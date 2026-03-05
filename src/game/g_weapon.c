@@ -503,6 +503,15 @@ static qboolean G_IsObjectiveCarrier(const gentity_t *ent)
 }
 
 /**
+ * @brief Shared default adrenaline duration (milliseconds) by mode.
+ * @return Default adrenaline duration in milliseconds.
+ */
+int G_GetDefaultAdrenalineDuration(void)
+{
+	return (g_legacyAdrenaline.integer == 1) ? (5000 + 750) : 10000;
+}
+
+/**
  * @brief Shared syringe/adrenaline trace acquisition used by weapon firing and cursorhints.
  *
  * @param[in,out] ent
@@ -691,7 +700,7 @@ static gentity_t *Weapon_Syringe_Shared(gentity_t *ent, qboolean isLegacyAdrenal
 	         !G_IsObjectiveCarrier(traceEnt)
 	         )
 	{
-		const int adrenalineEndTime = level.time + 5000 + 750;
+		const int adrenalineEndTime = level.time + G_GetDefaultAdrenalineDuration();
 		traceEnt->client->ps.powerups[PW_ADRENALINE] = adrenalineEndTime;
 
 		{
@@ -756,7 +765,7 @@ gentity_t *Weapon_AdrenalineSyringe(gentity_t *ent)
 		return NULL;
 	}
 
-	ent->client->ps.powerups[PW_ADRENALINE] = level.time + 10000;
+	ent->client->ps.powerups[PW_ADRENALINE] = level.time + G_GetDefaultAdrenalineDuration();
 	return NULL;
 }
 
