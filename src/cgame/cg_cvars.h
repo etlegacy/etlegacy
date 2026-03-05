@@ -113,6 +113,7 @@ extern vmCvar_t cg_synchronousClients;
 #endif // ALLOW_GSYNC
 extern vmCvar_t cg_teamChatTime;
 extern vmCvar_t cg_teamChatMention;
+extern vmCvar_t cg_disableComplaints;
 extern vmCvar_t cg_stats;
 extern vmCvar_t cg_coronafardist;
 extern vmCvar_t cg_coronas;

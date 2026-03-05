@@ -1256,12 +1256,12 @@ void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
 			cgs.teamChatPos++;
 
 			cgs.teamChatStartLine[cgs.teamChatPos % chatHeight] = qfalse;
-			p    = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
-			*p   = 0;
-			*p++ = Q_COLOR_ESCAPE;
-			*p++ = lastcolor;
-			len  = 0;
-			ls   = NULL;
+			p                                                   = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
+			*p                                                  = 0;
+			*p++                                                = Q_COLOR_ESCAPE;
+			*p++                                                = lastcolor;
+			len                                                 = 0;
+			ls                                                  = NULL;
 		}
 
 		if (Q_IsColorString(str))
@@ -3594,6 +3594,14 @@ static void CG_ServerCommand(void)
 	case COMPLAINT_HASH:                                       // "complaint"
 		if (cgs.gamestate == GS_PLAYING)
 		{
+			// Client-side opt-out for all complaint popups.
+			if (cg_disableComplaints.integer)
+			{
+				cgs.complaintEndTime = 0;
+				cgs.complaintClient  = -1;
+				return;
+			}
+
 			if (!(CG_GetActiveHUD()->votetext.style & 1))
 			{
 				trap_SendClientCommand("vote no");
