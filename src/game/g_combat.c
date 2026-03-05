@@ -498,6 +498,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		killerName = "<world>";
 	}
 
+	if (attackerClient && attacker != self)
+	{
+		trap_SendServerCommand(self - g_entities, va("cp \"Killed by %s\" 1", attacker->client->pers.netname));
+	}
+
 	if (g_gamestate.integer == GS_PLAYING)
 	{
 #ifdef FEATURE_OMNIBOT
