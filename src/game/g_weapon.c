@@ -512,6 +512,35 @@ int G_GetDefaultAdrenalineDuration(void)
 }
 
 /**
+ * @brief Grants adrenaline to a target and emits the shared adrenaline event.
+ * @param[in] injector Source player for event attribution; may be NULL.
+ * @param[in,out] target Client receiving adrenaline.
+ * @param[in] durationMs Duration in milliseconds; defaults when <= 0.
+ * @return Absolute end time for PW_ADRENALINE.
+ */
+int G_GrantAdrenaline(gentity_t *injector, gentity_t *target, int durationMs)
+{
+	gentity_t *te;
+	int       adrenalineDuration;
+	int       adrenalineEndTime;
+	int       injectorClientNum;
+
+	adrenalineDuration = durationMs > 0 ? durationMs : G_GetDefaultAdrenalineDuration();
+	adrenalineEndTime  = level.time + adrenalineDuration;
+
+	target->client->ps.powerups[PW_ADRENALINE] = adrenalineEndTime;
+
+	te = G_TempEntity(target->r.currentOrigin, EV_PLAYER_ADRENALINE);
+
+	injectorClientNum = injector ? injector->s.clientNum : target->s.clientNum;
+	te->s.eventParm   = target->s.clientNum;
+	te->s.clientNum   = injectorClientNum;
+	te->s.effect3Time = adrenalineEndTime;
+
+	return adrenalineEndTime;
+}
+
+/**
  * @brief Shared syringe/adrenaline trace acquisition used by weapon firing and cursorhints.
  *
  * @param[in,out] ent
@@ -700,17 +729,7 @@ static gentity_t *Weapon_Syringe_Shared(gentity_t *ent, qboolean isLegacyAdrenal
 	         !G_IsObjectiveCarrier(traceEnt)
 	         )
 	{
-		const int adrenalineEndTime = level.time + G_GetDefaultAdrenalineDuration();
-		traceEnt->client->ps.powerups[PW_ADRENALINE] = adrenalineEndTime;
-
-		{
-			gentity_t *te;
-			te = G_TempEntity(traceEnt->r.currentOrigin, EV_PLAYER_ADRENALINE);
-
-			te->s.eventParm   = traceEnt->s.clientNum;
-			te->s.clientNum   = ent->s.clientNum;
-			te->s.effect3Time = adrenalineEndTime;
-		}
+		G_GrantAdrenaline(ent, traceEnt, 0);
 
 		// register hit
 		if (g_gamestate.integer == GS_PLAYING)
@@ -765,7 +784,7 @@ gentity_t *Weapon_AdrenalineSyringe(gentity_t *ent)
 		return NULL;
 	}
 
-	ent->client->ps.powerups[PW_ADRENALINE] = level.time + G_GetDefaultAdrenalineDuration();
+	G_GrantAdrenaline(ent, ent, 0);
 	return NULL;
 }
 

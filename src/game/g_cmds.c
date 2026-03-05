@@ -851,7 +851,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 			else
 			{
 				const int adrenalineDuration = amount > 0 ? amount * 1000 : G_GetDefaultAdrenalineDuration();
-				ent->client->ps.powerups[PW_ADRENALINE] = level.time + adrenalineDuration;
+				G_GrantAdrenaline(ent, ent, adrenalineDuration);
 			}
 		}
 		else if (!give_all)
