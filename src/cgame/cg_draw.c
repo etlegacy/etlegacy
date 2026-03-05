@@ -1747,17 +1747,20 @@ static void CG_DrawNoShootIcon(hudComponent_t *comp)
 	}
 	else if (cg.crosshairClientNoShoot)
 	{
-		// Keep hint timing/opacity independent from other crosshair fades.
-		float hintAlpha = Com_Clamp(0.f, 1.f, cg_crosshairHintsAlpha.value);
-		float *color    = CG_FadeColor_Ext(cg.crosshairEntTime, cg_crosshairHintsFade.integer, hintAlpha);
+		vec4_t hintColor;
+		float  hintAlpha;
 
-		if (!color)
+		// Keep visibility timing from cg_crosshairHintsFade, but do not fade alpha with it.
+		if (!cg.crosshairEntTime || cg_crosshairHintsFade.integer <= 0 || (cg.time - cg.crosshairEntTime) >= cg_crosshairHintsFade.integer)
 		{
 			trap_R_SetColor(NULL);
 			return;
 		}
 
-		trap_R_SetColor(color);
+		hintAlpha    = Com_Clamp(0.f, 1.f, cg_crosshairHintsAlpha.value);
+		hintColor[0] = hintColor[1] = hintColor[2] = 1.f;
+		hintColor[3] = hintAlpha;
+		trap_R_SetColor(hintColor);
 	}
 	else
 	{
