@@ -3620,6 +3620,13 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
+	// Match server-side PM lock: prevent alt toggles while the weapon is still raising
+	// from a regular switch, otherwise predicted select state can desync briefly.
+	if (cg.snap->ps.weaponstate == WEAPON_RAISING)
+	{
+		return;
+	}
+
 	// don't allow alt weapon switch till we have switched to selected weapon
 	if (cg.snap->ps.weapon != cg.weaponSelect || (cg.snap->ps.nextWeapon && cg.snap->ps.weapon != cg.snap->ps.nextWeapon))
 	{

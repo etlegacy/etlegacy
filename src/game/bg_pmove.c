@@ -2603,6 +2603,14 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 		return;
 	}
 
+	// Keep alt attachment toggles locked while a weapon is still raising from a regular switch.
+	// Without this guard, a fast re-select + altweap can bypass the detach animation timing.
+	if (pm->ps->weaponstate == WEAPON_RAISING &&
+	    (newWeapon == GetWeaponTableData(oldWeapon)->weapAlts || oldWeapon == GetWeaponTableData(newWeapon)->weapAlts))
+	{
+		return;
+	}
+
 	// don't allow change during spinup
 	if (pm->ps->weaponDelay)
 	{
