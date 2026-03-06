@@ -3876,17 +3876,25 @@ static void FindIndexMatch(const char *s)
  */
 static void PrintCvarMatchLine(const char *s)
 {
-	char       value[TRUNCATE_LENGTH];
-	char       formattedDescription[CVAR_COMPLETION_DESCRIPTION_LIMIT + 4];
-	char       *currentValue;
-	const char *description;
-	const char *valueColor;
-	size_t     descriptionOut;
-	qboolean   descriptionTruncated;
+	char        value[TRUNCATE_LENGTH];
+	char        formattedDescription[CVAR_COMPLETION_DESCRIPTION_LIMIT + 4];
+	char        *currentValue;
+	const char  *description;
+	const char  *nameColor;
+	const char  *valueColor;
+	cvarFlags_t cvarFlags;
+	size_t      descriptionOut;
+	qboolean    descriptionTruncated;
 
 	currentValue = Cvar_VariableString(s);
 	description  = Cvar_VariableDescription(s);
-	valueColor   = !Q_stricmp(currentValue, Cvar_DefaultString(s)) ? "^2" : "^3";
+	cvarFlags    = Cvar_Flags(s);
+
+	// User-created cvars commonly come from stale/unknown config "set" entries, highlight them in red.
+	nameColor = (cvarFlags & CVAR_USER_CREATED) ? "^j" : "^9";
+
+	// Show value color differently depending if it's default value or not
+	valueColor = !Q_stricmp(currentValue, Cvar_DefaultString(s)) ? "^2" : "^3";
 
 	// Strip newline characters and trim long cvar descriptions in completion output.
 	descriptionOut       = 0;
@@ -3938,11 +3946,11 @@ static void PrintCvarMatchLine(const char *s)
 	// Print cvar descriptions in completion output when available.
 	if (formattedDescription[0] != '\0')
 	{
-		Com_Printf("    ^9%-*s^9 = \"%s%s^9\" - ^z%s\n", cvarMatchMaxWidth, s, valueColor, value, formattedDescription);
+		Com_Printf("    %s%-*s^9 = \"%s%s^9\" - ^z%s\n", nameColor, cvarMatchMaxWidth, s, valueColor, value, formattedDescription);
 	}
 	else
 	{
-		Com_Printf("    ^9%-*s^9 = \"%s%s^9\"\n", cvarMatchMaxWidth, s, valueColor, value);
+		Com_Printf("    %s%-*s^9 = \"%s%s^9\"\n", nameColor, cvarMatchMaxWidth, s, valueColor, value);
 	}
 }
 
