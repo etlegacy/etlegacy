@@ -54,6 +54,99 @@ vec3_t playerMins = { -18, -18, -24 };
 vec3_t playerMaxs = { 18, 18, 48 };
 
 /**
+ * @brief Store the exact view direction at the moment the player gets downed.
+ * @param[in,out] ent
+ */
+void G_LegacyRevive_RecordDownedViewAngles(gentity_t *ent)
+{
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	VectorCopy(ent->client->ps.viewangles, ent->client->legacyDownedViewAngles);
+	ent->client->legacyDownedViewAnglesValid = qtrue;
+}
+
+/**
+ * @brief Reset or advance the per-life revive counter.
+ * @param[in,out] ent
+ * @param[in] revived
+ */
+void G_LegacyRevive_OnClientSpawn(gentity_t *ent, qboolean revived)
+{
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	if (revived)
+	{
+		ent->client->legacyRevivesSinceRespawn++;
+		return;
+	}
+
+	ent->client->legacyRevivesSinceRespawn   = 0;
+	ent->client->legacyDownedViewAnglesValid = qfalse;
+}
+
+/**
+ * @brief Build the post-revive look angles for the given target.
+ * @param[in,out] ent
+ * @param[out] outViewAngles
+ * @return qtrue when legacy revive behavior should apply.
+ */
+qboolean G_LegacyRevive_GetReviveViewAngles(gentity_t *ent, vec3_t outViewAngles)
+{
+	if (!ent || !ent->client || !outViewAngles)
+	{
+		return qfalse;
+	}
+
+	if (g_legacyRevives.integer != 1)
+	{
+		return qfalse;
+	}
+
+	// Admin "revive <name>" while alive should preserve the current look direction.
+	if (ent->health > 0 || ent->client->ps.pm_type != PM_DEAD)
+	{
+		VectorCopy(ent->client->ps.viewangles, outViewAngles);
+		return qtrue;
+	}
+
+	if (ent->client->legacyDownedViewAnglesValid)
+	{
+		VectorCopy(ent->client->legacyDownedViewAngles, outViewAngles);
+		return qtrue;
+	}
+
+	VectorCopy(ent->client->ps.viewangles, outViewAngles);
+	return qtrue;
+}
+
+/**
+ * @brief True when first-revive interactions must be blocked.
+ * @param[in] ent
+ * @return
+ */
+qboolean G_LegacyRevive_IsFirstReviveRestricted(gentity_t *ent)
+{
+	if (!ent || !ent->client || g_legacyRevives.integer != 1)
+	{
+		return qfalse;
+	}
+
+	// Restrict only during the first-revive stand-up phase.
+	if (ent->client->legacyRevivesSinceRespawn != 1)
+	{
+		return qfalse;
+	}
+
+	return (ent->client->ps.pm_flags & PMF_TIME_LOCKPLAYER) && ent->client->ps.pm_time > 0;
+}
+
+/**
  * @brief QUAKED info_player_deathmatch (1 0 1) (-18 -18 -24) (18 18 48)
  * potential spawning position for deathmatch games.
  * Targets will be fired when someone spawns in on them.
@@ -2220,7 +2313,14 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 
 				if (!Q_strncmp(cl->pers.cl_guid, cs_guid, MAX_GUID_LENGTH + 1))
 				{
-					return "Bad GUID: Duplicate etkey.";
+					if ((g_xpSaver.integer & XPSF_WIPE_DUP_GUID))
+					{
+						trap_DropClient(clientNum, "Bad GUID: Duplicate etkey.", 0);
+					}
+					else
+					{
+						return "Bad GUID: Duplicate etkey.";
+					}
 				}
 			}
 		}
@@ -2477,7 +2577,32 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	}
 #endif
 
-	if (firstTime && g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
+	if (
+		firstTime &&
+		(g_xpSaver.integer & XPSF_ENABLE) && (
+			(g_gametype.integer == GT_WOLF_CAMPAIGN) ||
+			(g_gametype.integer == GT_WOLF_STOPWATCH && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH)) ||
+			(g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF)
+			)
+		)
+	{
+		G_XPSaver_Load(client);
+
+		for (i = 0; i < SK_NUM_SKILLS; i++)
+		{
+			G_SetPlayerSkill(client, i);
+		}
+	}
+
+	if (
+		!firstTime &&
+		(g_xpSaver.integer & XPSF_ENABLE) && (
+			(g_gametype.integer == GT_WOLF_CAMPAIGN) ||
+			((g_gametype.integer == GT_WOLF_STOPWATCH) && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH)) ||
+			(g_gametype.integer == GT_WOLF_MAPVOTE) ||
+			(g_gametype.integer == GT_WOLF)
+			)
+		)
 	{
 		G_XPSaver_Load(client);
 
@@ -2495,11 +2620,11 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	{
 		if ((g_countryflags.integer & CF_CONNECT) && client->sess.uci > 0 && client->sess.uci < MAX_COUNTRY_NUM && allowGeoIP)
 		{
-			trap_SendServerCommand(-1, va("cpm \"" S_COLOR_WHITE "%s" S_COLOR_WHITE " connected from %s\n\"", client->pers.netname, country_name[client->sess.uci]));
+			trap_SendServerCommand(-1, va("cpm \"" S_COLOR_WHITE "%s" S_COLOR_WHITE " connected from %s\n\" %i", client->pers.netname, country_name[client->sess.uci], PM_CONNECT));
 		}
 		else
 		{
-			trap_SendServerCommand(-1, va("cpm \"" S_COLOR_WHITE "%s" S_COLOR_WHITE " connected\n\"", client->pers.netname));
+			trap_SendServerCommand(-1, va("cpm \"" S_COLOR_WHITE "%s" S_COLOR_WHITE " connected\n\" %i", client->pers.netname, PM_CONNECT));
 		}
 	}
 
@@ -2915,6 +3040,9 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	int                oldAmmo[MAX_WEAPONS];                          // total amount of ammo
 	int                oldAmmoclip[MAX_WEAPONS];                      // ammo in clip
 	int                oldWeapons[MAX_WEAPONS / (sizeof(int) * 8)];   // 64 bits for weapons held
+	int                savedLegacyRevivesSinceRespawn;
+	qboolean           savedLegacyDownedViewAnglesValid;
+	vec3_t             savedLegacyDownedViewAngles;
 
 	client->pers.lastSpawnTime            = level.time;
 	client->pers.lastBattleSenseBonusTime = level.timeCurrent;
@@ -3001,6 +3129,11 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		Com_Memcpy(oldWeapons, client->ps.weapons, sizeof(int) * (MAX_WEAPONS / (sizeof(int) * 8)));
 	}
 
+	// Preserve legacy revive state while the client struct gets rebuilt.
+	savedLegacyRevivesSinceRespawn   = client->legacyRevivesSinceRespawn;
+	savedLegacyDownedViewAnglesValid = client->legacyDownedViewAnglesValid;
+	VectorCopy(client->legacyDownedViewAngles, savedLegacyDownedViewAngles);
+
 	for (i = 0 ; i < MAX_PERSISTANT ; i++)
 	{
 		persistant[i] = client->ps.persistant[i];
@@ -3013,11 +3146,14 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		client->maxlivescalced = set;
 	}
 
-	client->pers              = savedPers;
-	client->sess              = savedSess;
-	client->ps.ping           = savedPing;
-	client->ps.teamNum        = savedTeam;
-	client->disguiseClientNum = -1;
+	client->pers                        = savedPers;
+	client->sess                        = savedSess;
+	client->ps.ping                     = savedPing;
+	client->ps.teamNum                  = savedTeam;
+	client->disguiseClientNum           = -1;
+	client->legacyRevivesSinceRespawn   = savedLegacyRevivesSinceRespawn;
+	client->legacyDownedViewAnglesValid = savedLegacyDownedViewAnglesValid;
+	VectorCopy(savedLegacyDownedViewAngles, client->legacyDownedViewAngles);
 
 	if (g_gamestate.integer == GS_INTERMISSION)
 	{
@@ -3037,6 +3173,9 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	}
 	client->ps.persistant[PERS_TEAM]        = client->sess.sessionTeam;
 	client->ps.persistant[PERS_HWEAPON_USE] = 0;
+
+	// Update per-life revive compatibility counters once spawn type is known.
+	G_LegacyRevive_OnClientSpawn(ent, revived);
 
 	// breathbar
 	client->ps.stats[STAT_AIRLEFT] = HOLDBREATHTIME;
@@ -3424,7 +3563,15 @@ void ClientDisconnect(int clientNum)
 	}
 #endif
 
-	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN && !level.intermissiontime)
+	if (
+		(g_xpSaver.integer & XPSF_ENABLE) &&
+		!level.intermissiontime && (
+			(g_gametype.integer == GT_WOLF_CAMPAIGN) ||
+			((g_gametype.integer == GT_WOLF_STOPWATCH) && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH)) ||
+			(g_gametype.integer == GT_WOLF_MAPVOTE) ||
+			(g_gametype.integer == GT_WOLF)
+			)
+		)
 	{
 		G_XPSaver_Store(ent->client);
 	}

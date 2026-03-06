@@ -3879,6 +3879,7 @@ void CG_LimboPanel_KeyHandling(int key, qboolean down)
 	{
 		if (CG_CommandCentreSpawnPointClick())
 		{
+			SOUND_SELECT;
 			return;
 		}
 	}

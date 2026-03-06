@@ -48,7 +48,9 @@ int historyLine;            // the line being displayed from history buffer
 
 field_t g_consoleField;
 
-qboolean key_overstrikeMode;
+qboolean        key_overstrikeMode;
+static char     fieldYankBuffer[MAX_EDIT_LINE];
+static qboolean fieldLastCommandWasKillWord;
 
 int    anykeydown;
 qkey_t keys[MAX_KEYS];
@@ -452,6 +454,174 @@ static void Field_SeekWord(field_t *edit, int direction)
 }
 
 /**
+ * @brief Checks if a UTF-8 character should be treated as a kill-word separator.
+ * @param[in] utf8Char
+ * @return
+ */
+static qboolean Field_IsKillWordSeparator(const char *utf8Char)
+{
+	unsigned char ch;
+
+	if (!utf8Char || !*utf8Char)
+	{
+		return qfalse;
+	}
+
+	ch = (unsigned char)utf8Char[0];
+
+	// Keep shell-like path/token separators explicit for console editing.
+	return (ch == '/' || ch == '\\' || ch == '_');
+}
+
+/**
+ * @brief Checks if a UTF-8 character stops backward kill-word scanning.
+ * @param[in] utf8Char
+ * @return
+ */
+static qboolean Field_IsKillWordStop(const char *utf8Char)
+{
+	unsigned char ch;
+
+	if (!utf8Char || !*utf8Char)
+	{
+		return qtrue;
+	}
+
+	ch = (unsigned char)utf8Char[0];
+
+	// Whitespace and explicit token separators define kill-word boundaries.
+	return (isspace(ch) || Field_IsKillWordSeparator(utf8Char));
+}
+
+/**
+ * @brief Checks if a character index is at a lower->upper camel-case boundary.
+ * @param[in] edit
+ * @param[in] charIndex
+ * @return
+ */
+static qboolean Field_IsKillWordCamelBoundary(field_t *edit, int charIndex)
+{
+	const char    *currentChar;
+	const char    *previousChar;
+	unsigned char current;
+	unsigned char previous;
+
+	if (!edit || charIndex <= 0)
+	{
+		return qfalse;
+	}
+
+	currentChar  = Q_UTF8_CharAt(edit->buffer, charIndex);
+	previousChar = Q_UTF8_CharAt(edit->buffer, charIndex - 1);
+	if (!currentChar || !previousChar || !*currentChar || !*previousChar)
+	{
+		return qfalse;
+	}
+
+	current  = (unsigned char)currentChar[0];
+	previous = (unsigned char)previousChar[0];
+
+	// Stop on the first lower->upper case transition inside a token.
+	return (islower(previous) && isupper(current));
+}
+
+/**
+ * @brief Deletes one backward kill-word unit and appends it to yank buffer.
+ * @param[in,out] edit
+ */
+static void Field_KillWordBackward(field_t *edit)
+{
+	int    start, end;
+	int    startOffset, endOffset;
+	int    removedLength;
+	size_t len;
+	char   removedText[MAX_EDIT_LINE];
+
+	if (edit->cursor <= 0)
+	{
+		return;
+	}
+
+	start = edit->cursor;
+	end   = edit->cursor;
+
+	// First remove trailing spaces, if any.
+	while (start > 0 && isspace((unsigned char)Q_UTF8_CharAt(edit->buffer, start - 1)[0]))
+	{
+		start--;
+	}
+
+	// If the first character is a separator, consume separators then the preceding word segment.
+	if (start > 0 && Field_IsKillWordSeparator(Q_UTF8_CharAt(edit->buffer, start - 1)))
+	{
+		while (start > 0 && Field_IsKillWordSeparator(Q_UTF8_CharAt(edit->buffer, start - 1)))
+		{
+			start--;
+		}
+
+		while (start > 0 && !Field_IsKillWordStop(Q_UTF8_CharAt(edit->buffer, start - 1)))
+		{
+			start--;
+			if (start > 0 && Field_IsKillWordCamelBoundary(edit, start))
+			{
+				break;
+			}
+		}
+	}
+	else
+	{
+		// Regular kill-word: consume word chars until a boundary is reached.
+		while (start > 0 && !Field_IsKillWordStop(Q_UTF8_CharAt(edit->buffer, start - 1)))
+		{
+			start--;
+			if (start > 0 && Field_IsKillWordCamelBoundary(edit, start))
+			{
+				break;
+			}
+		}
+	}
+
+	startOffset   = Q_UTF8_ByteOffset(edit->buffer, start);
+	endOffset     = Q_UTF8_ByteOffset(edit->buffer, end);
+	removedLength = endOffset - startOffset;
+	if (removedLength <= 0)
+	{
+		return;
+	}
+
+	if (removedLength >= (int)sizeof(removedText))
+	{
+		removedLength = sizeof(removedText) - 1;
+	}
+
+	Com_Memcpy(removedText, edit->buffer + startOffset, removedLength);
+	removedText[removedLength] = '\0';
+
+	len = strlen(edit->buffer);
+	memmove(edit->buffer + startOffset, edit->buffer + endOffset, len + 1 - endOffset);
+
+	// Consecutive kill-word operations prepend to preserve natural yank order.
+	if (fieldLastCommandWasKillWord && fieldYankBuffer[0] != '\0')
+	{
+		char existingYank[MAX_EDIT_LINE];
+		Q_strncpyz(existingYank, fieldYankBuffer, sizeof(existingYank));
+		Com_sprintf(fieldYankBuffer, sizeof(fieldYankBuffer), "%s%s", removedText, existingYank);
+	}
+	else
+	{
+		Q_strncpyz(fieldYankBuffer, removedText, sizeof(fieldYankBuffer));
+	}
+
+	fieldLastCommandWasKillWord = qtrue;
+	edit->cursor                = start;
+
+	if (edit->cursor < edit->scroll)
+	{
+		edit->scroll = edit->cursor;
+	}
+}
+
+/**
  * @brief Performs the basic line editing functions for the console,
  * in-game talk, and menu fields
  *
@@ -572,15 +742,62 @@ void Field_CharEvent(field_t *edit, int ch)
 
 	if (ch == CTRL('v') && !keys[K_RALT].down)      // ctrl-v is paste
 	{
+		fieldLastCommandWasKillWord = qfalse;
 		Field_Paste(edit);
 		return;
 	}
 
-	if (ch == CTRL('c'))      // ctrl-c clears the field
+	if (ch == CTRL('c') || ch == CTRL('u'))      // ctrl-c/u clears the entire input line
 	{
+		fieldLastCommandWasKillWord = qfalse;
 		Field_Clear(edit);
 		return;
 	}
+
+	if (ch == CTRL('w'))      // ctrl-w deletes backward word segments and updates yank buffer
+	{
+		Field_KillWordBackward(edit);
+		return;
+	}
+
+	if (ch == CTRL('y'))      // ctrl-y yanks previously kill-word deleted text
+	{
+		int    yankOffset;
+		size_t yankByteLen;
+		size_t yankCharLen;
+
+		fieldLastCommandWasKillWord = qfalse;
+
+		if (fieldYankBuffer[0] == '\0')
+		{
+			return;
+		}
+
+		len         = strlen(edit->buffer);
+		yankByteLen = strlen(fieldYankBuffer);
+		yankCharLen = Q_UTF8_Strlen(fieldYankBuffer);
+
+		// Keep headroom consistent with normal field insertion behavior.
+		if ((size_t)len + yankByteLen >= (MAX_EDIT_LINE - 1))
+		{
+			return;
+		}
+
+		yankOffset = Q_UTF8_ByteOffset(edit->buffer, edit->cursor);
+		memmove(edit->buffer + yankOffset + yankByteLen,
+		        edit->buffer + yankOffset,
+		        len + 1 - yankOffset);
+		Com_Memcpy(edit->buffer + yankOffset, fieldYankBuffer, yankByteLen);
+
+		edit->cursor += yankCharLen;
+		if (edit->cursor >= edit->scroll + edit->widthInChars)
+		{
+			edit->scroll = edit->cursor - edit->widthInChars + 1;
+		}
+		return;
+	}
+
+	fieldLastCommandWasKillWord = qfalse;
 
 	len       = strlen(edit->buffer);
 	stringLen = Q_UTF8_Strlen(edit->buffer);
@@ -791,6 +1008,20 @@ void Console_Key(int key)
 	}
 
 	// console scrolling
+	if ((key == K_PGUP || key == K_KP_PGUP) && (keys[K_LSHIFT].down || keys[K_RSHIFT].down))
+	{
+		// Shift+PgUp performs an absolute jump to the oldest visible console line.
+		Con_ScrollTop();
+		return;
+	}
+
+	if ((key == K_PGDN || key == K_KP_PGDN) && (keys[K_LSHIFT].down || keys[K_RSHIFT].down))
+	{
+		// Shift+PgDn performs an absolute jump back to live console output.
+		Con_ScrollBottom();
+		return;
+	}
+
 	if (key == K_PGUP || key == K_KP_PGUP)
 	{
 		Con_PageUp();

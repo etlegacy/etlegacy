@@ -1,0 +1,102 @@
+^dEngine
+
+* Configstring 1 sv_referencedPakNames optimized 
+* Etkey format adjusted
+* Fix for array overwrite memory corruption when drawing too many polygons
+* Removed newlines for COM_Error calls
+* Fix rconAddress not printing redirected print packets while not on a server
+* Client buffer overflow fix
+* Fixed client console with colored input - renders the escapes and the colors as in
+  ioq3
+* Use different config file for dedicated server executable "etconfig_server.cfg"
+* Client takes account for slash AND trailing \0 in field char events
+* Translation updates
+* Support of et:// protocol handling and registration
+* s_useOpenAL cvar removed - s_initsound '2' sets OpenAL instead
+* Removed 'MODE is unbound, use controls menu to set' print on linux console
+* Fixed frequently not playing sounds
+* New command to clean up fs_homepath - see also menu -> options -> clean
+* 2 wallhack prediction fixes
+* Better limits & default values for sv_wh_bbox cvars 
+* New feature: PID file for client and dedicated server
+* New server DDOS protection for getchallenge requests
+* Fixed potential buffer overflows
+* Fixed never working cvars r_maxpolyverts and r_maxpolys
+* Fixed dedicated server consumes 100% CPU when no map is loaded
+* Fixed Sys_Dialog for *nix systems not using gnome or KDE
+* Fixed temp memory to be present all the time
+* Fixed undesired CAPSLOCK behaviour - you can bind it now
+* Fixed bsp flares causing surface corruption
+* Joystick code reactivated (apple excluded)
+* Fixed text getting appended to vid_restart in command buffer
+* cl_timeout default value decreased to 30
+* Fixed keyboard issues on Windows (ALT and CTRL keys)
+* Fixed usage and printing of long GL extensions string (>4096 chars)
+* Fixed null model axis disappearing if sky is in view
+* LAN_RemoveServer can remove all servers of same type
+* ARM Linux support by ptitSeb
+* Fixed UI rendering issue with r_mode 11
+* Fixed recursive crash when home path cannot be created
+* OpenPandora port by ptitSeb
+* Release input devices in Sys_ErrorDialog
+* OpenGL-ES support by ptitSeb
+* Genuine/vanilla etmain/mp_bin.pk3 is no longer referenced
+* Added scollbar to console
+* Fixed freeing commands on shutdown
+* Improved console handling (tab & cvar cycle)
+* Fixed ALT + tab minimize bug
+
+^dMod
+
+* Country flags
+* cg_muzzleFlash introduced
+* Scoreboard spectator fix
+* ETPro like class cmd
+* Fixed CG_AllocMark using wrong time in while loop
+* Fixed mapvoting - clients were able to vote several times
+* Command map spawnpoint selection fix
+* CG_ReadNextSnapshot fix for local hosts demos
+* Arty/airstrike rate limiting by forty - new cvars team_airstrikeTime and
+  team_artyTime
+* Fix for Cmd_Vote_f() not accepting nonsense
+* Silent door sounds for croaching players
+* team_max restrictions introduced
+* Level up customization - see skill_X cvars
+* Lua G_XP_Set, G_ResetXP and Lua trap_FS_GetFileList functions have been added
+* Fixed Lua sha1 checksum - did work only for capitalized inputs
+* g_intermissionTime and g_intermissionReadyPercent cvars introduced 
+* sv_cvar command has been added to force cvars
+* Fixed wrong server cvar g_protectLog at etl_server.cfg
+* Fixed: g_inactivity and g_spectatorInactivity cvars
+* g_mapScriptDirectory and g_mapConfig cvars introduced
+* Custom huds cg_althud
+* Popup customization
+* Team class limitations team_maxCLASS
+* Team weapon limitations team_maxWEAPON
+* More fireteam functions
+* Rifle clip sizes increased
+* Force client cvars
+* Added local time to the hud
+* Show players latched class in fireteam
+* g_moverscale cvar introduced
+* Replaced stamina- with breath bar under water
+* Removed a warning when custom- or Lua sounds are played
+* Allow voice chats as spectator
+* Config string optimizations 
+* Draw loading text in status bar
+* Fixed buggy team chat display when cg_locations is set
+* Scaled map name on loading screen to fit its bounding box
+* Fixed client is shown as 'connecting' while already connected
+* Client gets info when muted and tries to chat
+* cg_centertime is no longer cheat protected
+* Colored obituary prints for team- and self kills with used weapon
+* Fixed CG_AllocMark using wrong time in while loop
+* Limbo spawnpoint selection fix
+* Deny /imready in intermission and gametype mapvoting
+* Stop processing ClientUserInfoChanged when client is dropped
+* bg_pmove.c slightly optimized
+* Server Browser rework - added new buttons & filters 
+* Added configurable HUD
+* Fixed memory leak when lua is reading files
+
+... and again more clean up in engine and mod.

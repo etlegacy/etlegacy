@@ -1964,6 +1964,51 @@ char *Q_CleanStr(char *string)
 }
 
 /**
+ * @brief Takes a string and escapes any color codes found in it, so that the text can
+ * be printed "as is", without the color codes being interpreted as actual color codes.
+ * This is useful when you want to print clean strings that contain '^' characters,
+ * without them being automatically interpreted as color codes.
+ *
+ * Example use case:
+ * We want to print a player's name to the console without color codes, and their name is:
+ * ^1Foo^2^^3Bar
+ *
+ * After color codes are removed, the remaining string is:
+ * Foo^Bar
+ *
+ * Printing this will interpret the '^B' as a color code, resulting output 'Fooar'.
+ *
+ * After cleaning, running the string through this function with '7' as 'escapeChar'
+ * will instead turn the string into this:
+ * Foo^^7Bar
+ *
+ * This can now be printed as plain white text, while preserving the caret character.
+ *
+ * NOTE: This function potentially grows the string size by 3x!
+ * Ensure the buffer holding the string is large enough to accommodate this!
+ *
+ * @param[in] string
+ * @param[in] escapeColor
+ */
+void Q_EscapeColorCodes(char *string, char escapeColor)
+{
+	size_t len = strlen(string);
+	size_t i;
+
+	for (i = 0; i < len; i++)
+	{
+		if (Q_IsColorString(string + i) && len > i + 2)
+		{
+			len += 2;
+			memmove(string + i + 3, string + i + 1, len - i - 2);
+			string[i + 1] = Q_COLOR_ESCAPE;
+			string[i + 2] = escapeColor;
+			i            += 2;
+		}
+	}
+}
+
+/**
  * @brief Takes a plain "un-colored" string, and then colorizes it so the string is displayed in the given color.
  * If given a string such as "Bob" and asked to colorize to '1' (red)', the output would be "^1Bob". If given
  * "John^^7Candy" the output is "^1John^^1^^17Candy"  -- Note that when drawn, this would literally show

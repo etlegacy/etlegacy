@@ -100,8 +100,9 @@ void CG_InitPMGraphics(void)
 	cgs.media.pmImages[PM_AMMOPICKUP]     = trap_R_RegisterShaderNoMip("gfx/limbo/filter_healthammo");
 	cgs.media.pmImages[PM_HEALTHPICKUP]   = trap_R_RegisterShaderNoMip("gfx/limbo/filter_healthammo");
 	cgs.media.pmImages[PM_WEAPONPICKUP]   = trap_R_RegisterShaderNoMip("sprites/voiceChat");
-	cgs.media.pmImages[PM_CONNECT]        = trap_R_RegisterShaderNoMip("sprites/voiceChat");
+	cgs.media.pmImages[PM_CONNECT]        = trap_R_RegisterShaderNoMip("gfx/hud/pm_radiogreendot");
 	cgs.media.pmImages[PM_ANNOUNCE]       = trap_R_RegisterShaderNoMip("sprites/voiceChat");
+	cgs.media.pmImages[PM_DISCONNECT]     = trap_R_RegisterShaderNoMip("gfx/hud/pm_radioreddot");
 
 	cgs.media.pmImageAlliesConstruct = trap_R_RegisterShaderNoMip("gfx/hud/pm_constallied");
 	cgs.media.pmImageAxisConstruct   = trap_R_RegisterShaderNoMip("gfx/hud/pm_constaxis");
@@ -109,7 +110,7 @@ void CG_InitPMGraphics(void)
 	cgs.media.pmImageAxisMine        = trap_R_RegisterShaderNoMip("gfx/hud/pm_mineaxis");
 	cgs.media.pmImageAlliesFlag      = trap_R_RegisterShaderNoMip("gfx/limbo/pm_flagallied");
 	cgs.media.pmImageAxisFlag        = trap_R_RegisterShaderNoMip("gfx/limbo/pm_flagaxis");
-	cgs.media.pmImageSpecFlag        = trap_R_RegisterShaderNoMip("sprites/voiceChat");
+	cgs.media.pmImageSpecFlag        = trap_R_RegisterShaderNoMip("gfx/limbo/but_team_spec");
 	cgs.media.hintKey                = trap_R_RegisterShaderNoMip("gfx/hud/keyboardkey_old");
 
 	// extra obituaries
@@ -254,6 +255,17 @@ void CG_UpdatePMLists(void)
 	int           i;
 	hudStucture_t *hud = CG_GetActiveHUD();
 
+	// This can happen if a 'CG_DRAW_ACTIVE_FRAME' call happens while 'CG_INIT'
+	// hasn't finished loading the HUD. Unsure if this is possible in a real scenario,
+	// but it's a reproducable crash when running with a debugger and breaking inside
+	// 'CG_Init' before the call to 'CG_AssetCache', and continuing execution.
+	// We don't need to do anything special here, just returning is fine,
+	// the HUD isn't even visible at this point as we're still in the loading screen.
+	if (!hud)
+	{
+		return;
+	}
+
 	for (i = 0; i < NUM_PM_STACK; ++i)
 	{
 		hudComponent_t *pmComp = (hudComponent_t *)((byte *)&hud->popupmessages + i * sizeof(hudComponent_t));
@@ -324,6 +336,7 @@ qboolean CG_CheckPMItemFilter(popupMessageType_t type, int filter)
 	switch (type)
 	{
 	case PM_CONNECT:
+	case PM_DISCONNECT:
 		return filter & POPUP_FILTER_CONNECT;
 	case PM_TEAM:
 		return filter & POPUP_FILTER_TEAMJOIN;
@@ -421,12 +434,6 @@ void CG_AddPMItemEx(popupMessageType_t type, const char *message, const char *me
 		listItem->message[strlen(listItem->message) - 1] = 0;
 	}
 
-	// do not write obituary popups into console - we'll get double kill-messages otherwise
-	if (type != PM_DEATH && type != PM_DEATH_HEADSHOT)
-	{
-		trap_Print(va("%s\n", listItem->message)); // FIXME: translate this (does it makes sense?)
-	}
-
 	// chop off the newline at the end if any
 	while ((end = strchr(listItem->message, '\n')))
 	{
@@ -494,6 +501,8 @@ void CG_AddPMItem(popupMessageType_t type, const char *message, const char *mess
 	{
 		CG_AddPMItemEx(type, message, message2, shader, weaponShader, scaleShader, color, i);
 	}
+
+	trap_Print(va("%s\n", message)); // FIXME: translate this (does it makes sense?)
 }
 
 /**

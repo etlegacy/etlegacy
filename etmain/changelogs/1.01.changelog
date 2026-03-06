@@ -1,0 +1,29 @@
+* Server Stability Issues:
+We've made a few adjustments that will help with server side stability and should
+help to remedy unexpected server timeouts.
+* PunkBuster Update:
+Even Balance has updated their PunkBuster software and we've included it in this
+update as well.  Below is a detailed description of how PunkBuster works and how to
+update to the latest version entitled PBWEB.
+The PB Server software routinely checks with the master PB Servers and downloads new
+updates when they become available and then distributes the new versions down to the
+PB Clients when players running an old version connect to the server.
+When PB can't keep itself up to date, various error messages will be displayed. For
+PB Server Admins, messages will be displayed to all players when a player joins who
+has a newer version of PB than what is currently running on the PB Server. Also, PB
+Servers running old versions will not be able to detect and deal with all of the
+latest versions of cheat/hack software. For players of the games, when their PB can't
+keep itself up to date, they will be removed (kicked) from PB Servers and may see one
+of a variety of messages ... "Distress", "Technical Problem loading ...", or "Update
+Timeout".
+For users who are unable to resolve the issues dealing with master PB Server
+communication or who have unreliable Internet connections that cause PB auto-updates
+to fail, you should use PBWEB to resolve the issue. To use PBWEB, you first must know
+where your home "pb" directory is located on your hard drive. To do this, enter
+"/fs_homepath" into your console (without the quotes). Players can press the tilde
+key (the ~ key) from any game screen to bring down (and/or raise) their console.
+After entering "/fs_homepath", the game will display the path to the home directory.
+At that location, the subdirectory called "pb" is the home "pb" directory. Launch
+PBWEB from the home directory. If PBWEB is not launched from inside the home "pb"
+directory, then it will not work. Note that PBWEB works for all games supported by
+PunkBuster and it works for both Players and also Admins running PB Servers.

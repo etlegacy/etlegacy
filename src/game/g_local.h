@@ -1083,6 +1083,11 @@ struct gclient_s
 	damageReceivedStats_t dmgReceivedSts[MAX_CLIENTS];
 
 	int isSpawnInvulnerability;
+
+	// Legacy revive compatibility state.
+	vec3_t legacyDownedViewAngles;            ///< View direction at the moment player got downed.
+	qboolean legacyDownedViewAnglesValid;     ///< True when downed angles are valid for revive restore.
+	int legacyRevivesSinceRespawn;            ///< Number of revives since last full respawn.
 };
 
 /**
@@ -1739,6 +1744,10 @@ void respawn(gentity_t *ent);
 void BeginIntermission(void);
 void InitBodyQue(void);
 void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean restoreHealth, qboolean toggleTeleport);
+void G_LegacyRevive_RecordDownedViewAngles(gentity_t *ent);
+void G_LegacyRevive_OnClientSpawn(gentity_t *ent, qboolean revived);
+qboolean G_LegacyRevive_GetReviveViewAngles(gentity_t *ent, vec3_t outViewAngles);
+qboolean G_LegacyRevive_IsFirstReviveRestricted(gentity_t *ent);
 void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t meansOfDeath);
 void AddKillScore(gentity_t *ent, int score);
 void CalculateRanks(void);
@@ -1812,10 +1821,12 @@ qboolean trap_GetValue(char *value, int valueSize, const char *key);
 void trap_DemoSupport(const char *commands);
 void trap_SnapshotCallbackExt(void);
 void trap_SnapshotSetClientMask(int clientNum, uint64_t mask);
+void trap_Cvar_SetDescription(const char *cvarName, const char *description);
 extern int dll_com_trapGetValue;
 extern int dll_trap_DemoSupport;
 extern int dll_trap_SnapshotCallbackExt;
 extern int dll_trap_SnapshotSetClientMask;
+extern int dll_trap_CvarSetDescription;
 
 // g_demo_legacy.c
 void G_DemoStateChanged(demoState_t demoState, int demoClientsNum);
@@ -2355,10 +2366,18 @@ int G_ReadPrestige(prData_t *pr_data);
 int G_WritePrestige(prData_t *pr_data);
 #endif
 
+#define XPSF_ENABLE              1  ///< enable XP Save on disconnect
+#define XPSF_NR_MAPRESET         2  ///< no reset on map restarts
+#define XPSF_NR_EVER             4  ///< no reset ever
+#define XPSF_WIPE_DUP_GUID       8  ///< call ClientDisconnect() on clients with the same GUID
+#define XPSF_DISABLE_STOPWATCH   16 ///< do not use xp-save when playing stopwatch
+#define XPSF_CONVERT             32 ///< if enabled the server tries to import old .xp format into etl database
+
 int G_XPSaver_CheckDB(char *db_path, int db_mode);
 void G_XPSaver_Load(gclient_t *cl);
 void G_XPSaver_Store(gclient_t *cl);
 int G_XPSaver_Clear();
+void G_XPSaver_Convert();
 
 // g_stats.c
 void G_UpgradeSkill(gentity_t *ent, skillType_t skill);

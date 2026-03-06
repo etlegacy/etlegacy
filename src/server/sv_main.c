@@ -1500,7 +1500,7 @@ static qboolean SV_CheckPaused(void)
 /**
  * @brief Return time in millseconds until processing of the next server frame.
  */
-int SV_FrameMsec()
+int64_t SV_FrameMsec()
 {
 	if (svcls.isTVGame)
 	{
@@ -1509,21 +1509,17 @@ int SV_FrameMsec()
 
 	if (sv_fps)
 	{
-		int frameMsec = (int)(1000.0f / sv_fps->value);
+		int64_t frameMsec = (int64_t)(1000.0f / sv_fps->value);
 
 		if (frameMsec < sv.timeResidual)
 		{
 			return 0;
 		}
-		else
-		{
-			return frameMsec - sv.timeResidual;
-		}
+
+		return frameMsec - sv.timeResidual;
 	}
-	else
-	{
-		return 1;
-	}
+
+	return 1;
 }
 
 /**

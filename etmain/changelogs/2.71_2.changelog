@@ -1,0 +1,41 @@
+> Note: ET: L 2.71 rc 2 wasn't published - see also 2.71 rc2
+
+^dEngine
+
+* Crash log file is written again on *nix systems
+* Added MorphOS support
+
+^fClient
+
+* Fixed cl_languagedebug cvar
+* Added the option to disable lean on activate button press
+* Fixed "bind <key>" message for unbound keys
+* Fixed Motion JPG avi contains no video
+* Fixed *nix Desktop icon
+* Added background ET:L logo
+* Added linux desktop and mime type files to proper location
+
+^fServer
+
+^dMod
+
+* Added fixed physics feature
+* Tricheckbox slighlty improved
+* Added the KA-BAR weapon for allies
+* Removed obsolete 'lieutenant' references - changed cvar g_LTChargeTime to
+  g_fieldopsChargeTime
+* Added shadows to the spawn wait text for similarity on texts
+* Added help messages for empty server list to server browser
+* Added servers filtered counter to server browser
+* Fixed WP_MEDKIT animation
+* Added the Browning MG weapon for allied soldiers
+* Added follow text uses icons for class and rank
+* Added crosshair shows class and rank icons instead of text
+* Fixed axis no longer use allies rank symbols
+* Added borders to construction/dynamite bar to be more informative
+* Added spectators view teamflags
+* Beautified several center prints & other game cosmetic
+* Fixed maxlives not displayed in scoreboard
+* Added cg_weapaltReloads cvar -  alternative fire reload
+
+... and again more clean up and optimizations in engine and mod.

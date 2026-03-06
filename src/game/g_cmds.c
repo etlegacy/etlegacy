@@ -400,7 +400,7 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 	{
 		int j;
 
-		if ((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
+		if (((g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF) && (g_xpSaver.integer & XPSF_ENABLE)) ||
 		    (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
 		    (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
 		{
@@ -2942,7 +2942,15 @@ void G_Say(gentity_t *ent, gentity_t *target, int mode, const char *chatText)
 		return;
 	}
 
-	Com_sprintf(name, sizeof(name), "%c%c(%s%c%c): %c%c", Q_COLOR_ESCAPE, COLOR_WHITE, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, Q_COLOR_ESCAPE, color);
+	// no brackets around player names in global chat
+	if (mode == SAY_ALL)
+	{
+		Com_sprintf(name, sizeof(name), "%c%c%s%c%c: %c%c", Q_COLOR_ESCAPE, COLOR_WHITE, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, Q_COLOR_ESCAPE, color);
+	}
+	else
+	{
+		Com_sprintf(name, sizeof(name), "%c%c(%s%c%c): %c%c", Q_COLOR_ESCAPE, COLOR_WHITE, ent->client->pers.netname, Q_COLOR_ESCAPE, COLOR_WHITE, Q_COLOR_ESCAPE, color);
+	}
 
 	// echo the text to the console
 	if (g_dedicated.integer)

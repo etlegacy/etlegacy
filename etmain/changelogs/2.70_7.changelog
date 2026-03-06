@@ -1,0 +1,15 @@
+^dEngine
+
+* Switched from etmaster.idsoftware.com to
+  [etmaster.net](http://www.splashdamage.com/forums/showthread.php/31768-Unofficial-q
+  uot-Empty-Server-List-quot-Fix?highlight=etmaster.net)
+* Compatibility with NoQuarter 1.2.9
+* Ported etkey generation from ioquake
+* Updated CURL lib to the latest version available
+* Resolved about a 1000 compiler warnings (still a few hundreds left)
+* Removed some useless and deprecated code (a lot more to go)
+* All the fixes and improvements made by raedwulf (move from deprecated platform
+  specific code to SDL, sound fix on linux, etc.)
+
+^uET CHANGELOG/README/INFO
+

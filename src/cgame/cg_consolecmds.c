@@ -87,6 +87,50 @@ static void CG_Viewpos_f(void)
 }
 
 /**
+ * @brief CG_WeapzoomDown_f
+ */
+static void CG_WeapzoomDown_f(void)
+{
+	if (!CG_WeapzoomAllowed_f())
+	{
+		return;
+	}
+
+	if (cg.weapzoomActive)
+	{
+		return;
+	}
+
+	cg.weapzoomActive = qtrue;
+}
+
+/**
+ * @brief CG_WeapzoomUp_f
+ */
+static void CG_WeapzoomUp_f(void)
+{
+	if (!cg.weapzoomActive)
+	{
+		return;
+	}
+
+	cg.weapzoomActive = qfalse;
+}
+
+/**
+ * @brief CG_ToggleWeapzoom_f
+ */
+static void CG_ToggleWeapzoom_f(void)
+{
+	if (!CG_WeapzoomAllowed_f())
+	{
+		return;
+	}
+
+	cg.weapzoomActive = !cg.weapzoomActive;
+}
+
+/**
  * @brief CG_LimboMenu_f
  */
 void CG_LimboMenu_f(void)
@@ -1704,7 +1748,7 @@ static void CG_ShareTimer_f(void)
 	qtime_t ct;
 	char    *cmd, *stChar, text[MAX_SAY_TEXT];
 	int     st, limboTime, nextSpawn;
-	stChar = CG_SpawnTimerText();
+	stChar = CG_SpawnTimerText(qfalse);
 
 	if (stChar == NULL)
 	{
@@ -2690,10 +2734,14 @@ const hudComponentMembersFields_t hudComponentMembersFields[] =
 	{ HUDMF(anchorPoint),        CG_SetAnchorPointFromCommand               },
 	{ "parentAnchorPoint",       offsetof(hudComponent_t, parentAnchor) + offsetof(anchor_t, point), CG_SetAnchorPointFromCommand},
 	{ "parentAnchorComponent",   offsetof(hudComponent_t, parentAnchor) + offsetof(anchor_t, parent), CG_SetAnchorParentComponentFromCommand},
+	{ HUDMF(barStyle),           CG_SetIntComponentFromCommand              },
 	{ HUDMF(circleDensityPoint), CG_SetFloatComponentFromCommand            },
 	{ HUDMF(circleStartAngle),   CG_SetFloatComponentFromCommand            },
 	{ HUDMF(circleEndAngle),     CG_SetFloatComponentFromCommand            },
 	{ HUDMF(circleThickness),    CG_SetFloatComponentFromCommand            },
+	{ HUDMF(feedTime),           CG_SetFloatComponentFromCommand            },
+	{ HUDMF(feedStayTime),       CG_SetFloatComponentFromCommand            },
+	{ HUDMF(feedFadeTime),       CG_SetFloatComponentFromCommand            },
 	{ NULL,                      0, NULL                                    },
 };
 
@@ -2727,6 +2775,11 @@ static void CG_ShowEditComponentHelp()
 	CG_Printf("\n\nAvailable ^3<field> ^7:\n\n%s\n", str);
 }
 
+/**
+ * @brief CG_ShowEditComponentStyleHelp
+ * @param[in] compField
+ * @param[in] value
+ */
 static void CG_ShowEditComponentStyleHelp(const hudComponentFields_t *compField, int *value)
 {
 	int  i;
@@ -2735,6 +2788,29 @@ static void CG_ShowEditComponentStyleHelp(const hudComponentFields_t *compField,
 	for (i = 0; i < MAXSTYLES && compField->styles[i]; ++i)
 	{
 		str = va("%s%s%5d : %-16s%s", str ? str : "", ((*value) & 1 << i) ? "^2" : "^7", 1 << i, compField->styles[i], !((i + 1) % 3) ? "\n" : "    ");
+	}
+
+	if (str)
+	{
+		CG_Printf("Available ^3<style>^7 for %s :\n\n%s\n", compField->name, str);
+	}
+	else
+	{
+		CG_Printf("No ^3<style>^7 available for %s\n", compField->name);
+	}
+}
+
+/**
+ * @brief CG_ShowEditComponentBarStyleHelp
+ */
+static void CG_ShowEditComponentBarStyleHelp(const hudComponentFields_t *compField, int *value)
+{
+	int  i;
+	char *str = NULL;
+
+	for (i = 0; barFlagsString[i]; ++i)
+	{
+		str = va("%s%s%5d : %-16s%s", str ? str : "", ((*value) & 1 << i) ? "^2" : "^7", 1 << i, barFlagsString[i], !((i + 1) % 3) ? "\n" : "    ");
 	}
 
 	if (str)
@@ -2840,6 +2916,13 @@ static void CG_EditComponent_f(void)
 					if (!Q_stricmp(hudComponentMembersFields[j].name, "style"))
 					{
 						CG_ShowEditComponentStyleHelp(compField, (int *)((char *)comp + hudComponentMembersFields[j].offset));
+						return;
+					}
+
+					// display specific help for bar style
+					if (!Q_stricmp(hudComponentMembersFields[j].name, "barStyle"))
+					{
+						CG_ShowEditComponentBarStyleHelp(compField, (int *)((char *)comp + hudComponentMembersFields[j].offset));
 						return;
 					}
 
@@ -3421,6 +3504,9 @@ static consoleCommand_t commands[] =
 	{ "nextskin",               CG_TestModelNextSkin_f       },
 	{ "prevskin",               CG_TestModelPrevSkin_f       },
 	{ "viewpos",                CG_Viewpos_f                 },
+	{ "+weapzoom",              CG_WeapzoomDown_f            },
+	{ "-weapzoom",              CG_WeapzoomUp_f              },
+	{ "toggleweapzoom",         CG_ToggleWeapzoom_f          },
 	{ "+scores",                CG_ScoresDown_f              },
 	{ "-scores",                CG_ScoresUp_f                },
 	{ "zoomin",                 CG_ZoomIn_f                  },

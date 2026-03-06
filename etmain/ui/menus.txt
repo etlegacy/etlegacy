@@ -25,6 +25,7 @@
 	loadMenu { "ui/options.menu" }
 	loadMenu { "ui/options_customise_game.menu" }
 	loadMenu { "ui/options_customise_hud.menu" }
+	loadMenu { "ui/options_customise_hud_extended.menu" }
 	loadMenu { "ui/options_customise_hudeditor_fui.menu" }
 	loadMenu { "ui/options_controls.menu" }
 	loadMenu { "ui/options_controls_advanced.menu" }
@@ -32,6 +33,7 @@
 	loadMenu { "ui/options_system.menu" }
 	loadMenu { "ui/options_system_extended.menu" }
 	loadMenu { "ui/options_system_gamma.menu" }
+	loadMenu { "ui/credits_attributions.menu" }
 	loadMenu { "ui/credits_etlegacy.menu" }
 	loadMenu { "ui/credits_splashdamage.menu" }
 	loadMenu { "ui/credits_idsoftware.menu" }
@@ -54,6 +56,7 @@
 	loadMenu { "ui/popup_serverredirect.menu"}
 	loadMenu { "ui/popup_addfavorite.menu"}
 	loadMenu { "ui/popup_removefavorite.menu"}
+	loadMenu { "ui/changelog.menu" }
 
 	// video confirmation
 	loadMenu { "ui/vid_restart.menu" }

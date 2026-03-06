@@ -42,11 +42,12 @@
 
 static ext_trap_keys_t cg_extensionTraps[] =
 {
-	{ "trap_SysFlashWindow_Legacy",  CG_SYS_FLASH_WINDOW, qfalse },
-	{ "trap_CommandComplete_Legacy", CG_COMMAND_COMPLETE, qfalse },
-	{ "trap_CmdBackup_Ext_Legacy",   CG_CMDBACKUP_EXT,    qfalse },
-	{ "trap_MatchPaused_Legacy",     CG_MATCHPAUSED,      qfalse },
-	{ NULL,                          -1,                  qfalse }
+	{ "trap_SysFlashWindow_Legacy",     CG_SYS_FLASH_WINDOW,     qfalse },
+	{ "trap_CommandComplete_Legacy",    CG_COMMAND_COMPLETE,     qfalse },
+	{ "trap_CmdBackup_Ext_Legacy",      CG_CMDBACKUP_EXT,        qfalse },
+	{ "trap_MatchPaused_Legacy",        CG_MATCHPAUSED,          qfalse },
+	{ "trap_CvarSetDescription_Legacy", CG_CVAR_SET_DESCRIPTION, qfalse },
+	{ NULL,                             -1,                      qfalse }
 };
 
 extern botlib_export_t *botlib_export;
@@ -221,14 +222,15 @@ static void CL_InterpolationCheckRange(void)
 		return;
 	}
 
-	snaps      = Cvar_VariableValue("snaps");
-	updateRate = snaps < cl.sv_fps ? 1000 / snaps : 1000 / cl.sv_fps;
+	snaps = (int)Cvar_VariableValue("snaps");
+
+	updateRate = snaps && (snaps < cl.sv_fps) ? 1000 / snaps : 1000 / cl.sv_fps;
 	buffer     = (FRAMETIME / 2) / updateRate - 1;
 
 	if (cl_interpolation->integer > buffer)
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: cvar '%s' is over allowed buffer (%d > %d), setting to %d\n", cl_interpolation->name, cl_interpolation->integer, buffer, buffer);
-		Cvar_SetValue(cl_interpolation->name, buffer);
+		Cvar_SetValue(cl_interpolation->name, (float)buffer);
 	}
 }
 
@@ -1126,6 +1128,9 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_MATCHPAUSED:
 		S_PauseSounds(args[1]);
 		return 0;
+
+	case CG_CVAR_SET_DESCRIPTION:
+		return Cvar_SetDescriptionByName(VMA(1), VMA(2));
 
 	default:
 		Com_Error(ERR_DROP, "Bad cgame system trap: %ld", (long int) args[0]);

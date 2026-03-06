@@ -85,6 +85,7 @@ FILE(GLOB CGAME_SRC
 	"src/cgame/*.h"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
+	"src/qcommon/version.c"
 	"src/qcommon/q_unicode.c"
 	"src/game/bg_*.c"
 )
@@ -97,6 +98,7 @@ FILE(GLOB QAGAME_SRC
 	"vendor/sha-1/sha1.c"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
+	"src/qcommon/version.c"
 )
 
 FILE(GLOB TVGAME_SRC
@@ -114,6 +116,7 @@ FILE(GLOB TVGAME_SRC
 	"vendor/sha-1/sha1.c"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
+	"src/qcommon/version.c"
 )
 
 FILE(GLOB UI_SRC
@@ -123,6 +126,7 @@ FILE(GLOB UI_SRC
     "src/ui/lib/*.h"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
+	"src/qcommon/version.c"
 	"src/qcommon/q_unicode.c"
 	"src/game/bg_classes.c"
 	"src/game/bg_misc.c"

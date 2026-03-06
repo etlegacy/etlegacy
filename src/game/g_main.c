@@ -90,6 +90,7 @@ int dll_com_trapGetValue;
 int dll_trap_DemoSupport;
 int dll_trap_SnapshotCallbackExt;
 int dll_trap_SnapshotSetClientMask;
+int dll_trap_CvarSetDescription;
 
 /**
  * @brief G_SnapshotCallbackExt
@@ -158,7 +159,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case GAME_INIT:
 	{
 		int time = trap_Milliseconds();
-		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
+		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN "%s\n", MODNAME, ETLEGACY_VERSION);
 		G_ParsePlatformManifest();
 #ifdef FEATURE_OMNIBOT
 
@@ -539,7 +540,13 @@ void G_CheckForCursorHints(gentity_t *ent)
 		// show medics a syringe if they can revive someone
 		if (traceEnt->client && traceEnt->client->sess.sessionTeam == ent->client->sess.sessionTeam)
 		{
-			if (ps->stats[STAT_PLAYER_CLASS] == PC_MEDIC && traceEnt->client->ps.pm_type == PM_DEAD && !(traceEnt->client->ps.pm_flags & PMF_LIMBO))
+			if (ps->stats[STAT_PLAYER_CLASS] == PC_MEDIC
+			    // reviving downed players
+			    && ((traceEnt->client->ps.pm_type == PM_DEAD && !(traceEnt->client->ps.pm_flags & PMF_LIMBO))
+			        // optionally healing living players
+			        || (g_syringeHealing.integer == 1
+			            && traceEnt->client->ps.pm_type == PM_NORMAL
+			            && traceEnt->health <= (int)(traceEnt->client->ps.stats[STAT_MAX_HEALTH] * 0.25f))))
 			{
 				hintDist = CH_REVIVE_DIST;        // matches weapon_syringe in g_weapon.c
 				hintType = HINT_REVIVE;
@@ -925,23 +932,32 @@ void G_CheckForCursorHints(gentity_t *ent)
 				if (ps->stats[STAT_PLAYER_CLASS] == PC_ENGINEER)
 				{
 					hintDist = CH_BREAKABLE_DIST;
-					hintType = HINT_DISARM;
-					hintVal  = checkEnt->health;            // also send health to client for visualization
-					if (hintVal > 255)
+					if (checkEnt->methodOfDeath == MOD_DYNAMITE && G_LegacyRevive_IsFirstReviveRestricted(ent))
 					{
-						hintVal = 255;
+						// During the first revive stand-up, only dynamite arm/disarm is blocked.
+						hintType = HINT_NO_DARM_FIRST_REVIVE;
+						hintVal  = 0;
+					}
+					else
+					{
+						hintType = HINT_DISARM;
+						hintVal  = checkEnt->health;            // also send health to client for visualization
+						if (hintVal > 255)
+						{
+							hintVal = 255;
+						}
 					}
 				}
 
 				// hint icon specified in entity (and proper contact was made, so hintType was set)
 				// first try the checkent...
-				if (checkEnt->s.dmgFlags && hintType)
+				if (hintType != HINT_NO_DARM_FIRST_REVIVE && checkEnt->s.dmgFlags && hintType)
 				{
 					hintType = checkEnt->s.dmgFlags;
 				}
 
 				// then the traceent
-				if (traceEnt->s.dmgFlags && hintType)
+				if (hintType != HINT_NO_DARM_FIRST_REVIVE && traceEnt->s.dmgFlags && hintType)
 				{
 					hintType = traceEnt->s.dmgFlags;
 				}
@@ -1379,6 +1395,7 @@ static ID_INLINE void G_SetupExtensions(void)
 		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_DemoSupport, "trap_DemoSupport_Legacy");
 		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_SnapshotCallbackExt, "trap_SnapshotCallbackExt_Legacy");
 		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_SnapshotSetClientMask, "trap_SnapshotSetClientMask_Legacy");
+		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CvarSetDescription, "trap_CvarSetDescription_Legacy");
 	}
 }
 
@@ -1737,13 +1754,18 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 		}
 #endif
 
-		if (g_xpSaver.integer)
+		if (!(g_xpSaver.integer & XPSF_ENABLE))
 		{
 			G_Printf("^3WARNING: g_xpSaver changed to 0\n");
 			trap_Cvar_Set("g_xpSaver", "0");
 		}
 	}
 #endif
+
+	if ((g_xpSaver.integer & XPSF_CONVERT))
+	{
+		G_XPSaver_Convert();
+	}
 
 #ifdef FEATURE_RATING
 	if (g_skillRating.integer)
@@ -1762,9 +1784,20 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	}
 #endif
 
-	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
+	if ((g_xpSaver.integer & XPSF_ENABLE) && g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
 		if (g_campaigns[level.currentCampaign].current == 0 || level.newCampaign)
+		{
+			if (!(g_xpSaver.integer & XPSF_NR_EVER))
+			{
+				G_XPSaver_Clear();
+			}
+		}
+	}
+
+	if ((g_xpSaver.integer & XPSF_ENABLE) && (g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF))
+	{
+		if (!(g_xpSaver.integer & XPSF_NR_EVER))
 		{
 			G_XPSaver_Clear();
 		}
@@ -2044,7 +2077,7 @@ int QDECL SortRanks(const void *a, const void *b)
 			totalXP[1] += cb->sess.skillpoints[i];
 		}
 
-		if (!((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
+		if (!(((g_gametype.integer == GT_WOLF_CAMPAIGN || g_gametype.integer == GT_WOLF_STOPWATCH || g_gametype.integer == GT_WOLF_MAPVOTE || g_gametype.integer == GT_WOLF) && (g_xpSaver.integer & XPSF_ENABLE)) ||
 		      (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
 		      (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0)))
 		{
@@ -3001,7 +3034,14 @@ void G_LogExit(const char *string)
 		}
 	}
 #endif
-	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
+	if (
+		(g_xpSaver.integer & XPSF_ENABLE) && (
+			(g_gametype.integer == GT_WOLF_CAMPAIGN) ||
+			((g_gametype.integer == GT_WOLF_STOPWATCH) && !(g_xpSaver.integer & XPSF_DISABLE_STOPWATCH)) ||
+			(g_gametype.integer == GT_WOLF_MAPVOTE) ||
+			(g_gametype.integer == GT_WOLF)
+			)
+		)
 	{
 		for (i = 0; i < level.numConnectedClients; i++)
 		{

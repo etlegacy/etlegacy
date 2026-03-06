@@ -1,0 +1,108 @@
+^dEngine
+
+* Updated libs to
+  * SDL 2.0.20
+
+^fGeneral
+
+* Fixed infinite loop in filesystem initalization when ^8pak0.pk3^9 was missing
+* Changed default URI from ^8ET://^9 (upper case) to ^8et://^9 (lower case) and made
+  case insensitive for compatibility / flexibility
+
+^fAndroid
+
+^fMacOS
+
+* Fixed omnibot loading
+
+^fUnix
+
+^fWindows
+
+^dClient
+
+^fGeneral
+
+* Removed ^8cl_activateLean^9 cvar (moved behaviour to mod (^8cg_activateLean^9))
+
+^fSDL2 Audio backend
+
+* Fixed double played sound in one frame increasing sound (i.e mg42)
+
+^dServer
+
+^dRenderer
+
+^dMod
+
+^fGeneral
+
+* Fixed players not set ^8unready^9 after swapping teams
+* Fixed ^8wait^9 map-script command not matching the correct time on higher
+  ^8sv_fps^9 _(comparing to ^8sv_fps 20^9)_, which affected and broke certain
+  gameplay elements
+* Updated game command list and related help in console
+* Fixed accuracy calculation for splashdamage weapons
+* Fixed dropping objective was allowed during pause
+* Added ^8cg_activateLean^9, allowing all clients activate lean usage
+* Added ^8g_shoveNoZ^9 to allow disabling Z shove completely
+* Added binds for shifting enemy spawn timer and requesting artillery 
+* Changed the way for displaying help command by swapping arguments order (Before:
+  <command_name> ?) (After: ? <command_name>)
+
+^fStability & Performance
+
+* Fixed hitsounds reduced network performance and sometimes get duplicated,
+  especially with high pings
+* Added commands flood protection (^8g_floodProtection^9 / ^8g_floodLimit^9 /
+  ^8g_floodWait cvars^9)
+* Changed unprotect flood for team cmd so class cmd doesn't get dropped
+* Fixed prediction error by changing ^8cg_errorDecay^9 flag with ^8CVAR_CHEAT^9
+
+^fAudio
+
+* Fixed missing hitsound when player has exactly ^8FORCE_LIMBO_HEALTH^9 health (-113
+  HP)
+
+^fGraphics
+
+* Fixed players breath puffs effect missing completely
+* Fixed pause weapon animation in 1st person during pause
+* Fixed viewmodel FOV calculation wasn't lowering enough 1st person weapon draw on
+  FOV > 90
+* Remove ^8g_altSuicideAnim^9 and default to the normal death anim on player
+  suiciding
+* Fixed a crash with ^8cg_drawgun 2^9 and ^8cg_weapanims 0^9 combination
+* Added voice chat icons for : 
+  * Affirmative / Negative
+  * Hold your fire
+  * Say player class
+
+^fUI
+
+* Fixed disconnect icon rendering through walls
+* Added hud componement scale and color configurability from hud file
+* Fixed fireteam highlight overlay spacing on top edge
+* Fixed ^8*^9 characters in map description were not replaced by line feed
+* Added ^8cg_popupTime^9 and ^8cg_numPopups^9 cvar to control popups more thoroughly
+* Added ^8sharetimer^9/^8sharetimer_buddy^9 commands and ^8cg_sharetimerText^9 cvar
+  share the spawntimer you have set for when you think the enemy spawns
+* Removed grid drawing on compass
+* Added ^8cg_fireteamBgAlpha^9 cvar to control fireteam background alpha value
+* Added cvar name tooltip in option menus
+* Added missile camera for practice
+* Enhanced squared compass
+  * Fixed icon scaling to match regular compass
+  * Fixed slightly incorrect out of bounds check for icons
+  * Icons are now drawn when they're inside the map and respect map zoom
+  * Added indicators for N, S, E, W
+
+^fWeapons
+
+* Increased landmine splash radius by 25 (225 -> 250) to match etpro
+* Fixed picking up rifle with full riflenade ammo was restoring 4 riflenade instead
+  of 5
+* Fixed throwable missiles (i.e: grenade, satchel, dynamite, landmine) infinite
+  bouncing
+* Removed hardcoded sensitivity on mounted mg's and use common sensitivity
+* Added ^8cg_scopedSensitivityScaler^9 to scale sensitivity when scoped

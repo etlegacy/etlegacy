@@ -1,0 +1,79 @@
+^dEngine
+
+* Optimized LAN player detection
+* Fixed an issue which cause the argument system to break on loading a map
+* Fixed the extraction code having wrong output filename due to static array flipping
+* Fixed beginning of log not displaying in console
+* Updated unzip to 1.1
+* Fixed compiling with MinGW-w64
+* Fixed Windows file list extension check
+
+^fClient
+
+* Added unicode support
+* Updated to freetype 2.6.0, libogg 1.3.2, libvorbis 1.3.5, jpeg-turbo 1.4.1, GLEW
+  1.12 and latest tinygettext
+* Fixed console scrollbar length
+* Fixed replays aren't always shown in the list
+* Fixed mouse being stuck
+* Fixed "VM_Create on UI failed" error when downloading new mods
+* Added warning for unknown shader parms
+* Fixed looping sounds stuttering
+* Fixed cache_startgather cmd
+* Fixed horizontal scroll caused K_MWHEELDOWN key press
+* Added console smooth scrolling
+
+^fServer
+
+* Fixed freeze when server is full and there is no free slot available
+* Fixed Omni-bot interface to work on 64-bit Linux servers
+
+^dMod
+
+* Fixed initial clip value of scoped Garand
+* Fixed ejected brass type for scoped Garand
+* Fixed weapon names spelling across the game
+* Fixed K43 grenade launcher reload animation
+* Fixed MG 42/Browning reload animation
+* Fixed (Silenced) Luger/Colt shooting animation
+* Added speed boost when free flight spectators use SPRINT
+* Fixed scoped weapons still scoped after revive
+* Fixed possibility to select double Thomson/MP40 in limbo menu by Soldier with heavy
+  weapons level 4
+* Fixed obituaries icon color with self-kills
+* Added color to chargebar when weapons aren't ready
+* Fixed FG 42 reload animation
+* Fixed airborne explosion debris scale
+* Added several additional obituaries icons for various MODs (means of deaths)
+* Added autoexec_(team,class,map) config file support
+* Fixed accuracy stats being over 100%
+* Fixed slag surface parm
+* Added always creating a dialog when server tries to redirect - cvar ui_autoredirect
+  removed
+* Fixed wrong name for "HQ" and "Pilot" messages
+* Added "Pilot" chat message when doing an airstrike
+* Added MG 42 and Browning can be reloaded anytime now
+* Added displaying more than one player sprite at same time
+* Fixed Fireteam members 7 & 8 couldn't be selected
+* Added ability to unbind keys in the controls menu with the backspace key
+* Fixed gun stuck when reloading and proning forward in stand up position
+* Fixed finishing weapon alt changing animations before cycling to next weapon
+* Fixed weapon shaking underwater
+* Fixed weapon model aspect with cg_gun_fovscale enabled and fov < 90
+* Fixed orange box visible when the redirect popup appears
+* Fixed green flickering on loading screen on wide screens
+* Added version string print out when loading libs
+* Added combo boxes for the language selection
+* Fixed human player models shaking on listen servers
+* Added automatically scaled fov on wide screens
+* Fixed drowned players can't wait indefinitely underwater
+* Removed weapon icon flash 2-colors only option
+* Fixed revive icon display on command map after respawn
+* Fixed no message when dynamite is defused
+* Fixed  spectator's real score
+* Fixed a crash when being shot under Mac OS X
+* Updated to Lua 5.3.1
+
+... and various (tons of!) smaller adjustments and optimizations. Since the last
+release we have fixed about 150 issues reported by
+[coverity](http://www.coverity.com)

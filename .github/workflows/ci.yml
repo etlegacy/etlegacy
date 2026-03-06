@@ -52,72 +52,106 @@ jobs:
           echo "tag=$git_tag" >> "$GITHUB_OUTPUT"
 
   # Run the build on all the current platforms
+  #
+  # etlegacy/lnx-build:latest ships an older glibc, so JS-based actions (like actions/checkout)
+  # cannot run inside the job container (node20 fails to start).
+  #
+  # Therefore these jobs use a pure `git` checkout step instead of `uses: actions/checkout`.
   lnx64:
     runs-on: ubuntu-24.04
     needs: [pre-build]
+    container:
+      image: etlegacy/lnx-build:latest
+      options: --user 1001:1001
     env:
-      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
-      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
+      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
+      CI: "true"
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
+      - name: Checkout (git, no JS actions)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+          # Make submodules work even if they use https://github.com/, git://github.com/, or ssh
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "git://github.com/"
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "ssh://git@github.com/"
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "git@github.com:"
+
+          # Ensure workspace is empty
+          mkdir -p "$GITHUB_WORKSPACE"
+          find "$GITHUB_WORKSPACE" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+
+          cd "$GITHUB_WORKSPACE"
+          git init
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+
+          # Works for push (refs/heads/...) and PR (refs/pull/.../merge)
+          git fetch --no-tags --prune --depth=1 origin "${GITHUB_REF}"
+          git checkout --detach FETCH_HEAD
+
+          git submodule sync --recursive
+          git submodule update --init --recursive --depth 1 || git submodule update --init --recursive
 
       - name: Build
-        uses: addnab/docker-run-action@v3
-        with:
-          image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
-          run: |
-            git config --global --add safe.directory /code
-            ./easybuild.sh build -64
-
-      - name: Change Owner of Container Working Directory
         run: |
-          action_name=$(whoami)
-          action_group=$(groups "$action_name" | awk '{print $3}')
-          sudo chown "${action_name}:${action_group}" -R .
+          ./easybuild.sh build -64
 
       - name: Generate packages
-        uses: addnab/docker-run-action@v3
-        with:
-          image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
-          run: |
-            cd build/
-            cpack
+        working-directory: build
+        run: cpack
 
   lnx32:
     runs-on: ubuntu-24.04
     needs: [pre-build]
+    container:
+      image: etlegacy/lnx-build:latest
+      options: --user 1001:1001
+    env:
+      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
+      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
+      CI: "true"
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
+      - name: Checkout (git, no JS actions)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+          # Make submodules work even if they use https://github.com/, git://github.com/, or ssh
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "git://github.com/"
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "ssh://git@github.com/"
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "git@github.com:"
+
+          # Ensure workspace is empty
+          mkdir -p "$GITHUB_WORKSPACE"
+          find "$GITHUB_WORKSPACE" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+
+          cd "$GITHUB_WORKSPACE"
+          git init
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+
+          # Works for push (refs/heads/...) and PR (refs/pull/.../merge)
+          git fetch --no-tags --prune --depth=1 origin "${GITHUB_REF}"
+          git checkout --detach FETCH_HEAD
+
+          git submodule sync --recursive
+          git submodule update --init --recursive --depth 1 || git submodule update --init --recursive
 
       - name: Build
-        uses: addnab/docker-run-action@v3
-        with:
-          image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
-          run: |
-            git config --global --add safe.directory /code
-            ./easybuild.sh build -32
-
-      - name: Change Owner of Container Working Directory
         run: |
-          action_name=$(whoami)
-          action_group=$(groups "$action_name" | awk '{print $3}')
-          sudo chown "${action_name}:${action_group}" -R .
+          ./easybuild.sh build -32
 
       - name: Generate packages
-        uses: addnab/docker-run-action@v3
-        with:
-          image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
-          run: |
-            cd build/
-            cpack
+        working-directory: build
+        run: cpack
 
   lnx-aarch64:
     runs-on: ubuntu-latest
@@ -125,8 +159,8 @@ jobs:
     container:
       image: etlegacy/lnx-aarch64-build
     env:
-      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
-      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
+      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -145,8 +179,8 @@ jobs:
     runs-on: macos-14
     needs: [pre-build]
     env:
-      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
-      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
+      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -173,8 +207,8 @@ jobs:
     runs-on: windows-2022
     needs: [pre-build]
     env:
-      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
-      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
+      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -194,8 +228,8 @@ jobs:
     runs-on: windows-2022
     needs: [pre-build]
     env:
-      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
-      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
+      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -214,8 +248,8 @@ jobs:
   android:
     runs-on: ubuntu-24.04
     env:
-      CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
-      CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
+      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
+      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
     needs: [pre-build]
     container:
       image: etlegacy/android-build

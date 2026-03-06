@@ -1,0 +1,24 @@
+* Weapon fixes include moving Land Mines and Adrenaline needles to separate weapon
+  banks. Made switching to a weapon after dropping dynamite/satchel/landmines easier.
+  Also added ability for 
+Covert Ops/Engineer to pick up weapons from the opposing team of the same class.
+Fixed some issues with Air Strike detonation. Fixed XP not being given (and stats
+being kept) for kills with akimbo pistols. 
+* Server side fixes include private slots not working when the server is
+  password-protected, added cvar (g_disableComplaints) to disable complaint system
+  for certain type of kills, 1 = mines, 
+2 = airstrike/ffe, 4 = mortar (add together for multiple types). Made it so, for the
+cvars that require it, any changes to public/competition settings will now do a map
+restart. Added a temporary 
+banning system for when players are kicked by vote or from complaints (defaults to 5
+mins).
+* Client-side additions include the ability to show smaller popup messages (such as
+  death messages) with cvar (cg_drawSmallPopupIcons). Made it easier to give health
+  and ammo to players 
+closer to you (instead of giving it to yourself by accident). Fixed vid_restarts
+causing players to be thrown into limbo on pure servers. Fixed changing game modes
+causing entities (mounted MG's) to be spawned incorrectly. Fixed some votes not
+displaying properly. Sped up fog rendering code and many other behind-the-scenes
+fixes!
+
+Thanks to Chad Siedhoff and the Activision Visioneers for helping with this patch!

@@ -1,0 +1,132 @@
+^dEngine
+
+* Fixed OOB access in CM_EdgePlaneNum
+* Fixed MSG_ReadDeltaKey setting bit 1<<bits often
+* Fixed several potential buffer overflows
+* Added demo controls (rewind, pause and fastforward)
+* Fix incorrect strncat usage in CL_ServerInfoPacket
+* Update com_hunkMegs/com_zoneMegs when forcing a minimum
+* Disabled Nagle's algorithm for TCP connections
+* Added an auto updater
+
+^fClient
+
+* Updated SDL to SDL2 (supports raw input)
+* Console text size increased
+* No longer print the gfx extension string per default
+* Fixed bsp node surface bounds calculation
+* Joystick code reactivated
+* cl_language and cl_languagedebug renamed to cl_lang & cl_langDebug
+* Fixed Windows XP incompatibility
+* Decals reworked. Fixed the decals issue introduced by rc4 (draw player shadows,
+  bullet marks etc. again when hud head is active)
+* New default value for r_maxpolyverts
+* Fixed several polys, polyverts and poly buffer issues
+* Renderer2 bug fixes & clean up (unreleased)
+* Added 2560x1440 WQHD and 3840x2160 UltraHD resolution in r_mode.
+* MAX_CORONAS  per scene/frame decreased to  64
+* Added support for stereo sound files in S_StartSound and S_StartLocalSound
+* Fixed PNG image loading
+* Fixed possible division by zero in S_PaintChannelFrom16 functions
+* Updated and fixed displaying *nix dialog boxes
+* Added dialog to restore default settings or keep current config after crash
+* Use LAN/CABLE/xDSL connection settings as default and removed option from UI.
+* Show coloured strings in cvar completion and serverstatus as expected
+* Added update indicator in console and UI update popup
+* Minor tweak to embedded icon
+* Fixed IRC quit and ctcp version string (unreleased)
+* Replaced jpeg with jpeg-turbo lib
+* Fullscreen state is now restored when rejecting new video changes
+* Fixed crash on map change
+
+^fServer
+
+* Added uptime cmd
+* Warn admins *before* MAX_GAMESTATE_CHARS error occures
+* Warn admins *before* too many maps in paths cause trouble
+* Fixed possible client timeouts after bigger downloads
+* Show ETL servers as ET and not as Q3Comp in HLSW
+
+^dMod
+
+* Display player names in spectator view
+* cg_enableBreath cvar removed - let mappers control breath puffs
+* g_corpses cvar introduced - enable 'unlimited' corpses
+* Print secondery weapon in setup messages
+* Added more realistic explosion shakes
+* Fixed flamer deaths getting blamed on the world/player 0
+* Fixed UpdateGoalEntity was called when omnibot was not enabled 
+* Show secondary weapons in select weapon messages
+* Adjust aimspreadscale each PmoveSingle
+* Fixed an invalid null deref check in the slider code
+* Added ETPro anim script conditions NOT/MINUS
+* Syringe is no longer a stat weapon
+* Make votings work again
+* Show results of votings
+* Fixed uneven weapon issues
+* Added server messages on team join
+* Bazooka eject brass disabled
+* Demo controls extended
+* Fixed icon scaling of akimbo pistols
+* New Lua fields: lastkilled_client, lastrevive_client, lastkiller_client,
+  lastammo_client, lasthealth_client, lastteambleed_client, lastteambleed_dmg
+* Fixed swap_teams work again
+* Added more debris effects
+* Fixed server related cvars being overwritten by default config
+* Make artillery calls chargebar dependant
+* Fixed adding decals to the scene if these are disabled
+* Fixed filter for vanilla servers in the game browser
+* LUA
+  * Lib Lua updated to latest stable version 5.2.3
+  * G_LuaHook_Damage added
+  * lua field ps.classWeaponTime added
+* Added more game constants to Lua & make Lua constants work (again)
+* Added lua_api command
+* Added autorecord on late joins
+* Fixed scrolling inconsistency in server info
+* Added g_misc 2 bitflag - enables medic syringe healing
+* Omni-bot library updated to the latest (unreleased) version from subversion
+* Fixed double Thompson/MP40 weapon selection message with soldier lvl4
+* Added teambleed sound for disguised covert ops
+* Covert ops no longer loose disguise by binoc 'attack'
+* Fixed MG42 icon displayed as Browning after using Browning on allied tank
+* Fixed Fireteam window not displaying fixed MG42 and Browning tank icon
+* Fixed Fireateam window sometimes visible as spectator
+* Fixed binoc nofire sound under water
+* Fixed playing "I need a medic!" sound when killed inside tank
+* Fixed server name max length in server browser
+* Fixed default motd version string
+* Fixed client freeze issue occurring with big explosions (only when compiled with
+  MSVC in release mode, or clang)
+* Fixed corpses not gibbed by satchel or dynamite explosion
+* Fixed adrenaline self syringe color not matching syringe color
+* Covops now switches to main weapon instead of pistol after using smoke bomb
+* Fixed corpses not gibbed by dyna or satchel
+* Fixed corpses throwing helmet when uniform and helmet is stolen
+* Fixed autoswitch when medics run out of syringes/adrenaline syringes
+* Fixed autoswitch to main weapon after using adrenaline
+* Fixed autoswitch to knife if entirely out of ammo and grenade.
+* Added ingame logo
+* Fixed MG/MG_SET cooling
+* Fixed creating campaign server in Host Menu causing a crash
+* Show levelshot instead of campaign info for non campaign game types 
+* Fixed player with heavy weapon skill level 4 couldn't pick up enemy SMS on ground
+* Fixed reinforce time displayed in limbopanel as spectator
+* Fixed feedback when using apply/invite/propose commands to full fireteam
+* Fixed official NATO spelling to fireteam names
+* Fixed line selection in debriefing player list
+* Smoke bomb is no longer a player stats weapon
+* Fixed the client side class command and added support for class selection with
+  numbers
+* Fixed flamer selfkill messages shown as world kills
+* Fixed flamer stats
+* Added real head hitbox code from Zinx Verituse
+* Fixed client/server flamer  view & behaviour
+* Fixed LMS/max_lives tapout window showing up in warmup
+* Draw fieldops recharge icon in red when unavailable
+* Added g_misc flag to combine artillery and airstrike time counters
+* Added mod version in UI
+* Added Neil Toronto’s skip correction code
+* Fixed pushing teammate to death gaining battle sense xp
+
+... and various smaller adjustments and optimizations.

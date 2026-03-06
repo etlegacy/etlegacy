@@ -34,7 +34,7 @@
 //Microsoft Developer Studio generated resource script.
 //
 #include "win_resource.h"
-#include "git_version.h"
+#include "version_generated.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -146,4 +146,3 @@ END
 
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
-

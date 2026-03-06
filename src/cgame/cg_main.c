@@ -49,6 +49,7 @@ int dll_trap_SysFlashWindow;
 int dll_trap_CommandComplete;
 int dll_trap_CmdBackup_Ext;
 int dll_trap_MatchPaused;
+int dll_trap_CvarSetDescription;
 
 /**
  * @brief This is the only way control passes into the module.
@@ -838,9 +839,13 @@ static void CG_RegisterSounds(void)
 		}
 	}
 
-	cgs.media.countFight   = trap_S_RegisterSound("sound/osp/fight.wav", qfalse);
-	cgs.media.countPrepare = trap_S_RegisterSound("sound/osp/prepare.wav", qfalse);
-	cgs.media.goatAxis     = trap_S_RegisterSound("sound/osp/goat.wav", qfalse);
+	cgs.media.countFight             = trap_S_RegisterSound("sound/osp/fight.wav", qfalse);
+	cgs.media.countPrepare           = trap_S_RegisterSound("sound/osp/prepare.wav", qfalse);
+	cgs.media.goatAxis               = trap_S_RegisterSound("sound/osp/goat.wav", qfalse);
+	cgs.media.reinforceTickSound     = trap_S_RegisterSound("sound/multiplayer/tick.wav", qfalse);
+	cgs.media.reinforceTockSound     = trap_S_RegisterSound("sound/multiplayer/tock.wav", qfalse);
+	cgs.media.reinforceTickLoudSound = trap_S_RegisterSound("sound/multiplayer/tickLoud.wav", qfalse);
+	cgs.media.reinforceTockLoudSound = trap_S_RegisterSound("sound/multiplayer/tockLoud.wav", qfalse);
 
 	cgs.media.headShot = trap_S_RegisterSound("sound/hitsounds/hithead.wav", qfalse);
 	cgs.media.bodyShot = trap_S_RegisterSound("sound/hitsounds/hit.wav", qfalse);
@@ -1167,6 +1172,7 @@ static void CG_RegisterGraphics(void)
 	cgs.media.spawnInvincibleShader = trap_R_RegisterShader("sprites/shield");
 	cgs.media.scoreEliminatedShader = trap_R_RegisterShader("sprites/skull");
 	cgs.media.medicReviveShader     = trap_R_RegisterShader("sprites/medic_revive");
+	cgs.media.medicReviveShader2    = trap_R_RegisterShader("sprites/medic_revive2");
 	cgs.media.disguisedShader       = trap_R_RegisterShader("sprites/undercover");
 
 	cgs.media.constructShader = trap_R_RegisterShaderNoMip("sprites/construct");
@@ -1176,8 +1182,11 @@ static void CG_RegisterGraphics(void)
 	cgs.media.defendShader    = trap_R_RegisterShaderNoMip("sprites/defend");
 	cgs.media.regroupShader   = trap_R_RegisterShaderNoMip("sprites/regroup");
 
-	cgs.media.voiceChatShader = trap_R_RegisterShader("sprites/voiceChat");
-	cgs.media.balloonShader   = trap_R_RegisterShader("sprites/balloon3");
+	cgs.media.voiceChatShader       = trap_R_RegisterShader("sprites/voiceChat");
+	cgs.media.voiceChatOrangeShader = trap_R_RegisterShader("sprites/voiceChat_orange");
+	cgs.media.balloonShader         = trap_R_RegisterShader("sprites/balloon3");
+	cgs.media.greenTick             = trap_R_RegisterShader("sprites/greentick");
+	cgs.media.redCross              = trap_R_RegisterShader("sprites/redcross");
 
 	cgs.media.objectiveShader        = trap_R_RegisterShader("sprites/objective");
 	cgs.media.objectiveBlueShader    = trap_R_RegisterShaderNoMip("sprites/objective_blue");
@@ -1236,6 +1245,15 @@ static void CG_RegisterGraphics(void)
 	cgs.media.ccFilterBackOn  = trap_R_RegisterShaderNoMip("gfx/limbo/filter_back_on");
 	cgs.media.ccFilterBackOff = trap_R_RegisterShaderNoMip("gfx/limbo/filter_back_off");
 
+	// class icons
+	cgs.media.skillPics[SK_BATTLE_SENSE]                             = trap_R_RegisterShaderNoMip("gfx/limbo/ic_battlesense");
+	cgs.media.skillPics[SK_EXPLOSIVES_AND_CONSTRUCTION]              = trap_R_RegisterShaderNoMip("gfx/limbo/ic_engineer");
+	cgs.media.skillPics[SK_FIRST_AID]                                = trap_R_RegisterShaderNoMip("gfx/limbo/ic_medic");
+	cgs.media.skillPics[SK_SIGNALS]                                  = trap_R_RegisterShaderNoMip("gfx/limbo/ic_fieldops");
+	cgs.media.skillPics[SK_LIGHT_WEAPONS]                            = trap_R_RegisterShaderNoMip("gfx/limbo/ic_lightweap");
+	cgs.media.skillPics[SK_HEAVY_WEAPONS]                            = trap_R_RegisterShaderNoMip("gfx/limbo/ic_soldier");
+	cgs.media.skillPics[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] = trap_R_RegisterShaderNoMip("gfx/limbo/ic_covertops");
+
 	// used in:
 	//  statsranksmedals
 	//  command map
@@ -1262,17 +1280,22 @@ static void CG_RegisterGraphics(void)
 	cgs.media.mortarTarget      = trap_R_RegisterShaderNoMip("gfx/limbo/mort_target");
 	cgs.media.mortarTargetArrow = trap_R_RegisterShaderNoMip("gfx/limbo/mort_targetarrow");
 
-	cgs.media.skillPics[SK_BATTLE_SENSE]                             = trap_R_RegisterShaderNoMip("gfx/limbo/ic_battlesense");
-	cgs.media.skillPics[SK_EXPLOSIVES_AND_CONSTRUCTION]              = trap_R_RegisterShaderNoMip("gfx/limbo/ic_engineer");
-	cgs.media.skillPics[SK_FIRST_AID]                                = trap_R_RegisterShaderNoMip("gfx/limbo/ic_medic");
-	cgs.media.skillPics[SK_SIGNALS]                                  = trap_R_RegisterShaderNoMip("gfx/limbo/ic_fieldops");
-	cgs.media.skillPics[SK_LIGHT_WEAPONS]                            = trap_R_RegisterShaderNoMip("gfx/limbo/ic_lightweap");
-	cgs.media.skillPics[SK_HEAVY_WEAPONS]                            = trap_R_RegisterShaderNoMip("gfx/limbo/ic_soldier");
-	cgs.media.skillPics[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] = trap_R_RegisterShaderNoMip("gfx/limbo/ic_covertops");
+	//cgs.media.ccskillPics[SK_BATTLE_SENSE]                             = trap_R_RegisterShaderNoMip("gfx/limbo/cm_ic_battlesense"); // no usage and not declared in legacy_sprite shader
+	cgs.media.ccskillPics[SK_EXPLOSIVES_AND_CONSTRUCTION] = trap_R_RegisterShaderNoMip("gfx/limbo/cm_ic_engineer");
+	cgs.media.ccskillPics[SK_FIRST_AID]                   = trap_R_RegisterShaderNoMip("gfx/limbo/cm_ic_medic");
+	cgs.media.ccskillPics[SK_SIGNALS]                     = trap_R_RegisterShaderNoMip("gfx/limbo/cm_ic_fieldops");
+	//cgs.media.ccskillPics[SK_LIGHT_WEAPONS]                            = trap_R_RegisterShaderNoMip("gfx/limbo/cc_im_lightweap"); // no usage and not declared in legacy_sprite shader
+	cgs.media.ccskillPics[SK_HEAVY_WEAPONS]                            = trap_R_RegisterShaderNoMip("gfx/limbo/cm_ic_soldier");
+	cgs.media.ccskillPics[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] = trap_R_RegisterShaderNoMip("gfx/limbo/cm_ic_covertops");
 
-	cgs.media.ccMedicIcon       = trap_R_RegisterShaderNoMip("sprites/cm_medic_icon");
-	cgs.media.ccAmmoIcon        = trap_R_RegisterShaderNoMip("sprites/cm_ammo_icon");
-	cgs.media.ccVoiceChatShader = trap_R_RegisterShaderNoMip("sprites/cm_voicechat_icon");
+	cgs.media.ccMedicIcon             = trap_R_RegisterShaderNoMip("sprites/cm_medic_icon");
+	cgs.media.ccMedicReviveShader     = trap_R_RegisterShaderNoMip("sprites/cm_medic_revive");
+	cgs.media.ccAmmoIcon              = trap_R_RegisterShaderNoMip("sprites/cm_ammo_icon");
+	cgs.media.ccVoiceChatShader       = trap_R_RegisterShaderNoMip("sprites/cm_voicechat_icon");
+	cgs.media.ccVoiceChatOrangeShader = trap_R_RegisterShaderNoMip("sprites/cm_voicechat_orange_icon");
+	cgs.media.ccGreenTick             = trap_R_RegisterShaderNoMip("sprites/cm_greentick");
+	cgs.media.ccRedCross              = trap_R_RegisterShaderNoMip("sprites/cm_redcross");
+	cgs.media.ccFriendShader          = trap_R_RegisterShaderNoMip("sprites/cm_friendlycross");
 
 #ifdef FEATURE_PRESTIGE
 	cgs.media.prestigePics[0] = trap_R_RegisterShaderNoMip("gfx/hud/prestige/prestige");
@@ -2103,6 +2126,7 @@ static ID_INLINE void CG_SetupExtensions(void)
 		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CommandComplete, "trap_CommandComplete_Legacy");
 		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CmdBackup_Ext, "trap_CmdBackup_Ext_Legacy");
 		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_MatchPaused, "trap_MatchPaused_Legacy");
+		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CvarSetDescription, "trap_CvarSetDescription_Legacy");
 	}
 }
 
@@ -2138,7 +2162,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	//int startat = trap_Milliseconds();
 
-	Com_Printf(S_COLOR_MDGREY "Initializing %s cgame " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
+	Com_Printf(S_COLOR_MDGREY "Initializing %s cgame " S_COLOR_GREEN "%s\n", MODNAME, ETLEGACY_VERSION);
 
 	// clean up the config backup if one exists
 	CG_RestoreProfile();

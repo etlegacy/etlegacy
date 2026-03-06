@@ -1,0 +1,72 @@
+^dAndroid
+
+^dEngine
+
+* Added cvar_trim command
+* Fixed Q_ColorizeString overflowing
+* Fixed pk3 locations loading from filesystem
+* Fixed the mounting of the dlcache folder instead of the files inside of it 
+
+^fClient
+
+* Fixed directional sound issue with SDL2 backend
+* Fixed demo folder deletion
+* Fixed defaultprofile.dat file not properly created
+* Moved the local directories to the top of the search path
+
+^fServer
+
+* Enhanced server demo record
+* Removed server side GUID check (moved to mod side)
+* Allowed large amount of pk3 files on the server without breaking sv_pure
+
+^fRenderer
+
+* Fixed bit shifting bug causing a black map
+* Fixed screenshot filaname with duplicate extension
+* Fixed screenshot command wasn't using correct format
+
+^dMod
+
+* Enhanced shoutcaster mod
+* Fixed knockback for dead framerate independent
+* Added reset stats and stop recording on map restart / match reset
+* Changed cg_skybox from CVAR_CHEAT to CVAR_ARCHIVE
+* Fixed missing map_restart reset when loading config
+* Fixed dynamite/landmines/satchel hitbox for pliers (missing link entity)
+* Added g_guidCheck for mod side GUID check
+* Fixed wounded players collision issues
+* Fixed losing keyboard and mouse input after intermission
+* Allowed shoutcasters to use setviewpos
+* Added cg_popupShadow
+* Fixed client crash when dynamite explodes
+* Fixed vote timeout logic
+* Fixed client crash due to name length
+* Added automatic vertical scrolling
+* Added map description on map vote debriefing page
+* Fixed 'Details' map description in 'Host Hame' menu exceeds its box
+* Fixed spread bar not draw while firing with scoped weapon
+* Added custom map location editor
+* Added prone animation transitions through crouching
+* Added cancel start match vote if countdown starts
+* Removed g_playerHitBoxHeight
+* Fixed losing mouse input after intermission on demo playback
+* Added selection of minor spawnpoint per major spawnpoint
+* Fixed constructions decaying after pause
+* Fixed gib stats from explosions when player was still alive
+* Allowed moving when using scoped weapon but cap speed to walking 128u speed
+* Increased FG 42 scoped fire rate from 400ms to 200ms
+* Decreased scoped Garand/K43 spread scale from 10 to 5 (half the spread recovery
+  time)
+* Fixed speakereditor axis picking not supporting widescreen
+* Fixed wounded players not dropping down when on ladders
+* Added usage of square minimap for compass (merge from shoutcaster minimap)
+* Fixed voice chat position and drawing outside of command map
+* Fixed objective icons being affected by picmip
+* Added camera editor 
+* Fixed demo freecam
+* Fixed rotate player's view only when ON rotating mover
+* Changed movers to not kill players or destroy items
+* Added SVG weapon icons files
+* Disabled activatelean by default, and add a switch to the menu
+* Adjusted engineers to pickup up to 8 grenades even without any level upgrades

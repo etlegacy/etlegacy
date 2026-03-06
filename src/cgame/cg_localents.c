@@ -230,6 +230,7 @@ void CG_BloodTrail(localEntity_t *le)
 
 void CG_ProjectBloodDecal(vec3_t *points, float radius)
 {
+	static vec4_t bloodColor = { 1, 1, 1, 0.75f };
 	// vec4_t projection, color;
 	vec4_t projection;
 	//CG_ImpactMark( cgs.media.bloodDotShaders[rand()%5], trace->endpos, trace->plane.normal, random()*360,
@@ -243,7 +244,7 @@ void CG_ProjectBloodDecal(vec3_t *points, float radius)
 	VectorSet(projection, 0, 0, -1);
 	projection[3] = radius;
 	// Vector4Set(color, 1.0f, 1.0f, 1.0f, 1.0f);
-	trap_R_ProjectDecal(cgs.media.bloodDotShaders[rand() % 5], 1, points, projection, colorWhite,
+	trap_R_ProjectDecal(cgs.media.bloodDotShaders[rand() % 5], 1, points, projection, bloodColor,
 	                    cg_bloodTime.integer * 1000, (cg_bloodTime.integer * 1000) >> 4);
 #endif
 }

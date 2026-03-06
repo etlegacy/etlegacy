@@ -5095,11 +5095,11 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 	// did we find any key/value pairs in the params at all?..
 	if (count == 0)
 	{
-		return qfalse;
+		return qtrue;
 	}
 
 	// now delete the entities that passed all tests..
-	for (i = ENTITYNUM_MAX_NORMAL - 1; i >= MAX_CLIENTS + BODY_QUEUE_SIZE; i--)
+	for (i = ENTITYNUM_MAX_NORMAL - 1; i >= MAX_CLIENTS; i--)
 	{
 		if (pass[i] == count)
 		{
@@ -5113,7 +5113,6 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 	if (deleted == 0)
 	{
 		G_Printf("G_ScriptAction_Delete(): no entities found (%s)\n", params);
-		return qfalse;
 	}
 
 	return qtrue;

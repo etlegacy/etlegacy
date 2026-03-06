@@ -37,6 +37,8 @@
 #include "ui_cvars.h"
 
 uiInfo_t uiInfo;
+int      dll_com_trapGetValue;
+int      dll_trap_CvarSetDescription;
 
 static const char *MonthAbbrev[] =
 {
@@ -84,6 +86,7 @@ static int UI_CampaignCount(qboolean singlePlayer);
 qboolean UI_CheckExecKey(int key);
 
 static void UI_ParseGameInfo(const char *teamFile);
+static void UI_RegisterCvarDescriptionsFromTooltips(void);
 
 void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
 
@@ -95,6 +98,30 @@ void UI_KeyEvent(int key, qboolean down);
 void UI_MouseEvent(int dx, int dy);
 void UI_Refresh(int realtime);
 qboolean _UI_IsFullscreen(void);
+
+static ID_INLINE void UI_SetupExtensionTrap(char *value, int valueSize, int *trap, const char *name)
+{
+	if (trap_GetValue(value, valueSize, name))
+	{
+		*trap = Q_atoi(value);
+	}
+	else
+	{
+		*trap = qfalse;
+	}
+}
+
+static ID_INLINE void UI_SetupExtensions(void)
+{
+	char value[MAX_CVAR_VALUE_STRING];
+
+	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
+	if (value[0])
+	{
+		dll_com_trapGetValue = Q_atoi(value);
+		UI_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CvarSetDescription, "trap_CvarSetDescription_Legacy");
+	}
+}
 
 static uiMenuCommand_t UI_AdjustedMenuCommand(const uiMenuCommand_t menutype)
 {
@@ -245,6 +272,7 @@ void _UI_DrawTopBottom(float x, float y, float w, float h, float size)
 
 /**
  * @brief UI_DrawRect
+ * Draw an unfilled rectangle.
  * Coordinates are 640*480 virtual values
  * @param[in] x
  * @param[in] y
@@ -588,9 +616,10 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 
 	if (text)
 	{
-		const char *s    = text;
-		int        len   = Q_UTF8_Strlen(text);
-		int        count = 0;
+		const char *s             = text;
+		int        len            = Q_UTF8_Strlen(text);
+		int        count          = 0;
+		qboolean   is_accelerator = qfalse;
 
 		trap_R_SetColor(color);
 		Com_Memcpy(&newColor[0], &color[0], sizeof(vec4_t));
@@ -612,7 +641,14 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 
 			glyph = Q_UTF8_GetGlyph(font, s);
 
-			if (Q_IsColorString(s))
+
+			if (Q_IsAcceleratorString(s))
+			{
+				is_accelerator = qtrue;
+				s             += 2;
+				continue;
+			}
+			else if (Q_IsColorString(s))
 			{
 				if (*(s + 1) == COLOR_NULL)
 				{
@@ -643,6 +679,17 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 
 					colorBlack[3] = 1.0;
 				}
+
+				if (is_accelerator)
+				{
+					trap_R_SetColor(colorBlack);
+					UI_FillRect(x + (glyph->pitch * scalex * 1.2),
+					            y - yadj + (glyph->imageHeight * scaley) + 1.0,
+					            glyph->imageWidth * scalex * 0.9, 0.5, newColor);
+					trap_R_SetColor(newColor);
+					is_accelerator = qfalse;
+				}
+
 				Text_PaintCharExt(x + (glyph->pitch * scalex), y - yadj, glyph->imageWidth, glyph->imageHeight, scalex, scaley, glyph->s, glyph->t, glyph->s2, glyph->t2, glyph->glyph);
 
 				x += (glyph->xSkip * scalex) + adjust;
@@ -1446,7 +1493,12 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 	// Show the UI a bit differently on mobile devices
 	trap_PC_AddGlobalDefine("ANDROID");
 #endif
-
+#ifdef FEATURE_MULTIVIEW
+	trap_PC_AddGlobalDefine("FEATURE_MULTIVIEW");
+#endif
+#ifdef FEATURE_MULTIVIEW
+	trap_PC_AddGlobalDefine("FEATURE_EDV");
+#endif
 	trap_PC_AddGlobalDefine(va("__WINDOW_WIDTH %f", (uiInfo.uiDC.glconfig.windowAspect / RATIO43) * 640));
 	trap_PC_AddGlobalDefine("__WINDOW_HEIGHT 480");
 
@@ -1528,6 +1580,32 @@ void UI_Load(void)
 	UI_LoadMenus(menuSet, qtrue);
 	Menus_CloseAll();
 	Menus_ActivateByName(lastName, qtrue);
+}
+
+/**
+ * @brief Backfill missing engine cvar descriptions from parsed UI tooltips.
+ */
+static void UI_RegisterCvarDescriptionsFromTooltips(void)
+{
+	int i;
+	int j;
+
+	for (i = 0; i < menuCount; i++)
+	{
+		menuDef_t *menu = &Menus[i];
+
+		for (j = 0; j < menu->itemCount; j++)
+		{
+			itemDef_t *item = menu->items[j];
+
+			if (!item || !item->cvar || !item->cvar[0] || !item->rawTooltip || !item->rawTooltip[0])
+			{
+				continue;
+			}
+
+			trap_Cvar_SetDescription(item->cvar, item->rawTooltip);
+		}
+	}
 }
 
 /**
@@ -4904,6 +4982,18 @@ void UI_RunMenuScript(char **args)
 		{
 			UI_LoadMods();
 		}
+		else if (Q_stricmp(name, "ChangelogInit") == 0)
+		{
+			UI_ChangelogInit();
+		}
+		else if (Q_stricmp(name, "ChangelogNext") == 0)
+		{
+			UI_ChangelogNext();
+		}
+		else if (Q_stricmp(name, "ChangelogPrevious") == 0)
+		{
+			UI_ChangelogPrevious();
+		}
 		else if (Q_stricmp(name, "playMovie") == 0)
 		{
 			if (uiInfo.previewMovie >= 0)
@@ -7411,6 +7501,8 @@ static int UI_FeederCount(int feederID)
 		return uiInfo.serverStatus.numDisplayServers;
 	case FEEDER_SERVERSTATUS:
 		return uiInfo.serverStatusInfo.numLines;
+	case FEEDER_CHANGELOG:
+		return UI_ChangelogFeederCount();
 	case FEEDER_PLAYER_LIST:
 		if (uiInfo.uiDC.realTime > uiInfo.playerRefresh)
 		{
@@ -7933,6 +8025,15 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 			}
 		}
 		break;
+	case FEEDER_CHANGELOG:
+	{
+		const char *lineText = UI_ChangelogFeederItemText(index, column);
+		if (lineText)
+		{
+			return lineText;
+		}
+	}
+	break;
 	case FEEDER_PLAYER_LIST:
 		if (index >= 0 && index < uiInfo.playerCount)
 		{
@@ -8112,6 +8213,10 @@ static void UI_FeederSelection(int feederID, int index)
 			trap_Cvar_Set("team_headmodel", va("*%s", uiInfo.characterList[index].name));
 			updateModel = qtrue;
 		}
+		break;
+	case FEEDER_CHANGELOG:
+		// Read-only feeder; line selection does not trigger additional behavior.
+		UI_ChangelogFeederSelection(index);
 		break;
 	case FEEDER_Q3HEADS:
 		if (index >= 0 && index < uiInfo.q3HeadCount)
@@ -8590,11 +8695,12 @@ static void UI_RunCinematicFrame(int handle)
 void UI_Init(int etLegacyClient, int clientVersion)
 {
 	int x;
-	Com_Printf(S_COLOR_MDGREY "Initializing %s ui " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME);
+	Com_Printf(S_COLOR_MDGREY "Initializing %s ui " S_COLOR_GREEN "%s\n", MODNAME, ETLEGACY_VERSION);
 
 	UI_RegisterCvars();
 	UI_InitMemory();
 	trap_PC_RemoveAllGlobalDefines();
+	UI_SetupExtensions();
 
 	trap_Cvar_Set("ui_menuFiles", DEFAULT_MENU_FILE);   // we need to hardwire for wolfMP
 
@@ -8751,6 +8857,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	UI_ParseGameInfo("gameinfo.txt");
 
 	UI_LoadMenus(DEFAULT_MENU_FILE, qfalse);
+	UI_RegisterCvarDescriptionsFromTooltips();
 
 	Menus_CloseAll();
 

@@ -1,0 +1,8 @@
+* CVE-2006-2082: directory traversal / information leak in Quake III Arena auto
+  download feature
+Ludwig Nussel and Thilo Shulz discovered a vulnerability letting a malicious client
+download files from a server if auto download is enabled ( sv_allowDownload 1 ).
+
+* Issue #2 ( CVE pending ): R_RemapShaders buffer overflow
+A second issue fixed in this release would let a malicious server exploit a buffer
+overflow to execute a shellcode on connecting clients.

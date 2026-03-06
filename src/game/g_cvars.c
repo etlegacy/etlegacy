@@ -100,6 +100,8 @@ vmCvar_t g_voiceChatsAllowed;
 vmCvar_t g_alliedmaxlives;
 vmCvar_t g_axismaxlives;
 vmCvar_t g_fastres;
+vmCvar_t g_syringeHealing;
+vmCvar_t g_legacyRevives;
 vmCvar_t g_enforcemaxlives;
 
 vmCvar_t g_needpass;
@@ -325,6 +327,7 @@ vmCvar_t g_multiview; // 0 - off, other - enabled
 
 vmCvar_t g_stickyCharge;
 vmCvar_t g_xpSaver;
+vmCvar_t g_xpSaverMaxAge;
 
 vmCvar_t g_debugForSingleClient;
 vmCvar_t g_debugEvents;
@@ -441,7 +444,7 @@ cvarTable_t gameCvarTable[] =
 
 	{ &voteFlags,                         "voteFlags",                         "0",                          CVAR_TEMP | CVAR_ROM | CVAR_SERVERINFO,          0, qfalse, qfalse },
 
-	{ &g_complaintlimit,                  "g_complaintlimit",                  "6",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+	{ &g_complaintlimit,                  "g_complaintlimit",                  "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_teambleedComplaint,              "g_teambleedComplaint",              "50",                         CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_ipcomplaintlimit,                "g_ipcomplaintlimit",                "3",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_filtercams,                      "g_filtercams",                      "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
@@ -452,6 +455,8 @@ cvarTable_t gameCvarTable[] =
 	{ &g_alliedmaxlives,                  "g_alliedmaxlives",                  "0",                          CVAR_LATCH | CVAR_SERVERINFO,                    0, qtrue,  qfalse },
 	{ &g_axismaxlives,                    "g_axismaxlives",                    "0",                          CVAR_LATCH | CVAR_SERVERINFO,                    0, qtrue,  qfalse },
 	{ &g_fastres,                         "g_fastres",                         "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qtrue  },     // Fast Medic Resing
+	{ &g_syringeHealing,                  "g_syringeHealing",                  "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qtrue  }, // Enable syringe healing on alive teammates
+	{ &g_legacyRevives,                   "g_legacyRevives",                   "1",                          CVAR_ARCHIVE,                                    0, qtrue,  qtrue  }, // Legacy ET revive behavior compatibility
 	{ &g_enforcemaxlives,                 "g_enforcemaxlives",                 "1",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },     // Gestapo enforce maxlives stuff by temp banning
 
 	{ &g_developer,                       "developer",                         "0",                          CVAR_TEMP,                                       0, qfalse, qfalse },
@@ -652,6 +657,7 @@ cvarTable_t gameCvarTable[] =
 #endif
 	{ &g_stickyCharge,                    "g_stickyCharge",                    "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_xpSaver,                         "g_xpSaver",                         "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &g_xpSaverMaxAge,                   "g_xpSaverMaxAge",                   "86400",                      CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_dropObjDelay,                    "g_dropObjDelay",                    "3000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 
@@ -871,7 +877,18 @@ void G_UpdateCvars(void)
 						trap_Cvar_Set(cv->cvarName, "33");
 					}
 				}
-				else if (cv->vmCvar == &team_maxSoldiers || cv->vmCvar == &team_maxMedics || cv->vmCvar == &team_maxEngineers || cv->vmCvar == &team_maxFieldops || cv->vmCvar == &team_maxCovertops || cv->vmCvar == &team_maxMortars || cv->vmCvar == &team_maxFlamers || cv->vmCvar == &team_maxMachineguns || cv->vmCvar == &team_maxRockets || cv->vmCvar == &team_maxRiflegrenades || cv->vmCvar == &team_maxplayers)
+				else if (cv->vmCvar == &team_maxSoldiers ||
+				         cv->vmCvar == &team_maxMedics ||
+				         cv->vmCvar == &team_maxEngineers ||
+				         cv->vmCvar == &team_maxFieldops ||
+				         cv->vmCvar == &team_maxCovertops ||
+				         cv->vmCvar == &team_maxMortars ||
+				         cv->vmCvar == &team_maxFlamers ||
+				         cv->vmCvar == &team_maxMachineguns ||
+				         cv->vmCvar == &team_maxRockets ||
+				         cv->vmCvar == &team_maxRiflegrenades ||
+				         cv->vmCvar == &team_maxLandmines ||
+				         cv->vmCvar == &team_maxplayers)
 				{
 					clsweaprestriction = qtrue;
 				}

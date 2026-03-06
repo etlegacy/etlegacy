@@ -1,0 +1,477 @@
+^dEngine
+
+^fGeneral
+
+* Added ^8com_maxfpsMinimized^9 / ^8com_maxfpsUnfocused^9 cvars, for allowing clients
+  to specify maxfps for either window states
+* Added lua support to ETLTV explicitly
+* Fixed 64-bit VM_Call/SystemCall argument expansion
+* Fixed a crash when sorting ^8etmain/fs_game^9 directories which are not present
+* Enhanced IPv4 / IPv6 internal usage
+* Enhanced cgame loading error message for clients
+* Allowed viewlog to be spawned during runtime 
+* Added ^8-h/--help^9 and ^8-t/--title^9 cmdline args, to show help text and set the
+  window title respectively
+
+^fAndroid
+
+^fRaspberry PI
+
+^fMacOS
+
+* No more support for macOs12
+
+^fUnix
+
+^fWindows
+
+* Fixed 64-bit Windows using incorrect path in ^8VM_DllSyscall^9 as ^8__x86_64__^9
+  wasn't defined on Windows
+* Windows binaries are now signed with an official certification
+
+^dClient
+
+* Fixed pmove crash from tvgame
+* Fixed ^8clc.demo.demoName^9 being empty on demo playback
+* Fixed naming scheme used by ^8video^9 command with no arguments, which tries to
+  insert the demo name in front of the automatic numbering
+* Added "video-pipe" to pipe "video/audio" to ^8ffmpeg^9
+  * Note: If ^8ffmpeg^9 isn't part of ^8$PATH^9, the executable must be placed next
+    to the etl binary
+  * Note2: magic token ^8$demo^9 can be used for both "video" and "video-pipe" to
+    automatically use the demo name as the filename
+  * Changed ^8cl_avidemo^9 cvar behaviour to only sets framerate for the classic
+    screenshot-based avidemo
+  * Added ^8cl_aviFrameRate^9 cvar to set framerate for video 
+  * Added ^8cl_aviPipeFormat^9 cvar to set ^8ffmpeg^9command line, see ^8ffmpeg^9
+    documentation: https://ffmpeg.org/documentation.html
+  * Added ^8cl_aviPipeExtension^9 cvar to override the default ^8.mp4^9 extension
+    used by video-pipe
+* Fixed TTF console font scaling with ^8r_scale^9
+* Added ^8con_scale^9 cvar (0.5 to 4) to scale console text size
+* Fixed ^8r_mode -2^9 resolution detection on non-primary display
+* Improved ^8timedemo^9 output by adding min / max / 99th percentile / 99.9th
+  percentile minimum framerate and Stability which represents the % of frames that
+  were rendered at or above ^8com_maxfps^9 value
+* Added ^8benchmark^9 command - wrapper command that executes ^8timedemo 1; demo
+  <demoname>^9
+* Added ^8cl_interpolation^9 cvar for buffering server packets to smooth over
+  packetloss/ping instability. Values 0-4 depending on ^8sv_fps^9 and ^8snaps^9. Set
+  to 0 for most responsive gameplay.
+* Added possibility to pause pausable sounds with SDL and OpenAL sounds backend
+* Added ^8s_debugPause^9 cvar for easier debugging
+* Fixed ^8uiMenuCommand_t^9 enum order back to normal. This caused issues with other
+  mods running on ETL, as the enum is also compiled into the engine, which sends
+  auto-update popups via ^8VM_Call^9 to UI
+* Increased ^8con_openspeed^9 cvar from 3 → 5, compromise to get both a fast console
+  open and still a smooth transition
+* Added "DEVELOPMENT BUILD" banner for non-release builds in UI menu and console
+
+^dServer
+
+* Fixed ^8sv_hidden 1^9 blocked incoming clients due to mandatory info request
+* Added possibility to watch ^8tv_84^9 demos on client (listen server)
+
+^dRenderer
+
+* Allowed setting multisample to 16x for supersample antialiasing
+* Fixed potential Out of bound memory access in ^8RE_UploadCinematic^9
+* Fixed a crash with high PNG screenshoot resolution by using hunk memory instead of
+  zone memory for allocating PNG screenshot data
+* Fixed incorrect constants used for ^8GL_RGB^9 and ^8GL_RGBA^9, which caused them to
+  display as ^8????^9
+* Fixed ^8imagelist^9 over/underflow on some maps
+* Added  ^8r_debugShaderSurfaceFlags^9 cvar for highlights any shader with passed
+  SURF_* bitflag set (e.g. for highlighting SURF_LANDMINE shaders:
+^8r_debugShaderSurfaceFlags 2147483648^9)
+* Removed cheat protection from ^8r_lodScale^9 cvar
+
+^dMod
+
+^fGeneral
+
+* Used equivalent or best weapons on ^8ref putallies / putaxis^9 commands
+* Added back log health pack pickup
+* Fixed lean angles were not interpolated while spectating/demo playback.
+* Added ^8g_luaModuleList^9 cvar to list Lua modules to be loaded from the given file
+  name
+* Increased the limit of loaded Lua modules from ^818^9 to ^864^9
+* Fixed viewangles jittering when riding on movers
+* Fixed bot doesn't received regular pistol on spawn
+* Fixed teleport bit not working when switching teams
+* Fixed localent indexing to force creating new local entity wih negative value in
+  ^8CG_RailTrail2^9
+* Fixed erroneous invalid client print on give command
+* Prevented callvote when warmup/game is about to end (less than 10 secondes
+  remaining)
+* Allowed non-negative ^8g_warmup^9 values, was capped at 11 secondes minimum
+* Added support for devmap-specific map autoexecs
+* Fixed excessive knockback on long range hit, due to falloff wasn't apply correctly
+  on knockback computation
+* Fixed crash with ^8et.gentity_set^9 (64-bit Windows)
+* Extended ^8give^9 commands : 
+  * Added ^8give skill^9 none to reset skills
+  * Added ^8give hp^9 as an alias for give health
+  * Added ^8give health^9 none to damage a player`s health to 0
+  * Added ^8give weapon^9 as an alias for give weapons
+  * Added ^8give weapon <number>^9 to give only a specific weapon instead of all
+  * Changed ^8give all^9 to give up to 'maxammo' for each weapon, previously gave
+    forced 9999 ammo for each weapon
+  * Changed ^8give ammo^9 now only giving up to 'maxammo' for each weapon, previously
+    gave forced 9999 ammo for each weapon
+  * Changed ^8give ammo -9999^9 now caps the ammo at 0 instead of setting player ammo
+    to negative values
+  * Added ^8give ammo all^9 to force 9999 ammo for each weapon
+  * Added ^8give ammo clip^9 to give a clip worth of ammo to each weapon
+  * Added ^8give ammo none^9 to remove all ammo and empty all clips from each weapon
+  * Made plain ^8give^9 to show most available combinations
+* Fixed ammo/medic pack throwing can be pick it up at a 45° YAW angle
+* Made medic's passive heal deterministic by resetting and pausing the regen timer on
+  max health
+* Fixed map vote incorrect ^8lastPlayed^9 increment on never played map
+* Fixed warmup annoucement weren't played when ^8warmuptitle^9 comp was invisible
+* Allowed ^8obj^9 command during intermission
+* Fixed ^8g_maxGameClients^9 interaction with ^8class^9 command was forcing player to
+  spectator if team is full
+* Added ^8cg_weapaltMgAutoProne^9 cvar to automatically prone on ^8weapalt^9 command
+  with settable weapon (MG42, browning...)
+* Removed ^8G_MISC_CROSSHAIR_DYNAMITE (8)^9 and ^8G_MISC_CROSSHAIR_LANDMINE (16)^9
+  values from ^8g_misc^9 cvar
+* Added ^8et_Chat^9 Lua hook
+* Added kill assist system, granding 0 to 3 battle sense pts depending of the ammount
+  max health damage inflicted. Up to 4 players to be rewarded on the same target
+* Added team bleeding complaint, customizable with ^8g_teambleedComplaint^9 cvar with
+  value in percetage of team bled between 0-100. Negative value disable it.
+* Added ^8cg_spritesFollowHeads^9 cvar to makes player icons (revive icon etc.) to
+  follow player heads when they are downed
+* Added ^8g_debugEvents^9 cvar to log server events server side
+* Added ^8g_forcerespawn -1^9 to respawn instantly
+* Added ^8g_debugAnim^9 cvar 
+  * 3 - show animation script - animation debug info
+  * 4 - show animation script - event debug info
+  * 5 - 3 & 4
+* Added values to ^8cg_debugAnim^9 cvar : 
+  * 1 - show animation runtime debug info / first person or third person
+  * 2 - like 1 with some extra info
+  * 3 - show animation script - animation debug info
+  * 4 - show animation script - event debug info
+  * 5 - 3 & 4
+* Fixed ^8G_ScriptAction_Delete^9 iteration loop by excluding ^8ENTITYNUM_WORLD^9
+  (worldspawn), ^8ENTITYNUM_NONE^9 and ^8BODYQUE^9 ents from loop
+* Fixed ^8G_ScriptAction_Delete^9 return values to qtrue from the function, otherwise
+  script execution gets stuck if the call doesn't delete any entities
+* Fixed to ^8create^9 script action implicit link, entities should handle linking in
+  their spawn function, if they require linking
+* Fixed ^8func_fakebrush^9 entities content by using ^8CONTENTS_PLAYERCLIP^9, this
+  allows creating fakebrushes that only block player movement but don't interfere
+  with gameplay by blocking bullets and projectiles
+* Changed ^8func_fakebrush^9 now requires ^8origin^9, ^8mins^9, ^8maxs^9 and
+  ^8contents^9 to be set explicitly, to avoid unexpected default values to be used
+  implicitly
+* Added ^8cg_autoCmdExecuted^9 cvar to allows setting a command that automatically
+  gets executed when first snapshot was received (Also executes for each
+  ^8map_restart^9)
+* Added ^8cg_weapBankCollisions^9 cvar (default to 0) to allow selecting soldier SMG
+  on weaponbank 2
+* Added ^8Objective_Destroyed^9 log for dynamites
+* Enhanced hitscan ^8aim-following^9 selection as spectator
+* Changed ^8SPRINT^9 hold behaviour on hitscan as spectator to not cycle through next
+  player
+* Added back ^8cg_crosshairX/Y^9 and added ^8cg_crosshairScaleX/Y^9 for cvar
+  crosshair
+* Added log demo version
+* Added a set of "vectorized", configurable crosshairs
+  * cg_customCrosshair
+    * 0 - disabled
+    * 1 - dot with small cross
+    * 2 - only dot
+    * 3 - only small cross
+    * 4 - full cross
+  * cg_customCrosshairDotWidth
+    * Circumference of the center dot.
+  * cg_customCrosshairDotColor
+    * Color of the center dot (or intersection for full cross).
+  * cg_customCrosshairDotOutlineRounded
+    * Switch if outline around the center dot should be rounded or not.
+  * cg_customCrosshairDotOutlineColor
+    * Color of the outline around the center dot.
+  * cg_customCrosshairDotOutlineWidth
+    * Width of the outline around the center dot.
+  * cg_customCrosshairCrossWidth
+    * Circumference of the cross.
+  * cg_customCrosshairCrossLength
+    * Length of the cross.
+  * cg_customCrosshairCrossGap
+    * Fixed gap between the center dot and the cross.
+  * cg_customCrosshairCrossSpreadDistance
+    * Distance that is used for 100% spread value.
+  * cg_customCrosshairCrossSpreadOTGCoef
+    * Coefficient used on 'cg_customCrosshairCrossSpreadDistance' for when a player
+      is Off-the-ground (OTG).
+  * cg_customCrosshairCrossColor
+    * Color of the cross.
+  * cg_customCrosshairCrossOutlineRounded
+    * Switch if outline around the cross should be rounded or not.
+  * cg_customCrosshairCrossOutlineColor
+    * Color of the outline of the cross.
+  * cg_customCrosshairCrossOutlineWidth
+    * Width of the outline around the cross.
+* Fixed third person view on multiview
+* Updated multiview help window
+
+^fStability & Performance
+
+* Fixed ^8WolfRevivePushEnt^9 framerate dependency by applying push effect only every
+  50ms to match sv_fps 20 behavior
+* Fixed crash when activating ^8trigger_multiple^9 through ^8alertentity^9
+* Fixed potential out of bounds read with ^8uiInfo.map/campaignList^9
+* Fixed ^8GetCurrentWeapon^9 lua hook could cause a crash if client is invalid
+* Fixed player getting stuck on spectator spawn point due to ^8r.currentOrigin^9 was
+  not updated / reset for spectators
+* Fixed crash if ^8et.G_Damage^9 is called with a weapon MOD
+* Fixed disconnecting player crashes other player watching him in multiview
+* Improved slightly ^8G_TempTraceIgnoreEntities^9 detection
+* Improved hit box height computation for antilag
+* Fixed objective item pickup spam in log file
+* Ensured HUD with no parent load properly to default missing component
+* Added animation demo backwards compatibility
+* Fixed jump-crouch and swim hitbox
+
+^fAudio
+
+* Changed landmines and satchel bounce effect (thx to ETPub or ETPro)
+* Fixed ^8'FIGHT!'^9 voice line when following someone
+* Fixed announce ^8'Prepare To Fight'^9 voice line with ^8g_doWarmup 1^9
+* Made sure weapon sounds stop on death (such as reload sounds)
+* Added ^8noAmmoSound^9 when trying to switch to empty weapon
+* Paused reload sound while game is paused
+* Improved ^8noAmmoSound^9 on failed weapon switch (empty one)
+
+^fGraphics
+
+* Fixed incorrect impacts bullet for entities other than clients
+* Fixed TGA field order for auth & landmine filter icons, as they were drawn upside
+  down on 2.60b clients
+* Fixed allied rank icons using wrong shaders
+* Fixed burning wounded players causes permanent smoke with ^8burn^9 command
+* Reframe all 1st person weapon animation
+  * Fixed flying rifle grenade on swapping / firing weapon
+  * Increased ^8Bazooka^9 barrel smoke time after firing to match the duration before
+    the weapon can be switched off
+  * Fixed Scoped Garand's Magazine was missing
+  * Fixed Akimbo post-reload firing animation
+  * Fixed rifle muzzle flash alignment
+  * Fixed kar98/garand silencer alignment
+  * Fixed kar98 brass ejection alignment
+  * Fixed rifle disappearing for a brief time right after unscoping
+  * Fixed weapon smoke upon respawning and switching weapon by resetting it
+  * Improved ^8kar98^9 and ^8mp34^9 brass ejection offsets
+  * Fixed throwing weapons now dissapear correctly from hands
+  * ... and a lot more ...
+* Added priority system for 3rd persons animations
+* Reframe 3rd person weapon animation
+  * MG42 Reload Anim
+  * SMGs or Pistols Reload while jumping
+  * Jump animation on landing on the ground (was hovering/gliding player on short
+    distance)
+  * Skip reload animations for Panzer and Flamer as there is no reload at all
+  * Fixed grenade priming torso anim while jumping was not played
+  * Fixed strafeleft and proned zooming binoc animation with binoculars
+  * Fixed pliers animation was not looping and therefore caused jarring torso moves
+  * Showed weapons while climbing
+  * Fixed touching ground now outprioritizes jumping animations (instead of
+    jump-hovering while already on the ground)
+  * Fixed run-jumping into a ladder was causing the ladder animation now to
+    outprioritize the still playing jumping animation
+  * Fixed priming grenades now outprioritizes raising grenades
+  * Fixed attack knife animation now outprioritizes raising the knife
+  * Changed knife animation to be holded hunder hand instead of pistol style
+  * Fixed attaching / detaching rifle grenades
+  * Fixed ^8no power^9 animation when player is proned as torso will change as
+    standing animation
+  * Added a missing firing animation for Bazooka
+  * Reframed both RAISE animations for PF and Bazooka to have less weapon clipping
+    through the body and a smoother transition towards idle/fire
+  * Fixed 3P landmine model orientation and position on hand
+  * Fixed MG42 bipod wasn't deployed
+  * Added an animation for deploying/retract MG42 tripod
+  * ... and a lot more ...
+* Smoothed ^8PM_GroundTrace^9 (OTG) for Jump Animation, removing "stumble" / "hobble"
+  across seemingly flat terrain on 3rd person model
+* Fixed climbing animations in 3rd person model
+* Reduced heavily z-fighting on Health Packs (Medpacks) Ammo Packsand Landmines
+* Made ^8Smoke Bomb^9 puff direction deterministic
+* Added missing shader for orange vchat sprite (fire in the hole)
+* Fixed smoke sprites not fading out correctly
+* Fixed some particle effects with ^8MissileCam^9 on
+* Add 'cg_muzzleFlash 2' cvar value for hiding muzzle flash in 1st person only
+* Fixed 3rd person mortar flash smoke wasn't emit
+* Fixed 1st person mounted tank gun dlight wasn't emit
+* Added new death animation (Reframed deaths that skip the flailing with arms around
+  parts of existing death animations)
+* Changed muzzle flash size by down scaling it by 20%
+* Added ^8cg_muzzleFlashOld^9 cvar, default to ^80^9. for using vanilla muzzle flash
+* Added ^8cg_muzzleFlashDlight^9 cvar :
+  * 0 - force muzzle flash dynamic light off
+  * 1 - force muzzle flash dynamic light on
+  * 2 - force muzzle flash dynamic light on only for others not yourself
+  * 3 - depends on cg_muzzleFlash (default)
+* Rework airstrike bomb : 
+ * Reduced model size
+ * Fixed UV Wrap
+ * Added pseudo-shadows to texture and some random details
+ * De-saturated to fit the game colors more
+ * Tilted bomb angle a bit more towards the ground
+* Slightly shrink Panzerfaust Brass
+* Added ^8cg_drawAirplanes^9 cvar toggle airstrike airplane visiblity (was tied to
+  ^8cg_visualeffect^9)
+* Reframed animations much more closely into action duration
+* Reduced random jerking of player arms while firing
+* Allowed animation changes while jumping
+* Added an animation on crashlanding. Now plays a short but sweet leg break leg
+  animation
+* Added an animation on using doors or buttons. Now plays a short but sweet low
+  priority 'activate' animation
+* Added ^8cg_gunFovOffset^9 cvar and ETL dynamic gun fov : 
+  * cg_gunFovOffset 0  : dynamic mode (default)
+  * cg_gunFovOffset 75 : keeps the guns as they were in 2.82.1
+  * cg_gunFovOffset 90 : keeps the guns as they were in Vanilla ET (previously not
+    possible)
+* Added damage skin on player heads
+
+^fUI
+
+* Moved HUD editor tab from ^8Options/View^9 to ^8Options^9
+* Added ^8timerReset^9 bind to ^8Controls/Advanced^9 menu 
+* Added default bind ^8N^9 to ^8timerReset^9
+* Fixed clickable rectangle area (butons, combo-box, ...) check being 1px too small 
+* Allowed disconnecting / exiting via 'Enter' key while related pop-up message show
+  up
+* Fixed aspect ratio correction for limbo/debriefing mouse movement
+* Fixed mouse cursor if menu bypasses mouse input by properly hiding it
+* Fixed potentially invisible cursor during intermission
+* Fixed replay menu path resetting when re-opening the menu
+* Fixed focused edit/numericfield not drawing tooltips
+* Turned off ^8Force colors^9 popup message flag for default Shoutcaster HUD
+* Added ^8cg_drawHintFade^9 to control hint icon fade time, default to 250ms
+* Fixed binding for ^8timerReset^9 command from controls menu
+* Fixed menufile fallback case was not working if custom menufile wasn't founded
+* Changed ^8cg_commandMapTime^9 cvar default value from 250 to 0 for quicker map look
+  at
+* Fixed somes ui / sprites shader clamp map
+* Added backup of ^8hud.dat^9 when upgrading to new version
+* Added debug draw Artillery on ^8sv_cheats 1^9. This will draw a sprite when using
+  binocs as fops showing if artillery can be called in at the spot or not
+* Fixed HUD Editor and Limbo panel to be opened on demo playback
+* Fixed wrong maxhealth on team mates by assuming +15 maxhealth on teammates if self
+  had the battle sense health skill
+* Changed ^8Geometric Detail^9 cvar usage from ^8r_lodbias^9 to ^8r_lodscale^9,
+  allowing higher model geometry on distance
+* Added back use of ^8.tga^9 crosshairs, instead of ^8.svg^9 (still available with
+  cg_crosshairSVG)
+* HUD changes :
+  * Fix coloration on ^8popupmessage^9 killfeed for team kill which was always red
+    and not using the customized color
+  * Fix coloration on ^8popupmessage^9 killfeed for suicide to use enemy / teammate
+    color instead of teamkill color
+  * Changed default dynamic health color from white to ^8maincolor^9 and made it lerp
+  * Fixed compass disappears while spectating a player
+  * Fixed ^8Always Draw^9 style for compass was working as expected
+  * Added four new crosshairs : 
+    * Vertical line with a dot
+    * X with a dot
+    * Square stroke
+    * Dot cross
+  * Added HUD ^8No Countdown^9 style to ^8followtext^9 comp
+  * Replaced ^8|^9 to separate akimbo ammo with ^8:^9, so it will no break vertical
+    alignment
+  * Added ^8Needle^9 style to add a needle on the chargebar indicating when the next
+    charge is ready to be used
+  * Added ^8Needle^9 style to health bar showing HP bonus from medics count in team
+  * Fixed weapon obituary icon missalignment
+  * Fixed ^8XPgain^9 popup doesn't stack up properly in some cases
+  * Added health bar and name of medic targeted by view camera when waiting for
+    revive
+  * Added ^8Explosive Owner^9 style to ^8crosshairName^9 comp, showing primed
+    dynamite / mines and satchel owner
+  * Reduced hint icon fade time from 1000ms to 250ms
+  * Reduced crosshair info fade time from 1000ms to 250ms
+  * Added ^8cursorhintstext^9 comp to show the hint cursor value as percentage 
+  * Added 100% hint indicator on task completed (construction done, steal uniform,
+    arming/disarming dynamite/landmine)
+  * Added ^8cursorhintsbar^9 comp, which seperate bar progression from
+    ^8cursorhints^9 comp
+  * Added "No stack" style to ^8XPGain^9 comp, allowing popup to not stack together
+    but construction and repair
+  * Allowed missile camera in demo playback
+  * Added ^8Dynamic Heat Color^9 style for ^8weaponicon^9 HUD comp
+  * Reduced ^8demotext^9 comp transparency by half
+  * Reduced slightly ^8popmessages^9 comp fonts size to add up 1 more line
+  * Ensured unique names when cloning via HUD Editor
+  * Added toggle HUD Editor bind to Menu (default ^8F7^9)
+  * Reduced max ^8pmitemsbig^9 message stack from ^88^9 to ^83^9
+  * Adjusted XP score scale by ten thousand
+  * Added XP Gain multiplicator indicator
+  * Added ^8No XP Add Up^9 style to ^8XpGain^9 comp
+* HUD Editor changes :
+  * Allowed invisible comp to be selectable when all the layout (including invisible)
+    are draw
+  * Fixed HUD selection for shoutcaster mode from combo box failed to load selected
+    HUD
+  * Added hotkeys : 
+    * t - hotkey toggles showing only the focused component
+    * v - hotkey toggles visibility of focused component
+    * alt + mwheel - changes scale/text size instead of component size
+    * alt + shift + v - sets all components visible
+  * Changed generate noise for ^8popupmessages^9 items to be more consistently (used
+    to be modulo to cg.time, which was unpredictable and fps dependent)
+  * Changed generate noise for fireteam overlay, draw a box with an info that
+    mentions to join a real fireteam instead
+  * Added ^8Toggle Help^9 button
+  * Added parent selection and no parent option, allowing exporting standalone HUD to
+    ease sharing
+* Debriefing :
+  * Fixed map description in map vote window going over actual text box
+  * Fixed map bias low precision computation
+  * Changed popularity color transition to red (0%), yellow (50%), green (100%)
+    gradiant (depending of popularity)
+  * Moved prestige note into tooltip, allowing hit region draw to always displayed
+  * Added a 2nd clic check to collect prestige button to confirm the choice
+* Limbo : 
+  * Added hotkeys to navigate in limbo menu
+    * 1 / 2 / 3 key         => Axis / Allies / Spec
+    * e / c / f / m / s key => engineer / covops / fieldops / medic / soldier
+    * tab key               => toggle between primary and secondary weaponview
+    * enter / y  key        => confirm choices
+    * space key             => open weapon panel selection (then use 1-9 keys to
+      select weapon)
+  * Fixed limbo key handling on open weaponpanel case was not cleared properly
+  * Changed Team/Class and XP Counter speed roll to be faster
+  * Removed plus-/minusButton from maps buttons panel
+  * Changed AUTOSPAWN text to clarify this is about spawnpoints, instead of spawning
+    behavior
+  * Ensured SMG is selected as secondary weapon when possible and primary weapon is
+    not SMG
+  * Added ^8cg_limboClassClickConfirm^9 cvar default to ^80^9 to let class Limbo
+    selection take effect immediately
+
+^fWeapons
+
+* Reduced mg tank jiggle by half
+* Changed rifle grenade ^8fireDelayTime^9 from ^8100^9 to ^80^9 ms
+* Fixed switch alternate weapons for mg and scoped weapons not being properly unset
+  on revive
+* Fixed flamethrower DPS increased with higher ^8sv_fps^9 by normalizing flamethrower
+  damage to default ^8sv_fps 20^9
+* Fixed ^8weapprev^9 not working while holding silenced akimbo pistols
+* Fixed flamethrower flame chunck visibility on 2 last flames sprites, so it keep
+  visible until the flame gone
+* Fixed double satchel exploit with fast weapon switch
+* Changed Sten/MP34 now do not produce bullet tracers. This gives them a unique
+  characteristic and buffs them by not automatically giving away the player's
+  position
+* Fixed MG42 excess client-side overheat events
+* Fixed panzer/arty creating ^8EV_MORTAR_IMPACT^9 events
+* Fixed MG42/Mortar weapon 1st view on slopes was hiding a large part of the field of
+  view
+* Added empty syringue animation on succesful usage

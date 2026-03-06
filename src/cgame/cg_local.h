@@ -1173,7 +1173,7 @@ typedef struct
 	version_t demoVersion;
 	demoBackwardsCompat_t demoBackwardsCompat;
 
-	int etLegacyClient;                     ///< is either 0 (vanilla client) or a version integer from git_version.h
+	int etLegacyClient;                     ///< is either 0 (vanilla client) or a version integer from version_generated.h
 	qboolean loading;                       ///< don't defer players at initial startup
 	qboolean intermissionStarted;           ///< don't draw disconnect icon/message because game will end shortly
 	qboolean autoCmdExecuted;               ///< has 'cg_autoCmd' been executed yet
@@ -1200,6 +1200,7 @@ typedef struct
 	int physicsTime;                        ///< either cg.snap->time or cg.nextSnap->time
 
 	int timelimitWarnings;                  ///< 5 min, 1 min, overtime
+	int ownWaveTicktockLastReinfTime;      ///< last own reinforcement time seen for one-shot ticktock warning
 
 	qboolean mapRestart;                    ///< set on a map restart to set back the weapon
 
@@ -1251,6 +1252,13 @@ typedef struct
 	int zoomTime;
 	float zoomSensitivity;
 	float zoomval;
+	qboolean weapzoomActive;
+	qboolean weapzoomWasActive;
+	qboolean weapzoomStartValid;
+	int weapzoomTime;
+	float weapzoomStartFov;
+	float weapzoomCurrentFov;
+	float weapzoomLerp;
 
 	/// information screen text during loading
 	char infoScreenText[MAX_STRING_CHARS];
@@ -1320,6 +1328,7 @@ typedef struct
 	int cursorHintTime;
 	int cursorHintFade;
 	int cursorHintValue;
+	qhandle_t lastUsedHintIcon;
 
 	// attacking player
 	int attackerTime;
@@ -1666,8 +1675,12 @@ typedef struct
 	qhandle_t scoreEliminatedShader;
 
 	qhandle_t medicReviveShader;
+	qhandle_t medicReviveShader2;
 	qhandle_t disguisedShader;
 	qhandle_t voiceChatShader;
+	qhandle_t voiceChatOrangeShader;
+	qhandle_t greenTick;
+	qhandle_t redCross;
 	qhandle_t balloonShader;
 	qhandle_t objectiveShader;
 	qhandle_t objectiveBlueShader;
@@ -1868,6 +1881,10 @@ typedef struct
 	sfxHandle_t countFight;
 	sfxHandle_t countPrepare;
 	sfxHandle_t goatAxis;
+	sfxHandle_t reinforceTickSound;
+	sfxHandle_t reinforceTockSound;
+	sfxHandle_t reinforceTickLoudSound;
+	sfxHandle_t reinforceTockLoudSound;
 
 	// hitsounds
 	sfxHandle_t headShot;
@@ -1914,9 +1931,15 @@ typedef struct
 	qhandle_t ccDestructIcon[3][2];
 	qhandle_t ccTankIcon;
 	qhandle_t skillPics[SK_NUM_SKILLS];
+	qhandle_t ccskillPics[SK_NUM_SKILLS];
+	qhandle_t ccGreenTick;
+	qhandle_t ccRedCross;
+	qhandle_t ccFriendShader;
 	qhandle_t ccMedicIcon;
+	qhandle_t ccMedicReviveShader;
 	qhandle_t ccAmmoIcon;
 	qhandle_t ccVoiceChatShader;
+	qhandle_t ccVoiceChatOrangeShader;
 #ifdef FEATURE_PRESTIGE
 	qhandle_t prestigePics[3];
 #endif
@@ -2236,12 +2259,29 @@ enum
 	COMPASS_ALWAYS_DRAW          = BIT(7),
 	COMPASS_POINT_TOWARD_NORTH   = BIT(8),
 	COMPASS_DRAW_ICONS_INSIDE    = BIT(9),
+	COMPASS_DYNAMIC_TICKS        = BIT(10),
+	COMPASS_DYNAMIC_DIRECTION    = BIT(11),
 };
 
 // Follow filters
 enum
 {
 	FOLLOW_NO_COUNTDOWN = BIT(0),
+};
+
+// fireteam overlay
+enum
+{
+	FT_LATCHED_CLASS     = BIT(0),
+	FT_NO_HEADER         = BIT(1),
+	FT_COLORLESS_NAME    = BIT(2),
+	FT_STATUS_COLOR_NAME = BIT(3),
+	FT_STATUS_COLOR_ROW  = BIT(4),
+	FT_SPAWN_POINT       = BIT(5),
+	FT_SPAWN_POINT_LOC   = BIT(6),
+	FT_SPAWN_POINT_MINOR = BIT(7),
+	FT_HEALTH_TEXT       = BIT(8),
+	FT_MINI_HEALTH_BAR   = BIT(9),
 };
 
 /// Locations
@@ -2290,6 +2330,7 @@ enum
 	BAR_ICON           = BIT(11),
 	BAR_NEEDLE         = BIT(12),
 	BAR_CIRCULAR       = BIT(13),
+	BAR_MAX            = BIT(14),
 };
 
 enum
@@ -2300,6 +2341,8 @@ enum
 	GAMESTATS_DAMAGEGIVEN    = BIT(3),
 	GAMESTATS_DAMAGERECEIVED = BIT(4),
 };
+
+extern char *barFlagsString[BAR_MAX];
 
 /**
  * @struct objectives_t
@@ -2539,6 +2582,7 @@ typedef struct cgs_s
 	vec4_t fireteamSpritesColorSelected;
 
 	// teamchat width is *3 because of embedded color codes
+	qboolean teamChatStartLine[TEAMCHAT_MSG_MAX];
 	char teamChatMsgs[TEAMCHAT_MSG_MAX][MAX_STRING_CHARS];
 	int teamChatMsgTimes[TEAMCHAT_MSG_MAX];
 	team_t teamChatMsgTeams[TEAMCHAT_MSG_MAX];
@@ -2806,9 +2850,10 @@ enum
 // crosshair bar flags
 enum
 {
-	CROSSHAIR_BAR_CLASS    = BIT(0),
-	CROSSHAIR_BAR_RANK     = BIT(1),
-	CROSSHAIR_BAR_PRESTIGE = BIT(2),
+	CROSSHAIR_BAR_CLASS         = BIT(0),
+	CROSSHAIR_BAR_RANK          = BIT(1),
+	CROSSHAIR_BAR_PRESTIGE      = BIT(2),
+	CROSSHAIR_BAR_DYNAMIC_COLOR = BIT(3),
 };
 
 // projectile spawn effects at destination
@@ -2910,6 +2955,14 @@ void CG_AdjustFrom640(float *x, float *y, float *w, float *h);
 static ID_INLINE void CG_AdjustRectFrom640(rectDef_t *rect)
 {
 	CG_AdjustFrom640(&rect->x, &rect->y, &rect->w, &rect->h);
+}
+static ID_INLINE qboolean CG_WeapzoomAllowed_f(void)
+{
+	return !(cg.zoomed || cg.zoomedBinoc || cg.zoomval != 0.f)
+	       && !(cg.snap->ps.persistant[PERS_HWEAPON_USE])
+	       && !(cg.snap->ps.eFlags & (EF_MG42_ACTIVE | EF_AAGUN_ACTIVE | EF_MOUNTEDTANK))
+	       && !((GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_SET)
+	            && (GetWeaponTableData(cg.snap->ps.weapon)->type & WEAPON_TYPE_MG));
 }
 void CG_FillRect(float x, float y, float width, float height, const float *color);
 void CG_HorizontalPercentBar(float x, float y, float width, float height, float percent);
@@ -3031,7 +3084,7 @@ int CG_CalculateReinfTime(team_t team);
 int CG_GetReinfTime(qboolean menu);
 void CG_Fade(int r, int g, int b, int a, int time, int duration);
 
-void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, vec4_t **colorAmmo /*, vec4_t **colorClip*/);
+void CG_PlayerAmmoValue(int *ammo, int *clips, int *akimboammo, int *maxammo, vec4_t **colorAmmo /*, vec4_t **colorClip*/);
 
 void CG_ToggleShoutcasterMode(int shoutcaster);
 void CG_ShoutcastCheckKeyCatcher(int keycatcher);
@@ -3298,7 +3351,7 @@ void CG_LoadRankIcons(void);
 
 void CG_ParseFireteams(void);
 void CG_ParseOIDInfos(void);
-char *CG_SpawnTimerText(void);
+char *CG_SpawnTimerText(qboolean isDoubleDigits);
 //oidInfo_t *CG_OIDInfoForEntityNum(int num);
 
 // cg_consolecmds.c
@@ -3633,11 +3686,13 @@ void trap_SysFlashWindow(int state);
 void trap_CommandComplete(const char *value);
 void trap_CmdBackup_Ext(void);
 void trap_MatchPaused(qboolean matchPaused);
+void trap_Cvar_SetDescription(const char *cvarName, const char *description);
 extern int dll_com_trapGetValue;
 extern int dll_trap_SysFlashWindow;
 extern int dll_trap_CommandComplete;
 extern int dll_trap_CmdBackup_Ext;
 extern int dll_trap_MatchPaused;
+extern int dll_trap_CvarSetDescription;
 
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent);
 
@@ -3870,7 +3925,7 @@ void CG_CommandMap_DrawHighlightText(void);
 qboolean CG_CommandCentreSpawnPointClick(void);
 
 qhandle_t CG_GetCompassIcon(entityState_t *ent, qboolean drawAllVoicesChat, qboolean drawFireTeam, qboolean drawPrimaryObj, qboolean drawSecondaryObj, qboolean drawItemObj, qboolean drawDynamic, char *name);
-void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor, qboolean drawIconInside);
+void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor, int style);
 
 void CG_TransformToCommandMapCoord(float *coord_x, float *coord_y);
 
@@ -4103,7 +4158,7 @@ typedef struct
 	anchorPoint_t point;
 } anchor_t;
 
-#define HUD_COMPONENTS_NUM 61
+#define HUD_COMPONENTS_NUM 62
 
 typedef struct hudComponent_s
 {
@@ -4129,7 +4184,8 @@ typedef struct hudComponent_s
 	qboolean parsed; ///< Used to notify that the component has been setup via file
 	void (*draw)(struct hudComponent_s *comp);
 
-	// bar circle customization only
+	// bar customization only
+	int barStyle;
 	float circleDensityPoint;
 	float circleStartAngle;
 	float circleEndAngle;
@@ -4165,6 +4221,7 @@ typedef struct hudStructure_s
 	hudComponent_t weaponheatbar;
 	hudComponent_t weaponicon;
 	hudComponent_t weaponammo;
+	hudComponent_t clipbar;
 	hudComponent_t fireteam;
 	hudComponent_t popupmessages;
 	hudComponent_t popupmessages2;
@@ -4173,8 +4230,8 @@ typedef struct hudStructure_s
 	hudComponent_t powerups;
 	hudComponent_t objectives;
 	hudComponent_t hudhead;
-	hudComponent_t cursorhints;
 	// 20
+	hudComponent_t cursorhints;
 	hudComponent_t cursorhintsbar;
 	hudComponent_t cursorhintstext;
 	hudComponent_t weaponstability;
@@ -4184,8 +4241,8 @@ typedef struct hudStructure_s
 	hudComponent_t spawntimer;
 	hudComponent_t localtime;
 	hudComponent_t votetext;
-	hudComponent_t spectatortext;
 	// 30
+	hudComponent_t spectatortext;
 	hudComponent_t limbotext;
 	hudComponent_t followtext;
 	hudComponent_t demotext;
@@ -4195,8 +4252,8 @@ typedef struct hudStructure_s
 	hudComponent_t weaponchargetext;
 	hudComponent_t fps;
 	hudComponent_t snapshot;
-	hudComponent_t ping;
 	// 40
+	hudComponent_t ping;
 	hudComponent_t speed;
 	hudComponent_t lagometer;
 	hudComponent_t disconnect;
@@ -4206,8 +4263,8 @@ typedef struct hudStructure_s
 	hudComponent_t warmuptitle;
 	hudComponent_t warmuptext;
 	hudComponent_t objectivetext;
-	hudComponent_t centerprint;
 	// 50
+	hudComponent_t centerprint;
 	hudComponent_t banner;
 	hudComponent_t crosshair;
 	hudComponent_t crosshairtext;
@@ -4215,8 +4272,8 @@ typedef struct hudStructure_s
 	hudComponent_t stats;
 	hudComponent_t xpgain;
 	hudComponent_t scPlayerListAxis;
-	hudComponent_t scPlayerListAllies;
 	// 60
+	hudComponent_t scPlayerListAllies;
 	hudComponent_t scTeamNamesAxis;
 	hudComponent_t scTeamNamesAllies;
 
@@ -4225,7 +4282,7 @@ typedef struct hudStructure_s
 
 #define MAXHUDS 32
 #define MAXSTYLES 24
-#define CURRENT_HUD_JSON_VERSION 6
+#define CURRENT_HUD_JSON_VERSION 7
 #define DEFAULTHUD "ETmain"
 
 typedef struct
@@ -4326,6 +4383,7 @@ void CG_DrawPlayerStatusHead(hudComponent_t *comp);
 void CG_DrawGunIcon(hudComponent_t *comp);
 void CG_DrawGunHeatBar(hudComponent_t *comp);
 void CG_DrawAmmoCount(hudComponent_t *comp);
+void CG_DrawClipBar(hudComponent_t *comp);
 void CG_DrawPowerUps(hudComponent_t *comp);
 void CG_DrawObjectiveStatus(hudComponent_t *comp);
 void CG_DrawPlayerHealthBar(hudComponent_t *comp);

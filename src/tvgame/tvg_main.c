@@ -237,6 +237,7 @@ qboolean TVG_SnapshotCallback(int entityNum, int clientNum)
 }
 
 int dll_com_trapGetValue;
+int dll_trap_CvarSetDescription;
 
 /**
  * @brief This is the only way control passes into the module.
@@ -259,7 +260,7 @@ Q_EXPORT intptr_t vmMain(intptr_t command, intptr_t arg0, intptr_t arg1, intptr_
 	case GAME_INIT:
 	{
 		int time = trap_Milliseconds();
-		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN ETLEGACY_VERSION "\n", MODNAME_TV);
+		Com_Printf(S_COLOR_MDGREY "Initializing %s game " S_COLOR_GREEN "%s\n", MODNAME_TV, ETLEGACY_VERSION);
 		TVG_InitGame(arg0, arg1, arg2, arg3, arg4);
 		G_Printf("Game Initialization completed in %.2f seconds\n", (float)(trap_Milliseconds() - time) / 1000.f);
 	}
@@ -462,6 +463,7 @@ static ID_INLINE void TVG_SetupExtensions(void)
 	if (value[0])
 	{
 		dll_com_trapGetValue = Q_atoi(value);
+		TVG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CvarSetDescription, "trap_CvarSetDescription_Legacy");
 	}
 }
 

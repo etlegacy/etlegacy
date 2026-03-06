@@ -989,6 +989,7 @@ static int CG_CalcFov(void)
 	float        x;
 	int          contents;
 	float        fov_x = 0.0f, fov_y;
+	float        weapzoomLerp = 0.0f;
 	int          inwater;
 
 	CG_Zoom();
@@ -1089,6 +1090,90 @@ static int CG_CalcFov(void)
 		}
 	}
 
+	if (cg.predictedPlayerState.pm_type != PM_INTERMISSION && !cg.showGameView)
+	{
+		qboolean weapzoomAllowed = CG_WeapzoomAllowed_f();
+
+		if (!weapzoomAllowed)
+		{
+			cg.weapzoomStartValid = qfalse;
+		}
+		else
+		{
+			float weapzoomTarget = cg_weapzoomFov.value;
+			float weapzoomFrac   = 1.0f;
+
+			if (!developer.integer)
+			{
+				weapzoomTarget = Com_Clamp(75.0f, 160.0f, weapzoomTarget);
+			}
+
+			if (cg.weapzoomActive != cg.weapzoomWasActive)
+			{
+				cg.weapzoomStartFov   = cg.weapzoomActive ? fov_x : (cg.weapzoomCurrentFov > 0.0f ? cg.weapzoomCurrentFov : fov_x);
+				cg.weapzoomStartValid = qtrue;
+				cg.weapzoomTime       = cg.time;
+				cg.weapzoomWasActive  = cg.weapzoomActive;
+				weapzoomFrac          = 0.0f;
+
+				if (cg.weapzoomActive)
+				{
+					if (cg_onWeapzoomStart.string[0] != '\0')
+					{
+						trap_SendConsoleCommand(va("%s\n", cg_onWeapzoomStart.string));
+					}
+				}
+				else
+				{
+					if (cg_onWeapzoomEnd.string[0] != '\0')
+					{
+						trap_SendConsoleCommand(va("%s\n", cg_onWeapzoomEnd.string));
+					}
+				}
+			}
+
+			if (cg.weapzoomStartValid)
+			{
+				int weapzoomTimeMs = cg.weapzoomActive ? cg_weapzoomInTimeMs.integer : cg_weapzoomOutTimeMs.integer;
+
+				if (weapzoomTimeMs > 0)
+				{
+					weapzoomFrac = (float)(cg.time - cg.weapzoomTime) / (float)weapzoomTimeMs;
+					weapzoomFrac = Com_Clamp(0.0f, 1.0f, weapzoomFrac);
+				}
+
+				weapzoomLerp = cg.weapzoomActive ? weapzoomFrac : (1.0f - weapzoomFrac);
+				if (weapzoomFrac < 1.0f)
+				{
+					if (cg.weapzoomActive)
+					{
+						fov_x = cg.weapzoomStartFov + weapzoomFrac * (weapzoomTarget - cg.weapzoomStartFov);
+					}
+					else
+					{
+						fov_x = cg.weapzoomStartFov + weapzoomFrac * (fov_x - cg.weapzoomStartFov);
+					}
+
+					cg.weapzoomCurrentFov = fov_x;
+				}
+				else
+				{
+					if (cg.weapzoomActive)
+					{
+						fov_x                 = weapzoomTarget;
+						cg.weapzoomStartFov   = weapzoomTarget;
+						cg.weapzoomCurrentFov = weapzoomTarget;
+					}
+					else
+					{
+						cg.weapzoomStartValid = qfalse;
+						cg.weapzoomCurrentFov = fov_x;
+					}
+				}
+			}
+		}
+	}
+
 	if (cg.predictedPlayerState.pm_type == PM_INTERMISSION)
 	{
 		// if in intermission, use a fixed value
@@ -1161,6 +1246,39 @@ static int CG_CalcFov(void)
 	{
 		cg.zoomSensitivity = cg.refdef_current->fov_y / 75.0f;
 	}
+
+	if (weapzoomLerp > 0.0f)
+	{
+		float weapzoomScale    = cg_weapzoomSensitivityScale.value;
+		float weapzoomExplicit = cg_weapzoomSensitivityOverride.value;
+		float baseFov          = cg_fov.value;
+		float weapzoomFov      = (cg.weapzoomCurrentFov > 0.0f) ? cg.weapzoomCurrentFov : cg_weapzoomFov.value;
+		float fovScale         = 1.0f;
+		float targetScale      = 1.0f;
+
+		if (weapzoomScale < 0.0f)
+		{
+			weapzoomScale = 0.0f;
+		}
+
+		if (baseFov > 0.0f && weapzoomFov > 0.0f)
+		{
+			fovScale = tanf(DEG2RAD(weapzoomFov * 0.5f)) / tanf(DEG2RAD(baseFov * 0.5f));
+		}
+
+		if (weapzoomExplicit > 0.0f)
+		{
+			targetScale = weapzoomExplicit;
+		}
+		else
+		{
+			targetScale = weapzoomScale * fovScale;
+		}
+
+		cg.zoomSensitivity *= (1.0f + weapzoomLerp * (targetScale - 1.0f));
+	}
+
+	cg.weapzoomLerp = weapzoomLerp;
 
 	return inwater;
 }
@@ -2012,7 +2130,8 @@ static void CG_DemoRewindFixEffects(void)
 		{
 			cgs.teamChatPos--;
 			cgs.teamLastChatPos--;
-			cgs.teamChatMsgTimes[i] = 0;
+			cgs.teamChatMsgTimes[i]  = 0;
+			cgs.teamChatStartLine[i] = 0;
 			Com_Memset(cgs.teamChatMsgs[i], 0, sizeof(cgs.teamChatMsgs[i]));
 		}
 	}
@@ -2187,6 +2306,53 @@ static void CG_DrawSpawnpoints(void)
 	}
 }
 
+static ID_INLINE void CG_PlayAnnouncementTickTock()
+{
+	// Play ticktock sound based on own team wave timer.
+	if (cg_reinforceTickTock.integer
+	    && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR
+	    && cgs.gamestate == GS_PLAYING)
+	{
+		team_t ownTeam = cgs.clientinfo[cg.clientNum].team;
+		// Keep this offset local to warning sounds so HUD/other reinforcement timing remains unchanged.
+		int warningLeadMsec       = 100;
+		int dwDeployTime          = (ownTeam == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer;
+		int adjustedElapsed       = cgs.aReinfOffset[ownTeam] + (cg.time + warningLeadMsec) - cgs.levelStartTime;
+		int ownReinfTime          = (int)(1 + (dwDeployTime - (adjustedElapsed % dwDeployTime)) * 0.001f);
+		int triggerStartReinfTime = cg_reinforceTickTock.integer;
+		int sequenceIndex;
+		qboolean playTock;
+		qboolean playLoud;
+
+		// CG_CalculateReinfTime() returns 1 for the final full second before wave.
+		if (cg.ownWaveTicktockLastReinfTime != ownReinfTime
+		    && ownReinfTime >= 1
+		    && ownReinfTime <= triggerStartReinfTime)
+		{
+			// Build an index from the first warning second to the final warning second.
+			sequenceIndex = triggerStartReinfTime - ownReinfTime;
+			playTock      = (sequenceIndex & 1) ? qtrue : qfalse;
+			playLoud      = (ownReinfTime == 1) ? qtrue : qfalse;
+
+			if (playTock)
+			{
+				trap_S_StartLocalSound(playLoud ? cgs.media.reinforceTockLoudSound : cgs.media.reinforceTockSound, CHAN_LOCAL_SOUND);
+			}
+			else
+			{
+				trap_S_StartLocalSound(playLoud ? cgs.media.reinforceTickLoudSound : cgs.media.reinforceTickSound, CHAN_LOCAL_SOUND);
+			}
+		}
+
+		cg.ownWaveTicktockLastReinfTime = ownReinfTime;
+	}
+	else
+	{
+		// Reset outside active non-spectator play state so warning can trigger again when re-entering play.
+		cg.ownWaveTicktockLastReinfTime = -1;
+	}
+}
+
 /**
  * @brief CG_PlayAnnouncement
  */
@@ -2317,6 +2483,8 @@ static void CG_PlayAnnouncement()
 			}
 		}
 	}
+
+	CG_PlayAnnouncementTickTock();
 }
 
 /**

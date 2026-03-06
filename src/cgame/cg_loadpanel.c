@@ -454,15 +454,17 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 			}
 		}
 
+		// keep 3:4 original ratio for levelshot picture
+		// to ensure the image isn't stretched
 		trap_R_SetColor(colorBlack);
-		CG_DrawPic(x, 2 + 1, 192, 144, bg_mappic);
+		CG_DrawPic(x, 2 + 1, Ccg_WideXReverse(192), 144, bg_mappic);
 
 		trap_R_SetColor(NULL);
 		x = 16 + cgs.wideXoffset;
-		CG_DrawPic(x, 2, 192, 144, bg_mappic);
+		CG_DrawPic(x, 2, Ccg_WideXReverse(192), 144, bg_mappic);
 
-		x = 16 + cgs.wideXoffset + 80;
-		CG_DrawPic(x, 2 + 6, 20, 20, bg_pin);
+		x = 16 + cgs.wideXoffset + Ccg_WideXReverse(80);
+		CG_DrawPic(x, 2 + 6, Ccg_WideXReverse(20), 20, bg_pin);
 	}
 
 	if (forcerefresh)

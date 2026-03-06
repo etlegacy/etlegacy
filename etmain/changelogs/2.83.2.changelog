@@ -1,0 +1,62 @@
+^dEngine
+
+* Fixed ^8Q_ParseColor^9 not setting Alpha by default to 1 when the value wasn't
+  provided
+* Fixed windows resolution at initialisation when DPI is handle at OS system
+
+^fAndroid
+
+* App no longer minimize when run in Fullscreen and System Bar is expanded
+* Fixed backward compability with older versions of legacy mod
+* Reworked Permisions for App
+* Changed Downloaded Data Location to External Storage of the App so it acts like
+  basepath
+* Fixed issue with demos from external sources not showing up in Replay Menu
+
+^dClient
+
+* Fixed ^8+strafe^9 framerate dependency by normalizing all movement to 125FPS, so
+  ^8m_forward/side^9 behave the same regardless of framerate
+
+^fGeneral
+
+* Fixed ^8cg_autoswitch 1^9 removing rifle grenade when picking up rifle ammo
+* Fixed incorrect objective touch trigger was taking up item when out of range
+* Fixed debriefing scoreboard was parsing incorect data set
+* Prevented ^8/kill^9 command when spawnshield is active (excluding revive)
+
+^fStability & Performance
+
+* Fixed a crash where non-client trigering a door movement was playing a player
+  animation
+* Restored implicit linking of entities via ^8create^9 without reusing an existing
+  bmodel, which is used in some mapscripts
+* Improved Spectator aim-following trace computation
+* Fixed incorrect return values for create/delete script action, causing map errors
+
+^fGraphics
+
+* Fixed tracers displaying incorrectly while spectating player
+* Fixed various 1st person hand animation quirks
+* Reduced z-fighting from 100 to 20 unit to handle some occurence on non-trivial
+  distance
+
+^fUI
+
+* Fixed players name/health crosshair draw time instant fade out
+* Added back version info to development builds loading panel
+* Allowed ^8cg_customCrosshair^9 to be moved with ^8cg_crosshairX/Y^9 cvars
+* Fixed ^8cursorhint^9 text and bar was draw on entity without a valid value
+* Fixed crosshair selection wasn't possible for some crosshair
+* Fixed missing shader for some crosshair
+* Fixed missing crosshair draw in menu option
+* Removed ^8CREDITS^9 from ingame menu, as it is already available from main menu
+
+^fWeapons
+
+* Fixed flamethrower damage on different ^8sv_fps^9 values where on some scenarios
+  the dps gets effectively halved
+* Fixed spread scale for scoped weapon was halved for scoped rifle and divided by
+  almost 15 for FG42, decreasing too fast the spread recovery time
+* Removed slowdown while being scoped
+* Fixed scope / unscope switch time was twice too long

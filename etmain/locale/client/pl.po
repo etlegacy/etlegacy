@@ -45,3 +45,15 @@ msgstr "Anuluj"
 
 msgid "SPACE"
 msgstr "SPACJA"
+
+#: via misc/i18n-sync-pot-files.py
+msgid "say:"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "say_fireteam:"
+msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "say_team:"
+msgstr ""

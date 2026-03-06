@@ -1834,7 +1834,7 @@ int G_Surrender_v(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg
 		Info_SetValueForKey(cs, "w",
 		                    (level.voteInfo.voteTeam == TEAM_AXIS) ? "1" : "0");
 		trap_SetConfigstring(CS_MULTI_MAPWINNER, cs);
-		G_LogExit(va("%s Surrender\n",
+		G_LogExit(va("%s Surrender",
 		             (level.voteInfo.voteTeam == TEAM_AXIS) ?
 		             "Axis" : "Allies"));
 		AP(va("chat \"%s have surrendered!\"",

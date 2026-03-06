@@ -256,8 +256,10 @@ if(BUILD_MOD_PK3)
 	add_custom_command(
 		OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${MODNAME}/${MODNAME}_${ETL_CMAKE_VERSION_SHORT}.pk3
 		COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/etmain ${CMAKE_CURRENT_BINARY_DIR}/${MODNAME}
-		COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_CURRENT_BINARY_DIR}/${MODNAME}/${MODNAME}_${ETL_CMAKE_VERSION_SHORT}.pk3 --format=zip $<TARGET_FILE_NAME:cgame> $<TARGET_FILE_NAME:ui> ${ETMAIN_FILES_SHALLOW_REL}
-		DEPENDS cgame ui ${ETMAIN_FILES} remove_old_pk3_files "${ETMAIN_STAGE_STAMP}"
+		# Version header is generated in the build tree and staged into ui/ for menu includes.
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/etmain/ui/version_generated.h ${CMAKE_CURRENT_BINARY_DIR}/${MODNAME}/ui/version_generated.h
+		COMMAND ${CMAKE_COMMAND} -E tar c ${CMAKE_CURRENT_BINARY_DIR}/${MODNAME}/${MODNAME}_${ETL_CMAKE_VERSION_SHORT}.pk3 --format=zip $<TARGET_FILE_NAME:cgame> $<TARGET_FILE_NAME:ui> ${ETMAIN_FILES_SHALLOW_REL} ui/version_generated.h
+		DEPENDS cgame ui ${ETMAIN_FILES} ${CMAKE_CURRENT_BINARY_DIR}/etmain/ui/version_generated.h remove_old_pk3_files "${ETMAIN_STAGE_STAMP}"
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${MODNAME}/
 		VERBATIM
 	)

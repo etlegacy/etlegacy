@@ -1,0 +1,74 @@
+^dEngine
+
+^fGeneral
+
+* Changed ^8in_mouse^9 cvar to be latched
+* Added ^8CVAR_NODEFAULT^9 and ^8CVAR_ARCHIVE_ND^9 flag. Cvar will not be written to
+  config files when they match the default value and are marked for archive
+
+^fAndroid
+
+^fMacOS
+
+^fUnix
+
+^fWindows
+
+^dClient
+
+^fGeneral
+
+* Restored vanilla ^8activatelean^9 behavior for consistency with 2.60b client with
+  mods which do not implement a toggle.
+
+^fAudio backend
+
+* Replaced ^8s_mixPreStep^9 by ^8s_mixOffset^9 cvar and set value to 0 for improved
+  audio latency
+* Added ^8s_sdlLevelSamps^9 cvar to improved audio latency depending of hardware
+  capability
+
+^dServer
+
+^dRenderer
+
+^dMod
+
+^fGeneral
+
+* Adjusted ^8cg_debugPlayerHitboxes^9 to reflect what server actually does too
+* Added ^8cg_debugBullets^9 which draws trail of the shot
+
+^fStability & Performance
+
+* Fixed ^8pause^9 at certain ^8sv_fps^9 causing visual bug with time
+* Fixed screen shake framerate dependency. The higher fps, the bigger screen shake -
+  forcing screen shake to old 125fps like behaviour
+* Fixed forced prediction error that possibly causes unnecessary commands re-runs
+  which can be CPU intensive
+
+^fAudio
+
+^fGraphics
+
+* Fixed zoom in third person
+ 
+
+^fUI
+
+* Fixed new voicechat sprites drawing through walls
+* Added sprint/breath/weapon charge HUD text components (available in custom HUD)
+* Fixed multilines tooltip height
+* Fixed tooltip parser ^8ui_^9 prefix logic to display them correctly
+* Added ^8cg_healthDynamicColor^9 cvar for dynamic health text coloring
+* Added compass icon scaling based on distance between players :
+  * ^8cg_dynamicIcons^9 dynamic player icon scaling on/off (default off)
+  * ^8cg_dynamicIconsDistance^9 distance between players when scaling down starts
+  * ^8cg_dynamicIconsSize^9 player icon size. command map defaults: compass 5,
+    minimap/sc 20
+  * ^8cg_dynamicIconsMaxScale^9 max scale
+  * ^8cg_dynamicIconsMinScale^9 min scale
+
+^fWeapons
+
+* Fixed airstrike first impact was delayed by 750ms (comparing to vanilla)

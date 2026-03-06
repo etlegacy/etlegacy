@@ -101,7 +101,7 @@ static void CG_Transform(refEntity_t *ref, float scale, float trnsl1, float trns
 	static vec3_t vec1, vec2, vec3;
 
 	// scale
-	if (scale != 0.0 || scale != 1.0)
+	if (scale != 0.0 && scale != 1.0)
 	{
 		VectorScale(ref->axis[0], scale, ref->axis[0]);
 		VectorScale(ref->axis[1], scale, ref->axis[1]);
@@ -2614,15 +2614,28 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
  * @brief
  * Applies per 'cg_fov' shifts of the hands axis when 'cg_gunFovOffset 0'.
  */
+static float CG_GetEffectiveGunFov(void)
+{
+	if (cg_gunFovOffset.integer == 0 && cg.weapzoomStartValid && cg.weapzoomCurrentFov > 0.0f)
+	{
+		return cg.weapzoomCurrentFov;
+	}
+
+	return cg_fov.value;
+}
+
 static void CG_ApplyViewWeaponShift(refEntity_t *hand, vec3_t shifts_90, vec3_t shifts_120)
 {
-	if (cg_fov.integer == 120)
+	float fov    = CG_GetEffectiveGunFov();
+	int   fovInt = (int)fov;
+
+	if (fovInt == 120)
 	{
 		VectorMA(hand->origin, shifts_120[0], up, hand->origin);
 		VectorMA(hand->origin, shifts_120[1], forward, hand->origin);
 		VectorMA(hand->origin, shifts_120[2], right, hand->origin);
 	}
-	else if (cg_fov.integer == 90)
+	else if (fovInt == 90)
 	{
 		VectorMA(hand->origin, shifts_90[0], up, hand->origin);
 		VectorMA(hand->origin, shifts_90[1], forward, hand->origin);
@@ -2630,7 +2643,7 @@ static void CG_ApplyViewWeaponShift(refEntity_t *hand, vec3_t shifts_90, vec3_t 
 	}
 	else
 	{
-		float fov = (cg_fov.value < 90) ? 90 : cg_fov.value;
+		fov = (fov < 90) ? 90 : fov;
 		// interpolate via the distance of 'shifts_90' and 'shifts_120'
 		VectorMA(hand->origin,
 		         shifts_120[0] - ((120.0f - fov) * ((shifts_120[0] - shifts_90[0]) / 30)),
@@ -2785,9 +2798,9 @@ void CG_AddViewWeapon(playerState_t *ps)
 	}
 
 	// drop gun lower at higher fov
-	if (cg_fov.value >= 75)
+	if (CG_GetEffectiveGunFov() >= 75)
 	{
-		fovOffset = -0.2f * (cg_fov.value - (cg_gunFovOffset.integer ? cg_gunFovOffset.integer : 90 /* ETL dyn fov values were determined with 90 as reference */));
+		fovOffset = -0.2f * (CG_GetEffectiveGunFov() - (cg_gunFovOffset.integer ? cg_gunFovOffset.integer : 90 /* ETL dyn fov values were determined with 90 as reference */));
 	}
 	else
 	{
@@ -3334,7 +3347,9 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 
 	cg.mortarImpactTime = -2;
 
-	if (cg_weapaltSwitches.integer && lastWeapon != GetWeaponTableData(newWeapon)->weapAlts)
+	// Always keep selected weapon in sync with attachment/silencer state.
+	// This prevents bypassing alt attach/detach animations via wheel switching.
+	if (lastWeapon != GetWeaponTableData(newWeapon)->weapAlts)
 	{
 		if (((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && !(GetWeaponTableData(newWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED) && (cg.pmext.silencedSideArm & 1))
 		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(newWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED) && !(cg.pmext.silencedSideArm & 1))

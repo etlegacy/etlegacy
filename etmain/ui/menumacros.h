@@ -31,7 +31,7 @@
  * @file menumacros.h
  */
 
-#include "ui/git_version.h"
+#include "ui/version_generated.h"
 
 #ifndef INCLUDE_MENUMACROS_H
 #define INCLUDE_MENUMACROS_H
@@ -1266,6 +1266,16 @@
 			action {                                                                                             \
 				play "sound/menu/filter.wav" ;                                                                   \
 			}                                                                                                    \
+		}
+
+#define LINE(LINE_X, LINE_Y, LINE_W, LINE_H, LINE_FILLCOLOR)                                 \
+		itemDef {                                                                            \
+			group GROUP_NAME                                                                 \
+			rect $evalfloat(LINE_X) $evalfloat(LINE_Y) $evalfloat(LINE_W) $evalfloat(LINE_H) \
+			style WINDOW_STYLE_FILLED                                                        \
+			backcolor LINE_FILLCOLOR                                                         \
+			visible 1                                                                        \
+			decoration                                                                       \
 		}
 
 #endif // #ifndef INCLUDE_MENUMACROS_H

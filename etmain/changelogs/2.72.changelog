@@ -1,0 +1,32 @@
+^dEngine
+
+* Rework of download code
+
+^fClient
+
+* Expanded et:// protocol
+* Updated icon
+* Request servers from ET:L master server
+* Disabled SDL2 Joystick code to avoid possible crash when gamepads are connected
+
+^fServer
+
+* Fixed vanilla mod compatibilty
+* Fixed SV_Demo_Record_f for sv_maxclients 64
+* Added configurable attack log prints to console
+* Fixed sv_protect 1 (possibly) and added challenge size check
+* Added part of the ioq3 com_frame code to fix cpu usage issue
+* Added option for dedicated servers to receive updateinfo packages
+* Added protection of SV_CheckDRDoS against time wrapping
+* Send heartbeat to ET:L master server
+* Don’t force snaps to 30 - use sv_fps instead
+
+^dMod
+
+* Removed cg_railTrailTime
+* Fixed wrong maxclients count in server browser (Windows only)
+* Fixed scoped rifles generating same stats as standard rifles
+* Fixed LUA  et_Damage callback not taking distance and HS into account
+* Fixed compatibility issue with older linux GLIBC versions
+
+... we did also fix tons of defects detected by coverity.

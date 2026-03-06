@@ -1,0 +1,88 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define WINDOW_X		16
+#define WINDOW_Y		16
+#define WINDOW_WIDTH	608
+#define WINDOW_HEIGHT	448
+#define GROUP_NAME		"grpCreditsAttributions"
+
+// Attributions Menu //
+menuDef {
+	name		"credits_attributions"
+	visible		0
+	fullscreen	0
+	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style		WINDOW_STYLE_FILLED
+
+	onESC {
+		close credits_attributions ;
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif
+	}
+
+// Window //
+	itemDef {
+		name		"window"
+		group		GROUP_NAME
+		rect		0 0 WINDOW_WIDTH WINDOW_HEIGHT
+		style		WINDOW_STYLE_FILLED
+		backcolor	0 0 0 .8
+		border		WINDOW_BORDER_FULL
+		bordercolor	.5 .5 .5 .5
+		visible		1
+		decoration
+	}
+
+// Logo //
+	itemDef {
+		name		"headerLogo"
+		group		GROUP_NAME
+		rect		6 20 $evalfloat(WINDOW_WIDTH-12) 16
+		text		_("ATTRIBUTIONS")
+		textfont	UI_FONT_ARIBLK_16
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.3
+		textalign	ITEM_ALIGN_CENTER
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textaligny	14
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+// Credits Sections //
+#define CREDITS_Y	30
+
+// Sounds //
+	itemDef {
+		name		"headerSounds"
+		group		GROUP_NAME
+		rect		6 $evalfloat(CREDITS_Y+30) $evalfloat(WINDOW_WIDTH-12) 12
+		text		_("SOUNDS")
+		textfont	UI_FONT_ARIBLK_16
+		textstyle	ITEM_TEXTSTYLE_SHADOWED
+		textscale	.19
+		textalign	ITEM_ALIGN_CENTER
+		textalignx	$evalfloat(.5*(WINDOW_WIDTH-12))
+		textaligny	10
+		forecolor	1 1 1 1
+		visible		1
+		decoration
+	}
+
+	LABELWHITE( 6, CREDITS_Y+46, WINDOW_WIDTH-12, 10, "Ticking Clock 2.WAV by vince2323 -- https://freesound.org/s/408303/ -- License: Attribution 4.0", .2, ITEM_ALIGN_CENTER, (.5*(WINDOW_WIDTH-12)), 8 )
+
+// Buttons //
+#ifdef FUI
+	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_attributions ; open main )
+#else
+	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_attributions ; open ingame_main )
+#endif
+	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "ET LEGACY", .3, 14, close credits_attributions ; open credits_etlegacy )
+	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("SPLASH DAMAGE"), .3, 14, close credits_attributions ; open credits_splashdamage )
+}

@@ -8,10 +8,6 @@
 #define WINDOW_HEIGHT   448
 #define GROUP_NAME      "grpOptionsSystem"
 
-// Subwindows //
-#define SUBWINDOW_WIDTH_L       .50 * (WINDOW_WIDTH - 18)
-#define SUBWINDOW_WIDTH_R       .50 * (WINDOW_WIDTH - 18)
-
 menuDef {
 	name        "options_system"
 	visible     0
@@ -42,176 +38,187 @@ menuDef {
 
 // Simple graphics //
 #ifdef ETLEGACY
-#define GRAPHICS_Y 32
-	SUBWINDOW(6, GRAPHICS_Y, (SUBWINDOW_WIDTH_L), 160, _("GRAPHICS"))
-	MULTIACTION(8, GRAPHICS_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Quality Preset:"), .2, 8, "ui_glPreset", cvarFloatList { "Very Low" 3 "Low" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glPreset", _("Set overall video quality"))
-	COMBO(8, GRAPHICS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Set rendering resolution"))
-	NUMERICFIELD(8, GRAPHICS_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Custom Width:"), .2, 8, "r_customwidth", 5, _("Specify custom resolution width (requires custom resolution set)"))
-	NUMERICFIELD(8, GRAPHICS_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Custom Height:"), .2, 8, "r_customheight", 5, _("Specify custom resolution height (requires custom resolution set)"))
-	COMBO(8, GRAPHICS_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Display Mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Set display mode"))
-	YESNO(8, GRAPHICS_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, _("Center Window:"), .2, 8, "ui_r_centerwindow", _("Center window in windowed mode"))
-	CVARFLOATLABEL(8, GRAPHICS_Y + 88, (SUBWINDOW_WIDTH_L)-6, 10, "r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
-	SLIDER(8, GRAPHICS_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, _("Display Gamma:"), .2, 8, "r_gamma" 1.3 1 3, _("Set display gamma (requires vid_restart if using software gamma)"))
-	YESNO(8, GRAPHICS_Y + 100, (SUBWINDOW_WIDTH_L)-4, 10, _("Ignore Hardware Gamma:"), .2, 8, "ui_r_ignorehwgamma", _("Ignore hardware gamma and use software gamma instead"))
-	MULTI(8, GRAPHICS_Y + 112, (SUBWINDOW_WIDTH_L)-4, 10, _("Intensity:"), .2, 8, "ui_r_intensity", cvarFloatList { "1.0" 1.0 "1.1" 1.1 "1.2" 1.2 "1.3" 1.3 "1.4" 1.4 "1.5" 1.5 }, _("Set the color intensity of textures"))
-	MULTI(8, GRAPHICS_Y + 124, (SUBWINDOW_WIDTH_L)-4, 10, _("Map Overbright Bits:"), .2, 8, "ui_r_mapoverbrightbits", cvarFloatList { "Very Dark" 0 "Dark" 1 "Normal" 2 "Bright" 3 }, _("Set texture brightness of the world"))
-	YESNO(8, GRAPHICS_Y + 136, (SUBWINDOW_WIDTH_L)-4, 10, _("Overbright Bits:"), .2, 8, "ui_r_overBrightBits", _("Set overall screen brightness (requires hardware gamma)"))
-	MULTI(8, GRAPHICS_Y + 148, (SUBWINDOW_WIDTH_L)-4, 10, _("Max FPS:"), .2, 8, "com_maxfps", cvarFloatList { "Low (43 FPS)" 43 "Medium (76 FPS)" 76 "High (125 FPS)" 125 "Very High (250 FPS)" 250 }, _("Set the FPS limit"))
+#define GRAPHICS_Y SUBWINDOW_OPTION_Y_START
+#define GRAPHICS_H SUBWINDOW_OPTION_COMPUTE_H(12)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X1_START, GRAPHICS_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, GRAPHICS_H, _("GRAPHICS"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 1), SUBWINDOW_OPTION_WIDTH_L, 10, _("Quality Preset:"), .2, 8, "ui_glPreset", cvarFloatList { "Very Low" 3 "Low" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glPreset", _("Set overall video quality"))
+	COMBO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 2), SUBWINDOW_OPTION_WIDTH_L, 10, _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Set rendering resolution"))
+	NUMERICFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 3), SUBWINDOW_OPTION_WIDTH_L, 10, _("Custom Width:"), .2, 8, "r_customwidth", 5, _("Specify custom resolution width (requires custom resolution set)"))
+	NUMERICFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 4), SUBWINDOW_OPTION_WIDTH_L, 10, _("Custom Height:"), .2, 8, "r_customheight", 5, _("Specify custom resolution height (requires custom resolution set)"))
+	COMBO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 5), SUBWINDOW_OPTION_WIDTH_L, 10, _("Display Mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Set display mode"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 6), SUBWINDOW_OPTION_WIDTH_L, 10, _("Center Window:"), .2, 8, "ui_r_centerwindow", _("Center window in windowed mode"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 7), (SUBWINDOW_OPTION_WIDTH_L)-6, 10, "r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_L), 8)
+	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 7), SUBWINDOW_OPTION_WIDTH_L, 10, _("Display Gamma:"), .2, 8, "r_gamma" 1.3 1 3, _("Set display gamma (requires vid_restart if using software gamma)"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 8), SUBWINDOW_OPTION_WIDTH_L, 10, _("Ignore Hardware Gamma:"), .2, 8, "ui_r_ignorehwgamma", _("Ignore hardware gamma and use software gamma instead"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 9), SUBWINDOW_OPTION_WIDTH_L, 10, _("Intensity:"), .2, 8, "ui_r_intensity", cvarFloatList { "1.0" 1.0 "1.1" 1.1 "1.2" 1.2 "1.3" 1.3 "1.4" 1.4 "1.5" 1.5 }, _("Set the color intensity of textures"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 10), SUBWINDOW_OPTION_WIDTH_L, 10, _("Map Overbright Bits:"), .2, 8, "ui_r_mapoverbrightbits", cvarFloatList { "Very Dark" 0 "Dark" 1 "Normal" 2 "Bright" 3 }, _("Set texture brightness of the world"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 11), SUBWINDOW_OPTION_WIDTH_L, 10, _("Overbright Bits:"), .2, 8, "ui_r_overBrightBits", _("Set overall screen brightness (requires hardware gamma)"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 12), SUBWINDOW_OPTION_WIDTH_L, 10, _("Max FPS:"), .2, 8, "com_maxfps", cvarFloatList { "Low (43 FPS)" 43 "Medium (76 FPS)" 76 "High (125 FPS)" 125 "Very High (250 FPS)" 250 }, _("Set the FPS limit"))
 
 // Advanced graphics //
-#define GRAPHICSADVANCED_Y 196
-	SUBWINDOW(6, GRAPHICSADVANCED_Y, (SUBWINDOW_WIDTH_L), 208, _("ADVANCED GRAPHICS"))
-	YESNOACTION(8, GRAPHICSADVANCED_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Low Quality Sky:"), .2, 8, "r_fastsky", uiScript glPreset, _("Toggle whether the detailed skybox is drawn or just a basic sky"))
+#define GRAPHICSADVANCED_Y (GRAPHICS_Y + GRAPHICS_H + SUBWINDOW_OPTION_Y_PADDING)
+#define GRAPHICSADVANCED_H SUBWINDOW_OPTION_COMPUTE_H(17)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X1_START, GRAPHICSADVANCED_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, GRAPHICSADVANCED_H, _("ADVANCED GRAPHICS"))
+	YESNOACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 1), SUBWINDOW_OPTION_WIDTH_L, 10, _("Draw Sky Box Ents:"), .2, 8, "ui_cg_skybox", uiScript glPreset, _("Toggle drawing the skybox portal scene"))
+	YESNOACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 2), SUBWINDOW_OPTION_WIDTH_L, 10, _("Low Quality Sky:"), .2, 8, "r_fastsky", uiScript glPreset, _("Toggle whether the detailed skybox is drawn or just a basic sky"))
 	// FIXME: fix cg_shadows >= 2
-	// MULTIACTION( 8, GRAPHICSADVANCED_Y+28, (SUBWINDOW_WIDTH_L)-4, 10, _("Shadow Detail:"), .2, 8, "ui_cg_shadows", cvarFloatList { "None" 0 "Blob" 1 /*"Stencil shadows" 2 "Projection shadows" 3 "Polygon shadows" 4 */}, uiScript glCustom, _("Set shadow details") )
-	YESNOACTION(8, GRAPHICSADVANCED_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Dynamic Shadows:"), .2, 8, "cg_shadows", uiScript glPreset, _("Draw shadows for dynamic game objects"))
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Texture Detail:"), .2, 8, "ui_r_picmip", cvarFloatList { "Low" 3 "Medium" 2 "High" 1 "Very High" 0 }, uiScript glPreset, _("Set texture resolution"))
+	// MULTIACTION( 8, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 2), SUBWINDOW_OPTION_WIDTH_L, 10, _("Shadow Detail:"), .2, 8, "ui_cg_shadows", cvarFloatList { "None" 0 "Blob" 1 /*"Stencil shadows" 2 "Projection shadows" 3 "Polygon shadows" 4 */}, uiScript glCustom, _("Set shadow details") )
+	YESNOACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 3), SUBWINDOW_OPTION_WIDTH_L, 10, _("Dynamic Shadows:"), .2, 8, "cg_shadows", uiScript glPreset, _("Draw shadows for dynamic game objects"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 4), SUBWINDOW_OPTION_WIDTH_L, 10, _("Texture Detail:"), .2, 8, "ui_r_picmip", cvarFloatList { "Low" 3 "Medium" 2 "High" 1 "Very High" 0 }, uiScript glPreset, _("Set texture resolution"))
 	// add options 0 - disabled, 1 - single path, 2 - path
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Dynamic Lights:"), .2, 8, "ui_r_dynamiclight", cvarFloatList { "Disabled" 0 "Enabled (Single-pass)" 1 "Enabled (Multi-pass)" 2 }, uiScript glPreset, _("Enable dynamic lighting effects"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 5), SUBWINDOW_OPTION_WIDTH_L, 10, _("Dynamic Lights:"), .2, 8, "ui_r_dynamiclight", cvarFloatList { "Disabled" 0 "Enabled (Single-pass)" 1 "Enabled (Multi-pass)" 2 }, uiScript glPreset, _("Enable dynamic lighting effects"))
 	// check this if ET supports same way
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Geometric Detail:"), .2, 8, "ui_r_lodscale", cvarFloatList { "Lowest" 0 "Medium" 5 "High" 20 }, uiScript glPreset; uiScript update "r_lodscale", _("Set level of details scale distance"))
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, _("Texture Bits:"), .2, 8, "ui_r_texturebits", cvarFloatList { "Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glPreset; uiScript update "r_colorbits", _("Set the number of bits for textures"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 6), SUBWINDOW_OPTION_WIDTH_L, 10, _("Geometric Detail:"), .2, 8, "ui_r_lodscale", cvarFloatList { "Lowest" 0 "Medium" 5 "High" 20 }, uiScript glPreset; uiScript update "r_lodscale", _("Set level of details scale distance"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 7), SUBWINDOW_OPTION_WIDTH_L, 10, _("Texture Bits:"), .2, 8, "ui_r_texturebits", cvarFloatList { "Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glPreset; uiScript update "r_colorbits", _("Set the number of bits for textures"))
 	// "GL_NEAREST" "GL_LINEAR" "GL_NEAREST_MIPMAP_NEAREST" "GL_LINEAR_MIPMAP_NEAREST" "GL_NEAREST_MIPMAP_LINEAR" "GL_LINEAR_MIPMAP_LINEAR"
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, _("Texture Filtering:"), .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glPreset, _("Set texture filtering mode"))
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 100, (SUBWINDOW_WIDTH_L)-4, 10, _("Anisotropic Filtering:"), .2, 8, "ui_r_ext_texture_filter_anisotropic", cvarFloatList { "Disabled" 0 "Medium (4)" 4 "High (8)" 8 "Very High (16)" 16 }, uiScript glPreset, _("Set anisotropic filtering level"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 8), SUBWINDOW_OPTION_WIDTH_L, 10, _("Texture Filtering:"), .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glPreset, _("Set texture filtering mode"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 9), SUBWINDOW_OPTION_WIDTH_L, 10, _("Anisotropic Filtering:"), .2, 8, "ui_r_ext_texture_filter_anisotropic", cvarFloatList { "Disabled" 0 "Medium (4)" 4 "High (SUBWINDOW_OPTION_X1_START)" 8 "Very High (16)" 16 }, uiScript glPreset, _("Set anisotropic filtering level"))
 #ifndef ANDROID
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 112, (SUBWINDOW_WIDTH_L)-4, 10, _("Anti-Aliasing:"), .2, 8, "ui_r_ext_multisample", cvarFloatList { "Off" 0 "x2" 2 "x4" 4 "x8" 8 "x16" 16 }, uiScript glPreset, _("Set MSAA level"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 10), SUBWINDOW_OPTION_WIDTH_L, 10, _("Anti-Aliasing:"), .2, 8, "ui_r_ext_multisample", cvarFloatList { "Off" 0 "x2" 2 "x4" 4 "x8" 8 "x16" 16 }, uiScript glPreset, _("Set MSAA level"))
 #else
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 112, (SUBWINDOW_WIDTH_L)-4, 10, _("Anti-Aliasing:"), .2, 8, "ui_r_ext_multisample", cvarFloatList { "Off" 0 "x2" 2 "x4" 4 }, uiScript glPreset, _("Set MSAA level"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 10), SUBWINDOW_OPTION_WIDTH_L, 10, _("Anti-Aliasing:"), .2, 8, "ui_r_ext_multisample", cvarFloatList { "Off" 0 "x2" 2 "x4" 4 }, uiScript glPreset, _("Set MSAA level"))
 #endif
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 124, (SUBWINDOW_WIDTH_L)-4, 10, _("Color Depth:"), .2, 8, "ui_r_colorbits", cvarFloatList { "Desktop Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glPreset, _("Set color depth"))
-	YESNOACTION(8, GRAPHICSADVANCED_Y + 136, (SUBWINDOW_WIDTH_L)-4, 10, _("Detail Textures:"), .2, 8, "ui_r_detailtextures", uiScript glPreset, _("Enable use of detail textures"))
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 148, (SUBWINDOW_WIDTH_L)-4, 10, _("Depth Buffer:"), .2, 8, "ui_r_depthbits", cvarFloatList { "Default" 0 "16-bit" 16 "24-bit" 24 }, uiScript glPreset, _("Set the number of desired depth bits"))
-	YESNOACTION(8, GRAPHICSADVANCED_Y + 160, (SUBWINDOW_WIDTH_L)-4, 10, _("Compress Textures:"), .2, 8, "ui_r_ext_compressed_textures", uiScript glPreset, _("Enable texture compression"))
-	YESNO(8, GRAPHICSADVANCED_Y + 172, (SUBWINDOW_WIDTH_L)-4, 10, _("Sync Every Frame:"), .2, 8, "ui_r_finish", _("Force renderer commands to finish before new commands are sent"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 11), SUBWINDOW_OPTION_WIDTH_L, 10, _("Color Depth:"), .2, 8, "ui_r_colorbits", cvarFloatList { "Desktop Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glPreset, _("Set color depth"))
+	YESNOACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 12), SUBWINDOW_OPTION_WIDTH_L, 10, _("Detail Textures:"), .2, 8, "ui_r_detailtextures", uiScript glPreset, _("Enable use of detail textures"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 13), SUBWINDOW_OPTION_WIDTH_L, 10, _("Depth Buffer:"), .2, 8, "ui_r_depthbits", cvarFloatList { "Default" 0 "16-bit" 16 "24-bit" 24 }, uiScript glPreset, _("Set the number of desired depth bits"))
+	YESNOACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 14), SUBWINDOW_OPTION_WIDTH_L, 10, _("Compress Textures:"), .2, 8, "ui_r_ext_compressed_textures", uiScript glPreset, _("Enable texture compression"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 15), SUBWINDOW_OPTION_WIDTH_L, 10, _("Sync Every Frame:"), .2, 8, "ui_r_finish", _("Force renderer commands to finish before new commands are sent"))
 
-	BUTTON(8 + .5 * ((SUBWINDOW_WIDTH_L)-184), GRAPHICSADVANCED_Y + 186, 184, 14, _("SET RECOMMENDED"), .24, 11, uiScript vidReset ; uiScript systemCvarsReset ; open rec_restart)
+	BUTTON(SUBWINDOW_OPTION_X1_START + .5 * ((SUBWINDOW_OPTION_WIDTH_L)-184), SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 16), 184, 14, _("SET RECOMMENDED"), .24, 11, uiScript vidReset ; uiScript systemCvarsReset ; open rec_restart)
 
 #else
 // Other clients      //
-#define GRAPHICS_Y 32
-	SUBWINDOW(6, GRAPHICS_Y, (SUBWINDOW_WIDTH_L), 148, _("GRAPHICS"))
-	MULTIACTION(8, GRAPHICS_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Quality Preset:"), .2, 8, "ui_glPreset", cvarFloatList { "Very Low" 3 "Low" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glPreset", _("Set overall video quality"))
-	MULTI(8, GRAPHICS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Resolution:"), .2, 8, "ui_r_mode", VANILLA_RESOLUTIONS, _("Set rendering resolution"))
-	NUMERICFIELD(8, GRAPHICS_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Custom Width:"), .2, 8, "r_customwidth", 5, _("Specify custom resolution width (requires custom resolution set)"))
-	NUMERICFIELD(8, GRAPHICS_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Custom Height:"), .2, 8, "r_customheight", 5, _("Specify custom resolution height (requires custom resolution set)"))
-	MULTI(8, GRAPHICS_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Display Mode:"), .2, 8, "ui_r_fullscreen", VANILLA_WINDOWMODES, _("Set display mode"))
-	CVARFLOATLABEL(8, GRAPHICS_Y + 76, (SUBWINDOW_WIDTH_L)-6, 10, "r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
-	SLIDER(8, GRAPHICS_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, _("Display Gamma:"), .2, 8, "r_gamma" 1.3 1 3, _("Set display gamma (requires vid_restart if using software gamma)"))
-	YESNO(8, GRAPHICS_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, _("Ignore Hardware Gamma:"), .2, 8, "ui_r_ignorehwgamma", _("Ignore hardware gamma and use software gamma instead"))
-	MULTI(8, GRAPHICS_Y + 100, (SUBWINDOW_WIDTH_L)-4, 10, _("Intensity:"), .2, 8, "ui_r_intensity", cvarFloatList { "1.0" 1.0 "1.1" 1.1 "1.2" 1.2 "1.3" 1.3 "1.4" 1.4 "1.5" 1.5 }, _("Set the color intensity of textures"))
-	MULTI(8, GRAPHICS_Y + 112, (SUBWINDOW_WIDTH_L)-4, 10, _("Map Overbright Bits:"), .2, 8, "ui_r_mapoverbrightbits", cvarFloatList { "0" 0 "1" 1 "2" 2 "3" 3 }, _("Set texture brightness of the world"))
-	YESNO(8, GRAPHICS_Y + 124, (SUBWINDOW_WIDTH_L)-4, 10, _("Overbright Bits:"), .2, 8, "ui_r_overBrightBits", _("Set overall screen brightness (requires hardware gamma)"))
-	MULTI(8, GRAPHICS_Y + 136, (SUBWINDOW_WIDTH_L)-4, 10, _("Max FPS:"), .2, 8, "com_maxfps", cvarFloatList { "Low (43 FPS)" 43 "Medium (76 FPS)" 76 "High (125 FPS)" 125 "Very High (250 FPS)" 250 }, _("Set the FPS limit"))
+#define GRAPHICS_Y SUBWINDOW_OPTION_Y_START
+#define GRAPHICS_H SUBWINDOW_OPTION_COMPUTE_H(11)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X1_START, GRAPHICS_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, GRAPHICS_H, _("GRAPHICS"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 1), SUBWINDOW_OPTION_WIDTH_L, 10, _("Quality Preset:"), .2, 8, "ui_glPreset", cvarFloatList { "Very Low" 3 "Low" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glPreset", _("Set overall video quality"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 2), SUBWINDOW_OPTION_WIDTH_L, 10, _("Resolution:"), .2, 8, "ui_r_mode", VANILLA_RESOLUTIONS, _("Set rendering resolution"))
+	NUMERICFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 3), SUBWINDOW_OPTION_WIDTH_L, 10, _("Custom Width:"), .2, 8, "r_customwidth", 5, _("Specify custom resolution width (requires custom resolution set)"))
+	NUMERICFIELD(SUBWINDOW_OPTION_X1_START, GRAPHICS_Y + 52SUBWINDOW_OPTION_COMPUTE_Y (GRAPHICS_Y, 4), SUBWINDOW_OPTION_WIDTH_L, 10, _("Custom Height:"), .2, 8, "r_customheight", 5, _("Specify custom resolution height (requires custom resolution set)"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 5), SUBWINDOW_OPTION_WIDTH_L, 10, _("Display Mode:"), .2, 8, "ui_r_fullscreen", VANILLA_WINDOWMODES, _("Set display mode"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 6), (SUBWINDOW_OPTION_WIDTH_L)-6, 10, "r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_L), 8)
+	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 6), SUBWINDOW_OPTION_WIDTH_L, 10, _("Display Gamma:"), .2, 8, "r_gamma" 1.3 1 3, _("Set display gamma (requires vid_restart if using software gamma)"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 7), SUBWINDOW_OPTION_WIDTH_L, 10, _("Ignore Hardware Gamma:"), .2, 8, "ui_r_ignorehwgamma", _("Ignore hardware gamma and use software gamma instead"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 8), SUBWINDOW_OPTION_WIDTH_L, 10, _("Intensity:"), .2, 8, "ui_r_intensity", cvarFloatList { "1.0" 1.0 "1.1" 1.1 "1.2" 1.2 "1.3" 1.3 "1.4" 1.4 "1.5" 1.5 }, _("Set the color intensity of textures"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 9), SUBWINDOW_OPTION_WIDTH_L, 10, _("Map Overbright Bits:"), .2, 8, "ui_r_mapoverbrightbits", cvarFloatList { "0" 0 "1" 1 "2" 2 "3" 3 }, _("Set texture brightness of the world"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 10), SUBWINDOW_OPTION_WIDTH_L, 10, _("Overbright Bits:"), .2, 8, "ui_r_overBrightBits", _("Set overall screen brightness (requires hardware gamma)"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 11), SUBWINDOW_OPTION_WIDTH_L, 10, _("Max FPS:"), .2, 8, "com_maxfps", cvarFloatList { "Low (43 FPS)" 43 "Medium (76 FPS)" 76 "High (125 FPS)" 125 "Very High (250 FPS)" 250 }, _("Set the FPS limit"))
 
 // Advanced graphics //
-#define GRAPHICSADVANCED_Y 184
-	SUBWINDOW(6, GRAPHICSADVANCED_Y, (SUBWINDOW_WIDTH_L), 208, _("ADVANCED GRAPHICS"))
-	YESNOACTION(8, GRAPHICSADVANCED_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Low Quality Sky:"), .2, 8, "ui_r_fastsky", uiScript glPreset, _("Toggle whether the detailed skybox is drawn or just a basic sky"))
-	YESNOACTION(8, GRAPHICSADVANCED_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Dynamic Shadows:"), .2, 8, "ui_cg_shadows", uiScript glPreset, _("Draw shadows for dynamic game objects"))
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Texture Detail:"), .2, 8, "ui_r_picmip", cvarFloatList { "Low" 3 "Medium" 2 "High" 1 "Very High" 0 }, uiScript glPreset, _("Set texture resolution"))
+#define GRAPHICSADVANCED_Y (GRAPHICS_Y + GRAPHICS_H + SUBWINDOW_OPTION_Y_PADDING)
+#define GRAPHICSADVANCED_H SUBWINDOW_OPTION_COMPUTE_H(17)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X1_START, GRAPHICSADVANCED_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, GRAPHICSADVANCED_H, _("ADVANCED GRAPHICS"))
+	YESNOACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 1), SUBWINDOW_OPTION_WIDTH_L, 10, _("Draw Sky Box Ents:"), .2, 8, "ui_cg_skybox", uiScript glPreset, _("Toggle drawing the skybox portal scene"))
+	YESNOACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 2), SUBWINDOW_OPTION_WIDTH_L, 10, _("Low Quality Sky:"), .2, 8, "ui_r_fastsky", uiScript glPreset, _("Toggle whether the detailed skybox is drawn or just a basic sky"))
+	YESNOACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 3), SUBWINDOW_OPTION_WIDTH_L, 10, _("Dynamic Shadows:"), .2, 8, "ui_cg_shadows", uiScript glPreset, _("Draw shadows for dynamic game objects"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 4), SUBWINDOW_OPTION_WIDTH_L, 10, _("Texture Detail:"), .2, 8, "ui_r_picmip", cvarFloatList { "Low" 3 "Medium" 2 "High" 1 "Very High" 0 }, uiScript glPreset, _("Set texture resolution"))
 	// add options 0 - disabled, 1 - single path, 2 - path
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Dynamic Lights:"), .2, 8, "ui_r_dynamiclight", cvarFloatList { "Disabled" 0 "Enabled (Single-pass)" 1 "Enabled (Multi-pass)" 2 }, uiScript glPreset, _("Enable dynamic lighting effects"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 5), SUBWINDOW_OPTION_WIDTH_L, 10, _("Dynamic Lights:"), .2, 8, "ui_r_dynamiclight", cvarFloatList { "Disabled" 0 "Enabled (Single-pass)" 1 "Enabled (Multi-pass)" 2 }, uiScript glPreset, _("Enable dynamic lighting effects"))
 	// check this if ET supports same way
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Geometric Detail:"), .2, 8, "ui_r_lodscale", cvarFloatList { "Lowest" 0 "Medium" 5 "High" 20 }, uiScript glPreset; uiScript update "r_lodscale", _("Set level of details scale distance"))
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, _("Texture Bits:"), .2, 8, "ui_r_texturebits", cvarFloatList { "Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glPreset; uiScript update "r_texturebits", _("Set the number of bits for textures"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 6), SUBWINDOW_OPTION_WIDTH_L, 10, _("Geometric Detail:"), .2, 8, "ui_r_lodscale", cvarFloatList { "Lowest" 0 "Medium" 5 "High" 20 }, uiScript glPreset; uiScript update "r_lodscale", _("Set level of details scale distance"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 7), SUBWINDOW_OPTION_WIDTH_L, 10, _("Texture Bits:"), .2, 8, "ui_r_texturebits", cvarFloatList { "Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glPreset; uiScript update "r_texturebits", _("Set the number of bits for textures"))
 	// "GL_NEAREST" "GL_LINEAR" "GL_NEAREST_MIPMAP_NEAREST" "GL_LINEAR_MIPMAP_NEAREST" "GL_NEAREST_MIPMAP_LINEAR" "GL_LINEAR_MIPMAP_LINEAR"
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, _("Texture Filtering:"), .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glPreset, _("Set texture filtering mode"))
-	YESNOACTION(8, GRAPHICSADVANCED_Y + 100, (SUBWINDOW_WIDTH_L)-4, 10, _("Anisotropic Filtering:"), .2, 8, "ui_r_ext_texture_filter_anisotropic", uiScript glPreset, _("Enable anisotropic filtering"))
-	MULTI(8, GRAPHICSADVANCED_Y + 112, (SUBWINDOW_WIDTH_L)-4, 10, _("AF Level:"), .2, 8, "r_textureAnisotropy", cvarFloatList { "Low (2)" 2 "Medium (4)" 4 "High (8)" 8 "Very High (16)" 16 }, _("Set anisotropic filtering level"))
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 124, (SUBWINDOW_WIDTH_L)-4, 10, _("Color Depth:"), .2, 8, "ui_r_colorbits", cvarFloatList { "Desktop Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glPreset, _("Set color depth"))
-	YESNOACTION(8, GRAPHICSADVANCED_Y + 136, (SUBWINDOW_WIDTH_L)-4, 10, _("Detail Textures:"), .2, 8, "ui_r_detailtextures", uiScript glPreset, _("Enable use of detail textures"))
-	MULTIACTION(8, GRAPHICSADVANCED_Y + 148, (SUBWINDOW_WIDTH_L)-4, 10, _("Depth Buffer:"), .2, 8, "ui_r_depthbits", cvarFloatList { "Default" 0 "16-bit" 16 "24-bit" 24 }, uiScript glPreset, _("Set the number of desired depth bits"))
-	YESNOACTION(8, GRAPHICSADVANCED_Y + 160, (SUBWINDOW_WIDTH_L)-4, 10, _("Compress Textures:"), .2, 8, "ui_r_ext_compressed_textures", uiScript glPreset, _("Enable texture compression"))
-	YESNO(8, GRAPHICSADVANCED_Y + 172, (SUBWINDOW_WIDTH_L)-4, 10, _("Sync Every Frame:"), .2, 8, "ui_r_finish", _("Force renderer commands to finish before new commands are sent"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 8), SUBWINDOW_OPTION_WIDTH_L, 10, _("Texture Filtering:"), .2, 8, "ui_r_texturemode", cvarStrList { "Bilinear"; "GL_LINEAR_MIPMAP_NEAREST"; "Trilinear"; "GL_LINEAR_MIPMAP_LINEAR" }, uiScript glPreset, _("Set texture filtering mode"))
+	YESNOACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 9), SUBWINDOW_OPTION_WIDTH_L, 10, _("Anisotropic Filtering:"), .2, 8, "ui_r_ext_texture_filter_anisotropic", uiScript glPreset, _("Enable anisotropic filtering"))
+	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 10), SUBWINDOW_OPTION_WIDTH_L, 10, _("AF Level:"), .2, 8, "r_textureAnisotropy", cvarFloatList { "Low (2)" 2 "Medium (4)" 4 "High (SUBWINDOW_OPTION_X1_START)" 8 "Very High (16)" 16 }, _("Set anisotropic filtering level"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 11), SUBWINDOW_OPTION_WIDTH_L, 10, _("Color Depth:"), .2, 8, "ui_r_colorbits", cvarFloatList { "Desktop Default" 0 "16-bit" 16 "32-bit" 32 }, uiScript glPreset, _("Set color depth"))
+	YESNOACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 12), SUBWINDOW_OPTION_WIDTH_L, 10, _("Detail Textures:"), .2, 8, "ui_r_detailtextures", uiScript glPreset, _("Enable use of detail textures"))
+	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 13), SUBWINDOW_OPTION_WIDTH_L, 10, _("Depth Buffer:"), .2, 8, "ui_r_depthbits", cvarFloatList { "Default" 0 "16-bit" 16 "24-bit" 24 }, uiScript glPreset, _("Set the number of desired depth bits"))
+	YESNOACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 14), SUBWINDOW_OPTION_WIDTH_L, 10, _("Compress Textures:"), .2, 8, "ui_r_ext_compressed_textures", uiScript glPreset, _("Enable texture compression"))
+	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 15), SUBWINDOW_OPTION_WIDTH_L, 10, _("Sync Every Frame:"), .2, 8, "ui_r_finish", _("Force renderer commands to finish before new commands are sent"))
 
-	BUTTON(8 + .5 * ((SUBWINDOW_WIDTH_L)-184), GRAPHICSADVANCED_Y + 186, 184, 14, _("SET RECOMMENDED"), .24, 11, uiScript vidReset ; uiScript systemCvarsReset ; open rec_restart)
+	BUTTON(SUBWINDOW_OPTION_X1_START + .5 * ((SUBWINDOW_OPTION_WIDTH_L)-184), SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICSADVANCED_Y, 16), 184, 14, _("SET RECOMMENDED"), .24, 11, uiScript vidReset ; uiScript systemCvarsReset ; open rec_restart)
 #endif
 
 // ET: Legacy clients //
 // Right side         //
 #ifdef ETLEGACY
 // LANGUAGE //
-#define LANGUAGE_Y 32
-	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, LANGUAGE_Y, (SUBWINDOW_WIDTH_R), 28, _("LANGUAGE"))
+#define LANGUAGE_Y SUBWINDOW_OPTION_Y_START
+#define LANGUAGE_H SUBWINDOW_OPTION_COMPUTE_H(1)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, LANGUAGE_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, LANGUAGE_H, _("LANGUAGE"))
 	// TODO: use FEEDER_LANGUAGES to automatically show available localizations
-	//MULTI( 6+(SUBWINDOW_WIDTH_L)+6+2, LANGUAGE_Y+16, (SUBWINDOW_WIDTH_L)-4, 10, _("Language:"), .2, 8, "ui_cl_lang", LEGACY_LANGUAGES, _("Set your desired language") )
-	COMBO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, LANGUAGE_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Language:"), .2, 8, "ui_cl_lang", LEGACY_LANGUAGES, none, _("Set your desired language"))
+	//MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(LANGUAGE_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Language:"), .2, 8, "ui_cl_lang", LEGACY_LANGUAGES, _("Set your desired language") )
+	COMBO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(LANGUAGE_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Language:"), .2, 8, "ui_cl_lang", LEGACY_LANGUAGES, none, _("Set your desired language"))
 
 // SCREENSHOTS //
-#define SCREENSHOTS_Y 64
-	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, SCREENSHOTS_Y, (SUBWINDOW_WIDTH_R), 42, _("SCREENSHOTS"))
-	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SCREENSHOTS_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Format:"), .2, 8, "r_screenshotFormat", cvarFloatList { "TGA (lossless)" 0 "JPEG (lossy)" 1 "PNG (lossless)" 2 }, _("Set your preferred screenshot format"))
-	CVARFLOATLABEL(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SCREENSHOTS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, "r_screenshotJpegQuality", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
-	SLIDER(6 + (SUBWINDOW_WIDTH_L)+6 + 2, SCREENSHOTS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("JPEG Quality:"), .2, 8, "r_screenshotJpegQuality" 90 50 100, _("Set the JPEG quality"))
+#define SCREENSHOTS_Y (LANGUAGE_Y + LANGUAGE_H + SUBWINDOW_OPTION_Y_PADDING)
+#define SCREENSHOTS_H SUBWINDOW_OPTION_COMPUTE_H(3)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, SCREENSHOTS_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, SCREENSHOTS_H, _("SCREENSHOTS"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SCREENSHOTS_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Format:"), .2, 8, "r_screenshotFormat", cvarFloatList { "TGA (lossless)" 0 "JPEG (lossy)" 1 "PNG (lossless)" 2 }, _("Set your preferred screenshot format"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SCREENSHOTS_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, "r_screenshotJpegQuality", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_R), 8)
+	SLIDER(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SCREENSHOTS_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, _("JPEG Quality:"), .2, 8, "r_screenshotJpegQuality" 90 50 100, _("Set the JPEG quality"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SCREENSHOTS_Y, 3), SUBWINDOW_OPTION_WIDTH_R, 10, _("Auto Folders:"), .2, 8, "cg_autoFolders", _("Toggle folder prefix to place auto demos and images to folders by year and month"))
 
 // Audio //
-#define AUDIO_Y 110
-	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, AUDIO_Y, (SUBWINDOW_WIDTH_R), 114, _("AUDIO"))
-	CVARFLOATLABEL(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, "s_volume", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
-	SLIDER(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Effects Volume:"), .2, 8, "s_volume" .7 0 1, _("Set the effects volume"))
-	CVARFLOATLABEL(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, "s_musicvolume", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
-	SLIDER(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Music Volume:"), .2, 8, "s_musicvolume" .25 0 1, _("Set the music volume"))
-	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Sound Quality:"), .2, 8, "ui_s_khz", cvarFloatList { "11 khz (low)" 11 "22 khz (medium)" 22 "44 khz (high)" 44 "48 khz (ultra high)" 48 }, _("Set the sound quality"))
-	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Doppler FX:"), .2, 8, "s_doppler", _("Toggle the doppler effect"))
-	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Mute When Minimized:"), .2, 8, "s_muteWhenMinimized", _("Toggle audio mute when window is minimized"))
-	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, _("Mute When Unfocused:"), .2, 8, "s_muteWhenUnfocused", _("Toggle audio mute when window is unfocused"))
-	MULTIACTION(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, _("Sound System:"), .2, 8, "ui_s_initsound", cvarFloatList { "SDL2" 1 "OpenAL" 2 }, uiScript update "ui_s_initsound", _("Set the sound system backend"))
-	MULTIACTION(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 100, (SUBWINDOW_WIDTH_L)-4, 10, _("SDL Sample Count:"), .2, 8, "ui_s_sdlLevelSamps", cvarFloatList { "Default" 0 "Low" 1 "Very Low" 2 }, uiScript update "ui_s_sdlLevelSamps", _("Set SDL sample count. Lower values improve latency but might break audio.\nSet as low as possible, effects are highly dependant on hardware and SDL audio driver.\ns_sdlDevSamps must be set to 0 for this to work."))
+#define AUDIO_Y (SCREENSHOTS_Y + SCREENSHOTS_H + SUBWINDOW_OPTION_Y_PADDING)
+#define AUDIO_H SUBWINDOW_OPTION_COMPUTE_H(8)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, AUDIO_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, AUDIO_H, _("AUDIO"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, "s_volume", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_R), 8)
+	SLIDER(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Effects Volume:"), .2, 8, "s_volume" .7 0 1, _("Set the effects volume"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, "s_musicvolume", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_R), 8)
+	SLIDER(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, _("Music Volume:"), .2, 8, "s_musicvolume" .25 0 1, _("Set the music volume"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 3), SUBWINDOW_OPTION_WIDTH_R, 10, _("Sound Quality:"), .2, 8, "ui_s_khz", cvarFloatList { "11 khz (low)" 11 "22 khz (medium)" 22 "44 khz (high)" 44 "48 khz (ultra high)" 48 }, _("Set the sound quality"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 4), SUBWINDOW_OPTION_WIDTH_R, 10, _("Doppler FX:"), .2, 8, "s_doppler", _("Toggle the doppler effect"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 5), SUBWINDOW_OPTION_WIDTH_R, 10, _("Mute When Minimized:"), .2, 8, "s_muteWhenMinimized", _("Toggle audio mute when window is minimized"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 6), SUBWINDOW_OPTION_WIDTH_R, 10, _("Mute When Unfocused:"), .2, 8, "s_muteWhenUnfocused", _("Toggle audio mute when window is unfocused"))
+	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 7), SUBWINDOW_OPTION_WIDTH_R, 10, _("Sound System:"), .2, 8, "ui_s_initsound", cvarFloatList { "SDL2" 1 "OpenAL" 2 }, uiScript update "ui_s_initsound", _("Set the sound system backend"))
+	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 8), SUBWINDOW_OPTION_WIDTH_R, 10, _("SDL Sample Count:"), .2, 8, "ui_s_sdlLevelSamps", cvarFloatList { "Default" 0 "Low" 1 "Very Low" 2 }, uiScript update "ui_s_sdlLevelSamps", _("Set SDL sample count. Lower values improve latency but might break audio.\nSet as low as possible, effects are highly dependant on hardware and SDL audio driver.\ns_sdlDevSamps must be set to 0 for this to work."))
 
 // Networking //
-#define NETWORK_Y 228
-	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, NETWORK_Y, (SUBWINDOW_WIDTH_R), 42, _("NETWORK"))
-	MULTIACTION(6 + (SUBWINDOW_WIDTH_L)+6 + 2, NETWORK_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Max Packets:"), .2, 8, "ui_cl_maxpackets", cvarFloatList { "Very Low (15)" 15 "Low (30)" 30 "Medium (60)" 60 "High (100)" 100 "Very High (125)" 125 }, uiScript update "ui_cl_maxpackets", _("Cap for upstream data packet transmissions"))
-	MULTIACTION(6 + (SUBWINDOW_WIDTH_L)+6 + 2, NETWORK_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Packet Duplication:"), .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", _("Set number of duplicates for every data packet sent upstream, minimized packetloss"))
+#define NETWORK_Y (AUDIO_Y + AUDIO_H + SUBWINDOW_OPTION_Y_PADDING)
+#define NETWORK_H SUBWINDOW_OPTION_COMPUTE_H(3)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, NETWORK_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, NETWORK_H, _("NETWORK"))
+	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Max Packets:"), .2, 8, "ui_cl_maxpackets", cvarFloatList { "Very Low (15)" 15 "Low (30)" 30 "Medium (SUBWINDOW_OPTION_HEADER_X1_START0)" 60 "High (100)" 100 "Very High (125)" 125 }, uiScript update "ui_cl_maxpackets", _("Cap for upstream data packet transmissions"))
+	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, _("Packet Duplication:"), .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", _("Set number of duplicates for every data packet sent upstream, minimized packetloss"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 3), SUBWINDOW_OPTION_WIDTH_R, 10, "cl_timenudge", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_R), 8)
+	SLIDER(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 3), SUBWINDOW_OPTION_WIDTH_R, 10, _("Time Nudge:"), .2, 8, "cl_timenudge" .25 0 1, _("Allows more or less latency to be added\nin the interest of better smoothness or better responsiveness"))
 
 // Downloads //
-#define DOWNLOADS_Y 274
-	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, DOWNLOADS_Y, (SUBWINDOW_WIDTH_R), 42, _("DOWNLOADS"))
-	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DOWNLOADS_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Get Missing Files:"), .2, 8, "cl_allowDownload", cvarFloatList { "Disabled" 0 "Enabled" 1 "Enabled & No sound" 2 }, _("Download missing files when available"))
-	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DOWNLOADS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Use HTTP/FTP Downloads:"), .2, 8, "cl_wwwDownload", _("Toggle http/ftp downloads"))
-
-// IRC //
-#define IRC_Y 320
-	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, IRC_Y, (SUBWINDOW_WIDTH_R), 102, _("IRC CLIENT"))
-	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, IRC_Y + 16, (SUBWINDOW_WIDTH_R)-4, 10, _("Mode:"), .2, 8, "irc_mode", cvarFloatList { "Disabled" 0 "Direct connect" 1 "Override nickname" 2 "Mute channel" 4 "Direct + Override" 3 "Direct + Mute" 5 "Override + Mute" 6 "Direct + Over. + Mute" 7 }, _("Specify IRC client behavior"))
-	EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, IRC_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Server:"), .2, 8, "irc_server", 25, 18, _("Set IRC server name"))
-	EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, IRC_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Channel #:"), .2, 8, "irc_channel", 25, 18, _("Set IRC channel name (no '#' required)"))
-	NUMERICFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, IRC_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Port:"), .2, 8, "irc_port", 5, _("Set IRC server port"))
-	EDITFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, IRC_Y + 64, (SUBWINDOW_WIDTH_L)-4, 10, _("Nickname:"), .2, 8, "irc_nickname", 25, 18, _("Set IRC nickame"))
-	NUMERICFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, IRC_Y + 76, (SUBWINDOW_WIDTH_L)-4, 10, _("Kick rejoin time ms:"), .2, 8, "irc_kick_rejoin", 5, _("Set auto rejoin time after kick in ms"))
-	NUMERICFIELD(6 + (SUBWINDOW_WIDTH_L)+6 + 2, IRC_Y + 88, (SUBWINDOW_WIDTH_L)-4, 10, _("Reconnect time ms:"), .2, 8, "irc_reconnect_delay", 5, _("Set auto reconnect time in ms"))
-
+#define DOWNLOADS_Y (NETWORK_Y + NETWORK_H + SUBWINDOW_OPTION_Y_PADDING)
+#define DOWNLOADS_H SUBWINDOW_OPTION_COMPUTE_H(2)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, DOWNLOADS_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, DOWNLOADS_H, _("DOWNLOADS"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DOWNLOADS_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Get Missing Files:"), .2, 8, "cl_allowDownload", cvarFloatList { "Disabled" 0 "Enabled" 1 "Enabled & No sound" 2 }, _("Download missing files when available"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DOWNLOADS_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, _("Use HTTP/FTP Downloads:"), .2, 8, "cl_wwwDownload", _("Toggle http/ftp downloads"))
 #else
 // Other clients      //
+// SCREENSHOTS //
+#define SCREENSHOTS_Y (LANGUAGE_Y + LANGUAGE_H + SUBWINDOW_OPTION_Y_PADDING)
+#define SCREENSHOTS_H SUBWINDOW_OPTION_COMPUTE_H(1)
+    SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, SCREENSHOTS_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, SCREENSHOTS_H, _("SCREENSHOTS"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SCREENSHOTS_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Auto Folders:"), .2, 8, "cg_autoFolders", _("Toggle folder prefix to place auto demos and images to folders by year and month"))
+
 // Audio //
-#define AUDIO_Y 32
-	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, AUDIO_Y, (SUBWINDOW_WIDTH_R), 66, _("AUDIO"))
-	CVARFLOATLABEL(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, "s_volume", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
-	SLIDER(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Effects Volume:"), .2, 8, "s_volume" .7 0 1, _("Set the effects volume"))
-	CVARFLOATLABEL(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, "s_musicvolume", .2, ITEM_ALIGN_RIGHT, $evalfloat((SUBWINDOW_WIDTH_L)-6), 8)
-	SLIDER(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Music Volume:"), .2, 8, "s_musicvolume" .25 0 1, _("Set the music volume"))
-	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 40, (SUBWINDOW_WIDTH_L)-4, 10, _("Sound Quality:"), .2, 8, "ui_s_khz", cvarFloatList { "11 khz (low)" 11 "22 khz (medium)" 22 "44 khz (high)" 44 "48 khz (ultra high)" 48 }, _("Set the sound quality"))
-	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, AUDIO_Y + 52, (SUBWINDOW_WIDTH_L)-4, 10, _("Doppler FX:"), .2, 8, "s_doppler", _("Toggle the doppler effect"))
+#define AUDIO_Y (SCREENSHOTS_Y + SCREENSHOTS_H + SUBWINDOW_OPTION_Y_PADDING)
+#define AUDIO_H SUBWINDOW_OPTION_COMPUTE_H(4)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, AUDIO_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, AUDIO_H, _("AUDIO"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, "s_volume", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_R), 8)
+	SLIDER(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Effects Volume:"), .2, 8, "s_volume" .7 0 1, _("Set the effects volume"))
+	CVARFLOATLABEL(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, "s_musicvolume", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_R), 8)
+	SLIDER(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, _("Music Volume:"), .2, 8, "s_musicvolume" .25 0 1, _("Set the music volume"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 3), SUBWINDOW_OPTION_WIDTH_R, 10, _("Sound Quality:"), .2, 8, "ui_s_khz", cvarFloatList { "11 khz (low)" 11 "22 khz (medium)" 22 "44 khz (high)" 44 "48 khz (ultra high)" 48 }, _("Set the sound quality"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(AUDIO_Y, 4), SUBWINDOW_OPTION_WIDTH_R, 10, _("Doppler FX:"), .2, 8, "s_doppler", _("Toggle the doppler effect"))
 
 // Networking //
-#define NETWORK_Y 102
-	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, NETWORK_Y, (SUBWINDOW_WIDTH_R), 42, _("NETWORK"))
-	MULTIACTION(6 + (SUBWINDOW_WIDTH_L)+6 + 2, NETWORK_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Max Packets:"), .2, 8, "ui_cl_maxpackets", cvarFloatList { "Very Low (15)" 15 "Low (30)" 30 "Medium (60)" 60 "High (100)" 100 "Very High (125)" 125 }, uiScript update "ui_cl_maxpackets", _("Cap for upstream data packet transmissions"))
-	MULTIACTION(6 + (SUBWINDOW_WIDTH_L)+6 + 2, NETWORK_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Packet Duplication:"), .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", _("Set number of duplicates for every data packet sent upstream, minimized packetloss"))
+#define NETWORK_Y (AUDIO_Y + AUDIO_H + SUBWINDOW_OPTION_Y_PADDING)
+#define NETWORK_H SUBWINDOW_OPTION_COMPUTE_H(2)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, NETWORK_Y, SUBWINDOW_OPTION_WIDTH_R, NETWORK_H, _("NETWORK"))
+	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Max Packets:"), .2, 8, "ui_cl_maxpackets", cvarFloatList { "Very Low (15)" 15 "Low (30)" 30 "Medium (SUBWINDOW_OPTION_HEADER_X1_START0)" 60 "High (100)" 100 "Very High (125)" 125 }, uiScript update "ui_cl_maxpackets", _("Cap for upstream data packet transmissions"))
+	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, _("Packet Duplication:"), .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", _("Set number of duplicates for every data packet sent upstream, minimized packetloss"))
 
 // Downloads //
-#define DOWNLOADS_Y 148
-	SUBWINDOW(6 + (SUBWINDOW_WIDTH_L)+6, DOWNLOADS_Y, (SUBWINDOW_WIDTH_R), 42, _("DOWNLOADS"))
-	MULTI(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DOWNLOADS_Y + 16, (SUBWINDOW_WIDTH_L)-4, 10, _("Get Missing Files:"), .2, 8, "cl_allowDownload", cvarFloatList { "Disabled" 0 "Enabled" 1 "Enabled & No sound" 2 }, _("Download missing files when available"))
-	YESNO(6 + (SUBWINDOW_WIDTH_L)+6 + 2, DOWNLOADS_Y + 28, (SUBWINDOW_WIDTH_L)-4, 10, _("Use HTTP/FTP Downloads:"), .2, 8, "cl_wwwDownload", _("Toggle http/ftp downloads"))
-
+#define DOWNLOADS_Y (NETWORK_Y + NETWORK_H + SUBWINDOW_OPTION_Y_PADDING)
+#define DOWNLOADS_H SUBWINDOW_OPTION_COMPUTE_H(2)
+	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, DOWNLOADS_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, DOWNLOADS_H, _("DOWNLOADS"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DOWNLOADS_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Get Missing Files:"), .2, 8, "cl_allowDownload", cvarFloatList { "Disabled" 0 "Enabled" 1 "Enabled & No sound" 2 }, _("Download missing files when available"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DOWNLOADS_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, _("Use HTTP/FTP Downloads:"), .2, 8, "cl_wwwDownload", _("Toggle http/ftp downloads"))
+	DOWNLOADS_Y
 #endif
 
 // Buttons //
-	BUTTON(6, WINDOW_HEIGHT - 24, .33*(WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, uiScript vidReset ; close options_system ; open options)
-    BUTTON(6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, _("EXTENDED"), .3, 14, close options_system ; open options_system_extended )
-	BUTTON(6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("APPLY"), .3, 14,
+	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START, WINDOW_HEIGHT - 24, .33 *(WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, uiScript vidReset ; close options_system ; open options)
+	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, _("EXTENDED"), .3, 14, close options_system ; open options_system_extended)
+	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("APPLY"), .3, 14,
 	       conditionalScript vidrestartIsRequired 2
 	       ("open vid_restart")
 	           ("uiScript systemCvarsApply ; close options_system ; open options"))

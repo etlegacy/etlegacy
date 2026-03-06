@@ -1,0 +1,283 @@
+^dEngine
+
+^fGeneral
+
+* Allowed sending some extra chars in messages, such as ^8%^9, ^8;^9 or ^8"^9
+* Switched splash image to a svg version
+* Fixed pointer issues with ^8Q_TrimStr^9 causing access overflow
+* Added custom entity loading (ETL only)
+* Added ettv protocol support to etlded and add custom tvgame for ettv, see
+  [ETLTV](https://etlegacy.readthedocs.io/en/latest/etltv.html)
+* Added possibility for etlded to act as a client (ettv)
+
+^fAndroid
+
+* Fix position of the Shoot Button dependant on the screen dimensions/dpi
+* Updated SDL to ^82.26.4^9
+* Updated Java to ^811^9
+* When minimized/unforcused App is now storing its state resulting in no more
+  relauching.
+* Fixed USB Keyboard/Mouse Input not being recognized correctly
+* Resized Shoot Button Layout to increase better accessibility
+* Added support for x86 x86_64 Android Devices (only Legacy mod can be runned)
+
+^fRaspberry PI
+
+* Rename naming scheme to match arch64 linux (for more advanced users aarch64 is
+  better term in recognisation that apply for all arch64 distros/cpus)
+
+^fMacOS
+
+* Added omnibot support
+
+^fUnix
+
+^fWindows
+
+* Added DPI Awarness to detect System scaling and apply those to the Game Window
+
+^dClient
+
+^fGeneral
+
+* Added console history. The entries are saved in ^8etl-history^9 file and can stored
+  up to ^82048^9 characters
+* Fixed issues where the keycather changes to console, ui or cgame and some keys or
+  +/- actions bleed thrue
+* Allowed console resizing while open. No need to close and open with a new size with
+  key shortcut.
+* Reworked/Better Support for Gamepads
+* Prevented paste from clipboard using ^8AltGr + V^9, which on some layouts causes
+  problems when trying to type specifics characters suh as ^8@^9
+* Added previously removed ^8ui_finalURL^9
+* Fixed ^8ui_finalURL^9 line ending
+* Increased ^8CMD_BACKUP^9 to 128 via extension
+* Changed ^8com_maxfps^9 cvar up to 500
+
+^dServer
+
+* Added Trackbase statistic functionality 
+* Reworked server demos
+* Enforced temporary ban on both GUID and IP
+* Added ^8cleartempbans^9 command to clear temporary ban list
+* Fixed ^8Z_malloc^9 allocation failure on download when netchan is already buffering
+  too much block
+
+^dRenderer
+
+* Added automatic svg scaling
+* Fixed garbage font where cached image were sharing the same hash values on
+  registration
+* Added back ^8r_sdlDriver^9 cvar for setting video driver (mainly useful on Linux
+  OS)
+* Fixed VRAM usage grows after continuous vid_restarts
+
+^dMod
+
+^fGeneral
+
+* Fixed ref commands list not set on ref promote
+* Improved vote by requiring more than threshold vote ammount
+* Prevented pushing lagged out players
+* Cleared ^8viewDamage^9 buffer on demo rewind
+* Fixed negative total map vote on client disconnection
+* Fixed ^8Last Played^9 count for not eligible map in map vote draw
+* Changed the next map loaded to random instead of ^8nextmap^9 in ^8MAP VOTE^9 game
+  type when no vote has been casted by players
+* Prevented dynamite to be trigger on sudden death for defenders
+* Added ^8passvote^9 and ^8cancelvote^9 commands
+* Added XP Battle Sense reward on differents objectives condition : 
+  * 3pts Taking objective item
+  * 5pts Returning objective item
+  * 8pts Capturing objective item
+  * 2pts Capturing spawn flag (flag pole / checkpoint)
+  * 3pts Killing objective carrier
+  * 2pts Killing player on TOI (objective area)
+* Added ^8cg_teamVoiceChatsOnly^9 cvar for better chat filtering
+* Added ^8qsay^9 command to print message without prefix
+* Forced mapnames lowercase for ^8map^9 command
+* Fixed objective disappearing when a player carrying it is revived by using
+  ^8revive^9 command
+* Fixed ^8forcetapout^9 command was possible while game in pause or player frozen
+* Fixed ^8kill^9 was possible when player was wounded while game in pause or player
+  frozen
+* Removed ^8cg_shoutcastDrawPlayers^9 and ^8cg_shoutcastDrawTeamNames^9 shoutcaster
+  cvars
+* Removed ^8cg_drawReinforcementTime^9 cvar
+* Fixed shoutcast keycatcher event handling when limbo menu / HUD editor is showed or
+  resolution has been changed
+* Allowed ^8ref^9 and ^8callvote^9 commands in server console
+* Fixed intermission ^8impkd^9 stats showing only zeros for some players by splitting
+  stats in two differents commands ^8impkd0^9 and ^8impkd1^9
+* Fixed Lua modules won't load if one has a syntax error during pre-compilation
+* Improved vsay commands, clients can choose which variant of the vsay they want to
+  play. Everyone hears the chosen variant.
+* Fixed custom ^8vsay^9 was truncated after first word
+* Fixed velocity was reset when landing on ^8nodamage^9 surface
+* Added ^8g_logTimestamp^9 cvar to control and keep add backward compatible log
+  timestamp formats for parsers
+  * 0 - no timestamp
+  * 1 - integer (ms)
+  * 2 - startup relative time (mmm:ss)
+  * 3 - vanilla ("hh:mm.ss")
+* Updated HUD file version to v3, using HUD name as indentifier instead of index. Old
+  HUD index are compatible as they are converted
+* Protected Alternative HUD, Comp HUD and Shoutcaster against edition. They must be
+  cloned first before modification
+* Fixed landmine limit to prevent overflow when changing ^8team_maxLandmines^9 cvar
+  value
+* Removed rank text from "You have been revived..." center print text
+* Changed default secondary weapon selection to the best one
+* Fixed ^8team^9 command on swapping team was selecting default weapons in case of
+  command flooding or first team join
+* Fixed log stats when player disconnects from limbo were not written to the log file
+* Fixed omni-bot mg42 goal names
+* Enabled spawning when changing entity classname with "set" scriptaction
+* Fixed dlights not updating if spawned after initial map load
+
+^fStability & Performance
+
+* Removed send ^8EV_SHAKE^9 event if out of range of the shake wave
+* Added client prediction optimization (instead of iterating over whole CMD_BACKUP
+  array every frame oldest valid cmd will be saved during snapshot transition frame
+  as future starting point)
+
+^fAudio
+
+^fGraphics
+
+* Added ^8cg_bloodPuff^9 to toggle showing blood puff effect when players are shot
+* Fixed FT icon display on enemies when sprites are disabled
+* Added ^8.svg^9 version of simple items icons
+* Improved brass ejection position to ensure it doesn't obstruct view
+ 
+
+^fUI
+
+* Added missing shader for ^8Fire in the hole^9 icon
+* Fixed wrong computation of x coordinate for environment awareness when icons was
+  behind the player
+* Added ^8cg_drawEnvAwarenessScale^9 cvar for moving icons position relative to
+  screen center
+* Added ^8cg_drawEnvAwarenessIconSize^9 cvar to resize icons
+* Fixed scope mask draw over scoreboard
+* Added larges score abbreviation by thousands
+* Enhanced server browser selection by retaining last selected server during server
+  list load
+* Added focus on connect to IP textBox when opened
+* Removed ^8cg_numPopups^9 cvar
+* Improved bot flag readability
+* Fixed chat button usage in shoutcaster mode
+* Added ^8cg_commandMapTime^9 to control ^8+mapexpand^9 animation speed
+* Fixed animation cut-off when expanding map as a spectator
+* Fixed team map data position for players with ^8noclip^9 on 
+* Fixed spectator freecam was not speclocked correctly
+* Updated ^8huds.hud^9 file to json format
+* Fixed scoreboard tooltip show if alternative features are disabled
+* Added ^8.svg^9 version of crosshairs
+* Added ^8cg_shoutcasterhud^9 cvar to toggle hud to selected from it when becoming
+  shoutcaster
+* Suppressed fireteam invites and proposals from ignored clients
+* Fixed speaker editor handle drag and panels resolution / position on widescreen
+* Fixed antiwarp lagometer
+
+* HUD changes :
+  * Fixed crosshair name revealing disguised enemy covert ops
+  * Fixed crosshair name in 3rd person
+  * Fixed Popup Messages alpha and fade effect
+  * Fixed objectives HUD icon scaling
+  * Added ^8Always draw^9 style option for compass to keep compass draw while map
+    extend is displayed
+  * Changed default component visibility to ^80^9 for
+    fps/ping/speed/lagometer/localtime on default HUD 0 (ETmain)
+  * Fixed no clip weapon dynamic color ammo count
+  * Adjusted icons and spacing on fireteam overlay
+  * Fixed unscaled spacing on fireteam overlay
+  * Added ^8cg_drawCrosshairFade^9 cvar to control delay before fading crosshair
+    information
+  * Fixed crosshair name fade effect for dynamite and mines
+  * Adjusted icons size on follow text
+  * Added thin white border to the simple compass and smaller letters and lines
+  * Fixed weapon icon alignment and alpha color
+  * Fixed proposition/invitation vote text was not displayed
+  * Fixed vote text color
+  * Fixed warmup text color
+  * Added background and border for bar comp
+  * Changed ^8Color Main^9 and ^8Color Secondary^9 to modify bar color instead of
+    background and border color
+  * Changed ^8Background Color^9 and ^8Color Border^9 to modify both
+    background/border of comp and bar
+  * Enable ^8Lerp Color^9 for bar comp
+  * Added ^8Dynamic Color^9 style for ^8healthbar^9 and ^8crosshairbar^9 comp
+  * Changed maximum popup message to be displayed in ^8popupmessage^9 from ^87^9 to
+    ^832^9, depending of componement free space. 
+  * Added multiline support to ^8popupmessage^9 component
+  * Added ^8Scroll Down^9 style option to ^8popupmessage^9 component, starting popup
+    to draw from top instead of bottom
+  * Added ^8popupmessage2^9and ^8popupmessage3^9 comps which behave the same as
+    ^8popupmessage^9 comp
+  * Added ^8Colorless Name^9, ^8Status Color Row^9 and ^8Status Color Row^9 style to
+    fireteam comp to show player status as color in ft and allow forced white names
+  * Added ^8scPlayerListAxis^9, ^8scPlayerListAllies^9, ^8scTeamNamesAxis^9,
+    ^8scTeamNamesAllies^9 shoutcaster componement
+  * Added HUD 5 ^8Shoutcaster HUD^9
+  * Replace ^8status^9 comp with shoutcaster player status
+  * Enhanced ^8RoundTimer^9 comp to work with shoutcaster
+  * Enhanced weapon icons in popup messages point towards the victim when ^8Swap
+    V<->K^9 is toggle
+  * Added ^8draw suffix^9 style option to ^8healthtext^9, ^8breathtext^9,
+    ^8sprinttext^9, ^8chargeweapontext^9 and ^8xptext^9
+
+* HUD Editor
+  * Added a toggle for ^8noise generator^9 in HUD Editor (^8n^9 key)
+  * Removed temporisation on save button from HUD Editor
+  * Added warning message about HUD 0 can't be modify from HUD Editor
+  * Added a toogle for fullscreen display in HUD editor (^8f^9 key)
+  * Added option to show visible component layout only
+  * Added blinking warning message on default HUDs as they can't be modified until
+    cloned
+  * Changes HUD selection by name instead of index
+  * Added grid support for elements alignment (^8o^9, ^8c^9 and ^8d^9 keys)
+  * Added grid alignment option to force element when moved / rezised to be aligned
+    with the grid depending of the grid scale (^8a^9 key)
+
+* Debriefing
+  * Fixed ^8LAST^9 played map indicator index on map vote panel
+  * Fixed "Participation" percent on on map vote panel
+  * Enhanced map vote panel popularity score
+  * Fixed map bias on map vote panel
+  * Enhanced map bias by showing computed map bias for the team advantaged for the
+    selected map on map vote panel
+  * Added panels windows with quick access buttons to each panels availables
+  * Added blinking effects for map vote button when the vote isn't casted
+  * Fixed campaign map list wasn't draw when at least 1 maps was missing localy 
+
+* UI Menu
+  * Added back crosshair cvar in option menu
+  * Added ^8cg_dynamicIcons*^9 cvars on Option View menu
+  * Improved server browser filter description
+
+^fWeapons
+
+* Fixed binocular switching multiple time while moving
+* Added jiggle effect on mobile MG and tank MG
+* Added spread visual crosshair to nested MG and tank MG
+* Increased mines spotting update frequency from ^81000^9 to ^8500^9 ms, back to
+  default vanilla value
+* Fixed an issue where current weapon gets changed even if the removed weapon is not
+  the one currently being held
+* Fixed exploit by ensuring ^8weapalt^9 will not be executed if binoc are used
+* Fixed extra ammo gain for soldier SMG due to add secondary weapon again if it's
+  already added as a primary
+* Fixed flamethrower spawns too many flames with ^8cg_drawGun^9 ^80^9 and ^82^9
+* Fixed riflegrenade being equipped again if player shoots and dies right after
+* Fixed altweapon state not being properly restored when revived
+* Fixed riflegrenade grenade model disappearing if player dies and gets revived
+* Improved flying nade effect fix when getting revived
+* Improved weapon selection when player dies and upon revive has invalid weapon
+  equipped
+* Improved altweapon initialization on respawn (silenced pistols)
+* Fixed pliers not working near TOI on some maps (such as fixed MG on Railgun / Radar
+  or 1st barrier in Bremen)
+* Changed satchel charge fade on player dead instead of wounded
+* Changed mgs nested fire rate from ^850^9ms to ^866^9ms to match ETpro

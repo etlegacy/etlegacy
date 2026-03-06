@@ -192,14 +192,64 @@ static int CG_GetVoiceChatForCommandMap(int voiceChat)
 		return cgs.media.ccVoiceChatShader;
 	}
 
+	if (voiceChat == cgs.media.voiceChatOrangeShader)
+	{
+		return cgs.media.ccVoiceChatOrangeShader;
+	}
+
+	if (voiceChat == cgs.media.greenTick)
+	{
+		return cgs.media.ccGreenTick;
+	}
+
+	if (voiceChat == cgs.media.redCross)
+	{
+		return cgs.media.ccRedCross;
+	}
+
+	if (voiceChat == cgs.media.friendShader)
+	{
+		return cgs.media.ccFriendShader;
+	}
+
 	if (voiceChat == cgs.media.medicIcon)
 	{
 		return cgs.media.ccMedicIcon;
 	}
 
+	if (voiceChat == cgs.media.medicReviveShader)
+	{
+		return cgs.media.ccMedicReviveShader;
+	}
+
 	if (voiceChat == cgs.media.ammoIcon)
 	{
 		return cgs.media.ccAmmoIcon;
+	}
+
+	if (voiceChat == cgs.media.skillPics[SK_EXPLOSIVES_AND_CONSTRUCTION])
+	{
+		return cgs.media.ccskillPics[SK_EXPLOSIVES_AND_CONSTRUCTION];
+	}
+
+	if (voiceChat == cgs.media.skillPics[SK_FIRST_AID])
+	{
+		return cgs.media.ccskillPics[SK_FIRST_AID];
+	}
+
+	if (voiceChat == cgs.media.skillPics[SK_SIGNALS])
+	{
+		return cgs.media.ccskillPics[SK_SIGNALS];
+	}
+
+	if (voiceChat == cgs.media.skillPics[SK_HEAVY_WEAPONS])
+	{
+		return cgs.media.ccskillPics[SK_HEAVY_WEAPONS];
+	}
+
+	if (voiceChat == cgs.media.skillPics[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS])
+	{
+		return cgs.media.ccskillPics[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS];
 	}
 
 	return voiceChat;
@@ -804,8 +854,8 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 		}
 		else
 		{
-			// only see revivables for own team, unless shoutcaster
-			if (mEnt->type == ME_PLAYER_REVIVE && !CG_IsShoutcaster())
+			// only see revivables for own team, unless shoutcaster or in same fireteam
+			if (mEnt->type == ME_PLAYER_REVIVE && !CG_IsShoutcaster() && !CG_IsOnSameFireteam(cg.clientNum, mEnt->data))
 			{
 				return;
 			}
@@ -878,7 +928,7 @@ static void CG_DrawMapEntity(mapEntityData_t *mEnt, float x, float y, float w, f
 			reviveClr[3] = .5f + .5f * (float)((sin(sqrt((double)msec) * 25 * M_TAU_F) + 1) * 0.5);
 
 			trap_R_SetColor(reviveClr);
-			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.medicReviveShader);
+			CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f, icon_pos[1] - icon_extends[1] * 0.5f, icon_extends[0], icon_extends[1], cgs.media.ccMedicReviveShader);
 		}
 		else
 		{
@@ -1653,7 +1703,7 @@ void CG_DrawMap(float x, float y, float w, float h, int mEntFilter, mapScissor_t
 				}
 
 				trap_R_SetColor(reviveClr);
-				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f + 2, icon_pos[1] - icon_extends[1] * 0.5f + 2, icon_extends[0] - 2, icon_extends[1] - 2, cgs.media.medicReviveShader);
+				CG_DrawPic(icon_pos[0] - icon_extends[0] * 0.5f + 2, icon_pos[1] - icon_extends[1] * 0.5f + 2, icon_extends[0] - 2, icon_extends[1] - 2, cgs.media.ccMedicReviveShader);
 				trap_R_SetColor(NULL);
 				return;
 			}
@@ -1807,6 +1857,170 @@ void CG_DrawExpandedAutoMap(void)
 }
 
 /**
+ * @brief CG_DrawCircleCompassCase
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ */
+static void CG_DrawCircleCompassCase(float x, float y, float w, float h, int style)
+{
+	static float lastangle  = 0;
+	static float anglespeed = 0;
+	float        angle;
+	float        diff;
+
+	angle       = (cg.refdefViewAngles[YAW] + 180.f) / 360.f - (0.125f);
+	diff        = AngleSubtract(angle * 360, lastangle * 360) / 360.f;
+	anglespeed /= 1.08f;
+	anglespeed += diff * 0.01f;
+	if (Q_fabs(anglespeed) < 0.00001f)
+	{
+		anglespeed = 0;
+	}
+	lastangle += anglespeed;
+
+	// use the arrow from the decor shader
+	if (style & COMPASS_DECOR)
+	{
+		// keep the direction static in case the dynamic tick or dynamic map is on
+		if (style & COMPASS_DYNAMIC_DIRECTION && !(style & COMPASS_DYNAMIC_TICKS) && style & COMPASS_POINT_TOWARD_NORTH)
+		{
+			CG_DrawRotatedPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassShader, -lastangle + 0.25);
+		}
+		else
+		{
+			CG_DrawPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassShader);
+		}
+	}
+	else if (style & COMPASS_DIRECTION)
+	{
+		// keep the direction static in case the dynamic tick or dynamic map is on
+		if (style & COMPASS_DYNAMIC_DIRECTION && !(style & COMPASS_DYNAMIC_TICKS) && style & COMPASS_POINT_TOWARD_NORTH)
+		{
+			CG_DrawRotatedPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassDirectionShader, -lastangle + 0.25);
+		}
+		else
+		{
+			CG_DrawPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassDirectionShader);
+		}
+	}
+
+	if (style & COMPASS_CARDINAL_POINTS)
+	{
+		trap_R_SetColor(colorLtGrey);
+
+		// force cardinals point to be aligned to direction in case dynamic map is on
+		if (style & COMPASS_DYNAMIC_TICKS || !(style & COMPASS_POINT_TOWARD_NORTH))
+		{
+			// use the tick from the decor shader
+			if (style & COMPASS_DECOR)
+			{
+				CG_DrawRotatedPic(x - w * 0.1275, y - h * 0.1275, w * 1.255, h * 1.255, cgs.media.compass2Shader, lastangle);
+			}
+			else
+			{
+				CG_DrawRotatedPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassCircleTickShader, lastangle);
+			}
+		}
+		else
+		{
+			// use the tick from the decor shader
+			if (style & COMPASS_DECOR)
+			{
+				CG_DrawPic(x - w * 0.1275, y - h * 0.1275, w * 1.255, h * 1.255, cgs.media.compass2Shader);
+			}
+			else
+			{
+				CG_DrawPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassCircleTickShader);
+			}
+		}
+		trap_R_SetColor(NULL);
+	}
+}
+
+#define CARDINAL_POINTS_NUMBER 8
+
+/**
+ * @brief CG_DrawSquareCompassCase
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] style
+ */
+static void CG_DrawSquareCompassCase(float x, float y, float w, float h, int style)
+{
+	if ((style & COMPASS_CARDINAL_POINTS))
+	{
+		float        centerX   = x + (w * .5f);
+		float        centerY   = y + (h * .5f);
+		float        textScale = (w * .01) * 0.22f;
+		float        textPadding;
+		float        offsetX                                 = (w * .01) * 3.f;
+		float        offsetY                                 = (h * .01) * 3.f;
+		fontHelper_t *font                                   = &cgs.media.limboFont2;
+		const char   *cardinalPoints[CARDINAL_POINTS_NUMBER] = { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
+		int          index                                   = 0;
+
+		CG_DrawRect_FixedBorder(x - 0.75f, y - 0.75f, w + 1.5f, h + 1.5f, 2, colorLtGrey);
+
+		if (style & COMPASS_DIRECTION)
+		{
+			// keep the direction static in case the dynamic tick or dynamic map is on
+			if (style & COMPASS_DYNAMIC_DIRECTION && !(style & COMPASS_DYNAMIC_TICKS) && style & COMPASS_POINT_TOWARD_NORTH)
+			{
+				CG_DrawRotatedPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassDirectionShader, (-cg.refdefViewAngles[YAW] - 45) / 360);
+			}
+			else
+			{
+				CG_DrawPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassDirectionShader);
+			}
+		}
+
+		// force cardinals point to be aligned to direction in case dynamic map is on
+		if (style & COMPASS_DYNAMIC_TICKS || !(style & COMPASS_POINT_TOWARD_NORTH))
+		{
+			float angle = -cg.refdefViewAngles[YAW] + 90;
+
+			// keep angle between 0 <-> 360
+			angle = fmodf(angle, 360);
+
+			for (index = 0; index < CARDINAL_POINTS_NUMBER; ++index)
+			{
+				if (angle < 22.5f + (index * 45))
+				{
+					break;
+				}
+			}
+
+			index %= CARDINAL_POINTS_NUMBER;
+		}
+
+		// Top
+		CG_Text_Paint_Centred_Ext(centerX, y - offsetY, textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+
+		index = (index + 2) % CARDINAL_POINTS_NUMBER;
+
+		// Right
+		textPadding = (float)CG_Text_Width_Ext(cardinalPoints[index], textScale, 0, font);
+		CG_Text_Paint_Ext(x + w + offsetX, centerY + (textPadding * .5f), textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+
+		index = (index + 2) % CARDINAL_POINTS_NUMBER;
+
+		// Bottom
+		textPadding = (float)CG_Text_Height_Ext(cardinalPoints[index], textScale, 0, font);
+		CG_Text_Paint_Centred_Ext(centerX, y + h + textPadding + offsetY, textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+
+		index = (index + 2) % CARDINAL_POINTS_NUMBER;
+
+		// Left
+		textPadding = (float)CG_Text_Width_Ext(cardinalPoints[index], textScale, 0, font);
+		CG_Text_Paint_RightAligned_Ext(x - offsetX, centerY + (textPadding * .5f), textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+	}
+}
+
+/**
  * @brief CG_DrawAutoMap
  * @param[in] x
  * @param[in] y
@@ -1822,7 +2036,6 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 	float        h;
 	float        wMap;
 	float        hMap;
-	float        angle;
 	float        diff;
 	vec2_t       automapTransformed;
 	mapScissor_t mapScissor;
@@ -1896,124 +2109,31 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 		mapScissor.tl[1] = mapScissor.br[1] - hMap;
 	}
 
-	CG_DrawMap(x, y, w, h, cgs.ccFilter, &mapScissor, qfalse, 1.f, qfalse, style & COMPASS_POINT_TOWARD_NORTH);
-
-	if (mapScissor.circular)
+	// draw decor before map for squared compass as there is no mask on it
+	// FIXME: ugly, replace it by a better looking decor with mask, so
+	// it can be move into the draw square compass function
+	if (!mapScissor.circular)
 	{
 		if (style & COMPASS_DECOR)
 		{
-			CG_DrawPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassShader);
-		}
-		else if (style & COMPASS_DIRECTION)
-		{
-			CG_DrawPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassDirectionShader);
-		}
-
-		if (style & COMPASS_CARDINAL_POINTS)
-		{
-			trap_R_SetColor(colorLtGrey);
-			if (style & COMPASS_POINT_TOWARD_NORTH)
-			{
-				CG_DrawPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, style & COMPASS_DECOR ? cgs.media.compass2Shader : cgs.media.compassCircleTickShader);
-			}
-			else
-			{
-				static float lastangle  = 0;
-				static float anglespeed = 0;
-
-				angle       = (cg.refdefViewAngles[YAW] + 180.f) / 360.f - (0.125f);
-				diff        = AngleSubtract(angle * 360, lastangle * 360) / 360.f;
-				anglespeed /= 1.08f;
-				anglespeed += diff * 0.01f;
-				if (Q_fabs(anglespeed) < 0.00001f)
-				{
-					anglespeed = 0;
-				}
-				lastangle += anglespeed;
-
-				if (style & COMPASS_DECOR)
-				{
-					CG_DrawRotatedPic(x - w * 0.1275, y - h * 0.1275, w * 1.255, h * 1.255, cgs.media.compass2Shader, lastangle);
-				}
-				else
-				{
-					CG_DrawRotatedPic(x - w * 0.125, y - h * 0.125, w * 1.25, h * 1.25, cgs.media.compassCircleTickShader, lastangle);
-				}
-			}
-			trap_R_SetColor(NULL);
+			CG_DrawPic(basex, basey, basew, baseh, cgs.media.limboObjectiveBack[2]);
 		}
 	}
-	else if ((style & COMPASS_CARDINAL_POINTS))   // square map
+
+	// draw the base map
+	CG_DrawMap(x, y, w, h, cgs.ccFilter, &mapScissor, qfalse, 1.f, qfalse, style & COMPASS_POINT_TOWARD_NORTH);
+
+	// draw the decor, ticks, cardinals points, ...
+	if (mapScissor.circular)
 	{
-		float        centerX   = x + (w * .5f);
-		float        centerY   = y + (h * .5f);
-		float        textScale = (w / 100) * 0.18f;
-		float        textHeight;
-		float        offsetX            = (w / 100) * 3.f;
-		float        offsetY            = (h / 100) * 3.f;
-		fontHelper_t *font              = &cgs.media.limboFont2;
-		const char   *cardinalPoints[8] = { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
-		int          index              = 0;
-
-		CG_DrawRect_FixedBorder(x - 0.75f, y - 0.75f, w + 1.5f, h + 1.5f, 2, colorLtGrey);
-
-		if (!(style & COMPASS_POINT_TOWARD_NORTH))
-		{
-			float angle = -(cg.refdefViewAngles[YAW] - 180) - 90;
-
-			if (angle < 0)
-			{
-				angle += 360;
-			}
-			else if (angle > 360)
-			{
-				angle -= 360;
-			}
-
-			for (index = 0; index < 8; ++index)
-			{
-				if (angle < 22.5f + (index * 45))
-				{
-					break;
-				}
-			}
-
-			if (index >= 8)
-			{
-				index -= 8;
-			}
-		}
-
-		CG_Text_Paint_Centred_Ext(centerX, y - offsetY, textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
-
-		index += 2;
-		if (index >= 8)
-		{
-			index -= 8;
-		}
-
-		textHeight = (float)CG_Text_Height_Ext(cardinalPoints[index], textScale, 0, font);
-		CG_Text_Paint_Ext(x + w + offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
-
-		index += 2;
-		if (index >= 8)
-		{
-			index -= 8;
-		}
-
-		textHeight = (float)CG_Text_Height_Ext(cardinalPoints[index], textScale, 0, font);
-		CG_Text_Paint_Centred_Ext(centerX, y + h + textHeight + offsetY, textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
-
-		index += 2;
-		if (index >= 8)
-		{
-			index -= 8;
-		}
-
-		textHeight = (float)CG_Text_Height_Ext(cardinalPoints[index], textScale, 0, font);
-		CG_Text_Paint_RightAligned_Ext(x - offsetX, centerY + (textHeight * .5f), textScale, textScale, colorLtGrey, cardinalPoints[index], 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+		CG_DrawCircleCompassCase(x, y, w, h, style);
+	}
+	else
+	{
+		CG_DrawSquareCompassCase(x, y, w, h, style);
 	}
 
+	// draw the icons on base compass edge
 	for (i = 0; i < snap->numEntities; ++i)
 	{
 		centity_t *cent = &cg_entities[snap->entities[i].number];
@@ -2031,14 +2151,12 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 
 		if (icon)
 		{
-			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14, &mapScissor,
-			                   style & COMPASS_DRAW_ICONS_INSIDE);
+			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14, &mapScissor, style);
 
 			// draw overlapping shader for disguised covops
 			if (icon == cgs.media.friendShader)
 			{
-				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14, &mapScissor,
-				                   style & COMPASS_DRAW_ICONS_INSIDE);
+				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14, &mapScissor, style);
 			}
 		}
 	}
@@ -2559,13 +2677,15 @@ void CG_CommandMap_DrawHighlightText(void)
 * @param[in] origin
 * @param[in] dest
 * @param[in] shader
-* @param[in] drawIconInside
+* @param[in] style
 */
-void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor, qboolean drawIconInside)
+void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor, int style)
 {
-	float  iconx, icony, iconWidth, iconHeight, radius;
-	float  angle, len, diff;
-	vec3_t v1, angles;
+	float    iconx, icony, iconWidth, iconHeight, radius;
+	float    angle, len, diff;
+	vec3_t   v1, angles;
+	qboolean drawIconInside   = style & COMPASS_DRAW_ICONS_INSIDE;
+	qboolean pointTowardNorth = (style & COMPASS_POINT_TOWARD_NORTH && !(style & COMPASS_DYNAMIC_TICKS));
 
 	VectorCopy(dest, v1);
 	VectorSubtract(origin, v1, v1);
@@ -2578,7 +2698,7 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 		return;
 	}
 
-	angles[YAW] = AngleSubtract(cg.refdefViewAngles[YAW], angles[YAW]);
+	angles[YAW] = AngleSubtract(pointTowardNorth ? 90.f : cg.refdefViewAngles[YAW], angles[YAW]);
 	angle       = ((angles[YAW] + 180.f) / 360.f - (0.50f / 2.f)) * M_TAU_F;
 
 	len        = 1 - MIN(1.f, len / 2000.f * dstScale);
