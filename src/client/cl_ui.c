@@ -42,9 +42,15 @@
 
 extern botlib_export_t *botlib_export;
 
-#define TRAP_EXTENSIONS_LIST NULL
+#define TRAP_EXTENSIONS_LIST ui_extensionTraps
 #include "../qcommon/vm_ext.h"
 #include "json.h"
+
+static ext_trap_keys_t ui_extensionTraps[] =
+{
+	{ "trap_CvarSetDescription_Legacy", UI_CVAR_SET_DESCRIPTION, qfalse },
+	{ NULL,                             -1,                      qfalse }
+};
 
 vm_t *uivm;
 
@@ -1352,6 +1358,8 @@ intptr_t CL_UISystemCalls(intptr_t *args)
 		return 0;
 	case UI_TRAP_GETVALUE:
 		return VM_Ext_GetValue(VMA(1), args[2], VMA(3));
+	case UI_CVAR_SET_DESCRIPTION:
+		return Cvar_SetDescriptionByName(VMA(1), VMA(2));
 	default:
 		Com_Error(ERR_DROP, "Bad UI system trap: %ld", (long int) args[0]);
 	}

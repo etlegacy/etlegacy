@@ -721,6 +721,7 @@ int Cvar_VariableIntegerValue(const char *var_name);
 
 char *Cvar_VariableString(const char *var_name);
 char *Cvar_DefaultString(const char *var_name);
+const char *Cvar_VariableDescription(const char *var_name);
 void Cvar_VariableStringBuffer(const char *var_name, char *buffer, size_t bufsize);
 // returns an empty string if not defined
 void Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, size_t bufsize);
@@ -756,6 +757,7 @@ char *Cvar_InfoString_Big(int bit);
 void Cvar_InfoStringBuffer(int bit, char *buff, size_t buffsize);
 void Cvar_CheckRange(cvar_t *cv, float minVal, float maxVal, qboolean shouldBeIntegral);
 void Cvar_SetDescription(cvar_t *cv, const char *varDescription);
+qboolean Cvar_SetDescriptionByName(const char *varName, const char *varDescription);
 
 void Cvar_Restart(qboolean unsetVM);
 void Cvar_Restart_f(void);

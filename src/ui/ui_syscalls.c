@@ -1158,3 +1158,33 @@ void trap_GetHunkData(int *hunkused, int *hunkexpected)
 {
 	SystemCall(UI_GETHUNKDATA, hunkused, hunkexpected);
 }
+
+/**
+ * @brief Entry point for additional system calls without breaking compatibility with other engines.
+ * @param[out] value
+ * @param[in] valueSize
+ * @param[in] key
+ * @return qtrue if value was provided by engine
+ */
+qboolean trap_GetValue(char *value, int valueSize, const char *key)
+{
+	if (!dll_com_trapGetValue)
+	{
+		return qfalse;
+	}
+
+	return (qboolean)(SystemCall(dll_com_trapGetValue, value, valueSize, key));
+}
+
+/**
+ * @brief Extension for setting a cvar description in the engine cvar registry.
+ * @param[in] cvarName
+ * @param[in] description
+ */
+void trap_Cvar_SetDescription(const char *cvarName, const char *description)
+{
+	if (dll_trap_CvarSetDescription && cvarName && description)
+	{
+		SystemCall(dll_trap_CvarSetDescription, cvarName, description);
+	}
+}

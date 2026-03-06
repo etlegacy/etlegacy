@@ -227,6 +227,10 @@ typedef enum
 
 	///< engine extensions padding
 	G_TRAP_GETVALUE = COM_TRAP_GETVALUE,
+	G_DEMOSUPPORT,
+	G_SNAPSHOT_CALLBACK_EXT,
+	G_SNAPSHOT_SETCLIENTMASK,
+	G_CVAR_SET_DESCRIPTION,
 } gameImport_t;
 
 

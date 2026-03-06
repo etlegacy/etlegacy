@@ -1821,10 +1821,12 @@ qboolean trap_GetValue(char *value, int valueSize, const char *key);
 void trap_DemoSupport(const char *commands);
 void trap_SnapshotCallbackExt(void);
 void trap_SnapshotSetClientMask(int clientNum, uint64_t mask);
+void trap_Cvar_SetDescription(const char *cvarName, const char *description);
 extern int dll_com_trapGetValue;
 extern int dll_trap_DemoSupport;
 extern int dll_trap_SnapshotCallbackExt;
 extern int dll_trap_SnapshotSetClientMask;
+extern int dll_trap_CvarSetDescription;
 
 // g_demo_legacy.c
 void G_DemoStateChanged(demoState_t demoState, int demoClientsNum);
