@@ -3620,9 +3620,12 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
-	// Match server-side PM lock: prevent alt toggles while the weapon is still raising
-	// from a regular switch, otherwise predicted select state can desync briefly.
-	if (cg.snap->ps.weaponstate == WEAPON_RAISING)
+	// Match server-side PM lock, but only for rifle grenade attach/detach.
+	// Scope/silencer alt modes are intentionally not blocked here.
+	if (cg.snap->ps.weaponstate == WEAPON_RAISING
+	    && (((GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_RIFLE)
+	         && (GetWeaponTableData(GetWeaponTableData(cg.weaponSelect)->weapAlts)->type & WEAPON_TYPE_RIFLENADE))
+	        || (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_RIFLENADE)))
 	{
 		return;
 	}

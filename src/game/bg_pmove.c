@@ -2603,10 +2603,14 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 		return;
 	}
 
-	// Keep alt attachment toggles locked while a weapon is still raising from a regular switch.
-	// Without this guard, a fast re-select + altweap can bypass the detach animation timing.
+	// Keep rifle grenade toggles locked while a weapon is still raising from a regular switch.
+	// Without this guard, a fast re-select + altweap can bypass detach timing for rifle grenades.
+	// Scope/silencer alt modes are intentionally excluded.
 	if (pm->ps->weaponstate == WEAPON_RAISING &&
-	    (newWeapon == GetWeaponTableData(oldWeapon)->weapAlts || oldWeapon == GetWeaponTableData(newWeapon)->weapAlts))
+	    (((GetWeaponTableData(oldWeapon)->type & WEAPON_TYPE_RIFLE) && (GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLENADE)
+	      && newWeapon == GetWeaponTableData(oldWeapon)->weapAlts)
+	     || ((GetWeaponTableData(oldWeapon)->type & WEAPON_TYPE_RIFLENADE) && (GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLE)
+	         && oldWeapon == GetWeaponTableData(newWeapon)->weapAlts)))
 	{
 		return;
 	}
@@ -2736,6 +2740,16 @@ static void PM_FinishWeaponChange(void)
 	// doesn't happen too often (player switched weapons away then back very quickly)
 	if (oldWeapon == newWeapon)
 	{
+		// Keep rifle/riflegrenade transitions from collapsing into a zero-time raise
+		// when a quick switch gets canceled back to the same weapon.
+		if (((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLENADE)
+		     || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLE)
+		         && (GetWeaponTableData(GetWeaponTableData(newWeapon)->weapAlts)->type & WEAPON_TYPE_RIFLENADE))))
+		{
+			PM_StartWeaponAnim(WEAP_RAISE);
+			pm->ps->weaponTime += GetWeaponTableData(newWeapon)->switchTimeFinish;
+		}
+
 		return;
 	}
 
