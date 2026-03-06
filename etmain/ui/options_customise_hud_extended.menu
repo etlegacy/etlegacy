@@ -26,17 +26,16 @@ menuDef {
 
 // Gun Display //
 #define WEAPON_Y (SUBWINDOW_OPTION_Y_START)
-#define WEAPON_H SUBWINDOW_OPTION_COMPUTE_H(8)
+#define WEAPON_H SUBWINDOW_OPTION_COMPUTE_H(7)
 	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X1_START, WEAPON_Y, SUBWINDOW_OPTION_HEADER_WIDTH_L, WEAPON_H, _("WEAPONS DISPLAY"))
 	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPON_Y, 1), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Draw Weapon:"), .2, 8, "cg_drawGun", cvarFloatList { "Off" 0 "On" 1 "Hide Weapons Only" 2 }, _("Show gun model on-screen"))
 	NUMERICFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPON_Y, 2), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Freeze Gun Frame:"), .2, 8, "cg_gun_frame", 3, _("Freeze the gun animation to a single chosen frame"))
 	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPON_Y, 3), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Weapon Animations:"), .2, 8, "cg_weapAnims", cvarFloatList { "None" 0 "Move" 1 "Firing" 2 "Reload" 4 "Switch" 8 "Move + Firing" 3 "Move + Reload" 5 "Move + Switch" 9 "Move + Firing + Reload" 7 "Move + Firing + Switch" 11 "Move + Reload + Switch" 13 "Firing + Reload" 6 "Firing + Switch" 10 "Firing + Reload + Switch" 14 "Reload + Switch" 12 "All" 15 }, _("Set which weapon animations to play"))
 	YESNO(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPON_Y, 4), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Weapon Revive Raising:"), .2, 8, "cg_gunReviveFadeIn", _("Toggle weapon animation raising in while being revived"))
 	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPON_Y, 5), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, "cg_gunFovOffset", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_L), 8)
-	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPON_Y, 5), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Weapon FOV Offset:"), .2, 8, "cg_gunFovOffset" 90 75 160, _("Set the offset depending of field of view to control gun aspect ratio"))
-	NUMERICFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPON_Y, 6), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Weapon X Offset:"), .2, 8, "cg_gunX", 3, _("Set the weapon position offset on X axis"))
-	NUMERICFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPON_Y, 7), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Weapon Y Offset:"), .2, 8, "cg_gunY", 3, _("Set the weapon position offset on Y axis"))
-	NUMERICFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPON_Y, 8), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Weapon Z Offset:"), .2, 8, "cg_gunZ", 3, _("Set the weapon position offset on Z axis"))
+	NUMERICFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPON_Y, 5), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Weapon X Offset:"), .2, 8, "cg_gunX", 3, _("Set the weapon position offset on X axis"))
+	NUMERICFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPON_Y, 6), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Weapon Y Offset:"), .2, 8, "cg_gunY", 3, _("Set the weapon position offset on Y axis"))
+	NUMERICFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(WEAPON_Y, 7), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Weapon Z Offset:"), .2, 8, "cg_gunZ", 3, _("Set the weapon position offset on Z axis"))
 
 // Crosshair //
 #define CROSSHAIR_Y (WEAPON_Y + WEAPON_H + SUBWINDOW_OPTION_Y_PADDING)
