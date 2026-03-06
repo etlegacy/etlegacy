@@ -219,8 +219,8 @@ static cvarTable_t cvarTable[] =
 
 	{ &ui_cg_shoutcastTeamNameRed,         "cg_shoutcastTeamNameRed",             "Axis",                       CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastTeamNameBlue,        "cg_shoutcastTeamNameBlue",            "Allies",                     CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_shoutcastTeamScoreRed,        "cg_shoutcastTeamScoreRed",            "0",                          CVAR_ARCHIVE,                   0 },
-	{ &ui_cg_shoutcastTeamScoreBlue,       "cg_shoutcastTeamScoreBlue",           "0",                          CVAR_ARCHIVE,                   0 },
+    { &ui_cg_shoutcastTeamScoreRed,        "cg_shoutcastTeamScoreRed",            "0",                          CVAR_ARCHIVE,                   0 },
+    { &ui_cg_shoutcastTeamScoreBlue,       "cg_shoutcastTeamScoreBlue",           "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawHealth,          "cg_shoutcastDrawHealth",              "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastGrenadeTrail,        "cg_shoutcastGrenadeTrail",            "0",                          CVAR_ARCHIVE,                   0 },
 

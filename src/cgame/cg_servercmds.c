@@ -1256,12 +1256,12 @@ void CG_AddToTeamChat(const char *str, int clientnum) // FIXME: add disguise?
 			cgs.teamChatPos++;
 
 			cgs.teamChatStartLine[cgs.teamChatPos % chatHeight] = qfalse;
-			p                                                   = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
-			*p                                                  = 0;
-			*p++                                                = Q_COLOR_ESCAPE;
-			*p++                                                = lastcolor;
-			len                                                 = 0;
-			ls                                                  = NULL;
+			p    = cgs.teamChatMsgs[cgs.teamChatPos % chatHeight];
+			*p   = 0;
+			*p++ = Q_COLOR_ESCAPE;
+			*p++ = lastcolor;
+			len  = 0;
+			ls   = NULL;
 		}
 
 		if (Q_IsColorString(str))

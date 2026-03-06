@@ -552,7 +552,7 @@ static void CG_FTOverlay_StoreSpawnpointString(fireteamOverlay_t *fto, const int
 #define CLASS_ICON_ARROW_WIDTH (CG_Text_Width_Ext_Float("->", fto->textScale, 0, FONT_TEXT))
 // slightly wider than the icon size, to leave a bit of margin between the icon and name
 #define POWERUP_WIDTH (fto->iconSize * 1.25f)
-#define MAJOR_SPAWN_NUMBER_WIDTH_SCALE ((comp->style &FT_SPAWN_POINT_MINOR) ? 1.25f : 1.0f)
+#define MAJOR_SPAWN_NUMBER_WIDTH_SCALE ((comp->style & FT_SPAWN_POINT_MINOR) ? 1.25f : 1.0f)
 
 static float CG_FTOverlay_ClassIconWidth(const fireteamOverlay_t *fto, const hudComponent_t *comp)
 {
