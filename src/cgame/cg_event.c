@@ -2973,7 +2973,7 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		if (reviver == cg.clientNum)
 		{
-			cg.lastReviveTime = cg.time;
+			cg.lastSyringeInjection = cg.time;
 		}
 
 		// play sound
@@ -2983,6 +2983,26 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		{
 			trap_S_StartSoundVControl(es->origin, es->number, CHAN_VOICE, sound, 255);
 		}
+		break;
+	}
+	case EV_PLAYER_ADRENALINE:
+	{
+		sfxHandle_t sound;
+		int         injector = es->clientNum;
+
+		if (injector == cg.clientNum)
+		{
+			cg.lastSyringeInjection = cg.time;
+		}
+
+		// play sound
+		sound = CG_GetGameSound(GAMESOUND_MISC_ADRENALINE);
+
+		if (sound)
+		{
+			trap_S_StartSoundVControl(es->origin, es->number, CHAN_VOICE, sound, 255);
+		}
+		break;
 	}
 	break;
 	default:

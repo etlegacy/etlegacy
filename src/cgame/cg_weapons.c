@@ -43,16 +43,16 @@
  */
 weapon_t weapBanksMultiPlayer[MAX_WEAP_BANKS_MP][MAX_WEAPS_IN_BANK_MP] =
 {
-	{ 0,                   0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       }, // empty bank '0'
-	{ WP_KNIFE,            WP_KNIFE_KABAR,       0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
-	{ WP_LUGER,            WP_COLT,              WP_AKIMBO_COLT,  WP_AKIMBO_LUGER, WP_SILENCER,    WP_SILENCED_COLT, WP_AKIMBO_SILENCEDCOLT, WP_AKIMBO_SILENCEDLUGER, 0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
-	{ WP_MP40,             WP_THOMPSON,          WP_STEN,         WP_GARAND,       WP_PANZERFAUST, WP_FLAMETHROWER,  WP_KAR98,               WP_CARBINE,              WP_FG42, WP_K43, WP_MOBILE_MG42, WP_MOBILE_BROWNING, WP_MORTAR, WP_MORTAR2, WP_BAZOOKA, WP_GPG40, WP_M7, WP_MP34 },
-	{ WP_GRENADE_LAUNCHER, WP_GRENADE_PINEAPPLE, 0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
-	{ WP_MEDIC_SYRINGE,    WP_PLIERS,            WP_SMOKE_MARKER, WP_SMOKE_BOMB,   0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
-	{ WP_DYNAMITE,         WP_MEDKIT,            WP_AMMO,         WP_SATCHEL,      WP_SATCHEL_DET, 0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
-	{ WP_LANDMINE,         WP_MEDIC_ADRENALINE,  0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
-	{ WP_BINOCULARS,       0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
-	{ 0,                   0,                    0,               0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
+	{ 0,                   0,                    0,                    0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       }, // empty bank '0'
+	{ WP_KNIFE,            WP_KNIFE_KABAR,       0,                    0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
+	{ WP_LUGER,            WP_COLT,              WP_AKIMBO_COLT,       WP_AKIMBO_LUGER, WP_SILENCER,    WP_SILENCED_COLT, WP_AKIMBO_SILENCEDCOLT, WP_AKIMBO_SILENCEDLUGER, 0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
+	{ WP_MP40,             WP_THOMPSON,          WP_STEN,              WP_GARAND,       WP_PANZERFAUST, WP_FLAMETHROWER,  WP_KAR98,               WP_CARBINE,              WP_FG42, WP_K43, WP_MOBILE_MG42, WP_MOBILE_BROWNING, WP_MORTAR, WP_MORTAR2, WP_BAZOOKA, WP_GPG40, WP_M7, WP_MP34 },
+	{ WP_GRENADE_LAUNCHER, WP_GRENADE_PINEAPPLE, 0,                    0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
+	{ WP_MEDIC_SYRINGE,    WP_PLIERS,            WP_SMOKE_MARKER,      WP_SMOKE_BOMB,   0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
+	{ WP_DYNAMITE,         WP_MEDKIT,            WP_AMMO,              WP_SATCHEL,      WP_SATCHEL_DET, 0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
+	{ WP_LANDMINE,         WP_MEDIC_ADRENALINE,  WP_MEDIC_ADRENALINE2, 0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
+	{ WP_BINOCULARS,       0,                    0,                    0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
+	{ 0,                   0,                    0,                    0,               0,              0,                0,                      0,                       0,       0,      0,              0,                  0,         0,          0,          0,        0,     0       },
 };
 
 static char *weapAnimNumberStr[] =
@@ -1647,6 +1647,12 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				return;
 			}
 			break;
+		case WP_MEDIC_SYRINGE:
+			if ((cg.time > (cent->firedTime + 900)) && (cg.time < (cent->firedTime + 1200)))
+			{
+				return;
+			}
+			break;
 		case WP_SMOKE_MARKER:
 			if ((cg.time > (cent->firedTime + 200)) && (cg.time < (cent->firedTime + 1900)))
 			{
@@ -1708,14 +1714,24 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 	{
 		if (weaponNum == WP_MEDIC_SYRINGE)
 		{
-
-			if (cg.lastReviveTime > 0 && cg.time - cg.lastReviveTime < SYRINGE_VISUAL_RECOVERY_TIME)
+			if (cg.lastSyringeInjection > 0 && cg.time - cg.lastSyringeInjection < SYRINGE_VISUAL_RECOVERY_TIME)
 			{
 				gun.customShader = weapon->modModels[1];
 			}
 			else if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
 			{
 				gun.customShader = weapon->modModels[0];
+			}
+		}
+		else if (weaponNum == WP_MEDIC_ADRENALINE2)
+		{
+			if (cg.lastSyringeInjection > 0 && cg.time - cg.lastSyringeInjection < SYRINGE_VISUAL_RECOVERY_TIME)
+			{
+				gun.customShader = weapon->modModels[1];
+			}
+			else
+			{
+				gun.customShader = weapon->modModels[2];
 			}
 		}
 	}
@@ -2084,13 +2100,24 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 					if (weaponNum == WP_MEDIC_SYRINGE && i == W_PART_1)
 					{
-						if (cg.lastReviveTime > 0 && cg.time - cg.lastReviveTime < SYRINGE_VISUAL_RECOVERY_TIME)
+						if (cg.lastSyringeInjection > 0 && cg.time - cg.lastSyringeInjection < SYRINGE_VISUAL_RECOVERY_TIME)
 						{
 							barrel.customShader = weapon->modModels[1];
 						}
 						else if (BG_IsSkillAvailable(cgs.clientinfo[clientNum].skill, SK_FIRST_AID, SK_MEDIC_FULL_REVIVE))
 						{
 							barrel.customShader = weapon->modModels[0];
+						}
+					}
+					else if (weaponNum == WP_MEDIC_ADRENALINE2 && i == W_PART_1)
+					{
+						if (cg.lastSyringeInjection > 0 && cg.time - cg.lastSyringeInjection < SYRINGE_VISUAL_RECOVERY_TIME)
+						{
+							barrel.customShader = weapon->modModels[1];
+						}
+						else
+						{
+							barrel.customShader = weapon->modModels[2];
 						}
 					}
 
@@ -4476,7 +4503,7 @@ void CG_OutOfAmmoChange(qboolean allowForceSwitch)
 			return;
 		}
 
-		if ((GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_PANZER) || cg.weaponSelect == WP_SMOKE_BOMB || cg.weaponSelect == WP_MEDIC_ADRENALINE)
+		if ((GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_PANZER) || cg.weaponSelect == WP_SMOKE_BOMB || cg.weaponSelect == WP_MEDIC_ADRENALINE || cg.weaponSelect == WP_MEDIC_ADRENALINE2)
 		{
 			for (i = 0; i < MAX_WEAP_BANK_SWITCH_ORDER; i++)
 			{

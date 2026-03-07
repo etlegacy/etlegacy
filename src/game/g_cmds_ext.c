@@ -100,7 +100,7 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "follownext",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_FollowNext_f,                    ":^7 Follow next player in list"                                                             },
 	{ "followprev",     CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_FollowPrevious_f,                ":^7 Follow previous player in list"                                                         },
 	{ "forcetapout",    CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_ForceTapout_f,                   ":^7 Force player into limbo"                                                                },
-	{ "give",           CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_Give_f,                          " <all|skill|medal|health|weapons|ammo|allammo|keys>:^7 Gives something"                     },
+	{ "give",           CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_Give_f,                          " <all|skill|medal|health|adrenaline|weapons|ammo|allammo|keys>:^7 Gives something"          },
 	{ "god",            CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_God_f,                           ":^7 God Mode"                                                                               },
 	{ "ignore",         CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_Ignore_f,                        " <clientname>:^7 Ignore a player from chat"                                                 },
 #ifdef FEATURE_PRESTIGE
