@@ -76,7 +76,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(weaponstability),    CG_DrawWeapStability,             HUD_COMP_TYPE_BAR,       0.19f, { "Always" } },    // FIXME: outside cg_draw_hud
 	{ HUDF(livesleft),          CG_DrawLivesLeft,                 HUD_COMP_TYPE_SPECIFIC,  0.19f, { 0 } },
 	{ HUDF(roundtimer),         CG_DrawRoundTimer,                HUD_COMP_TYPE_TEXT,      0.19f, { "Simple",        "Double Digits" } },
-	{ HUDF(reinforcement),      CG_DrawRespawnTimer,              HUD_COMP_TYPE_TEXT,      0.19f, { "Double Digits" } },
+	{ HUDF(reinforcement),      CG_DrawRespawnTimer,              HUD_COMP_TYPE_TEXT,      0.19f, { "Double Digits", "Color Gradient" } },
 	{ HUDF(spawntimer),         CG_DrawSpawnTimer,                HUD_COMP_TYPE_TEXT,      0.19f, { "Double Digits" } },
 	{ HUDF(localtime),          CG_DrawLocalTime,                 HUD_COMP_TYPE_TEXT,      0.19f, { "Second",        "12 Hours" } },
 	{ HUDF(votetext),           CG_DrawVote,                      HUD_COMP_TYPE_MULTITEXT, 0.22f, { "Complaint" } }, // FIXME: outside cg_draw_hud
@@ -224,7 +224,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->weaponstability    = CG_getComponent(50, 208, 10, 64, qtrue, 0, BAR_CENTER | BAR_VERT | BAR_LERP_COLOR, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawWeapStability);
 	hud->livesleft          = CG_getComponent(4, 360, 48, 24, qtrue, 0, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawLivesLeft);
 	hud->roundtimer         = CG_getComponent(SCREEN_WIDTH - 60, 152, 57, 14, qtrue, 0, 0, 100.f, colorWhite, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawRoundTimer);
-	hud->reinforcement      = CG_getComponent(SCREEN_WIDTH - 60, SCREEN_HEIGHT - 70, 57, 14, qfalse, 0, 0, 100.f, colorLtBlue, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawRespawnTimer);
+	hud->reinforcement      = CG_getComponent(SCREEN_WIDTH * .5f - 24, 3.0, 48, 14, qfalse, REINFORCEMENT_TIMER_COLOR_GRADIENT, 0, 200.f, colorLtBlue, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawRespawnTimer);
 	hud->spawntimer         = CG_getComponent(SCREEN_WIDTH - 60, SCREEN_HEIGHT - 60, 57, 14, qfalse, 0, 0, 100.f, colorRed, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawSpawnTimer);
 	hud->localtime          = CG_getComponent(SCREEN_WIDTH - 60, 168, 57, 14, qfalse, 0, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawLocalTime);
 	hud->votetext           = CG_getComponent(4, 202, 278, 28, qtrue, 1, 0, 100.f, colorYellow, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, 0, 0, 0, CG_DrawVote);
@@ -3189,6 +3189,82 @@ static qboolean CG_SpawnTimersText(char **s, char **rt, qboolean isDoubleDigits)
 }
 
 /**
+ * @brief CG_GetReinforcementMaxValue
+ * @details Returns the maximum reinforcement countdown value for the timer currently shown in the reinforcement HUD element.
+ */
+static int CG_GetReinforcementMaxValue(void)
+{
+	team_t team;
+	int    deployMs;
+
+	if (cgs.gamestate != GS_PLAYING)
+	{
+		team = (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS) ? TEAM_AXIS : TEAM_ALLIES;
+	}
+	else if (cgs.gametype != GT_WOLF_LMS)
+	{
+		if (cgs.clientinfo[cg.clientNum].shoutcaster)
+		{
+			// Reinforcement HUD shows allies time while shoutcasting.
+			team = TEAM_ALLIES;
+		}
+		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
+		{
+			team = cgs.clientinfo[cg.snap->ps.clientNum].team;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	else
+	{
+		return 0;
+	}
+
+	deployMs = (team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer;
+	if (deployMs <= 0)
+	{
+		return 0;
+	}
+
+	// CG_CalculateReinfTime includes a +1 second offset while playing.
+	return (cgs.gamestate == GS_PLAYING) ? (deployMs / 1000) + 1 : (deployMs / 1000);
+}
+
+/**
+ * @brief CG_ApplyReinforcementGradientColor
+ * @details Applies a two-segment linear gradient: red (0) -> yellow (middle) -> green (highest).
+ */
+static void CG_ApplyReinforcementGradientColor(vec4_t color, int countdownValue, int maxValue)
+{
+	float timeFactor;
+
+	if (maxValue <= 0)
+	{
+		return;
+	}
+
+	countdownValue = Com_Clamp(0, maxValue, countdownValue);
+	timeFactor     = (float)countdownValue / (float)maxValue;
+
+	if (timeFactor <= 0.5f)
+	{
+		// Red to yellow.
+		color[0] = 1.f;
+		color[1] = timeFactor * 2.f;
+		color[2] = 0.f;
+	}
+	else
+	{
+		// Yellow to green.
+		color[0] = 1.f - ((timeFactor - 0.5f) * 2.f);
+		color[1] = 1.f;
+		color[2] = 0.f;
+	}
+}
+
+/**
  * @brief CG_RoundTimerText
  * @return
  */
@@ -3264,17 +3340,27 @@ void CG_DrawRespawnTimer(hudComponent_t *comp)
 {
 	char     *s = NULL, *rt = NULL;
 	qboolean blink;
+	qboolean colorCountdown;
+	vec4_t   drawColor;
 
 	if (cg_paused.integer)
 	{
 		return;
 	}
 
-	blink = CG_SpawnTimersText(&s, &rt, comp->style & 1);
+	blink          = CG_SpawnTimersText(&s, &rt, comp->style & REINFORCEMENT_TIMER_DOUBLE_DIGITS);
+	colorCountdown = (comp->style & REINFORCEMENT_TIMER_COLOR_GRADIENT) != 0;
 
 	if (s)
 	{
-		CG_DrawCompText(comp, s, comp->colorMain, blink ? ITEM_TEXTSTYLE_BLINK : comp->styleText, &cgs.media.limboFont1);
+		Vector4Copy(comp->colorMain, drawColor);
+
+		if (colorCountdown && Q_isanumber(s))
+		{
+			CG_ApplyReinforcementGradientColor(drawColor, atoi(s), CG_GetReinforcementMaxValue());
+		}
+
+		CG_DrawCompText(comp, s, drawColor, blink ? ITEM_TEXTSTYLE_BLINK : comp->styleText, &cgs.media.limboFont1);
 	}
 }
 
@@ -3295,7 +3381,7 @@ void CG_DrawSpawnTimer(hudComponent_t *comp)
 	// note: pass reinforcement timer in as 's' to get the ENEMY reinforcement time
 	// FIXME: this should be refactored, this makes no sense... what even is 's'? and 'rt'?
 	//  spawntimer/reinforcement timer? but the function doesn't treat them as such...
-	blink = CG_SpawnTimersText(&s, &rt, comp->style & 1);
+	blink = CG_SpawnTimersText(&s, &rt, comp->style & REINFORCEMENT_TIMER_DOUBLE_DIGITS);
 
 	if (s)
 	{
