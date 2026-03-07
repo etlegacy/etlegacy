@@ -2836,6 +2836,13 @@ enum
 	LOCALTIME_12HOUR = BIT(1),
 };
 
+// reinforcement/spawn timer flags
+enum
+{
+	REINFORCEMENT_TIMER_DOUBLE_DIGITS  = BIT(0),
+	REINFORCEMENT_TIMER_COLOR_GRADIENT = BIT(1),
+};
+
 // crosshairs flags
 enum
 {
