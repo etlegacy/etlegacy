@@ -905,6 +905,16 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 					Add_Ammo(ent, weapon, 9999, qtrue);
 				}
 			}
+
+			// Ensure team grenades are included even if not currently in the weapon bitfield.
+			if (ent->client->sess.sessionTeam == TEAM_AXIS)
+			{
+				Add_Ammo(ent, WP_GRENADE_LAUNCHER, 9999, qtrue);
+			}
+			else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
+			{
+				Add_Ammo(ent, WP_GRENADE_PINEAPPLE, 9999, qtrue);
+			}
 		}
 		else if (isNoneAmount)  // empty ammo completely on all weapons
 		{
