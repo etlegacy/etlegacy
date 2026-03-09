@@ -6588,7 +6588,8 @@ static int ScanAndLoadShaderFiles(void)
 	}
 
 	// build single large buffer
-	s_shaderText    = (char *)ri.Hunk_Alloc(sum + numShaderFiles * 2, h_low);
+	size            = sum + numShaderFiles * 2;
+	s_shaderText    = (char *)ri.Hunk_Alloc(size * 2, h_low);
 	s_shaderText[0] = '\0';
 	textEnd         = s_shaderText;
 
