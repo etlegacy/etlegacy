@@ -20,8 +20,8 @@ void main()
 
 	// reconstruct vertex position in world space
 	float depth = texture2D(u_DepthMap, st).r;
-	depth *=depth; // make it non linear, so you can see further. Original fog is VERY dense
-	vec4  P     = u_UnprojectMatrix * vec4(gl_FragCoord.xy, depth, 1.0);
+	depth *= depth; // make it non linear, so you can see further. Original fog is VERY dense
+	vec4 P = u_UnprojectMatrix * vec4(gl_FragCoord.xy, depth, 1.0);
 	P.xyz /= P.w;
 
 	// calculate the length in fog (t is always 0 if eye is in fog)

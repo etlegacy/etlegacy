@@ -47,7 +47,7 @@ uniform float u_VertexInterpolation;
 uniform float u_DepthScale;
 #endif // USE_PARALLAX_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4  u_PortalPlane;
+uniform vec4 u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 
 varying vec3 var_Position;
@@ -131,7 +131,7 @@ void main()
 	var_Normal.xyz = mat3(u_ModelMatrix) * normal;
 
 #if defined(USE_NORMAL_MAPPING)
-	tangent = (u_ModelMatrix * vec4(tangent, 0.0)).xyz;
+	tangent  = (u_ModelMatrix * vec4(tangent, 0.0)).xyz;
 	binormal = (u_ModelMatrix * vec4(binormal, 0.0)).xyz;
 
 	// in a vertex-shader there exists no gl_FrontFacing
@@ -145,7 +145,7 @@ void main()
 	// transform specularmap texture coords
 	var_TexSpecular = (u_SpecularTextureMatrix * attr_TexCoord0).st;
 
-	var_ViewOrigin = normalize(u_ViewOrigin - var_Position.xyz);
+	var_ViewOrigin  = normalize(u_ViewOrigin - var_Position.xyz);
 	var_ViewOrigin2 = normalize(var_tangentMatrix * var_ViewOrigin);
 
 #if defined(USE_PARALLAX_MAPPING)

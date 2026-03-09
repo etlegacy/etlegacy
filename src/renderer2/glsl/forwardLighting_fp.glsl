@@ -975,11 +975,11 @@ void    main()
 	dotNL = dot(N, L);
 
 	// specular highlights
-	vec4 map = texture2D(u_SpecularMap, texSpecular);
+	vec4 map      = texture2D(u_SpecularMap, texSpecular);
 	vec3 specular = computeSpecular2(dotNL, V, N, L, vec3(1.0), r_SpecularExponent)
-					* map.rgb * u_LightColor; // * r_SpecularScale;
+	                * map.rgb * u_LightColor; // * r_SpecularScale;
 
-#else // else USE_NORMAL_MAPPING 
+#else // else USE_NORMAL_MAPPING
 
 	vec3 N;
 #if defined(TWOSIDED)

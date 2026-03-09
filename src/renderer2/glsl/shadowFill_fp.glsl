@@ -5,7 +5,7 @@ uniform int       u_AlphaTest;
 uniform sampler2D u_ColorMap;
 #endif // USE_ALPHA_TESTING
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4      u_PortalPlane;
+uniform vec4 u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 
 #if defined(VSM) || defined(EVSM) || defined(ESM)
@@ -96,9 +96,9 @@ void main()
 #endif
 #if defined(EVSM)
 	#if !defined(r_EVSMPostProcess)
-		gl_FragColor = var_FragColorEVSM; //ShadowDepthToEVSM(distance_);
+	gl_FragColor = var_FragColorEVSM;     //ShadowDepthToEVSM(distance_);
 	#else
-		gl_FragColor = vec4(0.0, 0.0, 0.0, distance_);
+	gl_FragColor = vec4(0.0, 0.0, 0.0, distance_);
 	#endif
 #else
 	gl_FragColor = vec4(0.0, 0.0, 0.0, distance_);

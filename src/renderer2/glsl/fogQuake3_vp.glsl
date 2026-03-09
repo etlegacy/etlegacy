@@ -81,5 +81,5 @@ void main()
 
 	var_Tex = vec2(s, t);
 
-	var_Color =  attr_Color * u_ColorModulate + u_Color;
+	var_Color = attr_Color * u_ColorModulate + u_Color;
 }

@@ -27,15 +27,15 @@ attribute vec3 attr_Binormal2;
 
 uniform float u_VertexInterpolation;
 #endif // USE_VERTEX_ANIMATION
-uniform mat4  u_NormalTextureMatrix;
-uniform mat4  u_ModelMatrix;
-uniform mat4  u_ModelViewProjectionMatrix;
-uniform vec3  u_ViewOrigin;
+uniform mat4 u_NormalTextureMatrix;
+uniform mat4 u_ModelMatrix;
+uniform mat4 u_ModelViewProjectionMatrix;
+uniform vec3 u_ViewOrigin;
 #if defined(USE_DEFORM_VERTEXES)
 uniform float u_Time;
 #endif // USE_DEFORM_VERTEXES
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4  u_PortalPlane;
+uniform vec4 u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 
 varying vec3 var_Position;

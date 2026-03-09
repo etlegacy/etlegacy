@@ -58,11 +58,6 @@ char            implicitMap[MAX_QPATH];
 unsigned        implicitStateBits;
 cullType_t      implicitCullType;
 
-static qboolean Shader_AllowPicmip(const shader_t *shader)
-{
-	return (!shader->noPicMip || shader->maxPicMip >= 0);
-}
-
 /**
  * @brief R_RemapShader
  * @param[in] shaderName
@@ -1557,10 +1552,7 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 	// determine image options
 	if (stage->overrideNoPicMip || shader.noPicMip || stage->highQuality || stage->forceHighQuality)
 	{
-		if (!Shader_AllowPicmip(&shader))
-		{
-			imageBits |= IF_NOPICMIP;
-		}
+		imageBits |= IF_NOPICMIP;
 	}
 
 	if (stage->type == ST_NORMALMAP || stage->type == ST_HEATHAZEMAP || stage->type == ST_LIQUIDMAP)
@@ -1607,7 +1599,7 @@ qboolean LoadMap(shaderStage_t *stage, char *buffer)
 	}
 
 	// try to load the image
-	stage->bundle[0].image[0] = R_FindImageFile(buffer, imageBits, shader.maxPicMip, filterType, wrapType, shader.name);
+	stage->bundle[0].image[0] = R_FindImageFile(buffer, imageBits, filterType, wrapType, shader.name);
 
 	if (!stage->bundle[0].image[0])
 	{
@@ -1706,10 +1698,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			imageBits = 0;
 			if (stage->overrideNoPicMip || shader.noPicMip)
 			{
-				if (!Shader_AllowPicmip(&shader))
-				{
-					imageBits |= IF_NOPICMIP;
-				}
+				imageBits |= IF_NOPICMIP;
 			}
 
 			if (stage->overrideFilterType)
@@ -1721,7 +1710,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 				filterType = shader.filterType;
 			}
 
-			stage->bundle[0].image[0] = R_FindImageFile(token, imageBits, shader.maxPicMip, filterType, WT_EDGE_CLAMP, shader.name);
+			stage->bundle[0].image[0] = R_FindImageFile(token, imageBits, filterType, WT_EDGE_CLAMP, shader.name);
 			if (!stage->bundle[0].image[0])
 			{
 				Ren_Warning("WARNING: R_FindImageFile could not find 'clampmap' image '%s' in shader '%s'\n", token, shader.name);
@@ -1744,10 +1733,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			imageBits = 0;
 			if (stage->overrideNoPicMip || shader.noPicMip)
 			{
-				if (!Shader_AllowPicmip(&shader))
-				{
-					imageBits |= IF_NOPICMIP;
-				}
+				imageBits |= IF_NOPICMIP;
 			}
 
 			if (stage->overrideFilterType)
@@ -1772,7 +1758,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 				num = stage->bundle[0].numImages;
 				if (num < MAX_IMAGE_ANIMATIONS)
 				{
-					stage->bundle[0].image[num] = R_FindImageFile(token, imageBits, shader.maxPicMip, filterType, WT_REPEAT, shader.name);
+					stage->bundle[0].image[num] = R_FindImageFile(token, imageBits, filterType, WT_REPEAT, shader.name);
 					if (!stage->bundle[0].image[num])
 					{
 						Ren_Warning("WARNING: R_FindImageFile could not find 'animMap' image '%s' in shader '%s'\n", token,
@@ -1829,10 +1815,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 			imageBits = 0;
 			if (stage->overrideNoPicMip || shader.noPicMip)
 			{
-				if (!Shader_AllowPicmip(&shader))
-				{
-					imageBits |= IF_NOPICMIP;
-				}
+				imageBits |= IF_NOPICMIP;
 			}
 
 			if (stage->overrideFilterType)
@@ -1844,7 +1827,7 @@ qboolean ParseStage(shaderStage_t *stage, char **text)
 				filterType = shader.filterType;
 			}
 
-			stage->bundle[0].image[0] = R_FindCubeImage(token, imageBits, shader.maxPicMip, filterType, WT_EDGE_CLAMP, shader.name);
+			stage->bundle[0].image[0] = R_FindCubeImage(token, imageBits, filterType, WT_EDGE_CLAMP, shader.name);
 			if (!stage->bundle[0].image[0])
 			{
 				Ren_Warning("WARNING: R_FindCubeImage could not find '%s' in shader '%s'\n", token, shader.name);
@@ -3006,7 +2989,7 @@ void ParseSkyParms(char **text)
 	{
 		Q_strncpyz(prefix, token, sizeof(prefix));
 
-		shader.sky.outerbox = R_FindCubeImage(prefix, IF_NONE, shader.maxPicMip, FT_LINEAR, WT_EDGE_CLAMP, shader.name);
+		shader.sky.outerbox = R_FindCubeImage(prefix, IF_NONE, FT_LINEAR, WT_EDGE_CLAMP, shader.name);
 		if (!shader.sky.outerbox)
 		{
 			Ren_Warning("WARNING: could not find cubemap '%s' for outer skybox in shader '%s'\n", prefix, shader.name);
@@ -3041,7 +3024,7 @@ void ParseSkyParms(char **text)
 	{
 		Q_strncpyz(prefix, token, sizeof(prefix));
 
-		shader.sky.innerbox = R_FindCubeImage(prefix, IF_NONE, shader.maxPicMip, FT_DEFAULT, WT_REPEAT, shader.name); // GL_REPEAT?! /  FT_LINEAR?!
+		shader.sky.innerbox = R_FindCubeImage(prefix, IF_NONE, FT_DEFAULT, WT_REPEAT, shader.name); // GL_REPEAT?! /  FT_LINEAR?!
 		if (!shader.sky.innerbox)
 		{
 			Ren_Warning("WARNING: could not find cubemap '%s' for inner skybox in shader '%s'\n", prefix, shader.name);
@@ -5578,7 +5561,6 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 	Com_Memset(&stages, 0, sizeof(stages));
 	Q_strncpyz(shader.name, strippedName, sizeof(shader.name));
 	shader.type = type;
-	shader.maxPicMip = -1;
 	for (i = 0; i < MAX_SHADER_STAGES; i++)
 	{
 		stages[i].bundle[0].texMods = texMods[i];
@@ -5685,12 +5667,8 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 
 	// if not defined in the in-memory shader descriptions,
 	// look for a single supported image file
-	image = R_FindImageFile(fileName,
-	                        mipRawImage ? IF_NONE : (Shader_AllowPicmip(&shader) ? IF_NONE : IF_NOPICMIP),
-	                        shader.maxPicMip,
-	                        mipRawImage ? FT_DEFAULT : FT_LINEAR,
-	                        mipRawImage ? WT_REPEAT : WT_EDGE_CLAMP,
-	                        shader.name);
+	image = R_FindImageFile(fileName, mipRawImage ? IF_NONE : IF_NOPICMIP,
+	                        mipRawImage ? FT_DEFAULT : FT_LINEAR, mipRawImage ? WT_REPEAT : WT_EDGE_CLAMP, shader.name);
 	if (!image)
 	{
 		Ren_Developer("Warning: Couldn't find image [%s] file for shader '%s' - returning default shader\n", fileName, shader.name);
@@ -5776,16 +5754,11 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 			}
 		}
 
-		if (i == 1 && shader.type != SHADER_2D && shader.type != SHADER_LIGHT && (stages[0].type == ST_COLORMAP || stages[0].type == ST_DIFFUSEMAP) && Shader_AllowPicmip(&shader))
+		if (i == 1 && shader.type != SHADER_2D && shader.type != SHADER_LIGHT && (stages[0].type == ST_COLORMAP || stages[0].type == ST_DIFFUSEMAP) && !shader.noPicMip)
 		{
 			// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
 			// ETL: suffix for normalmaps is '_n'
-			tmpImage = R_FindImageFile(va("%s_n.tga", strippedName),
-			                           Shader_AllowPicmip(&shader) ? IF_NONE : IF_NOPICMIP,
-			                           shader.maxPicMip,
-			                           Shader_AllowPicmip(&shader) ? FT_DEFAULT : FT_LINEAR,
-			                           Shader_AllowPicmip(&shader) ? WT_REPEAT : WT_EDGE_CLAMP,
-			                           shader.name);
+			tmpImage = R_FindImageFile(va("%s_n.tga", strippedName), !shader.noPicMip ? IF_NONE : IF_NOPICMIP, !shader.noPicMip ? FT_DEFAULT : FT_LINEAR, !shader.noPicMip ? WT_REPEAT : WT_EDGE_CLAMP, shader.name);
 			if (tmpImage)
 			{
 				stages[i].active             = qtrue;
@@ -5802,12 +5775,7 @@ shader_t *R_FindShader(const char *name, shaderType_t type, qboolean mipRawImage
 
 			// Note/FIXME: image file name has to be including extension, we use tga - make this more generic one day
 			// ETL: suffix for specularmaps is '_r'
-			tmpImage = R_FindImageFile(va("%s_r.tga", strippedName),
-			                           Shader_AllowPicmip(&shader) ? IF_NONE : IF_NOPICMIP,
-			                           shader.maxPicMip,
-			                           Shader_AllowPicmip(&shader) ? FT_DEFAULT : FT_LINEAR,
-			                           Shader_AllowPicmip(&shader) ? WT_REPEAT : WT_EDGE_CLAMP,
-			                           shader.name);
+			tmpImage = R_FindImageFile(va("%s_r.tga", strippedName), !shader.noPicMip ? IF_NONE : IF_NOPICMIP, !shader.noPicMip ? FT_DEFAULT : FT_LINEAR, !shader.noPicMip ? WT_REPEAT : WT_EDGE_CLAMP, shader.name);
 			if (tmpImage)
 			{
 				stages[i].active             = qtrue;
@@ -5882,7 +5850,6 @@ qhandle_t RE_RegisterShaderFromImage(const char *name, image_t *image, qboolean 
 	Com_Memset(&stages, 0, sizeof(stages));
 	Q_strncpyz(shader.name, strippedName, sizeof(shader.name));
 	shader.type = SHADER_2D;
-	shader.maxPicMip = -1;
 	for (i = 0; i < MAX_SHADER_STAGES; i++)
 	{
 		stages[i].bundle[0].texMods = texMods[i];
@@ -6335,8 +6302,8 @@ static void ScanAndLoadGuideFiles(void)
 			Ren_Drop("Couldn't load %s (single buffer)", filename);
 		}
 	}
-    size = sum + numGuides * 2;
-	s_guideText = (char *)ri.Hunk_Alloc(size, h_low);
+	size = sum + numGuides * 2;
+	s_guideText = (char*)ri.Hunk_Alloc(size, h_low);
 
 	// load in reverse order, so doubled templates are overriden properly
 	for (i = numGuides - 1; i >= 0; i--)
@@ -6369,7 +6336,7 @@ static void ScanAndLoadGuideFiles(void)
 		p = buffers[i];
 
 		// look for label
-		while (1)
+		while (qtrue)
 		{
 			token = COM_ParseExt2(&p, qtrue);
 			if (token[0] == 0)
@@ -6400,7 +6367,7 @@ static void ScanAndLoadGuideFiles(void)
 				break;
 			}
 
-			while (1)
+			while (qtrue)
 			{
 				token = COM_ParseExt2(&p, qtrue);
 
@@ -6425,12 +6392,9 @@ static void ScanAndLoadGuideFiles(void)
 			SkipBracedSection(&p);
 
 			// if we passed the pointer to the next shader file
-			if (i < numGuides - 1)
+			if (i < numGuides - 1 && p > buffers[i + 1])
 			{
-				if (p > buffers[i + 1])
-				{
-					break;
-				}
+				break;
 			}
 		}
 	}
@@ -6893,7 +6857,6 @@ static void CreateInternalShaders(void)
 	Q_strncpyz(shader.name, "<default>", sizeof(shader.name));
 
 	shader.type                  = SHADER_3D_DYNAMIC;
-	shader.maxPicMip             = -1;
 	stages[0].type               = ST_DIFFUSEMAP;
 	//stages[0].bundle[0].image[0] = tr.defaultImage;
 	stages[0].active             = qtrue;
