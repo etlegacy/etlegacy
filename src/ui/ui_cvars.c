@@ -101,6 +101,7 @@ vmCvar_t ui_cg_crosshairScaleX;
 vmCvar_t ui_cg_crosshairScaleY;
 
 vmCvar_t cl_bypassMouseInput;
+vmCvar_t in_osCursor;
 
 vmCvar_t ui_serverBrowserSettings;
 
@@ -287,6 +288,7 @@ static cvarTable_t cvarTable[] =
 	{ NULL,                                "ui_profile_mousePitch",               "",                           CVAR_ARCHIVE,                   0 },
 
 	{ &cl_bypassMouseInput,                "cl_bypassMouseInput",                 "0",                          CVAR_TEMP,                      0 },
+	{ &in_osCursor,                        "in_osCursor",                         "1",                          CVAR_ARCHIVE,                   0 },
 
 	{ NULL,                                "g_currentCampaign",                   "",                           CVAR_WOLFINFO | CVAR_ROM,       0 },
 	{ NULL,                                "g_currentCampaignMap",                "0",                          CVAR_WOLFINFO | CVAR_ROM,       0 },

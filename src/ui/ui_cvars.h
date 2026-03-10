@@ -92,6 +92,7 @@ extern vmCvar_t ui_cg_crosshairScaleX;
 extern vmCvar_t ui_cg_crosshairScaleY;
 
 extern vmCvar_t cl_bypassMouseInput;
+extern vmCvar_t in_osCursor;
 
 extern vmCvar_t ui_serverBrowserSettings;
 
