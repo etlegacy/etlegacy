@@ -2284,6 +2284,12 @@ enum
 	FT_MINI_HEALTH_BAR   = BIT(9),
 };
 
+// iconfeed layout
+enum
+{
+	ICONFEED_VERTICAL = BIT(0),
+};
+
 /// Locations
 #define MAX_C_LOCATIONS 1024
 #define MAX_LOC_LEN 128

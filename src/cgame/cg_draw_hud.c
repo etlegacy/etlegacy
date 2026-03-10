@@ -100,7 +100,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(warmuptitle),        CG_DrawWarmupTitle,               HUD_COMP_TYPE_TEXT,      0.35f, { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(warmuptext),         CG_DrawWarmupText,                HUD_COMP_TYPE_MULTITEXT, 0.22f, { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(objectivetext),      CG_DrawObjectiveInfo,             HUD_COMP_TYPE_MULTITEXT, 0.22f, { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(iconfeed),           CG_DrawIconFeed,                  HUD_COMP_TYPE_SPECIFIC,  0.22f, { 0 } },           // FIXME: outside cg_draw_hud
+	{ HUDF(iconfeed),           CG_DrawIconFeed,                  HUD_COMP_TYPE_SPECIFIC,  0.22f, { "Vertical" } },  // FIXME: outside cg_draw_hud
 	{ HUDF(centerprint),        CG_DrawCenterString,              HUD_COMP_TYPE_MULTITEXT, 0.22f, { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(banner),             CG_DrawBannerPrint,               HUD_COMP_TYPE_MULTITEXT, 0.23f, { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(crosshairtext),      CG_DrawCrosshairNames,            HUD_COMP_TYPE_TEXT,      0.25f, { "Full Color",    "Explosive Owner" } },// FIXME: outside cg_draw_hud

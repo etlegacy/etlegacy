@@ -48,6 +48,9 @@ typedef struct
 	float startX;
 	float currentX;
 	float targetX;
+	float startY;
+	float currentY;
+	float targetY;
 	int animationStart;
 } cg_hud_iconfeed_anim_t;
 
@@ -92,33 +95,41 @@ static ID_INLINE void CG_Hud_IconFeed_Draw_EntryCentered(int i, int cx, int cy, 
 	trap_R_SetColor(NULL);
 }
 
-/* Evaluate the current horizontal position for an icon animation track. */
-static ID_INLINE float CG_IconFeed_EvaluateAnimatedX(const cg_hud_iconfeed_anim_t *anim, int now)
+/* Evaluate the current icon position for an animation track. */
+static ID_INLINE void CG_IconFeed_EvaluateAnimatedPosition(const cg_hud_iconfeed_anim_t *anim, int now, float *x, float *y)
 {
 	float frac;
 
 	if (!anim->active)
 	{
-		return 0.0f;
+		*x = 0.0f;
+		*y = 0.0f;
+		return;
 	}
 	if (now <= anim->animationStart)
 	{
-		return anim->startX;
+		*x = anim->startX;
+		*y = anim->startY;
+		return;
 	}
 	if (now >= anim->animationStart + icon_shift_duration)
 	{
-		return anim->targetX;
+		*x = anim->targetX;
+		*y = anim->targetY;
+		return;
 	}
 
 	frac = (float)(now - anim->animationStart) / (float)icon_shift_duration;
-	return LERP(anim->startX, anim->targetX, frac);
+	*x   = LERP(anim->startX, anim->targetX, frac);
+	*y   = LERP(anim->startY, anim->targetY, frac);
 }
 
-/* Update an icon animation track and return the x-position to draw this frame. */
-static ID_INLINE float CG_IconFeed_ResolveAnimatedX(int entryIndex, float targetX, int now)
+/* Update an icon animation track and return the draw position for this frame. */
+static ID_INLINE void CG_IconFeed_ResolveAnimatedPosition(int entryIndex, float targetX, float targetY, int now, float *x, float *y)
 {
 	cg_hud_iconfeed_anim_t *anim = &entryAnims[entryIndex];
 	float                  currentX;
+	float                  currentY;
 
 	if (!anim->active)
 	{
@@ -126,22 +137,32 @@ static ID_INLINE float CG_IconFeed_ResolveAnimatedX(int entryIndex, float target
 		anim->startX         = targetX;
 		anim->currentX       = targetX;
 		anim->targetX        = targetX;
+		anim->startY         = targetY;
+		anim->currentY       = targetY;
+		anim->targetY        = targetY;
 		anim->animationStart = now;
 
-		return targetX;
+		*x = targetX;
+		*y = targetY;
+		return;
 	}
 
-	currentX = CG_IconFeed_EvaluateAnimatedX(anim, now);
-	if (Q_fabs(anim->targetX - targetX) > 0.5f)
+	CG_IconFeed_EvaluateAnimatedPosition(anim, now, &currentX, &currentY);
+	if (Q_fabs(anim->targetX - targetX) > 0.5f || Q_fabs(anim->targetY - targetY) > 0.5f)
 	{
 		anim->startX         = currentX;
+		anim->startY         = currentY;
 		anim->targetX        = targetX;
+		anim->targetY        = targetY;
 		anim->animationStart = now;
 		currentX             = anim->startX;
+		currentY             = anim->startY;
 	}
 
 	anim->currentX = currentX;
-	return currentX;
+	anim->currentY = currentY;
+	*x             = currentX;
+	*y             = currentY;
 }
 
 /* Return qtrue when the entry participates in the kill-consecutive window logic. */
@@ -329,7 +350,7 @@ void CG_DrawIconFeed(hudComponent_t *comp)
 		}
 	}
 
-	/* 2) Collect active entries and sort them into one row. */
+	/* 2) Collect active entries and sort them into display groups. */
 	drawCount = 0;
 	for (i = 0; i < MAX_ENTRIES; ++i)
 	{
@@ -358,32 +379,42 @@ void CG_DrawIconFeed(hudComponent_t *comp)
 		}
 	}
 
-	/* 3) Draw a single centered row with an extra gap between timestamp groups. */
+	/* 3) Lay out each display group either leftward or downward from the anchor. */
 	if (drawCount > 0)
 	{
-		float iconScale;
-		float groupCenter[MAX_ENTRIES];
-		float groupScale[MAX_ENTRIES];
-		int   baseIconWidth;
-		int   groupCount;
-		int   groupIndex;
-		int   groupInnerStep[MAX_ENTRIES];
-		int   groupLen[MAX_ENTRIES];
-		int   groupStart[MAX_ENTRIES];
-		int   groupWidth[MAX_ENTRIES];
-		int   innerStep;
-		int   groupGap;
-		int   now;
+		float    iconScale;
+		float    groupCenterX[MAX_ENTRIES];
+		float    groupCenterY[MAX_ENTRIES];
+		float    groupScale[MAX_ENTRIES];
+		int      baseIconWidth;
+		int      baseIconHeight;
+		int      groupCount;
+		int      groupIndex;
+		int      groupInnerStep[MAX_ENTRIES];
+		int      groupHeight[MAX_ENTRIES];
+		int      groupLen[MAX_ENTRIES];
+		int      groupStart[MAX_ENTRIES];
+		int      groupWidth[MAX_ENTRIES];
+		int      innerStep;
+		int      groupGap;
+		int      now;
+		qboolean verticalLayout;
 
-		iconScale     = Com_Clamp(0.25f, 3.0f, cg_iconfeedScale.value);
-		baseIconWidth = (int)((float)icon_size_w * iconScale + 0.5f);
-		innerStep     = (int)((float)(icon_size_w + icon_consecutive_gap) * iconScale + 0.5f);
-		groupGap      = (int)((float)icon_group_gap * iconScale + 0.5f);
-		now           = cg.time;
+		iconScale      = Com_Clamp(0.25f, 3.0f, cg_iconfeedScale.value);
+		baseIconWidth  = (int)((float)icon_size_w * iconScale + 0.5f);
+		baseIconHeight = (int)((float)icon_size_h * iconScale + 0.5f);
+		innerStep      = (int)((float)(icon_size_w + icon_consecutive_gap) * iconScale + 0.5f);
+		groupGap       = (int)((float)icon_group_gap * iconScale + 0.5f);
+		now            = cg.time;
+		verticalLayout = (comp->style & ICONFEED_VERTICAL) != 0;
 
 		if (baseIconWidth < 1)
 		{
 			baseIconWidth = 1;
+		}
+		if (baseIconHeight < 1)
+		{
+			baseIconHeight = 1;
 		}
 		if (innerStep < 1)
 		{
@@ -400,10 +431,12 @@ void CG_DrawIconFeed(hudComponent_t *comp)
 		{
 			if (i == 0 || entries[drawItems[i]].groupId != entries[drawItems[i - 1]].groupId)
 			{
-				groupStart[groupCount]  = i;
-				groupLen[groupCount]    = 0;
-				groupWidth[groupCount]  = 0;
-				groupCenter[groupCount] = (float)anchorCX;
+				groupStart[groupCount]   = i;
+				groupLen[groupCount]     = 0;
+				groupWidth[groupCount]   = 0;
+				groupHeight[groupCount]  = 0;
+				groupCenterX[groupCount] = (float)anchorCX;
+				groupCenterY[groupCount] = (float)anchorCY;
 				groupCount++;
 			}
 
@@ -421,20 +454,44 @@ void CG_DrawIconFeed(hudComponent_t *comp)
 
 			groupWidth[i] = (int)((float)baseIconWidth * groupScale[i] + 0.5f)
 			                + (groupLen[i] - 1) * groupInnerStep[i];
+			groupHeight[i] = (int)((float)baseIconHeight * groupScale[i] + 0.5f);
+			if (groupHeight[i] < 1)
+			{
+				groupHeight[i] = 1;
+			}
 		}
 
-		/* Keep the newest consecutive group centered and push older groups left. */
-		groupCenter[groupCount - 1] = (float)anchorCX;
-		for (i = groupCount - 2; i >= 0; --i)
+		if (verticalLayout)
 		{
-			groupCenter[i] = groupCenter[i + 1]
-			                 - ((float)groupWidth[i] + (float)groupWidth[i + 1]) * 0.5f
-			                 - (float)groupGap;
+			/* Keep the newest group at the anchor and flow older groups downward. */
+			groupCenterX[groupCount - 1] = (float)anchorCX;
+			groupCenterY[groupCount - 1] = (float)anchorCY;
+			for (i = groupCount - 2; i >= 0; --i)
+			{
+				groupCenterX[i] = (float)anchorCX;
+				groupCenterY[i] = groupCenterY[i + 1]
+				                  + ((float)groupHeight[i] + (float)groupHeight[i + 1]) * 0.5f
+				                  + (float)groupGap;
+			}
+		}
+		else
+		{
+			/* Keep the newest group centered and push older groups left. */
+			groupCenterX[groupCount - 1] = (float)anchorCX;
+			groupCenterY[groupCount - 1] = (float)anchorCY;
+			for (i = groupCount - 2; i >= 0; --i)
+			{
+				groupCenterX[i] = groupCenterX[i + 1]
+				                  - ((float)groupWidth[i] + (float)groupWidth[i + 1]) * 0.5f
+				                  - (float)groupGap;
+				groupCenterY[i] = (float)anchorCY;
+			}
 		}
 
 		if (cg_iconfeed_debug)
 		{
-			Com_Printf("row draw: count=%d groups=%d iconScale=%.3f innerStep=%d groupGap=%d\n",
+			Com_Printf("%s draw: count=%d groups=%d iconScale=%.3f innerStep=%d groupGap=%d\n",
+			           verticalLayout ? "column" : "row",
 			           drawCount, groupCount, iconScale, innerStep, groupGap);
 		}
 
@@ -442,11 +499,12 @@ void CG_DrawIconFeed(hudComponent_t *comp)
 		{
 			if (cg_iconfeed_debug)
 			{
-				Com_Printf("  group[%d] ts=%d len=%d center=%.2f width=%d\n",
+				Com_Printf("  group[%d] ts=%d len=%d center=(%.2f, %.2f) width=%d\n",
 				           groupIndex,
 				           entries[drawItems[groupStart[groupIndex]]].groupTimestamp,
 				           groupLen[groupIndex],
-				           groupCenter[groupIndex],
+				           groupCenterX[groupIndex],
+				           groupCenterY[groupIndex],
 				           groupWidth[groupIndex]);
 			}
 
@@ -459,12 +517,15 @@ void CG_DrawIconFeed(hudComponent_t *comp)
 				int   dt;
 				int   doFadeOut;
 				int   cx;
+				int   cy;
 				float alpha;
 				float alphaOut;
 				float currentX;
+				float currentY;
 				float p;
 				float scale;
 				float targetX;
+				float targetY;
 
 				drawIndex = groupStart[groupIndex] + i;
 				idxEntry  = drawItems[drawIndex];
@@ -473,11 +534,13 @@ void CG_DrawIconFeed(hudComponent_t *comp)
 				doFadeOut = 0;
 				alphaOut  = icon_alpha;
 
-				targetX = groupCenter[groupIndex]
+				targetX = groupCenterX[groupIndex]
 				          - ((float)(groupLen[groupIndex] - 1) * (float)groupInnerStep[groupIndex]) * 0.5f
 				          + (float)i * (float)groupInnerStep[groupIndex];
-				currentX = CG_IconFeed_ResolveAnimatedX(idxEntry, targetX, now);
-				cx       = (int)(currentX + 0.5f);
+				targetY = groupCenterY[groupIndex];
+				CG_IconFeed_ResolveAnimatedPosition(idxEntry, targetX, targetY, now, &currentX, &currentY);
+				cx = (int)(currentX + 0.5f);
+				cy = (int)(currentY + 0.5f);
 
 				dt = now - born;
 				if (dt < 0)
@@ -519,12 +582,12 @@ void CG_DrawIconFeed(hudComponent_t *comp)
 
 				if (cg_iconfeed_debug)
 				{
-					Com_Printf("    idx=%d cx=%d target=%.2f p=%.3f s=%.3f a=%.3f%s type=%d\n",
-					           idxEntry, cx, targetX, p, scale, alpha,
+					Com_Printf("    idx=%d cx=%d cy=%d target=(%.2f, %.2f) p=%.3f s=%.3f a=%.3f%s type=%d\n",
+					           idxEntry, cx, cy, targetX, targetY, p, scale, alpha,
 					           doFadeOut ? " (fadeOut)" : "", (int)entries[idxEntry].type);
 				}
 
-				CG_Hud_IconFeed_Draw_EntryCentered(idxEntry, cx, anchorCY, scale, alpha);
+				CG_Hud_IconFeed_Draw_EntryCentered(idxEntry, cx, cy, scale, alpha);
 				totalDrawn++;
 			}
 		}
