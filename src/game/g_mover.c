@@ -485,7 +485,6 @@ qboolean G_TryPushingEntity(gentity_t *check, gentity_t *pusher, vec3_t move, ve
 
 // referenced in G_MoverPush()
 extern void LandMineTrigger(gentity_t *self);
-extern void GibEntity(gentity_t *self, int killer, int damage);
 
 /**
  * @brief Objects need to be moved back on a failed push,
@@ -645,7 +644,7 @@ qboolean G_MoverPush(gentity_t *pusher, vec3_t move, vec3_t amove, gentity_t **o
 		{
 		case ET_CORPSE: // always gib corpses ...
 			trap_LinkEntity(check);
-			GibEntity(check, ENTITYNUM_WORLD, 0);
+			GibEntity(check, &g_entities[ENTITYNUM_WORLD], &g_entities[ENTITYNUM_WORLD], 0, qfalse);
 			moveList[e] = ENTITYNUM_NONE; // prevent re-linking later on
 			continue;
 		default:
