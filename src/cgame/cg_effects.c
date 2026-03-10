@@ -576,11 +576,12 @@ int CG_GetOriginForTag(centity_t *cent, refEntity_t *parent, const char *tagName
  * @param[in] playerOrigin
  * @param[in] gdir
  */
-void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir, int damage)
+void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir, int damage, qboolean heavyDirectGib)
 {
 	if (cg_blood.integer && cg_bloodTime.integer)
 	{
 		vec3_t         origin;
+		vec3_t         launchDir;
 		trace_t        trace;
 		clientInfo_t   *ci;
 		bg_character_t *character;
@@ -593,6 +594,9 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir, int damage)
 		// vec4_t      color;
 		vec3_t      velocity, dir, angles;
 		refEntity_t *re = &cent->pe.bodyRefEnt;
+		float       directHeavyScale;
+		float       topDownLift;
+		qboolean    hasLaunchDir;
 		int         i, j, count = 0;
 		int         tagIndex, gibIndex, junction;
 		int         clientNum = cent->currentState.clientNum;
@@ -653,6 +657,18 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir, int damage)
 
 		ci        = &cgs.clientinfo[clientNum];
 		character = CG_CharacterForClientinfo(ci, cent);
+		// Direct heavy-projectile hits should throw gibs much harder.
+		directHeavyScale = heavyDirectGib ? 1.75f : 1.0f;
+		hasLaunchDir     = (VectorNormalize2(gdir, launchDir) > 0.f);
+		topDownLift      = 0.f;
+
+		if (hasLaunchDir && launchDir[2] < -0.45f)
+		{
+			// EV_GIB_PLAYER does not carry blast distance, so only steep
+			// downward impulses get a small lift to keep close overhead hits
+			// from driving every gib straight into the floor.
+			topDownLift = Com_Clamp(0.f, 1.f, (-launchDir[2] - 0.45f) / 0.55f) * GIB_VELOCITY * 0.75f;
+		}
 
 		// fetch the various positions of the tag_gib*'s
 		// and spawn the gibs from the correct places (especially the head)
@@ -668,12 +684,24 @@ void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir, int damage)
 				VectorSubtract(origin, re->origin, dir);
 				VectorNormalize(dir);
 
-				// spawn a gib
-				velocity[0] = dir[0] * (0.5f + random()) * GIB_VELOCITY * 0.3f;
-				velocity[1] = dir[1] * (0.5f + random()) * GIB_VELOCITY * 0.3f;
-				velocity[2] = GIB_JUMP + dir[2] * (0.5f + random()) * GIB_VELOCITY * 0.5f;
+				if (hasLaunchDir)
+				{
+					// Keep the transmitted damage direction as the dominant launch
+					// vector and only use tag offsets as a small cone spread.
+					// Direct heavy-projectile hits get a much stronger shove.
+					VectorScale(launchDir, directHeavyScale * (GIB_JUMP + (0.5f + random()) * GIB_VELOCITY), velocity);
+					VectorMA(velocity, (0.15f + 0.15f * random()) * GIB_VELOCITY, dir, velocity);
+					velocity[2] += topDownLift;
+				}
+				else
+				{
+					// Fall back to the legacy outward/upward spray when the event
+					// did not carry a usable damage direction.
+					velocity[0] = dir[0] * (0.5f + random()) * GIB_VELOCITY * 0.3f;
+					velocity[1] = dir[1] * (0.5f + random()) * GIB_VELOCITY * 0.3f;
+					velocity[2] = GIB_JUMP + dir[2] * (0.5f + random()) * GIB_VELOCITY * 0.5f;
+				}
 
-				VectorMA(velocity, GIB_VELOCITY, gdir, velocity);
 				AxisToAngles(axis, angles);
 
 				CG_LaunchGib(cent, origin, angles, velocity, character->gibModels[gibIndex], 1.0, 0);
