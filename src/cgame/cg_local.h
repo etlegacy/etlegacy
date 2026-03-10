@@ -2043,7 +2043,6 @@ typedef struct
 	qhandle_t pmImageAxisMine;
 	qhandle_t pmImageAlliesFlag;
 	qhandle_t pmImageAxisFlag;
-	qhandle_t pmImageSpecFlag;
 	qhandle_t hintKey;
 
 	qhandle_t pmImageSlime;
@@ -2058,6 +2057,7 @@ typedef struct
 
 	qhandle_t axisFlag;
 	qhandle_t alliedFlag;
+	qhandle_t spectatorFlag;
 
 	qhandle_t disconnectIcon;
 

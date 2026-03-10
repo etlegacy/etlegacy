@@ -110,7 +110,6 @@ void CG_InitPMGraphics(void)
 	cgs.media.pmImageAxisMine        = trap_R_RegisterShaderNoMip("gfx/hud/pm_mineaxis");
 	cgs.media.pmImageAlliesFlag      = trap_R_RegisterShaderNoMip("gfx/limbo/pm_flagallied");
 	cgs.media.pmImageAxisFlag        = trap_R_RegisterShaderNoMip("gfx/limbo/pm_flagaxis");
-	cgs.media.pmImageSpecFlag        = trap_R_RegisterShaderNoMip("gfx/limbo/but_team_spec");
 	cgs.media.hintKey                = trap_R_RegisterShaderNoMip("gfx/hud/keyboardkey_old");
 
 	// extra obituaries
@@ -1408,7 +1407,7 @@ qhandle_t CG_GetPMItemIcon(centity_t *cent)
 		{
 			return cgs.media.pmImageAlliesFlag;
 		}
-		return cgs.media.pmImageSpecFlag;
+		return cgs.media.spectatorFlag;
 	default:
 		return cgs.media.pmImages[cent->currentState.effect1Time];
 	}

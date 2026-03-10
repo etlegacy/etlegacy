@@ -1114,7 +1114,7 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 				}
 				else if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_SPECTATOR)
 				{
-					flag = cgs.media.pmImageSpecFlag;
+					flag = cgs.media.spectatorFlag;
 				}
 				else
 				{

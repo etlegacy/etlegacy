@@ -1591,6 +1591,7 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.axisFlag       = trap_R_RegisterShaderNoMip("gfx/limbo/flag_axis");
 	cgs.media.alliedFlag     = trap_R_RegisterShaderNoMip("gfx/limbo/flag_allied");
+	cgs.media.spectatorFlag  = trap_R_RegisterShaderNoMip("gfx/limbo/flag_spectator");
 	cgs.media.disconnectIcon = trap_R_RegisterShaderNoMip("gfx/2d/net");
 
 	cgs.media.cm_spec_icon  = trap_R_RegisterShaderNoMip("ui/assets/mp_spec");
