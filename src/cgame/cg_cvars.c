@@ -243,6 +243,7 @@ vmCvar_t cg_sharetimerText;
 
 vmCvar_t cg_simpleItems;
 vmCvar_t cg_simpleItemsScale;
+vmCvar_t cg_iconfeedStayTime;
 vmCvar_t cg_iconfeedScale;
 
 vmCvar_t cg_automapZoom;
@@ -559,6 +560,7 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_simpleItems,                        "cg_simpleItems",                        "0",           CVAR_ARCHIVE,                 0 },           // Bugged atm
 	{ &cg_simpleItemsScale,                   "cg_simpleItemsScale",                   "1.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_iconfeedStayTime,                   "cg_iconfeedStayTime",                   "5000",        CVAR_ARCHIVE,                 0 },
 	{ &cg_iconfeedScale,                      "cg_iconfeedScale",                      "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_automapZoom,                        "cg_automapZoom",                        "5.159",       CVAR_ARCHIVE,                 0 },
 	{ &cg_autoCmd,                            "cg_autoCmd",                            "",            CVAR_TEMP,                    0 },

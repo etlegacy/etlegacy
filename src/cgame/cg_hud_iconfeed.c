@@ -16,8 +16,6 @@ typedef struct
 
 #define MAX_ENTRIES 16
 
-static const int stayTime = 5000;
-
 /* Target icon size (unscaled) */
 static const int   icon_size_w = 29;
 static const int   icon_size_h = 29;
@@ -325,10 +323,13 @@ void CG_DrawIconFeed(hudComponent_t *comp)
 	uint8_t drawItems[MAX_ENTRIES];
 	int     anchorCX;
 	int     anchorCY;
+	int     stayTime;
 	int     totalDrawn;
 
-	anchorCX   = (int)(comp->location.x + comp->location.w * 0.5f + 0.5f);
-	anchorCY   = (int)(comp->location.y + comp->location.h * 0.5f + 0.5f);
+	anchorCX = (int)(comp->location.x + comp->location.w * 0.5f + 0.5f);
+	anchorCY = (int)(comp->location.y + comp->location.h * 0.5f + 0.5f);
+	/* Prevent negative values from extending icon lifetime due to signed math. */
+	stayTime   = cg_iconfeedStayTime.integer < 0 ? 0 : cg_iconfeedStayTime.integer;
 	totalDrawn = 0;
 
 	/* 1) Expire timed-out entries first */
