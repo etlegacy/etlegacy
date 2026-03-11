@@ -632,17 +632,6 @@ static void CG_TeamVoiceChat_f(void)
 		return;
 	}
 
-	// don't let spectators voice chat
-	// NOTE - This cg.snap will be the person you are following, but its just for intermission test
-	if (cg.snap && (cg.snap->ps.pm_type != PM_INTERMISSION))
-	{
-		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_FREE)
-		{
-			CG_Printf("%s", CG_TranslateString("Can't team voice chat as a spectator.\n")); // FIXME? find a way to print this on screen
-			return;
-		}
-	}
-
 	trap_Argv(1, chatCmd, 64);
 
 	trap_SendConsoleCommand(va("cmd vsay_team %s\n", chatCmd));
