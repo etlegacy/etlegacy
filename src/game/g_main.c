@@ -3673,6 +3673,14 @@ void CheckWolfMP(void)
 			{
 				level.warmupTime += 10000;
 				trap_Cvar_Set("g_restarted", "1");
+				if (g_gametype.integer == GT_WOLF_CAMPAIGN && !level.newCampaign)
+				{
+					int i;
+					for (i = 0; i < level.numConnectedClients; i++)
+					{
+						Com_Memset(&level.clients[level.sortedClients[i]].sess.aWeaponStats, 0, sizeof(level.clients[level.sortedClients[i]].sess.aWeaponStats));
+					}
+				}
 				trap_SendConsoleCommand(EXEC_APPEND, "map_restart 0\n");
 				level.restarted = qtrue;
 				return;
