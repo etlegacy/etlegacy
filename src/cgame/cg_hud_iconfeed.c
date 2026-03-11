@@ -17,9 +17,12 @@ typedef struct
 #define MAX_ENTRIES 16
 
 /* Target icon size (unscaled) */
-static const int   icon_size_w = 29;
-static const int   icon_size_h = 29;
-static const float icon_alpha  = 0.8f;
+// static const int   icon_size_w = 29;
+// static const int   icon_size_h = 29;
+static const int   icon_size_w = 28;
+static const int   icon_size_h = 28;
+// static const float icon_alpha  = 0.8f;
+static const float icon_alpha  = 1.0f;
 
 static const float fade_in_size      = 2.0f;
 static const int   fade_in_duration  = 200;
@@ -28,7 +31,7 @@ static const int   fade_out_duration = 300;
 static const float fade_out_alpha    = 0.0f;
 
 /* Horizontal gap between icons that share a consecutive-kill window. */
-static const int icon_consecutive_gap = 0;
+static const int icon_consecutive_gap = -2;
 
 /* Gap between separate consecutive-kill groups. */
 static const int icon_group_gap      = 8;
