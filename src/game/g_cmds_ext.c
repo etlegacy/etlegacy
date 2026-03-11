@@ -890,12 +890,6 @@ void G_vsay_cmd(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void G_vsay_team_cmd(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	if (ent->client->sess.sessionTeam == TEAM_SPECTATOR || ent->client->sess.sessionTeam == TEAM_FREE)
-	{
-		trap_SendServerCommand(ent - g_entities, "print \"Can't team chat as spectator\n\"");
-		return;
-	}
-
 	G_Voice_f(ent, SAY_TEAM, qfalse, qfalse);
 }
 
