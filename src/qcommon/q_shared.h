@@ -504,7 +504,7 @@ typedef float net_float;
 #define DEFAULT_SV_FPS     20
 #define DEFAULT_SV_FPS_STR "20"
 // default server frametime at sv_fps 20, for framerate independent timings
-#define DEFAULT_SV_FRAMETIME 1000 / DEFAULT_SV_FPS
+#define DEFAULT_SV_FRAMETIME (1000 / DEFAULT_SV_FPS)
 
 extern char *GlobalGameTitle;
 
