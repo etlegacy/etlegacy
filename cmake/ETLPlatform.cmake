@@ -201,7 +201,7 @@ elseif(WIN32)
 		target_compile_definitions(shared_libraries INTERFACE C_ONLY)
 	endif()
 
-	target_link_libraries(os_libraries INTERFACE wsock32 ws2_32 psapi winmm)
+	target_link_libraries(os_libraries INTERFACE wsock32 ws2_32 psapi winmm dbghelp)
 
 	if(FEATURE_SSL)
 		target_link_libraries(os_libraries INTERFACE Crypt32)
