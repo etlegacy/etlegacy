@@ -1540,6 +1540,7 @@ void CL_PlayDemo_f(void)
 
 	// make sure a local server is killed
 	Cvar_Set("sv_killserver", "1");
+	SV_Frame(0);
 
 	CL_Disconnect(qtrue);
 
