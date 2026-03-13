@@ -803,15 +803,30 @@ static void CL_ParseDemo(void)
 				cl.gameState.dataCount    = 1;
 				while (qtrue)
 				{
-					int cmd2 = MSG_ReadByte(msg);
+					int  csnum, cmd2;
+					char *cs;
+
+					cmd2 = MSG_ReadByte(msg);
+
 					if (cmd2 == svc_EOF)
 					{
 						break;
 					}
 					if (cmd2 == svc_configstring)
 					{
-						MSG_ReadShort(msg);
-						MSG_ReadBigString(msg);
+						csnum = MSG_ReadShort(msg);
+						cs    = MSG_ReadBigString(msg);
+
+						if (csnum == CS_SYSTEMINFO)
+						{
+							cl.sv_fps = Q_atoi(Info_ValueForKey(cs, "sv_fps"));
+
+							// fallback to default engine sv_fps
+							if (!cl.sv_fps)
+							{
+								cl.sv_fps = DEFAULT_SV_FPS;
+							}
+						}
 					}
 					else if (cmd2 == svc_baseline)
 					{
