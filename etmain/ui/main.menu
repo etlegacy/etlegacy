@@ -8,6 +8,10 @@
 #define WINDOW_HEIGHT	448
 #define MENU_WIDTH		128
 #define MENU_HEIGHT		248
+#define DISCORD_X		0
+#define DISCORD_Y		MENU_HEIGHT+6
+#define DISCORD_WIDTH	MENU_WIDTH
+#define DISCORD_HEIGHT	89
 #define GROUP_NAME		"grpMain"
 
 // Opener //
@@ -61,37 +65,76 @@ menuDef {
 		decoration
 	}
 
-// Company Logos //
+#ifndef ANDROID
+// Discord Window below the welcome panel //
 	itemDef {
-		name		"sd_logo"
-		rect		0 394 54 54		// 16, 16 offset!!
-		style		WINDOW_STYLE_SHADER
-		background	"ui/assets/logo_sd_dark"
-		forecolor	1 1 1 1
+		name		"discord"
+		group		GROUP_NAME
+		rect		$evalfloat(DISCORD_X) $evalfloat(DISCORD_Y) DISCORD_WIDTH DISCORD_HEIGHT
+		style		WINDOW_STYLE_FILLED
+		backcolor	0 0 0 .2
+		border		WINDOW_BORDER_FULL
+		bordercolor	.5 .5 .5 .5
 		visible		1
 		decoration
 	}
 
 	itemDef {
-		name		"atvi_logo"
-		rect		$evalint(__WINDOW_WIDTH-(2*WINDOW_X)-48-4-108) 421 108 27		// 16, 16 offset!! (note offset to left a little as well)
-		style		WINDOW_STYLE_SHADER
-		background	"ui/assets/logo_atvi_dark"
-		forecolor	1 1 1 1
+		name		"discordTitle"
+		group		GROUP_NAME
+		rect		$evalfloat(DISCORD_X+2) $evalfloat(DISCORD_Y+2) $evalfloat(DISCORD_WIDTH-4) 12
+		text		_("DISCORD")
+		textfont	UI_FONT_ARIBLK_16
+		textscale	.19
+		textalign	ITEM_ALIGN_CENTER
+		textalignx	$evalfloat(.5*(DISCORD_WIDTH-4))
+		textaligny	10
+		style		WINDOW_STYLE_FILLED
+		backcolor	.16 .2 .17 .8
+		forecolor	.6 .6 .6 1
 		visible		1
 		decoration
 	}
 
 	itemDef {
-		name		"id_logo"
-		rect		$evalint(__WINDOW_WIDTH-(2*WINDOW_X)-48) 400 48 48		// 16, 16 offset!!
+		name		"discord_button"
+		group		GROUP_NAME
+		rect		$evalfloat(DISCORD_X+.5*(DISCORD_WIDTH-62)) $evalfloat(DISCORD_Y+20) 62 62
+		type		ITEM_TYPE_BUTTON
+		style		WINDOW_STYLE_FILLED
+		backcolor	.3 .3 .3 .4
+		border		WINDOW_BORDER_FULL
+		bordercolor	.1 .1 .1 .5
+		visible		1
+
+		mouseEnter {
+			setitemcolor "discord_button" backcolor .5 .5 .5 .4 ;
+			setitemcolor "discord_logo" forecolor 1 1 1 1
+		}
+
+		mouseExit {
+			setitemcolor "discord_button" backcolor .3 .3 .3 .4 ;
+			setitemcolor "discord_logo" forecolor .55 .55 .55 1
+		}
+
+		action {
+			setitemcolor "discord_button" backcolor .3 .3 .3 .4 ;
+			setitemcolor "discord_logo" forecolor .55 .55 .55 1 ;
+			clearFocus ;
+			uiScript validate_openURL "https://discord.gg/UBAZFys"
+		}
+	}
+
+	itemDef {
+		name		"discord_logo"
+		rect		$evalfloat(DISCORD_X+.5*(DISCORD_WIDTH-48)) $evalfloat(DISCORD_Y+28) 48 48
 		style		WINDOW_STYLE_SHADER
-		background	"ui/assets/logo_id_dark"
-		forecolor	1 1 1 1
+		background	"ui/assets/logo_discord"
+		forecolor	.55 .55 .55 1
 		visible		1
 		decoration
 	}
-
+#endif
 
 // Window //
 	//WINDOW( _("WELCOME"), 50 )
@@ -150,7 +193,7 @@ itemDef {
 #endif
 
 // Version //
-LABEL( 2, 450, 132, 10, "^1"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
+LABEL( 2, 450, 132, 10, "^y"ETLEGACY_VERSION, .2, ITEM_ALIGN_LEFT, 0, 8 )
 
 // message of the day?
 //	SUBWINDOW( MENU_WIDTH+6, 0, __WINDOW_WIDTH-MENU_WIDTH-6-32, 28, _("MESSAGE OF THE DAY") )
