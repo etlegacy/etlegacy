@@ -2519,6 +2519,49 @@ gitem_t *BG_FindItemForClassName(const char *className)
 }
 
 /**
+ * @brief BG_PlayerTouchesBox
+ * @param[in] ps
+ * @param[in] item
+ * @param[in] atTime
+ * @param[in] sideLength
+ * @return
+ */
+qboolean BG_PlayerTouchesBox(playerState_t *ps, entityState_t *item, int atTime, int sideLength)
+{
+	vec3_t origin;
+
+	BG_EvaluateTrajectory(&item->pos, atTime, origin, qfalse, item->effect2Time);
+
+	// we are ignoring ducked differences here
+	return !(ps->origin[0] - origin[0] > sideLength
+	         || ps->origin[0] - origin[0] < -sideLength
+	         || ps->origin[1] - origin[1] > sideLength
+	         || ps->origin[1] - origin[1] < -sideLength
+	         || ps->origin[2] - origin[2] > sideLength
+	         || ps->origin[2] - origin[2] < -sideLength);
+}
+
+/**
+ * @brief BG_PlayerTouchesCylender
+ * @param[in] ps
+ * @param[in] item
+ * @param[in] atTime
+ * @param[in] sideLength
+ * @return
+ */
+qboolean BG_PlayerTouchesCylender(playerState_t *ps, entityState_t *item, int atTime, int sideLength)
+{
+	vec3_t origin;
+
+	BG_EvaluateTrajectory(&item->pos, atTime, origin, qfalse, item->effect2Time);
+
+	// Check against cylinder
+	return !(vec2_dist(ps->origin, origin) > sideLength
+	         || ps->origin[2] - origin[2] > sideLength
+	         || ps->origin[2] - origin[2] < -sideLength);
+}
+
+/**
  * @brief Old Version of 'BG_PlayerTouchesItem' retained for intersect checking Objectives.
  * @param[in] ps
  * @param[in] item
@@ -2527,17 +2570,7 @@ gitem_t *BG_FindItemForClassName(const char *className)
  */
 qboolean BG_PlayerTouchesObjective(playerState_t *ps, entityState_t *item, int atTime)
 {
-	vec3_t origin;
-
-	BG_EvaluateTrajectory(&item->pos, atTime, origin, qfalse, item->effect2Time);
-
-	// we are ignoring ducked differences here
-	return !(ps->origin[0] - origin[0] > 36
-	         || ps->origin[0] - origin[0] < -36
-	         || ps->origin[1] - origin[1] > 36
-	         || ps->origin[1] - origin[1] < -36
-	         || ps->origin[2] - origin[2] > 36
-	         || ps->origin[2] - origin[2] < -36);
+	return BG_PlayerTouchesBox(ps, item, atTime, 36);
 }
 
 /**
@@ -2552,15 +2585,7 @@ qboolean BG_PlayerTouchesObjective(playerState_t *ps, entityState_t *item, int a
  */
 qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime)
 {
-	vec3_t origin;
-	int    boxSide = ps->maxs[0] - ps->mins[0];
-
-	BG_EvaluateTrajectory(&item->pos, atTime, origin, qfalse, item->effect2Time);
-
-	// Check against cylinder
-	return !(vec2_dist(ps->origin, origin) > boxSide ||
-	         ps->origin[2] - origin[2] > boxSide ||
-	         ps->origin[2] - origin[2] < -boxSide);
+	return BG_PlayerTouchesCylender(ps, item, atTime, ps->maxs[0] - ps->mins[0]);
 }
 
 /**
