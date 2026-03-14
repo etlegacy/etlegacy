@@ -15,6 +15,9 @@ menuDef {
 	rect        WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style       WINDOW_STYLE_FILLED
 	popup
+	// Restore the previously focused menu on close so the main menu music
+	// does not restart when returning from the changelog browser.
+	modal
 
 	fadeClamp   0.5
 	fadeAmount  0.075
