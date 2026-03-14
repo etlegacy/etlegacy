@@ -4462,10 +4462,12 @@ static int UI_DemoSort(const void *a, const void *b)
 
 	if (fileA->file != fileB->file)
 	{
+		// Keep directories grouped before demo files while reversing the
+		// alphabetical order within each group.
 		return (int)fileA->file - (int)fileB->file;
 	}
 
-	return Q_stricmp(fileA->path, fileB->path);
+	return Q_stricmp(fileB->path, fileA->path);
 }
 
 /**
