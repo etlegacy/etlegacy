@@ -7,7 +7,7 @@
 #define WINDOW_WIDTH	__WINDOW_WIDTH-32
 #define WINDOW_HEIGHT	448
 #define MENU_WIDTH		128
-#define MENU_HEIGHT		248
+#define MENU_HEIGHT		255
 #define DISCORD_X		0
 #define DISCORD_Y		MENU_HEIGHT+6
 #define DISCORD_WIDTH	MENU_WIDTH
@@ -152,13 +152,13 @@ menuDef {
 	BUTTON( 6, 80, MENU_WIDTH-12, 18, _("REPLAYS"), .3, 14, close main ; open viewreplay )
 	// LINE(1, 100.5, MENU_WIDTH - 2, 1, .5 .5 .5 .4)
 	BUTTON( 6, 104, MENU_WIDTH-12, 18, _("OPTIONS"), .3, 14, close main ; open options )
-	LINE(1, 124.5, MENU_WIDTH - 2, 1, .5 .5 .5 .4)
-	BUTTON( 6, 128, MENU_WIDTH-12, 18, _("PROFILE"), .3, 14, close main ; open profile )
+	LINE(1, 128, MENU_WIDTH - 2, 1, .5 .5 .5 .4)
+	BUTTON( 6, 135, MENU_WIDTH-12, 18, _("PROFILE"), .3, 14, close main ; open profile )
 	// LINE(1, 148.5, MENU_WIDTH - 2, 1, .5 .5 .5 .4)
-	BUTTON( 6, 152, MENU_WIDTH-12, 18, _("MODS"), .3, 14, close main ; open mods )
-	BUTTON( 6, 176, MENU_WIDTH-12, 18, _("CHANGELOG"), .3, 14, setcvar ui_changelog_ingame 0 ; open changelog_popup )
-	BUTTON( 6, 200, MENU_WIDTH-12, 18, _("CREDITS"), .3, 14, close main ; open credits_etlegacy )
-	BUTTON( 6, 224, MENU_WIDTH-12, 18, _("EXIT"), .3, 14, clearFocus ; open quit )
+	BUTTON( 6, 159, MENU_WIDTH-12, 18, _("MODS"), .3, 14, close main ; open mods )
+	BUTTON( 6, 183, MENU_WIDTH-12, 18, _("CHANGELOG"), .3, 14, setcvar ui_changelog_ingame 0 ; open changelog_popup )
+	BUTTON( 6, 207, MENU_WIDTH-12, 18, _("CREDITS"), .3, 14, close main ; open credits_etlegacy )
+	BUTTON( 6, 231, MENU_WIDTH-12, 18, _("EXIT"), .3, 14, clearFocus ; open quit )
 
 // Vanilla or old Legacy client warning //
 #ifdef OLD_CLIENT
