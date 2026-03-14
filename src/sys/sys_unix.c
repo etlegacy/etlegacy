@@ -64,6 +64,73 @@ qboolean stdinIsATTY;
 // Used to determine where to store user-specific files
 static char homePath[MAX_OSPATH] = { 0 };
 
+/**
+ * @brief Convert a fatal Unix signal into a readable name for crash reports.
+ * @param[in] signal Signal number.
+ * @return Static signal name string.
+ */
+static const char *Sys_UnixSignalName(int signal)
+{
+	switch (signal)
+	{
+	case SIGABRT: return "SIGABRT";
+	case SIGFPE:  return "SIGFPE";
+	case SIGILL:  return "SIGILL";
+	case SIGINT:  return "SIGINT";
+	case SIGSEGV: return "SIGSEGV";
+	case SIGTERM: return "SIGTERM";
+#ifdef SIGBUS
+	case SIGBUS:  return "SIGBUS";
+#endif
+#ifdef SIGHUP
+	case SIGHUP:  return "SIGHUP";
+#endif
+#ifdef SIGQUIT
+	case SIGQUIT: return "SIGQUIT";
+#endif
+#ifdef SIGTRAP
+	case SIGTRAP: return "SIGTRAP";
+#endif
+	default:      return "UNKNOWN";
+	}
+}
+
+/**
+ * @brief Unix fatal signal trampoline used to preserve kernel signal data.
+ * @param[in] signal Signal number.
+ * @param[in] info Signal information provided by the kernel.
+ * @param[in] context Platform context pointer.
+ */
+static void Sys_UnixCrashHandler(int signal, siginfo_t *info, void *context)
+{
+	(void)context;
+	Sys_HandleCrash(signal, info);
+}
+
+/**
+ * @brief Install the fatal Unix signal handlers used for crash reporting.
+ */
+void Sys_InstallCrashHandler(void)
+{
+	struct sigaction action;
+
+	memset(&action, 0, sizeof(action));
+	sigemptyset(&action.sa_mask);
+	action.sa_sigaction = Sys_UnixCrashHandler;
+	action.sa_flags     = SA_SIGINFO | SA_RESETHAND;
+
+	sigaction(SIGABRT, &action, NULL);
+	sigaction(SIGFPE, &action, NULL);
+	sigaction(SIGILL, &action, NULL);
+	sigaction(SIGSEGV, &action, NULL);
+#ifdef SIGBUS
+	sigaction(SIGBUS, &action, NULL);
+#endif
+#if defined(SIGTRAP) && !defined(ETLEGACY_DEBUG)
+	sigaction(SIGTRAP, &action, NULL);
+#endif
+}
+
 #ifdef  __ANDROID__
 char *Sys_CdToExtStorage(void)
 {
@@ -1179,14 +1246,7 @@ void Sys_PlatformInit(void)
 {
 	const char *term = getenv("TERM");
 
-// don't set signal handlers for anything that will generate coredump (in DEBUG builds)
-#if !defined(ETLEGACY_DEBUG)
-	signal(SIGTRAP, Sys_SigHandler);
-	signal(SIGBUS, Sys_SigHandler);
-#endif
-	signal(SIGHUP, Sys_SigHandler);
-	signal(SIGABRT, Sys_SigHandler);
-	signal(SIGQUIT, Sys_SigHandler);
+	Sys_InstallCrashHandler();
 
 	stdinIsATTY = isatty(STDIN_FILENO) &&
 	              !(term && (!strcmp(term, "raw") || !strcmp(term, "dumb")));
@@ -1273,25 +1333,35 @@ qboolean Sys_DllExtension(const char *name)
 	return qfalse;
 }
 
-void Sys_Backtrace(int sig)
+void Sys_Backtrace(int sig, void *context)
 {
-	void   *syms[32];
-	size_t size;
+	const char      *signalName = Sys_UnixSignalName(sig);
+	const siginfo_t *info       = (const siginfo_t *)context;
+	void            *syms[32];
+	int             size = 0;
 
 	// Get the backtrace and write it to stderr
 #ifndef __ANDROID__
-	size = backtrace(syms, 32);
+	size = backtrace(syms, ARRAY_LEN(syms));
 #endif
 	fprintf(stderr, "--- Report this to the project - START ---\n");
-	fprintf(stderr, "ERROR: Caught SIGSEGV(%d)\n", sig);
+	fprintf(stderr, "ERROR: Caught %s (%d)\n", signalName, sig);
+	if (info != NULL)
+	{
+		fprintf(stderr, "FAULT ADDRESS: %p\n", info->si_addr);
+	}
 	fprintf(stderr, "VERSION: %s (%s)\n", ETLEGACY_VERSION, ETLEGACY_VERSION_SHORT);
 	fprintf(stderr, "BTIME: %s\n", PRODUCT_BUILD_TIME);
 	fprintf(stderr, "BACKTRACE:\n");
 #ifndef __ANDROID__
 	backtrace_symbols_fd(syms, size, STDERR_FILENO);
+#else
+	fprintf(stderr, "backtrace unavailable on this build\n");
 #endif
 	fprintf(stderr, "--- Report this to the project -  END  ---\n");
+	fflush(stderr);
 
 	signal(sig, SIG_DFL);
 	kill(getpid(), sig);
+	_exit(128 + sig);
 }
