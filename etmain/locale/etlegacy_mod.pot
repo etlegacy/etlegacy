@@ -7978,3 +7978,7 @@ msgstr ""
 #: via misc/i18n-sync-pot-files.py
 msgid "OLDER"
 msgstr ""
+
+#: via misc/i18n-sync-pot-files.py
+msgid "ATTRIBUTIONS"
+msgstr ""
