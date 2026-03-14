@@ -125,6 +125,7 @@ vmCvar_t pmove_fixed;
 vmCvar_t pmove_msec;
 
 vmCvar_t cg_gameType;
+vmCvar_t g_legacyAdrenaline;
 vmCvar_t cg_bloodTime;
 vmCvar_t cg_skybox;
 
@@ -452,6 +453,7 @@ static cvarTable_t cvarTable[] =
 #endif // ALLOW_GSYNC
 
 	{ &cg_gameType,                           "g_gametype",                            "0",           0,                            0 }, // communicated by systeminfo
+	{ &g_legacyAdrenaline,                    "g_legacyAdrenaline",                    "1",           0,                            0 }, // communicated by systeminfo
 	{ &cg_bluelimbotime,                      "",                                      "30000",       0,                            0 }, // communicated by systeminfo
 	{ &cg_redlimbotime,                       "",                                      "30000",       0,                            0 }, // communicated by systeminfo
 	{ &cg_limboClassClickConfirm,             "cg_limboClassClickConfirm",             "0",           CVAR_ARCHIVE,                 0 },

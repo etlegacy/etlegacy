@@ -1627,10 +1627,13 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 		}
 	}
 
-	// adrenaline junkie!
-	if (targ->client && targ->client->ps.powerups[PW_ADRENALINE])
+	if (g_legacyAdrenaline.integer == 0)
 	{
-		take *= .5f;
+		// adrenaline junkie!
+		if (targ->client && targ->client->ps.powerups[PW_ADRENALINE])
+		{
+			take *= .5f;
+		}
 	}
 
 	// save some from flak jacket
