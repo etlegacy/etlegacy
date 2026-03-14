@@ -50,6 +50,7 @@ extern vmCvar_t ui_gameType;
 extern vmCvar_t ui_netGameType;
 extern vmCvar_t ui_joinGameType;
 extern vmCvar_t ui_dedicated;
+extern vmCvar_t ui_demoSortAscending;
 
 // multiplayer cvars
 extern vmCvar_t ui_serverFilterType;

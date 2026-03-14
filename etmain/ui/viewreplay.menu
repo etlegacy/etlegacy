@@ -31,6 +31,8 @@ menuDef {
 #ifdef ETLEGACY
 	// Pure "server" demo viewing. Maybe change this to something more pretty? Checkbox? //
 	YESNO( 160, 14, 40, 10, _("Pure Server:"), .2, 8, "sv_pure", _("Limit game content to that contained in PK3 files\non both the client and server with matching CRCs") )
+	// Keep replay ordering clickable from the same top-row controls.
+	MULTIACTIONLEFT( 256, 14, 100, 10, _("Sorting:"), .2, 8, "ui_demoSortAscending", cvarFloatList { "Descending" 0 "Ascending" 1 }, uiScript LoadDemos, _("Toggle the replay browser sorting order between descending and ascending") )
 #endif
 
 	// Demo List //

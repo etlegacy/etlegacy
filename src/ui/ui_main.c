@@ -90,7 +90,8 @@ static void UI_RegisterCvarDescriptionsFromTooltips(void);
 
 void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
 
-static char translated_yes[4], translated_no[4];
+static qboolean ui_demoSortAscendingCached;
+static char     translated_yes[4], translated_no[4];
 
 void UI_Init(int etLegacyClient, int clientVersion);
 void UI_Shutdown(void);
@@ -4467,6 +4468,12 @@ static int UI_DemoSort(const void *a, const void *b)
 		return (int)fileA->file - (int)fileB->file;
 	}
 
+	// Reverse only the name ordering and keep directories grouped before demo files.
+	if (ui_demoSortAscendingCached)
+	{
+		return Q_stricmp(fileA->path, fileB->path);
+	}
+
 	return Q_stricmp(fileB->path, fileA->path);
 }
 
@@ -4483,6 +4490,9 @@ static void UI_LoadDemos(void)
 
 	uiInfo.demos.count = 0;
 	// uiInfo.demos.index = 0;
+
+	trap_Cvar_Update(&ui_demoSortAscending);
+	ui_demoSortAscendingCached = ui_demoSortAscending.integer != 0;
 
 	Com_sprintf(path, sizeof(path), "demos");
 	if (uiInfo.demos.path[0])

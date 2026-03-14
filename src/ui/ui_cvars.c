@@ -48,6 +48,7 @@ vmCvar_t ui_gameType;
 vmCvar_t ui_netGameType;
 vmCvar_t ui_joinGameType;
 vmCvar_t ui_dedicated;
+vmCvar_t ui_demoSortAscending;
 
 // cvars for multiplayer
 vmCvar_t ui_serverFilterType;
@@ -150,6 +151,7 @@ static cvarTable_t cvarTable[] =
 	{ &ui_gameType,                        "ui_gametype",                         "3",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_joinGameType,                    "ui_joinGametype",                     "-1",                         CVAR_ARCHIVE,                   0 },
 	{ &ui_netGameType,                     "ui_netGametype",                      "4",                          CVAR_ARCHIVE,                   0 }, // hardwired for now
+	{ &ui_demoSortAscending,               "ui_demoSortAscending",                "0",                          CVAR_ARCHIVE,                   0 },
 
 	// multiplayer cvars
 	{ &ui_mapIndex,                        "ui_mapIndex",                         "0",                          CVAR_ARCHIVE,                   0 },
@@ -219,8 +221,8 @@ static cvarTable_t cvarTable[] =
 
 	{ &ui_cg_shoutcastTeamNameRed,         "cg_shoutcastTeamNameRed",             "Axis",                       CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastTeamNameBlue,        "cg_shoutcastTeamNameBlue",            "Allies",                     CVAR_ARCHIVE,                   0 },
-    { &ui_cg_shoutcastTeamScoreRed,        "cg_shoutcastTeamScoreRed",            "0",                          CVAR_ARCHIVE,                   0 },
-    { &ui_cg_shoutcastTeamScoreBlue,       "cg_shoutcastTeamScoreBlue",           "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastTeamScoreRed,        "cg_shoutcastTeamScoreRed",            "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_cg_shoutcastTeamScoreBlue,       "cg_shoutcastTeamScoreBlue",           "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastDrawHealth,          "cg_shoutcastDrawHealth",              "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_cg_shoutcastGrenadeTrail,        "cg_shoutcastGrenadeTrail",            "0",                          CVAR_ARCHIVE,                   0 },
 
