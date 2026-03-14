@@ -1707,7 +1707,7 @@ msgstr ""
 
 #: etmain/ui/main.menu:105
 msgid "PLAY"
-msgstr "^_PLAY"
+msgstr "PL^_AY"
 
 #: etmain/ui/main.menu:107
 msgid "HOST"
