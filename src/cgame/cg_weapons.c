@@ -3620,6 +3620,16 @@ void CG_AltWeapon_f(void)
 		return;
 	}
 
+	// Match server-side PM lock, but only for rifle grenade attach/detach.
+	// Scope/silencer alt modes are intentionally not blocked here.
+	if (cg.snap->ps.weaponstate == WEAPON_RAISING
+	    && (((GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_RIFLE)
+	         && (GetWeaponTableData(GetWeaponTableData(cg.weaponSelect)->weapAlts)->type & WEAPON_TYPE_RIFLENADE))
+	        || (GetWeaponTableData(cg.weaponSelect)->type & WEAPON_TYPE_RIFLENADE)))
+	{
+		return;
+	}
+
 	// don't allow alt weapon switch till we have switched to selected weapon
 	if (cg.snap->ps.weapon != cg.weaponSelect || (cg.snap->ps.nextWeapon && cg.snap->ps.weapon != cg.snap->ps.nextWeapon))
 	{
