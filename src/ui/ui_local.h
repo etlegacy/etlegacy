@@ -349,8 +349,10 @@ typedef struct scrollInfo_s
 	int scrollKey;
 	float xStart;
 	float yStart;
+	float thumbStart;
 	itemDef_t *item;
 	qboolean scrollDir;
+	qboolean draggingThumb;
 } scrollInfo_t;
 
 extern scrollInfo_t scrollInfo;

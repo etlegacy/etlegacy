@@ -475,6 +475,45 @@ static int Item_ListBox_ThumbSize(itemDef_t *item, int count)
 }
 
 /**
+ * @brief Clamp the dragged thumb to the available scrollbar track.
+ * @param[in] item
+ * @param[in] si
+ * @return Thumb origin in screen coordinates.
+ */
+static int Item_ListBox_DragThumbPosition(itemDef_t *item, const scrollInfo_t *si)
+{
+	int   count;
+	int   trackSize;
+	int   thumbSize;
+	int   trackStart;
+	int   trackEnd;
+	float dragPos;
+
+	count     = DC->feederCount(item->special);
+	trackSize = Item_ListBox_ScrollTrackSize(item);
+	thumbSize = Item_ListBox_ThumbSize(item, count);
+
+	if (item->window.flags & WINDOW_HORIZONTAL)
+	{
+		trackStart = item->window.rect.x + SCROLLBAR_SIZE + 1;
+		dragPos    = si->thumbStart + (DC->cursorx - si->xStart);
+	}
+	else
+	{
+		trackStart = item->window.rect.y + SCROLLBAR_SIZE + 1;
+		dragPos    = si->thumbStart + (DC->cursory - si->yStart);
+	}
+
+	trackEnd = trackStart + trackSize - thumbSize;
+	if (trackEnd < trackStart)
+	{
+		return trackStart;
+	}
+
+	return (int)Com_Clamp((float)trackStart, (float)trackEnd, dragPos);
+}
+
+/**
  * @brief Draws a non-scaled listbox scrollbar thumb using simple primitives.
  * @param[in] item
  * @param[in] x
@@ -611,40 +650,9 @@ int Item_ListBox_ThumbPosition(itemDef_t *item)
  */
 int Item_ListBox_ThumbDrawPosition(itemDef_t *item)
 {
-	int count, trackSize, thumbSize, min, max;
-
-	count     = DC->feederCount(item->special);
-	trackSize = Item_ListBox_ScrollTrackSize(item);
-	thumbSize = Item_ListBox_ThumbSize(item, count);
-
-	if (itemCapture == item)
+	if (itemCapture == item && scrollInfo.draggingThumb)
 	{
-		if (item->window.flags & WINDOW_HORIZONTAL)
-		{
-			min = item->window.rect.x + SCROLLBAR_SIZE + 1;
-			max = min + trackSize - thumbSize;
-			if (DC->cursorx >= min + thumbSize / 2 && DC->cursorx <= max + thumbSize / 2)
-			{
-				return DC->cursorx - thumbSize / 2;
-			}
-			else
-			{
-				return Item_ListBox_ThumbPosition(item);
-			}
-		}
-		else
-		{
-			min = item->window.rect.y + SCROLLBAR_SIZE + 1;
-			max = min + trackSize - thumbSize;
-			if (DC->cursory >= min + thumbSize / 2 && DC->cursory <= max + thumbSize / 2)
-			{
-				return DC->cursory - thumbSize / 2;
-			}
-			else
-			{
-				return Item_ListBox_ThumbPosition(item);
-			}
-		}
+		return Item_ListBox_DragThumbPosition(item, &scrollInfo);
 	}
 	else
 	{
@@ -1219,6 +1227,12 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 		if (key == K_MOUSE1 || key == K_MOUSE2)
 		{
 			Item_ListBox_MouseEnter(item, DC->cursorx, DC->cursory, qtrue);
+
+			if (itemCapture == item && scrollInfo.draggingThumb)
+			{
+				// Thumb movement is updated by the active capture callback.
+				return qtrue;
+			}
 
 			if (item->window.flags & WINDOW_LB_LEFTARROW)
 			{
@@ -2088,17 +2102,16 @@ static void Item_Scroll_ListBox_ThumbFunc(void *p)
 {
 	scrollInfo_t *si = (scrollInfo_t *)p;
 	rectDef_t    r;
-	int          pos, max, count, thumbSize, trackRange;
+	int          pos, max, count, thumbPos, thumbSize, trackRange;
 	listBoxDef_t *listPtr = (listBoxDef_t *)si->item->typeData;
 	count = DC->feederCount(si->item->special);
 
+	// Move from the pointer delta relative to the grabbed thumb position so a
+	// mouse press on the thumb does not recenter it.
+	thumbPos = Item_ListBox_DragThumbPosition(si->item, si);
+
 	if (si->item->window.flags & WINDOW_HORIZONTAL)
 	{
-		if (DC->cursorx == si->xStart)
-		{
-			return;
-		}
-
 		r.x        = si->item->window.rect.x + SCROLLBAR_SIZE + 1;
 		r.y        = si->item->window.rect.y + si->item->window.rect.h - SCROLLBAR_SIZE - 1;
 		r.h        = SCROLLBAR_SIZE;
@@ -2109,7 +2122,7 @@ static void Item_Scroll_ListBox_ThumbFunc(void *p)
 
 		if (trackRange > 0)
 		{
-			pos = (DC->cursorx - r.x - thumbSize / 2) * max / trackRange;
+			pos = (thumbPos - r.x) * max / trackRange;
 		}
 		else
 		{
@@ -2125,9 +2138,8 @@ static void Item_Scroll_ListBox_ThumbFunc(void *p)
 		}
 
 		listPtr->startPos = pos;
-		si->xStart        = DC->cursorx;
 	}
-	else if (DC->cursory != si->yStart)
+	else
 	{
 		r.x        = si->item->window.rect.x + si->item->window.rect.w - SCROLLBAR_SIZE - 1;
 		r.y        = si->item->window.rect.y + SCROLLBAR_SIZE + 1;
@@ -2139,7 +2151,7 @@ static void Item_Scroll_ListBox_ThumbFunc(void *p)
 		//
 		if (trackRange > 0)
 		{
-			pos = (DC->cursory - r.y - thumbSize / 2) * max / trackRange;
+			pos = (thumbPos - r.y) * max / trackRange;
 		}
 		else
 		{
@@ -2155,7 +2167,6 @@ static void Item_Scroll_ListBox_ThumbFunc(void *p)
 		}
 
 		listPtr->startPos = pos;
-		si->yStart        = DC->cursory;
 	}
 
 	if (DC->realTime > si->nextScrollTime)
@@ -2232,7 +2243,8 @@ void Item_StartCapture(itemDef_t *item, int key)
 
 	case ITEM_TYPE_LISTBOX:
 	{
-		flags = Item_ListBox_OverLB(item, DC->cursorx, DC->cursory);
+		flags                    = Item_ListBox_OverLB(item, DC->cursorx, DC->cursory);
+		scrollInfo.draggingThumb = qfalse;
 		if (flags & (WINDOW_LB_LEFTARROW | WINDOW_LB_RIGHTARROW))
 		{
 			scrollInfo.nextScrollTime = DC->realTime + SCROLL_TIME_START;
@@ -2245,21 +2257,35 @@ void Item_StartCapture(itemDef_t *item, int key)
 			captureFunc               = &Item_Scroll_ListBox_AutoFunc;
 			itemCapture               = item;
 		}
+		else if (flags & (WINDOW_LB_PGUP | WINDOW_LB_PGDN))
+		{
+			scrollInfo.nextScrollTime = DC->realTime + SCROLL_TIME_START;
+			scrollInfo.nextAdjustTime = DC->realTime + SCROLL_TIME_ADJUST;
+			scrollInfo.adjustValue    = SCROLL_TIME_START;
+			scrollInfo.scrollKey      = key;
+			scrollInfo.item           = item;
+			captureData               = &scrollInfo;
+			captureFunc               = &Item_Scroll_ListBox_AutoFunc;
+			itemCapture               = item;
+		}
 		else if (flags & WINDOW_LB_THUMB)
 		{
-			scrollInfo.scrollKey = key;
-			scrollInfo.item      = item;
-			scrollInfo.xStart    = DC->cursorx;
-			scrollInfo.yStart    = DC->cursory;
-			captureData          = &scrollInfo;
-			captureFunc          = &Item_Scroll_ListBox_ThumbFunc;
-			itemCapture          = item;
+			scrollInfo.scrollKey     = key;
+			scrollInfo.item          = item;
+			scrollInfo.xStart        = DC->cursorx;
+			scrollInfo.yStart        = DC->cursory;
+			scrollInfo.thumbStart    = Item_ListBox_ThumbPosition(item);
+			scrollInfo.draggingThumb = qtrue;
+			captureData              = &scrollInfo;
+			captureFunc              = &Item_Scroll_ListBox_ThumbFunc;
+			itemCapture              = item;
 		}
 		break;
 	}
 	case ITEM_TYPE_SLIDER:
 	{
-		flags = Item_Slider_OverSlider(item, DC->cursorx, DC->cursory);
+		flags                    = Item_Slider_OverSlider(item, DC->cursorx, DC->cursory);
+		scrollInfo.draggingThumb = qfalse;
 		if (flags & WINDOW_LB_THUMB)
 		{
 			scrollInfo.scrollKey = key;
