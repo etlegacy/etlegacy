@@ -83,7 +83,7 @@ menuDef {
 		name		"discordTitle"
 		group		GROUP_NAME
 		rect		$evalfloat(DISCORD_X+2) $evalfloat(DISCORD_Y+2) $evalfloat(DISCORD_WIDTH-4) 12
-		text		_("DISCORD")
+		text		_("JOIN OUR DISCORD")
 		textfont	UI_FONT_ARIBLK_16
 		textscale	.19
 		textalign	ITEM_ALIGN_CENTER
