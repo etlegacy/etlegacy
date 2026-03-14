@@ -6449,7 +6449,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowWeaponsRestricted", "0");
 			trap_Cvar_Set("ui_browserShowAntilag", "0");
 			trap_Cvar_Set("ui_browserShowTeamBalanced", "0");
-			trap_Cvar_Set("ui_browserShowHumans", "0");
+			trap_Cvar_Set("ui_browserShowHumans", "1");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
 		}
@@ -6464,7 +6464,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowWeaponsRestricted", "0");
 			trap_Cvar_Set("ui_browserShowAntilag", "0");
 			trap_Cvar_Set("ui_browserShowTeamBalanced", "0");
-			trap_Cvar_Set("ui_browserShowHumans", "0");
+			trap_Cvar_Set("ui_browserShowHumans", "1");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
 		}
@@ -6479,7 +6479,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowWeaponsRestricted", "0");
 			trap_Cvar_Set("ui_browserShowAntilag", "0");
 			trap_Cvar_Set("ui_browserShowTeamBalanced", "0");
-			trap_Cvar_Set("ui_browserShowHumans", "0");
+			trap_Cvar_Set("ui_browserShowHumans", "1");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
 		}
@@ -6494,7 +6494,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowWeaponsRestricted", "0");
 			trap_Cvar_Set("ui_browserShowAntilag", "0");
 			trap_Cvar_Set("ui_browserShowTeamBalanced", "0");
-			trap_Cvar_Set("ui_browserShowHumans", "0");
+			trap_Cvar_Set("ui_browserShowHumans", "1");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
 		}
