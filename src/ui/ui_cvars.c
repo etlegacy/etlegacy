@@ -165,7 +165,7 @@ static cvarTable_t cvarTable[] =
 	{ &ui_browserShowAntilag,              "ui_browserShowAntilag",               "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_browserShowWeaponsRestricted,    "ui_browserShowWeaponsRestricted",     "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_browserShowTeamBalanced,         "ui_browserShowTeamBalanced",          "0",                          CVAR_ARCHIVE,                   0 },
-	{ &ui_browserShowHumans,               "ui_browserShowHumans",                "0",                          CVAR_ARCHIVE,                   0 },
+	{ &ui_browserShowHumans,               "ui_browserShowHumans",                "1",                          CVAR_ARCHIVE,                   0 },
 
 	{ &ui_browserModFilter,                "ui_browserModFilter",                 "0",                          CVAR_ARCHIVE,                   0 },
 	{ &ui_browserMapFilter,                "ui_browserMapFilter",                 "",                           CVAR_ARCHIVE,                   0 },
