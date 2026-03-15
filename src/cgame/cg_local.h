@@ -2284,6 +2284,12 @@ enum
 	FT_MINI_HEALTH_BAR   = BIT(9),
 };
 
+// iconfeed layout
+enum
+{
+	ICONFEED_VERTICAL = BIT(0),
+};
+
 /// Locations
 #define MAX_C_LOCATIONS 1024
 #define MAX_LOC_LEN 128
@@ -2447,6 +2453,15 @@ typedef enum
 	ML_EDV
 } mlType_t;
 #endif
+
+/** Values matter for sorting/drawing. */
+typedef enum
+{
+	CG_HUD_ICONFEED_NONE      = 0,
+	CG_HUD_ICONFEED_KILL      = 1,
+	CG_HUD_ICONFEED_KILL_SELF = 10,
+	CG_HUD_ICONFEED_KILL_TEAM = 2,
+} cgHudIconFeedType_t;
 
 // limbopanel
 #define SECONDARY_SLOT 0
@@ -3026,6 +3041,7 @@ void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
 void CG_CenterPrint(const char *str);
 void CG_PriorityCenterPrint(const char *str, int priority);
 void CG_ObjectivePrint(const char *str);
+void CG_Hud_IconFeed_Add(cgHudIconFeedType_t type);
 void CG_DrawActive(void);
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team);
 void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font);
@@ -4283,6 +4299,7 @@ typedef struct hudStructure_s
 	hudComponent_t scPlayerListAllies;
 	hudComponent_t scTeamNamesAxis;
 	hudComponent_t scTeamNamesAllies;
+	hudComponent_t iconfeed;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4385,6 +4402,7 @@ void CG_DrawCursorhint(hudComponent_t *comp);
 void CG_DrawCursorHintBar(hudComponent_t *comp);
 void CG_DrawCursorHintText(hudComponent_t *comp);
 void CG_DrawCrosshair(hudComponent_t *comp);
+void CG_DrawIconFeed(hudComponent_t *comp);
 
 void CG_DrawPlayerStatusHead(hudComponent_t *comp);
 void CG_DrawGunIcon(hudComponent_t *comp);

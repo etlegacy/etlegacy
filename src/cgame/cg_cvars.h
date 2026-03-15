@@ -239,6 +239,8 @@ extern vmCvar_t cg_fireteamSpritesColorSelected;
 
 extern vmCvar_t cg_simpleItems;
 extern vmCvar_t cg_simpleItemsScale;
+extern vmCvar_t cg_iconfeedStayTime;
+extern vmCvar_t cg_iconfeedScale;
 
 extern vmCvar_t cg_weapaltReloads;
 extern vmCvar_t cg_weapaltSwitches;
