@@ -165,7 +165,7 @@ void SV_CL_Commands_f(void)
 
 	if (argc < 2)
 	{
-		Com_Printf("usage: tv <demo|ff>\n");
+		Com_Printf("usage: tv <demo|ff|absolute-demo-path>\n");
 		return;
 	}
 
@@ -173,11 +173,26 @@ void SV_CL_Commands_f(void)
 
 	if (!Q_stricmp(cmd, "demo"))
 	{
+		if (argc < 3)
+		{
+			Com_Printf("usage: tv <demo|ff|absolute-demo-path>\n");
+			return;
+		}
+
 		SV_CL_PlayDemo_f();
 	}
 	else if (!Q_stricmp(cmd, "ff"))
 	{
 		SV_CL_FastForward_f();
+	}
+	else if (argc == 2 && Sys_PathAbsolute(cmd))
+	{
+		// Treat a bare absolute path like the standalone demo command.
+		SV_CL_PlayDemo_f();
+	}
+	else
+	{
+		Com_Printf("usage: tv <demo|ff|absolute-demo-path>\n");
 	}
 }
 
