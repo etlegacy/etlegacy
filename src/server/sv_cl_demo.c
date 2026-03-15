@@ -74,6 +74,64 @@ void SV_CL_DemoFilename(int number, char *fileName)
 static char demoName[MAX_OSPATH];
 
 /**
+ * @brief Tries supported ETTV demo extensions for a demo name or absolute path.
+ * @param[in] arg demo basename or absolute path without extension
+ * @param[out] name resolved path used for opening attempts
+ * @param[out] demofile opened file handle on success
+ * @return protocol version on success, 0 otherwise
+ */
+static int SV_CL_WalkDemoExt(const char *arg, char *name, fileHandle_t *demofile)
+{
+	qboolean absolutePath;
+	int      i;
+
+	*demofile    = 0;
+	absolutePath = Sys_PathAbsolute(arg);
+
+	if (absolutePath)
+	{
+		Com_sprintf(name, MAX_OSPATH, "%s.%s%d", arg, SVCLDEMOEXT, PROTOCOL_VERSION);
+		FS_FOpenFileReadFullDir(name, demofile);
+	}
+	else
+	{
+		Com_sprintf(name, MAX_OSPATH, "tvdemos/%s.%s%d", arg, SVCLDEMOEXT, PROTOCOL_VERSION);
+		FS_FOpenFileRead(name, demofile, qtrue);
+	}
+
+	if (*demofile)
+	{
+		return PROTOCOL_VERSION;
+	}
+
+	for (i = 0; demo_protocols[i]; i++)
+	{
+		if (demo_protocols[i] == PROTOCOL_VERSION)
+		{
+			continue;
+		}
+
+		if (absolutePath)
+		{
+			Com_sprintf(name, MAX_OSPATH, "%s.%s%d", arg, SVCLDEMOEXT, demo_protocols[i]);
+			FS_FOpenFileReadFullDir(name, demofile);
+		}
+		else
+		{
+			Com_sprintf(name, MAX_OSPATH, "tvdemos/%s.%s%d", arg, SVCLDEMOEXT, demo_protocols[i]);
+			FS_FOpenFileRead(name, demofile, qtrue);
+		}
+
+		if (*demofile)
+		{
+			return demo_protocols[i];
+		}
+	}
+
+	return 0;
+}
+
+/**
  * @brief SV_CL_Record_f
  */
 void SV_CL_Record_f(void)
@@ -412,9 +470,9 @@ void SV_CL_FastForward_f(void)
  */
 void SV_CL_PlayDemo_f(void)
 {
-	char name[MAX_OSPATH], nextDemo[MAX_OSPATH];
-	char *demoFile;
-	int  nextDemoNo;
+	char *demoFile, *displayName, *ext_test;
+	char name[MAX_OSPATH], nextDemo[MAX_OSPATH], retry[MAX_OSPATH];
+	int  nextDemoNo, protocol, i;
 
 	if (Cmd_Argc() != 2 && Cmd_Argc() != 3)
 	{
@@ -431,9 +489,68 @@ void SV_CL_PlayDemo_f(void)
 	SV_CL_Disconnect();
 
 	// open the demo file (should be the last arg)
-	demoFile = Cmd_Argv(Cmd_Argc() - 1);
-	Com_sprintf(name, MAX_OSPATH, "tvdemos/%s.%s%d", demoFile, SVCLDEMOEXT, PROTOCOL_VERSION);
-	FS_FOpenFileRead(name, &svclc.demo.file, qtrue);
+	demoFile    = Cmd_Argv(Cmd_Argc() - 1);
+	displayName = demoFile;
+	ext_test    = strrchr(demoFile, '.');
+
+	// Match the regular demo command and allow direct absolute paths as input.
+	if (ext_test && !Q_stricmpn(ext_test + 1, SVCLDEMOEXT, ARRAY_LEN(SVCLDEMOEXT) - 1))
+	{
+		size_t len;
+
+		protocol = Q_atoi(ext_test + ARRAY_LEN(SVCLDEMOEXT));
+
+		for (i = 0; demo_protocols[i]; i++)
+		{
+			if (demo_protocols[i] == protocol)
+			{
+				break;
+			}
+		}
+
+		if (demo_protocols[i] || protocol == PROTOCOL_VERSION)
+		{
+			if (Sys_PathAbsolute(demoFile))
+			{
+				Com_sprintf(name, sizeof(name), "%s", demoFile);
+				FS_FOpenFileReadFullDir(name, &svclc.demo.file);
+				displayName = COM_SkipPath(demoFile);
+			}
+			else
+			{
+				Com_sprintf(name, sizeof(name), "tvdemos/%s", demoFile);
+				FS_FOpenFileRead(name, &svclc.demo.file, qtrue);
+			}
+		}
+		else
+		{
+			Com_Printf("Protocol %d not supported for demos\n", protocol);
+			len = ext_test - demoFile;
+
+			if (len >= ARRAY_LEN(retry))
+			{
+				len = ARRAY_LEN(retry) - 1;
+			}
+
+			Q_strncpyz(retry, demoFile, len + 1);
+			retry[len] = '\0';
+			SV_CL_WalkDemoExt(retry, name, &svclc.demo.file);
+
+			if (Sys_PathAbsolute(demoFile))
+			{
+				displayName = COM_SkipPath(retry);
+			}
+		}
+	}
+	else
+	{
+		SV_CL_WalkDemoExt(demoFile, name, &svclc.demo.file);
+
+		if (Sys_PathAbsolute(demoFile))
+		{
+			displayName = COM_SkipPath(demoFile);
+		}
+	}
 
 	if (!svclc.demo.file)
 	{
@@ -441,7 +558,7 @@ void SV_CL_PlayDemo_f(void)
 		return;
 	}
 
-	Q_strncpyz(svclc.demo.demoName, demoFile, sizeof(svclc.demo.demoName));
+	Q_strncpyz(svclc.demo.demoName, displayName, sizeof(svclc.demo.demoName));
 
 	if (sv_etltv_autoplay->integer)
 	{
@@ -458,7 +575,7 @@ void SV_CL_PlayDemo_f(void)
 	svclc.demo.playing = qtrue;
 	svclc.demo.pure    = sv_pure->integer != 0;
 
-	Q_strncpyz(svcls.servername, demoFile, sizeof(svcls.servername));
+	Q_strncpyz(svcls.servername, displayName, sizeof(svcls.servername));
 
 	while (!svcls.firstSnap || !svcl.serverTime)
 	{
