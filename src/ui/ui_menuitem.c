@@ -1053,6 +1053,41 @@ qboolean Item_OwnerDraw_HandleKey(itemDef_t *item, int key)
 }
 
 /**
+ * @brief Item_ListBox_IsNavigationKey
+ * @param[in] key
+ * @return
+ */
+static qboolean Item_ListBox_IsNavigationKey(int key)
+{
+	switch (key)
+	{
+	case K_UPARROW:
+	case K_PAD0_DPAD_UP:
+	case K_KP_UPARROW:
+	case K_DOWNARROW:
+	case K_PAD0_DPAD_DOWN:
+	case K_KP_DOWNARROW:
+	case K_LEFTARROW:
+	case K_PAD0_DPAD_LEFT:
+	case K_KP_LEFTARROW:
+	case K_RIGHTARROW:
+	case K_PAD0_DPAD_RIGHT:
+	case K_KP_RIGHTARROW:
+	case K_HOME:
+	case K_KP_HOME:
+	case K_END:
+	case K_KP_END:
+	case K_PGUP:
+	case K_KP_PGUP:
+	case K_PGDN:
+	case K_KP_PGDN:
+		return qtrue;
+	default:
+		return qfalse;
+	}
+}
+
+/**
  * @brief Item_ListBox_HandleKey
  * @param[in,out] item
  * @param[in] key
@@ -1064,11 +1099,20 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 {
 	listBoxDef_t *listPtr = (listBoxDef_t *)item->typeData;
 	int          count    = DC->feederCount(item->special);
+	qboolean     hovered  = Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory);
 
-	if (force || (Rect_ContainsPoint(&item->window.rect, DC->cursorx, DC->cursory) && (item->window.flags & WINDOW_HASFOCUS)))
+	// Keep keyboard navigation on the focused listbox even when the cursor is
+	// resting on another control from the previous menu interaction.
+	if (force || (((item->window.flags & WINDOW_HASFOCUS) != 0) &&
+	              (Item_ListBox_IsNavigationKey(key) || hovered)))
 	{
 		int max = Item_ListBox_MaxScroll(item);
 		int viewmax;
+
+		if (count <= 0)
+		{
+			return qfalse;
+		}
 
 		if (item->window.flags & WINDOW_HORIZONTAL)
 		{
@@ -2720,7 +2764,7 @@ qboolean Item_HandleKey(itemDef_t *item, int key, qboolean down)
 		return qtrue;
 	}
 
-	if ((realKey == K_ENTER || realKey == K_PAD0_START) && item->onEnter)
+	if ((realKey == K_ENTER || realKey == K_KP_ENTER || realKey == K_PAD0_START) && item->onEnter)
 	{
 		Item_RunScript(item, NULL, item->onEnter);
 		return qtrue;

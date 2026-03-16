@@ -149,28 +149,68 @@ void Menu_Init(menuDef_t *menu)
 	Window_Init(&menu->window);
 }
 
-/*
+/**
  * @brief Menu_GetFocusedItem
- * @param menu
+ * @param[in] menu
  * @return
- * @note Unused
-itemDef_t *Menu_GetFocusedItem(menuDef_t *menu)
+ */
+static itemDef_t *Menu_GetFocusedItem(menuDef_t *menu)
 {
-    if (menu)
-    {
-        int i;
+	int i;
 
-        for (i = 0; i < menu->itemCount; i++)
-        {
-            if (menu->items[i]->window.flags & WINDOW_HASFOCUS)
-            {
-                return menu->items[i];
-            }
-        }
-    }
-    return NULL;
+	if (menu == NULL)
+	{
+		return NULL;
+	}
+
+	for (i = 0; i < menu->itemCount; i++)
+	{
+		if (menu->items[i]->window.flags & WINDOW_HASFOCUS)
+		{
+			return menu->items[i];
+		}
+	}
+
+	return NULL;
 }
-*/
+
+/**
+ * @brief Menu_IsListBoxNavigationKey
+ * @param[in] key
+ * @return
+ */
+static qboolean Menu_IsListBoxNavigationKey(int key)
+{
+	switch (key)
+	{
+	case K_UPARROW:
+	case K_KP_UPARROW:
+	case K_PAD0_DPAD_UP:
+	case K_DOWNARROW:
+	case K_KP_DOWNARROW:
+	case K_PAD0_DPAD_DOWN:
+	case K_LEFTARROW:
+	case K_KP_LEFTARROW:
+	case K_PAD0_DPAD_LEFT:
+	case K_RIGHTARROW:
+	case K_KP_RIGHTARROW:
+	case K_PAD0_DPAD_RIGHT:
+	case K_HOME:
+	case K_KP_HOME:
+	case K_END:
+	case K_KP_END:
+	case K_PGUP:
+	case K_KP_PGUP:
+	case K_PGDN:
+	case K_KP_PGDN:
+	case K_ENTER:
+	case K_KP_ENTER:
+	case K_PAD0_START:
+		return qtrue;
+	default:
+		return qfalse;
+	}
+}
 
 /**
  * @brief Menu_GetFocused
@@ -1087,7 +1127,14 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	itemDef_t  *item             = NULL;
 	static int s_suppressEditKey = -1;  // suppress next matching char after accelerator-triggered focus
 
-	Menu_HandleMouseMove(menu, DC->cursorx, DC->cursory);       // fix for focus not resetting on unhidden buttons
+	item = Menu_GetFocusedItem(menu);
+
+	// Keep keyboard focus on active listboxes so arrow and enter handling is
+	// driven by the selected row instead of the last hovered button.
+	if (item == NULL || item->type != ITEM_TYPE_LISTBOX || !Menu_IsListBoxNavigationKey(key))
+	{
+		Menu_HandleMouseMove(menu, DC->cursorx, DC->cursory);       // fix for focus not resetting on unhidden buttons
+	}
 
 	// enter key handling for the window supercedes item enter handling
 	if (down && ((key == K_ENTER || key == K_KP_ENTER) && menu->onEnter))
@@ -1147,14 +1194,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 		return;
 	}
 
-	// get the item with focus
-	for (i = 0; i < menu->itemCount; i++)
-	{
-		if (menu->items[i]->window.flags & WINDOW_HASFOCUS)
-		{
-			item = menu->items[i];
-		}
-	}
+	item = Menu_GetFocusedItem(menu);
 
 	if (Menu_HandleMouseESC(menu, key, down, item))
 	{

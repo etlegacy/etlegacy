@@ -18,6 +18,7 @@ menuDef {
 
 	onOpen {
 		uiScript LoadDemos
+		setfocus demoList
 	}
 
 	onESC {
@@ -58,6 +59,10 @@ menuDef {
 		tooltip			_("Select the replay to view or delete")
 
 		doubleClick {
+			uiScript RunDemo
+		}
+
+		onEnter {
 			uiScript RunDemo
 		}
 	}

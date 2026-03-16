@@ -4578,6 +4578,10 @@ static void UI_LoadDemos(void)
 			qsort(uiInfo.demos.items, uiInfo.demos.count, sizeof(demoItem_t), UI_DemoSort);
 		}
 	}
+
+	// Reset the feeder selection after each reload so keyboard activation keeps
+	// operating on a valid entry when changing directories or sort order.
+	Menu_SetFeederSelection(NULL, FEEDER_DEMOS, 0, NULL);
 }
 
 /**
