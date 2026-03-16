@@ -54,7 +54,8 @@ menuDef {
 		elementtype		LISTBOX_TEXT
 		elementwidth	200
 		elementheight	12
-		columns			1 0 200 33
+		// Let replay names use the available row width instead of the shared 33-char cap.
+		columns			1 0 590 0
 		visible			1
 		tooltip			_("Select the replay to view or delete")
 
