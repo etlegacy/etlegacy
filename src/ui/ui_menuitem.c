@@ -1360,15 +1360,27 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 		}
 		if (key == K_HOME || key == K_KP_HOME)
 		{
-			// home
+			// Jump to the first list entry instead of only rewinding the view.
 			listPtr->startPos = 0;
+			if (!listPtr->notselectable)
+			{
+				listPtr->cursorPos = 0;
+				item->cursorPos    = listPtr->cursorPos;
+				DC->feederSelection(item->special, item->cursorPos);
+			}
 			return qtrue;
 		}
 
 		if (key == K_END || key == K_KP_END)
 		{
-			// end
+			// Jump to the last list entry instead of only advancing the view.
 			listPtr->startPos = max;
+			if (!listPtr->notselectable)
+			{
+				listPtr->cursorPos = count - 1;
+				item->cursorPos    = listPtr->cursorPos;
+				DC->feederSelection(item->special, item->cursorPos);
+			}
 			return qtrue;
 		}
 
