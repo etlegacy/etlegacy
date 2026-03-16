@@ -4585,6 +4585,34 @@ static void UI_LoadDemos(void)
 }
 
 /**
+ * @brief UI_DemoStepUpDirectory
+ * @return
+ */
+qboolean UI_DemoStepUpDirectory(void)
+{
+	char *last;
+
+	if (!uiInfo.demos.path[0])
+	{
+		return qfalse;
+	}
+
+	last = strrchr(uiInfo.demos.path, '/');
+	if (last)
+	{
+		last[0] = '\0';
+	}
+	else
+	{
+		uiInfo.demos.path[0] = '\0';
+	}
+
+	UI_LoadDemos();
+
+	return qtrue;
+}
+
+/**
  * @brief UI_CheckExecKey
  * @param[in] key
  * @return
@@ -5033,27 +5061,20 @@ void UI_RunMenuScript(char **args)
 					// is a parent path?
 					if (!strcmp(&uiInfo.demos.items[uiInfo.demos.index].path[2], ".."))
 					{
-						char *last = strrchr(uiInfo.demos.path, '/');
-						if (last)
-						{
-							last[0] = '\0';
-						}
-						else
-						{
-							uiInfo.demos.path[0] = '\0';
-						}
+						UI_DemoStepUpDirectory();
 					}
 					else if (uiInfo.demos.path[0])
 					{
 						Q_strcat(uiInfo.demos.path, sizeof(uiInfo.demos.path),
 						         va("/%s", &uiInfo.demos.items[uiInfo.demos.index].path[2]));
+						UI_LoadDemos();
 					}
 					else
 					{
 						Com_sprintf(uiInfo.demos.path, sizeof(uiInfo.demos.path),
 						            "%s", &uiInfo.demos.items[uiInfo.demos.index].path[2]);
+						UI_LoadDemos();
 					}
-					UI_LoadDemos();
 				}
 				else
 				{
