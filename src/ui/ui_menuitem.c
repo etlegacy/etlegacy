@@ -527,6 +527,9 @@ static void Item_ListBox_DrawThumb(itemDef_t *item, float x, float y, float w, f
 	vec4_t backgroundColor;
 	vec4_t borderColor;
 	float  alpha;
+	float  cy;
+	float  gx;
+	float  gw;
 
 	// Build a stable thumb palette from the configured scrollbar color.
 	Vector4Copy(item->scrollColor, thumbColor);
@@ -547,32 +550,21 @@ static void Item_ListBox_DrawThumb(itemDef_t *item, float x, float y, float w, f
 	DC->fillRect(x, y, w, h, backgroundColor);
 	DC->drawRect(x, y, w, h, 1, borderColor);
 
-	// Add grip marks to keep the thumb readable at large sizes.
-	if (w > h)
+	// Keep the grip orientation stable so the thumb always shows horizontal marks.
+	gw = w - 6.0f;
+	if (gw > 10.0f)
 	{
-		float cx = x + w * 0.5f - 3.0f;
-		float gy = y + 3.0f;
-		float gh = h - 6.0f;
-
-		if (gh > 2.0f)
-		{
-			DC->fillRect(cx + 0.0f, gy, 1.0f, gh, borderColor);
-			DC->fillRect(cx + 3.0f, gy, 1.0f, gh, borderColor);
-			DC->fillRect(cx + 6.0f, gy, 1.0f, gh, borderColor);
-		}
+		gw = 10.0f;
 	}
-	else
-	{
-		float cy = y + h * 0.5f - 3.0f;
-		float gx = x + 3.0f;
-		float gw = w - 6.0f;
 
-		if (gw > 2.0f)
-		{
-			DC->fillRect(gx, cy + 0.0f, gw, 1.0f, borderColor);
-			DC->fillRect(gx, cy + 3.0f, gw, 1.0f, borderColor);
-			DC->fillRect(gx, cy + 6.0f, gw, 1.0f, borderColor);
-		}
+	gx = x + (w - gw) * 0.5f;
+	cy = y + h * 0.5f - 3.0f;
+
+	if (gw > 2.0f && h > 8.0f)
+	{
+		DC->fillRect(gx, cy + 0.0f, gw, 1.0f, borderColor);
+		DC->fillRect(gx, cy + 3.0f, gw, 1.0f, borderColor);
+		DC->fillRect(gx, cy + 6.0f, gw, 1.0f, borderColor);
 	}
 }
 
