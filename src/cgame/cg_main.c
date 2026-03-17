@@ -2198,7 +2198,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	cg.demoPlayback = demoPlayback;
 
-	MOD_CHECK_ETLEGACY(etLegacyClient, clientVersion, cg.etLegacyClient);
+	MOD_CHECK_ETLEGACY(clientVersion, cg.etLegacyClient);
 
 	// get the rendering configuration from the client system
 	trap_GetGlconfig(&cgs.glconfig);

@@ -8735,7 +8735,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 		uiInfo.uiDC.bias = 0;
 	}
 
-	MOD_CHECK_ETLEGACY(etLegacyClient, clientVersion, uiInfo.etLegacyClient);
+	MOD_CHECK_ETLEGACY(clientVersion, uiInfo.etLegacyClient);
 
 	uiInfo.uiDC.etLegacyClient = uiInfo.etLegacyClient;
 

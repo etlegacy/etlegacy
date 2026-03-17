@@ -103,8 +103,28 @@
 #define SLASH_COMMAND 1        ///< Will the client require a '/' sign in front of commands
 
 // ET: Legacy specific - used by mod code
+// NOTE: this is not a perfect and reliable solution - vanilla client sends garbage data to VM calls
+// for unused arguments, which makes the arguments used to detect ET: Legacy clients unreliable.
+// A more reliable method on cgame/ui is to check for 'etVersion' cvar, although this is not
+// fool proof either, as old clients may just set this themselves as 'CVAR_USER_CREATED'.
+#ifdef GAMEDLL
 #define MOD_CHECK_ETLEGACY(isETLegacy, versionNum, outputValue) outputValue = (isETLegacy == qtrue ? qtrue : qfalse); \
 		if (outputValue) { outputValue = versionNum; }
+#else
+#define MOD_CHECK_ETLEGACY(clientVersion, outVersion) \
+		{ \
+			char versionString[128]; \
+			char versionStringCmp[128]; \
+\
+			trap_Cvar_VariableStringBuffer("etVersion", versionString, sizeof(versionString)); \
+			Com_sprintf(versionStringCmp, sizeof(versionStringCmp), "%s %s", PRODUCT_LABEL, ETLEGACY_VERSION); \
+\
+			if (!Q_stricmpn(versionString, versionStringCmp, 13)) /* "ET Legacy v2." */ \
+			{ \
+				outVersion = clientVersion; \
+			} \
+		}
+#endif
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4018) // signed/unsigned mismatch
