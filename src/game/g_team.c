@@ -2356,6 +2356,10 @@ void G_UpdateSpawnPointStatePlayerCounts()
 		client = &level.clients[level.sortedClients[i]];
 		resolvedSpawn = G_GetSpawnForClient(client, resolvedAutoSpawnPts);
 
+		if (resolvedSpawn.major == -1) {
+			continue;
+		}
+
 		resolvedMinorSpawnPt = client->sess.userMinorSpawnPointValue;
 		if (client->sess.userMinorSpawnPointValue <= 0 && resolvedSpawn.minor > 0) {
 			resolvedMinorSpawnPt = resolvedSpawn.minor;
