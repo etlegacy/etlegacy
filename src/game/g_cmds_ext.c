@@ -512,12 +512,14 @@ void G_pause_cmd(gentity_t *ent, unsigned int dwCommand, int fPause)
  */
 void G_players_cmd(gentity_t *ent, unsigned int dwCommand, int fDump)
 {
-	int       i, idnum, max_rate, cnt = 0;
-	int       user_rate, user_snaps;
-	gclient_t *cl;
-	gentity_t *cl_ent;
-	char      guid[MAX_GUID_LENGTH + 1], n2[MAX_NETNAME], rate[32], version[64];
-	char      *s, *tc, *ready, *ref, *spec, *ign, *muted, *special, userinfo[MAX_INFO_STRING], *user_version;
+	static const int NAME_MAX_LEN = 26;
+	int              i, idnum, max_rate, cnt = 0;
+	int              user_rate, user_snaps;
+	int              namePadding;
+	gclient_t        *cl;
+	gentity_t        *cl_ent;
+	char             guid[MAX_GUID_LENGTH + 1], n2[MAX_NETNAME * 3], rate[32], version[64];
+	char             *s, *tc, *ready, *ref, *spec, *ign, *muted, *special, userinfo[MAX_INFO_STRING], *user_version;
 
 	if (g_gamestate.integer == GS_PLAYING)
 	{
@@ -558,9 +560,10 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, int fDump)
 		Q_CleanStr(guid);
 
 		Q_strncpyz(n2, cl->pers.netname, sizeof(n2));
+		Q_TruncateStr(n2, NAME_MAX_LEN);
 		Q_CleanStr(n2);
-
-		n2[26] = 0;
+		Q_EscapeColorCodes(n2, (cl->sess.referee && !(cl_ent->r.svFlags & SVF_BOT)) ? '3' : '7');
+		namePadding = Q_CountPaddingWithColor(n2, NAME_MAX_LEN);
 
 		// GUID
 		if (cl_ent->r.svFlags & SVF_BOT)
@@ -715,11 +718,28 @@ void G_players_cmd(gentity_t *ent, unsigned int dwCommand, int fDump)
 
 		if (ent)
 		{
-			CP(va("print \"%-9s %s%s%2d : %s%-26s^7%s  ^3%-8s^7  ^9%s^7\n\"", guid, ready, tc, idnum, ((ref[0]) ? "^3" : "^7"), n2, rate, special, version));
+			CP(va("print \"%-9s %s%s%2d : %s%-*s^7%s  ^3%-8s^7  ^9%s^7\n\"",
+			      guid,
+			      ready,
+			      tc,
+			      idnum,
+			      ref[0] ? "^3" : "^7",
+			      namePadding, n2,
+			      rate,
+			      special,
+			      version));
 		}
 		else
 		{
-			G_Printf("%-9s %s%s%2d : %-26s%s  %-8s  %s\n", guid, ready, tc, idnum, n2, rate, special, version);
+			G_Printf("%-9s %s%s%2d : %-*s%s  %-8s  %s\n",
+			         guid,
+			         ready,
+			         tc,
+			         idnum,
+			         namePadding, n2,
+			         rate,
+			         special,
+			         version);
 		}
 
 		cnt++;
