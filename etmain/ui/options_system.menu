@@ -94,7 +94,7 @@ menuDef {
 	MULTIACTION(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 1), SUBWINDOW_OPTION_WIDTH_L, 10, _("Quality Preset:"), .2, 8, "ui_glPreset", cvarFloatList { "Very Low" 3 "Low" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glPreset", _("Set overall video quality"))
 	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 2), SUBWINDOW_OPTION_WIDTH_L, 10, _("Resolution:"), .2, 8, "ui_r_mode", VANILLA_RESOLUTIONS, _("Set rendering resolution"))
 	NUMERICFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 3), SUBWINDOW_OPTION_WIDTH_L, 10, _("Custom Width:"), .2, 8, "r_customwidth", 5, _("Specify custom resolution width (requires custom resolution set)"))
-	NUMERICFIELD(SUBWINDOW_OPTION_X1_START, GRAPHICS_Y + 52SUBWINDOW_OPTION_COMPUTE_Y (GRAPHICS_Y, 4), SUBWINDOW_OPTION_WIDTH_L, 10, _("Custom Height:"), .2, 8, "r_customheight", 5, _("Specify custom resolution height (requires custom resolution set)"))
+	NUMERICFIELD(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 4), SUBWINDOW_OPTION_WIDTH_L, 10, _("Custom Height:"), .2, 8, "r_customheight", 5, _("Specify custom resolution height (requires custom resolution set)"))
 	MULTI(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 5), SUBWINDOW_OPTION_WIDTH_L, 10, _("Display Mode:"), .2, 8, "ui_r_fullscreen", VANILLA_WINDOWMODES, _("Set display mode"))
 	CVARFLOATLABEL(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 6), (SUBWINDOW_OPTION_WIDTH_L)-6, 10, "r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_L), 8)
 	SLIDER(SUBWINDOW_OPTION_X1_START, SUBWINDOW_OPTION_COMPUTE_Y(GRAPHICS_Y, 6), SUBWINDOW_OPTION_WIDTH_L, 10, _("Display Gamma:"), .2, 8, "r_gamma" 1.3 1 3, _("Set display gamma (requires vid_restart if using software gamma)"))
@@ -169,7 +169,7 @@ menuDef {
 #define NETWORK_Y (AUDIO_Y + AUDIO_H + SUBWINDOW_OPTION_Y_PADDING)
 #define NETWORK_H SUBWINDOW_OPTION_COMPUTE_H(3)
 	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, NETWORK_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, NETWORK_H, _("NETWORK"))
-	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Max Packets:"), .2, 8, "ui_cl_maxpackets", cvarFloatList { "Very Low (15)" 15 "Low (30)" 30 "Medium (SUBWINDOW_OPTION_HEADER_X1_START0)" 60 "High (100)" 100 "Very High (125)" 125 }, uiScript update "ui_cl_maxpackets", _("Cap for upstream data packet transmissions"))
+	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Max Packets:"), .2, 8, "ui_cl_maxpackets", cvarFloatList { "Very Low (15)" 15 "Low (30)" 30 "Medium (60)" 60 "High (100)" 100 "Very High (125)" 125 }, uiScript update "ui_cl_maxpackets", _("Cap for upstream data packet transmissions"))
 	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, _("Packet Duplication:"), .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", _("Set number of duplicates for every data packet sent upstream, minimized packetloss"))
 	CVARFLOATLABEL(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 3), SUBWINDOW_OPTION_WIDTH_R, 10, "cl_timenudge", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_R), 8)
 	SLIDER(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 3), SUBWINDOW_OPTION_WIDTH_R, 10, _("Time Nudge:"), .2, 8, "cl_timenudge" .25 0 1, _("Allows more or less latency to be added\nin the interest of better smoothness or better responsiveness"))
@@ -183,7 +183,7 @@ menuDef {
 #else
 // Other clients      //
 // SCREENSHOTS //
-#define SCREENSHOTS_Y (LANGUAGE_Y + LANGUAGE_H + SUBWINDOW_OPTION_Y_PADDING)
+#define SCREENSHOTS_Y SUBWINDOW_OPTION_Y_START
 #define SCREENSHOTS_H SUBWINDOW_OPTION_COMPUTE_H(1)
     SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, SCREENSHOTS_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, SCREENSHOTS_H, _("SCREENSHOTS"))
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SCREENSHOTS_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Auto Folders:"), .2, 8, "cg_autoFolders", _("Toggle folder prefix to place auto demos and images to folders by year and month"))
@@ -203,7 +203,7 @@ menuDef {
 #define NETWORK_Y (AUDIO_Y + AUDIO_H + SUBWINDOW_OPTION_Y_PADDING)
 #define NETWORK_H SUBWINDOW_OPTION_COMPUTE_H(2)
 	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, NETWORK_Y, SUBWINDOW_OPTION_WIDTH_R, NETWORK_H, _("NETWORK"))
-	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Max Packets:"), .2, 8, "ui_cl_maxpackets", cvarFloatList { "Very Low (15)" 15 "Low (30)" 30 "Medium (SUBWINDOW_OPTION_HEADER_X1_START0)" 60 "High (100)" 100 "Very High (125)" 125 }, uiScript update "ui_cl_maxpackets", _("Cap for upstream data packet transmissions"))
+	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Max Packets:"), .2, 8, "ui_cl_maxpackets", cvarFloatList { "Very Low (15)" 15 "Low (30)" 30 "Medium (60)" 60 "High (100)" 100 "Very High (125)" 125 }, uiScript update "ui_cl_maxpackets", _("Cap for upstream data packet transmissions"))
 	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, _("Packet Duplication:"), .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", _("Set number of duplicates for every data packet sent upstream, minimized packetloss"))
 
 // Downloads //
@@ -212,7 +212,6 @@ menuDef {
 	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, DOWNLOADS_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, DOWNLOADS_H, _("DOWNLOADS"))
 	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DOWNLOADS_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Get Missing Files:"), .2, 8, "cl_allowDownload", cvarFloatList { "Disabled" 0 "Enabled" 1 "Enabled & No sound" 2 }, _("Download missing files when available"))
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(DOWNLOADS_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, _("Use HTTP/FTP Downloads:"), .2, 8, "cl_wwwDownload", _("Toggle http/ftp downloads"))
-	DOWNLOADS_Y
 #endif
 
 // Buttons //
