@@ -8026,3 +8026,92 @@ msgstr ""
 #: via misc/i18n-sync-pot-files.py
 msgid "OLDER"
 msgstr ""
+
+# Stable menu button aliases
+msgid "MSGID_MENU_BACK"
+msgstr "ΠΊΣΩ"
+
+msgid "MSGID_MENU_EXTENDED"
+msgstr "ΕΠΕΚΤΆΘΗΚΕ"
+
+msgid "MSGID_MENU_APPLY"
+msgstr "ΕΦΑΡΜΌΖΕΤΑΙ"
+
+msgid "MSGID_MENU_YES"
+msgstr "ΝΑΊ"
+
+msgid "MSGID_MENU_NO"
+msgstr "ΌΧΙ"
+
+# Stable menu button aliases
+msgid "MSGID_MENU_ADVANCED"
+msgstr "ΠΡΟΧΩΡΗΜΈΝΟΣ"
+
+msgid "MSGID_MENU_DEFAULT"
+msgstr "ΑΘΈΤΗΣΗ"
+
+msgid "MSGID_MENU_HOST_START_SERVER"
+msgstr "ΑΡΧΉ ΥΠΗΡΈΤΗΣ"
+
+msgid "MSGID_MENU_PLAY_JOIN_SERVER"
+msgstr "ΣΥΜΜΕΤΟΧΉ ΥΠΗΡΈΤΗΣ"
+
+msgid "MSGID_MENU_PLAY_REFRESH_LIST"
+msgstr "Ανανέωση λίστας"
+
+msgid "MSGID_MENU_PLAY_CONNECT_TO_IP"
+msgstr "Συνδεθείτε με IP"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO"
+msgstr "ΥΠΗΡΈΤΗΣ INFO"
+
+msgid "MSGID_MENU_PLAY_DELETE_FAVS"
+msgstr "ΔΙΑΓΡΆΦΩ favs"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO_REFRESH"
+msgstr "ΦΡΕΣΚΆΡΩ"
+
+msgid "MSGID_MENU_OK"
+msgstr "Εντάξει"
+
+msgid "MSGID_MENU_CHANGELOG_OLDER"
+msgstr ""
+
+msgid "MSGID_MENU_CHANGELOG_NEWER"
+msgstr ""
+
+msgid "MSGID_MENU_REPLAYS_DELETE"
+msgstr "ΔΙΑΓΡΆΦΩ"
+
+msgid "MSGID_MENU_REPLAYS_VIEW"
+msgstr "ΘΈΑ"
+
+msgid "MSGID_MENU_PROFILE_SELECT"
+msgstr "Επιλέξτε το προφίλ"
+
+msgid "MSGID_MENU_MODS_LOAD"
+msgstr "ΦΟΡΤΩΣΗ MOD"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_REFRESH"
+msgstr "ΦΡΕΣΚΆΡΩ"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_FAVORITE"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_MISC"
+msgstr "ΔΙΑΦΟΡΑ"
+
+msgid "MSGID_MENU_INGAME_REFEREE_MAPS"
+msgstr "ΧΑΡΤΕΣ"
+
+msgid "MSGID_MENU_INGAME_REFEREE_PLAYERS"
+msgstr "ΠΑΙΚΤΕΣ"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS"
+msgstr "BOTS"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_ON"
+msgstr "BOTS ΕΠΊ"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_OFF"
+msgstr "BOTS  ΕΚΤΌΣ"

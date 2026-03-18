@@ -8031,3 +8031,92 @@ msgstr ""
 #: via misc/i18n-sync-pot-files.py
 msgid "OLDER"
 msgstr ""
+
+# Stable menu button aliases
+msgid "MSGID_MENU_BACK"
+msgstr "TAKAISIN"
+
+msgid "MSGID_MENU_EXTENDED"
+msgstr "LAAJENNETTU"
+
+msgid "MSGID_MENU_APPLY"
+msgstr "KÄYTÄ"
+
+msgid "MSGID_MENU_YES"
+msgstr "KYLLÄ"
+
+msgid "MSGID_MENU_NO"
+msgstr "EI"
+
+# Stable menu button aliases
+msgid "MSGID_MENU_ADVANCED"
+msgstr "KEHITTYNYT"
+
+msgid "MSGID_MENU_DEFAULT"
+msgstr "OLETUS"
+
+msgid "MSGID_MENU_HOST_START_SERVER"
+msgstr "ALOITA PALVELIN"
+
+msgid "MSGID_MENU_PLAY_JOIN_SERVER"
+msgstr "LIITY PALVELIMELLE"
+
+msgid "MSGID_MENU_PLAY_REFRESH_LIST"
+msgstr "PÄIVITÄ LISTA"
+
+msgid "MSGID_MENU_PLAY_CONNECT_TO_IP"
+msgstr "YHDISTÄ IP:N"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO"
+msgstr "PALVELIMEN TIEDOT"
+
+msgid "MSGID_MENU_PLAY_DELETE_FAVS"
+msgstr "POISTA SUOSIKIT"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO_REFRESH"
+msgstr "PÄIVITÄ"
+
+msgid "MSGID_MENU_OK"
+msgstr "OK"
+
+msgid "MSGID_MENU_CHANGELOG_OLDER"
+msgstr ""
+
+msgid "MSGID_MENU_CHANGELOG_NEWER"
+msgstr ""
+
+msgid "MSGID_MENU_REPLAYS_DELETE"
+msgstr "POISTA"
+
+msgid "MSGID_MENU_REPLAYS_VIEW"
+msgstr "NÄKYMÄ"
+
+msgid "MSGID_MENU_PROFILE_SELECT"
+msgstr "VALITSE PROFIILI"
+
+msgid "MSGID_MENU_MODS_LOAD"
+msgstr "LATAA MODI"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_REFRESH"
+msgstr "PÄIVITÄ"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_FAVORITE"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_MISC"
+msgstr "MUUT"
+
+msgid "MSGID_MENU_INGAME_REFEREE_MAPS"
+msgstr "KARTAT"
+
+msgid "MSGID_MENU_INGAME_REFEREE_PLAYERS"
+msgstr "PELAAJAT"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS"
+msgstr "BOTIT"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_ON"
+msgstr "BOTIT PÄÄLLÄ"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_OFF"
+msgstr "BOTIT POIS PÄÄLTÄ"

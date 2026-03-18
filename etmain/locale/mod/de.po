@@ -8032,3 +8032,92 @@ msgstr ""
 #: via misc/i18n-sync-pot-files.py
 msgid "OLDER"
 msgstr ""
+
+# Stable menu button aliases
+msgid "MSGID_MENU_BACK"
+msgstr "ZURÜCK"
+
+msgid "MSGID_MENU_EXTENDED"
+msgstr "ERWEITERT"
+
+msgid "MSGID_MENU_APPLY"
+msgstr "ÜBERNEHMEN"
+
+msgid "MSGID_MENU_YES"
+msgstr "JA"
+
+msgid "MSGID_MENU_NO"
+msgstr "NEIN"
+
+# Stable menu button aliases
+msgid "MSGID_MENU_ADVANCED"
+msgstr "ERWEITERT"
+
+msgid "MSGID_MENU_DEFAULT"
+msgstr "STANDARD"
+
+msgid "MSGID_MENU_HOST_START_SERVER"
+msgstr "STARTE SERVER"
+
+msgid "MSGID_MENU_PLAY_JOIN_SERVER"
+msgstr "SERVER BEITRETEN"
+
+msgid "MSGID_MENU_PLAY_REFRESH_LIST"
+msgstr "LISTE AKTUALISIEREN"
+
+msgid "MSGID_MENU_PLAY_CONNECT_TO_IP"
+msgstr "VERBINDE MIT IP"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO"
+msgstr "SERVER INFO"
+
+msgid "MSGID_MENU_PLAY_DELETE_FAVS"
+msgstr "LÖSCHE FAVS"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO_REFRESH"
+msgstr "AKTUALISIEREN"
+
+msgid "MSGID_MENU_OK"
+msgstr "OK"
+
+msgid "MSGID_MENU_CHANGELOG_OLDER"
+msgstr ""
+
+msgid "MSGID_MENU_CHANGELOG_NEWER"
+msgstr ""
+
+msgid "MSGID_MENU_REPLAYS_DELETE"
+msgstr "LÖSCHE"
+
+msgid "MSGID_MENU_REPLAYS_VIEW"
+msgstr "ANSICHT"
+
+msgid "MSGID_MENU_PROFILE_SELECT"
+msgstr "PROFIL WÄHLEN"
+
+msgid "MSGID_MENU_MODS_LOAD"
+msgstr "LADE MOD"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_REFRESH"
+msgstr "AKTUALISIEREN"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_FAVORITE"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_MISC"
+msgstr "DIVERSE"
+
+msgid "MSGID_MENU_INGAME_REFEREE_MAPS"
+msgstr "KARTEN"
+
+msgid "MSGID_MENU_INGAME_REFEREE_PLAYERS"
+msgstr "SPIELER"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS"
+msgstr "BOTS"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_ON"
+msgstr "BOTS AN"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_OFF"
+msgstr "BOTS AUS"

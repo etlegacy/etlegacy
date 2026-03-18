@@ -76,7 +76,7 @@ menuDef {
 		notselectable
 	}
 
-	BUTTON( (SUBWINDOW_X)+8, (SUBWINDOW_Y)+(SUBWINDOW_HEIGHT)-24, .333*((SUBWINDOW_WIDTH)-22), 18, _("BACK"), .3, 14, conditionalscript ui_changelog_ingame 0 ( "close changelog_popup ; open ingame_main" ) ( "close changelog_popup" ) )
-	BUTTONEXT( (SUBWINDOW_X)+8+.333*((SUBWINDOW_WIDTH)-22)+3, (SUBWINDOW_Y)+(SUBWINDOW_HEIGHT)-24, .333*((SUBWINDOW_WIDTH)-22), 18, _("NEWER"), .3, 14, uiScript ChangelogNext, cvarTest "ui_changelog_has_prev" disableCvar { 0 } )
-	BUTTONEXT( (SUBWINDOW_X)+8+2*.333*((SUBWINDOW_WIDTH)-22)+6, (SUBWINDOW_Y)+(SUBWINDOW_HEIGHT)-24, .334*((SUBWINDOW_WIDTH)-22), 18, _("OLDER"), .3, 14, uiScript ChangelogPrevious, cvarTest "ui_changelog_has_next" disableCvar { 0 } )
+	BUTTON( (SUBWINDOW_X)+8, (SUBWINDOW_Y)+(SUBWINDOW_HEIGHT)-24, .333*((SUBWINDOW_WIDTH)-22), 18, _("MSGID_MENU_BACK"), .3, 14, conditionalscript ui_changelog_ingame 0 ( "close changelog_popup ; open ingame_main" ) ( "close changelog_popup" ) )
+	BUTTONEXT( (SUBWINDOW_X)+8+.333*((SUBWINDOW_WIDTH)-22)+3, (SUBWINDOW_Y)+(SUBWINDOW_HEIGHT)-24, .333*((SUBWINDOW_WIDTH)-22), 18, _("MSGID_MENU_CHANGELOG_NEWER"), .3, 14, uiScript ChangelogNext, cvarTest "ui_changelog_has_prev" disableCvar { 0 } )
+	BUTTONEXT( (SUBWINDOW_X)+8+2*.333*((SUBWINDOW_WIDTH)-22)+6, (SUBWINDOW_Y)+(SUBWINDOW_HEIGHT)-24, .334*((SUBWINDOW_WIDTH)-22), 18, _("MSGID_MENU_CHANGELOG_OLDER"), .3, 14, uiScript ChangelogPrevious, cvarTest "ui_changelog_has_next" disableCvar { 0 } )
 }

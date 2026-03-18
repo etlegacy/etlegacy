@@ -51,5 +51,5 @@ menuDef {
 	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-4, 10, _("Voting is disabled"), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+28, (SUBWINDOW_WIDTH)-4, 10, _("on this server."), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
 
-	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH), 18, _("BACK"), .3, 14, close ingame_votedisabled ; open ingame_main )
+	BUTTON( SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH), 18, _("MSGID_MENU_BACK"), .3, 14, close ingame_votedisabled ; open ingame_main )
 }

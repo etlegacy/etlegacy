@@ -153,5 +153,5 @@ menuDef {
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(CUSTOM_CROSSHAIR_Y, 16), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Dynamic Health:"), .2, 8, "cg_customCrosshairHealth", _("Force the crosshair coloration to follow player health"))
 
 // Buttons //
-	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START, WINDOW_HEIGHT - 22, WINDOW_WIDTH - 12, 18, _("BACK"), .3, 14, close options_customise_hud_extended ; open options_customise_hud)
+	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START, WINDOW_HEIGHT - 22, WINDOW_WIDTH - 12, 18, _("MSGID_MENU_BACK"), .3, 14, close options_customise_hud_extended ; open options_customise_hud)
 }

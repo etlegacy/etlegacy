@@ -8023,3 +8023,92 @@ msgstr ""
 #: via misc/i18n-sync-pot-files.py
 msgid "OLDER"
 msgstr ""
+
+# Stable menu button aliases
+msgid "MSGID_MENU_BACK"
+msgstr ""
+
+msgid "MSGID_MENU_EXTENDED"
+msgstr ""
+
+msgid "MSGID_MENU_APPLY"
+msgstr ""
+
+msgid "MSGID_MENU_YES"
+msgstr ""
+
+msgid "MSGID_MENU_NO"
+msgstr ""
+
+# Stable menu button aliases
+msgid "MSGID_MENU_ADVANCED"
+msgstr ""
+
+msgid "MSGID_MENU_DEFAULT"
+msgstr ""
+
+msgid "MSGID_MENU_HOST_START_SERVER"
+msgstr ""
+
+msgid "MSGID_MENU_PLAY_JOIN_SERVER"
+msgstr ""
+
+msgid "MSGID_MENU_PLAY_REFRESH_LIST"
+msgstr ""
+
+msgid "MSGID_MENU_PLAY_CONNECT_TO_IP"
+msgstr ""
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO"
+msgstr ""
+
+msgid "MSGID_MENU_PLAY_DELETE_FAVS"
+msgstr ""
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO_REFRESH"
+msgstr ""
+
+msgid "MSGID_MENU_OK"
+msgstr ""
+
+msgid "MSGID_MENU_CHANGELOG_OLDER"
+msgstr ""
+
+msgid "MSGID_MENU_CHANGELOG_NEWER"
+msgstr ""
+
+msgid "MSGID_MENU_REPLAYS_DELETE"
+msgstr ""
+
+msgid "MSGID_MENU_REPLAYS_VIEW"
+msgstr ""
+
+msgid "MSGID_MENU_PROFILE_SELECT"
+msgstr ""
+
+msgid "MSGID_MENU_MODS_LOAD"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_REFRESH"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_FAVORITE"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_MISC"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_MAPS"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_PLAYERS"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_ON"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_OFF"
+msgstr ""

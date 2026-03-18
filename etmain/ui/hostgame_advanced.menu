@@ -169,7 +169,7 @@ menuDef {
 	EDITFIELDLEFT( 6+(SUBWINDOW_WIDTH)+6+4, MOTD_Y+64, (SUBWINDOW_WIDTH)-8, 10, _("Line 5:"), .2, 8, "server_motd4", 26, 35, _("Specify the message clients will see when connecting to the server") )
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("BACK"), .3, 14, close hostgame_advanced ; open hostgame )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("EXTENDED"), .3, 14, close hostgame_advanced ; open hostgame_extended )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("DEFAULT"), .3, 14, open hostgame_advanced_default )
+	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_BACK"), .3, 14, close hostgame_advanced ; open hostgame )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_EXTENDED"), .3, 14, close hostgame_advanced ; open hostgame_extended )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_DEFAULT"), .3, 14, open hostgame_advanced_default )
 }

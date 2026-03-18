@@ -8030,3 +8030,92 @@ msgstr ""
 #: via misc/i18n-sync-pot-files.py
 msgid "OLDER"
 msgstr ""
+
+# Stable menu button aliases
+msgid "MSGID_MENU_BACK"
+msgstr "ATRÁS"
+
+msgid "MSGID_MENU_EXTENDED"
+msgstr "EXTENDIDO"
+
+msgid "MSGID_MENU_APPLY"
+msgstr "APLICAR"
+
+msgid "MSGID_MENU_YES"
+msgstr "SI"
+
+msgid "MSGID_MENU_NO"
+msgstr "NO"
+
+# Stable menu button aliases
+msgid "MSGID_MENU_ADVANCED"
+msgstr "AVANZADO"
+
+msgid "MSGID_MENU_DEFAULT"
+msgstr "POR DEFECTO"
+
+msgid "MSGID_MENU_HOST_START_SERVER"
+msgstr "INICIAR SERVIDOR"
+
+msgid "MSGID_MENU_PLAY_JOIN_SERVER"
+msgstr "UNIRSE AL SERVIDOR"
+
+msgid "MSGID_MENU_PLAY_REFRESH_LIST"
+msgstr "ACTUALIZAR LISTA"
+
+msgid "MSGID_MENU_PLAY_CONNECT_TO_IP"
+msgstr "CONECTAR A IP"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO"
+msgstr "INFO SERVIDOR"
+
+msgid "MSGID_MENU_PLAY_DELETE_FAVS"
+msgstr "BORRAR FAVS"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO_REFRESH"
+msgstr "ACTUALIZAR"
+
+msgid "MSGID_MENU_OK"
+msgstr "OK"
+
+msgid "MSGID_MENU_CHANGELOG_OLDER"
+msgstr ""
+
+msgid "MSGID_MENU_CHANGELOG_NEWER"
+msgstr ""
+
+msgid "MSGID_MENU_REPLAYS_DELETE"
+msgstr "BORRAR"
+
+msgid "MSGID_MENU_REPLAYS_VIEW"
+msgstr "VISTA"
+
+msgid "MSGID_MENU_PROFILE_SELECT"
+msgstr "SELECCIONAR PERFIL"
+
+msgid "MSGID_MENU_MODS_LOAD"
+msgstr "CARGAR MOD"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_REFRESH"
+msgstr "ACTUALIZAR"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_FAVORITE"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_MISC"
+msgstr "MISC"
+
+msgid "MSGID_MENU_INGAME_REFEREE_MAPS"
+msgstr "MAPAS"
+
+msgid "MSGID_MENU_INGAME_REFEREE_PLAYERS"
+msgstr "JUGADORES"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS"
+msgstr "BOTS"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_ON"
+msgstr "BOTS ON"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_OFF"
+msgstr "BOTS OFF"

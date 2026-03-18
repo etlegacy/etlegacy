@@ -8025,3 +8025,92 @@ msgstr ""
 #: via misc/i18n-sync-pot-files.py
 msgid "OLDER"
 msgstr ""
+
+# Stable menu button aliases
+msgid "MSGID_MENU_BACK"
+msgstr "НАЗАД"
+
+msgid "MSGID_MENU_EXTENDED"
+msgstr "РАЗШИРЕНИ НАСТРОЙКИ"
+
+msgid "MSGID_MENU_APPLY"
+msgstr "ЗАПАЗИ"
+
+msgid "MSGID_MENU_YES"
+msgstr "ДА"
+
+msgid "MSGID_MENU_NO"
+msgstr "НЕ"
+
+# Stable menu button aliases
+msgid "MSGID_MENU_ADVANCED"
+msgstr "ДОП. НАСТРОЙКИ"
+
+msgid "MSGID_MENU_DEFAULT"
+msgstr "ВЪЗСТАНОВЯВАНЕ"
+
+msgid "MSGID_MENU_HOST_START_SERVER"
+msgstr "СТАРТИРАЙ СЪРВЪРА"
+
+msgid "MSGID_MENU_PLAY_JOIN_SERVER"
+msgstr "ПРИСЪЕДИНЯВАНЕ"
+
+msgid "MSGID_MENU_PLAY_REFRESH_LIST"
+msgstr "ОБВНОВИ СПИСЪКА"
+
+msgid "MSGID_MENU_PLAY_CONNECT_TO_IP"
+msgstr "ОТВАРЯНЕ IP АДРЕС"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO"
+msgstr "ИНФОРМАЦИЯ"
+
+msgid "MSGID_MENU_PLAY_DELETE_FAVS"
+msgstr "ИЗТРИЙ ЛЮБИМИТЕ"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO_REFRESH"
+msgstr "ОБНОВИ"
+
+msgid "MSGID_MENU_OK"
+msgstr "ЗАПАЗИ"
+
+msgid "MSGID_MENU_CHANGELOG_OLDER"
+msgstr ""
+
+msgid "MSGID_MENU_CHANGELOG_NEWER"
+msgstr ""
+
+msgid "MSGID_MENU_REPLAYS_DELETE"
+msgstr "ИЗТРИЙ"
+
+msgid "MSGID_MENU_REPLAYS_VIEW"
+msgstr "ПРЕГЛЕД"
+
+msgid "MSGID_MENU_PROFILE_SELECT"
+msgstr "ИЗБОР ПРОФИЛ"
+
+msgid "MSGID_MENU_MODS_LOAD"
+msgstr "ЗАРЕДИ"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_REFRESH"
+msgstr "ОБНОВИ"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_FAVORITE"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_MISC"
+msgstr "РАЗНИ"
+
+msgid "MSGID_MENU_INGAME_REFEREE_MAPS"
+msgstr "КАРТИ"
+
+msgid "MSGID_MENU_INGAME_REFEREE_PLAYERS"
+msgstr "ИГРАЧИ"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS"
+msgstr "КОМПЮТРИ"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_ON"
+msgstr "ВКЛЮЧИ"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_OFF"
+msgstr "ИЗКЛЮЧИ"

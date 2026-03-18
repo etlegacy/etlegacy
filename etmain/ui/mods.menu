@@ -55,6 +55,6 @@ menuDef {
 	}
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("BACK"), .3, 14, close mods ; open main )
-	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("LOAD MOD"), .3, 14, uiScript RunMod )
+	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("MSGID_MENU_BACK"), .3, 14, close mods ; open main )
+	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("MSGID_MENU_MODS_LOAD"), .3, 14, uiScript RunMod )
 }

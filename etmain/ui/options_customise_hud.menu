@@ -127,6 +127,6 @@ menuDef {
 	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(FIRETEAM_Y, 5), SUBWINDOW_OPTION_WIDTH_L, SUBWINDOW_OPTION_HEIGHT, _("Sprites Color Selected:"), .2, 8, "cg_fireteamSpritesColorSelected", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the fireteam sprites selected"))
 
 // Buttons //
-	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START, WINDOW_HEIGHT - 22, (WINDOW_WIDTH - 24) * 0.5, 18, _("BACK"), .3, 14, close options_customise_hud ; open options)
-	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START + .5 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 22, .5 * (WINDOW_WIDTH - 12), 18, _("EXTENDED"), .3, 14, close options_customise_hud ; open options_customise_hud_extended)
+	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START, WINDOW_HEIGHT - 22, (WINDOW_WIDTH - 24) * 0.5, 18, _("MSGID_MENU_BACK"), .3, 14, close options_customise_hud ; open options)
+	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START + .5 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 22, .5 * (WINDOW_WIDTH - 12), 18, _("MSGID_MENU_EXTENDED"), .3, 14, close options_customise_hud ; open options_customise_hud_extended)
 }

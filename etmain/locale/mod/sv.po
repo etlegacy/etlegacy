@@ -8026,3 +8026,92 @@ msgstr ""
 #: via misc/i18n-sync-pot-files.py
 msgid "OLDER"
 msgstr ""
+
+# Stable menu button aliases
+msgid "MSGID_MENU_BACK"
+msgstr "TILLBAKA"
+
+msgid "MSGID_MENU_EXTENDED"
+msgstr "FÖRLÄNGD"
+
+msgid "MSGID_MENU_APPLY"
+msgstr "TILLÄMPA"
+
+msgid "MSGID_MENU_YES"
+msgstr "JA"
+
+msgid "MSGID_MENU_NO"
+msgstr "NEJ"
+
+# Stable menu button aliases
+msgid "MSGID_MENU_ADVANCED"
+msgstr "AVANCERAT"
+
+msgid "MSGID_MENU_DEFAULT"
+msgstr "STANDARD"
+
+msgid "MSGID_MENU_HOST_START_SERVER"
+msgstr "STARTA SERVER"
+
+msgid "MSGID_MENU_PLAY_JOIN_SERVER"
+msgstr "ANSLUT SERVERN"
+
+msgid "MSGID_MENU_PLAY_REFRESH_LIST"
+msgstr "UPPDATERA LISTA"
+
+msgid "MSGID_MENU_PLAY_CONNECT_TO_IP"
+msgstr "ANSLUTA TILL IP"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO"
+msgstr "SERVERINFO"
+
+msgid "MSGID_MENU_PLAY_DELETE_FAVS"
+msgstr "RADERA FAVORITER"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO_REFRESH"
+msgstr "UPPDATERA"
+
+msgid "MSGID_MENU_OK"
+msgstr "OK"
+
+msgid "MSGID_MENU_CHANGELOG_OLDER"
+msgstr ""
+
+msgid "MSGID_MENU_CHANGELOG_NEWER"
+msgstr ""
+
+msgid "MSGID_MENU_REPLAYS_DELETE"
+msgstr "RADERA"
+
+msgid "MSGID_MENU_REPLAYS_VIEW"
+msgstr "SYN"
+
+msgid "MSGID_MENU_PROFILE_SELECT"
+msgstr "VÄLJ PROFIL"
+
+msgid "MSGID_MENU_MODS_LOAD"
+msgstr "LADDA MODD"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_REFRESH"
+msgstr "UPPDATERA"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_FAVORITE"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_MISC"
+msgstr "OLIKA"
+
+msgid "MSGID_MENU_INGAME_REFEREE_MAPS"
+msgstr "BANOR"
+
+msgid "MSGID_MENU_INGAME_REFEREE_PLAYERS"
+msgstr "SPELARE"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS"
+msgstr "BOTTAR"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_ON"
+msgstr "BOTTAR PÅ"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_OFF"
+msgstr "BOTTAR AV"

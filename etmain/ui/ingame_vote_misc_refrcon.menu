@@ -70,7 +70,7 @@ menuDef {
 	BUTTONEXT( 6+.875*(WINDOW_WIDTH-18)+6, 158, .125*(WINDOW_WIDTH-18), 14, _("6ON6"), .24, 11, exec "cmd ref config legacy6"; uiScript closeingame, voteFlag CV_SVF_CONFIG)
 
 	MULTILEFT( 8, 176+2, .66*(WINDOW_WIDTH-18), 10, _("Warmup Damage:"), .2, 8, "ui_voteWarmupDamage", cvarFloatList { "None" 0 "Enemies" 1 "Everyone" 2 } voteFlag CV_SVF_WARMUPDAMAGE, _("Enable or disable warmup damage") )
-	NAMEDBUTTONEXT( "bttnextWarmupDamage", 6+.80*(WINDOW_WIDTH-18)+6, 176, .20*(WINDOW_WIDTH-18), 14, _("OK"), .24, 11, uiScript refWarmupDamage ; uiScript closeingame, voteFlag CV_SVF_WARMUPDAMAGE )
+	NAMEDBUTTONEXT( "bttnextWarmupDamage", 6+.80*(WINDOW_WIDTH-18)+6, 176, .20*(WINDOW_WIDTH-18), 14, _("MSGID_MENU_OK"), .24, 11, uiScript refWarmupDamage ; uiScript closeingame, voteFlag CV_SVF_WARMUPDAMAGE )
 
 	//	itemDef {
 //		name		"poll"
@@ -98,10 +98,10 @@ menuDef {
 //	NAMEDBUTTONEXT( "bttnextTimelimit", 6+.80*(WINDOW_WIDTH-18)+6, 194, .20*(WINDOW_WIDTH-18), 14, _("OK"), .24, 11, uiScript votePoll; uiScript closeingame, voteFlag CV_SVF_POLL )
 
 	NUMERICFIELDLEFTEXT( 8, 212+2, .66*(WINDOW_WIDTH-18), 10, _("Time Limit:"), .2, 8, "ui_voteTimelimit", 6, voteFlag CV_SVF_TIMELIMIT, _("Set the time limit for the server") )
-	NAMEDBUTTONEXT( "bttnextTimelimit", 6+.80*(WINDOW_WIDTH-18)+6, 212, .20*(WINDOW_WIDTH-18), 14, _("OK"), .24, 11, uiScript refTimelimit ; uiScript closeingame, voteFlag CV_SVF_TIMELIMIT )
+	NAMEDBUTTONEXT( "bttnextTimelimit", 6+.80*(WINDOW_WIDTH-18)+6, 212, .20*(WINDOW_WIDTH-18), 14, _("MSGID_MENU_OK"), .24, 11, uiScript refTimelimit ; uiScript closeingame, voteFlag CV_SVF_TIMELIMIT )
 
 	MULTILEFT( 8, 230+2, .66*(WINDOW_WIDTH-18), 10, _("Game Type:"), .2, 8, "ui_voteGameType", cvarFloatList { "Single-Map Objective" 2 "Stopwatch" 3 "Last Man Standing" 5 "Map Voting" 6 } voteFlag CV_SVF_GAMETYPE, _("Set the game type") )
-	NAMEDBUTTONEXT( "bttnextGameType", 6+.80*(WINDOW_WIDTH-18)+6, 230, .20*(WINDOW_WIDTH-18), 14, _("OK"), .24, 11, uiScript refGame ; uiScript closeingame, voteFlag CV_SVF_GAMETYPE )
+	NAMEDBUTTONEXT( "bttnextGameType", 6+.80*(WINDOW_WIDTH-18)+6, 230, .20*(WINDOW_WIDTH-18), 14, _("MSGID_MENU_OK"), .24, 11, uiScript refGame ; uiScript closeingame, voteFlag CV_SVF_GAMETYPE )
 
 	BUTTONEXT( 6, 248, WINDOW_WIDTH-12, 14, _("PAUSE"), .24, 11, exec "cmd ref pause" ; uiScript closeingame, settingDisabled CV_SVS_PAUSE cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 	BUTTONEXT( 6, 248, WINDOW_WIDTH-12, 14, _("UNPAUSE"), .24, 11, exec "cmd ref unpause" ; uiScript closeingame, settingEnabled CV_SVS_PAUSE cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
@@ -112,5 +112,5 @@ menuDef {
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 266, .5*(WINDOW_WIDTH-18), 14, _("LOCK SPECS"), .24, 11, exec "cmd ref speclock" ; uiScript closeingame, settingDisabled CV_SVS_LOCKSPECS cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 	BUTTONEXT( 6+.5*(WINDOW_WIDTH-18)+6, 266, .5*(WINDOW_WIDTH-18), 14, _("UNLOCK SPECS"), .24, 11, exec "cmd ref specunlock" ; uiScript closeingame, settingEnabled CV_SVS_LOCKSPECS cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 
-	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close ingame_vote_misc_refrcon ; open ingame_vote )
+	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("MSGID_MENU_BACK"), .3, 14, close ingame_vote_misc_refrcon ; open ingame_vote )
 }

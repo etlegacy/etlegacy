@@ -109,5 +109,5 @@ menuDef {
 	EDITFIELD(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(MISC_Y, 7), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Auto Command:"), .2, 8, "cg_autoCmd", 15, 13, _("Set a command to be executed on map start / restart"))
 
 // Buttons //
-	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START, WINDOW_HEIGHT - 24, WINDOW_WIDTH - 12, 18, _("BACK"), .3, 14, close options_customise_game ; open options)
+	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START, WINDOW_HEIGHT - 24, WINDOW_WIDTH - 12, 18, _("MSGID_MENU_BACK"), .3, 14, close options_customise_game ; open options)
 }

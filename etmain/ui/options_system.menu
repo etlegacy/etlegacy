@@ -216,9 +216,9 @@ menuDef {
 #endif
 
 // Buttons //
-	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START, WINDOW_HEIGHT - 24, .33 *(WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, uiScript vidReset ; close options_system ; open options)
-	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, _("EXTENDED"), .3, 14, close options_system ; open options_system_extended)
-	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("APPLY"), .3, 14,
+	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START, WINDOW_HEIGHT - 24, .33 *(WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, uiScript vidReset ; close options_system ; open options)
+	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_EXTENDED"), .3, 14, close options_system ; open options_system_extended)
+	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_APPLY"), .3, 14,
 	       conditionalScript vidrestartIsRequired 2
 	       ("open vid_restart")
 	           ("uiScript systemCvarsApply ; close options_system ; open options"))

@@ -8032,3 +8032,92 @@ msgstr ""
 #: via misc/i18n-sync-pot-files.py
 msgid "OLDER"
 msgstr ""
+
+# Stable menu button aliases
+msgid "MSGID_MENU_BACK"
+msgstr "TERUG"
+
+msgid "MSGID_MENU_EXTENDED"
+msgstr "UITGEBREID"
+
+msgid "MSGID_MENU_APPLY"
+msgstr "TOEPASSEN"
+
+msgid "MSGID_MENU_YES"
+msgstr "JA"
+
+msgid "MSGID_MENU_NO"
+msgstr "NEE"
+
+# Stable menu button aliases
+msgid "MSGID_MENU_ADVANCED"
+msgstr "GEAVANCEERD"
+
+msgid "MSGID_MENU_DEFAULT"
+msgstr "STANDAARD"
+
+msgid "MSGID_MENU_HOST_START_SERVER"
+msgstr "START SERVER"
+
+msgid "MSGID_MENU_PLAY_JOIN_SERVER"
+msgstr "VERBINDEN"
+
+msgid "MSGID_MENU_PLAY_REFRESH_LIST"
+msgstr "LIJST VERVERSEN"
+
+msgid "MSGID_MENU_PLAY_CONNECT_TO_IP"
+msgstr "MET IP VERBINDEN"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO"
+msgstr "SERVERINFO"
+
+msgid "MSGID_MENU_PLAY_DELETE_FAVS"
+msgstr "VERWIJDER FAVS"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO_REFRESH"
+msgstr "VERVERS"
+
+msgid "MSGID_MENU_OK"
+msgstr "OK"
+
+msgid "MSGID_MENU_CHANGELOG_OLDER"
+msgstr ""
+
+msgid "MSGID_MENU_CHANGELOG_NEWER"
+msgstr ""
+
+msgid "MSGID_MENU_REPLAYS_DELETE"
+msgstr "VERWIJDEREN"
+
+msgid "MSGID_MENU_REPLAYS_VIEW"
+msgstr "WEERGAVE"
+
+msgid "MSGID_MENU_PROFILE_SELECT"
+msgstr "PROFIEL SELECTEREN"
+
+msgid "MSGID_MENU_MODS_LOAD"
+msgstr "MOD LADEN"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_REFRESH"
+msgstr "VERVERS"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_FAVORITE"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_MISC"
+msgstr "OVERIG"
+
+msgid "MSGID_MENU_INGAME_REFEREE_MAPS"
+msgstr "MAPS"
+
+msgid "MSGID_MENU_INGAME_REFEREE_PLAYERS"
+msgstr "SPELERS"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS"
+msgstr "BOTS"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_ON"
+msgstr "BOTS AAN"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_OFF"
+msgstr "BOTS UIT"

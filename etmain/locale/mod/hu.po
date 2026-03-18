@@ -8025,3 +8025,92 @@ msgstr ""
 #: via misc/i18n-sync-pot-files.py
 msgid "OLDER"
 msgstr ""
+
+# Stable menu button aliases
+msgid "MSGID_MENU_BACK"
+msgstr "VISSZA"
+
+msgid "MSGID_MENU_EXTENDED"
+msgstr "KITERJESZTETT"
+
+msgid "MSGID_MENU_APPLY"
+msgstr "ALKALMAZ"
+
+msgid "MSGID_MENU_YES"
+msgstr "IGEN"
+
+msgid "MSGID_MENU_NO"
+msgstr "NEM"
+
+# Stable menu button aliases
+msgid "MSGID_MENU_ADVANCED"
+msgstr "HALADÓ"
+
+msgid "MSGID_MENU_DEFAULT"
+msgstr "ALAPHELYZET"
+
+msgid "MSGID_MENU_HOST_START_SERVER"
+msgstr "SZERVER INDÍTÁSA"
+
+msgid "MSGID_MENU_PLAY_JOIN_SERVER"
+msgstr "CSATLAKOZÁS"
+
+msgid "MSGID_MENU_PLAY_REFRESH_LIST"
+msgstr "LISTA FRISSÍTÉSE"
+
+msgid "MSGID_MENU_PLAY_CONNECT_TO_IP"
+msgstr "CSATLAKOZÁS IP-HEZ"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO"
+msgstr "SZERVER INFÓ"
+
+msgid "MSGID_MENU_PLAY_DELETE_FAVS"
+msgstr "KEDVENCEK TÖRLÉSE"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO_REFRESH"
+msgstr "FRISSÍTÉS"
+
+msgid "MSGID_MENU_OK"
+msgstr "OK"
+
+msgid "MSGID_MENU_CHANGELOG_OLDER"
+msgstr ""
+
+msgid "MSGID_MENU_CHANGELOG_NEWER"
+msgstr ""
+
+msgid "MSGID_MENU_REPLAYS_DELETE"
+msgstr "TÖRLÉS"
+
+msgid "MSGID_MENU_REPLAYS_VIEW"
+msgstr "NÉZET"
+
+msgid "MSGID_MENU_PROFILE_SELECT"
+msgstr "PROFIL KIVÁLASZTÁSA"
+
+msgid "MSGID_MENU_MODS_LOAD"
+msgstr "MOD BETÖLTÉSE"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_REFRESH"
+msgstr "FRISSÍTÉS"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_FAVORITE"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_MISC"
+msgstr "EGYÉB"
+
+msgid "MSGID_MENU_INGAME_REFEREE_MAPS"
+msgstr "PÁLYÁK"
+
+msgid "MSGID_MENU_INGAME_REFEREE_PLAYERS"
+msgstr "JÁTÉKOSRA"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS"
+msgstr "BOTOK"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_ON"
+msgstr "BOTOK BE"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_OFF"
+msgstr "BOTOK KI"

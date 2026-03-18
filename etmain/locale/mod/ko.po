@@ -8025,3 +8025,92 @@ msgstr ""
 #: via misc/i18n-sync-pot-files.py
 msgid "OLDER"
 msgstr ""
+
+# Stable menu button aliases
+msgid "MSGID_MENU_BACK"
+msgstr "뒤로 가기"
+
+msgid "MSGID_MENU_EXTENDED"
+msgstr "고급 설정"
+
+msgid "MSGID_MENU_APPLY"
+msgstr "적용"
+
+msgid "MSGID_MENU_YES"
+msgstr "예"
+
+msgid "MSGID_MENU_NO"
+msgstr "아니오"
+
+# Stable menu button aliases
+msgid "MSGID_MENU_ADVANCED"
+msgstr "고급"
+
+msgid "MSGID_MENU_DEFAULT"
+msgstr "기본"
+
+msgid "MSGID_MENU_HOST_START_SERVER"
+msgstr "서버 시작"
+
+msgid "MSGID_MENU_PLAY_JOIN_SERVER"
+msgstr "서버 참가"
+
+msgid "MSGID_MENU_PLAY_REFRESH_LIST"
+msgstr "목록 새로고침"
+
+msgid "MSGID_MENU_PLAY_CONNECT_TO_IP"
+msgstr "IP로 접속"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO"
+msgstr "서버 정보"
+
+msgid "MSGID_MENU_PLAY_DELETE_FAVS"
+msgstr "즐겨찾기에서 삭제"
+
+msgid "MSGID_MENU_PLAY_SERVER_INFO_REFRESH"
+msgstr "새로고침"
+
+msgid "MSGID_MENU_OK"
+msgstr "확인"
+
+msgid "MSGID_MENU_CHANGELOG_OLDER"
+msgstr ""
+
+msgid "MSGID_MENU_CHANGELOG_NEWER"
+msgstr ""
+
+msgid "MSGID_MENU_REPLAYS_DELETE"
+msgstr "삭제"
+
+msgid "MSGID_MENU_REPLAYS_VIEW"
+msgstr "보기"
+
+msgid "MSGID_MENU_PROFILE_SELECT"
+msgstr "프로파일 선택"
+
+msgid "MSGID_MENU_MODS_LOAD"
+msgstr "모드 불러오기"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_REFRESH"
+msgstr "새로고침"
+
+msgid "MSGID_MENU_INGAME_SERVER_INFO_FAVORITE"
+msgstr ""
+
+msgid "MSGID_MENU_INGAME_REFEREE_MISC"
+msgstr "기타"
+
+msgid "MSGID_MENU_INGAME_REFEREE_MAPS"
+msgstr "맵"
+
+msgid "MSGID_MENU_INGAME_REFEREE_PLAYERS"
+msgstr "플레이어"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS"
+msgstr "봇"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_ON"
+msgstr "봇 켜기"
+
+msgid "MSGID_MENU_INGAME_REFEREE_BOTS_BOTS_OFF"
+msgstr "봇 끄기"
