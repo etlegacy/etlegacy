@@ -185,8 +185,13 @@ DictionaryManager::get_dictionary(const Language& language)
 
 		if (!language.get_country().empty())
 		{
-			// printf("Adding language fallback %s\n", language.get_language().c_str());
+			// Regional dictionaries fall back to their base language first.
 			dict->addFallback(&get_dictionary(Language::from_spec(language.get_language())));
+		}
+		else if (language.get_language() != "en")
+		{
+			// Non-English base dictionaries fall back to the English catalog.
+			dict->addFallback(&get_dictionary(Language::from_spec("en")));
 		}
 		return *dict;
 	}
