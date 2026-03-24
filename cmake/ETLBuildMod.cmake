@@ -8,7 +8,17 @@ check_library_exists(m pow "" LIBM)
 if(LIBM)
     target_link_libraries(cgame_libraries INTERFACE m)
     target_link_libraries(ui_libraries INTERFACE m)
+    target_link_libraries(qagame_libraries INTERFACE m)
+    target_link_libraries(tvgame_libraries INTERFACE m)
 endif()
+
+# Keep stricter undefined-symbol checks scoped to the ET:L VM modules so
+# bundled third-party libraries continue to use their own upstream defaults.
+function(etl_enforce_linux_mod_no_undefined target_name)
+	if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_C_COMPILER_ID STREQUAL "GNU")
+		target_link_options(${target_name} PRIVATE LINKER:--no-undefined)
+	endif()
+endfunction()
 
 #
 # cgame
@@ -16,6 +26,7 @@ endif()
 if(BUILD_CLIENT_MOD)
 	add_library(cgame MODULE ${CGAME_SRC})
 	target_link_libraries(cgame cgame_libraries mod_libraries)
+	etl_enforce_linux_mod_no_undefined(cgame)
 
 	set_target_properties(cgame
 		PROPERTIES
@@ -36,6 +47,7 @@ endif()
 if(BUILD_CLIENT_MOD)
 	add_library(ui MODULE ${UI_SRC})
 	target_link_libraries(ui ui_libraries mod_libraries)
+	etl_enforce_linux_mod_no_undefined(ui)
 
 	set_target_properties(ui
 		PROPERTIES
@@ -56,6 +68,7 @@ endif()
 if(BUILD_SERVER_MOD)
 	add_library(qagame MODULE ${QAGAME_SRC})
 	target_link_libraries(qagame qagame_libraries mod_libraries)
+	etl_enforce_linux_mod_no_undefined(qagame)
 
 	if(FEATURE_LUASQL AND FEATURE_DBMS)
 		target_compile_definitions(qagame PRIVATE FEATURE_DBMS FEATURE_LUASQL)
@@ -102,6 +115,7 @@ endif()
 if(BUILD_SERVER_MOD)
 	add_library(tvgame MODULE ${TVGAME_SRC})
 	target_link_libraries(tvgame tvgame_libraries mod_libraries)
+	etl_enforce_linux_mod_no_undefined(tvgame)
 
 	if(FEATURE_LUASQL AND FEATURE_DBMS)
 		target_compile_definitions(tvgame PRIVATE FEATURE_DBMS FEATURE_LUASQL)
