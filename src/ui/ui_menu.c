@@ -1131,7 +1131,7 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	// step back out of nested folders without leaving the keyboard flow.
 	if (menu != NULL && down && key == K_BACKSPACE && !g_waitingForKey && !g_editingField &&
 	    menu->window.name && !Q_stricmp(menu->window.name, "viewreplay") &&
-	    UI_DemoStepUpDirectory())
+	    DC->demoStepUpDirectory())
 	{
 		Item_SetFocus(Menu_FindItemByName(menu, "demoList"), DC->cursorx, DC->cursory);
 		return;

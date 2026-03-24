@@ -555,6 +555,8 @@ typedef struct
 	void (*getHunkData)(int *hunkused, int *hunkexpected);
 	int (*getConfigString)(int index, char *buff, size_t buffsize);
 
+	qboolean (*demoStepUpDirectory)(void);
+
 	float yscale;
 	float xscale;
 	float bias;

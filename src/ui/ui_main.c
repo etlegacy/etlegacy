@@ -8854,6 +8854,8 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	uiInfo.uiDC.getHunkData            = &trap_GetHunkData;
 	uiInfo.uiDC.getConfigString        = &trap_GetConfigString;
 
+	uiInfo.uiDC.demoStepUpDirectory = &UI_DemoStepUpDirectory;
+
 	Init_Display(&uiInfo.uiDC);
 
 	String_Init();
