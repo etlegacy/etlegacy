@@ -270,7 +270,6 @@ int UI_AdjustTimeByGame(int time);
 void UI_ShowPostGame();
 void UI_LoadArenas(void);
 void UI_LoadCampaigns(void);
-qboolean UI_DemoStepUpDirectory(void);
 mapInfo *UI_FindMapInfoByMapname(const char *name);
 void UI_ReadableSize(char *buf, int bufsize, int value);
 void UI_PrintTime(char *buf, int bufsize, int time);

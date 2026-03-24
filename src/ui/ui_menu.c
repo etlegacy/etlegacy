@@ -1127,16 +1127,6 @@ void Menu_HandleKey(menuDef_t *menu, int key, qboolean down)
 	itemDef_t  *item             = NULL;
 	static int s_suppressEditKey = -1;  // suppress next matching char after accelerator-triggered focus
 
-	// Keep replay browser directory navigation on a dedicated key so users can
-	// step back out of nested folders without leaving the keyboard flow.
-	if (menu != NULL && down && key == K_BACKSPACE && !g_waitingForKey && !g_editingField &&
-	    menu->window.name && !Q_stricmp(menu->window.name, "viewreplay") &&
-	    UI_DemoStepUpDirectory())
-	{
-		Item_SetFocus(Menu_FindItemByName(menu, "demoList"), DC->cursorx, DC->cursory);
-		return;
-	}
-
 	item = Menu_GetFocusedItem(menu);
 
 	// Keep keyboard focus on active listboxes so arrow and enter handling is
