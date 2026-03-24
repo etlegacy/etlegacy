@@ -203,6 +203,7 @@ static qboolean Menu_IsListBoxNavigationKey(int key)
 	case K_KP_PGUP:
 	case K_PGDN:
 	case K_KP_PGDN:
+	case K_BACKSPACE:
 	case K_ENTER:
 	case K_KP_ENTER:
 	case K_PAD0_START:

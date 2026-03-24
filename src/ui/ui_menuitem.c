@@ -1081,6 +1081,7 @@ static qboolean Item_ListBox_IsNavigationKey(int key)
 	case K_KP_PGUP:
 	case K_PGDN:
 	case K_KP_PGDN:
+	case K_BACKSPACE:
 		return qtrue;
 	default:
 		return qfalse;
@@ -1354,6 +1355,26 @@ qboolean Item_ListBox_HandleKey(itemDef_t *item, int key, qboolean down, qboolea
 						Menus_ActivateByName(listPtr->contextMenu, qtrue);
 					}
 				}
+			}
+
+			return qtrue;
+		}
+		if (key == K_BACKSPACE && item->special == FEEDER_DEMOS)
+		{
+			int        numOptionalImages = 0;
+			const char *firstEntry       = DC->feederItemText(item->special, 0, 0, NULL, &numOptionalImages);
+
+			// Reuse the existing ".." replay entry so backspace climbs one
+			// directory without duplicating the browser path logic here.
+			if (firstEntry && !Q_stricmp(firstEntry, "^2.."))
+			{
+				char script[] = "RunDemo";
+				char *p       = script;
+
+				listPtr->cursorPos = 0;
+				item->cursorPos    = listPtr->cursorPos;
+				DC->feederSelection(item->special, item->cursorPos);
+				DC->runScript(&p);
 			}
 
 			return qtrue;
