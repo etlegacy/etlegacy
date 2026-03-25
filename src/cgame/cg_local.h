@@ -4165,7 +4165,11 @@ typedef struct
 	anchorPoint_t point;
 } anchor_t;
 
-#define HUD_COMPONENTS_NUM 62
+/*
+ * NOTE : Keep this in sync with the concrete HUD component members in
+ * hudStucture_t and the non-alias entries in hudComponentFields[].
+ */
+#define HUD_COMPONENTS_NUM 63
 
 typedef struct hudComponent_s
 {

@@ -3194,33 +3194,44 @@ void ID_INLINE CG_HudEditorAdjustWidthSpread(panel_button_t *panel[])
 */
 void CG_HudEditorSetup(void)
 {
-	int i, j;
+	int i, componentCount;
 
 	// setup some useful coordinates for the side panel
 	HUDEditorX       = SCREEN_WIDTH_SAFE;
 	HUDEditorWidth   = (HUDEditorX * HUD_EDITOR_SIZE_COEFF) - HUDEditorX;
 	HUDEditorCenterX = HUDEditorX + (HUDEditorWidth * 0.5f);
 
-	for (i = 0, j = 0; hudComponentFields[i].name; i++, j++)
+	// Reset the cached editor buttons before rebuilding the component list.
+	Com_Memset(hudComponents, 0, sizeof(hudComponents));
+	Com_Memset(hudComponentsPanel, 0, sizeof(hudComponentsPanel));
+
+	for (i = 0, componentCount = 0; hudComponentFields[i].name; i++)
 	{
 		hudComponent_t *comp;
 
 		if (hudComponentFields[i].isAlias)
 		{
-			j--;
 			continue;
+		}
+
+		// Refuse to walk past the static editor buffers if the component count drifts again.
+		if (componentCount >= ARRAY_LEN(hudComponents))
+		{
+			Com_Printf(S_COLOR_RED "CG_HudEditorSetup: HUD component count overflow (%d)\n", componentCount);
+			break;
 		}
 
 		comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[i].offset);
 
-		hudComponents[j].text      = hudComponentFields[i].name;
-		hudComponents[j].rect      = comp->location;
-		hudComponents[j].onKeyDown = CG_HudEditor_KeyDown;
-		hudComponents[j].onKeyUp   = CG_HudEditor_KeyUp;
-		hudComponents[j].onDraw    = CG_HudEditor_Render;
-		hudComponents[j].data[0]   = i; // link button to hud component
+		hudComponents[componentCount].text      = hudComponentFields[i].name;
+		hudComponents[componentCount].rect      = comp->location;
+		hudComponents[componentCount].onKeyDown = CG_HudEditor_KeyDown;
+		hudComponents[componentCount].onKeyUp   = CG_HudEditor_KeyUp;
+		hudComponents[componentCount].onDraw    = CG_HudEditor_Render;
+		hudComponents[componentCount].data[0]   = i; // link button to hud component
 
-		hudComponentsPanel[j] = &hudComponents[j];
+		hudComponentsPanel[componentCount] = &hudComponents[componentCount];
+		componentCount++;
 	}
 
 	if (!wsAdjusted)
@@ -3235,10 +3246,15 @@ void CG_HudEditorSetup(void)
 		wsAdjusted = qtrue;
 	}
 
-	qsort(hudComponentsPanel, HUD_COMPONENTS_NUM, sizeof(panel_button_t *), CG_SortComponentByName);
+	qsort(hudComponentsPanel, componentCount, sizeof(hudComponentsPanel[0]), CG_SortComponentByName);
 
 	// last element needs to be NULL
-	hudComponentsPanel[HUD_COMPONENTS_NUM] = NULL;
+	hudComponentsPanel[componentCount] = NULL;
+
+	if (componentCount != HUD_COMPONENTS_NUM)
+	{
+		Com_Printf(S_COLOR_YELLOW "CG_HudEditorSetup: expected %d HUD components, found %d\n", HUD_COMPONENTS_NUM, componentCount);
+	}
 
 	// clear last selected button
 	lastFocusComponent = NULL;
