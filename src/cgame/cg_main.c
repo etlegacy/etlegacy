@@ -2190,6 +2190,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	}
 
 	CG_InitStatsDebug();
+	CG_I18N_Init();
 
 	cgs.ccZoomFactor = 1.f;
 
@@ -2251,6 +2252,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	cgs.media.charsetPropB      = trap_R_RegisterShaderNoMip("menu/art/font2_prop.tga");
 
 	CG_RegisterCvars();
+	CG_I18N_Update();
 
 	if (cg_logFile.string[0])
 	{
@@ -2483,6 +2485,8 @@ void CG_Shutdown(void)
 
 	Q_UTF8_FreeFont(&cgs.media.bg_loadscreenfont1);
 	Q_UTF8_FreeFont(&cgs.media.bg_loadscreenfont2);
+
+	CG_I18N_Shutdown();
 }
 
 /**

@@ -96,7 +96,7 @@ if(BUILD_CLIENT)
 		target_link_libraries(client_libraries INTERFACE bundled_sdl_int)
 		target_compile_definitions(client_libraries INTERFACE BUNDLED_SDL)
 	endif()
-	# for tinygettext (always force SDL icons -> less dependencies)
+	# gettext support always uses SDL icons to keep dependencies minimal
 	target_compile_definitions(client_libraries INTERFACE HAVE_SDL)
 
 	if(NOT BUNDLED_JPEG)
@@ -129,36 +129,15 @@ if(BUILD_CLIENT)
 
 	if(FEATURE_GETTEXT)
 		target_compile_definitions(client_libraries INTERFACE FEATURE_GETTEXT)
-		FILE(GLOB GETTEXT_SRC
-			"src/qcommon/i18n_main.cpp"
-			"src/qcommon/i18n_findlocale.c"
-			"src/qcommon/i18n_findlocale.h"
-			"vendor/tinygettext/tinygettext/dictionary.hpp"
-			"vendor/tinygettext/tinygettext/dictionary_manager.hpp"
-			"vendor/tinygettext/tinygettext/file_system.hpp"
-			"vendor/tinygettext/tinygettext/iconv.hpp"
-			"vendor/tinygettext/tinygettext/language.hpp"
-			"vendor/tinygettext/tinygettext/log.hpp"
-			"vendor/tinygettext/tinygettext/log_stream.hpp"
-			"vendor/tinygettext/tinygettext/plural_forms.hpp"
-			"vendor/tinygettext/tinygettext/po_parser.hpp"
-			"vendor/tinygettext/tinygettext/tinygettext.hpp"
-			"vendor/tinygettext/dictionary.cpp"
-			"vendor/tinygettext/dictionary_manager.cpp"
-			"vendor/tinygettext/iconv.cpp"
-			"vendor/tinygettext/language.cpp"
-			"vendor/tinygettext/log.cpp"
-			"vendor/tinygettext/plural_forms.cpp"
-			"vendor/tinygettext/po_parser.cpp"
-			"vendor/tinygettext/tinygettext.cpp"
+		set(GETTEXT_SRC
+			"${PROJECT_SOURCE_DIR}/src/qcommon/i18n_main.c"
+			"${PROJECT_SOURCE_DIR}/src/qcommon/i18n_dictionary.cpp"
+			"${PROJECT_SOURCE_DIR}/src/qcommon/i18n_dictionary.h"
+			"${PROJECT_SOURCE_DIR}/src/qcommon/i18n_findlocale.c"
+			"${PROJECT_SOURCE_DIR}/src/qcommon/i18n_findlocale.h"
+			${I18N_TINYGETTEXT_SRC}
+			${I18N_TINYGETTEXT_HEADERS}
 		)
-		if(MSVC)
-			list(APPEND GETTEXT_SRC "${PROJECT_SOURCE_DIR}/vendor/tinygettext/windows_file_system.cpp")
-			list(APPEND GETTEXT_SRC "${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/windows_file_system.hpp")
-		else()
-			list(APPEND GETTEXT_SRC "${PROJECT_SOURCE_DIR}/vendor/tinygettext/unix_file_system.cpp")
-			list(APPEND GETTEXT_SRC "${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/unix_file_system.hpp")
-		endif()
 		target_sources(client_libraries INTERFACE ${GETTEXT_SRC})
 	endif(FEATURE_GETTEXT)
 
@@ -390,6 +369,11 @@ if(BUILD_MOD)
 
 	if(FEATURE_EDV)
 		target_compile_definitions(cgame_libraries INTERFACE FEATURE_EDV)
+	endif()
+
+	if(FEATURE_GETTEXT)
+		target_compile_definitions(cgame_libraries INTERFACE FEATURE_GETTEXT)
+		target_compile_definitions(ui_libraries INTERFACE FEATURE_GETTEXT)
 	endif()
 
 	if (FEATURE_AUTH)

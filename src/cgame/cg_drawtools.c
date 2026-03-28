@@ -989,12 +989,19 @@ const char *CG_TranslateString(const char *string)
 	static char buffer[TRANSLATION_BUFFERS][MAX_PRINT_MSG];
 	static int  buffOffset = 0;
 	char        *buf;
+	const char  *translatedString;
+
+	if (!string)
+	{
+		return NULL;
+	}
 
 	// some code expects this to return a copy always, even
 	// if none is needed for translation, so always supply another buffer
 	buf = buffer[buffOffset++ % TRANSLATION_BUFFERS];
 
-	trap_TranslateString(string, buf);
+	translatedString = CG_I18N_Translate(string);
+	Q_strncpyz(buf, translatedString ? translatedString : string, MAX_PRINT_MSG);
 
 	return buf;
 }

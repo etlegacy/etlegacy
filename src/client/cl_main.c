@@ -4512,9 +4512,11 @@ void CL_TranslateString(const char *string, char *dest_buffer)
 /**
  * @brief Called by mod libs to handle translation.
  *
- * @param[in] string to be translated
+ * This keeps the legacy translation syscall working while sharing the same
+ * qcommon-backed loader used by engine-owned client strings.
+ *
+ * @param[in] string original text
  * @param[out] dest_buffer translated text
- * @note for client translations use _(x) macro instead.
  */
 void CL_TranslateStringMod(const char *string, char *dest_buffer)
 {

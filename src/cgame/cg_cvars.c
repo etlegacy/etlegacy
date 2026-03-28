@@ -744,6 +744,9 @@ void CG_RegisterCvars(void)
 	trap_Cvar_VariableStringBuffer("sv_running", var, sizeof(var));
 	cgs.localServer = (qboolean)(!!Q_atoi(var));
 
+	// Keep the local mod dictionary in sync with the engine-owned language cvar.
+	CG_I18N_Update();
+
 	// um, here, why?
 	CG_setClientFlags();
 
@@ -763,6 +766,9 @@ void CG_UpdateCvars(void)
 	{
 		return;
 	}
+
+	// The selected language lives in the engine, so poll it once here per update.
+	CG_I18N_Update();
 
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{

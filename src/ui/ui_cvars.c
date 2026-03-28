@@ -332,6 +332,9 @@ void UI_RegisterCvars(void)
 
 	Q_ParseColor(ui_cg_crosshairColorAlt.string, uiInfo.xhairColorAlt);
 	uiInfo.xhairColorAlt[3] = ui_cg_crosshairAlphaAlt.value;
+
+	// Keep the local mod dictionary in sync with the engine-owned language cvar.
+	UI_I18N_Update();
 }
 
 /**
@@ -341,6 +344,9 @@ void UI_UpdateCvars(void)
 {
 	size_t      i;
 	cvarTable_t *cv;
+
+	// The selected language lives in the engine, so poll it once per UI update.
+	UI_I18N_Update();
 
 	for (i = 0, cv = cvarTable ; i < cvarTableSize ; i++, cv++)
 	{

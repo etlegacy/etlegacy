@@ -19,6 +19,38 @@ FILE(GLOB COMMON_SRC_REMOVE
 
 LIST(REMOVE_ITEM COMMON_SRC ${COMMON_SRC_REMOVE})
 
+set(I18N_TINYGETTEXT_SRC
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/dictionary.cpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/dictionary_manager.cpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/iconv.cpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/language.cpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/log.cpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/plural_forms.cpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/po_parser.cpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext.cpp"
+)
+
+set(I18N_TINYGETTEXT_HEADERS
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/dictionary.hpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/dictionary_manager.hpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/file_system.hpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/iconv.hpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/language.hpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/log.hpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/log_stream.hpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/plural_forms.hpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/po_parser.hpp"
+	"${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/tinygettext.hpp"
+)
+
+if(MSVC)
+	list(APPEND I18N_TINYGETTEXT_SRC "${PROJECT_SOURCE_DIR}/vendor/tinygettext/windows_file_system.cpp")
+	list(APPEND I18N_TINYGETTEXT_HEADERS "${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/windows_file_system.hpp")
+else()
+	list(APPEND I18N_TINYGETTEXT_SRC "${PROJECT_SOURCE_DIR}/vendor/tinygettext/unix_file_system.cpp")
+	list(APPEND I18N_TINYGETTEXT_HEADERS "${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/unix_file_system.hpp")
+endif()
+
 # Platform specific code for server and client
 if(UNIX)
 	if(APPLE)
@@ -83,6 +115,8 @@ FILE(GLOB UI_SHARED
 FILE(GLOB CGAME_SRC
 	"src/cgame/*.c"
 	"src/cgame/*.h"
+	"src/qcommon/i18n_dictionary.cpp"
+	"src/qcommon/i18n_dictionary.h"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
 	"src/qcommon/version.c"
@@ -91,6 +125,10 @@ FILE(GLOB CGAME_SRC
 )
 
 LIST(APPEND CGAME_SRC ${UI_SHARED})
+
+if(FEATURE_GETTEXT)
+	LIST(APPEND CGAME_SRC ${I18N_TINYGETTEXT_SRC} ${I18N_TINYGETTEXT_HEADERS})
+endif()
 
 FILE(GLOB QAGAME_SRC
 	"src/game/*.c"
@@ -122,8 +160,10 @@ FILE(GLOB TVGAME_SRC
 FILE(GLOB UI_SRC
 	"src/ui/*.c"
 	"src/ui/*.h"
-    "src/ui/lib/*.c"
-    "src/ui/lib/*.h"
+	"src/ui/lib/*.c"
+	"src/ui/lib/*.h"
+	"src/qcommon/i18n_dictionary.cpp"
+	"src/qcommon/i18n_dictionary.h"
 	"src/qcommon/q_math.c"
 	"src/qcommon/q_shared.c"
 	"src/qcommon/version.c"
@@ -131,6 +171,10 @@ FILE(GLOB UI_SRC
 	"src/game/bg_classes.c"
 	"src/game/bg_misc.c"
 )
+
+if(FEATURE_GETTEXT)
+	LIST(APPEND UI_SRC ${I18N_TINYGETTEXT_SRC} ${I18N_TINYGETTEXT_HEADERS})
+endif()
 
 FILE(GLOB CLIENT_FILES
 	"src/client/*.c"

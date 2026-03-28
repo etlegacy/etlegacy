@@ -39,6 +39,7 @@
 #include "../qcommon/q_shared.h"
 #include "../qcommon/q_unicode.h"
 #include "../renderercommon/tr_types.h"
+#include "ui_i18n.h"
 #include "ui_public.h"
 #include "../qcommon/keycodes.h"
 #include "../game/bg_public.h"

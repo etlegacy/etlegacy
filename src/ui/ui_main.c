@@ -1115,6 +1115,7 @@ void UI_Shutdown(void)
 	Q_UTF8_FreeFont(&uiInfo.uiDC.Assets.bg_loadscreenfont2);
 
 	//trap_LAN_SaveCachedServers(); // obsolete - ETL saves on add/remove
+	UI_I18N_Shutdown();
 }
 
 char *defaultMenu = NULL;
@@ -8713,8 +8714,10 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	int x;
 	Com_Printf(S_COLOR_MDGREY "Initializing %s ui " S_COLOR_GREEN "%s\n", MODNAME, ETLEGACY_VERSION);
 
+	UI_I18N_Init();
 	UI_RegisterCvars();
 	UI_InitMemory();
+	UI_I18N_Update();
 	trap_PC_RemoveAllGlobalDefines();
 	UI_SetupExtensions();
 
@@ -9592,10 +9595,17 @@ const char *UI_TranslateString(const char *string)
 	static char buffer[TRANSLATION_BUFFERS][MAX_PRINT_MSG];
 	static int  buffOffset = 0;
 	char        *buf;
+	const char  *translatedString;
+
+	if (!string)
+	{
+		return NULL;
+	}
 
 	buf = buffer[buffOffset++ % TRANSLATION_BUFFERS];
 
-	trap_TranslateString(string, buf);
+	translatedString = UI_I18N_Translate(string);
+	Q_strncpyz(buf, translatedString ? translatedString : string, MAX_PRINT_MSG);
 
 	return buf;
 }

@@ -47,6 +47,7 @@
 #include "../game/bg_public.h"
 #include "cg_public.h"
 #include "cg_cvars.h"
+#include "cg_i18n.h"
 #include "../ui/ui_shared.h"
 
 
