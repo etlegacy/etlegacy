@@ -1469,7 +1469,7 @@ void UI_LoadMenus(const char *menuFile, qboolean reset)
 #ifdef FEATURE_MULTIVIEW
 	trap_PC_AddGlobalDefine("FEATURE_MULTIVIEW");
 #endif
-#ifdef FEATURE_MULTIVIEW
+#ifdef FEATURE_EDV
 	trap_PC_AddGlobalDefine("FEATURE_EDV");
 #endif
 	trap_PC_AddGlobalDefine(va("__WINDOW_WIDTH %f", (uiInfo.uiDC.glconfig.windowAspect / RATIO43) * 640));
