@@ -349,8 +349,10 @@ typedef struct scrollInfo_s
 	int scrollKey;
 	float xStart;
 	float yStart;
+	float thumbStart;
 	itemDef_t *item;
 	qboolean scrollDir;
+	qboolean draggingThumb;
 } scrollInfo_t;
 
 extern scrollInfo_t scrollInfo;
@@ -747,6 +749,10 @@ void trap_GetAutoUpdate(void);
 
 void trap_openURL(const char *url);
 void trap_GetHunkData(int *hunkused, int *hunkexpected);
+qboolean trap_GetValue(char *value, int valueSize, const char *key);
+void trap_Cvar_SetDescription(const char *cvarName, const char *description);
+extern int dll_com_trapGetValue;
+extern int dll_trap_CvarSetDescription;
 
 // localization functions
 const char *UI_TranslateString(const char *string);

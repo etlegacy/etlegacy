@@ -300,9 +300,9 @@ void CG_DrawPlayerWeaponIcon(rectDef_t *rect, int align, vec4_t *refcolor)
  */
 void CG_DrawCursorhint(hudComponent_t *comp)
 {
-	float *color;
-	float scale = 0, halfscale = 0;
-	float hintAlpha;
+	vec4_t color;
+	float  scale = 0, halfscale = 0;
+	float  hintAlpha;
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -408,14 +408,17 @@ void CG_DrawCursorhint(hudComponent_t *comp)
 		return;
 	}
 
-	// color
-	hintAlpha = Com_Clamp(0.f, 1.f, cg_cursorHintsAlpha.value);
-	color     = CG_FadeColor_Ext(cg.cursorHintTime, cg.cursorHintFade, hintAlpha);
-	if (!color)
+	// Keep visibility timing from cg_cursorHintsFade, but do not fade alpha with it.
+	if (!cg.cursorHintTime || cg.cursorHintFade <= 0 || (cg.time - cg.cursorHintTime) >= cg.cursorHintFade)
 	{
 		trap_R_SetColor(NULL);
 		return;
 	}
+
+	// color
+	hintAlpha = Com_Clamp(0.f, 1.f, cg_cursorHintsAlpha.value);
+	color[0]  = color[1] = color[2] = 1.f;
+	color[3]  = hintAlpha;
 
 	// color
 	if (comp->style & 4)
@@ -459,7 +462,7 @@ void CG_DrawCursorhint(hudComponent_t *comp)
  */
 void CG_DrawCursorHintBar(hudComponent_t *comp)
 {
-	float  *color;
+	vec4_t color;
 	vec4_t textColor;
 	float  curValue;
 	float  hintAlpha;
@@ -484,17 +487,20 @@ void CG_DrawCursorHintBar(hudComponent_t *comp)
 		return;
 	}
 
-	// color
-	Vector4Copy(comp->colorMain, textColor);
-	hintAlpha = Com_Clamp(0.f, 1.f, cg_cursorHintsAlpha.value);
-	color     = CG_FadeColor_Ext(cg.cursorHintTime, cg.cursorHintFade, textColor[3] * hintAlpha);
-	if (!color)
+	// Keep visibility timing from cg_cursorHintsFade, but do not fade alpha with it.
+	if (!cg.cursorHintTime || cg.cursorHintFade <= 0 || (cg.time - cg.cursorHintTime) >= cg.cursorHintFade)
 	{
 		trap_R_SetColor(NULL);
 		return;
 	}
 
-	textColor[3] = *color;
+	// color
+	Vector4Copy(comp->colorMain, textColor);
+	hintAlpha = Com_Clamp(0.f, 1.f, cg_cursorHintsAlpha.value);
+	color[0]  = color[1] = color[2] = textColor[3] * hintAlpha;
+	color[3]  = textColor[3] * hintAlpha;
+
+	textColor[3] = color[3];
 
 	curValue = (float)cg.cursorHintValue / 255.0f;
 
@@ -524,7 +530,6 @@ void CG_DrawCursorHintBar(hudComponent_t *comp)
  */
 void CG_DrawCursorHintText(hudComponent_t *comp)
 {
-	float      *color;
 	vec4_t     textColor;
 	const char *str;
 	float      hintAlpha;
@@ -549,19 +554,20 @@ void CG_DrawCursorHintText(hudComponent_t *comp)
 		return;
 	}
 
-	// color
-	Vector4Copy(comp->colorMain, textColor);
-	hintAlpha = Com_Clamp(0.f, 1.f, cg_cursorHintsAlpha.value);
-	color     = CG_FadeColor_Ext(cg.cursorHintTime, cg.cursorHintFade, textColor[3] * hintAlpha);
-	if (!color)
+	// Keep visibility timing from cg_cursorHintsFade, but do not fade alpha with it.
+	if (!cg.cursorHintTime || cg.cursorHintFade <= 0 || (cg.time - cg.cursorHintTime) >= cg.cursorHintFade)
 	{
 		trap_R_SetColor(NULL);
 		return;
 	}
 
+	// color
+	Vector4Copy(comp->colorMain, textColor);
+	hintAlpha = Com_Clamp(0.f, 1.f, cg_cursorHintsAlpha.value);
+
 	str = va("%.0f%s", MIN((cg.cursorHintValue / 255.f) * 100, 100), (comp->style & 1) ? " %" : "");
 
-	textColor[3] = color[3];
+	textColor[3] *= hintAlpha;
 	CG_DrawCompText(comp, str, textColor, comp->styleText, &cgs.media.limboFont1);
 }
 

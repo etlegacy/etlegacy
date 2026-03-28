@@ -20,7 +20,7 @@ uniform float u_DepthScale;
 #endif // USE_PARALLAX_MAPPING
 #endif // USE_NORMAL_MAPPING
 #if defined(USE_PORTAL_CLIPPING)
-uniform vec4  u_PortalPlane;
+uniform vec4 u_PortalPlane;
 #endif // USE_PORTAL_CLIPPING
 
 varying vec4 var_LightColor;
@@ -59,7 +59,7 @@ void main()
 	var_Normal = (u_ModelMatrix * vec4(attr_Normal, 0.0)).xyz;
 
 #if defined(USE_NORMAL_MAPPING)
-	vec3 tangent = (u_ModelMatrix * vec4(attr_Tangent, 0.0)).xyz;
+	vec3 tangent  = (u_ModelMatrix * vec4(attr_Tangent, 0.0)).xyz;
 	vec3 binormal = (u_ModelMatrix * vec4(attr_Binormal, 0.0)).xyz;
 
 	// in a vertex-shader there exists no gl_FrontFacing
@@ -71,7 +71,7 @@ void main()
 	var_TexNormal2.xy = (u_NormalTextureMatrix * attr_TexCoord0).st;
 #endif // USE_WATER
 
-	var_LightColor = attr_Color;
+	var_LightColor     = attr_Color;
 	var_LightDirection = -normalize(u_LightDir);
 	// the view origin in worldspace
 	var_ViewOrigin2 = normalize(var_tangentMatrix * var_ViewOrigin);

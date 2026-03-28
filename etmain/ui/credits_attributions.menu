@@ -79,9 +79,9 @@ menuDef {
 
 // Buttons //
 #ifdef FUI
-	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_attributions ; open main )
+	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, close credits_attributions ; open main )
 #else
-	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("BACK"), .3, 14, close credits_attributions ; open ingame_main )
+	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, close credits_attributions ; open ingame_main )
 #endif
 	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "ET LEGACY", .3, 14, close credits_attributions ; open credits_etlegacy )
 	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("SPLASH DAMAGE"), .3, 14, close credits_attributions ; open credits_splashdamage )

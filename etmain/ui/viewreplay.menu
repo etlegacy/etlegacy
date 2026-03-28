@@ -18,6 +18,7 @@ menuDef {
 
 	onOpen {
 		uiScript LoadDemos
+		setfocus demoList
 	}
 
 	onESC {
@@ -31,6 +32,8 @@ menuDef {
 #ifdef ETLEGACY
 	// Pure "server" demo viewing. Maybe change this to something more pretty? Checkbox? //
 	YESNO( 160, 14, 40, 10, _("Pure Server:"), .2, 8, "sv_pure", _("Limit game content to that contained in PK3 files\non both the client and server with matching CRCs") )
+	// Keep replay ordering clickable from the same top-row controls.
+	MULTIACTIONLEFT( 256, 14, 100, 10, _("Sorting:"), .2, 8, "ui_demoSortAscending", cvarFloatList { "Descending" 0 "Ascending" 1 }, uiScript LoadDemos, _("Toggle the replay browser sorting order between descending and ascending") )
 #endif
 
 	// Demo List //
@@ -51,19 +54,24 @@ menuDef {
 		elementtype		LISTBOX_TEXT
 		elementwidth	200
 		elementheight	12
-		columns			1 0 200 33
+		// Let replay names use the available row width instead of the shared 33-char cap.
+		columns			1 0 590 0
 		visible			1
 		tooltip			_("Select the replay to view or delete")
 
 		doubleClick {
 			uiScript RunDemo
 		}
+
+		onEnter {
+			uiScript RunDemo
+		}
 	}
 
 	// Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("BACK"), .3, 14, close viewreplay ; open main )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("DELETE"), .3, 14, conditionalScript ValidReplaySelected 2
+	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_BACK"), .3, 14, close viewreplay ; open main )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_REPLAYS_DELETE"), .3, 14, conditionalScript ValidReplaySelected 2
 		( "clearFocus ; open viewreplay_delete" )
 		( "clearFocus" ) )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("VIEW"), .3, 14, uiScript RunDemo )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_REPLAYS_VIEW"), .3, 14, uiScript RunDemo )
 }

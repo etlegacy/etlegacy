@@ -50,6 +50,7 @@ static ext_trap_keys_t g_extensionTraps[] =
 	{ "trap_DemoSupport_Legacy",           G_DEMOSUPPORT,            qfalse },
 	{ "trap_SnapshotCallbackExt_Legacy",   G_SNAPSHOT_CALLBACK_EXT,  qfalse },
 	{ "trap_SnapshotSetClientMask_Legacy", G_SNAPSHOT_SETCLIENTMASK, qfalse },
+	{ "trap_CvarSetDescription_Legacy",    G_CVAR_SET_DESCRIPTION,   qfalse },
 	{ NULL,                                -1,                       qfalse }
 };
 
@@ -715,6 +716,9 @@ intptr_t SV_GameSystemCalls(intptr_t *args)
 	case G_SNAPSHOT_SETCLIENTMASK:
 		SV_SnapshotSetClientMask(args[1], VMU64(2));
 		return 0;
+
+	case G_CVAR_SET_DESCRIPTION:
+		return Cvar_SetDescriptionByName(VMA(1), VMA(2));
 
 	default:
 		Com_Error(ERR_DROP, "Bad game system trap: %ld", (long int) args[0]);

@@ -85,5 +85,5 @@ menuDef {
 	BIND(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SHOUTCASTER_Y, 7), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Swap teams name & score:"), .2, 8, "scSwapTeamLabels", "Swap the shoutcaster red <-> blue team banner name and score. Helpful on teams swap")
 
 // Buttons //
-	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START, WINDOW_HEIGHT - 24, WINDOW_WIDTH - 12, 18, _("BACK"), .3, 14, close options_controls_advanced ; open options_controls)
+	BUTTON(SUBWINDOW_OPTION_HEADER_X1_START, WINDOW_HEIGHT - 24, WINDOW_WIDTH - 12, 18, _("MSGID_MENU_BACK"), .3, 14, close options_controls_advanced ; open options_controls)
 }

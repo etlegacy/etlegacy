@@ -2608,7 +2608,8 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		trap_S_StartSound(es->pos.trBase, -1, CHAN_AUTO, cgs.media.gibSound);
 		ByteToDir(es->eventParm, dir);
-		CG_GibPlayer(bodyCent, bodyCent->lerpOrigin, dir, es->effect3Time);
+		// EV_GIB_PLAYER reuses the weapon byte as a 0/1 heavy-direct gib flag.
+		CG_GibPlayer(bodyCent, bodyCent->lerpOrigin, dir, es->effect3Time, (qboolean)es->weapon);
 	}
 	break;
 	// particles

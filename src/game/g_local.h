@@ -1655,6 +1655,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod, int *hitEventType);
 qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, meansOfDeath_t mod);
 qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, meansOfDeath_t mod, qboolean clientsonly);
+void GibEntity(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, qboolean heavyDirectGib);
 void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t meansOfDeath);
 void TossWeapons(gentity_t *self);
 gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent);
@@ -1821,10 +1822,12 @@ qboolean trap_GetValue(char *value, int valueSize, const char *key);
 void trap_DemoSupport(const char *commands);
 void trap_SnapshotCallbackExt(void);
 void trap_SnapshotSetClientMask(int clientNum, uint64_t mask);
+void trap_Cvar_SetDescription(const char *cvarName, const char *description);
 extern int dll_com_trapGetValue;
 extern int dll_trap_DemoSupport;
 extern int dll_trap_SnapshotCallbackExt;
 extern int dll_trap_SnapshotSetClientMask;
+extern int dll_trap_CvarSetDescription;
 
 // g_demo_legacy.c
 void G_DemoStateChanged(demoState_t demoState, int demoClientsNum);

@@ -8,9 +8,9 @@ uniform float       u_EnvironmentInterpolation;
 #else // 1
 uniform samplerCube u_ColorMap;
 #endif // 1
-uniform mat4        u_ModelMatrix;
+uniform mat4 u_ModelMatrix;
 #if defined(USE_NORMAL_MAPPING)
-uniform sampler2D   u_NormalMap;
+uniform sampler2D u_NormalMap;
 #endif // USE_NORMAL_MAPPING
 
 varying vec3 var_Position;
@@ -34,7 +34,7 @@ void main()
 		return;
 	}
 #endif // USE_PORTAL_CLIPPING
-	
+
 
 	// compute incident ray
 	vec3 V = var_ViewOrigin.xyz;

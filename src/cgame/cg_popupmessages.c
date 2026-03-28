@@ -110,7 +110,6 @@ void CG_InitPMGraphics(void)
 	cgs.media.pmImageAxisMine        = trap_R_RegisterShaderNoMip("gfx/hud/pm_mineaxis");
 	cgs.media.pmImageAlliesFlag      = trap_R_RegisterShaderNoMip("gfx/limbo/pm_flagallied");
 	cgs.media.pmImageAxisFlag        = trap_R_RegisterShaderNoMip("gfx/limbo/pm_flagaxis");
-	cgs.media.pmImageSpecFlag        = trap_R_RegisterShaderNoMip("gfx/limbo/but_team_spec");
 	cgs.media.hintKey                = trap_R_RegisterShaderNoMip("gfx/hud/keyboardkey_old");
 
 	// extra obituaries
@@ -254,6 +253,17 @@ void CG_UpdatePMLists(void)
 {
 	int           i;
 	hudStucture_t *hud = CG_GetActiveHUD();
+
+	// This can happen if a 'CG_DRAW_ACTIVE_FRAME' call happens while 'CG_INIT'
+	// hasn't finished loading the HUD. Unsure if this is possible in a real scenario,
+	// but it's a reproducable crash when running with a debugger and breaking inside
+	// 'CG_Init' before the call to 'CG_AssetCache', and continuing execution.
+	// We don't need to do anything special here, just returning is fine,
+	// the HUD isn't even visible at this point as we're still in the loading screen.
+	if (!hud)
+	{
+		return;
+	}
 
 	for (i = 0; i < NUM_PM_STACK; ++i)
 	{
@@ -1397,7 +1407,7 @@ qhandle_t CG_GetPMItemIcon(centity_t *cent)
 		{
 			return cgs.media.pmImageAlliesFlag;
 		}
-		return cgs.media.pmImageSpecFlag;
+		return cgs.media.spectatorFlag;
 	default:
 		return cgs.media.pmImages[cent->currentState.effect1Time];
 	}

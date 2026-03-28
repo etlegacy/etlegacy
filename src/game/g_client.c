@@ -883,6 +883,10 @@ void limbo(gentity_t *ent, qboolean makeCorpse)
 		int       i, contents;
 		int       startclient = ent->client->ps.clientNum;
 
+		// GibEntity() already spawned the gibs and hid the player entity.
+		// Do not let later limbo paths recreate an untouchable corpse from it.
+		makeCorpse = makeCorpse && ent->health > GIB_HEALTH;
+
 		if (ent->client->ps.persistant[PERS_RESPAWNS_LEFT] == 0)
 		{
 			if (g_maxlivesRespawnPenalty.integer)

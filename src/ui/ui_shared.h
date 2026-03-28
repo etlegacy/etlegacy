@@ -90,9 +90,9 @@
 #define TEXTFIELD(x) (x == ITEM_TYPE_EDITFIELD || x == ITEM_TYPE_NUMERICFIELD)
 
 #ifdef CGAME
-#define STRING_POOL_SIZE    128 * 1024
+#define STRING_POOL_SIZE    (256 * 1024)
 #else
-#define STRING_POOL_SIZE    384 * 1024
+#define STRING_POOL_SIZE    (516 * 1024)
 #endif
 
 #define MAX_EDITFIELD       256
@@ -348,6 +348,7 @@ typedef struct itemDef_s
 	const char *onEnter;
 	const char *onPaste;
 
+	const char *rawTooltip;         ///< Tooltip text without parser-added cvar/cmd annotation
 	struct itemDef_s *toolTipData;  ///< Tag an item to this item for auto-help popups
 
 	/// ETL: checkbox for bitflags in an integer cvar. The value it has is the bitvalue (1,2,4,8 etc)

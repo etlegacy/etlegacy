@@ -49,6 +49,7 @@ int dll_trap_SysFlashWindow;
 int dll_trap_CommandComplete;
 int dll_trap_CmdBackup_Ext;
 int dll_trap_MatchPaused;
+int dll_trap_CvarSetDescription;
 
 /**
  * @brief This is the only way control passes into the module.
@@ -1590,6 +1591,7 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.axisFlag       = trap_R_RegisterShaderNoMip("gfx/limbo/flag_axis");
 	cgs.media.alliedFlag     = trap_R_RegisterShaderNoMip("gfx/limbo/flag_allied");
+	cgs.media.spectatorFlag  = trap_R_RegisterShaderNoMip("gfx/limbo/flag_spectator");
 	cgs.media.disconnectIcon = trap_R_RegisterShaderNoMip("gfx/2d/net");
 
 	cgs.media.cm_spec_icon  = trap_R_RegisterShaderNoMip("ui/assets/mp_spec");
@@ -2125,6 +2127,7 @@ static ID_INLINE void CG_SetupExtensions(void)
 		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CommandComplete, "trap_CommandComplete_Legacy");
 		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CmdBackup_Ext, "trap_CmdBackup_Ext_Legacy");
 		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_MatchPaused, "trap_MatchPaused_Legacy");
+		CG_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CvarSetDescription, "trap_CvarSetDescription_Legacy");
 	}
 }
 

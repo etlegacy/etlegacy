@@ -223,34 +223,98 @@ void LookAtKiller(gentity_t *self, gentity_t *inflictor, gentity_t *attacker)
 }
 
 /**
- * @brief GibEntity
- * @param[in,out] self
- * @param[in] killer
+ * @brief Resolve the gib push from the latest damage impulse whenever possible.
+ * @param[in] self
+ * @param[in] inflictor
+ * @param[in] attacker
+ * @param[out] dir
  */
-void GibEntity(gentity_t *self, int killer, int damage)
+static void G_GetGibDirection(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, vec3_t dir)
 {
-	gentity_t *te;
-	gentity_t *other = &g_entities[killer];
-	vec3_t    dir;
+	gentity_t *source = NULL;
 
 	VectorClear(dir);
-	if (other->inuse)
+
+	// Reuse the exact damage direction captured by G_Damage so explosive gibs
+	// keep travelling with the incoming blast instead of guessing from positions.
+	if (self->client &&
+	    self->client->lasthurt_time == level.time &&
+	    !self->client->damage_fromWorld &&
+	    !VectorCompare(self->client->damage_from, vec3_origin))
 	{
-		if (other->client)
-		{
-			VectorSubtract(self->r.currentOrigin, other->r.currentOrigin, dir);
-			VectorNormalize(dir);
-		}
-		else if (!VectorCompare(other->s.pos.trDelta, vec3_origin))
-		{
-			VectorNormalize2(other->s.pos.trDelta, dir);
-		}
+		VectorNormalize2(self->client->damage_from, dir);
+		return;
 	}
+
+	if (inflictor && inflictor->inuse && inflictor->s.number != ENTITYNUM_WORLD)
+	{
+		source = inflictor;
+	}
+	else if (attacker && attacker->inuse && attacker->s.number != ENTITYNUM_WORLD)
+	{
+		source = attacker;
+	}
+
+	if (!source)
+	{
+		return;
+	}
+
+	if (source->client)
+	{
+		VectorSubtract(self->r.currentOrigin, source->r.currentOrigin, dir);
+		VectorNormalize(dir);
+	}
+	else if (!VectorCompare(source->s.pos.trDelta, vec3_origin))
+	{
+		VectorNormalize2(source->s.pos.trDelta, dir);
+	}
+}
+
+/**
+ * @brief Check whether this gib should use the heavy direct-hit launch boost.
+ * @param[in] meansOfDeath
+ * @param[in] radiusDamage
+ * @return qtrue for direct panzer, bazooka, or mortar gib hits.
+ */
+static qboolean G_IsHeavyDirectGib(meansOfDeath_t meansOfDeath, qboolean radiusDamage)
+{
+	if (radiusDamage)
+	{
+		return qfalse;
+	}
+
+	switch (meansOfDeath)
+	{
+	case MOD_PANZERFAUST:
+	case MOD_BAZOOKA:
+	case MOD_MORTAR:
+	case MOD_MORTAR2:
+		return qtrue;
+	default:
+		return qfalse;
+	}
+}
+
+/**
+ * @brief GibEntity
+ * @param[in,out] self
+ * @param[in] inflictor
+ * @param[in] attacker
+ */
+void GibEntity(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, qboolean heavyDirectGib)
+{
+	gentity_t *te;
+	vec3_t    dir;
+
+	G_GetGibDirection(self, inflictor, attacker, dir);
 
 	te                   = G_TempEntity(self->r.currentOrigin, EV_GIB_PLAYER);
 	te->s.otherEntityNum = self->s.number;
 	te->s.eventParm      = DirToByte(dir);
 	te->s.effect3Time    = damage;
+	// Reuse the temp entity weapon byte as a compact heavy-direct gib flag.
+	te->s.weapon = heavyDirectGib;
 
 	self->takedamage = qfalse;
 	self->s.eType    = ET_INVISIBLE;
@@ -260,16 +324,16 @@ void GibEntity(gentity_t *self, int killer, int damage)
 /**
  * @brief body_die
  * @param[in,out] self
- * @param inflictor - unused
- * @param attacker - unused
- * @param damage - unused
- * @param meansOfDeath - unused
+ * @param[in] inflictor
+ * @param[in] attacker
+ * @param[in] damage
+ * @param[in] meansOfDeath - unused
  */
 void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t meansOfDeath)
 {
 	if (self->health <= GIB_HEALTH)
 	{
-		GibEntity(self, ENTITYNUM_WORLD, damage);
+		GibEntity(self, inflictor, attacker, damage, G_IsHeavyDirectGib(meansOfDeath, self->sound2to3 != 0));
 	}
 }
 
@@ -321,6 +385,57 @@ qboolean G_CheckComplaint(gentity_t *self, gentity_t *inflictor, gentity_t *atta
 	}
 
 	return qfalse;
+}
+
+#define RANGE_NEAREST_TOI 512
+
+/**
+ * @brief Find the closest OID trigger from player
+ * @param[in,out] ent Entity
+ */
+gentity_t *G_FindNearestTOI(gentity_t *ent)
+{
+	int           i, num;
+	int           touch[MAX_GENTITIES];
+	gentity_t     *hit = NULL;
+	vec3_t        mins;
+	vec3_t        maxs;
+	static vec3_t range = { RANGE_NEAREST_TOI, RANGE_NEAREST_TOI, RANGE_NEAREST_TOI };
+
+	if (!ent->client)
+	{
+		return hit;
+	}
+
+	VectorSubtract(ent->client->ps.origin, range, mins);
+	VectorAdd(ent->client->ps.origin, range, maxs);
+
+	num = trap_EntitiesInBox(mins, maxs, touch, MAX_GENTITIES);
+
+	for (i = 0; i < num; i++)
+	{
+		gentity_t *tmp = &g_entities[touch[i]];
+
+		if (tmp->s.eType != ET_OID_TRIGGER)
+		{
+			continue;
+		}
+
+		if (!BG_PlayerTouchesCylender(&ent->client->ps, &tmp->s, level.time, RANGE_NEAREST_TOI))
+		{
+			continue;
+		}
+
+		// does the new objective is closer from the player than the previous one ?
+		if (hit && VectorDistance(ent->client->ps.origin, tmp->s.origin) >= VectorDistance(ent->client->ps.origin, tmp->s.origin))
+		{
+			continue;
+		}
+
+		hit = tmp;
+	}
+
+	return hit;
 }
 
 /**
@@ -498,6 +613,11 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		killerName = "<world>";
 	}
 
+	if (attackerClient && attacker != self)
+	{
+		trap_SendServerCommand(self - g_entities, va("cp \"Killed by %s\" 1", attacker->client->pers.netname));
+	}
+
 	if (g_gamestate.integer == GS_PLAYING)
 	{
 #ifdef FEATURE_OMNIBOT
@@ -659,7 +779,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 
 	// reward attacker for killing player on TOI area
-	if (self->client->touchingTOI)
+	if (self->client->touchingTOI || G_FindNearestTOI(self))
 	{
 		if (attackerClient && !dieFromSameTeam)
 		{
@@ -741,7 +861,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	// FIXME: contents is always 0 here
 	if (self->health <= GIB_HEALTH && !(contents & CONTENTS_NODROP))
 	{
-		GibEntity(self, killer, damage);
+		GibEntity(self, inflictor, attacker, damage, G_IsHeavyDirectGib(meansOfDeath, self->sound2to3 != 0));
 	}
 	else if (meansOfDeath != MOD_SWAP_PLACES)
 	{
@@ -1841,7 +1961,7 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 				}
 				if (targ->health <= GIB_HEALTH)
 				{
-					GibEntity(targ, 0, damage);
+					GibEntity(targ, inflictor, attacker, damage, G_IsHeavyDirectGib(mod, (dflags & DAMAGE_RADIUS) != 0));
 				}
 			}
 			else

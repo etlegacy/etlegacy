@@ -149,6 +149,41 @@ char *Cvar_VariableString(const char *var_name)
 }
 
 /**
+ * @brief Cvar_DefaultString
+ * @param[in] var_name
+ * @return
+ */
+char *Cvar_DefaultString(const char *var_name)
+{
+	cvar_t *var;
+
+	var = Cvar_FindVar(var_name);
+	if (!var)
+	{
+		return "";
+	}
+	return var->resetString;
+}
+
+/**
+ * @brief Cvar_VariableDescription
+ * @param[in] var_name
+ * @return
+ */
+const char *Cvar_VariableDescription(const char *var_name)
+{
+	cvar_t *var;
+
+	var = Cvar_FindVar(var_name);
+	if (!var || !var->description)
+	{
+		return "";
+	}
+
+	return var->description;
+}
+
+/**
  * @brief Cvar_VariableStringBuffer
  * @param[in] var_name
  * @param[out] buffer
@@ -1737,6 +1772,31 @@ void Cvar_SetDescription(cvar_t *cv, const char *varDescription)
 		}
 		cv->description = CopyString(varDescription);
 	}
+}
+
+/**
+ * @brief Cvar_SetDescriptionByName
+ * @param[in] varName
+ * @param[in] varDescription
+ * @return qtrue if a matching cvar exists and description was updated
+ */
+qboolean Cvar_SetDescriptionByName(const char *varName, const char *varDescription)
+{
+	cvar_t *cv;
+
+	if (!varName || !*varName || !varDescription || !*varDescription)
+	{
+		return qfalse;
+	}
+
+	cv = Cvar_FindVar(varName);
+	if (!cv)
+	{
+		return qfalse;
+	}
+
+	Cvar_SetDescription(cv, varDescription);
+	return qtrue;
 }
 
 /**

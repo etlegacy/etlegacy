@@ -796,22 +796,22 @@ int RE_LerpTagET(orientation_t *tag, const refEntity_t *refent, const char *tagN
 		retval = R_GetTag(model->mdv[0], endFrame, tagName, startIndex, &end);
 
 	}
-/*
-    else if(model->type == MOD_MDS)
-    {
-        // use bone lerping
-        retval = R_GetBoneTag(tag, model->model.mds, startIndex, refent, tagNameIn);
+	/*
+	else if(model->type == MOD_MDS)
+	{
+		// use bone lerping
+		retval = R_GetBoneTag(tag, model->model.mds, startIndex, refent, tagNameIn);
 
-        if(retval >= 0)
-        {
-            return retval;
-        }
+		if(retval >= 0)
+		{
+			return retval;
+		}
 
-        // failed
-        return -1;
+		// failed
+		return -1;
 
-    }
-    */
+	}
+	*/
 	else if (model->type == MOD_MDM)
 	{
 		// use bone lerping

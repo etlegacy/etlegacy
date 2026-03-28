@@ -2253,7 +2253,7 @@ public:
 		}
 
 		// commit suicide to ensure new class is used
-		// CS: wait until 2 seconds before next spawn
+		// CS: wait until shortly before next spawn
 		if (bot->client->sess.latchPlayerType != bot->client->sess.playerType)
 		{
 			//round end.
@@ -5178,7 +5178,7 @@ public:
 					}
 					else
 					{
-						//CS: /kill 2 seconds before next spawn
+						//CS: /kill shortly before next spawn
 						if (!(pEnt->client->ps.pm_flags & PMF_LIMBO) && pEnt->client->sess.playerWeapon != _weaponBotToGame(pMsg->m_Selection))
 						{
 							pEnt->client->sess.botSuicide = qtrue;
@@ -6243,14 +6243,17 @@ const char *_GetEntityName(gentity_t *_ent)
 //////////////////////////////////////////////////////////////////////////
 qboolean Bot_Util_CheckForSuicide(gentity_t *ent)
 {
+	// Keep this window short so bots can settle class/team changes quickly before spawn.
+	const int botSpawnSuicideWindowMsec = 500;
+
 	if (ent && ent->client)
 	{
-		// Omni-bot: used for class changes, bot will /kill 2 seconds before spawn
+		// Omni-bot: used for class changes, bot will /kill shortly before spawn.
 		if (ent->client->sess.botSuicide == qtrue)
 		{
 			if (ent->client->sess.sessionTeam == TEAM_AXIS)
 			{
-				if ((g_redlimbotime.integer - ((level.dwRedReinfOffset + level.timeCurrent - level.startTime) % g_redlimbotime.integer)) < 2000)
+				if ((g_redlimbotime.integer - ((level.dwRedReinfOffset + level.timeCurrent - level.startTime) % g_redlimbotime.integer)) < botSpawnSuicideWindowMsec)
 				{
 					Cmd_Kill_f(ent, 0, 0);
 					ent->client->sess.botSuicide = qfalse;
@@ -6259,7 +6262,7 @@ qboolean Bot_Util_CheckForSuicide(gentity_t *ent)
 			}
 			else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
 			{
-				if ((g_bluelimbotime.integer - ((level.dwBlueReinfOffset + level.timeCurrent - level.startTime) % g_bluelimbotime.integer)) < 2000)
+				if ((g_bluelimbotime.integer - ((level.dwBlueReinfOffset + level.timeCurrent - level.startTime) % g_bluelimbotime.integer)) < botSpawnSuicideWindowMsec)
 				{
 					Cmd_Kill_f(ent, 0, 0);
 					ent->client->sess.botSuicide = qfalse;

@@ -37,6 +37,8 @@
 #include "ui_cvars.h"
 
 uiInfo_t uiInfo;
+int      dll_com_trapGetValue;
+int      dll_trap_CvarSetDescription;
 
 static const char *MonthAbbrev[] =
 {
@@ -84,10 +86,12 @@ static int UI_CampaignCount(qboolean singlePlayer);
 qboolean UI_CheckExecKey(int key);
 
 static void UI_ParseGameInfo(const char *teamFile);
+static void UI_RegisterCvarDescriptionsFromTooltips(void);
 
 void Menu_ShowItemByName(menuDef_t *menu, const char *p, qboolean bShow);
 
-static char translated_yes[4], translated_no[4];
+static qboolean ui_demoSortAscendingCached;
+static char     translated_yes[4], translated_no[4];
 
 void UI_Init(int etLegacyClient, int clientVersion);
 void UI_Shutdown(void);
@@ -95,6 +99,30 @@ void UI_KeyEvent(int key, qboolean down);
 void UI_MouseEvent(int dx, int dy);
 void UI_Refresh(int realtime);
 qboolean _UI_IsFullscreen(void);
+
+static ID_INLINE void UI_SetupExtensionTrap(char *value, int valueSize, int *trap, const char *name)
+{
+	if (trap_GetValue(value, valueSize, name))
+	{
+		*trap = Q_atoi(value);
+	}
+	else
+	{
+		*trap = qfalse;
+	}
+}
+
+static ID_INLINE void UI_SetupExtensions(void)
+{
+	char value[MAX_CVAR_VALUE_STRING];
+
+	trap_Cvar_VariableStringBuffer("//trap_GetValue", value, sizeof(value));
+	if (value[0])
+	{
+		dll_com_trapGetValue = Q_atoi(value);
+		UI_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CvarSetDescription, "trap_CvarSetDescription_Legacy");
+	}
+}
 
 static uiMenuCommand_t UI_AdjustedMenuCommand(const uiMenuCommand_t menutype)
 {
@@ -1553,6 +1581,32 @@ void UI_Load(void)
 	UI_LoadMenus(menuSet, qtrue);
 	Menus_CloseAll();
 	Menus_ActivateByName(lastName, qtrue);
+}
+
+/**
+ * @brief Backfill missing engine cvar descriptions from parsed UI tooltips.
+ */
+static void UI_RegisterCvarDescriptionsFromTooltips(void)
+{
+	int i;
+	int j;
+
+	for (i = 0; i < menuCount; i++)
+	{
+		menuDef_t *menu = &Menus[i];
+
+		for (j = 0; j < menu->itemCount; j++)
+		{
+			itemDef_t *item = menu->items[j];
+
+			if (!item || !item->cvar || !item->cvar[0] || !item->rawTooltip || !item->rawTooltip[0])
+			{
+				continue;
+			}
+
+			trap_Cvar_SetDescription(item->cvar, item->rawTooltip);
+		}
+	}
 }
 
 /**
@@ -4409,10 +4463,18 @@ static int UI_DemoSort(const void *a, const void *b)
 
 	if (fileA->file != fileB->file)
 	{
+		// Keep directories grouped before demo files while reversing the
+		// alphabetical order within each group.
 		return (int)fileA->file - (int)fileB->file;
 	}
 
-	return Q_stricmp(fileA->path, fileB->path);
+	// Reverse only the name ordering and keep directories grouped before demo files.
+	if (ui_demoSortAscendingCached)
+	{
+		return Q_stricmp(fileA->path, fileB->path);
+	}
+
+	return Q_stricmp(fileB->path, fileA->path);
 }
 
 /**
@@ -4428,6 +4490,9 @@ static void UI_LoadDemos(void)
 
 	uiInfo.demos.count = 0;
 	// uiInfo.demos.index = 0;
+
+	trap_Cvar_Update(&ui_demoSortAscending);
+	ui_demoSortAscendingCached = ui_demoSortAscending.integer != 0;
 
 	Com_sprintf(path, sizeof(path), "demos");
 	if (uiInfo.demos.path[0])
@@ -4513,6 +4578,10 @@ static void UI_LoadDemos(void)
 			qsort(uiInfo.demos.items, uiInfo.demos.count, sizeof(demoItem_t), UI_DemoSort);
 		}
 	}
+
+	// Reset the feeder selection after each reload so keyboard activation keeps
+	// operating on a valid entry when changing directories or sort order.
+	Menu_SetFeederSelection(NULL, FEEDER_DEMOS, 0, NULL);
 }
 
 /**
@@ -6396,7 +6465,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowWeaponsRestricted", "0");
 			trap_Cvar_Set("ui_browserShowAntilag", "0");
 			trap_Cvar_Set("ui_browserShowTeamBalanced", "0");
-			trap_Cvar_Set("ui_browserShowHumans", "0");
+			trap_Cvar_Set("ui_browserShowHumans", "1");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
 		}
@@ -6411,7 +6480,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowWeaponsRestricted", "0");
 			trap_Cvar_Set("ui_browserShowAntilag", "0");
 			trap_Cvar_Set("ui_browserShowTeamBalanced", "0");
-			trap_Cvar_Set("ui_browserShowHumans", "0");
+			trap_Cvar_Set("ui_browserShowHumans", "1");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
 		}
@@ -6426,7 +6495,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowWeaponsRestricted", "0");
 			trap_Cvar_Set("ui_browserShowAntilag", "0");
 			trap_Cvar_Set("ui_browserShowTeamBalanced", "0");
-			trap_Cvar_Set("ui_browserShowHumans", "0");
+			trap_Cvar_Set("ui_browserShowHumans", "1");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
 		}
@@ -6441,7 +6510,7 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("ui_browserShowWeaponsRestricted", "0");
 			trap_Cvar_Set("ui_browserShowAntilag", "0");
 			trap_Cvar_Set("ui_browserShowTeamBalanced", "0");
-			trap_Cvar_Set("ui_browserShowHumans", "0");
+			trap_Cvar_Set("ui_browserShowHumans", "1");
 			trap_Cvar_Set("ui_browserMapFilterCheckBox", "0");
 			trap_Cvar_Set("ui_browserModFilter", "0");
 		}
@@ -8647,6 +8716,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	UI_RegisterCvars();
 	UI_InitMemory();
 	trap_PC_RemoveAllGlobalDefines();
+	UI_SetupExtensions();
 
 	trap_Cvar_Set("ui_menuFiles", DEFAULT_MENU_FILE);   // we need to hardwire for wolfMP
 
@@ -8803,6 +8873,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	UI_ParseGameInfo("gameinfo.txt");
 
 	UI_LoadMenus(DEFAULT_MENU_FILE, qfalse);
+	UI_RegisterCvarDescriptionsFromTooltips();
 
 	Menus_CloseAll();
 

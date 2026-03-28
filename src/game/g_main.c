@@ -90,6 +90,7 @@ int dll_com_trapGetValue;
 int dll_trap_DemoSupport;
 int dll_trap_SnapshotCallbackExt;
 int dll_trap_SnapshotSetClientMask;
+int dll_trap_CvarSetDescription;
 
 /**
  * @brief G_SnapshotCallbackExt
@@ -1394,6 +1395,7 @@ static ID_INLINE void G_SetupExtensions(void)
 		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_DemoSupport, "trap_DemoSupport_Legacy");
 		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_SnapshotCallbackExt, "trap_SnapshotCallbackExt_Legacy");
 		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_SnapshotSetClientMask, "trap_SnapshotSetClientMask_Legacy");
+		G_SetupExtensionTrap(value, MAX_CVAR_VALUE_STRING, &dll_trap_CvarSetDescription, "trap_CvarSetDescription_Legacy");
 	}
 }
 
@@ -3671,6 +3673,14 @@ void CheckWolfMP(void)
 			{
 				level.warmupTime += 10000;
 				trap_Cvar_Set("g_restarted", "1");
+				if (g_gametype.integer == GT_WOLF_CAMPAIGN && !level.newCampaign)
+				{
+					int i;
+					for (i = 0; i < level.numConnectedClients; i++)
+					{
+						Com_Memset(&level.clients[level.sortedClients[i]].sess.aWeaponStats, 0, sizeof(level.clients[level.sortedClients[i]].sess.aWeaponStats));
+					}
+				}
 				trap_SendConsoleCommand(EXEC_APPEND, "map_restart 0\n");
 				level.restarted = qtrue;
 				return;

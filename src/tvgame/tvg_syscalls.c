@@ -811,6 +811,19 @@ qboolean trap_GetValue(char *value, int valueSize, const char *key)
 }
 
 /**
+ * @brief Extension for setting a cvar description in the engine cvar registry.
+ * @param[in] cvarName
+ * @param[in] description
+ */
+void trap_Cvar_SetDescription(const char *cvarName, const char *description)
+{
+	if (dll_trap_CvarSetDescription && cvarName && description)
+	{
+		SystemCall(dll_trap_CvarSetDescription, cvarName, description);
+	}
+}
+
+/**
  * @brief trap_TVG_GetPlayerstate
  * @param[in] clientNum
  * @param[in,out] ps

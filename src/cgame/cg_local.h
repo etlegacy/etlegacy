@@ -2043,7 +2043,6 @@ typedef struct
 	qhandle_t pmImageAxisMine;
 	qhandle_t pmImageAlliesFlag;
 	qhandle_t pmImageAxisFlag;
-	qhandle_t pmImageSpecFlag;
 	qhandle_t hintKey;
 
 	qhandle_t pmImageSlime;
@@ -2058,6 +2057,7 @@ typedef struct
 
 	qhandle_t axisFlag;
 	qhandle_t alliedFlag;
+	qhandle_t spectatorFlag;
 
 	qhandle_t disconnectIcon;
 
@@ -2836,6 +2836,13 @@ enum
 	LOCALTIME_12HOUR = BIT(1),
 };
 
+// reinforcement/spawn timer flags
+enum
+{
+	REINFORCEMENT_TIMER_DOUBLE_DIGITS  = BIT(0),
+	REINFORCEMENT_TIMER_COLOR_GRADIENT = BIT(1),
+};
+
 // crosshairs flags
 enum
 {
@@ -3298,7 +3305,7 @@ localEntity_t *CG_SmokePuff(const vec3_t p,
 
 void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing);
 
-void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir, int damage);
+void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir, int damage, qboolean heavyDirectGib);
 void CG_LoseHat(centity_t *cent, vec3_t dir);
 
 void CG_Bleed(vec3_t origin, int entityNum);
@@ -3686,11 +3693,13 @@ void trap_SysFlashWindow(int state);
 void trap_CommandComplete(const char *value);
 void trap_CmdBackup_Ext(void);
 void trap_MatchPaused(qboolean matchPaused);
+void trap_Cvar_SetDescription(const char *cvarName, const char *description);
 extern int dll_com_trapGetValue;
 extern int dll_trap_SysFlashWindow;
 extern int dll_trap_CommandComplete;
 extern int dll_trap_CmdBackup_Ext;
 extern int dll_trap_MatchPaused;
+extern int dll_trap_CvarSetDescription;
 
 bg_playerclass_t *CG_PlayerClassForClientinfo(clientInfo_t *ci, centity_t *cent);
 

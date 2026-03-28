@@ -3347,7 +3347,9 @@ void CG_FinishWeaponChange(int lastWeapon, int newWeapon)
 
 	cg.mortarImpactTime = -2;
 
-	if (cg_weapaltSwitches.integer && lastWeapon != GetWeaponTableData(newWeapon)->weapAlts)
+	// Always keep selected weapon in sync with attachment/silencer state.
+	// This prevents bypassing alt attach/detach animations via wheel switching.
+	if (lastWeapon != GetWeaponTableData(newWeapon)->weapAlts)
 	{
 		if (((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && !(GetWeaponTableData(newWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED) && (cg.pmext.silencedSideArm & 1))
 		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && (GetWeaponTableData(newWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED) && !(cg.pmext.silencedSideArm & 1))
