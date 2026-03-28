@@ -364,6 +364,8 @@ void CG_TransformAutomapEntity(void)
 		// subtract surrounding decoration of the compass
 		w = hud->compass.location.w - (hud->compass.location.w * 0.25f);
 		h = hud->compass.location.h - (hud->compass.location.h * 0.25f);
+
+		w = h = hypotf(w, h);
 	}
 
 	for (i = 0; i < mapEntityCount; i++)
