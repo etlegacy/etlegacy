@@ -1138,7 +1138,7 @@ typedef enum
 	MOD_BAZOOKA, // Allied panzerfaust
 	MOD_BACKSTAB,
 	MOD_MP34, // Allied Sten alternative
-	
+
 	MOD_FEAR,
 
 	MOD_NUM_MODS
