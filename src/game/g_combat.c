@@ -471,6 +471,9 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	switch (meansOfDeath)
 	{
+	case MOD_FEAR:
+		weap = GetMODTableData(self->client->lasthurt_mod)->weaponIcon;
+		break;
 	case MOD_FALLING:
 		weap = WP_NONE;
 		if (self->client->pmext.shoved)
@@ -595,7 +598,19 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 
 	// death stats handled out-of-band of G_Damage for external calls
-	G_addStats(self, attacker, damage, meansOfDeath);
+	if (meansOfDeath == MOD_FEAR)
+	{
+		// reward last valid attacker which inflict damage to suicided client
+		G_addStats(self, attacker, damage, self->client->lasthurt_mod);
+		G_AddKillSkillPoints(attacker, self->client->lasthurt_mod, HR_NUM_HITREGIONS, qfalse);
+
+		// give assist point to other players
+		G_AddKillAssistPoints(self, &g_entities[self->client->lasthurt_client]);
+	}
+	else
+	{
+		G_addStats(self, attacker, damage, meansOfDeath);
+	}
 
 	self->client->ps.pm_type = PM_DEAD;
 
@@ -905,7 +920,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 #endif
 		limbo(self, qfalse);   // but no corpse
 	}
-	else if (meansOfDeath == MOD_SUICIDE)
+	else if (meansOfDeath == MOD_SUICIDE || meansOfDeath == MOD_FEAR)
 	{
 #ifdef FEATURE_SERVERMDX
 		self->client->deathAnim = qtrue;    // add animation time
