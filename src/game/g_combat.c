@@ -736,7 +736,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	{
 		attacker->client->pers.lastkilled_client = self->s.clientNum;
 
-		if (attacker == self || dieFromSameTeam)
+		// self or team mate
+		if (dieFromSameTeam)
 		{
 			G_CheckComplaint(self, inflictor, attacker, meansOfDeath);
 
@@ -748,6 +749,18 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		}
 		else
 		{
+			// reward attacker for killing objective carrier
+			if (G_DropItems(self))
+			{
+				G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 5.f, "obj. carrier killed");
+			}
+
+			// reward attacker for killing player on TOI area
+			if (self->client->touchingTOI || G_FindNearestTOI(self))
+			{
+				G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 3.f, "kill near obj.");
+			}
+
 			if (g_gametype.integer == GT_WOLF_LMS)
 			{
 				if (level.firstbloodTeam == -1)
@@ -766,24 +779,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		if (g_gametype.integer == GT_WOLF_LMS)
 		{
 			AddKillScore(self, -1);
-		}
-	}
-
-	if (G_DropItems(self))
-	{
-		// reward attacker for killing objective carrier
-		if (attackerClient && !dieFromSameTeam)
-		{
-			G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 5.f, "obj. carrier killed");
-		}
-	}
-
-	// reward attacker for killing player on TOI area
-	if (self->client->touchingTOI || G_FindNearestTOI(self))
-	{
-		if (attackerClient && !dieFromSameTeam)
-		{
-			G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 3.f, "kill near obj.");
 		}
 	}
 
