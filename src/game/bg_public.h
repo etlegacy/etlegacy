@@ -1353,6 +1353,7 @@ extern weaponTable_t *GetWeaponTableData(int weaponIndex);
 #define IS_VALID_WEAPON(w) ((w) > WP_NONE && (w) < WP_NUM_WEAPONS)
 #define IS_VALID_MOD(mod) ((mod) >= MOD_UNKNOWN && (mod) < MOD_NUM_MODS)
 #define IS_VALID_AMMUNITION(a) ((a) >= MISSILE_NONE && (a) < MOD_NUM_MISIILES)
+#define IS_VALID_CLIENT_NUM(clientNum) ((clientNum) >= 0 && (clientNum) < MAX_CLIENTS)
 
 // entityState_t->event values
 // entity events are for effects that take place reletive

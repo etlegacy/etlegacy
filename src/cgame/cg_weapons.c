@@ -5379,9 +5379,9 @@ static void CG_AddFleshImpact(vec3_t end, vec3_t dir, int fleshEntityNum)
 	qhandle_t shader = ((!cg_bloodForcePuffsForDamage.integer) || (cent->currentState.powerups & (1 << PW_INVULNERABLE)))
 	    ? cgs.media.smokePuffShader
 	    : cgs.media.fleshSmokePuffShader;
-	const qboolean isSelfFirstPerson = (cg.snap && ISVALIDCLIENTNUM(fleshEntityNum) && fleshEntityNum == cg.snap->ps.clientNum && !cg.renderingThirdPerson);
+	const qboolean isSelfFirstPerson = (cg.snap && IS_VALID_CLIENT_NUM(fleshEntityNum) && fleshEntityNum == cg.snap->ps.clientNum && !cg.renderingThirdPerson);
 
-	if (ISVALIDCLIENTNUM(fleshEntityNum) && !(cent->currentState.powerups & (1 << PW_INVULNERABLE)))
+	if (IS_VALID_CLIENT_NUM(fleshEntityNum) && !(cent->currentState.powerups & (1 << PW_INVULNERABLE)))
 	{
 		CG_Bleed(end, fleshEntityNum);
 	}
@@ -6041,7 +6041,7 @@ void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, int targetEntityNum)
 	trace_t  trace, trace2;
 	vec3_t   dir;
 	vec3_t   start = { 0, 0, 0 };
-	qboolean flesh = ISVALIDCLIENTNUM(targetEntityNum);
+	qboolean flesh = IS_VALID_CLIENT_NUM(targetEntityNum);
 
 	if (sourceEntityNum < 0 || sourceEntityNum >= MAX_GENTITIES)
 	{
