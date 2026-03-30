@@ -34,6 +34,7 @@
 
 #include "ui_local.h"
 #include "../qcommon/q_oss.h"
+#include "../qcommon/i18n.h"
 #include "ui_cvars.h"
 
 uiInfo_t uiInfo;
@@ -8718,6 +8719,11 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	trap_PC_RemoveAllGlobalDefines();
 	UI_SetupExtensions();
 
+#ifdef FEATURE_GETTEXT
+	// UI uses the shared qcommon translator directly instead of a client trap.
+	I18N_Init();
+#endif
+
 	trap_Cvar_Set("ui_menuFiles", DEFAULT_MENU_FILE);   // we need to hardwire for wolfMP
 
 	// cache redundant calculations
@@ -9595,7 +9601,11 @@ const char *UI_TranslateString(const char *string)
 
 	buf = buffer[buffOffset++ % TRANSLATION_BUFFERS];
 
-	trap_TranslateString(string, buf);
+#ifdef FEATURE_GETTEXT
+	Q_strncpyz(buf, I18N_TranslateMod(string), MAX_PRINT_MSG);
+#else
+	Q_strncpyz(buf, string, MAX_PRINT_MSG);
+#endif
 
 	return buf;
 }

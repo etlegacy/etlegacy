@@ -34,6 +34,7 @@
  */
 
 #include "cg_local.h"
+#include "../qcommon/i18n.h"
 
 /**
  * @brief Adjusted for resolution and screen aspect ratio
@@ -994,7 +995,12 @@ const char *CG_TranslateString(const char *string)
 	// if none is needed for translation, so always supply another buffer
 	buf = buffer[buffOffset++ % TRANSLATION_BUFFERS];
 
-	trap_TranslateString(string, buf);
+#ifdef FEATURE_GETTEXT
+	// Use the local qcommon translator so the module stays 2.60b-safe.
+	Q_strncpyz(buf, I18N_TranslateMod(string), MAX_PRINT_MSG);
+#else
+	Q_strncpyz(buf, string, MAX_PRINT_MSG);
+#endif
 
 	return buf;
 }

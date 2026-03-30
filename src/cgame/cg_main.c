@@ -35,6 +35,7 @@
 
 #include "cg_local.h"
 #include "cg_cvars.h"
+#include "../qcommon/i18n.h"
 
 displayContextDef_t cgDC;
 
@@ -2178,6 +2179,11 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 	CG_ClearCamera();
 
 	cgs.initing = qtrue;
+
+#ifdef FEATURE_GETTEXT
+	// Keep cgame translations independent from engine-specific translation traps.
+	I18N_Init();
+#endif
 
 	if (demoPlayback && info)
 	{

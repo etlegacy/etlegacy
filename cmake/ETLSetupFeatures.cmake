@@ -5,6 +5,40 @@
 # Helper to src folder
 set(SRC "${PROJECT_SOURCE_DIR}/src")
 
+if(FEATURE_GETTEXT)
+	FILE(GLOB GETTEXT_SRC
+		"src/qcommon/i18n_main.cpp"
+		"src/qcommon/i18n_findlocale.c"
+		"src/qcommon/i18n_findlocale.h"
+		"src/qcommon/i18n.h"
+		"vendor/tinygettext/tinygettext/dictionary.hpp"
+		"vendor/tinygettext/tinygettext/dictionary_manager.hpp"
+		"vendor/tinygettext/tinygettext/file_system.hpp"
+		"vendor/tinygettext/tinygettext/iconv.hpp"
+		"vendor/tinygettext/tinygettext/language.hpp"
+		"vendor/tinygettext/tinygettext/log.hpp"
+		"vendor/tinygettext/tinygettext/log_stream.hpp"
+		"vendor/tinygettext/tinygettext/plural_forms.hpp"
+		"vendor/tinygettext/tinygettext/po_parser.hpp"
+		"vendor/tinygettext/tinygettext/tinygettext.hpp"
+		"vendor/tinygettext/dictionary.cpp"
+		"vendor/tinygettext/dictionary_manager.cpp"
+		"vendor/tinygettext/iconv.cpp"
+		"vendor/tinygettext/language.cpp"
+		"vendor/tinygettext/log.cpp"
+		"vendor/tinygettext/plural_forms.cpp"
+		"vendor/tinygettext/po_parser.cpp"
+		"vendor/tinygettext/tinygettext.cpp"
+	)
+	if(MSVC)
+		list(APPEND GETTEXT_SRC "${PROJECT_SOURCE_DIR}/vendor/tinygettext/windows_file_system.cpp")
+		list(APPEND GETTEXT_SRC "${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/windows_file_system.hpp")
+	else()
+		list(APPEND GETTEXT_SRC "${PROJECT_SOURCE_DIR}/vendor/tinygettext/unix_file_system.cpp")
+		list(APPEND GETTEXT_SRC "${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/unix_file_system.hpp")
+	endif()
+endif()
+
 #-----------------------------------------------------------------
 # Client features
 #-----------------------------------------------------------------
@@ -129,36 +163,6 @@ if(BUILD_CLIENT)
 
 	if(FEATURE_GETTEXT)
 		target_compile_definitions(client_libraries INTERFACE FEATURE_GETTEXT)
-		FILE(GLOB GETTEXT_SRC
-			"src/qcommon/i18n_main.cpp"
-			"src/qcommon/i18n_findlocale.c"
-			"src/qcommon/i18n_findlocale.h"
-			"vendor/tinygettext/tinygettext/dictionary.hpp"
-			"vendor/tinygettext/tinygettext/dictionary_manager.hpp"
-			"vendor/tinygettext/tinygettext/file_system.hpp"
-			"vendor/tinygettext/tinygettext/iconv.hpp"
-			"vendor/tinygettext/tinygettext/language.hpp"
-			"vendor/tinygettext/tinygettext/log.hpp"
-			"vendor/tinygettext/tinygettext/log_stream.hpp"
-			"vendor/tinygettext/tinygettext/plural_forms.hpp"
-			"vendor/tinygettext/tinygettext/po_parser.hpp"
-			"vendor/tinygettext/tinygettext/tinygettext.hpp"
-			"vendor/tinygettext/dictionary.cpp"
-			"vendor/tinygettext/dictionary_manager.cpp"
-			"vendor/tinygettext/iconv.cpp"
-			"vendor/tinygettext/language.cpp"
-			"vendor/tinygettext/log.cpp"
-			"vendor/tinygettext/plural_forms.cpp"
-			"vendor/tinygettext/po_parser.cpp"
-			"vendor/tinygettext/tinygettext.cpp"
-		)
-		if(MSVC)
-			list(APPEND GETTEXT_SRC "${PROJECT_SOURCE_DIR}/vendor/tinygettext/windows_file_system.cpp")
-			list(APPEND GETTEXT_SRC "${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/windows_file_system.hpp")
-		else()
-			list(APPEND GETTEXT_SRC "${PROJECT_SOURCE_DIR}/vendor/tinygettext/unix_file_system.cpp")
-			list(APPEND GETTEXT_SRC "${PROJECT_SOURCE_DIR}/vendor/tinygettext/tinygettext/unix_file_system.hpp")
-		endif()
 		target_sources(client_libraries INTERFACE ${GETTEXT_SRC})
 	endif(FEATURE_GETTEXT)
 
@@ -390,6 +394,49 @@ if(BUILD_MOD)
 
 	if(FEATURE_EDV)
 		target_compile_definitions(cgame_libraries INTERFACE FEATURE_EDV)
+	endif()
+
+	if(FEATURE_GETTEXT)
+		target_compile_definitions(cgame_libraries INTERFACE FEATURE_GETTEXT)
+		target_compile_definitions(ui_libraries INTERFACE FEATURE_GETTEXT)
+		target_sources(cgame_libraries INTERFACE ${GETTEXT_SRC})
+		target_sources(ui_libraries INTERFACE ${GETTEXT_SRC})
+
+		if(BUILD_CLIENT OR WIN32)
+			if(WIN32 AND NOT BUILD_CLIENT)
+				if(BUNDLED_SDL)
+					message(FATAL_ERROR "Client mod localization requires system SDL2 when BUILD_CLIENT is disabled.")
+				endif()
+
+				find_package(SDL2 2.0.8 REQUIRED)
+			endif()
+
+			target_compile_definitions(cgame_libraries INTERFACE HAVE_SDL)
+			target_compile_definitions(ui_libraries INTERFACE HAVE_SDL)
+
+			if(NOT BUNDLED_SDL)
+				target_link_libraries(cgame_libraries INTERFACE ${SDL2_LIBRARY})
+				target_include_directories(cgame_libraries INTERFACE ${SDL2_INCLUDE_DIR})
+				target_link_libraries(ui_libraries INTERFACE ${SDL2_LIBRARY})
+				target_include_directories(ui_libraries INTERFACE ${SDL2_INCLUDE_DIR})
+			else()
+				if(MINGW AND WIN32)
+					target_link_libraries(cgame_libraries INTERFACE mingw32)
+					target_link_libraries(ui_libraries INTERFACE mingw32)
+				endif()
+
+				target_link_libraries(cgame_libraries INTERFACE bundled_sdl_int)
+				target_link_libraries(ui_libraries INTERFACE bundled_sdl_int)
+
+				# Keep the native platform libraries after the bundled SDL
+				# archive so static linkers resolve SDL's platform symbols in
+				# the same order as the main client target.
+				target_link_libraries(cgame_libraries INTERFACE os_libraries)
+				target_link_libraries(ui_libraries INTERFACE os_libraries)
+				target_compile_definitions(cgame_libraries INTERFACE BUNDLED_SDL)
+				target_compile_definitions(ui_libraries INTERFACE BUNDLED_SDL)
+			endif()
+		endif()
 	endif()
 
 	if (FEATURE_AUTH)

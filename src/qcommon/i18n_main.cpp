@@ -40,59 +40,220 @@
 #error This file should only be compiled if you want i18n support
 #endif
 
+#ifdef _MSC_VER
+/* Keep MSVC's math constants in sync before q_math.h provides its fallback values. */
+#ifndef _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
+#endif
+#include <math.h>
+#endif
+
 extern "C"
 {
-#include "q_shared.h"
+#ifndef MODLIB
 #include "qcommon.h"
+#else
+#if defined(CGAMEDLL)
+#include "q_shared.h"
+void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
+void trap_Cvar_Update(vmCvar_t *vmCvar);
+void trap_Cvar_Set(const char *varName, const char *value);
+int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode);
+void trap_FS_Read(void *buffer, int len, fileHandle_t f);
+int trap_FS_Write(const void *buffer, int len, fileHandle_t f);
+void trap_FS_FCloseFile(fileHandle_t f);
+int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
+#elif defined(UIDLL)
+#include "q_shared.h"
+void trap_Cvar_Register(vmCvar_t *vmCvar, const char *varName, const char *defaultValue, int flags);
+void trap_Cvar_Update(vmCvar_t *vmCvar);
+void trap_Cvar_Set(const char *varName, const char *value);
+int trap_FS_FOpenFile(const char *qpath, fileHandle_t *f, fsMode_t mode);
+void trap_FS_Read(void *buffer, int len, fileHandle_t f);
+void trap_FS_Write(const void *buffer, int len, fileHandle_t f);
+void trap_FS_FCloseFile(fileHandle_t f);
+int trap_FS_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
+#else
+#error Unsupported mod localization target
+#endif
+#endif
 #include "i18n_findlocale.h"
 }
 
-#include <iostream>
-#include <string.h>
-#include <stdlib.h>
 #include <map>
+#include <memory>
+#include <set>
+#include <stdlib.h>
+#include <string>
+#include <string.h>
 
+#include "../../vendor/tinygettext/tinygettext/file_system.hpp"
+#include "../../vendor/tinygettext/tinygettext/log.hpp"
 #include "../../vendor/tinygettext/tinygettext/po_parser.hpp"
 #include "../../vendor/tinygettext/tinygettext/tinygettext.hpp"
-#include "../../vendor/tinygettext/tinygettext/log.hpp"
-#include "../../vendor/tinygettext/tinygettext/file_system.hpp"
 
 tinygettext::DictionaryManager dictionary;
 tinygettext::DictionaryManager dictionary_mod;
 
-cvar_t      *cl_lang      = NULL;
-cvar_t      *cl_langDebug = NULL;
-static char cl_lang_last[3];
+#ifndef MODLIB
+static cvar_t *cl_lang      = NULL;
+static cvar_t *cl_langDebug = NULL;
+#else
+static vmCvar_t cl_lang;
+static vmCvar_t cl_langDebug;
+#endif
 
-qboolean doTranslate    = qfalse; // we don't translate english in general
-qboolean doTranslateMod = qtrue; // only translate default mod only
+static char cl_lang_last[MAX_CVAR_VALUE_STRING];
 
-std::map <std::string, std::string> strings; // original text / translated text
+static qboolean doTranslate         = qfalse; // we don't translate english in general
+static qboolean i18nCvarsRegistered = qfalse;
 
+static std::map<std::string, std::string> clientStrings;
+static std::map<std::string, std::string> modStrings;
+
+static void I18N_RegisterCvars(void);
+extern "C" void I18N_SetLanguage(const char *language);
+static const char *I18N_CurrentLanguage(void);
+static int I18N_DebugEnabled(void);
+static void I18N_SetLanguageCvar(const char *language);
+static int I18N_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize);
+static int I18N_FOpenFile(const char *qpath, fileHandle_t *file, fsMode_t mode);
+static void I18N_ReadFile(void *buffer, int len, fileHandle_t file);
+static void I18N_WriteFile(const void *buffer, int len, fileHandle_t file);
+static void I18N_CloseFile(fileHandle_t file);
+static void I18N_ResetDirectory(tinygettext::DictionaryManager &dict, const char *path);
+static void I18N_PrintAvailableLanguages(const char *label, tinygettext::DictionaryManager &dict);
 static void TranslationMissing(const char *msgid);
+static const char *_I18N_Translate(const char *msgid, tinygettext::DictionaryManager &dict, std::map<std::string, std::string> &cache);
 static void Tinygettext_Error(const std::string& str);
 static void Tinygettext_Warning(const std::string& str);
 static void Tinygettext_Info(const std::string& str);
 
+#ifndef MODLIB
+static void I18N_RegisterCvars(void)
+{
+	cl_lang             = Cvar_Get("cl_lang", "en", CVAR_ARCHIVE | CVAR_LATCH);
+	cl_langDebug        = Cvar_Get("cl_langDebug", "0", CVAR_ARCHIVE);
+	i18nCvarsRegistered = qtrue;
+}
+
+static const char *I18N_CurrentLanguage(void)
+{
+	return cl_lang ? cl_lang->string : "";
+}
+
+static int I18N_DebugEnabled(void)
+{
+	return cl_langDebug ? cl_langDebug->integer : 0;
+}
+
+static void I18N_SetLanguageCvar(const char *language)
+{
+	Cvar_Set("cl_lang", language);
+}
+
+static int I18N_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize)
+{
+	return FS_GetFileList(path, extension, listbuf, bufsize);
+}
+
+static int I18N_FOpenFile(const char *qpath, fileHandle_t *file, fsMode_t mode)
+{
+	return FS_FOpenFileByMode(qpath, file, mode);
+}
+
+static void I18N_ReadFile(void *buffer, int len, fileHandle_t file)
+{
+	FS_Read(buffer, len, file);
+}
+
+static void I18N_WriteFile(const void *buffer, int len, fileHandle_t file)
+{
+	FS_Write(buffer, len, file);
+}
+
+static void I18N_CloseFile(fileHandle_t file)
+{
+	FS_FCloseFile(file);
+}
+#else
 /**
- * @brief std::streambuf based class that uses the engine's File I/O functions for input
+ * @brief Client-side mods only rely on base cvar/fs traps so localization stays 2.60b-safe.
+ */
+static void I18N_RegisterCvars(void)
+{
+	trap_Cvar_Register(&cl_lang, "cl_lang", "en", CVAR_ARCHIVE | CVAR_LATCH);
+	trap_Cvar_Register(&cl_langDebug, "cl_langDebug", "0", CVAR_ARCHIVE);
+	i18nCvarsRegistered = qtrue;
+}
+
+static const char *I18N_CurrentLanguage(void)
+{
+	trap_Cvar_Update(&cl_lang);
+	return cl_lang.string;
+}
+
+static int I18N_DebugEnabled(void)
+{
+	trap_Cvar_Update(&cl_langDebug);
+	return cl_langDebug.integer;
+}
+
+static void I18N_SetLanguageCvar(const char *language)
+{
+	trap_Cvar_Set("cl_lang", language);
+	trap_Cvar_Update(&cl_lang);
+}
+
+static int I18N_GetFileList(const char *path, const char *extension, char *listbuf, int bufsize)
+{
+	return trap_FS_GetFileList(path, extension, listbuf, bufsize);
+}
+
+static int I18N_FOpenFile(const char *qpath, fileHandle_t *file, fsMode_t mode)
+{
+	return trap_FS_FOpenFile(qpath, file, mode);
+}
+
+static void I18N_ReadFile(void *buffer, int len, fileHandle_t file)
+{
+	trap_FS_Read(buffer, len, file);
+}
+
+static void I18N_WriteFile(const void *buffer, int len, fileHandle_t file)
+{
+	trap_FS_Write(buffer, len, file);
+}
+
+static void I18N_CloseFile(fileHandle_t file)
+{
+	trap_FS_FCloseFile(file);
+}
+#endif
+
+/**
+ * @brief std::streambuf based class that uses the active engine or mod file API for input.
  */
 class QInputbuf : public std::streambuf
 {
 private:
 	static const size_t BUFFER_SIZE = 8192;
 	fileHandle_t fileHandle;
+	int remainingBytes;
 	char buffer[BUFFER_SIZE];
 	size_t putBack;
 public:
-	QInputbuf(const std::string& filename) : putBack(1)
+	QInputbuf(const std::string& filename) : fileHandle(0), remainingBytes(0), putBack(1)
 	{
 		char *end = buffer + BUFFER_SIZE - putBack;
 
 		setg(end, end, end);
 
-		if (FS_FOpenFileRead(filename.c_str(), &fileHandle, qfalse) <= 0)
+		remainingBytes = I18N_FOpenFile(filename.c_str(), &fileHandle, FS_READ);
+		if (remainingBytes <= 0)
 		{
+			fileHandle     = 0;
+			remainingBytes = 0;
 			Com_Printf("Warning: can't open or read file '%s' \n", filename.c_str());
 		}
 	}
@@ -101,12 +262,16 @@ public:
 	{
 		if (fileHandle)
 		{
-			FS_FCloseFile(fileHandle);
+			I18N_CloseFile(fileHandle);
 		}
 	}
 
 	int underflow()
 	{
+		int  n;
+		char *base;
+		char *start;
+
 		if (gptr() < egptr())  // buffer not exhausted
 		{
 			return traits_type::to_int_type(*gptr());
@@ -117,8 +282,8 @@ public:
 			return traits_type::eof();
 		}
 
-		char *base  = buffer;
-		char *start = base;
+		base  = buffer;
+		start = base;
 
 		if (eback() == base)
 		{
@@ -127,12 +292,19 @@ public:
 			start += putBack;
 		}
 
-		size_t n = FS_Read(start, BUFFER_SIZE - (start - base), fileHandle);
+		n = (int)(BUFFER_SIZE - (start - base));
+		if (remainingBytes < n)
+		{
+			n = remainingBytes;
+		}
 
-		if (n == 0)
+		if (n <= 0)
 		{
 			return traits_type::eof();
 		}
+
+		I18N_ReadFile(start, n, fileHandle);
+		remainingBytes -= n;
 
 		// Set buffer pointers
 		setg(base, start, start + n);
@@ -158,29 +330,28 @@ public:
 
 /**
  * @brief Class used by tinygettext to read files and directories.
- * Uses the engine's File I/O functions for this purpose
+ * Uses the shared qcommon file API wrappers for this purpose.
  */
 class QFileSystem : public tinygettext::FileSystem
 {
 public:
-	QFileSystem()
-	{
-	}
-
 	std::vector<std::string> open_directory(const std::string& pathname)
 	{
+		static const int         FILE_LIST_SIZE = 32768;
+		char                     fileList[FILE_LIST_SIZE];
+		char                     *filePtr;
 		int                      numFiles;
-		char                     **files;
 		std::vector<std::string> ret;
 
-		files = FS_ListFiles(pathname.c_str(), NULL, &numFiles);
+		numFiles = I18N_GetFileList(pathname.c_str(), ".po", fileList, sizeof(fileList));
+		filePtr  = fileList;
 
-		for (int i = 0; i < numFiles; i++)
+		for (int i = 0; i < numFiles && filePtr[0]; ++i)
 		{
-			ret.push_back(std::string(files[i]));
+			ret.push_back(std::string(filePtr));
+			filePtr += strlen(filePtr) + 1;
 		}
 
-		FS_FreeFileList(files);
 		return ret;
 	}
 
@@ -198,37 +369,65 @@ public:
 };
 
 /**
+ * @brief Re-adds a search path to avoid duplicated directory entries on subsystem restarts.
+ */
+static void I18N_ResetDirectory(tinygettext::DictionaryManager &dict, const char *path)
+{
+	dict.remove_directory(path);
+	dict.add_directory(path);
+}
+
+/**
+ * @brief Prints the languages available for a specific translation domain.
+ */
+static void I18N_PrintAvailableLanguages(const char *label, tinygettext::DictionaryManager &dict)
+{
+	std::set<tinygettext::Language> languages = dict.get_languages();
+
+	Com_Printf("%s:", label);
+	for (std::set<tinygettext::Language>::iterator language = languages.begin(); language != languages.end(); ++language)
+	{
+		Com_Printf(" %s", language->get_name().c_str());
+	}
+	Com_Printf("\n");
+}
+
+/**
  * @brief Attempts to detect the system language unless cl_lang was already set.
  * Then loads the PO file containing translated strings.
  */
-void I18N_Init(void)
+extern "C" void I18N_Init(void)
 {
-	FL_Locale                       *locale;
-	std::set<tinygettext::Language> languages;
-	std::set<tinygettext::Language> languages_mod;
+	FL_Locale  *locale;
+	const char *language;
 
-	cl_lang      = Cvar_Get("cl_lang", "en", CVAR_ARCHIVE | CVAR_LATCH);
-	cl_langDebug = Cvar_Get("cl_langDebug", "0", CVAR_ARCHIVE);
+	I18N_RegisterCvars();
 
 	tinygettext::Log::set_log_error_callback(&Tinygettext_Error);
 	tinygettext::Log::set_log_info_callback(&Tinygettext_Info);
 	tinygettext::Log::set_log_warning_callback(&Tinygettext_Warning);
 
-	FL_FindLocale(&locale);
+	language = I18N_CurrentLanguage();
 
 	// Do not change the language if it is already set
-	if (!cl_lang->string[0])
+	if (!language[0])
 	{
+		locale = NULL;
+		FL_FindLocale(&locale);
+
 		// locale->country is also supported for 'en_US' format
-		if (locale->lang && locale->lang[0])
+		if (locale && locale->lang && locale->lang[0])
 		{
-			Cvar_Set("cl_lang", va("%s", locale->lang));
+			I18N_SetLanguageCvar(locale->lang);
 		}
 		else
 		{
 			// Language detection failed. Fallback to English
-			Cvar_Set("cl_lang", "en");
+			I18N_SetLanguageCvar("en");
 		}
+
+		FL_FreeLocale(&locale);
+		language = I18N_CurrentLanguage();
 	}
 
 #if __cplusplus >= 201103L // C++11
@@ -238,45 +437,34 @@ void I18N_Init(void)
 	dictionary.set_filesystem(std::auto_ptr<tinygettext::FileSystem>(new QFileSystem));
 	dictionary_mod.set_filesystem(std::auto_ptr<tinygettext::FileSystem>(new QFileSystem));
 #endif
-	dictionary.add_directory("locale/client");
-	dictionary_mod.add_directory("locale/mod");
+	I18N_ResetDirectory(dictionary, "locale/client");
+	I18N_ResetDirectory(dictionary_mod, "locale/mod");
 
-	languages = dictionary.get_languages();
-	Com_Printf("Available client translations:");
-	for (std::set<tinygettext::Language>::iterator p = languages.begin(); p != languages.end(); p++)
-	{
-		Com_Printf(" %s", p->get_name().c_str());
-	}
-	Com_Printf("\n");
+	I18N_PrintAvailableLanguages("Available client translations", dictionary);
+	I18N_PrintAvailableLanguages("Available mod translations", dictionary_mod);
 
-	languages_mod = dictionary_mod.get_languages();
-	Com_Printf("Available mod translations:");
-	for (std::set<tinygettext::Language>::iterator p = languages_mod.begin(); p != languages_mod.end(); p++)
-	{
-		Com_Printf(" %s", p->get_name().c_str());
-	}
-	Com_Printf("\n");
-
-	I18N_SetLanguage(cl_lang->string);
-	FL_FreeLocale(&locale);
+	I18N_SetLanguage(language);
 }
 
 /**
  * @brief Loads a localization file
  * @param[in] language
  */
-void I18N_SetLanguage(const char *language)
+extern "C" void I18N_SetLanguage(const char *language)
 {
+	const char *resolvedLanguage = (language && language[0]) ? language : "en";
+
 	// TODO: check if there is a localization file available for the selected language
-	dictionary.set_language(tinygettext::Language::from_env(std::string(language)));
-	dictionary_mod.set_language(tinygettext::Language::from_env(std::string(language)));
+	dictionary.set_language(tinygettext::Language::from_env(std::string(resolvedLanguage)));
+	dictionary_mod.set_language(tinygettext::Language::from_env(std::string(resolvedLanguage)));
 
 	Com_Printf("Language set to %s\n", dictionary.get_language().get_name().c_str());
-	Com_sprintf(cl_lang_last, sizeof(cl_lang_last), "%s", language);
+	Com_sprintf(cl_lang_last, sizeof(cl_lang_last), "%s", resolvedLanguage);
 
 	doTranslate = qtrue;
 
-	strings.clear();
+	clientStrings.clear();
+	modStrings.clear();
 }
 
 /**
@@ -288,20 +476,25 @@ void I18N_SetLanguage(const char *language)
  *
  * @param[in] msgid original string in English
  * @param[in] dict dictionary to use (client / mod)
+ * @param[in,out] cache cached translations for the selected domain
  *
  * @return translated string or English text if dictionary was not found
  */
-static const char *_I18N_Translate(const char *msgid, tinygettext::DictionaryManager &dict)
+static const char *_I18N_Translate(const char *msgid, tinygettext::DictionaryManager &dict, std::map<std::string, std::string> &cache)
 {
-	if (!cl_lang)
+	const char                                   *language;
+	std::map<std::string, std::string>::iterator translated;
+
+	if (!i18nCvarsRegistered)
 	{
-		Com_DPrintf("Calling translation before I18N is initialized\n");
+		Com_Printf("Calling translation before I18N is initialized\n");
 		return msgid;
 	}
 
-	if (Q_stricmp(cl_lang->string, cl_lang_last))
+	language = I18N_CurrentLanguage();
+	if (Q_stricmp(language, cl_lang_last))
 	{
-		I18N_SetLanguage(cl_lang->string);
+		I18N_SetLanguage(language);
 	}
 
 	if (!doTranslate)
@@ -310,20 +503,19 @@ static const char *_I18N_Translate(const char *msgid, tinygettext::DictionaryMan
 	}
 
 	// Store translated string if it is not there yet
-	if (strings.find(msgid) == strings.end())
+	translated = cache.find(msgid);
+	if (translated == cache.end())
 	{
-		strings.insert(std::make_pair(msgid, dict.get_dictionary().translate(msgid)));
+		cache.insert(std::make_pair(msgid, dict.get_dictionary().translate(msgid)));
+		translated = cache.find(msgid);
 	}
 
-	if (cl_langDebug->integer)
+	if (I18N_DebugEnabled() && !Q_stricmp(translated->second.c_str(), msgid))
 	{
-		if (!Q_stricmp(strings.find(msgid)->second.c_str(), msgid))
-		{
-			TranslationMissing(msgid);
-		}
+		TranslationMissing(msgid);
 	}
 
-	return strings.find(msgid)->second.c_str();
+	return translated->second.c_str();
 }
 
 /**
@@ -331,9 +523,9 @@ static const char *_I18N_Translate(const char *msgid, tinygettext::DictionaryMan
  * @param[in] msgid
  * @return
  */
-const char *I18N_Translate(const char *msgid)
+extern "C" const char *I18N_Translate(const char *msgid)
 {
-	return _I18N_Translate(msgid, dictionary);
+	return _I18N_Translate(msgid, dictionary, clientStrings);
 }
 
 /**
@@ -341,18 +533,9 @@ const char *I18N_Translate(const char *msgid)
  * @param[in] msgid
  * @return
  */
-const char *I18N_TranslateMod(const char *msgid)
+extern "C" const char *I18N_TranslateMod(const char *msgid)
 {
-	if (doTranslateMod)
-	{
-		return _I18N_Translate(msgid, dictionary_mod);
-	}
-	else
-	{
-		// we don't check for language change in this case - see *_I18N_Translate()
-		// let *I18N_Translate() do the job
-		return msgid;
-	}
+	return _I18N_Translate(msgid, dictionary_mod, modStrings);
 }
 
 /**
@@ -364,11 +547,17 @@ const char *I18N_TranslateMod(const char *msgid)
 static void TranslationMissing(const char *msgid)
 {
 	fileHandle_t file;
+	const char   *language;
+	const char   *line;
 
-	FS_FOpenFileByMode(va("missing_translations_%s.txt", Cvar_VariableString("cl_lang")), &file, FS_APPEND);
-	FS_Write(va("TRANSLATE(\"%s\");\n", msgid), strlen(msgid) + 15, file);
+	language = I18N_CurrentLanguage();
+	line     = va("TRANSLATE(\"%s\");\n", msgid);
 
-	FS_FCloseFile(file);
+	if (I18N_FOpenFile(va("missing_translations_%s.txt", language[0] ? language : "en"), &file, FS_APPEND) >= 0 && file)
+	{
+		I18N_WriteFile(line, (int)strlen(line), file);
+		I18N_CloseFile(file);
+	}
 }
 
 /**
@@ -390,7 +579,7 @@ static void Tinygettext_Error(const std::string& str)
  */
 static void Tinygettext_Warning(const std::string& str)
 {
-	if (cl_langDebug->integer)
+	if (I18N_DebugEnabled())
 	{
 		Com_Printf("^3%s^7", str.c_str());
 	}
@@ -402,7 +591,7 @@ static void Tinygettext_Warning(const std::string& str)
  */
 static void Tinygettext_Info(const std::string& str)
 {
-	if (cl_langDebug->integer)
+	if (I18N_DebugEnabled())
 	{
 		Com_Printf("%s", str.c_str());
 	}

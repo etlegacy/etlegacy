@@ -168,6 +168,16 @@ if(UNIX)
 			find_library(force_feedback_library ForceFeedback REQUIRED)
 			find_library(opengl_library OpenGL REQUIRED)
 
+			if(BUNDLED_SDL)
+				# Client-side mods link os_libraries instead of client_libraries,
+				# so bundled SDL's native framework dependencies must be visible
+				# through os_libraries as well.
+				target_link_libraries(os_libraries INTERFACE
+						${audio_toolbox_library} ${carbon_library} ${core_audio_library}
+						${core_video_library} ${force_feedback_library} ${opengl_library}
+				)
+			endif()
+
 			target_link_libraries(client_libraries INTERFACE
 					${audio_toolbox_library} ${carbon_library} ${core_audio_library}
 					${core_video_library} ${force_feedback_library} ${opengl_library}
@@ -177,6 +187,7 @@ if(UNIX)
 			if (BUNDLED_SDL)
 				find_library(core_haptics_library CoreHaptics REQUIRED)
 				find_library(game_controller_library GameController REQUIRED)
+				target_link_libraries(os_libraries INTERFACE ${core_haptics_library} ${game_controller_library})
 				target_link_libraries(client_libraries INTERFACE ${core_haptics_library} ${game_controller_library})
 			endif()
 		endif()
