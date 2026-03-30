@@ -33,6 +33,11 @@ elseif(APPLE)
 elseif(ANDROID)
 	add_library(etl SHARED ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 	set_target_properties(etl PROPERTIES PREFIX "lib")
+	if(BUNDLED_SDL)
+		# SDL's Android HID backend now builds C++ code, so the client shared
+		# library has to link through the C++ driver to pull in the NDK runtime.
+		set_target_properties(etl PROPERTIES LINKER_LANGUAGE CXX)
+	endif()
 	set(ETL_OUTPUT_DIR "legacy")
 else()
 	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
