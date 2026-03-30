@@ -665,7 +665,8 @@ void Script_ConditionalScript(itemDef_t *item, qboolean *bAbort, char **args)
 				char  r_texturemode[MAX_CVAR_VALUE_STRING];
 
 				trap_Cvar_VariableStringBuffer("ui_cl_lang", ui_cl_lang, sizeof(ui_cl_lang));
-				trap_Cvar_VariableStringBuffer("cl_lang", cl_lang, sizeof(cl_lang));
+				// Use the effective language value so restart checks follow pending profile changes.
+				trap_Cvar_LatchedVariableStringBuffer("cl_lang", cl_lang, sizeof(cl_lang));
 				trap_Cvar_VariableStringBuffer("ui_r_texturemode", ui_r_texturemode, sizeof(ui_r_texturemode));
 				trap_Cvar_VariableStringBuffer("r_texturemode", r_texturemode, sizeof(r_texturemode));
 

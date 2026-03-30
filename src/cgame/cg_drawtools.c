@@ -994,7 +994,7 @@ const char *CG_TranslateString(const char *string)
 	// if none is needed for translation, so always supply another buffer
 	buf = buffer[buffOffset++ % TRANSLATION_BUFFERS];
 
-	trap_TranslateString(string, buf);
+	Q_strncpyz(buf, I18N_TranslateMod(string), sizeof(buffer[0]));
 
 	return buf;
 }

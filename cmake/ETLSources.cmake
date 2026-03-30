@@ -13,6 +13,7 @@ FILE(GLOB COMMON_SRC_REMOVE
 	"src/qcommon/dl_main_curl.c"
 	"src/qcommon/dl_main_android.c"
 	"src/qcommon/dl_main_stubs.c"
+	"src/qcommon/i18n.c"
 	"src/qcommon/i18n_*"
 	"src/qcommon/auth.c"
 )

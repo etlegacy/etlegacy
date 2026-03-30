@@ -6194,7 +6194,8 @@ void UI_RunMenuScript(char **args)
 			int   ui_r_ignorehwgamma                  = (int)(trap_Cvar_VariableValue("r_ignorehwgamma"));
 			char  ui_r_texturemode[MAX_CVAR_VALUE_STRING];
 
-			trap_Cvar_VariableStringBuffer("cl_lang", ui_cl_lang, sizeof(ui_cl_lang));
+			// Mirror the effective language so the options UI matches pending profile changes.
+			trap_Cvar_LatchedVariableStringBuffer("cl_lang", ui_cl_lang, sizeof(ui_cl_lang));
 			trap_Cvar_VariableStringBuffer("r_texturemode", ui_r_texturemode, sizeof(ui_r_texturemode));
 
 			trap_Cvar_Set("ui_cl_lang", ui_cl_lang);
@@ -8718,6 +8719,10 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	trap_PC_RemoveAllGlobalDefines();
 	UI_SetupExtensions();
 
+#ifdef FEATURE_GETTEXT
+	I18N_Init();
+#endif
+
 	trap_Cvar_Set("ui_menuFiles", DEFAULT_MENU_FILE);   // we need to hardwire for wolfMP
 
 	// cache redundant calculations
@@ -9595,7 +9600,7 @@ const char *UI_TranslateString(const char *string)
 
 	buf = buffer[buffOffset++ % TRANSLATION_BUFFERS];
 
-	trap_TranslateString(string, buf);
+	Q_strncpyz(buf, I18N_TranslateMod(string), sizeof(buffer[0]));
 
 	return buf;
 }
