@@ -2205,9 +2205,10 @@ static void CG_CheckForCursorHints()
  */
 void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 {
-	float  *fadeColor;
+	float  barAlpha;
 	vec4_t bgcolor, bdcolor;
 	vec4_t c, c2;
+	vec4_t iconColor;
 	int    health, maxHealth;
 	int    clientNum, class;
 	float  x = comp->location.x, w = comp->location.w;
@@ -2227,13 +2228,16 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 		return;
 	}
 
-	// draw the name of the player being looked at
-	fadeColor = CG_FadeColor(cg.crosshairEntTime, cg_drawCrosshairFade.integer);
-
-	if (!fadeColor)
+	// Keep visibility timing from cg_crosshairBarAndTextFade, but do not fade alpha with it.
+	if (!cg.crosshairEntTime || cg_crosshairBarAndTextFade.integer <= 0 ||
+	    (cg.time - cg.crosshairEntTime) >= cg_crosshairBarAndTextFade.integer)
 	{
 		return;
 	}
+
+	barAlpha     = Com_Clamp(0.f, 1.f, cg_crosshairBarAndTextAlpha.value);
+	iconColor[0] = iconColor[1] = iconColor[2] = 1.f;
+	iconColor[3] = comp->colorMain[3] * barAlpha;
 
 	if (cg.crosshairNotLookingAtClient)
 	{
@@ -2282,7 +2286,10 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 
 		if (comp->style & CROSSHAIR_BAR_CLASS)
 		{
+			// Apply the same fixed alpha to bar icons as to the rest of the component.
+			trap_R_SetColor(iconColor);
 			CG_DrawPic(x, comp->location.y, comp->location.h, comp->location.h, cgs.media.skillPics[SkillNumForClass(class)]);
+			trap_R_SetColor(NULL);
 			x += comp->location.h;
 			w -= comp->location.h;
 		}
@@ -2296,18 +2303,22 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 			w -= CG_Text_Width_Ext_Float(s, comp->scale, 0, &cgs.media.limboFont2);
 			h  = CG_Text_Height_Ext(s, comp->scale, 0, &cgs.media.limboFont2);
 
-			CG_Text_Paint_Ext(comp->location.x + w, comp->location.y + (comp->location.h - h) * 0.5f, comp->scale, comp->scale, fadeColor, s, 0, 0, 0, &cgs.media.limboFont2);
+			CG_Text_Paint_Ext(comp->location.x + w, comp->location.y + (comp->location.h - h) * 0.5f, comp->scale, comp->scale, iconColor, s, 0, 0, 0, &cgs.media.limboFont2);
 
 			w -= comp->location.h;
 
+			trap_R_SetColor(iconColor);
 			CG_DrawPic(x + w, comp->location.y, comp->location.h, comp->location.h, cgs.media.prestigePics[0]);
+			trap_R_SetColor(NULL);
 		}
-#endif
+	#endif
 
 		if (cgs.clientinfo[clientNum].rank > 0 && (comp->style & CROSSHAIR_BAR_RANK))
 		{
 			w -= comp->location.h;
+			trap_R_SetColor(iconColor);
 			CG_DrawPic(x + w, comp->location.y, comp->location.h, comp->location.h, rankicons[cgs.clientinfo[clientNum].rank][cgs.clientinfo[clientNum].team == TEAM_AXIS ? 1 : 0][0].shader);
+			trap_R_SetColor(NULL);
 		}
 
 		// set the health
@@ -2337,22 +2348,22 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 	{
 		Vector4Copy(comp->colorMain, c);
 		CG_ColorForHealth(health, c);
-		c[3] = comp->colorMain[3] * fadeColor[3];
+		c[3] = comp->colorMain[3] * barAlpha;
 
 		style &= ~BAR_LERP_COLOR;
 	}
 	else
 	{
 		Vector4Copy(comp->colorMain, c);
-		c[3] *= fadeColor[3];
+		c[3] *= barAlpha;
 		Vector4Copy(comp->colorSecondary, c2);
-		c2[3] *= fadeColor[3];
+		c2[3] *= barAlpha;
 	}
 
 	Vector4Copy(comp->colorBackground, bgcolor);
-	bgcolor[3] *= fadeColor[3];
+	bgcolor[3] *= barAlpha;
 	Vector4Copy(comp->colorBorder, bdcolor);
-	bdcolor[3] *= fadeColor[3];
+	bdcolor[3] *= barAlpha;
 
 	if (comp->showBackGround)
 	{
@@ -2413,7 +2424,7 @@ static const char *CG_GetCrosshairNameString(hudComponent_t *comp, int clientNum
  */
 void CG_DrawCrosshairNames(hudComponent_t *comp)
 {
-	float      *color;
+	float      textAlpha;
 	vec4_t     textColor;
 	const char *s        = NULL;
 	int        clientNum = -1;
@@ -2429,13 +2440,16 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 		return;
 	}
 
-	Vector4Copy(comp->colorMain, textColor);
-	color = CG_FadeColor_Ext(cg.crosshairEntTime, cg_drawCrosshairFade.integer, textColor[3]);
-
-	if (!color)
+	// Keep visibility timing from cg_crosshairBarAndTextFade, but do not fade alpha with it.
+	if (!cg.crosshairEntTime || cg_crosshairBarAndTextFade.integer <= 0 ||
+	    (cg.time - cg.crosshairEntTime) >= cg_crosshairBarAndTextFade.integer)
 	{
 		return;
 	}
+
+	Vector4Copy(comp->colorMain, textColor);
+	textAlpha     = Com_Clamp(0.f, 1.f, cg_crosshairBarAndTextAlpha.value);
+	textColor[3] *= textAlpha;
 
 	// don't draw crosshair names in shoutcast mode
 	// shoutcasters can see tank and truck health
@@ -2492,7 +2506,6 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 
 			if (s && *s)
 			{
-				textColor[3] = color[3];
 				CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
 			}
 		}
@@ -2510,15 +2523,6 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 
 		if (BG_IsSkillAvailable(cgs.clientinfo[cg.snap->ps.clientNum].skill, SK_SIGNALS, SK_FIELDOPS_ENEMY_RECOGNITION) && cgs.clientinfo[cg.snap->ps.clientNum].cls == PC_FIELDOPS)
 		{
-			color = CG_FadeColor_Ext(cg.crosshairEntTime, cg_drawCrosshairFade.integer, textColor[3]);
-
-			if (!color)
-			{
-				return;
-			}
-
-			textColor[3] = color[3];
-
 			s = CG_TranslateString("Disguised Enemy!");
 			CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
 			return;
@@ -2535,8 +2539,6 @@ void CG_DrawCrosshairNames(hudComponent_t *comp)
 	// draw the name of the player being looked at
 	if (clientNum != -1)
 	{
-		textColor[3] = color[3];
-
 		s = CG_GetCrosshairNameString(comp, clientNum);
 		CG_DrawCompText(comp, s, textColor, comp->styleText, &cgs.media.limboFont2);
 	}
