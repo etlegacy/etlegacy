@@ -12,6 +12,10 @@
 * Removed SVG/NanoSVG suppport. Implementation was partially broken, thus discouraged
   and caused a significant increase in loading times.
 * Rasterized embed SDL splash and shrink splash image < 512 res
+* Fixed client detection on ^8cgame^9 and ^8ui^9. Using the vm arguments to detect
+  the client that the user has is not reliable as 2.60b sends garbage data to unused
+  vm arguments, which make the mod think that 2.60b client is in fact ET: Legacy
+  client, as the client version is not 0
 
 ^fAndroid
 
@@ -47,6 +51,19 @@
 * Fixed demo timeout when rewinding
 * Fixed gamestate not updating on demo rewind in some cases
 * Allowed rewinding/fast-forwarding when demo is paused
+* Added console keyboard shortcuts : 
+  * ^8Shift PgUp^9 now jumps to the top of console scrollback
+  * ^8Shift PgDn^9 now jumps back to the bottom/live console output
+  * ^8Ctrl u^9 clears the entire line
+  * ^8Ctrl w^9 and ^8CTRL y^9 console line editing (^8CTRL w^9 stops on: ^8\\^9,
+    ^8/^9, ^8_^9 and camelCase changes)
+* Sorted by alphabetica order cvar list on auto completion
+* Aligned cvar list on auto completion
+* Added coloration for commands and cvars values by default match and show current
+  value on auto completion
+* Added descriptions to cvars in console
+* Fixed divide by 0 when starting demo playback from localhost which may cause a
+  crash
 
 ^dServer
 
@@ -152,6 +169,14 @@ weapon selection until the player manually switched banks
 * Removed FPS sample rate cvar for measurement (^8cg_drawFPS^9) and hardcoding FPS
   samples to ^8MAX_FPS_FRAMES^9 (500)
 * Removed extra newline from surrender vote message
+* Reduced Omnibot pre-spawn suicide window from ^82000^9 to ^8500^9 ms. Shortening
+  the window makes bots complete the transition closer to
+immediate gameplay and reduces perceived join latency
+* Fixed ^8give ammo all^9 to also gives grenades
+* Allowed ^8vsay_team^9 for spectators
+* Adjusted XP reward gain on killing player near objective to maximum distance of
+  512u
+* Fixed players command output when player names contain carets
 
 ^fStability & Performance
 
@@ -198,6 +223,12 @@ weapon selection until the player manually switched banks
 * Lerped rifle grenades to look nicer
 * Removed smoke/blood puffs for self in first person view
 * Fixed spawnpoint drawing position on fallback path
+* Changed ^8cg_bloodDamageBlend^9 and ^8cg_atmosphericEffects^9 value to 0 by default
+  to improved new players experience
+* Prevented corpses after gibbed limbo. This preserves normal corpse creation while
+  removing the gibs-plus-indestructible-body bug for every limbo caller
+* Useed incoming damage direction for gibs so explosive gibs keep travelling with the
+  incoming blast direction
 
 ^fUI
 
@@ -307,7 +338,8 @@ weapon selection until the player manually switched banks
 * Skiped single option menus in ^8classmenu^9 menu selection
 * Displayed scroll bar in UI windows only when necessary
 * Changed chat flag icon to be displayed only on the first line starting the message
-* Added ^8dynamic ticks^9 and ^8dynamic direction^9 style option to compass component
+* Added ^8dynamic ticks^9 and ^8dynamic direction^9 style option to ^8compass^9
+  component
   * On static map :
     * Can enable ^8dynamic tick^9 and ^8dynamic direction^9
     * If dynamic ^8dynamic tick^9 is enable, ^8dynamic direction^9 is ignored
@@ -321,6 +353,10 @@ weapon selection until the player manually switched banks
 * Added ^8cg_crosshairhintsLinger ^9 and ^8cg_crosshairhintsAlpha ^9 cvars to
   customized no-shoot crosshair hint timing and opacity
 * Fixed name formatting for scores table if names contain ^8^^9 chars
+* Changed ^8popupmessages^9 weapon icons to use alternate version
+* Added ^8Color Gradient^9 style to ^8reinforcement^9 component
+* Added ^8killed by^9 message to center print
+* Reduced (slightly) ^8crosshairtext^9 default alpha
 
 * HUD Editor
   * Reworked the HUD with extra button to enable Tab customization depending of comp
@@ -344,6 +380,10 @@ weapon selection until the player manually switched banks
   * Increased Map/Player Callvote Menu height
   * Added CHANGELOG menu
   * Changed popup update appearance to be only displayed once per session
+  * Added replay browser sort toggle in ascending or descending alphabetical order
+  * Added main menu Discord link
+  * Changed to default human server browser filter to on
+  * Added replay backspace navigation
 
 * Demo UI
   * Fixed cursor timeout when interacting with demo UI
@@ -369,3 +409,18 @@ weapon selection until the player manually switched banks
   sprint + scope
 * Disabled zoom sway for binoculars
 * Allowed syringe hits to pass through deployables (satchel / dynamite / landmine)
+* Added weapon zoom by changing player fov limited to a range of ^875^9 to ^8160^9
+  via following command : 
+  * ^8+weapzoom^9
+  * ^8-weapzoom^9
+  * ^8toggleweapzoom^9
+* Added cvar to customized weapon zoom : 
+  * cg_weapzoomFov : fov used to zoom in
+  * cg_weapzoomInTimeMs : transition time when zooming in 
+  * cg_weapzoomOutTimeMs : transition time when zooming out 
+  * cg_weapzoomSensitivityScale : scale sensitivity when zoom in depending of
+    unzoomed sensitibity
+  * cg_weapzoomSensitivityOverride : when set, use this exact value instead of scaled
+    sensitivity
+  * cg_onWeapzoomStart : trigger a custom command when zooming in 
+  * cg_onWeapzoomEnd : trigger a custom command when zooming out
