@@ -4601,7 +4601,6 @@ static void FS_Startup(const char *gameName)
 		Com_Error(ERR_FATAL, "FS_Startup: fs_homepath and fs_basepath are equal - set different paths!");
 	}
 
-#ifdef FEATURE_GETTEXT
 	// only translate default mod
 	// - other mods don't support our unicode translation files
 	// - mods have own strings to translate - we avoid language mixes
@@ -4613,7 +4612,6 @@ static void FS_Startup(const char *gameName)
 	{
 		doTranslateMod = qfalse;
 	}
-#endif // FEATURE_GETTEXT
 
 #endif // ifndef DEDICATED
 

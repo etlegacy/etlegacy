@@ -1610,18 +1610,11 @@ void Com_GetHunkInfo(int *hunkused, int *hunkexpected);
 Native language support
 ==============================================================
 */
-#ifdef FEATURE_GETTEXT
-
 #define _(x) I18N_Translate(x)
 #define __(x) I18N_TranslateMod(x)
 
 void I18N_SetLanguage(const char *language);
 extern qboolean doTranslateMod;
-
-#else // FEATURE_GETTEXT
-#define _(x) x
-#define __(x) x
-#endif
 
 // auth.c
 #ifdef LEGACY_AUTH

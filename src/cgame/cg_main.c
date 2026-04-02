@@ -2200,9 +2200,7 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	MOD_CHECK_ETLEGACY(clientVersion, cg.etLegacyClient);
 
-#ifdef FEATURE_GETTEXT
 	I18N_Init();
-#endif
 
 	// get the rendering configuration from the client system
 	trap_GetGlconfig(&cgs.glconfig);

@@ -2191,14 +2191,9 @@ static ID_INLINE int Q_sscanfc(const char *str, int count, const char *fmt, ...)
 #define COM_TRAP_GETVALUE 700
 #define MOD_EXPORT_PADDING 1337
 
-#ifdef FEATURE_GETTEXT
 void I18N_Init(void);
 const char *I18N_Translate(const char *msgid);
 const char *I18N_TranslateMod(const char *msgid);
-#else
-#define I18N_Translate(x) (x)
-#define I18N_TranslateMod(x) (x)
-#endif
 
 #ifdef MODLIB
 // This is just a wrapper for getting the string noticed by xgettext

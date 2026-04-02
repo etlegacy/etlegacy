@@ -8719,9 +8719,7 @@ void UI_Init(int etLegacyClient, int clientVersion)
 	trap_PC_RemoveAllGlobalDefines();
 	UI_SetupExtensions();
 
-#ifdef FEATURE_GETTEXT
 	I18N_Init();
-#endif
 
 	trap_Cvar_Set("ui_menuFiles", DEFAULT_MENU_FILE);   // we need to hardwire for wolfMP
 

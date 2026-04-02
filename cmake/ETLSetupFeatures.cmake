@@ -127,22 +127,6 @@ if(BUILD_CLIENT)
 		target_link_libraries(renderer_libraries INTERFACE bundled_jpeg_int)
 	endif()
 
-	if(FEATURE_GETTEXT)
-		target_compile_definitions(client_libraries INTERFACE FEATURE_GETTEXT)
-		target_compile_definitions(cgame_libraries INTERFACE FEATURE_GETTEXT)
-		target_compile_definitions(ui_libraries INTERFACE FEATURE_GETTEXT)
-		target_sources(client_libraries INTERFACE
-			"${PROJECT_SOURCE_DIR}/src/qcommon/i18n.c"
-			"${PROJECT_SOURCE_DIR}/src/qcommon/i18n_findlocale.c"
-		)
-		target_sources(cgame_libraries INTERFACE
-			"${PROJECT_SOURCE_DIR}/src/qcommon/i18n.c"
-		)
-		target_sources(ui_libraries INTERFACE
-			"${PROJECT_SOURCE_DIR}/src/qcommon/i18n.c"
-		)
-	endif(FEATURE_GETTEXT)
-
 	if(FEATURE_IPV6)
 		target_compile_definitions(engine_libraries INTERFACE FEATURE_IPV6)
 	endif(FEATURE_IPV6)
@@ -212,6 +196,23 @@ if(BUILD_CLIENT)
 	if(FEATURE_PAKISOLATION)
 		target_compile_definitions(engine_libraries INTERFACE FEATURE_PAKISOLATION)
 	endif()
+endif()
+
+if(BUILD_CLIENT)
+	target_sources(client_libraries INTERFACE
+		"${PROJECT_SOURCE_DIR}/src/qcommon/i18n.c"
+		"${PROJECT_SOURCE_DIR}/src/qcommon/i18n_findlocale.c"
+	)
+endif()
+
+if(BUILD_CLIENT_MOD)
+	# Keep VM localization available for mod-only builds where BUILD_CLIENT is off.
+	target_sources(cgame_libraries INTERFACE
+		"${PROJECT_SOURCE_DIR}/src/qcommon/i18n.c"
+	)
+	target_sources(ui_libraries INTERFACE
+		"${PROJECT_SOURCE_DIR}/src/qcommon/i18n.c"
+	)
 endif()
 
 if(BUILD_CLIENT OR BUILD_SERVER)

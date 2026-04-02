@@ -33,10 +33,6 @@
  * @brief Shared ANSI C localization support for engine and client VMs.
  */
 
-#ifndef FEATURE_GETTEXT
-#error This file should only be compiled if you want i18n support
-#endif
-
 #if MODLIB
 #if CGAMEDLL
 #include "../cgame/cg_local.h"
