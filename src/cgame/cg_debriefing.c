@@ -2479,7 +2479,7 @@ void CG_Debriefing_ParseAwards(void)
 		cgs.dbAwardNames[i] = s;
 
 		len   = strlen(s);
-		size -= len;
+		size -= len + 1;
 		s    += len + 1;
 
 		// team
