@@ -602,6 +602,7 @@ qboolean CG_OwnerDrawVisible(int flags)
 void CG_DrawWeapStability(hudComponent_t *comp)
 {
 	static vec4_t goodColor = { 0, 1, 0, 0.5f }, badColor = { 1, 0, 0, 0.5f };
+	float         spread;
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -621,26 +622,30 @@ void CG_DrawWeapStability(hudComponent_t *comp)
 		return;
 	}
 
-	if (!(cg.snap->ps.aimSpreadScale))
-	{
-		return;
-	}
-
 	if (cg.renderingThirdPerson)
 	{
 		return;
 	}
 
+	if (cg.predictedPlayerState.groundEntityNum == ENTITYNUM_NONE)
+	{
+		spread = 255.0f;
+	}
+	else
+	{
+		spread = (float)cg.snap->ps.aimSpreadScale;
+	}
+
 	if (comp->barStyle & BAR_CIRCULAR)
 	{
 		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor,
-		              comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, 0.f, comp->barStyle, -1,
+		              comp->colorBackground, comp->colorBorder, spread / 255.0f, 0.f, comp->barStyle, -1,
 		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
 	}
 	else
 	{
 		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor,
-		             comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, 0.f, comp->barStyle, -1);
+		             comp->colorBackground, comp->colorBorder, spread / 255.0f, 0.f, comp->barStyle, -1);
 	}
 }
 
