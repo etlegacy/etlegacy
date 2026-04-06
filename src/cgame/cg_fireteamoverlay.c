@@ -816,7 +816,7 @@ static void CG_FTOverlay_DrawWeaponIcon(fireteamOverlay_t *fto)
 }
 
 #define FT_HEALTH_NORMAL 80
-#define FT_HEALTH_YELLOW 10
+#define FT_HEALTH_YELLOW 1
 
 static void CG_FTOverlay_DrawHealth(fireteamOverlay_t *fto, hudComponent_t *comp)
 {
@@ -1317,18 +1317,13 @@ static vec4_t * CG_FireTeamHealthColor(clientInfo_t *ci, hudComponent_t *comp)
 		return &colorYellow;
 	}
 
-	if (ci->health > 0)
-	{
-		return &colorRed;
-	}
-
 	// wounded
 	if (ci->health == 0)
 	{
 		return (cg.time % 500) > 250 ? &colorWhite : &colorRed;
 	}
 
-	// limbo (-1 health)
+	// limbo (< 0 health)
 	return &colorRed;
 }
 
