@@ -1761,14 +1761,20 @@ void G_RepairEmplacedGun(gentity_t *traceEnt, gentity_t *ent)
  * @brief G_RecoverLandmine
  * @param[in,out] traceEnt
  * @param[in,out] ent
+ *
+ * @note This incorrectly gives back the charge to the player who tries to arm the landmine,
+ * not the player who originally threw the landmine. This bug originates from etmain,
+ * and has become a feature that some players purposefully utilize, to pass charge
+ * between players. Only the stats are corrected here to take away the shot from
+ * the player who threw the mine, not the player who tried to arm it (also a bug in etmain).
  */
 void G_RecoverLandmine(gentity_t *traceEnt, gentity_t *ent)
 {
-	G_FreeEntity(traceEnt);
+	gentity_t *owner = g_entities + traceEnt->s.clientNum;
 
-	Add_Ammo(ent, WP_LANDMINE, 1, qfalse);
+	Add_Ammo(owner, WP_LANDMINE, 1, qfalse);
 
-	// give back the correct charge amount
+	// give back the correct charge amount (potentially to "wrong" player, see the note above)
 	if (BG_IsSkillAvailable(ent->client->sess.skill, SK_EXPLOSIVES_AND_CONSTRUCTION, SK_ENGINEER_STAMINA))
 	{
 		ent->client->ps.classWeaponTime -= .33f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
@@ -1777,7 +1783,12 @@ void G_RecoverLandmine(gentity_t *traceEnt, gentity_t *ent)
 	{
 		ent->client->ps.classWeaponTime -= .5f * level.engineerChargeTime[ent->client->sess.sessionTeam - 1];
 	}
-	ent->client->sess.aWeaponStats[WS_LANDMINE].atts--;
+
+	// take away a shot from the player who threw the mine (not necessarily the same player who's trying to arm it)
+	owner->client->sess.aWeaponStats[WS_LANDMINE].atts--;
+
+	// free at the very end so traceEnt stays valid for long enough
+	G_FreeEntity(traceEnt);
 }
 
 /**
