@@ -1294,7 +1294,7 @@ void CG_ForceTapOut_f(void)
  */
 static void CG_Kill_f(void)
 {
-	if (!cg.snap)
+	if (cg.demoPlayback || !cg.snap || (cg.snap->ps.pm_flags & PMF_FOLLOW))
 	{
 		return;
 	}
