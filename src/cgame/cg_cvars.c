@@ -201,6 +201,7 @@ vmCvar_t cg_refereePassword;
 vmCvar_t cg_atmosphericEffects;
 
 vmCvar_t cg_instanttapout;
+vmCvar_t cg_allowSelfKillSpawnProtection;
 
 vmCvar_t cg_debugSkills;
 
@@ -522,6 +523,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_refereePassword,                    "auth_refereePassword",                  "",            CVAR_TEMP,                    0 },
 
 	{ &cg_instanttapout,                      "cg_instanttapout",                      "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_allowSelfKillSpawnProtection,       "cg_allowSelfKillSpawnProtection",       "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_debugSkills,                        "cg_debugSkills",                        "0",           0,                            0 },
 	{ NULL,                                   "cg_etVersion",                          "",            CVAR_USERINFO | CVAR_ROM,     0 },
 #if 0

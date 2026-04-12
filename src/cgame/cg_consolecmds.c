@@ -1290,6 +1290,25 @@ void CG_ForceTapOut_f(void)
 }
 
 /**
+ * @brief Client-side handler for the /kill command.
+ */
+static void CG_Kill_f(void)
+{
+	if (!cg.snap)
+	{
+		return;
+	}
+
+	if (cgs.gamestate == GS_PLAYING && !cg_allowSelfKillSpawnProtection.integer && cg.spawnInvulnerability && cg.snap->ps.powerups[PW_INVULNERABLE] > cg.time)
+	{
+		CG_CenterPrint("You are invulnerable - ^3/kill^7 is disabled.");
+		return;
+	}
+
+	trap_SendClientCommand("kill");
+}
+
+/**
  * @brief Shows a popup message.
  */
 static void CG_CPM_f(void)
@@ -3577,6 +3596,7 @@ static consoleCommand_t commands[] =
 	{ "undoSpeaker",            CG_UndoSpeaker_f             },
 	{ "cpm",                    CG_CPM_f                     },
 	{ "forcetapout",            CG_ForceTapOut_f             },
+	{ "kill",                   CG_Kill_f                    },
 	{ "timerSet",               CG_TimerSet_f                },
 	{ "timerReset",             CG_TimerReset_f              },
 	{ "resetTimer",             CG_TimerReset_f              }, // keep ETPro compatibility
@@ -3703,7 +3723,6 @@ static const char *gameCommand[] =
 	"imwa",
 	"imws",
 	//   "invite",
-	"kill",
 	"lock",
 	"mapvote",
 #ifdef FEATURE_MULTIVIEW

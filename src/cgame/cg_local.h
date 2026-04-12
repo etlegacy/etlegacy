@@ -1353,6 +1353,7 @@ typedef struct
 	int grenLastTime;
 	int lastBeingRevivedTime;
 	int lastReviveTime;
+	qboolean spawnInvulnerability;
 
 	int switchbackWeapon;
 	int lastFiredWeapon;

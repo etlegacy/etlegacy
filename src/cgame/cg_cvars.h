@@ -206,6 +206,7 @@ extern vmCvar_t cg_debugSkills;
 
 // some optimization cvars
 extern vmCvar_t cg_instanttapout;
+extern vmCvar_t cg_allowSelfKillSpawnProtection;
 
 // demo recording cvars
 extern vmCvar_t cl_demorecording;

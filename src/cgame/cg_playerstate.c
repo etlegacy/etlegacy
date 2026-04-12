@@ -158,6 +158,7 @@ void CG_Respawn(qboolean revived)
 	cg.predictedPlayerState.weapAnim    = ((cg.predictedPlayerState.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | WEAP_IDLE1;      // reset weapon animations
 	cg.predictedPlayerState.weaponstate = WEAPON_READY;      // hmm, set this?  what to?
 	cg.predictedPlayerEntity.firedTime  = 0; // reset weapon smoke
+	cg.spawnInvulnerability             = !revived;
 
 	// display weapons available
 	cg.weaponSelectTime = cg.time;
