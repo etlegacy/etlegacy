@@ -482,7 +482,7 @@ static gentity_t *G_FindSyringeLikeHintTraceTarget(gentity_t *ent, vec3_t forwar
 	vec3_t    muzzleTrace;
 	trace_t   tr;
 	gentity_t *traceEnt;
-	if (!G_FindSyringeLikeTraceTarget(ent, forward, right, up, CH_ACTIVATE_DIST, &tr, muzzleTrace, &traceEnt))
+	if (!G_FindSyringeLikeTraceTarget(ent, forward, right, up, CH_ACTIVATE_DIST, qtrue, &tr, muzzleTrace, &traceEnt))
 	{
 		return NULL;
 	}

@@ -548,20 +548,71 @@ int G_GrantAdrenaline(gentity_t *injector, gentity_t *target, int durationMs)
  * @param[in] right
  * @param[in] up
  * @param[in] range Trace range in game units.
+ * @param[in] allowWideFallback Retry with a wide hull after a full-range miss.
  * @param[out] outTrace Final trace result for the chosen target.
  * @param[out] outMuzzleTrace Trace start point.
  * @param[out] outTarget Client target entity when found.
  * @return qtrue when a client target was found, qfalse otherwise.
  */
-qboolean G_FindSyringeLikeTraceTarget(gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, float range, trace_t *outTrace, vec3_t outMuzzleTrace, gentity_t **outTarget)
+/**
+ * @brief Run a full-range syringe/adrenaline trace while ignoring deployables.
+ * @param[in,out] ent
+ * @param[in] start
+ * @param[in] forward
+ * @param[in] range
+ * @param[in] mins Optional hull mins; NULL keeps a narrow line trace.
+ * @param[in] maxs Optional hull maxs; NULL keeps a narrow line trace.
+ * @param[out] outTrace Final trace result.
+ */
+static void G_RunSyringeLikeRangeTrace(gentity_t *ent, const vec3_t start, const vec3_t forward, float range, const vec3_t mins, const vec3_t maxs, trace_t *outTrace)
 {
 	vec3_t    end;
-	trace_t   tr;
 	gentity_t *traceEnt;
 	int       i;
 
+	VectorMA(start, range, forward, end);
+
+	G_HistoricalTraceBegin(ent);
+
+	G_TempTraceIgnorePlayersFromTeam(ent->s.teamNum == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS);
+	G_TempTraceIgnoreBodies();
+
+	for (i = 0; i < level.num_entities; ++i)
+	{
+		G_Trace(ent, outTrace, start, mins, maxs, end, ent->s.number, MASK_SHOT);
+
+		if (outTrace->fraction == 1.0f || outTrace->entityNum == ENTITYNUM_WORLD || outTrace->entityNum == ENTITYNUM_NONE)
+		{
+			break;
+		}
+
+		traceEnt = &g_entities[outTrace->entityNum];
+		if (traceEnt->s.eType == ET_MISSILE
+		    && (traceEnt->s.weapon == WP_SATCHEL
+		        || traceEnt->s.weapon == WP_DYNAMITE
+		        || traceEnt->s.weapon == WP_LANDMINE))
+		{
+			G_TempTraceIgnoreEntity(traceEnt);
+			continue;
+		}
+
+		break;
+	}
+
+	G_HistoricalTraceEnd(ent);
+	G_ResetTempTraceIgnoreEnts();
+}
+
+qboolean G_FindSyringeLikeTraceTarget(gentity_t *ent, vec3_t forward, vec3_t right, vec3_t up, float range, qboolean allowWideFallback, trace_t *outTrace, vec3_t outMuzzleTrace, gentity_t **outTarget)
+{
+	vec3_t              end;
+	trace_t             tr;
+	gentity_t           *traceEnt;
+	int                 i;
+	static const vec3_t wideFallbackMins = { -12.0f, -12.0f, -12.0f };
+	static const vec3_t wideFallbackMaxs = { 12.0f, 12.0f, 12.0f };
+
 	CalcMuzzlePointForActivate(ent, forward, right, up, outMuzzleTrace);
-	VectorMA(outMuzzleTrace, range, forward, end);
 
 	G_TempTraceIgnorePlayersFromTeam(ent->s.teamNum == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS);
 	G_TempTraceIgnoreBodies();
@@ -598,51 +649,25 @@ qboolean G_FindSyringeLikeTraceTarget(gentity_t *ent, vec3_t forward, vec3_t rig
 
 	G_ResetTempTraceIgnoreEnts();
 
-	// Run widened fallback not only on empty traces, but also when the short
-	// probe hits world geometry first.
+	/*
+	 * When the short probe finds no nearby blocker or target, run the normal
+	 * full-range line trace. Living-target injections can then retry with a
+	 * much wider hull so legacy adrenaline and syringeHealing feel forgiving.
+	 */
 	if (tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_WORLD || tr.entityNum == ENTITYNUM_NONE)
 	{
-		qboolean           foundAlt = qfalse;
-		vec3_t             mins, maxs;
-		static const float enlargeMins[3]  = { -4.0f, -4.0f, -3.0f };
-		static const float enlargeMaxs[3]  = { 4.0f, 4.0f, 0.0f };
-		static const float enlargeScale[4] = { 0.0f, 4.0f, 16.0f, 64.0f };
+		G_RunSyringeLikeRangeTrace(ent, outMuzzleTrace, forward, range, NULL, NULL, &tr);
 
-		// Retry with a wider hull to make short-range syringe traces less brittle.
-		VectorMA(outMuzzleTrace, range, forward, end);
-		G_HistoricalTraceBegin(ent);
-
-		G_TempTraceIgnorePlayersFromTeam(ent->s.teamNum == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS);
-		G_TempTraceIgnoreBodies();
-
-		for (i = 0; i < 4; ++i)
+		if ((tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_WORLD || tr.entityNum == ENTITYNUM_NONE)
+		    && allowWideFallback)
 		{
-			if (i == 0)
-			{
-				G_Trace(ent, &tr, outMuzzleTrace, NULL, NULL, end, ent->s.number, MASK_SHOT);
-			}
-			else
-			{
-				VectorMA(ent->r.mins, enlargeScale[i], enlargeMins, mins);
-				VectorMA(ent->r.maxs, enlargeScale[i], enlargeMaxs, maxs);
-				G_Trace(ent, &tr, outMuzzleTrace, mins, maxs, end, ent->s.number, MASK_SHOT);
-			}
-
-			traceEnt = &g_entities[tr.entityNum];
-			if (traceEnt->client != NULL)
-			{
-				foundAlt = qtrue;
-				break;
-			}
+			G_RunSyringeLikeRangeTrace(ent, outMuzzleTrace, forward, range, wideFallbackMins, wideFallbackMaxs, &tr);
 		}
+	}
 
-		G_HistoricalTraceEnd(ent);
-		G_ResetTempTraceIgnoreEnts();
-
-		if (!foundAlt)
-		{
-			return qfalse;
-		}
+	if (tr.fraction == 1.0f || tr.entityNum == ENTITYNUM_WORLD || tr.entityNum == ENTITYNUM_NONE)
+	{
+		return qfalse;
 	}
 
 	traceEnt = &g_entities[tr.entityNum];
@@ -671,7 +696,7 @@ static gentity_t *Weapon_Syringe_Shared(gentity_t *ent, qboolean isLegacyAdrenal
 	useActivateRangeTrace = (qboolean)(isLegacyAdrenaline || g_syringeHealing.integer == 1);
 	range                 = useActivateRangeTrace ? CH_ACTIVATE_DIST : CH_REVIVE_DIST;
 
-	if (!G_FindSyringeLikeTraceTarget(ent, forward, right, up, range, &tr, muzzleTrace, &traceEnt))
+	if (!G_FindSyringeLikeTraceTarget(ent, forward, right, up, range, useActivateRangeTrace, &tr, muzzleTrace, &traceEnt))
 	{
 		goto GIVE_BACK_AMMO;
 	}
