@@ -108,6 +108,7 @@
 * Added ^8maxpicmip^9 directive to shader option to control picmip individually
 * Added ^8///etl///^9 directive to shader option so only ETL client can parse those
   directives (ignored by 2.6b client)
+* Ensure renderer doesn't drop on image loading fail and use default one
 
 ^dMod
 
@@ -177,6 +178,7 @@ immediate gameplay and reduces perceived join latency
 * Adjusted XP reward gain on killing player near objective to maximum distance of
   512u
 * Fixed players command output when player names contain carets
+* Fixed broken weapon stat adjustment in landmine recovery 
 
 ^fStability & Performance
 
@@ -190,6 +192,7 @@ immediate gameplay and reduces perceived join latency
 * Fixed dynamite hitbox trigger detection when near TOI, which was smaller than
   vanilla and would not trigger planted state on some objective
 * Improved pliers ticking usage server side (less computation)
+* Fixed potential crash/incorrectness in awards parsing when debriefing is reached
 
 ^fAudio
 
@@ -357,6 +360,11 @@ immediate gameplay and reduces perceived join latency
 * Added ^8Color Gradient^9 style to ^8reinforcement^9 component
 * Added ^8killed by^9 message to center print
 * Reduced (slightly) ^8crosshairtext^9 default alpha
+* Added ^8iconfeed^9 HUD component tracking kills via skulls icons
+  * Added ^8cg_iconfeedStayTime^9 cvar to customize icons feed time appearance
+  * Added ^8cg_iconfeedScale^9 cvar to customize icons feed size
+* Fixed ^8weaponstability^9 component spread which was not correctly draw when being
+  off the ground
 
 * HUD Editor
   * Reworked the HUD with extra button to enable Tab customization depending of comp
