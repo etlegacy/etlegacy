@@ -605,7 +605,7 @@ gotnewcl:
 	*newcl    = temp;
 	clientNum = newcl - svs.clients;
 
-	if (!svcls.isTVGame)
+	if (!svcls.TVServer)
 	{
 		newcl->gentity            = SV_GentityNum(clientNum);
 		newcl->gentity->r.svFlags = 0; // clear client flags on new connection.
@@ -684,7 +684,7 @@ gotnewcl:
 	{
 		int clients = sv_maxclients->integer;
 
-		if (svcls.isTVGame)
+		if (svcls.TVServer)
 		{
 			clients = MAX_CLIENTS;
 		}
@@ -920,7 +920,7 @@ void SV_SendClientGameState(client_t *client)
 
 	MSG_WriteByte(&msg, svc_EOF);
 
-	if (svcls.isTVGame)
+	if (svcls.TVServer)
 	{
 		MSG_WriteLong(&msg, svclc.clientNum);
 	}

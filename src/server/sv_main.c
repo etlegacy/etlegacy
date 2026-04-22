@@ -1225,7 +1225,7 @@ void SV_PacketEvent(const netadr_t *from, msg_t *msg)
 		return;
 	}
 
-	if (svcls.isTVGame && svcls.state == CA_DISCONNECTED)
+	if (svcls.TVServer && svcls.state == CA_DISCONNECTED)
 	{
 		return;
 	}
@@ -1502,7 +1502,7 @@ static qboolean SV_CheckPaused(void)
  */
 int64_t SV_FrameMsec()
 {
-	if (svcls.isTVGame)
+	if (svcls.TVServer)
 	{
 		return 8;
 	}
@@ -1719,7 +1719,7 @@ void SV_Frame(int msec)
 		return;
 	}
 
-	if (svcls.isTVGame)
+	if (svcls.TVServer)
 	{
 		SV_CL_Frame(frameMsec);
 	}

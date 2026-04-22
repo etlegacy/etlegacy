@@ -98,7 +98,7 @@ void SV_SetConfigstring(int index, const char *val)
 	sv.configstrings[index]         = CopyString(val);
 	sv.configstringsmodified[index] = qtrue;
 
-	if (svcls.isTVGame && svcls.state != CA_LOADING &&
+	if (svcls.TVServer && svcls.state != CA_LOADING &&
 	    (index == CS_SERVERINFO || index == CS_WOLFINFO))
 	{
 		SV_CL_ConfigstringInfoChanged(index);
@@ -306,7 +306,7 @@ void SV_CreateBaseline(void)
 	sharedEntity_t *svent;
 	int            entnum;
 
-	if (svcls.isTVGame)
+	if (svcls.TVServer)
 	{
 		for (entnum = 0; entnum < MAX_GENTITIES; entnum++)
 		{
@@ -866,7 +866,7 @@ void SV_SpawnServer(const char *server)
 
 					client        = &svs.clients[i];
 					client->state = CS_ACTIVE;
-					if (!svcls.isTVGame)
+					if (!svcls.TVServer)
 					{
 						ent             = SV_GentityNum(i);
 						ent->s.number   = i;

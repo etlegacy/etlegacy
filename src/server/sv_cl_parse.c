@@ -472,7 +472,7 @@ void SV_CL_DeltaEntity(msg_t *msg, svclSnapshot_t *frame, int newnum, entityStat
 		MSG_ETTV_ReadDeltaEntityShared(msg, oldShared, stateShared);
 	}
 
-	if (svcls.isTVGame && sv.gentities)
+	if (svcls.TVServer && sv.gentities)
 	{
 		gEnt = SV_GentityNum(newnum);
 
@@ -1112,7 +1112,7 @@ void SV_CL_ParseServerMessage(msg_t *msg, int headerBytes)
 
 	SV_CL_ParseBinaryMessage(msg);
 
-	if (svcls.isTVGame)
+	if (svcls.TVServer)
 	{
 		SV_CL_RunFrame();
 	}

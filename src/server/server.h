@@ -653,7 +653,7 @@ typedef struct
 	int lastRunFrameTime;           ///< last server GAME_RUN_FRAME time
 	int lastRunFrameSysTime;        ///< last server GAME_RUN_FRAME system time
 
-	qboolean isTVGame;              ///< is it tv server
+	qboolean TVServer;              ///< is it tv server
 	qboolean isDelayed;             ///< is the master server feed delayed
 	qboolean isGamestateParsed;     ///< was the first gamestate server message parsed when the master server feed is delayed
 	qboolean firstSnap;             ///< did we parse first snapshot after new gamestate
