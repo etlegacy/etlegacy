@@ -1152,7 +1152,8 @@ typedef enum
 	TAG_BOTLIB,
 	TAG_RENDERER,
 	TAG_SMALL,
-	TAG_STATIC
+	TAG_STATIC,
+	TAG_TVSERVER
 } memtag_t;
 
 /*
@@ -1171,6 +1172,9 @@ renderer models
 temp file loading
 --- high memory ---
 */
+
+#define DEF_TVZONEMEGS   24
+#define DEF_TVZONEMEGS_S XSTRING(DEF_TVZONEMEGS)
 
 #if defined(ETLEGACY_DEBUG) && !defined(ZONE_DEBUG)
 #define ZONE_DEBUG

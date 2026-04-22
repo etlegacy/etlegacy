@@ -1128,21 +1128,12 @@ void SV_CL_ParseServerMessage(msg_t *msg, int headerBytes)
  */
 static void *SV_CL_Allocate(int size)
 {
-	void *data;
-
 	if (size > MAX_MSGLEN)
 	{
 		Com_Error(ERR_FATAL, "SV_CL_Allocate: Oversized allocation of [%d].", size);
 	}
 
-	data = Com_Allocate(size);
-
-	if (!data)
-	{
-		Com_Error(ERR_FATAL, "SV_CL_Allocate: Couldn't allocate size [%d].", size);
-	}
-
-	return data;
+	return Z_TagMalloc(size, TAG_TVSERVER);
 }
 
 /**
@@ -1151,12 +1142,7 @@ static void *SV_CL_Allocate(int size)
  */
 static serverMessageQueue_t *SV_CL_NewMessage(void)
 {
-	serverMessageQueue_t *newMessage = Com_Allocate(sizeof(serverMessageQueue_t));
-
-	if (!newMessage)
-	{
-		Com_Error(ERR_FATAL, "SV_CL_NewMessage: Couldn't allocate new message.");
-	}
+	serverMessageQueue_t *newMessage = Z_TagMalloc(sizeof(serverMessageQueue_t), TAG_TVSERVER);
 
 	Com_Memset(newMessage, 0, sizeof(serverMessageQueue_t));
 
@@ -1184,11 +1170,11 @@ static void SV_CL_FreeMessage(serverMessageQueue_t *svMsg)
 
 	for (i = 0; i < svMsg->numServerCommand; i++)
 	{
-		free(svMsg->serverCommands[i]);
+		Z_Free(svMsg->serverCommands[i]);
 	}
 
-	free(svMsg->msg.data);
-	free(svMsg);
+	Z_Free(svMsg->msg.data);
+	Z_Free(svMsg);
 }
 
 /**

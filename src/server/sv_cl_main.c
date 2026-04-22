@@ -1380,9 +1380,10 @@ void SV_CL_FlushMemory(void)
 		// clear collision map data
 		CM_ClearMap();
 
-		while (svMsgQueueHead)
+		if (svMsgQueueHead)
 		{
-			SV_CL_FreeServerMessage();
+			Z_FreeTags(TAG_TVSERVER);
+			svMsgQueueHead = svMsgQueueTail = NULL;
 		}
 	}
 	else

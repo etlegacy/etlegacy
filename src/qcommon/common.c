@@ -1025,6 +1025,8 @@ static memzone_t *mainzone;
 /// We also have a small zone for small allocations that would only
 /// fragment the main zone (think of cvar and cmd strings)
 static memzone_t *smallzone;
+/// zone for all tv server queue memory allocations
+static memzone_t *tvzone;
 
 static void Z_CheckHeap(void);
 
@@ -1052,6 +1054,21 @@ static void Z_ClearZone(memzone_t *zone, int size)
 	block->tag  = 0;        // free block
 	block->id   = ZONEID;
 	block->size = size - sizeof(memzone_t);
+}
+
+/**
+ * @brief GetZoneFromTag
+ * @param[int] tag
+ * return
+ */
+static memzone_t *GetZoneFromTag(memtag_t tag)
+{
+	switch (tag)
+	{
+	case TAG_SMALL:    return smallzone;
+	case TAG_TVSERVER: return tvzone;
+	default:           return mainzone;
+	}
 }
 
 /**
@@ -1089,14 +1106,7 @@ void Z_Free(void *ptr)
 		Com_Error(ERR_FATAL, "Z_Free: memory block wrote past end");
 	}
 
-	if (block->tag == TAG_SMALL)
-	{
-		zone = smallzone;
-	}
-	else
-	{
-		zone = mainzone;
-	}
+	zone = GetZoneFromTag(block->tag);
 
 	zone->used -= block->size;
 	// set the block to something that should cause problems
@@ -1143,14 +1153,7 @@ void Z_FreeTags(int tag)
 {
 	memzone_t *zone;
 
-	if (tag == TAG_SMALL)
-	{
-		zone = smallzone;
-	}
-	else
-	{
-		zone = mainzone;
-	}
+	zone = GetZoneFromTag(tag);
 
 	// use the rover as our pointer, because
 	// Z_Free automatically adjusts it
@@ -1196,14 +1199,7 @@ void *Z_TagMalloc(size_t size, int tag)
 		Com_Error(ERR_FATAL, "Z_TagMalloc: tried to use a 0 tag");
 	}
 
-	if (tag == TAG_SMALL)
-	{
-		zone = smallzone;
-	}
-	else
-	{
-		zone = mainzone;
-	}
+	zone = GetZoneFromTag(tag);
 
 #ifdef ZONE_DEBUG
 	allocSize = size;
@@ -1226,11 +1222,20 @@ void *Z_TagMalloc(size_t size, int tag)
 #ifdef ZONE_DEBUG
 			Z_LogHeap();
 
+			char *zoneName;
+
+			switch (tag)
+			{
+			case TAG_SMALL:    zoneName = "small"; break;
+			case TAG_TVSERVER: zoneName = "tv";    break;
+			default:           zoneName = "main";  break;
+			}
+
 			Com_Error(ERR_FATAL, "Z_Malloc: failed on allocation of %zu bytes from the %s zone: %s, line: %d (%s)",
-			          size, zone == smallzone ? "small" : "main", file, line, label);
+			          size, zoneName, file, line, label);
 #else
 			Com_Error(ERR_FATAL, "Z_Malloc: failed on allocation of %zu bytes from the %s zone",
-			          size, zone == smallzone ? "small" : "main");
+			          size, zoneName);
 #endif
 			return NULL;
 		}
@@ -1325,15 +1330,38 @@ static void Z_CheckHeap(void)
 		}
 		if ((byte *)block + block->size != (byte *)block->next)
 		{
-			Com_Error(ERR_FATAL, "Z_CheckHeap: block size does not touch the next block");
+			Com_Error(ERR_FATAL, "Z_CheckHeap: (mainzone) block size does not touch the next block");
 		}
 		if (block->next->prev != block)
 		{
-			Com_Error(ERR_FATAL, "Z_CheckHeap: next block doesn't have proper back link");
+			Com_Error(ERR_FATAL, "Z_CheckHeap: (mainzone) next block doesn't have proper back link");
 		}
 		if (!block->tag && !block->next->tag)
 		{
-			Com_Error(ERR_FATAL, "Z_CheckHeap: two consecutive free blocks");
+			Com_Error(ERR_FATAL, "Z_CheckHeap: (mainzone) two consecutive free blocks");
+		}
+	}
+
+	if (tvzone)
+	{
+		for (block = tvzone->blocklist.next; ; block = block->next)
+		{
+			if (block->next == &tvzone->blocklist)
+			{
+				break;          // all blocks have been hit
+			}
+			if ((byte *)block + block->size != (byte *)block->next)
+			{
+				Com_Error(ERR_FATAL, "Z_CheckHeap: (tvzone) block size does not touch the next block");
+			}
+			if (block->next->prev != block)
+			{
+				Com_Error(ERR_FATAL, "Z_CheckHeap: (tvzone) next block doesn't have proper back link");
+			}
+			if (!block->tag && !block->next->tag)
+			{
+				Com_Error(ERR_FATAL, "Z_CheckHeap: (tvzone) two consecutive free blocks");
+			}
 		}
 	}
 }
@@ -1406,6 +1434,7 @@ void Z_LogHeap(void)
 {
 	Z_LogZoneHeap(mainzone, "MAIN");
 	Z_LogZoneHeap(smallzone, "SMALL");
+	Z_LogZoneHeap(tvzone, "TV");
 }
 
 // static mem blocks to reduce a lot of small zone overhead
@@ -1542,6 +1571,7 @@ static int  s_hunkTotal;
 
 static int s_zoneTotal;
 static int s_smallZoneTotal;
+static int s_tvZoneTotal;
 
 /**
  * @brief Com_Meminfo_f
@@ -1552,6 +1582,7 @@ void Com_Meminfo_f(void)
 	int        zoneBytes = 0, zoneBlocks = 0;
 	int        smallZoneBytes, smallZoneBlocks;
 	int        botlibBytes = 0, rendererBytes = 0;
+	int        tvZoneBytes = 0, tvZoneBlocks = 0;
 	int        unused;
 
 	for (block = mainzone->blocklist.next ; ; block = block->next)
@@ -1609,9 +1640,32 @@ void Com_Meminfo_f(void)
 		}
 	}
 
+	if (tvzone)
+	{
+		for (block = tvzone->blocklist.next; ; block = block->next)
+		{
+			if (block->tag)
+			{
+				tvZoneBytes += block->size;
+				tvZoneBlocks++;
+			}
+
+			if (block->next == &tvzone->blocklist)
+			{
+				break;          // all blocks have been hit
+			}
+		}
+	}
+
 	Com_Printf("%9i bytes (%6.2f MB) total hunk\n", s_hunkTotal, s_hunkTotal / Square(1024.f));
 	Com_Printf("%9i bytes (%6.2f MB) total zone\n", s_zoneTotal, s_zoneTotal / Square(1024.f));
+	Com_Printf("%9i bytes (%6.2f MB) total small zone\n", s_smallZoneTotal, s_smallZoneTotal / Square(1024.f));
+	if (tvzone)
+	{
+		Com_Printf("%9i bytes (%6.2f MB) total tv zone\n", s_tvZoneTotal, s_tvZoneTotal / Square(1024.f));
+	}
 	Com_Printf("\n");
+
 	Com_Printf("%9i bytes (%6.2f MB) low mark\n", hunk_low.mark, hunk_low.mark / Square(1024.f));
 	Com_Printf("%9i bytes (%6.2f MB) low permanent\n", hunk_low.permanent, hunk_low.permanent / Square(1024.f));
 	if (hunk_low.temp != hunk_low.permanent)
@@ -1644,7 +1698,13 @@ void Com_Meminfo_f(void)
 	Com_Printf("        %9i bytes (%6.2f MB) in dynamic botlib\n", botlibBytes, botlibBytes / Square(1024.f));
 	Com_Printf("        %9i bytes (%6.2f MB) in dynamic renderer\n", rendererBytes, rendererBytes / Square(1024.f));
 	Com_Printf("        %9i bytes (%6.2f MB) in dynamic other\n", zoneBytes - (botlibBytes + rendererBytes), (zoneBytes - (botlibBytes + rendererBytes)) / Square(1024.f));
-	Com_Printf("        %9i bytes (%6.2f MB) in small Zone memory (%i) blocks\n", smallZoneBytes, smallZoneBytes / Square(1024.f), smallZoneBlocks);
+	Com_Printf("\n");
+
+	Com_Printf("%9i bytes (%6.2f MB) in small Zone memory (%i) blocks\n", smallZoneBytes, smallZoneBytes / Square(1024.f), smallZoneBlocks);
+	if (tvzone)
+	{
+		Com_Printf("%9i bytes (%6.2f MB) in tv Zone memory (%i) blocks\n", tvZoneBytes, tvZoneBytes / Square(1024.f), tvZoneBlocks);
+	}
 }
 
 /**
@@ -1687,6 +1747,25 @@ void Com_TouchMemory(void)
 		if (block->next == &mainzone->blocklist)
 		{
 			break;          // all blocks have been hit
+		}
+	}
+
+	if (tvzone)
+	{
+		for (block = tvzone->blocklist.next; ; block = block->next)
+		{
+			if (block->tag)
+			{
+				j = block->size >> 2;
+				for (i = 0; i < j; i += 64)                 // only need to touch each page
+				{
+					sum += ((int *)block)[i];
+				}
+			}
+			if (block->next == &tvzone->blocklist)
+			{
+				break;          // all blocks have been hit
+			}
 		}
 	}
 
@@ -1743,6 +1822,47 @@ void Com_InitZoneMemory(void)
 	}
 	Z_ClearZone(mainzone, s_zoneTotal);
 }
+
+#ifdef DEDICATED
+
+/**
+ * @brief Com_InitTVZoneMemory tv server queue memory zone
+ */
+void Com_InitTVZoneMemory(void)
+{
+	cvar_t *cv;
+
+	cv = Cvar_Get("sv_etltv_delay", "0", 0);
+
+	// no delay means no queue memory zone needed
+	if (!cv->integer)
+	{
+		return;
+	}
+
+	cv = Cvar_Get("sv_etltv_zoneMegs", DEF_TVZONEMEGS_S, 0);
+
+	Com_Printf("TV Zone megs: %d\n", cv->integer);
+	if (cv->integer < DEF_TVZONEMEGS)
+	{
+		Cvar_Set("sv_etltv_zoneMegs", DEF_TVZONEMEGS_S);
+		s_tvZoneTotal = 1024 * 1024 * DEF_TVZONEMEGS;
+	}
+	else
+	{
+		s_tvZoneTotal = 1024 * 1024 * cv->integer;
+	}
+
+	tvzone = calloc(s_tvZoneTotal, 1);
+	if (!tvzone)
+	{
+		Com_Error(ERR_FATAL, "TV Zone data failed to allocate %i megs", s_tvZoneTotal / (1024 * 1024));
+	}
+
+	Z_ClearZone(tvzone, s_tvZoneTotal);
+}
+
+#endif
 
 /**
  * @brief Hunk_Log
@@ -2965,6 +3085,10 @@ void Com_Init(char *commandLine)
 #endif
 	// allocate the stack based hunk allocator
 	Com_InitHunkMemory();
+
+#ifdef DEDICATED
+	Com_InitTVZoneMemory();
+#endif
 
 	// if any archived cvars are modified after this, we will trigger a writing
 	// of the config file

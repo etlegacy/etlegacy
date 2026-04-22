@@ -127,6 +127,7 @@ extern cvar_t *sv_etltv_autorecord;
 extern cvar_t *sv_etltv_autoplay;
 extern cvar_t *sv_etltv_clientname;
 extern cvar_t *sv_etltv_delay;
+extern cvar_t *sv_etltv_zoneMegs;
 extern cvar_t *sv_etltv_shownet;
 extern cvar_t *sv_etltv_queue_ms;
 extern cvar_t *sv_etltv_netblast;
