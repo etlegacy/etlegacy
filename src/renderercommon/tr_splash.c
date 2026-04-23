@@ -43,11 +43,7 @@ static qboolean LoadSplashImage(const char *name, byte *data, unsigned int size,
 {
 	if (!name && data)
 	{
-#ifdef FEATURE_RENDERER2
-		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, data, width, height, IF_NOCOMPRESSION, FT_DEFAULT, GL_CLAMP_TO_EDGE);
-#else
-		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, data, width, height, qfalse, qfalse, -1, GL_CLAMP_TO_EDGE);
-#endif
+		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, data, width, height, qfalse, qfalse, GL_CLAMP_TO_EDGE);
 	}
 	else if (name && data)
 	{
@@ -76,19 +72,11 @@ static qboolean LoadSplashImage(const char *name, byte *data, unsigned int size,
 			}
 		}
 
-#ifdef FEATURE_RENDERER2
-		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, pic, w, h, IF_NOCOMPRESSION, FT_DEFAULT, GL_CLAMP_TO_EDGE);
-#else
-		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, pic, w, h, qfalse, qfalse, -1, GL_CLAMP_TO_EDGE);
-#endif
+		splashImage = R_CreateImage(LEGACY_SPLASH_NAME, pic, w, h, qfalse, qfalse, GL_CLAMP_TO_EDGE);
 	}
 	else if (name)
 	{
-#ifdef FEATURE_RENDERER2
-		splashImage = R_FindImageFile(name, IF_NOCOMPRESSION, FT_DEFAULT, GL_CLAMP_TO_EDGE, NULL);
-#else
-		splashImage = R_FindImageFile(name, qfalse, qfalse, -1, GL_CLAMP_TO_EDGE, qfalse);
-#endif
+		splashImage = R_FindImageFile(name, qfalse, qfalse, GL_CLAMP_TO_EDGE, qfalse);
 	}
 
 	if (!splashImage)
