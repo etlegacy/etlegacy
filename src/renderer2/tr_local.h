@@ -1473,7 +1473,6 @@ typedef struct shader_s
 
 	qboolean uncompressed;
 	qboolean noPicMip;                  ///< for images that must always be full resolution
-	int maxPicMip;
 	filterType_t filterType;            ///< for console fonts, 2D elements, etc.
 	wrapType_t wrapType;
 

@@ -114,11 +114,6 @@ qboolean ParseShaderR1(char *_text)
 
 	while (1)
 	{
-		if (R_ParseEtlDirective(text, &shader.maxPicMip, shader.name, qtrue))
-		{
-			continue;
-		}
-
 		token = COM_ParseExt2(text, qtrue);
 		if (!token[0])
 		{
