@@ -5,7 +5,7 @@
 
 models/weapons2/c4_dynamite/dynomite1a
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -20,7 +20,7 @@ models/weapons2/c4_dynamite/dynomite1a
 
 models/weapons2/grenade/grenade_us
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -36,7 +36,7 @@ models/weapons2/grenade/grenade_us
 
 models/weapons2/colt/colt4
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -51,7 +51,7 @@ models/weapons2/colt/colt4
 
 models/weapons2/fg42/fg42_2
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -66,7 +66,7 @@ models/weapons2/fg42/fg42_2
 
 models/weapons2/flamethrower/flame1
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -81,7 +81,7 @@ models/weapons2/flamethrower/flame1
 
 models/weapons2/grenade/grenade
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -96,7 +96,7 @@ models/weapons2/grenade/grenade
 
 models/weapons2/knife/knife1a
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -111,7 +111,7 @@ models/weapons2/knife/knife1a
 
 models/weapons2/lightning/f_lightning
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	cull disable
 	sort additive
 	{
@@ -122,7 +122,7 @@ models/weapons2/lightning/f_lightning
 
 models/weapons2/luger/luger7
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -137,7 +137,7 @@ models/weapons2/luger/luger7
 
 models/weapons2/machinegun/f_machinegun
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	cull disable
 	nofog
 	sort additive
@@ -149,7 +149,7 @@ models/weapons2/machinegun/f_machinegun
 
 models/weapons2/mauser/mauser3
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -164,7 +164,7 @@ models/weapons2/mauser/mauser3
 
 models/weapons2/mp40/gun11
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -179,7 +179,7 @@ models/weapons2/mp40/gun11
 
 models/weapons2/rocketl/f_rocketl
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	cull disable
 	sort additive
 	{
@@ -190,7 +190,7 @@ models/weapons2/rocketl/f_rocketl
 
 models/weapons2/rocketl/panzerfast1a
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -205,7 +205,7 @@ models/weapons2/rocketl/panzerfast1a
 
 models/weapons2/rocketl/rocketl14
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	cull disable
 	sort additive
 	{
@@ -216,7 +216,7 @@ models/weapons2/rocketl/rocketl14
 
 models/weapons2/sten/sten1
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -231,7 +231,7 @@ models/weapons2/sten/sten1
 
 models/weapons2/thompson/thompson_la
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -246,7 +246,7 @@ models/weapons2/thompson/thompson_la
 
 models/weapons2/venom/venum1
 {
-	///etl/// maxpicmip 1
+	/// maxpicmip 1
 	{
 		map textures/effects/tinfx.tga
 		rgbGen lightingdiffuse
