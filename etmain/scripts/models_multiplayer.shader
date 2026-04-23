@@ -6,7 +6,7 @@
 
 models/multiplayer/satchel/radio
 {
-	/// maxpicmip 1
+
 	{
 				map textures/effects/envmap_slate_90.tga
 				rgbGen lightingdiffuse
@@ -23,7 +23,7 @@ models/multiplayer/satchel/radio
 
 models/multiplayer/satchel/satchel_allied
 {
-	/// maxpicmip 1
+
 	{
 				map textures/effects/envmap_slate.tga
 				rgbGen lightingdiffuse
@@ -38,7 +38,7 @@ models/multiplayer/satchel/satchel_allied
 
 models/multiplayer/satchel/satchel_axis
 {
-	/// maxpicmip 1
+
 	{
 				map textures/effects/envmap_slate_90.tga
 				rgbGen lightingdiffuse
@@ -55,7 +55,7 @@ models/multiplayer/satchel/satchel_axis
 
 models/multiplayer/satchel/light_ref
 {
-	/// maxpicmip 1
+
 	{
 		map textures/effects/tinfx.tga
 		rgbGen lightingdiffuse
@@ -71,7 +71,7 @@ models/multiplayer/satchel/light_ref
 
 models/multiplayer/satchel/lightgreen_off
 {
-	/// maxpicmip 1
+
 	{
 		map models/multiplayer/satchel/lightoff.tga
 		rgbgen lightingdiffuse
@@ -81,7 +81,7 @@ models/multiplayer/satchel/lightgreen_off
 
 models/multiplayer/satchel/lightgreen_off
 {
-	/// maxpicmip 1
+
 	{
 		map models/multiplayer/satchel/lightoff.tga
 		rgbgen lightingdiffuse
@@ -90,7 +90,8 @@ models/multiplayer/satchel/lightgreen_off
 
 models/multiplayer/satchel/lightgreen_on
 {
-	/// maxpicmip 1
+
+
 	{
 		map models/multiplayer/satchel/lightoff.tga
 		rgbgen lightingdiffuse
@@ -104,7 +105,7 @@ models/multiplayer/satchel/lightgreen_on
 }
 models/multiplayer/satchel/lightred_off
 {
-	/// maxpicmip 1
+
 	{
 		map models/multiplayer/satchel/lightoff.tga
 		rgbgen lightingdiffuse
@@ -113,7 +114,7 @@ models/multiplayer/satchel/lightred_off
 
 models/multiplayer/satchel/lightred_on
 {
-	/// maxpicmip 1
+
 	{
 		map models/multiplayer/satchel/lightoff.tga
 		rgbgen lightingdiffuse
@@ -128,7 +129,6 @@ models/multiplayer/satchel/lightred_on
 
 models/multiplayer/supplies/healthbox
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate_90.tga
 		rgbGen lightingdiffuse
@@ -143,7 +143,6 @@ models/multiplayer/supplies/healthbox
 
 models/multiplayer/supplies/ammobox
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate_90.tga
 		rgbGen lightingdiffuse
@@ -158,7 +157,6 @@ models/multiplayer/supplies/ammobox
 
 models/multiplayer/supplies/ammobox_2
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate_90.tga
 		rgbGen lightingdiffuse
@@ -173,7 +171,6 @@ models/multiplayer/supplies/ammobox_2
 
 models/multiplayer/smokebomb/smoke_bomb
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate_90.tga
 		rgbGen lightingdiffuse
@@ -188,7 +185,6 @@ models/multiplayer/smokebomb/smoke_bomb
 
 models/multiplayer/smokegrenade/smoke_grenade
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate_90.tga
 		rgbGen lightingdiffuse
@@ -204,7 +200,6 @@ models/multiplayer/smokegrenade/smoke_grenade
 
 models/multiplayer/landmine/landmine
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate_90.tga
 		rgbGen lightingdiffuse
@@ -219,7 +214,6 @@ models/multiplayer/landmine/landmine
 
 models/multiplayer/pliers/pliers
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate_90.tga
 		rgbGen lightingdiffuse
@@ -234,7 +228,6 @@ models/multiplayer/pliers/pliers
 
 models/multiplayer/binocs/binoculars
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -249,7 +242,6 @@ models/multiplayer/binocs/binoculars
 
 models/multiplayer/mortar/mortar_sd
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -265,7 +257,6 @@ models/multiplayer/mortar/mortar_sd
 
 models/multiplayer/mg42/s_mg42
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -282,7 +273,6 @@ models/multiplayer/mg42/s_mg42
 
 models/multiplayer/browning/handle
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -297,7 +287,6 @@ models/multiplayer/browning/handle
 
 models/multiplayer/browning/browning
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -312,7 +301,6 @@ models/multiplayer/browning/browning
 
 models/multiplayer/browning/barrel
 {
-	/// maxpicmip 1
 	cull none
 	{
 		map models/multiplayer/browning/barrel.tga
@@ -336,7 +324,6 @@ models/multiplayer/browning/barrel
 
 models/multiplayer/gold/gold
 {
-	/// maxpicmip 1
 	{
 		map models/multiplayer/gold/gold.tga
 		rgbGen lightingdiffuse
@@ -352,7 +339,6 @@ models/multiplayer/gold/gold
 
 models/multiplayer/treasure/treasure
 {
-	/// maxpicmip 1
 	cull disable
 	deformvertexes autosprite
 	sort nearest
@@ -366,7 +352,6 @@ models/multiplayer/treasure/treasure
 
 models/multiplayer/flagpole/american
 {
-	/// maxpicmip 1
 	cull disable
 //	deformVertexes wave 194 sin 0 3 0 .4
 	{
@@ -377,7 +362,6 @@ models/multiplayer/flagpole/american
 
 models/multiplayer/flagpole/american_reinforce
 {
-	/// maxpicmip 1
 	cull disable
 //	deformVertexes wave 194 sin 0 3 0 .4
 	{
@@ -388,7 +372,6 @@ models/multiplayer/flagpole/american_reinforce
 
 models/multiplayer/flagpole/disc
 {
-	/// maxpicmip 1
 	{
 		clampmap models/multiplayer/flagpole/disc.tga
 		rgbGen lightingDiffuse
@@ -399,7 +382,6 @@ models/multiplayer/flagpole/disc
 
 models/multiplayer/flagpole/flagpole
 {
-	/// maxpicmip 1
 	{
 		map models/multiplayer/flagpole/flag_clouds.tga
 		rgbGen lightingDiffuse
@@ -409,7 +391,6 @@ models/multiplayer/flagpole/flagpole
 
 models/multiplayer/flagpole/german
 {
-	/// maxpicmip 1
 	cull disable
 //	deformVertexes wave 194 sin 0 3 0 .4
 	{
@@ -420,7 +401,6 @@ models/multiplayer/flagpole/german
 
 models/multiplayer/flagpole/german_reinforce
 {
-	/// maxpicmip 1
 	cull disable
 //	deformVertexes wave 194 sin 0 3 0 .4
 	{
@@ -431,7 +411,6 @@ models/multiplayer/flagpole/german_reinforce
 
 models/multiplayer/flagpole/waypoint
 {
-	/// maxpicmip 1
 	cull disable
 	deformVertexes wave 194 sin 0 3 0 .4
 	{
@@ -442,7 +421,6 @@ models/multiplayer/flagpole/waypoint
 
 models/multiplayer/kar98/kar98silencer
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -457,7 +435,6 @@ models/multiplayer/kar98/kar98silencer
 
 models/multiplayer/kar98/mauser3
 {
-	/// maxpicmip 1
      {
           map textures/effects/envmap_slate.tga
           rgbGen lightingdiffuse
@@ -472,7 +449,6 @@ models/multiplayer/kar98/mauser3
 
 models/multiplayer/mg42/bullet
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_gold.tga
 		rgbGen identity
@@ -509,7 +485,6 @@ models/multiplayer/mine_marker/axis_marker
 
 models/multiplayer/m1_garand/m1_garand
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -524,7 +499,6 @@ models/multiplayer/m1_garand/m1_garand
 
 models/multiplayer/m1_garand/m1garandscope
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -539,7 +513,6 @@ models/multiplayer/m1_garand/m1garandscope
 
 models/multiplayer/m1_garand/m1garandsilencer
 {
-	/// maxpicmip 1
 	{
 		map textures/effects/envmap_slate.tga
 		rgbGen lightingdiffuse
@@ -554,7 +527,6 @@ models/multiplayer/m1_garand/m1garandsilencer
 
 models/multiplayer/syringe/adrenaline
 {
-	/// maxpicmip 1
 	cull disable
 	{
 		map models/multiplayer/syringe/fluid2.tga
@@ -577,7 +549,6 @@ models/multiplayer/syringe/adrenaline
 
 models/multiplayer/syringe/plunger
 {
-	/// maxpicmip 1
 	{
 		map models/multiplayer/syringe/plunger.tga
 		rgbgen lightingdiffuse
@@ -586,7 +557,6 @@ models/multiplayer/syringe/plunger
 
 models/multiplayer/syringe/syringe
 {
-	/// maxpicmip 1
 	cull disable
 	{
 		map models/multiplayer/syringe/fluid.tga
@@ -609,7 +579,6 @@ models/multiplayer/syringe/syringe
 
 models/multiplayer/syringe/100percent
 {
-	/// maxpicmip 1
 	cull disable
 	{
 		map models/multiplayer/syringe/fluid3.tga
@@ -667,3 +636,5 @@ models/multiplayer/test/axisflag
 		blendfunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
 	}
 }
+
+
