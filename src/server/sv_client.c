@@ -969,9 +969,15 @@ void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd)
 	}
 
 	// set up the entity for the client
-	ent           = SV_GentityNum(clientNum);
-	ent->s.number = clientNum;
-
+	if (svcls.TVServer)
+	{
+		ent = SV_GentityNum(svclc.clientNum);
+	}
+	else
+	{
+		ent           = SV_GentityNum(clientNum);
+		ent->s.number = clientNum;
+	}
 	// Differentiate between players and bots to properly replay gamestates
 	if (client->demoClient && strlen(client->userinfo) && strlen(Info_ValueForKey(client->userinfo, "cg_etVersion")))
 	{
