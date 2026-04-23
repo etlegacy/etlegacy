@@ -1219,9 +1219,6 @@ void *Z_TagMalloc(size_t size, int tag)
 	{
 		if (rover == start)
 		{
-#ifdef ZONE_DEBUG
-			Z_LogHeap();
-
 			char *zoneName;
 
 			switch (tag)
@@ -1230,6 +1227,9 @@ void *Z_TagMalloc(size_t size, int tag)
 			case TAG_TVSERVER: zoneName = "tv";    break;
 			default:           zoneName = "main";  break;
 			}
+
+#ifdef ZONE_DEBUG
+			Z_LogHeap();
 
 			Com_Error(ERR_FATAL, "Z_Malloc: failed on allocation of %zu bytes from the %s zone: %s, line: %d (%s)",
 			          size, zoneName, file, line, label);
