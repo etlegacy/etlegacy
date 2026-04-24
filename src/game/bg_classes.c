@@ -37,6 +37,8 @@
 
 bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 {
+	///       weapon                   skill                                        minSkillLevel    startingAmmo,startingClip
+
 	// Axis player classes
 	{
 		{
@@ -82,6 +84,7 @@ bg_playerclass_t bg_playerClasses[2][NUM_PLAYER_CLASSES] =
 			{
 				{ WP_MEDIC_SYRINGE,        SK_FIRST_AID,                                0,                         10,  1   },
 				{ WP_MEDIC_ADRENALINE,     SK_FIRST_AID,                                SK_MEDIC_ADRENALINE,       0,   1   }, // share ammo with medic syringe
+				// { WP_MEDIC_ADRENALINE2,    SK_FIRST_AID,                                SK_MEDIC_ADRENALINE,       0,   1   }, // share ammo with medic syringe
 				{ WP_MEDKIT,               SK_FIRST_AID,                                0,                         0,   1   },
 				{ WP_BINOCULARS,           SK_BATTLE_SENSE,                             SK_BATTLE_SENSE_BINOCULAR, 1,   0   },
 			},

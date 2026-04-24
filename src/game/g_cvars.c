@@ -345,6 +345,8 @@ vmCvar_t g_floodWait;
 
 vmCvar_t g_etltv_flags;
 
+vmCvar_t g_legacyAdrenaline;
+
 // Table {{{1
 
 typedef struct
@@ -666,6 +668,8 @@ cvarTable_t gameCvarTable[] =
 	{ &g_floodWait,                       "g_floodWait",                       "1000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 
 	{ &g_etltv_flags,                     "g_etltv_flags",                     "3",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
+
+	{ &g_legacyAdrenaline,                "g_legacyAdrenaline",                "1",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qtrue,  qfalse },
 };
 
 /**

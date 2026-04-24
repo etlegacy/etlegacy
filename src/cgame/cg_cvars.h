@@ -134,6 +134,7 @@ extern vmCvar_t cg_spritesFollowHeads;
 extern vmCvar_t cg_voiceSpriteTime;
 
 extern vmCvar_t cg_gameType;
+extern vmCvar_t g_legacyAdrenaline;
 extern vmCvar_t cg_bloodTime;
 extern vmCvar_t cg_skybox;
 

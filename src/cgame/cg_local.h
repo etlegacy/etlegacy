@@ -1352,7 +1352,7 @@ typedef struct
 
 	int grenLastTime;
 	int lastBeingRevivedTime;
-	int lastReviveTime;
+	int lastSyringeInjection;
 
 	int switchbackWeapon;
 	int lastFiredWeapon;
@@ -1676,6 +1676,7 @@ typedef struct
 
 	qhandle_t medicReviveShader;
 	qhandle_t medicReviveShader2;
+	qhandle_t adrenalineShader;
 	qhandle_t disguisedShader;
 	qhandle_t voiceChatShader;
 	qhandle_t voiceChatOrangeShader;

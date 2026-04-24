@@ -632,6 +632,7 @@ static const char *giveCmds[] =
 	"keys",
 	"medal",
 	"skill",
+	"adrenaline",
 	"weapon",
 	"weapons",
 };
@@ -697,7 +698,7 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	if (!validGiveCmd)
 	{
 		trap_SendServerCommand(ent - g_entities, va(
-								   "print \"usage: give [all|ammo|health|hp|keys|medal|skill|weapon(s)] [all|none|<amount>]\n"
+								   "print \"usage: give [all|ammo|health|hp|keys|medal|skill|adrenaline|weapon(s)] [all|none|<amount>]\n"
 								   "or:    give ammo clip\n"
 								   "\n\""
 								   ));
@@ -832,6 +833,30 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 		else
 		{
 			ent->health = ent->client->ps.stats[STAT_MAX_HEALTH];
+		}
+
+		if (!give_all)
+		{
+			return;
+		}
+	}
+	if (give_all || Q_stricmpn(name, "adrenaline", 10) == 0)
+	{
+		if (!ent->client->ps.powerups[PW_REDFLAG] && !ent->client->ps.powerups[PW_BLUEFLAG])
+		{
+			if (isNoneAmount)
+			{
+				ent->client->ps.powerups[PW_ADRENALINE] = 0;
+			}
+			else
+			{
+				const int adrenalineDuration = amount > 0 ? amount * 1000 : G_GetDefaultAdrenalineDuration();
+				G_GrantAdrenaline(ent, ent, adrenalineDuration);
+			}
+		}
+		else if (!give_all)
+		{
+			trap_SendServerCommand(ent - g_entities, "print \"Cannot give adrenaline while carrying an objective.\n\"");
 		}
 
 		if (!give_all)
