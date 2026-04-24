@@ -988,7 +988,7 @@ int ScanAndLoadShaderFilesR1()
 		COM_BeginParseSession(filename);
 
 		Ren_Developer("...loading '%s'\n", filename);
-		summand = ri.FS_ReadFile(filename, (void **)&buffers[i]);
+		summand       = ri.FS_ReadFile(filename, (void **)&buffers[i]);
 		bufferslen[i] = summand;
 
 		if (!buffers[i])
