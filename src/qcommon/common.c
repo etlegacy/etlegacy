@@ -1434,7 +1434,11 @@ void Z_LogHeap(void)
 {
 	Z_LogZoneHeap(mainzone, "MAIN");
 	Z_LogZoneHeap(smallzone, "SMALL");
-	Z_LogZoneHeap(tvzone, "TV");
+
+	if (tvzone)
+	{
+		Z_LogZoneHeap(tvzone, "TV");
+	}
 }
 
 // static mem blocks to reduce a lot of small zone overhead
