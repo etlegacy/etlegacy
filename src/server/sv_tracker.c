@@ -54,6 +54,15 @@ enum
 } catchBot;
 qboolean catchBotNum = 0;
 
+/**
+ * @def MAX_TRACKERS
+ * @brief Maximum number of tracker endpoints parsed from the sv_tracker cvar.
+ *
+ * @note The sv_tracker cvar value is bounded by MAX_CVAR_VALUE_STRING (256)
+ *       chars by the cvar system itself, so fitting MAX_TRACKERS entries
+ *       only works when the configured hostnames / IPs are reasonably short.
+ *       Prefer short hostnames or raw IPs when configuring many endpoints.
+ */
 #define MAX_TRACKERS 8
 
 netadr_t trackerAddrs[MAX_TRACKERS];
@@ -93,56 +102,36 @@ static void Tracker_AddAddress(const char *addr_str)
 }
 
 /**
- * @brief Parse a ';'-separated list of addresses and resolve each entry
+ * @brief Parse a whitespace-separated list of addresses and resolve each entry
  * @param[in] list Raw list from sv_tracker cvar
+ *
+ * Uses COM_ParseExt() to stay consistent with the engine's standard tokenizer
+ * used elsewhere for cvar lists. Tokens are separated by any whitespace
+ * (space, tab). Example cvar value: "tracker1.example.com:4444 tracker2.example.com:4444".
  */
 static void Tracker_ParseAddressList(const char *list)
 {
-	char     buf[1024];
-	char     *p;
-	char     *start;
-	char     *end;
-	qboolean is_end;
+	char buf[MAX_CVAR_VALUE_STRING];
+	char *p;
+	char *token;
+
+	if (!list || !*list)
+	{
+		return;
+	}
 
 	Q_strncpyz(buf, list, sizeof(buf));
-	p     = buf;
-	start = buf;
+	p = buf;
 
 	while (1)
 	{
-		if (*p != ';' && *p != '\0')
-		{
-			p++;
-			continue;
-		}
-
-		is_end = (*p == '\0');
-		*p     = '\0';
-
-		while (*start == ' ' || *start == '\t')
-		{
-			start++;
-		}
-
-		end = p - 1;
-		while (end >= start && (*end == ' ' || *end == '\t'))
-		{
-			*end = '\0';
-			end--;
-		}
-
-		if (*start)
-		{
-			Tracker_AddAddress(start);
-		}
-
-		if (is_end)
+		token = COM_ParseExt(&p, qfalse);
+		if (!token[0])
 		{
 			break;
 		}
 
-		start = p + 1;
-		p++;
+		Tracker_AddAddress(token);
 	}
 }
 
