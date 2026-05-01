@@ -960,31 +960,37 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 			perChannelColorBits = 4;
 		}
 
-#ifdef __sgi // Fix for SGIs grabbing too many bits of color
-		if (perChannelColorBits == 4)
+		// Vulkan windows don't use any SDL_GL_* attributes/context - the
+		// Vulkan device/surface/swapchain setup (triggered below via
+		// re.InitOpenGLSubSystem()) takes care of all of that instead.
+		if (!(flags & SDL_WINDOW_VULKAN))
 		{
-			perChannelColorBits = 0; /* Use minimum size for 16-bit color */
+#ifdef __sgi // Fix for SGIs grabbing too many bits of color
+			if (perChannelColorBits == 4)
+			{
+				perChannelColorBits = 0; /* Use minimum size for 16-bit color */
 
-		}
-		// Need alpha or else SGIs choose 36+ bit RGB mode
-		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
+			}
+			// Need alpha or else SGIs choose 36+ bit RGB mode
+			SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
 #endif
 
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, perChannelColorBits);
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, perChannelColorBits);
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, perChannelColorBits);
-		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, testDepthBits);
-		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, testStencilBits);
+			SDL_GL_SetAttribute(SDL_GL_RED_SIZE, perChannelColorBits);
+			SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, perChannelColorBits);
+			SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, perChannelColorBits);
+			SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, testDepthBits);
+			SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, testStencilBits);
 
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, samples ? 1 : 0);
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, samples);
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, samples ? 1 : 0);
+			SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, samples);
 
-		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+			SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-		// If not allowing software GL, demand accelerated
-		if (!r_allowSoftwareGL->integer)
-		{
-			SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+			// If not allowing software GL, demand accelerated
+			if (!r_allowSoftwareGL->integer)
+			{
+				SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+			}
 		}
 
 		main_window = SDL_CreateWindow(GlobalGameTitle, x, y, glConfig->vidWidth, glConfig->vidHeight, flags | SDL_WINDOW_SHOWN);
@@ -1020,46 +1026,49 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 
 		SDL_SetWindowIcon(main_window, icon);
 
-		if (flags & SDL_WINDOW_OPENGL && contextVersion > 0)
+		if (!(flags & SDL_WINDOW_VULKAN))
 		{
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, major);
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, minor);
-
-			switch (contextVersion)
+			if (flags & SDL_WINDOW_OPENGL && contextVersion > 0)
 			{
-			case GL_CONTEXT_COMP:
-				SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
-				break;
-			case GL_CONTEXT_CORE:
-				SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-				SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
-				break;
-			case GL_CONTEXT_ES:
-				SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-				break;
-			case GL_CONTEXT_EGL:
-				SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-				SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
-				break;
-			default:
-				break;
+				SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, major);
+				SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, minor);
+
+				switch (contextVersion)
+				{
+				case GL_CONTEXT_COMP:
+					SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+					break;
+				case GL_CONTEXT_CORE:
+					SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+					SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+					break;
+				case GL_CONTEXT_ES:
+					SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+					break;
+				case GL_CONTEXT_EGL:
+					SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+					SDL_GL_SetAttribute(SDL_GL_CONTEXT_EGL, 1);
+					break;
+				default:
+					break;
+				}
 			}
-		}
 
-		if ((SDL_glContext = SDL_GL_CreateContext(main_window)) == NULL)
-		{
-			Com_Printf("SDL_GL_CreateContext failed: %s\n", SDL_GetError());
-			continue;
-		}
+			if ((SDL_glContext = SDL_GL_CreateContext(main_window)) == NULL)
+			{
+				Com_Printf("SDL_GL_CreateContext failed: %s\n", SDL_GetError());
+				continue;
+			}
 
-		if (SDL_GL_MakeCurrent(main_window, SDL_glContext) < 0)
-		{
-			Com_Printf("SDL_GL_MakeCurrent failed: %s\n", SDL_GetError());
-		}
+			if (SDL_GL_MakeCurrent(main_window, SDL_glContext) < 0)
+			{
+				Com_Printf("SDL_GL_MakeCurrent failed: %s\n", SDL_GetError());
+			}
 
-		if (SDL_GL_SetSwapInterval(r_swapInterval->integer) == -1)
-		{
-			Com_Printf("SDL_GL_SetSwapInterval failed: %s\n", SDL_GetError());
+			if (SDL_GL_SetSwapInterval(r_swapInterval->integer) == -1)
+			{
+				Com_Printf("SDL_GL_SetSwapInterval failed: %s\n", SDL_GetError());
+			}
 		}
 
 		glConfig->colorBits   = testColorBits;
@@ -1249,16 +1258,72 @@ success:
 extern int CL_ScaledMilliseconds(void);
 #endif
 
+#ifdef FEATURE_RENDERER_VULKAN
+/**
+ * @brief Returns the list of SDL-required Vulkan instance extension names
+ * for the current window/platform (e.g. VK_KHR_surface + the platform
+ * surface extension). Called by the Vulkan renderer before vkCreateInstance.
+ * @param[out] count number of extension name strings written to names
+ * @param[out] names caller-allocated array of at least *count entries; pass
+ * names == NULL to query the required count first.
+ * @return qfalse on failure (and prints the SDL error)
+ */
+qboolean VKimp_GetInstanceExtensions(unsigned int *count, const char **names)
+{
+	if (!main_window)
+	{
+		Com_Printf("VKimp_GetInstanceExtensions: no window created yet\n");
+		return qfalse;
+	}
+
+	if (!SDL_Vulkan_GetInstanceExtensions(main_window, count, names))
+	{
+		Com_Printf("SDL_Vulkan_GetInstanceExtensions failed: %s\n", SDL_GetError());
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/**
+ * @brief Creates a VkSurfaceKHR for the main window.
+ * @param[in] instance a VkInstance
+ * @param[out] surface receives the created VkSurfaceKHR (as void* to avoid a
+ * vulkan.h include here)
+ * @return qfalse on failure (and prints the SDL error)
+ */
+qboolean VKimp_CreateSurface(void *instance, void **surface)
+{
+	if (!main_window)
+	{
+		Com_Printf("VKimp_CreateSurface: no window created yet\n");
+		return qfalse;
+	}
+
+	if (!SDL_Vulkan_CreateSurface(main_window, (SDL_vulkanInstance)instance, (SDL_vulkanSurface *)surface))
+	{
+		Com_Printf("SDL_Vulkan_CreateSurface failed: %s\n", SDL_GetError());
+		return qfalse;
+	}
+
+	return qtrue;
+}
+#endif
+
 /**
  * @brief Responsible for doing a swapbuffers
  */
 void GLimp_EndFrame(void)
 {
-	// don't flip if drawing to front buffer
-	//FIXME: remove this nonesense
-	if (Q_stricmp(Cvar_VariableString("r_drawBuffer"), "GL_FRONT") != 0)
+	// Vulkan windows present via the swapchain (vulkan/vk.c), not SDL_GL_SwapWindow
+	if (!(SDL_GetWindowFlags(main_window) & SDL_WINDOW_VULKAN))
 	{
-		SDL_GL_SwapWindow(main_window);
+		// don't flip if drawing to front buffer
+		//FIXME: remove this nonesense
+		if (Q_stricmp(Cvar_VariableString("r_drawBuffer"), "GL_FRONT") != 0)
+		{
+			SDL_GL_SwapWindow(main_window);
+		}
 	}
 
 	if (r_fullscreen->modified)

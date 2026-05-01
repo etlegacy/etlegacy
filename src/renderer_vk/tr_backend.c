@@ -851,9 +851,6 @@ void RB_SetGL2D(void)
  */
 void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty)
 {
-	int i, j;
-	int start;
-
 	if (!tr.registered)
 	{
 		return;
@@ -863,58 +860,12 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	// we definitely want to sync every frame for the cinematics
 	glFinish();
 
-	start = 0;
-	if (r_speeds->integer)
+	RE_UploadCinematic(0, 0, cols, rows, data, client, dirty);
+
+	if (!backEnd.projection2D)
 	{
-		start = ri.Milliseconds();
+		RB_SetGL2D();
 	}
-
-	if (!GL_ARB_texture_non_power_of_two)
-	{
-		// make sure rows and cols are powers of 2
-		for (i = 0; (1 << i) < cols; i++)
-		{
-		}
-		for (j = 0; (1 << j) < rows; j++)
-		{
-		}
-		if ((1 << i) != cols || (1 << j) != rows)
-		{
-			Ren_Drop("Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
-		}
-	}
-
-	GL_Bind(tr.scratchImage[client]);
-
-	// if the scratchImage isn't in the format we want, specify it as a new texture
-	if (cols != tr.scratchImage[client]->width || rows != tr.scratchImage[client]->height)
-	{
-		tr.scratchImage[client]->width  = tr.scratchImage[client]->uploadWidth = cols;
-		tr.scratchImage[client]->height = tr.scratchImage[client]->uploadHeight = rows;
-		glTexImage2D(GL_TEXTURE_2D, 0, 3, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	}
-	else
-	{
-		if (dirty)
-		{
-			// otherwise, just subimage upload it so that drivers can tell we are going to be changing
-			// it and don't try and do a texture compression
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, cols, rows, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		}
-	}
-
-	if (r_speeds->integer)
-	{
-		int end = ri.Milliseconds();
-
-		Ren_Print("glTexSubImage2D %i, %i: %i msec\n", cols, rows, end - start);
-	}
-
-	RB_SetGL2D();
 
 	glColor3f(tr.identityLight, tr.identityLight, tr.identityLight);
 
@@ -928,6 +879,9 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	glTexCoord2f(0.5f / cols, (rows - 0.5f) / rows);
 	glVertex2f(x, y + h);
 	glEnd();
+
+	// Without binding a texture the cinematic will not be displayed correctly
+	GL_Bind(tr.defaultImage);
 }
 
 /**
@@ -943,27 +897,60 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
  */
 void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int client, qboolean dirty)
 {
-	GL_Bind(tr.scratchImage[client]);
+	int     start;
+	image_t *image;
+
+	if (client < 0 || client >= (sizeof(tr.scratchImage) / sizeof(tr.scratchImage[0])))
+	{
+		Ren_Drop("RE_UploadCinematic: image offset out of range");
+	}
+
+#ifdef GL_ARB_texture_non_power_of_two
+	if (!GLEW_ARB_texture_non_power_of_two && (!Com_PowerOf2(cols) || !Com_PowerOf2(rows)))
+	{
+		Ren_Drop("Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
+	}
+#endif
+
+	if (!tr.scratchImage[client])
+	{
+		tr.scratchImage[client] = R_CreateImage(va("*scratch%i", client), data, cols, rows, qfalse, qtrue, GL_CLAMP_TO_EDGE);
+		dirty                   = qfalse;
+	}
+
+	start = 0;
+	if (r_speeds->integer)
+	{
+		start = ri.Milliseconds();
+	}
+
+	image = tr.scratchImage[client];
+
+	GL_Bind(image);
 
 	// if the scratchImage isn't in the format we want, specify it as a new texture
-	if (cols != tr.scratchImage[client]->width || rows != tr.scratchImage[client]->height)
+	if (cols != image->width || rows != image->height)
 	{
-		tr.scratchImage[client]->width  = tr.scratchImage[client]->uploadWidth = cols;
-		tr.scratchImage[client]->height = tr.scratchImage[client]->uploadHeight = rows;
-		glTexImage2D(GL_TEXTURE_2D, 0, 3, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		image->width  = image->uploadWidth = cols;
+		image->height = image->uploadHeight = rows;
+		glTexImage2D(GL_TEXTURE_2D, 0, image->internalFormat, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	}
-	else
+	else if (dirty)
 	{
-		if (dirty)
-		{
-			// otherwise, just subimage upload it so that drivers can tell we are going to be changing
-			// it and don't try and do a texture compression
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, cols, rows, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		}
+		// otherwise, just subimage upload it so that drivers can tell we are going to be changing
+		// it and don't try and do a texture compression
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, cols, rows, GL_RGBA, GL_UNSIGNED_BYTE, data);
+	}
+
+	if (r_speeds->integer)
+	{
+		int end = ri.Milliseconds();
+
+		Ren_Print("glTexSubImage2D %i, %i: %i msec\n", cols, rows, end - start);
 	}
 }
 
@@ -1311,7 +1298,6 @@ const void *RB_DrawBuffer(const void *data)
 {
 	const drawBufferCommand_t *cmd = ( const drawBufferCommand_t * ) data;
 
-	// Just skip this for now, not really an issue imho.
 	if (tr.useFBO)
 	{
 		return ( const void * ) (cmd + 1);

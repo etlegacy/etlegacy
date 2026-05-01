@@ -171,7 +171,7 @@ if(FEATURE_RENDERER2)
 endif()
 
 if(FEATURE_RENDERER_VULKAN)
-	add_library(renderer_vulkan ${REND_LIBTYPE} ${RENDERER_VULKAN_FILES} ${RENDERER_COMMON} ${RENDERER_VULKAN_SHADERS})
+	add_library(renderer_vulkan ${REND_LIBTYPE} ${RENDERER_VULKAN_FILES} ${RENDERER_COMMON} ${RENDERER_COMMON_VULKAN} ${RENDERER_VULKAN_SHADERS})
 	target_link_libraries(renderer_vulkan renderer_vulkan_libraries renderer_libraries)
 	target_compile_definitions(renderer_vulkan PRIVATE FEATURE_RENDERER_VULKAN)
 	target_compile_definitions(client_libraries INTERFACE FEATURE_RENDERER_VULKAN)

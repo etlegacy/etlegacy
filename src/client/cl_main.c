@@ -3108,6 +3108,14 @@ void CL_InitRef(void)
 	ri.GLimp_SetGamma    = GLimp_SetGamma;
 	ri.GLimp_SplashImage = GLimp_SplashImage;
 
+#ifdef FEATURE_RENDERER_VULKAN
+	ri.VKimp_GetInstanceExtensions = VKimp_GetInstanceExtensions;
+	ri.VKimp_CreateSurface         = VKimp_CreateSurface;
+#else
+	ri.VKimp_GetInstanceExtensions = NULL;
+	ri.VKimp_CreateSurface         = NULL;
+#endif
+
 	//ri.ftol = Q_ftol;
 
 	//ri.Sys_LowPhysicalMemory = Sys_LowPhysicalMemory;

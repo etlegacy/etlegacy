@@ -37,7 +37,7 @@
 
 #include "tr_types.h"
 
-#define REF_API_VERSION     10
+#define REF_API_VERSION     11
 
 #ifdef FEATURE_PNG
 #include "zlib.h"
@@ -265,6 +265,12 @@ typedef struct
 	void (*GLimp_SetGamma)(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
 
 	qboolean (*GLimp_SplashImage)(qboolean (*LoadSplashImage)(const char *name, byte *data, unsigned int size, unsigned int width, unsigned int height, uint8_t bytes));
+
+	/// Vulkan window-system integration (always present regardless of which
+	/// renderer DLL is loaded, so refimport_t's layout stays identical across
+	/// all renderers when built with RENDERER_DYNAMIC)
+	qboolean (*VKimp_GetInstanceExtensions)(unsigned int *count, const char **names);
+	qboolean (*VKimp_CreateSurface)(void *instance, void **surface);
 
 } refimport_t;
 

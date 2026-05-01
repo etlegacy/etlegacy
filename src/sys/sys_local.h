@@ -56,6 +56,11 @@ void GLimp_EndFrame(void);
 void GLimp_SetGamma(unsigned char red[256], unsigned char green[256], unsigned char blue[256]);
 qboolean GLimp_SplashImage(qboolean (*LoadSplashImage)(const char *name, byte *data, unsigned int size, unsigned int width, unsigned int height, uint8_t bytes));
 
+#ifdef FEATURE_RENDERER_VULKAN
+qboolean VKimp_GetInstanceExtensions(unsigned int *count, const char **names);
+qboolean VKimp_CreateSurface(void *instance, void **surface);
+#endif
+
 // Console
 void CON_Shutdown(void);
 void CON_Init(void);
