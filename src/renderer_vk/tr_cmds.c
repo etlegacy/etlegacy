@@ -107,7 +107,7 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 	cmdList->used = 0;
 
 	// at this point, the back end thread is idle, so it is ok
-	// to look at it's performance counters
+	// to look at its performance counters
 	if (runPerformanceCounters)
 	{
 		R_PerformanceCounters();

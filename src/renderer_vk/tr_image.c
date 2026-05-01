@@ -1040,7 +1040,7 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 			data.size = ri.FS_ReadFile(altName, &data.buffer.v);
 			if (!data.buffer.b || data.size < 0)
 			{
-				Ren_Warning("Failed to load an image (%s) with size: %i\n", data.name, data.size);
+				Ren_Developer("Failed to load an image (%s)\n", data.name);
 				continue;
 			}
 
@@ -1052,7 +1052,8 @@ void R_LoadImage(const char *name, byte **pic, int *width, int *height)
 
 			if (!loaderRet)
 			{
-				Ren_Drop("Image loader failed to parse an image %s\n", data.name);
+				Ren_Developer("Image loader failed to parse an image %s\n", data.name);
+				*pic = NULL;
 			}
 		}
 
@@ -1159,7 +1160,7 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 		tr.allowCompress = -1;
 	}
 
-	if (!GLEW_ARB_texture_non_power_of_two && (((width - 1) & width) || ((height - 1) & height)))
+	if (!GLEW_ARB_texture_non_power_of_two && (!Com_PowerOf2(width) || !Com_PowerOf2(height)))
 	{
 		Ren_Developer("WARNING: Image not power of 2 scaled: %s (%i:%i)\n", name, width, height);
 		return NULL;
@@ -1273,7 +1274,9 @@ static void R_CreateFogImage(void)
 	borderColor[2] = 1.0;
 	borderColor[3] = 1;
 
+#ifndef __EMSCRIPTEN__
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+#endif
 }
 
 #define DEFAULT_SIZE    16
@@ -1360,7 +1363,7 @@ void R_CreateBuiltinImages(void)
  */
 void R_SetColorMappings(void)
 {
-	int   i, j;
+	int   i;
 	float g;
 	int   inf;
 	int   shift;
@@ -1428,28 +1431,15 @@ void R_SetColorMappings(void)
 		}
 		else
 		{
-			inf = 255 * pow(i / 255.0, 1.0 / g) + 0.5;
+			inf = (int)(255 * pow(i / 255.0, 1.0 / g) + 0.5);
 		}
-		inf <<= shift;
-		if (inf < 0)
-		{
-			inf = 0;
-		}
-		if (inf > 255)
-		{
-			inf = 255;
-		}
-		s_gammatable[i] = inf;
+		inf           <<= shift;
+		s_gammatable[i] = ClampByte(inf);
 	}
 
 	for (i = 0 ; i < 256 ; i++)
 	{
-		j = i * r_intensity->value;
-		if (j > 255)
-		{
-			j = 255;
-		}
-		s_intensitytable[i] = j;
+		s_intensitytable[i] = ClampByte((int)(i * r_intensity->value));
 	}
 
 	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)

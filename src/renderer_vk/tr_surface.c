@@ -1872,7 +1872,9 @@ void RB_SurfaceDisplayList(srfDisplayList_t *surf)
 {
 	// all apropriate state must be set in RB_BeginSurface
 	// this isn't implemented yet...
+#ifndef __EMSCRIPTEN__
 	glCallList(surf->listNum);
+#endif
 }
 
 /**
