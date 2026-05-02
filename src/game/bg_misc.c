@@ -3492,15 +3492,15 @@ const char *eventnames[EV_MAX_EVENTS] =
 {
 	"EV_NONE",
 	"EV_FOOTSTEP",
-	"unused event",              // EV_FOOTSTEP_METAL,
-	"unused event",              // EV_FOOTSTEP_WOOD,
-	"unused event",              // EV_FOOTSTEP_GRASS,
-	"unused event",              // EV_FOOTSTEP_GRAVEL,
-	"unused event",              // EV_FOOTSTEP_ROOF,
-	"unused event",              // EV_FOOTSTEP_SNOW,
-	"unused event",              // EV_FOOTSTEP_CARPET",
+	"unused event (EV_FOOTSTEP_METAL)",  // EV_FOOTSTEP_METAL
+	"unused event (EV_FOOTSTEP_WOOD)",   // EV_FOOTSTEP_WOOD
+	"unused event (EV_FOOTSTEP_GRASS)",  // EV_FOOTSTEP_GRASS
+	"unused event (EV_FOOTSTEP_GRAVEL)", // EV_FOOTSTEP_GRAVEL
+	"unused event (EV_FOOTSTEP_ROOF)",   // EV_FOOTSTEP_ROOF
+	"unused event (EV_FOOTSTEP_SNOW)",   // EV_FOOTSTEP_SNOW
+	"unused event (EV_FOOTSTEP_CARPET)", // EV_FOOTSTEP_CARPET
 	"EV_FOOTSPLASH",
-	"unused event",              // EV_FOOTWADE,
+	"unused event (was EV_FOOTWADE)",        // EV_FOOTWADE
 	"EV_SWIM",
 	"EV_STEP_4",
 	"EV_STEP_8",
@@ -3523,7 +3523,7 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"EV_GLOBAL_ITEM_PICKUP",
 	"EV_NOAMMO",
 	"EV_WEAPONSWITCHED",
-	"unused event",              // EV_EMPTYCLIP,
+	"unused event (EV_EMPTYCLIP)",              // EV_EMPTYCLIP
 	"EV_FILL_CLIP",
 	"EV_MG42_FIXED",
 	"EV_WEAP_OVERHEAT",
@@ -3535,10 +3535,10 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"EV_NOFIRE_UNDERWATER",
 	"EV_FIRE_WEAPON_MG42",
 	"EV_FIRE_WEAPON_MOUNTEDMG42",
-	"unused event",              // EV_ITEM_RESPAWN,
-	"unused event",              // EV_ITEM_POP,
-	"unused event",              // EV_PLAYER_TELEPORT_IN,
-	"unused event",              // EV_PLAYER_TELEPORT_OUT,
+	"unused event (EV_ITEM_RESPAWN)",          // EV_ITEM_RESPAWN
+	"unused event (EV_ITEM_POP)",              // EV_ITEM_POP
+	"unused event (EV_PLAYER_TELEPORT_IN)",    // EV_PLAYER_TELEPORT_IN
+	"unused event (EV_PLAYER_TELEPORT_OUT)",   // EV_PLAYER_TELEPORT_OUT
 	"EV_GRENADE_BOUNCE",
 	"EV_GENERAL_SOUND",
 	"EV_GENERAL_SOUND_VOLUME",
@@ -3546,27 +3546,27 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"EV_GLOBAL_CLIENT_SOUND",
 	"EV_GLOBAL_TEAM_SOUND",
 	"EV_FX_SOUND",
-	"unused event",              // EV_BULLET_HIT_FLESH
-	"unused event",              // EV_BULLET_HIT_WALL
+	"unused event (EV_BULLET_HIT_FLESH)",      // EV_BULLET_HIT_FLESH
+	"unused event (EV_BULLET_HIT_WALL)",       // EV_BULLET_HIT_WALL
 	"EV_MISSILE_HIT",
 	"EV_MISSILE_MISS",
 	"EV_RAILTRAIL",
 	"EV_BULLET",
 	"EV_LOSE_HAT",
 	"EV_PAIN",
-	"unused event",              // EV_CROUCH_PAIN,
-	"unused event",              // EV_DEATH1,
-	"unused event",              // EV_DEATH2,
-	"unused event",              // EV_DEATH3,
+	"unused event (EV_CROUCH_PAIN)",          // EV_CROUCH_PAIN
+	"unused event (EV_DEATH1)",              // EV_DEATH1
+	"unused event (EV_DEATH2)",              // EV_DEATH2
+	"unused event (EV_DEATH3)",              // EV_DEATH3
 	"EV_OBITUARY",
 	"EV_STOPSTREAMINGSOUND",
-	"unused event",              // EV_POWERUP_QUAD
-	"unused event",              // EV_POWERUP_BATTLESUIT
-	"unused event",              // EV_POWERUP_REGEN
+	"unused event (EV_POWERUP_QUAD)",              // EV_POWERUP_QUAD
+	"unused event (EV_POWERUP_BATTLESUIT)",        // EV_POWERUP_BATTLESUIT
+	"unused event (EV_POWERUP_REGEN)",             // EV_POWERUP_REGEN
 	"EV_GIB_PLAYER",
-	"unused event",              // EV_DEBUG_LINE,
-	"unused event",              // EV_STOPLOOPINGSOUND
-	"unused event",              // EV_TAUNT,
+	"unused event (EV_DEBUG_LINE)",                // EV_DEBUG_LINE
+	"unused event (EV_STOPLOOPINGSOUND)",          // EV_STOPLOOPINGSOUND
+	"unused event (EV_TAUNT)",                     // EV_TAUNT
 	"EV_SMOKE",
 	"EV_SPARKS",
 	"EV_SPARKS_ELECTRIC",
@@ -3575,39 +3575,39 @@ const char *eventnames[EV_MAX_EVENTS] =
 	"EV_EFFECT",
 	"EV_MORTAREFX",
 	"EV_SPINUP",
-	"unused event",              // EV_SNOW_ON,
-	"unused event",              // EV_SNOW_OFF,
+	"unused event (EV_SNOW_ON)",              // EV_SNOW_ON
+	"unused event (EV_SNOW_OFF)",             // EV_SNOW_OFF
 	"EV_MISSILE_MISS_SMALL",
 	"EV_MISSILE_MISS_LARGE",
 	"EV_MORTAR_IMPACT",
 	"EV_MORTAR_MISS",
-	"unused event",              // EV_SPIT_HIT,
-	"unused event",              // EV_SPIT_MISS,
+	"unused event (EV_SPIT_HIT)",              // EV_SPIT_HIT
+	"unused event (EV_SPIT_MISS)",             // EV_SPIT_MISS
 	"EV_SHARD",
 	"EV_JUNK",
 	"EV_EMITTER",
 	"EV_OILPARTICLES",
 	"EV_OILSLICK",
 	"EV_OILSLICKREMOVE",
-	"unused event",              // EV_MG42EFX,
-	"unused event",              // EV_FLAKGUN1,
-	"unused event",              // EV_FLAKGUN2,
-	"unused event",              // EV_FLAKGUN3,
-	"unused event",              // EV_FLAKGUN4,
-	"unused event",              // EV_EXERT1,
-	"unused event",              // EV_EXERT2,
-	"unused event",              // EV_EXERT3,
+	"unused event (EV_MG42EFX)",             // EV_MG42EFX
+	"unused event (EV_FLAKGUN1)",            // EV_FLAKGUN1
+	"unused event (EV_FLAKGUN2)",            // EV_FLAKGUN2
+	"unused event (EV_FLAKGUN3)",            // EV_FLAKGUN3
+	"unused event (EV_FLAKGUN4)",            // EV_FLAKGUN4
+	"unused event (EV_EXERT1)",              // EV_EXERT1
+	"unused event (EV_EXERT2)",              // EV_EXERT2
+	"unused event (EV_EXERT3)",              // EV_EXERT3
 	"EV_SNOWFLURRY",
-	"unused event",              // EV_CONCUSSIVE,
+	"unused event (EV_CONCUSSIVE)",         // EV_CONCUSSIVE
 	"EV_DUST",
 	"EV_RUMBLE_EFX",
 	"EV_GUNSPARKS",
 	"EV_FLAMETHROWER_EFFECT",
-	"unused event",              // EV_POPUP,
-	"unused event",              // EV_POPUPBOOK,
-	"unused event",              // EV_GIVEPAGE,
-	"unused event",              // EV_MG42BULLET_HIT_FLESH
-	"unused event",              // EV_MG42BULLET_HIT_WALL
+	"unused event (EV_POPUP)",                  // EV_POPUP
+	"unused event (EV_POPUPBOOK)",              // EV_POPUPBOOK
+	"unused event (EV_GIVEPAGE)",               // EV_GIVEPAGE
+	"unused event (EV_MG42BULLET_HIT_FLESH)",   // EV_MG42BULLET_HIT_FLESH
+	"unused event (EV_MG42BULLET_HIT_WALL)",    // EV_MG42BULLET_HIT_WALL
 	"EV_SHAKE",
 	"EV_DISGUISE_SOUND",
 	"EV_BUILDDECAYED_SOUND",
