@@ -881,10 +881,12 @@ const char *Q_stristr(const char *s, const char *find);
 #define Q_strcpy(dest, src) strcpy(dest, src)
 
 /// buffer size safe library replacements
-void Q_strncpyz(char *dest, const char *src, size_t destsize);
+#define Q_strncpyz(dest, src, destsize) Q_strncpyz_f(dest, src, destsize, __func__, ETL_FILENAME, __LINE__)
+void Q_strncpyz_f(char *dest, const char *src, int destsize, const char *func, const char *file, int line);
 
 /// buffer size safe library replacements
-void Q_strcat(char *dest, size_t size, const char *src);
+#define Q_strcat(dest, size, src) Q_strcat_f(dest, size, src, __func__, ETL_FILENAME, __LINE__)
+void Q_strcat_f(char *dest, int size, const char *src, const char *func, const char *file, int line);
 
 /// strlen that discounts Quake color sequences
 int Q_PrintStrlen(const char *string);

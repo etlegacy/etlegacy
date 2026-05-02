@@ -1569,24 +1569,28 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args)
 
 /**
  * @brief Safe strncpy that ensures a trailing zero
- * @param[out] dest
+ * @param[in,out] dest
  * @param[in] src
  * @param[in] destsize
+ * @param[in] func
+ * @param[in] file
+ * @param[in] line
  */
-void Q_strncpyz(char *dest, const char *src, size_t destsize)
+void Q_strncpyz_f(char *dest, const char *src, int destsize,
+                  const char *func, const char *file, const int line)
 {
 	etl_assert(dest && src && destsize > 0 && dest != src);
 	if (!dest)
 	{
-		Com_Error(ERR_FATAL, "Q_strncpyz: NULL dest");
+		Com_Error(ERR_FATAL, "Q_strncpyz: NULL dest (%s, %s:%i)", func, file, line);
 	}
 	if (!src)
 	{
-		Com_Error(ERR_FATAL, "Q_strncpyz: NULL src");
+		Com_Error(ERR_FATAL, "Q_strncpyz: NULL src (%s, %s:%i)", func, file, line);
 	}
 	if (destsize < 1)
 	{
-		Com_Error(ERR_FATAL, "Q_strncpyz: destsize < 1");
+		Com_Error(ERR_FATAL, "Q_strncpyz: destsize < 1 (%s, %s:%i)", func, file, line);
 	}
 
 #if defined(__aarch64__) && defined(__GNUC__) && !defined(__clang__)
@@ -1760,14 +1764,17 @@ char *Q_strupr(char *s1)
 }
 
 /**
- * @brief Q_strcat
- * @param[out] dest
+ * @brief Safe strcat that ensures no copy overflow
+ * @param[in,out] dest
  * @param[in] size
  * @param[in] src
+ * @param[in] func
+ * @param[in] file
+ * @param[in] line
  *
  * @note Never goes past bounds or leaves without a terminating 0
  */
-void Q_strcat(char *dest, size_t size, const char *src)
+void Q_strcat_f(char *dest, int size, const char *src, const char *func, const char *file, const int line)
 {
 	size_t l1;
 	etl_assert(dest && src && size > 0 && dest != src);
@@ -1775,9 +1782,13 @@ void Q_strcat(char *dest, size_t size, const char *src)
 	l1 = strlen(dest);
 	if (l1 >= size)
 	{
-		Com_Error(ERR_FATAL, "Q_strcat: already overflowed");
+		Com_Error(ERR_FATAL, "Q_strcat: already overflowed (%s, %s:%i)", func, file, line);
 	}
-	Q_strncpyz(dest + l1, src, size - l1);
+
+	// we want to use the actual function here and pass the arguments to that,
+	// otherwise this gives no useful debug info as the func will be Q_strcat_f,
+	// which doesn't tell where this call originated from
+	Q_strncpyz_f(dest + l1, src, size - l1, func, file, line);
 }
 
 /**
