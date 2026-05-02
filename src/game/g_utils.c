@@ -958,9 +958,9 @@ gentity_t *G_TempEntity(vec3_t origin, entity_event_t event)
 		e->classname = "tempEntity";
 	}
 	else
-    {
-        e->classname = eventnames[event];
-    }
+	{
+		e->classname = eventnames[event];
+	}
 
 	e->eventTime      = level.time;
 	e->r.eventTime    = level.time;
