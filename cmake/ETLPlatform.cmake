@@ -258,9 +258,15 @@ elseif(WIN32)
 		# Should we always use this?
 		# add_definitions(-DC_ONLY)
 		add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
-	endif(MSVC)
-
-	if(MINGW)
+		
+	elseif(MINGW)
+	
+		# optimization/debug flags
+		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math")
+		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -Wall -Wextra")
+	
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffast-math")
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -Wall -Wextra")
 
 		# This is not yet supported, but most likely will happen in the future.
 		if(ENABLE_ASAN)
