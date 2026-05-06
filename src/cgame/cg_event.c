@@ -278,6 +278,13 @@ static void CG_Obituary(entityState_t *ent)
 		}
 	}
 
+	// Add the self-kill icon once per obituary event, not once per
+	// visible popupmessages stack.
+	if (attacker == target && attacker == cg.snap->ps.clientNum && mod != MOD_SUICIDE)
+	{
+		CG_Hud_IconFeed_Add(CG_HUD_ICONFEED_KILL_SELF);
+	}
+
 	for (i = 0; i < 3; ++i)
 	{
 		hudComponent_t *pmComp = (hudComponent_t *)((byte *)&CG_GetActiveHUD()->popupmessages + i * sizeof(hudComponent_t));
@@ -306,11 +313,6 @@ static void CG_Obituary(entityState_t *ent)
 		else if (attacker == target)
 		{
 			message = GetMODTableData(mod)->obituarySelfKillMessage;
-			// Suppress the self-kill iconfeed for explicit /kill suicides.
-			if (attacker == cg.snap->ps.clientNum && mod != MOD_SUICIDE)
-			{
-				CG_Hud_IconFeed_Add(CG_HUD_ICONFEED_KILL_SELF);
-			}
 		}
 
 		if (message)
