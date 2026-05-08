@@ -422,9 +422,29 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 		CG_Respawn(revived);
 
 		// saves the state of sidearm (riflegrenade weapon is considered as one too)
-		if (revived && (ops->weapon != GetWeaponTableData(ps->weapon)->weapAlts || BG_simpleWeaponState(ops->weaponstate) == WSTATE_FIRE))
+		if (revived)
 		{
-			cg.pmext.silencedSideArm = oldsilencedSideArm;
+			// in case the player was revived after alt switching, use the server selected weapon
+			if (GetWeaponTableData(ps->weapon)->weapAlts && (ops->weapon != ps->weapon))
+			{
+				if ((GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_PISTOL) && GetWeaponTableData(ps->weapon)->attributes & WEAPON_ATTRIBUT_SILENCED
+				    && !(GetWeaponTableData(ps->weapon)->attributes & WEAPON_ATTRIBUT_AKIMBO))
+				{
+					cg.pmext.silencedSideArm |= 1;
+				}
+				else if (GetWeaponTableData(ps->weapon)->type & WEAPON_TYPE_RIFLENADE)
+				{
+					cg.pmext.silencedSideArm |= 2;
+				}
+				else    // safe to use old sidearm state
+				{
+					cg.pmext.silencedSideArm = oldsilencedSideArm;
+				}
+			}
+			else
+			{
+				cg.pmext.silencedSideArm = oldsilencedSideArm;
+			}
 		}
 	}
 
