@@ -30,19 +30,18 @@
  */
 /**
  * @file renderer_vk/tr_shade.c
- * @brief Vulkan placeholder for shader/stage iteration.
+ * @brief Shader/stage iteration for the Vulkan backend.
  *
  * @note renderer1's tr_shade.c submits tessellated geometry via immediate
  * OpenGL vertex-array calls (glVertexPointer/glDrawElements/etc.), which has
- * no Vulkan equivalent and must be rewritten as a real pipeline/descriptor
- * based submission path later. For now this file only keeps
- * the bookkeeping (tess begin/end, fog iterator selection) needed by the
- * reused frontend (tr_surface.c/tr_world.c/tr_main.c/...) so the engine can
- * build its draw-surface list and run a full frame without crashing; no
- * surfaces are actually rasterized yet.
+ * no Vulkan equivalent. Currently, 2D/UI batches (backEnd.projection2D)
+ * are submitted for real via VK_Draw2D() (see vulkan/vk.c). 3D world/model
+ * surfaces still fall through RB_StageIteratorGeneric/VertexLitTexture/
+ * LightmappedMultitexture as no-ops and are rasterized separately.
  */
 
 #include "tr_local.h"
+#include "vulkan/vk.h"
 
 extern void R_Fog(glfog_t *curfog);
 
@@ -127,10 +126,29 @@ void SetIteratorFog(void)
 }
 
 /**
- * @brief No-op stage iterators (geometry rasterization isn't implemented yet).
+ * @brief for 2D/UI draws (backEnd.projection2D), submits the
+ * tessellated batch via the Vulkan UI pipeline. 3D world/model rendering
+ * isn't implemented yet, so this remains a no-op outside of
+ * the 2D path (RB_DrawSurfs/RB_RenderDrawSurfList reuse this same iterator
+ * for 3D surfaces).
  */
 void RB_StageIteratorGeneric(void)
 {
+	shaderCommands_t *input = &tess;
+	image_t          *image;
+
+	if (!backEnd.projection2D)
+	{
+		return;
+	}
+
+	image = NULL;
+	if (input->xstages && input->xstages[0])
+	{
+		image = input->xstages[0]->bundle[0].image[0];
+	}
+
+	VK_Draw2D(input, image);
 }
 
 void RB_StageIteratorVertexLitTexture(void)

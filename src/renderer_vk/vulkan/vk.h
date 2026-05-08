@@ -78,4 +78,28 @@ void VK_BeginFrame(void);
  */
 void VK_EndFrame(void);
 
+struct image_s;
+struct shaderCommands_s;
+
+/**
+ * @brief uploads a 32-bit RGBA image (one mip level only) to
+ * a new device-local Vulkan texture + descriptor set, stored on the given
+ * image_t. Returns qfalse on failure (caller should treat the image as
+ * untextured / fall back to tr.whiteImage).
+ */
+qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int width, int height, qboolean mipmap, int wrapClampMode);
+
+/**
+ * @brief Destroys the Vulkan resources created by VK_CreateImageTexture
+ * for the given image_t. Safe to call on an image that was never uploaded.
+ */
+void VK_DeleteImageTexture(struct image_s *image);
+
+/**
+ * @brief submits one already-tessellated 2D/UI shader batch
+ * (as populated by RB_StretchPic/RB_Draw2dPolys/etc. into tess) using the
+ * fixed UI pipeline, textured with the given image (tr.whiteImage if NULL).
+ */
+void VK_Draw2D(struct shaderCommands_s *input, struct image_s *image);
+
 #endif // VK_H

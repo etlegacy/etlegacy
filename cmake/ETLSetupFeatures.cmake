@@ -78,7 +78,7 @@ if(BUILD_CLIENT)
 
 	if(FEATURE_RENDERER_VULKAN)
 		# FIXME: use the vulkan sdk for now, swap to headers only at some point
-		find_package(Vulkan REQUIRED)
+		find_package(Vulkan REQUIRED COMPONENTS glslc)
 		target_link_libraries(renderer_vulkan_libraries INTERFACE Vulkan::Vulkan)
 	endif()
 

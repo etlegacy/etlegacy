@@ -43,6 +43,11 @@
 #include "../../renderercommon/tr_common.h"
 #include "../tr_local.h"
 
+// Generated (GLSL -> SPIR-V -> C header) by cmake/ETLBin2H.cmake at build
+// time; see the FEATURE_RENDERER_VULKAN block in cmake/ETLBuildRenderer.cmake.
+#include "ui.vert.glsl.h"
+#include "ui.frag.glsl.h"
+
 #define VK_MAX_SWAPCHAIN_IMAGES 8
 
 typedef struct
@@ -73,11 +78,69 @@ typedef struct
 	VkSemaphore renderFinishedSemaphore;
 	VkFence inFlightFence;
 
+	// UI/2D rendering pipeline.
+	VkDescriptorSetLayout uiDescriptorSetLayout;
+	VkPipelineLayout uiPipelineLayout;
+	VkPipeline uiPipeline;
+	VkDescriptorPool uiDescriptorPool;
+	VkSampler uiSamplerRepeat;
+	VkSampler uiSamplerClamp;
+
+	// Single-frame-in-flight "arena" vertex/index buffers for 2D draws,
+	// persistently mapped and reset at the start of every frame. Safe
+	// because there is only one command buffer/fence in flight (see
+	// VK_BeginFrame/VK_EndFrame) so the CPU never writes into memory the
+	// GPU might still be reading.
+	VkBuffer vertexArenaBuffer;
+	VkDeviceMemory vertexArenaMemory;
+	void *vertexArenaMapped;
+	VkDeviceSize vertexArenaSize;
+	VkDeviceSize vertexArenaOffset;
+
+	VkBuffer indexArenaBuffer;
+	VkDeviceMemory indexArenaMemory;
+	void *indexArenaMapped;
+	VkDeviceSize indexArenaSize;
+	VkDeviceSize indexArenaOffset;
+
+	qboolean uiPipelineBoundThisFrame;
+	qboolean uiViewportSetThisFrame;
+
+	// R_IssuePendingRenderCommands() can invoke RB_ExecuteRenderCommands()
+	// several times within a single real (presented) frame - e.g. whenever
+	// a cvar-driven state change needs to flush pending GL-compat commands
+	// - but only the final call (the one appending RC_SWAP_BUFFERS) actually
+	// swaps/presents. VK_BeginFrame()/VK_EndFrame() must therefore be
+	// idempotent across those intermediate flushes: only the first
+	// VK_BeginFrame() call of a real frame should wait/acquire/begin the
+	// command buffer, and only RB_SwapBuffers()'s VK_EndFrame() call should
+	// submit+present. Without this, an intermediate flush would leave the
+	// in-flight fence reset but never re-signaled (no matching submit),
+	// deadlocking the next VK_BeginFrame()'s vkWaitForFences() forever.
+	qboolean frameInProgress;
+
 	qboolean initialized;
 	uint32_t currentImageIndex;
 } vkContext_t;
 
 static vkContext_t vk;
+
+// vertex format fed into the UI pipeline: screen-space pixel
+// position, texture UV, and final (already colorGen/alphaGen-baked) RGBA8
+// vertex color.
+typedef struct
+{
+	float pos[2];
+	float uv[2];
+	byte color[4];
+} vkUIVertex_t;
+
+// Sized generously: a single 2D shader batch can be up to SHADER_MAX_VERTEXES
+// (10000) vertices, and a busy UI frame (console/loading text, HUD, menus)
+// can issue dozens of such batches.
+#define VK_UI_VERTEX_ARENA_SIZE (16 * 1024 * 1024)
+#define VK_UI_INDEX_ARENA_SIZE  (4 * 1024 * 1024)
+#define VK_UI_MAX_DESCRIPTOR_SETS 2048
 
 /**
  * @brief Minimal error helper: prints the VkResult and returns qfalse so
@@ -564,6 +627,409 @@ static qboolean VK_CreateCommandObjects(void)
 	return qtrue;
 }
 
+/**
+ * @brief Finds a device memory type index matching both the given
+ * memory-type bitmask (from a VkMemoryRequirements) and the requested
+ * property flags (host-visible, device-local, ...).
+ */
+static uint32_t VK_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
+{
+	VkPhysicalDeviceMemoryProperties memProperties;
+	uint32_t                         i;
+
+	vkGetPhysicalDeviceMemoryProperties(vk.physicalDevice, &memProperties);
+
+	for (i = 0; i < memProperties.memoryTypeCount; i++)
+	{
+		if ((typeFilter & (1u << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
+		{
+			return i;
+		}
+	}
+
+	Ren_Print("Vulkan: failed to find a suitable memory type\n");
+	return 0;
+}
+
+/**
+ * @brief Allocates a VkBuffer + backing VkDeviceMemory pair with the given
+ * usage/property flags.
+ */
+static qboolean VK_CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer *buffer, VkDeviceMemory *memory)
+{
+	VkBufferCreateInfo   bufferInfo;
+	VkMemoryRequirements memRequirements;
+	VkMemoryAllocateInfo allocInfo;
+
+	Com_Memset(&bufferInfo, 0, sizeof(bufferInfo));
+	bufferInfo.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	bufferInfo.size        = size;
+	bufferInfo.usage       = usage;
+	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	if (!VK_CheckResult(vkCreateBuffer(vk.device, &bufferInfo, NULL, buffer), "vkCreateBuffer"))
+	{
+		return qfalse;
+	}
+
+	vkGetBufferMemoryRequirements(vk.device, *buffer, &memRequirements);
+
+	Com_Memset(&allocInfo, 0, sizeof(allocInfo));
+	allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize  = memRequirements.size;
+	allocInfo.memoryTypeIndex = VK_FindMemoryType(memRequirements.memoryTypeBits, properties);
+
+	if (!VK_CheckResult(vkAllocateMemory(vk.device, &allocInfo, NULL, memory), "vkAllocateMemory"))
+	{
+		vkDestroyBuffer(vk.device, *buffer, NULL);
+		*buffer = VK_NULL_HANDLE;
+		return qfalse;
+	}
+
+	vkBindBufferMemory(vk.device, *buffer, *memory, 0);
+
+	return qtrue;
+}
+
+/**
+ * @brief Begins a single-use primary command buffer for one-shot transfer
+ * operations (texture upload layout transitions/copies). The caller must
+ * pair this with VK_EndOneShotCommands().
+ */
+static VkCommandBuffer VK_BeginOneShotCommands(void)
+{
+	VkCommandBufferAllocateInfo allocInfo;
+	VkCommandBufferBeginInfo    beginInfo;
+	VkCommandBuffer             commandBuffer;
+
+	Com_Memset(&allocInfo, 0, sizeof(allocInfo));
+	allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocInfo.commandPool        = vk.commandPool;
+	allocInfo.commandBufferCount = 1;
+
+	vkAllocateCommandBuffers(vk.device, &allocInfo, &commandBuffer);
+
+	Com_Memset(&beginInfo, 0, sizeof(beginInfo));
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+	vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+	return commandBuffer;
+}
+
+/**
+ * @brief Ends and submits a one-shot command buffer created with
+ * VK_BeginOneShotCommands(), waiting (vkQueueWaitIdle) for it to complete
+ * before freeing it. Synchronous and only meant for load-time texture
+ * uploads, not per-frame work.
+ */
+static void VK_EndOneShotCommands(VkCommandBuffer commandBuffer)
+{
+	VkSubmitInfo submitInfo;
+
+	vkEndCommandBuffer(commandBuffer);
+
+	Com_Memset(&submitInfo, 0, sizeof(submitInfo));
+	submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers    = &commandBuffer;
+
+	vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(vk.graphicsQueue);
+
+	vkFreeCommandBuffers(vk.device, vk.commandPool, 1, &commandBuffer);
+}
+
+/**
+ * @brief Creates the two samplers used by UI textures (one per
+ * wrap mode); shaders always sample with LINEAR filtering since real
+ * mipmaps aren't generated yet.
+ */
+static qboolean VK_CreateUISamplers(void)
+{
+	VkSamplerCreateInfo samplerInfo;
+
+	Com_Memset(&samplerInfo, 0, sizeof(samplerInfo));
+	samplerInfo.sType        = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	samplerInfo.magFilter    = VK_FILTER_LINEAR;
+	samplerInfo.minFilter    = VK_FILTER_LINEAR;
+	samplerInfo.mipmapMode   = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+	samplerInfo.maxLod       = 0.25f;
+	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+	samplerInfo.borderColor  = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+
+	if (!VK_CheckResult(vkCreateSampler(vk.device, &samplerInfo, NULL, &vk.uiSamplerRepeat), "vkCreateSampler(repeat)"))
+	{
+		return qfalse;
+	}
+
+	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+
+	if (!VK_CheckResult(vkCreateSampler(vk.device, &samplerInfo, NULL, &vk.uiSamplerClamp), "vkCreateSampler(clamp)"))
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/**
+ * @brief Creates the descriptor pool that every 2D image's descriptor set
+ * (one combined-image-sampler each) is allocated from.
+ */
+static qboolean VK_CreateUIDescriptorPool(void)
+{
+	VkDescriptorPoolSize       poolSize;
+	VkDescriptorPoolCreateInfo poolInfo;
+
+	Com_Memset(&poolSize, 0, sizeof(poolSize));
+	poolSize.type            = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	poolSize.descriptorCount = VK_UI_MAX_DESCRIPTOR_SETS;
+
+	Com_Memset(&poolInfo, 0, sizeof(poolInfo));
+	poolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	poolInfo.flags         = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+	poolInfo.poolSizeCount = 1;
+	poolInfo.pPoolSizes    = &poolSize;
+	poolInfo.maxSets       = VK_UI_MAX_DESCRIPTOR_SETS;
+
+	return VK_CheckResult(vkCreateDescriptorPool(vk.device, &poolInfo, NULL, &vk.uiDescriptorPool), "vkCreateDescriptorPool");
+}
+
+/**
+ * @brief Creates a VkShaderModule from an embedded SPIR-V byte array.
+ */
+static VkShaderModule VK_CreateShaderModule(const unsigned char *code, unsigned int size)
+{
+	VkShaderModuleCreateInfo createInfo;
+	VkShaderModule           module = VK_NULL_HANDLE;
+
+	Com_Memset(&createInfo, 0, sizeof(createInfo));
+	createInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	createInfo.codeSize = size;
+	createInfo.pCode    = (const uint32_t *)code;
+
+	VK_CheckResult(vkCreateShaderModule(vk.device, &createInfo, NULL, &module), "vkCreateShaderModule");
+
+	return module;
+}
+
+/**
+ * @brief Creates the fixed UI pipeline: one descriptor set
+ * layout (single combined-image-sampler), a push-constant (scale/offset)
+ * pipeline layout, and a graphics pipeline with dynamic viewport/scissor
+ * and the engine's standard 2D alpha-blend state baked in (matching
+ * RB_SetGL2D's hardcoded GL_State call, since every 2D draw uses it).
+ */
+static qboolean VK_CreateUIPipeline(void)
+{
+	VkDescriptorSetLayoutBinding           binding;
+	VkDescriptorSetLayoutCreateInfo        layoutInfo;
+	VkPushConstantRange                    pushConstantRange;
+	VkPipelineLayoutCreateInfo             pipelineLayoutInfo;
+	VkShaderModule                         vertModule, fragModule;
+	VkPipelineShaderStageCreateInfo        stages[2];
+	VkVertexInputBindingDescription        vertexBinding;
+	VkVertexInputAttributeDescription      vertexAttributes[3];
+	VkPipelineVertexInputStateCreateInfo   vertexInputInfo;
+	VkPipelineInputAssemblyStateCreateInfo inputAssembly;
+	VkPipelineViewportStateCreateInfo      viewportState;
+	VkPipelineRasterizationStateCreateInfo rasterizer;
+	VkPipelineMultisampleStateCreateInfo   multisampling;
+	VkPipelineColorBlendAttachmentState    colorBlendAttachment;
+	VkPipelineColorBlendStateCreateInfo    colorBlending;
+	VkDynamicState                         dynamicStates[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+	VkPipelineDynamicStateCreateInfo       dynamicState;
+	VkGraphicsPipelineCreateInfo           pipelineInfo;
+	qboolean                               ok = qtrue;
+
+	Com_Memset(&binding, 0, sizeof(binding));
+	binding.binding         = 0;
+	binding.descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	binding.descriptorCount = 1;
+	binding.stageFlags      = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	Com_Memset(&layoutInfo, 0, sizeof(layoutInfo));
+	layoutInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.bindingCount = 1;
+	layoutInfo.pBindings    = &binding;
+
+	if (!VK_CheckResult(vkCreateDescriptorSetLayout(vk.device, &layoutInfo, NULL, &vk.uiDescriptorSetLayout), "vkCreateDescriptorSetLayout"))
+	{
+		return qfalse;
+	}
+
+	Com_Memset(&pushConstantRange, 0, sizeof(pushConstantRange));
+	pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+	pushConstantRange.offset     = 0;
+	pushConstantRange.size       = sizeof(float) * 4; // vec2 scale + vec2 offset
+
+	Com_Memset(&pipelineLayoutInfo, 0, sizeof(pipelineLayoutInfo));
+	pipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	pipelineLayoutInfo.setLayoutCount         = 1;
+	pipelineLayoutInfo.pSetLayouts            = &vk.uiDescriptorSetLayout;
+	pipelineLayoutInfo.pushConstantRangeCount = 1;
+	pipelineLayoutInfo.pPushConstantRanges    = &pushConstantRange;
+
+	if (!VK_CheckResult(vkCreatePipelineLayout(vk.device, &pipelineLayoutInfo, NULL, &vk.uiPipelineLayout), "vkCreatePipelineLayout"))
+	{
+		return qfalse;
+	}
+
+	vertModule = VK_CreateShaderModule(ui_vert_spv, ui_vert_spv_SIZE);
+	fragModule = VK_CreateShaderModule(ui_frag_spv, ui_frag_spv_SIZE);
+
+	if (vertModule == VK_NULL_HANDLE || fragModule == VK_NULL_HANDLE)
+	{
+		if (vertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vertModule, NULL);
+		}
+		if (fragModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, fragModule, NULL);
+		}
+		return qfalse;
+	}
+
+	Com_Memset(stages, 0, sizeof(stages));
+	stages[0].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	stages[0].stage  = VK_SHADER_STAGE_VERTEX_BIT;
+	stages[0].module = vertModule;
+	stages[0].pName  = "main";
+	stages[1].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	stages[1].stage  = VK_SHADER_STAGE_FRAGMENT_BIT;
+	stages[1].module = fragModule;
+	stages[1].pName  = "main";
+
+	Com_Memset(&vertexBinding, 0, sizeof(vertexBinding));
+	vertexBinding.binding   = 0;
+	vertexBinding.stride    = sizeof(vkUIVertex_t);
+	vertexBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+	Com_Memset(vertexAttributes, 0, sizeof(vertexAttributes));
+	vertexAttributes[0].location = 0;
+	vertexAttributes[0].binding  = 0;
+	vertexAttributes[0].format   = VK_FORMAT_R32G32_SFLOAT;
+	vertexAttributes[0].offset   = offsetof(vkUIVertex_t, pos);
+	vertexAttributes[1].location = 1;
+	vertexAttributes[1].binding  = 0;
+	vertexAttributes[1].format   = VK_FORMAT_R32G32_SFLOAT;
+	vertexAttributes[1].offset   = offsetof(vkUIVertex_t, uv);
+	vertexAttributes[2].location = 2;
+	vertexAttributes[2].binding  = 0;
+	vertexAttributes[2].format   = VK_FORMAT_R8G8B8A8_UNORM;
+	vertexAttributes[2].offset   = offsetof(vkUIVertex_t, color);
+
+	Com_Memset(&vertexInputInfo, 0, sizeof(vertexInputInfo));
+	vertexInputInfo.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	vertexInputInfo.vertexBindingDescriptionCount   = 1;
+	vertexInputInfo.pVertexBindingDescriptions      = &vertexBinding;
+	vertexInputInfo.vertexAttributeDescriptionCount = 3;
+	vertexInputInfo.pVertexAttributeDescriptions    = vertexAttributes;
+
+	Com_Memset(&inputAssembly, 0, sizeof(inputAssembly));
+	inputAssembly.sType    = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
+	Com_Memset(&viewportState, 0, sizeof(viewportState));
+	viewportState.sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+	viewportState.viewportCount = 1;
+	viewportState.scissorCount  = 1;
+
+	Com_Memset(&rasterizer, 0, sizeof(rasterizer));
+	rasterizer.sType       = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+	rasterizer.cullMode    = VK_CULL_MODE_NONE; // RB_SetGL2D: glDisable(GL_CULL_FACE)
+	rasterizer.frontFace   = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+	rasterizer.lineWidth   = 1.0f;
+
+	Com_Memset(&multisampling, 0, sizeof(multisampling));
+	multisampling.sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+	// RB_SetGL2D: GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA)
+	Com_Memset(&colorBlendAttachment, 0, sizeof(colorBlendAttachment));
+	colorBlendAttachment.blendEnable         = VK_TRUE;
+	colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+	colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	colorBlendAttachment.colorBlendOp        = VK_BLEND_OP_ADD;
+	colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+	colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	colorBlendAttachment.alphaBlendOp        = VK_BLEND_OP_ADD;
+	colorBlendAttachment.colorWriteMask      = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+	                                           VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+
+	Com_Memset(&colorBlending, 0, sizeof(colorBlending));
+	colorBlending.sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	colorBlending.attachmentCount = 1;
+	colorBlending.pAttachments    = &colorBlendAttachment;
+
+	Com_Memset(&dynamicState, 0, sizeof(dynamicState));
+	dynamicState.sType             = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	dynamicState.dynamicStateCount = 2;
+	dynamicState.pDynamicStates    = dynamicStates;
+
+	Com_Memset(&pipelineInfo, 0, sizeof(pipelineInfo));
+	pipelineInfo.sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+	pipelineInfo.stageCount          = 2;
+	pipelineInfo.pStages             = stages;
+	pipelineInfo.pVertexInputState   = &vertexInputInfo;
+	pipelineInfo.pInputAssemblyState = &inputAssembly;
+	pipelineInfo.pViewportState      = &viewportState;
+	pipelineInfo.pRasterizationState = &rasterizer;
+	pipelineInfo.pMultisampleState   = &multisampling;
+	pipelineInfo.pColorBlendState    = &colorBlending;
+	pipelineInfo.pDynamicState       = &dynamicState;
+	pipelineInfo.layout              = vk.uiPipelineLayout;
+	pipelineInfo.renderPass          = vk.renderPass;
+	pipelineInfo.subpass             = 0;
+
+	if (!VK_CheckResult(vkCreateGraphicsPipelines(vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &vk.uiPipeline), "vkCreateGraphicsPipelines(ui)"))
+	{
+		ok = qfalse;
+	}
+
+	vkDestroyShaderModule(vk.device, vertModule, NULL);
+	vkDestroyShaderModule(vk.device, fragModule, NULL);
+
+	return ok;
+}
+
+/**
+ * @brief Creates the persistently-mapped vertex/index arena buffers used
+ * by VK_Draw2D() for every 2D draw this frame.
+ */
+static qboolean VK_CreateUIArenaBuffers(void)
+{
+	vk.vertexArenaSize = VK_UI_VERTEX_ARENA_SIZE;
+	vk.indexArenaSize  = VK_UI_INDEX_ARENA_SIZE;
+
+	if (!VK_CreateBuffer(vk.vertexArenaSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	                     &vk.vertexArenaBuffer, &vk.vertexArenaMemory))
+	{
+		return qfalse;
+	}
+	if (!VK_CreateBuffer(vk.indexArenaSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	                     &vk.indexArenaBuffer, &vk.indexArenaMemory))
+	{
+		return qfalse;
+	}
+
+	vkMapMemory(vk.device, vk.vertexArenaMemory, 0, vk.vertexArenaSize, 0, &vk.vertexArenaMapped);
+	vkMapMemory(vk.device, vk.indexArenaMemory, 0, vk.indexArenaSize, 0, &vk.indexArenaMapped);
+
+	return qtrue;
+}
+
 static void VK_DestroySwapchainObjects(void)
 {
 	uint32_t i;
@@ -661,6 +1127,15 @@ qboolean VK_Init(int width, int height)
 		return qfalse;
 	}
 
+	// UI/2D rendering pipeline + resources.
+	if (!VK_CreateUISamplers() ||
+	    !VK_CreateUIDescriptorPool() ||
+	    !VK_CreateUIPipeline() ||
+	    !VK_CreateUIArenaBuffers())
+	{
+		return qfalse;
+	}
+
 	vkGetPhysicalDeviceProperties(vk.physicalDevice, &props);
 	Q_strncpyz(glConfig.vendor_string, "Vulkan", sizeof(glConfig.vendor_string));
 	Q_strncpyz(glConfig.renderer_string, props.deviceName, sizeof(glConfig.renderer_string));
@@ -681,6 +1156,59 @@ void VK_Shutdown(void)
 	}
 
 	VK_DestroySwapchainObjects();
+
+	// UI/2D rendering resources.
+	if (vk.device != VK_NULL_HANDLE)
+	{
+		if (vk.vertexArenaMapped)
+		{
+			vkUnmapMemory(vk.device, vk.vertexArenaMemory);
+		}
+		if (vk.indexArenaMapped)
+		{
+			vkUnmapMemory(vk.device, vk.indexArenaMemory);
+		}
+		if (vk.vertexArenaBuffer != VK_NULL_HANDLE)
+		{
+			vkDestroyBuffer(vk.device, vk.vertexArenaBuffer, NULL);
+		}
+		if (vk.vertexArenaMemory != VK_NULL_HANDLE)
+		{
+			vkFreeMemory(vk.device, vk.vertexArenaMemory, NULL);
+		}
+		if (vk.indexArenaBuffer != VK_NULL_HANDLE)
+		{
+			vkDestroyBuffer(vk.device, vk.indexArenaBuffer, NULL);
+		}
+		if (vk.indexArenaMemory != VK_NULL_HANDLE)
+		{
+			vkFreeMemory(vk.device, vk.indexArenaMemory, NULL);
+		}
+		if (vk.uiPipeline != VK_NULL_HANDLE)
+		{
+			vkDestroyPipeline(vk.device, vk.uiPipeline, NULL);
+		}
+		if (vk.uiPipelineLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyPipelineLayout(vk.device, vk.uiPipelineLayout, NULL);
+		}
+		if (vk.uiDescriptorSetLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyDescriptorSetLayout(vk.device, vk.uiDescriptorSetLayout, NULL);
+		}
+		if (vk.uiDescriptorPool != VK_NULL_HANDLE)
+		{
+			vkDestroyDescriptorPool(vk.device, vk.uiDescriptorPool, NULL);
+		}
+		if (vk.uiSamplerRepeat != VK_NULL_HANDLE)
+		{
+			vkDestroySampler(vk.device, vk.uiSamplerRepeat, NULL);
+		}
+		if (vk.uiSamplerClamp != VK_NULL_HANDLE)
+		{
+			vkDestroySampler(vk.device, vk.uiSamplerClamp, NULL);
+		}
+	}
 
 	if (vk.imageAvailableSemaphore != VK_NULL_HANDLE)
 	{
@@ -725,6 +1253,23 @@ void VK_BeginFrame(void)
 		return;
 	}
 
+	// Idempotent per real frame: RB_ExecuteRenderCommands() may be invoked
+	// several times before the frame that actually swaps/presents (see the
+	// frameInProgress comment at its declaration). Only the first call
+	// should wait on the fence / acquire / begin the command buffer.
+	if (vk.frameInProgress)
+	{
+		return;
+	}
+	vk.frameInProgress = qtrue;
+
+	// reset the per-frame vertex/index arenas and UI
+	// pipeline/viewport-bound tracking before any draw calls are recorded.
+	vk.vertexArenaOffset        = 0;
+	vk.indexArenaOffset         = 0;
+	vk.uiPipelineBoundThisFrame = qfalse;
+	vk.uiViewportSetThisFrame   = qfalse;
+
 	vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX);
 	vkResetFences(vk.device, 1, &vk.inFlightFence);
 
@@ -758,10 +1303,11 @@ void VK_EndFrame(void)
 	VkPresentInfoKHR     presentInfo;
 	VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
-	if (!vk.initialized)
+	if (!vk.initialized || !vk.frameInProgress)
 	{
 		return;
 	}
+	vk.frameInProgress = qfalse;
 
 	vkCmdEndRenderPass(vk.commandBuffer);
 	vkEndCommandBuffer(vk.commandBuffer);
@@ -787,4 +1333,354 @@ void VK_EndFrame(void)
 	presentInfo.pImageIndices      = &vk.currentImageIndex;
 
 	vkQueuePresentKHR(vk.presentQueue, &presentInfo);
+}
+
+/**
+ * @brief uploads a 32-bit RGBA image to a new device-local
+ * VkImage (single mip level) via a host-visible staging buffer and a
+ * synchronous one-shot transfer command buffer, then creates its view
+ * and descriptor set (sampler picked by wrapClampMode). Stores the new
+ * handles on the image_t itself.
+ *
+ * @note scope reductions: always uploads as
+ * VK_FORMAT_R8G8B8A8_UNORM regardless of the legacy GL internalFormat
+ * selection, and only ever uploads one mip level (no runtime mipmap
+ * generation yet).
+ */
+qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int width, int height, qboolean mipmap, int wrapClampMode)
+{
+	VkDeviceSize                imageSize     = (VkDeviceSize)width * (VkDeviceSize)height * 4;
+	VkBuffer                    stagingBuffer = VK_NULL_HANDLE;
+	VkDeviceMemory              stagingMemory = VK_NULL_HANDLE;
+	void                        *mapped;
+	VkImageCreateInfo           imageInfo;
+	VkMemoryRequirements        memRequirements;
+	VkMemoryAllocateInfo        allocInfo;
+	VkImage                     vkImage       = VK_NULL_HANDLE;
+	VkDeviceMemory              vkImageMemory = VK_NULL_HANDLE;
+	VkCommandBuffer             cmd;
+	VkImageMemoryBarrier        barrier;
+	VkBufferImageCopy           region;
+	VkImageViewCreateInfo       viewInfo;
+	VkImageView                 vkImageView = VK_NULL_HANDLE;
+	VkDescriptorSetAllocateInfo dsAllocInfo;
+	VkDescriptorSet             descriptorSet = VK_NULL_HANDLE;
+	VkDescriptorImageInfo       imageDescInfo;
+	VkWriteDescriptorSet        writeSet;
+	VkSampler                   sampler;
+
+	(void)mipmap; // real mipmap generation deferred
+
+	if (!vk.initialized || !data || width <= 0 || height <= 0)
+	{
+		return qfalse;
+	}
+
+	if (!VK_CreateBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	                     &stagingBuffer, &stagingMemory))
+	{
+		return qfalse;
+	}
+
+	vkMapMemory(vk.device, stagingMemory, 0, imageSize, 0, &mapped);
+	Com_Memcpy(mapped, data, (size_t)imageSize);
+	vkUnmapMemory(vk.device, stagingMemory);
+
+	Com_Memset(&imageInfo, 0, sizeof(imageInfo));
+	imageInfo.sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	imageInfo.imageType     = VK_IMAGE_TYPE_2D;
+	imageInfo.extent.width  = (uint32_t)width;
+	imageInfo.extent.height = (uint32_t)height;
+	imageInfo.extent.depth  = 1;
+	imageInfo.mipLevels     = 1;
+	imageInfo.arrayLayers   = 1;
+	imageInfo.format        = VK_FORMAT_R8G8B8A8_UNORM;
+	imageInfo.tiling        = VK_IMAGE_TILING_OPTIMAL;
+	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	imageInfo.usage         = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+	imageInfo.samples       = VK_SAMPLE_COUNT_1_BIT;
+	imageInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
+
+	if (!VK_CheckResult(vkCreateImage(vk.device, &imageInfo, NULL, &vkImage), "vkCreateImage"))
+	{
+		vkDestroyBuffer(vk.device, stagingBuffer, NULL);
+		vkFreeMemory(vk.device, stagingMemory, NULL);
+		return qfalse;
+	}
+
+	vkGetImageMemoryRequirements(vk.device, vkImage, &memRequirements);
+
+	Com_Memset(&allocInfo, 0, sizeof(allocInfo));
+	allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize  = memRequirements.size;
+	allocInfo.memoryTypeIndex = VK_FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+	if (!VK_CheckResult(vkAllocateMemory(vk.device, &allocInfo, NULL, &vkImageMemory), "vkAllocateMemory(image)"))
+	{
+		vkDestroyImage(vk.device, vkImage, NULL);
+		vkDestroyBuffer(vk.device, stagingBuffer, NULL);
+		vkFreeMemory(vk.device, stagingMemory, NULL);
+		return qfalse;
+	}
+
+	vkBindImageMemory(vk.device, vkImage, vkImageMemory, 0);
+
+	cmd = VK_BeginOneShotCommands();
+
+	Com_Memset(&barrier, 0, sizeof(barrier));
+	barrier.sType                       = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barrier.oldLayout                   = VK_IMAGE_LAYOUT_UNDEFINED;
+	barrier.newLayout                   = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	barrier.srcQueueFamilyIndex         = VK_QUEUE_FAMILY_IGNORED;
+	barrier.dstQueueFamilyIndex         = VK_QUEUE_FAMILY_IGNORED;
+	barrier.image                       = vkImage;
+	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	barrier.subresourceRange.levelCount = 1;
+	barrier.subresourceRange.layerCount = 1;
+	barrier.srcAccessMask               = 0;
+	barrier.dstAccessMask               = VK_ACCESS_TRANSFER_WRITE_BIT;
+
+	vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
+	                     0, 0, NULL, 0, NULL, 1, &barrier);
+
+	Com_Memset(&region, 0, sizeof(region));
+	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	region.imageSubresource.layerCount = 1;
+	region.imageExtent.width           = (uint32_t)width;
+	region.imageExtent.height          = (uint32_t)height;
+	region.imageExtent.depth           = 1;
+
+	vkCmdCopyBufferToImage(cmd, stagingBuffer, vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+	barrier.oldLayout     = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	barrier.newLayout     = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+	barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+	vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+	                     0, 0, NULL, 0, NULL, 1, &barrier);
+
+	VK_EndOneShotCommands(cmd);
+
+	vkDestroyBuffer(vk.device, stagingBuffer, NULL);
+	vkFreeMemory(vk.device, stagingMemory, NULL);
+
+	Com_Memset(&viewInfo, 0, sizeof(viewInfo));
+	viewInfo.sType                       = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	viewInfo.image                       = vkImage;
+	viewInfo.viewType                    = VK_IMAGE_VIEW_TYPE_2D;
+	viewInfo.format                      = VK_FORMAT_R8G8B8A8_UNORM;
+	viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	viewInfo.subresourceRange.levelCount = 1;
+	viewInfo.subresourceRange.layerCount = 1;
+
+	if (!VK_CheckResult(vkCreateImageView(vk.device, &viewInfo, NULL, &vkImageView), "vkCreateImageView"))
+	{
+		vkDestroyImage(vk.device, vkImage, NULL);
+		vkFreeMemory(vk.device, vkImageMemory, NULL);
+		return qfalse;
+	}
+
+	sampler = (wrapClampMode == GL_REPEAT) ? vk.uiSamplerRepeat : vk.uiSamplerClamp;
+
+	Com_Memset(&dsAllocInfo, 0, sizeof(dsAllocInfo));
+	dsAllocInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	dsAllocInfo.descriptorPool     = vk.uiDescriptorPool;
+	dsAllocInfo.descriptorSetCount = 1;
+	dsAllocInfo.pSetLayouts        = &vk.uiDescriptorSetLayout;
+
+	if (!VK_CheckResult(vkAllocateDescriptorSets(vk.device, &dsAllocInfo, &descriptorSet), "vkAllocateDescriptorSets"))
+	{
+		vkDestroyImageView(vk.device, vkImageView, NULL);
+		vkDestroyImage(vk.device, vkImage, NULL);
+		vkFreeMemory(vk.device, vkImageMemory, NULL);
+		return qfalse;
+	}
+
+	Com_Memset(&imageDescInfo, 0, sizeof(imageDescInfo));
+	imageDescInfo.sampler     = sampler;
+	imageDescInfo.imageView   = vkImageView;
+	imageDescInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+	Com_Memset(&writeSet, 0, sizeof(writeSet));
+	writeSet.sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	writeSet.dstSet          = descriptorSet;
+	writeSet.dstBinding      = 0;
+	writeSet.descriptorCount = 1;
+	writeSet.descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	writeSet.pImageInfo      = &imageDescInfo;
+
+	vkUpdateDescriptorSets(vk.device, 1, &writeSet, 0, NULL);
+
+	image->vkImage         = (void *)vkImage;
+	image->vkImageMemory   = (void *)vkImageMemory;
+	image->vkImageView     = (void *)vkImageView;
+	image->vkSampler       = (void *)sampler; // not owned here: one of the two shared samplers
+	image->vkDescriptorSet = (void *)descriptorSet;
+
+	return qtrue;
+}
+
+/**
+ * @brief Tears down the Vulkan resources owned by an image_t (created by
+ * VK_CreateImageTexture); safe to call on an image that was never uploaded.
+ * Synchronous (vkDeviceWaitIdle) since texture purges happen outside the
+ * per-frame hot path.
+ */
+void VK_DeleteImageTexture(struct image_s *image)
+{
+	if (!image || !vk.initialized || vk.device == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	if (!image->vkImage && !image->vkImageView && !image->vkDescriptorSet && !image->vkImageMemory)
+	{
+		return;
+	}
+
+	vkDeviceWaitIdle(vk.device);
+
+	if (image->vkDescriptorSet)
+	{
+		VkDescriptorSet ds = (VkDescriptorSet)image->vkDescriptorSet;
+		vkFreeDescriptorSets(vk.device, vk.uiDescriptorPool, 1, &ds);
+		image->vkDescriptorSet = NULL;
+	}
+	if (image->vkImageView)
+	{
+		vkDestroyImageView(vk.device, (VkImageView)image->vkImageView, NULL);
+		image->vkImageView = NULL;
+	}
+	if (image->vkImage)
+	{
+		vkDestroyImage(vk.device, (VkImage)image->vkImage, NULL);
+		image->vkImage = NULL;
+	}
+	if (image->vkImageMemory)
+	{
+		vkFreeMemory(vk.device, (VkDeviceMemory)image->vkImageMemory, NULL);
+		image->vkImageMemory = NULL;
+	}
+	image->vkSampler = NULL; // shared sampler, not owned by this image
+}
+
+/**
+ * @brief appends one shader batch's worth of already-tessellated
+ * 2D/UI geometry (tess.xyz/texCoords[0]/vertexColors/indexes) into this
+ * frame's vertex/index arenas and issues one vkCmdDrawIndexed with the
+ * fixed UI pipeline bound to the given image's descriptor set.
+ *
+ * @note scope reductions: only bundle 0 / image frame 0 is
+ * considered (no multitexture, no animated-image frame selection yet).
+ */
+void VK_Draw2D(shaderCommands_t *input, struct image_s *image)
+{
+	int             numVertexes, numIndexes, i;
+	VkDeviceSize    vertexBytes, indexBytes;
+	vkUIVertex_t    *dstVerts;
+	uint32_t        *dstIndexes;
+	VkViewport      viewport;
+	VkRect2D        scissor;
+	float           pushConstants[4];
+	VkDescriptorSet descriptorSet;
+	VkBuffer        vertexBuffers[1];
+	VkDeviceSize    offsets[1];
+
+	if (!vk.initialized || !input || input->numVertexes == 0 || input->numIndexes == 0)
+	{
+		return;
+	}
+
+	if (!image)
+	{
+		image = tr.whiteImage;
+	}
+	if (!image || !image->vkDescriptorSet)
+	{
+		// texture failed to upload (or hasn't been uploaded yet); skip this
+		// batch rather than binding a garbage/null descriptor set.
+		return;
+	}
+
+	numVertexes = input->numVertexes;
+	numIndexes  = input->numIndexes;
+
+	vertexBytes = (VkDeviceSize)numVertexes * sizeof(vkUIVertex_t);
+	indexBytes  = (VkDeviceSize)numIndexes * sizeof(uint32_t);
+
+	if (vk.vertexArenaOffset + vertexBytes > vk.vertexArenaSize ||
+	    vk.indexArenaOffset + indexBytes > vk.indexArenaSize)
+	{
+		// Rate-limited: logging this on every dropped draw would itself grow
+		// the on-screen console text, causing more 2D draws and more drops -
+		// a feedback loop that never recovers once the arena fills up once.
+		static int lastWarnFrame = -1;
+
+		if (backEnd.refdef.time != lastWarnFrame)
+		{
+			Ren_Print("Vulkan: VK_Draw2D - UI vertex/index arena exhausted this frame, dropping remaining 2D draws\n");
+			lastWarnFrame = backEnd.refdef.time;
+		}
+		return;
+	}
+
+	dstVerts = (vkUIVertex_t *)((byte *)vk.vertexArenaMapped + vk.vertexArenaOffset);
+	for (i = 0; i < numVertexes; i++)
+	{
+		dstVerts[i].pos[0]   = input->xyz[i][0];
+		dstVerts[i].pos[1]   = input->xyz[i][1];
+		dstVerts[i].uv[0]    = input->texCoords[i][0][0];
+		dstVerts[i].uv[1]    = input->texCoords[i][0][1];
+		dstVerts[i].color[0] = input->vertexColors[i][0];
+		dstVerts[i].color[1] = input->vertexColors[i][1];
+		dstVerts[i].color[2] = input->vertexColors[i][2];
+		dstVerts[i].color[3] = input->vertexColors[i][3];
+	}
+
+	dstIndexes = (uint32_t *)((byte *)vk.indexArenaMapped + vk.indexArenaOffset);
+	Com_Memcpy(dstIndexes, input->indexes, (size_t)indexBytes);
+
+	if (!vk.uiPipelineBoundThisFrame)
+	{
+		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.uiPipeline);
+		vk.uiPipelineBoundThisFrame = qtrue;
+	}
+
+	if (!vk.uiViewportSetThisFrame)
+	{
+		Com_Memset(&viewport, 0, sizeof(viewport));
+		viewport.width    = (float)glConfig.vidWidth;
+		viewport.height   = (float)glConfig.vidHeight;
+		viewport.minDepth = 0.0f;
+		viewport.maxDepth = 1.0f;
+		vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
+
+		Com_Memset(&scissor, 0, sizeof(scissor));
+		scissor.extent.width  = (uint32_t)glConfig.vidWidth;
+		scissor.extent.height = (uint32_t)glConfig.vidHeight;
+		vkCmdSetScissor(vk.commandBuffer, 0, 1, &scissor);
+
+		vk.uiViewportSetThisFrame = qtrue;
+	}
+
+	pushConstants[0] = 2.0f / (float)glConfig.vidWidth;
+	pushConstants[1] = 2.0f / (float)glConfig.vidHeight;
+	pushConstants[2] = -1.0f;
+	pushConstants[3] = -1.0f;
+	vkCmdPushConstants(vk.commandBuffer, vk.uiPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstants), pushConstants);
+
+	descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
+	vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.uiPipelineLayout, 0, 1, &descriptorSet, 0, NULL);
+
+	vertexBuffers[0] = vk.vertexArenaBuffer;
+	offsets[0]       = vk.vertexArenaOffset;
+	vkCmdBindVertexBuffers(vk.commandBuffer, 0, 1, vertexBuffers, offsets);
+	vkCmdBindIndexBuffer(vk.commandBuffer, vk.indexArenaBuffer, vk.indexArenaOffset, VK_INDEX_TYPE_UINT32);
+
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, 0, 0, 0);
+
+	vk.vertexArenaOffset += vertexBytes;
+	vk.indexArenaOffset  += indexBytes;
 }
