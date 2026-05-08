@@ -33,6 +33,7 @@
  */
 
 #include "tr_local.h"
+#include "vulkan/vk.h"
 
 backEndData_t  *backEndData;
 backEndState_t backEnd;
@@ -1500,6 +1501,11 @@ const void *RB_SwapBuffers(const void *data)
 
 	Ren_LogComment("***************** RB_SwapBuffers *****************\n\n\n");
 
+	// End the render pass, submit the recorded command buffer and present
+	// the swapchain image (counterpart to VK_BeginFrame() called at the top
+	// of RB_ExecuteRenderCommands()).
+	VK_EndFrame();
+
 	ri.GLimp_SwapFrame();
 
 	backEnd.projection2D = qfalse;
@@ -1553,6 +1559,12 @@ void RB_ExecuteRenderCommands(const void *data)
 	int t1, t2;
 
 	t1 = ri.Milliseconds();
+
+	// Begin recording the Vulkan command buffer/render pass for this frame
+	// so that any RC_STRETCH_PIC / RC_2DPOLYS / RC_DRAW_SURFS commands below
+	// can submit real draw calls via VK_Draw2D(). Paired with VK_EndFrame()
+	// in RB_SwapBuffers(), which also submits and presents the frame.
+	VK_BeginFrame();
 
 	while (1)
 	{

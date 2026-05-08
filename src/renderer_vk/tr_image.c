@@ -33,6 +33,7 @@
  */
 
 #include "tr_local.h"
+#include "vulkan/vk.h"
 
 static byte          s_intensitytable[256];
 static unsigned char s_gammatable[256];
@@ -553,25 +554,33 @@ byte mipBlendColors[16][4] =
 };
 
 /**
- * @brief Upload32
+ * @brief Uploads a 32-bit RGBA image to a Vulkan texture for the given
+ * image_t. CPU-side preprocessing (power-of-two resample, picmip, max
+ * texture size clamp, light-scale) is kept from the legacy GL path, but
+ * the legacy internalFormat selection (luminance/S3TC/compressed formats)
+ * below is now purely informational/debug bookkeeping (image->internalFormat)
+ * - Vulkan always uploads as VK_FORMAT_R8G8B8A8_UNORM.
+ *
+ * @note scope reduction: real mipmap generation and the CPU
+ * mip-chain loop used by the legacy GL path have been dropped; only a
+ * single mip level is uploaded. Deferred for now.
+ *
+ * @param[in] image
  * @param[in,out] data
  * @param[in] width
  * @param[in] height
  * @param[in] mipmap
  * @param[in] picmip
  * @param[in] lightMap
- * @param[out] format
- * @param[out] pUploadWidth
- * @param[out] pUploadHeight
+ * @param[in] wrapClampMode
  * @param[in] noCompress
  */
-static void Upload32(unsigned *data,
+static void Upload32(image_t *image, unsigned *data,
                      int width, int height,
                      qboolean mipmap,
                      qboolean picmip,
                      qboolean lightMap,
-                     int *format,
-                     int *pUploadWidth, int *pUploadHeight,
+                     int wrapClampMode,
                      qboolean noCompress)
 {
 	int      samples;
@@ -622,7 +631,7 @@ static void Upload32(unsigned *data,
 		scaled_height = 1;
 	}
 
-	// clamp to the current upper OpenGL limit
+	// clamp to the current upper limit
 	// scale both axis down equally so we don't have to
 	// deal with a half mip resampling
 	while (scaled_width > glConfig.maxTextureSize
@@ -636,141 +645,44 @@ static void Upload32(unsigned *data,
 
 	// scan the texture for each channel's max values
 	// and verify if the alpha channel is being used or not
+	// (kept for informational image->internalFormat bookkeeping only)
 	c       = width * height;
 	scan    = ((byte *)data);
 	samples = 3;
 
 	if (lightMap)
 	{
-		if (r_greyScale->integer)
-		{
-			internalFormat = GL_LUMINANCE;
-		}
-		else
-		{
-			internalFormat = GL_RGB;
-		}
+		internalFormat = r_greyScale->integer ? GL_LUMINANCE : GL_RGB;
 	}
 	else
 	{
-		float rMax = 0, gMax = 0, bMax = 0;
-		int   i;
+		int i;
 
 		for (i = 0; i < c; i++)
 		{
-			if (scan[i * 4 + 0] > rMax)
-			{
-				rMax = scan[i * 4 + 0];
-			}
-			if (scan[i * 4 + 1] > gMax)
-			{
-				gMax = scan[i * 4 + 1];
-			}
-			if (scan[i * 4 + 2] > bMax)
-			{
-				bMax = scan[i * 4 + 2];
-			}
 			if (scan[i * 4 + 3] != 255)
 			{
 				samples = 4;
 				break;
 			}
 		}
-		// select proper internal format
+
 		if (samples == 3)
 		{
-			if (r_greyScale->integer)
-			{
-				if (r_textureBits->integer == 16)
-				{
-					internalFormat = GL_LUMINANCE8;
-				}
-				else if (r_textureBits->integer == 32)
-				{
-					internalFormat = GL_LUMINANCE16;
-				}
-				else
-				{
-					internalFormat = GL_LUMINANCE;
-				}
-			}
-			else
-			{
-				if (!noCompress && glConfig.textureCompression == TC_S3TC_ARB)
-				{
-					internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-				}
-				else if (!noCompress && glConfig.textureCompression == TC_S3TC)
-				{
-					internalFormat = GL_RGB4_S3TC;
-				}
-				else if (r_textureBits->integer == 16)
-				{
-					internalFormat = GL_RGB5;
-				}
-				else if (r_textureBits->integer == 32)
-				{
-					internalFormat = GL_RGB8;
-				}
-				else
-				{
-					internalFormat = GL_RGB;
-				}
-			}
+			internalFormat = r_greyScale->integer ? GL_LUMINANCE : GL_RGB8;
 		}
-		else if (samples == 4)
+		else
 		{
-			if (r_greyScale->integer)
-			{
-				if (r_textureBits->integer == 16)
-				{
-					internalFormat = GL_LUMINANCE8_ALPHA8;
-				}
-				else if (r_textureBits->integer == 32)
-				{
-					internalFormat = GL_LUMINANCE16_ALPHA16;
-				}
-				else
-				{
-					internalFormat = GL_LUMINANCE_ALPHA;
-				}
-			}
-			else
-			{
-				if (!noCompress && glConfig.textureCompression == TC_S3TC_ARB)
-				{
-					internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-				}
-				else if (r_textureBits->integer == 16)
-				{
-					internalFormat = GL_RGBA4;
-				}
-				else if (r_textureBits->integer == 32)
-				{
-					internalFormat = GL_RGBA8;
-				}
-				else
-				{
-					internalFormat = GL_RGBA;
-				}
-			}
+			internalFormat = r_greyScale->integer ? GL_LUMINANCE_ALPHA : GL_RGBA8;
 		}
 	}
 
-	// copy or resample data as appropriate for first MIP level
-	if ((scaled_width == width) &&
-	    (scaled_height == height))
-	{
-		if (!mipmap)
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-			*pUploadWidth  = scaled_width;
-			*pUploadHeight = scaled_height;
-			*format        = internalFormat;
+	(void)noCompress; // texture compression formats are not used by the Vulkan upload path
 
-			goto done;
-		}
-		Com_Memcpy(scaledBuffer, data, width * height * 4);
+	// copy or resample data for the single uploaded mip level
+	if (scaled_width == width && scaled_height == height)
+	{
+		Com_Memcpy(scaledBuffer, data, (size_t)width * height * 4);
 	}
 	else
 	{
@@ -789,68 +701,19 @@ static void Upload32(unsigned *data,
 				height = 1;
 			}
 		}
-		Com_Memcpy(scaledBuffer, data, width * height * 4);
+		Com_Memcpy(scaledBuffer, data, (size_t)width * height * 4);
 	}
 
 	R_LightScaleTexture(scaledBuffer, scaled_width, scaled_height, !mipmap);
 
-	*pUploadWidth  = scaled_width;
-	*pUploadHeight = scaled_height;
-	*format        = internalFormat;
+	image->internalFormat = internalFormat;
+	image->uploadWidth    = scaled_width;
+	image->uploadHeight   = scaled_height;
 
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer);
-
-	if (mipmap)
+	if (!VK_CreateImageTexture(image, (const byte *)scaledBuffer, scaled_width, scaled_height, mipmap, wrapClampMode))
 	{
-		int miplevel = 0;
-
-		while (scaled_width > 1 || scaled_height > 1)
-		{
-			R_MipMap((byte *)scaledBuffer, scaled_width, scaled_height);
-			scaled_width  >>= 1;
-			scaled_height >>= 1;
-			if (scaled_width < 1)
-			{
-				scaled_width = 1;
-			}
-			if (scaled_height < 1)
-			{
-				scaled_height = 1;
-			}
-			miplevel++;
-
-			if (r_colorMipLevels->integer)
-			{
-				R_BlendOverTexture((byte *)scaledBuffer, scaled_width * scaled_height, mipBlendColors[miplevel]);
-			}
-
-			glTexImage2D(GL_TEXTURE_2D, miplevel, internalFormat, scaled_width, scaled_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, scaledBuffer);
-		}
+		Ren_Print("Upload32: Vulkan texture upload failed for '%s'\n", image->imgName);
 	}
-done:
-
-	if (mipmap)
-	{
-		if (textureFilterAnisotropic)
-		{
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, Com_Clamp(1.f, maxAnisotropy, r_extTextureFilterAnisotropic->value));
-		}
-
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
-	}
-	else
-	{
-		if (textureFilterAnisotropic)
-		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1);
-		}
-
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	}
-
-	GL_CheckErrors();
 
 	if (scaledBuffer != 0)
 	{
@@ -861,6 +724,7 @@ done:
 		ri.Hunk_FreeTempMemory(resampledBuffer);
 	}
 }
+
 
 /**
  * @brief This is the only way any image_t are created
@@ -953,33 +817,33 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 
 	if (pic)
 	{
-		Upload32((unsigned *)pic, image->width, image->height,
+		Upload32(image, (unsigned *)pic, image->width, image->height,
 		         image->mipmap,
 		         allowPicmip,
 		         isLightmap,
-		         &image->internalFormat,
-		         &image->uploadWidth,
-		         &image->uploadHeight,
+		         wrapClampMode,
 		         noCompress);
 	}
 	else
 	{
-		image->internalFormat = GL_RGBA;
+		// placeholder/empty texture (e.g. render-target stand-ins): upload a
+		// zero-filled buffer so there's always a valid Vulkan image/descriptor
+		// set to bind, matching the legacy glTexImage2D(..., NULL) behavior.
+		size_t emptySize = (size_t)image->width * (size_t)image->height * 4;
+		byte   *empty    = ri.Hunk_AllocateTempMemory(emptySize);
+
+		Com_Memset(empty, 0, emptySize);
+
+		image->internalFormat = GL_RGBA8;
 		image->uploadWidth    = image->width;
 		image->uploadHeight   = image->height;
 
-		glTexImage2D(GL_TEXTURE_2D, 0, image->internalFormat, image->width, image->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		if (!VK_CreateImageTexture(image, empty, image->width, image->height, mipmap, wrapClampMode))
+		{
+			Ren_Print("R_CreateImage: Vulkan texture upload failed for '%s'\n", image->imgName);
+		}
 
-		if (mipmap)
-		{
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
-		}
-		else
-		{
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		}
+		ri.Hunk_FreeTempMemory(empty);
 	}
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapClampMode);
@@ -1474,6 +1338,7 @@ void R_DeleteTextures(void)
 	for (i = 0; i < tr.numImages ; i++)
 	{
 		glDeleteTextures(1, &tr.images[i]->texnum);
+		VK_DeleteImageTexture(tr.images[i]);
 	}
 
 	Com_Memset(tr.images, 0, sizeof(tr.images));
@@ -2085,6 +1950,7 @@ qboolean R_TouchImage(image_t *inImage)
 void R_PurgeImage(image_t *image)
 {
 	glDeleteTextures(1, &image->texnum);
+	VK_DeleteImageTexture(image);
 
 	R_CacheImageFree(image);
 

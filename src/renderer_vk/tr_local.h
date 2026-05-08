@@ -120,6 +120,14 @@ typedef struct image_s
 
 	int hash;                       ///< for fast building of the backupHash
 
+	// Vulkan-backed texture handles (opaque here to avoid pulling vulkan.h into
+	// this widely shared header; vulkan/vk.c casts these to the real Vk* types).
+	void *vkImage;
+	void *vkImageMemory;
+	void *vkImageView;
+	void *vkSampler;
+	void *vkDescriptorSet;
+
 	struct image_s *next;
 } image_t;
 

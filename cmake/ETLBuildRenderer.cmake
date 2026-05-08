@@ -171,11 +171,54 @@ if(FEATURE_RENDERER2)
 endif()
 
 if(FEATURE_RENDERER_VULKAN)
+	# Compile the GLSL UI shaders to SPIR-V, then embed each .spv binary into a
+	# generated C header (static const unsigned char[]) so the renderer stays
+	# self-contained and doesn't need runtime filesystem/pk3 access to load them.
+	set(VK_SHADER_GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/include/vk_shaders")
+	file(MAKE_DIRECTORY "${VK_SHADER_GEN_DIR}")
+
+	set(VK_SHADER_HEADERS "")
+	set(VK_SHADER_NAMES "ui.vert.glsl" "ui.frag.glsl")
+	set(VK_SHADER_ARRAY_NAME_ui.vert.glsl "ui_vert_spv")
+	set(VK_SHADER_ARRAY_NAME_ui.frag.glsl "ui_frag_spv")
+	set(VK_SHADER_STAGE_ui.vert.glsl "vertex")
+	set(VK_SHADER_STAGE_ui.frag.glsl "fragment")
+
+	foreach(VK_SHADER_SRC_NAME ${VK_SHADER_NAMES})
+		set(VK_SHADER_ARRAY_NAME "${VK_SHADER_ARRAY_NAME_${VK_SHADER_SRC_NAME}}")
+		set(VK_SHADER_STAGE "${VK_SHADER_STAGE_${VK_SHADER_SRC_NAME}}")
+
+		set(VK_SHADER_SRC "${CMAKE_SOURCE_DIR}/src/renderer_vk/glsl/${VK_SHADER_SRC_NAME}")
+		set(VK_SHADER_SPV "${VK_SHADER_GEN_DIR}/${VK_SHADER_SRC_NAME}.spv")
+		set(VK_SHADER_HDR "${VK_SHADER_GEN_DIR}/${VK_SHADER_SRC_NAME}.h")
+
+		add_custom_command(
+			OUTPUT ${VK_SHADER_SPV}
+			COMMAND Vulkan::glslc -fshader-stage=${VK_SHADER_STAGE} ${VK_SHADER_SRC} -o ${VK_SHADER_SPV}
+			DEPENDS ${VK_SHADER_SRC}
+			COMMENT "Compiling Vulkan shader ${VK_SHADER_SRC_NAME}"
+			VERBATIM
+		)
+		add_custom_command(
+			OUTPUT ${VK_SHADER_HDR}
+			COMMAND ${CMAKE_COMMAND} -DIN_FILE=${VK_SHADER_SPV} -DOUT_FILE=${VK_SHADER_HDR} -DARRAY_NAME=${VK_SHADER_ARRAY_NAME} -P ${CMAKE_SOURCE_DIR}/cmake/ETLBin2H.cmake
+			DEPENDS ${VK_SHADER_SPV} ${CMAKE_SOURCE_DIR}/cmake/ETLBin2H.cmake
+			COMMENT "Embedding ${VK_SHADER_SRC_NAME}.spv into ${VK_SHADER_SRC_NAME}.h"
+			VERBATIM
+		)
+
+		list(APPEND VK_SHADER_HEADERS ${VK_SHADER_HDR})
+	endforeach()
+
+	add_custom_target(vk_shader_compile DEPENDS ${VK_SHADER_HEADERS})
+	set_target_properties(vk_shader_compile PROPERTIES FOLDER Tools)
+
 	add_library(renderer_vulkan ${REND_LIBTYPE} ${RENDERER_VULKAN_FILES} ${RENDERER_COMMON} ${RENDERER_COMMON_VULKAN} ${RENDERER_VULKAN_SHADERS})
+	add_dependencies(renderer_vulkan vk_shader_compile)
 	target_link_libraries(renderer_vulkan renderer_vulkan_libraries renderer_libraries)
 	target_compile_definitions(renderer_vulkan PRIVATE FEATURE_RENDERER_VULKAN)
 	target_compile_definitions(client_libraries INTERFACE FEATURE_RENDERER_VULKAN)
-	target_include_directories(renderer_vulkan PRIVATE src/renderer_vk)
+	target_include_directories(renderer_vulkan PRIVATE src/renderer_vk ${VK_SHADER_GEN_DIR})
 
 	if(NOT MSVC)
 		target_link_libraries(renderer_vulkan renderer_libraries m)
