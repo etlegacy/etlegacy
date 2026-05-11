@@ -1,3 +1,4 @@
+import locale
 import os
 import sys
 import subprocess
@@ -10,13 +11,29 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 CWD = Path.cwd()
 
 
+def decode_subprocess_output(data: bytes) -> str:
+    # Most tool output in this repo is UTF-8, but Windows helper text can still
+    # arrive in the active locale encoding.
+    try:
+        return data.decode("utf-8")
+    except UnicodeDecodeError:
+        return data.decode(
+            locale.getpreferredencoding(False) or "utf-8", errors="replace"
+        )
+
+
 def run_command(cmd: List[str], check=True) -> subprocess.CompletedProcess:
-    result = subprocess.run(
+    raw_result = subprocess.run(
         cmd,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        text=True,
         check=False,
+    )
+    result = subprocess.CompletedProcess(
+        raw_result.args,
+        raw_result.returncode,
+        decode_subprocess_output(raw_result.stdout or b""),
+        decode_subprocess_output(raw_result.stderr or b""),
     )
     if check and result.returncode:
         msg = f"$ {" ".join([str(x) for x in cmd])}\nreturncode: {result.returncode}"
@@ -29,9 +46,7 @@ def run_command(cmd: List[str], check=True) -> subprocess.CompletedProcess:
 
 
 def run_git_command(cmd: List[str]) -> List[str]:
-    result = subprocess.run(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True
-    )
+    result = run_command(cmd, check=True)
     return result.stdout.strip().splitlines()
 
 

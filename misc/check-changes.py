@@ -5,7 +5,6 @@
 # REQUIRES: python uncrustify git
 import os
 import sys
-import subprocess
 import difflib
 from pathlib import Path
 from dataclasses import dataclass, field
@@ -46,12 +45,7 @@ class Error:
 
 def check_black(path: Path, errors: List[Error]):
     try:
-        result = subprocess.run(
-            ["black", "--check", "--diff", str(path)],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
+        result = run_command(["black", "--check", "--diff", str(path)], check=False)
         if result.returncode != 0:
             errors.append(
                 Error(
@@ -65,11 +59,9 @@ def check_black(path: Path, errors: List[Error]):
 
 
 def check_uncrustify(path: Path, errors: List[Error]):
-    result = subprocess.run(
+    result = run_command(
         ["uncrustify", "-c", str(ROOT_DIR / "uncrustify.cfg"), "-f", str(path)],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
+        check=False,
     )
 
     if result.returncode != 0:
@@ -95,12 +87,7 @@ def check_uncrustify(path: Path, errors: List[Error]):
 
 def check_sh(path: Path, errors: List[Error]):
     # shellcheck
-    result = subprocess.run(
-        ["shellcheck", str(path)],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
+    result = run_command(["shellcheck", str(path)], check=False)
 
     if result.returncode != 0:
         errors.append(
@@ -112,12 +99,7 @@ def check_sh(path: Path, errors: List[Error]):
         )
 
     # shfmt
-    result = subprocess.run(
-        ["shfmt", "--diff", str(path)],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
+    result = run_command(["shfmt", "--diff", str(path)], check=False)
 
     if result.returncode != 0:
         errors.append(
