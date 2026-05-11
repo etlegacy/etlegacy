@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import locale
 import os
 import re
 import subprocess
@@ -21,6 +22,17 @@ def log(msg: str) -> None:
     print(msg, file=sys.stderr, flush=True)
 
 
+def decode_subprocess_output(data: bytes) -> str:
+    # Repo content is expected to be UTF-8, but helper stderr can still use the
+    # platform encoding on Windows.
+    try:
+        return data.decode("utf-8")
+    except UnicodeDecodeError:
+        return data.decode(
+            locale.getpreferredencoding(False) or "utf-8", errors="replace"
+        )
+
+
 def run_fetch(script_dir: Path) -> str:
     """
     Runs ./fetch-single-file-from-git-repo.py "<repo>" "<file>" in script_dir.
@@ -36,20 +48,21 @@ def run_fetch(script_dir: Path) -> str:
     proc = subprocess.run(
         cmd,
         cwd=str(script_dir),
-        text=True,
         capture_output=True,
     )
+    stdout_text = decode_subprocess_output(proc.stdout or b"")
+    stderr_text = decode_subprocess_output(proc.stderr or b"")
     if proc.returncode != 0:
         # Preserve stderr for debugging; also include stdout in case it matters.
         log("[!] Fetch failed. Output follows:")
-        if proc.stdout:
-            print(proc.stdout, end="", file=sys.stderr)
-        if proc.stderr:
-            print(proc.stderr, end="", file=sys.stderr)
+        if stdout_text:
+            print(stdout_text, end="", file=sys.stderr)
+        if stderr_text:
+            print(stderr_text, end="", file=sys.stderr)
         raise SystemExit(proc.returncode)
 
-    log(f"[1/4] Fetch OK ({len(proc.stdout)} bytes).")
-    return proc.stdout
+    log(f"[1/4] Fetch OK ({len(proc.stdout or b'')} bytes).")
+    return stdout_text
 
 
 _heading_re = re.compile(r"^##\s+(.+?)\s*$")
