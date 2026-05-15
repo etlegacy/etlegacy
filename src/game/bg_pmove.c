@@ -2615,8 +2615,6 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 		return;
 	}
 
-	pm->ps->nextWeapon = newWeapon;
-
 	// it's an alt mode, play different anim
 	if (newWeapon == GetWeaponTableData(oldWeapon)->weapAlts)
 	{
@@ -2655,6 +2653,21 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 	}
 	else
 	{
+		// in case of not alternate weapon switch
+		// ensure the correct weapon is selected depending of side arm status
+		// as the client may be not aligned with the side arm status (i.e after issuing vid_restart)
+		if (((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL) && !(GetWeaponTableData(newWeapon)->attributes & WEAPON_ATTRIBUT_AKIMBO)
+		     && ((GetWeaponTableData(newWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED && !(pm->pmext->silencedSideArm & 1))
+		         || (!(GetWeaponTableData(newWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED) && pm->pmext->silencedSideArm & 1)))
+		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLE) && (pm->pmext->silencedSideArm & 2))
+		    || ((GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_RIFLENADE) && !(pm->pmext->silencedSideArm & 2)))
+		{
+			newWeapon = GetWeaponTableData(newWeapon)->weapAlts;            // get the alternate version
+			// force full weapon change cycle delay to let the client received the correct side arm status
+			// and ignore client weapon change during weapon raising
+			pm->ps->weaponDelay += GetWeaponTableData(oldWeapon)->switchTimeBegin + GetWeaponTableData(newWeapon)->switchTimeFinish;
+		}
+
 		PM_AddEvent(EV_CHANGE_WEAPON);
 
 		PM_StartWeaponAnim(WEAP_DROP);
@@ -2664,6 +2677,8 @@ static void PM_BeginWeaponChange(weapon_t oldWeapon, weapon_t newWeapon, qboolea
 
 		pm->ps->weaponTime += GetWeaponTableData(oldWeapon)->switchTimeBegin;            // dropping/raising usually takes 1/4 sec.
 	}
+
+	pm->ps->nextWeapon = newWeapon;
 
 	pm->ps->weaponstate = reload ? WEAPON_DROPPING_TORELOAD : WEAPON_DROPPING;
 }
@@ -2705,7 +2720,7 @@ static void PM_FinishWeaponChange(void)
 		pm->ps->aimSpreadScale      = AIMSPREAD_MAXSPREAD;       // initially at lowest accuracy
 		pm->ps->aimSpreadScaleFloat = AIMSPREAD_MAXSPREAD;       // initially at lowest accuracy
 	}
-	else if (GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL)
+	else if (GetWeaponTableData(newWeapon)->type & WEAPON_TYPE_PISTOL && !(GetWeaponTableData(newWeapon)->attributes & WEAPON_ATTRIBUT_AKIMBO))
 	{
 		if (GetWeaponTableData(newWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED)
 		{

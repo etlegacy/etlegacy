@@ -192,7 +192,8 @@ void CG_Respawn(qboolean revived)
 		cg.switchbackWeapon = WP_NONE;
 
 		// puts the silencer on if class is COVERTOPS
-		if (cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
+		if ((cg.predictedPlayerState.stats[STAT_PLAYER_CLASS] == PC_COVERTOPS)
+		    && (COM_BitCheck(cg.snap->ps.weapons, WP_SILENCER) || COM_BitCheck(cg.snap->ps.weapons, WP_SILENCED_COLT)))
 		{
 			cg.pmext.silencedSideArm = 1;
 		}
@@ -405,6 +406,36 @@ void CG_TransitionPlayerState(playerState_t *ps, playerState_t *ops)
 	if (ps->weapon != ops->weapon)
 	{
 		cg.predictedPlayerEntity.firedTime = 0; // reset smoke generation
+
+		// ensure the weapon we ask for is aligned with the one selected by the server
+		// otherwise, check if the status side arm is the correct one
+		// this may happen if a vid_restart has been issued as status side arm is not restored
+		if (ps->nextWeapon && (cg.weaponSelect != ps->nextWeapon))
+		{
+			if (GetWeaponTableData(ps->nextWeapon)->type & WEAPON_TYPE_PISTOL && !(GetWeaponTableData(ps->nextWeapon)->attributes & WEAPON_ATTRIBUT_AKIMBO))
+			{
+				if (GetWeaponTableData(ps->nextWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED && !(cg.pmext.silencedSideArm & 1))
+				{
+					cg.pmext.silencedSideArm |= 1;
+					cg.weaponSelect           = ps->nextWeapon;
+				}
+				else if (!(GetWeaponTableData(ps->nextWeapon)->attributes & WEAPON_ATTRIBUT_SILENCED) && (cg.pmext.silencedSideArm & 1))
+				{
+					cg.pmext.silencedSideArm &= ~1;
+					cg.weaponSelect           = ps->nextWeapon;
+				}
+			}
+			else if (GetWeaponTableData(ps->nextWeapon)->type & WEAPON_TYPE_RIFLE && (cg.pmext.silencedSideArm & 2))
+			{
+				cg.pmext.silencedSideArm &= ~2;
+				cg.weaponSelect           = ps->nextWeapon;
+			}
+			else if (GetWeaponTableData(ps->nextWeapon)->type & WEAPON_TYPE_RIFLENADE && !(cg.pmext.silencedSideArm & 2))
+			{
+				cg.pmext.silencedSideArm |= 2;
+				cg.weaponSelect           = ps->nextWeapon;
+			}
+		}
 	}
 
 	// damage events (player is getting wounded)
