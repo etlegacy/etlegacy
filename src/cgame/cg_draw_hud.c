@@ -3136,10 +3136,10 @@ char *CG_SpawnTimerText(qboolean isDoubleDigits)
 			}
 		}
 	}
-	else if (cg_spawnTimer_set.integer != -1 && cg_spawnTimer_period.integer > 0 && cgs.gamestate != GS_PLAYING)
+	else if (cg_spawnTimer_set.integer != -1 && cgs.gamestate != GS_PLAYING)
 	{
 		// We are not playing and the timer is set so reset/disable it
-		// this happens for example when custom period is set by timerSet and map is restarted or changed
+		// this happens for example when map is restarted or changed
 		trap_Cvar_Set("cg_spawnTimer_set", "-1");
 	}
 	return NULL;
@@ -3156,7 +3156,9 @@ static qboolean CG_SpawnTimersText(char **s, char **rt, qboolean isDoubleDigits)
 {
 	if (cgs.gamestate != GS_PLAYING)
 	{
-		int limbotimeOwn, limbotimeEnemy;
+		int limbotimeOwn;
+		int limbotimeEnemy;
+
 		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS)
 		{
 			limbotimeOwn   = cg_redlimbotime.integer;
@@ -3171,10 +3173,18 @@ static qboolean CG_SpawnTimersText(char **s, char **rt, qboolean isDoubleDigits)
 		*rt = va(isDoubleDigits ? "%02i" : "%0i", limbotimeEnemy / 1000);
 		*s  = (cgs.gametype == GT_WOLF_LMS && !cgs.clientinfo[cg.clientNum].shoutcaster) ? va("%s", CG_TranslateString("WARMUP")) : va(isDoubleDigits ? "%02i" : "%0i", limbotimeOwn / 1000);
 
+		// We are not playing and the timer is set so reset/disable it
+		// this happens for example when map is restarted or changed
+		if (cg_spawnTimer_set.integer != -1)
+		{
+			trap_Cvar_Set("cg_spawnTimer_set", "-1");
+		}
+
 		// if hud editor is up, return qfalse since we want to see text style changes
 		return !cg.generatingNoiseHud;
 	}
-	else if (cgs.gametype != GT_WOLF_LMS)
+
+	if (cgs.gametype != GT_WOLF_LMS)
 	{
 		if (cgs.clientinfo[cg.clientNum].shoutcaster)
 		{
