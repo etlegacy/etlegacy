@@ -101,13 +101,11 @@
 
 * Added ^8g_xpSaverMaxAge^9 to determine how long to keep saved xp, skillpoints and
   medals of the player
+* Extended ^8sv_tracker^9 cvar to support multiple endpoints via space-separated list
 
 ^dRenderer
 
 * Added ^8r_debugShader^9 cvar to display shader name by trace
-* Added ^8maxpicmip^9 directive to shader option to control picmip individually
-* Added ^8///etl///^9 directive to shader option so only ETL client can parse those
-  directives (ignored by 2.6b client)
 * Ensure renderer doesn't drop on image loading fail and use default one
 
 ^dMod
@@ -178,7 +176,12 @@ immediate gameplay and reduces perceived join latency
 * Adjusted XP reward gain on killing player near objective to maximum distance of
   512u
 * Fixed players command output when player names contain carets
-* Fixed broken weapon stat adjustment in landmine recovery 
+* Fixed broken weapon stat adjustment in landmine recovery
+* Added ^8cg_allowSelfKillSpawnProtection^9 cvar to let player issue ^8kill^9 command
+  while being under spawn protection state
+* Fixed silencer / riflenade weapon wrong status when getting revived or on
+  ^8vid_restart^9
+* Fixed reset spawn timer on map change wasn't working
 
 ^fStability & Performance
 
@@ -193,6 +196,7 @@ immediate gameplay and reduces perceived join latency
   vanilla and would not trigger planted state on some objective
 * Improved pliers ticking usage server side (less computation)
 * Fixed potential crash/incorrectness in awards parsing when debriefing is reached
+* Prevented restricted weapon slots from ghost-blocking across map changes
 
 ^fAudio
 
@@ -365,6 +369,8 @@ immediate gameplay and reduces perceived join latency
   * Added ^8cg_iconfeedScale^9 cvar to customize icons feed size
 * Fixed ^8weaponstability^9 component spread which was not correctly draw when being
   off the ground
+* Fixed debriefing chats flags icons scretching
+* Hided round timer when ^8timelimit^9 is set to 0 (vanilla behaviour)
 
 * HUD Editor
   * Reworked the HUD with extra button to enable Tab customization depending of comp
