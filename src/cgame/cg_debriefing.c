@@ -1635,56 +1635,15 @@ void CG_Debriefing_ChatBox_Draw(panel_button_t *button)
 {
 	if (cgs.teamLastChatPos != cgs.teamChatPos)
 	{
-		vec4_t hcolor;
-		float  lineHeight = 9.f;
-		int    i;
-		int    chatWidth  = button->rect.w;
-		int    chatHeight = button->rect.h;
+		int i;
+		int chatHeight = button->rect.h;
 
-		for (i = cgs.teamLastChatPos; i < cgs.teamChatPos; i++)
+		for (i = cgs.teamLastChatPos; i < cgs.teamChatPos; ++i)
 		{
 			CG_Text_Width_Ext(cgs.teamChatMsgs[i % chatHeight], 0.2f, 0, &cgs.media.limboFont2);
 		}
 
-		for (i = cgs.teamChatPos - 1; i >= cgs.teamLastChatPos; i--)
-		{
-			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_AXIS)
-			{
-				hcolor[0] = 1;
-				hcolor[1] = 0;
-				hcolor[2] = 0;
-			}
-			else if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_ALLIES)
-			{
-				hcolor[0] = 0;
-				hcolor[1] = 0;
-				hcolor[2] = 1;
-			}
-			else
-			{
-				hcolor[0] = 0;
-				hcolor[1] = 1;
-				hcolor[2] = 0;
-			}
-
-			hcolor[3] = 0.33f;
-
-			trap_R_SetColor(hcolor);
-			CG_DrawPic(button->rect.x, button->rect.y - (cgs.teamChatPos - i) * lineHeight, chatWidth, lineHeight, cgs.media.teamStatusBar);
-
-			trap_R_SetColor(NULL);
-
-			if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
-			{
-				CG_DrawPic(button->rect.x, button->rect.y - (cgs.teamChatPos - i - 1) * lineHeight - 8, 12, 10, cgs.media.axisFlag);
-			}
-			else if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_ALLIES)
-			{
-				CG_DrawPic(button->rect.x, button->rect.y - (cgs.teamChatPos - i - 1) * lineHeight - 8, 12, 10, cgs.media.alliedFlag);
-			}
-
-			CG_Text_Paint_Ext(button->rect.x + 12, button->rect.y - (cgs.teamChatPos - i - 1) * lineHeight, 0.2f, 0.2f, colorWhite, cgs.teamChatMsgs[i % chatHeight], 0, 0, 0, &cgs.media.limboFont2);
-		}
+		CG_DrawChatLines(button->rect.x, button->rect.y, button->rect.w, chatHeight, 9.f, 0.2f, 1.f, 0.33f, 0, qtrue, qfalse, qtrue);
 	}
 }
 

@@ -1826,3 +1826,21 @@ void CG_DrawCursor(float x, float y)
 
 	CG_DrawPic(x, y, CURSOR_SIZE, CURSOR_SIZE, cgs.media.cursorIcon);
 }
+
+/**
+ * @brief Retrieved the corresponding flag depending of the team
+ * @param[in] team The team we want to retrieved the corresponding flag
+ * @return The corresponding flag depending of the team
+ */
+ID_INLINE qhandle_t CG_GetTeamFlag(team_t team)
+{
+	switch (team)
+	{
+	case TEAM_AXIS: return cgs.media.axisFlag;
+	case TEAM_ALLIES: return cgs.media.alliedFlag;
+	case TEAM_SPECTATOR: return cgs.media.spectatorFlag;
+	case TEAM_FREE:
+	case TEAM_NUM_TEAMS:
+	default: return 0;
+	}
+}
