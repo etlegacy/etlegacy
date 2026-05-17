@@ -1832,7 +1832,7 @@ void CG_DrawCursor(float x, float y)
  * @param[in] team The team we want to retrieved the corresponding flag
  * @return The corresponding flag depending of the team
  */
-ID_INLINE qhandle_t CG_GetTeamFlag(team_t team)
+qhandle_t CG_GetTeamFlag(team_t team)
 {
 	switch (team)
 	{
