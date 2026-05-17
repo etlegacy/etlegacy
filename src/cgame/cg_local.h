@@ -2960,6 +2960,19 @@ void CG_Letterbox(float xsize, float ysize, qboolean center);
 
 void CG_DrawLine(const vec3_t start, const vec3_t end, float width, const vec4_t color, qhandle_t shader);
 
+void CG_DrawChatLines(float chatPosX,
+                      float chatPosY,
+                      float chatWidth,
+                      int chatHeight,
+                      float lineHeight,
+                      float scale,
+                      float colorAlpha,
+                      float colorBgAlpha,
+                      int styleText,
+                      qboolean showFlag,
+                      qboolean fadeOut,
+                      qboolean fullLineBg);
+
 void CG_SetupDlightstyles(void);
 
 // cg_drawtools.c
@@ -4477,6 +4490,8 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
 float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHelper_t *font*/);
 
 void CG_DrawCursor(float x, float y);
+
+qhandle_t CG_GetTeamFlag(team_t team);
 
 void CG_DemoBackwardsCompatInit();
 #endif // #ifndef INCLUDE_CG_LOCAL_H
