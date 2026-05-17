@@ -3279,7 +3279,12 @@ static char *CG_RoundTimerText()
 		return "WARMUP";
 	}
 
-	if (CG_RoundTime(&qt) < 0 && cgs.timelimit > 0.0f)
+	if (cgs.timelimit <= 0.0f)
+	{
+		return "";
+	}
+
+	if (CG_RoundTime(&qt) < 0)
 	{
 		return "00:00"; // round ended
 	}
