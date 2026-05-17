@@ -768,6 +768,7 @@ static bind_t g_bindings[] =
 	{ "+leanleft",                                 'q',             -1,  K_DEL,           -1,  -1, -1, -1 },
 	{ "+prone",                                    'x',             -1,  K_LSHIFT,        -1,  -1, -1, -1 },
 	{ "+attack",                                   K_MOUSE1,        -1,  K_MOUSE1,        -1,  -1, -1, -1 },
+	{ "+weapzoom",                                 K_MOUSE4,        -1,  K_MOUSE4,        -1,  -1, -1, -1 },
 	{ "weapalt",                                   K_MOUSE2,        -1,  K_MOUSE2,        -1,  -1, -1, -1 },
 	{ "weapprev",                                  K_MWHEELDOWN,    -1,  K_MWHEELDOWN,    -1,  -1, -1, -1 },
 	{ "weapnext",                                  K_MWHEELUP,      -1,  K_MWHEELUP,      -1,  -1, -1, -1 },
