@@ -6,8 +6,8 @@
 
 set -Eeuo pipefail
 
-# current Git branch
-branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
+# Current Git branch
+branch=$(git branch --show-current)
 
 # Require master
 if [[ "$branch" != "master" ]]; then
@@ -19,6 +19,12 @@ fi
 if [[ -n "$(git status --porcelain)" ]]; then
 	echo "Git repository is not clean exiting"
 	exit 1
+fi
+
+# Require the version file
+if [[ ! -f "VERSION.txt" ]]; then
+    echo "VERSION.txt file not found exiting"
+    exit 1
 fi
 
 # Parse the version file
@@ -55,7 +61,7 @@ parse_params() {
 			version_message="${2-}"
 			shift
 			;;
-		-?*) die "Unknown option: $1" ;;
+		-?*) echo "Unknown option: $1"; exit 1 ;;
 		*) break ;;
 		esac
 		shift
@@ -73,12 +79,12 @@ if [[ -z $version_changed ]]; then
 fi
 
 # Sorry tag is already taken.
-if [[ "$(git tag -l "v$major.$minor.$patch")" ]]; then
+if [[ -n "$(git tag -l "v$major.$minor.$patch")" ]]; then
 	echo "Tag 'v$major.$minor.$patch' was taken"
 	exit 1
 fi
 
-if [[ "$patch" = 0 ]] && [[ "$(git tag -l "v$major.$minor")" ]]; then
+if [[ "$patch" = 0 ]] && [[ -n "$(git tag -l "v$major.$minor")" ]]; then
 	echo "Tag 'v$major.$minor' was taken"
 	exit 1
 fi
@@ -97,19 +103,22 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 	perl -pi -e "s/(VERSION_MINOR)\s+[0-9]+/\1 $minor/g" VERSION.txt
 	perl -pi -e "s/(VERSION_PATCH)\s+[0-9]+/\1 $patch/g" VERSION.txt
 
-	if [[ -n $gpg_sign ]]; then
-		# no signing
-		# Create the release commit
-		git commit -am "Incrementing version number to $major.$minor.$patch"
-
-		# Tag it like a champ!
-		git tag -a "v$major.$minor.$patch" -m "$version_message"
-	else
-		# Create the release commit
+	if [[ -n "$gpg_sign" ]]; then
+		echo "Create a SIGNED release"
+	
+		# Create a SIGNED release commit
 		git commit -a -S -m "Incrementing version number to $major.$minor.$patch"
 
-		# sign the tag
+		# Tag it like a champ!
 		git tag -s "v$major.$minor.$patch" -m "$version_message"
+	else
+		echo "Create an UNSIGNED release"
+	
+		# Create an UNSIGNED release commit
+		git commit -am "Incrementing version number to $major.$minor.$patch"
+
+		# Create an UNSIGNED tag
+		git tag -a "v$major.$minor.$patch" -m "$version_message"
 	fi
 
 	echo "Committed and tagged a new release"
