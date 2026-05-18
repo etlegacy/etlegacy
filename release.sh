@@ -11,14 +11,14 @@ branch=$(git branch --show-current)
 
 # Require master
 if [[ "$branch" != "master" ]]; then
-	echo "Not in master exiting"
-	exit 1
+    echo "Not in master exiting"
+    exit 1
 fi
 
 # Require the current working directory to be clean
 if [[ -n "$(git status --porcelain)" ]]; then
-	echo "Git repository is not clean exiting"
-	exit 1
+    echo "Git repository is not clean exiting"
+    exit 1
 fi
 
 # Require the version file
@@ -36,61 +36,64 @@ version_message=
 gpg_sign=
 
 parse_params() {
-	while :; do
-		case "${1-}" in
-		-v | --verbose) set -x ;;
-		--major)
-			major=$((major+1))
-			minor=0
-			patch=0
-			version_changed=true
-			;;
-		--minor)
-			minor=$((minor+1))
-			patch=0
-			version_changed=true
-			;;
-		--patch)
-			patch=$((patch+1))
-			version_changed=true
-			;;
-		--sign)
-			gpg_sign=true
-			;;
-		-m | --message)
-			version_message="${2-}"
-			shift
-			;;
-		-?*) echo "Unknown option: $1"; exit 1 ;;
-		*) break ;;
-		esac
-		shift
-	done
+    while :; do
+        case "${1-}" in
+        -v | --verbose) set -x ;;
+        --major)
+            major=$((major + 1))
+            minor=0
+            patch=0
+            version_changed=true
+            ;;
+        --minor)
+            minor=$((minor + 1))
+            patch=0
+            version_changed=true
+            ;;
+        --patch)
+            patch=$((patch + 1))
+            version_changed=true
+            ;;
+        --sign)
+            gpg_sign=true
+            ;;
+        -m | --message)
+            version_message="${2-}"
+            shift
+            ;;
+        -?*)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
+        *) break ;;
+        esac
+        shift
+    done
 
-	return 0
+    return 0
 }
 
 parse_params "$@"
 
 # If nothing has changed then just exit
 if [[ -z $version_changed ]]; then
-	echo "Nothing to do"
-	exit 0
+    echo "Nothing to do"
+    exit 0
 fi
 
 # Sorry tag is already taken.
 if [[ -n "$(git tag -l "v$major.$minor.$patch")" ]]; then
-	echo "Tag 'v$major.$minor.$patch' was taken"
-	exit 1
+    echo "Tag 'v$major.$minor.$patch' was taken"
+    exit 1
 fi
 
 if [[ "$patch" = 0 ]] && [[ -n "$(git tag -l "v$major.$minor")" ]]; then
-	echo "Tag 'v$major.$minor' was taken"
-	exit 1
+    echo "Tag 'v$major.$minor' was taken"
+    exit 1
 fi
 
 if [[ -z "$version_message" ]]; then
-	version_message="Version $major.$minor.$patch"
+    version_message="Version $major.$minor.$patch"
 fi
 
 echo "Ready to commit and tag a new version: $major.$minor.$patch"
@@ -98,39 +101,39 @@ echo "Version message will be: $version_message"
 read -p "Ready to commit? [Y/N]: " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-	# Update the version file.
-	perl -pi -e "s/(VERSION_MAJOR)\s+[0-9]+/\1 $major/g" VERSION.txt
-	perl -pi -e "s/(VERSION_MINOR)\s+[0-9]+/\1 $minor/g" VERSION.txt
-	perl -pi -e "s/(VERSION_PATCH)\s+[0-9]+/\1 $patch/g" VERSION.txt
+    # Update the version file.
+    perl -pi -e "s/(VERSION_MAJOR)\s+[0-9]+/\1 $major/g" VERSION.txt
+    perl -pi -e "s/(VERSION_MINOR)\s+[0-9]+/\1 $minor/g" VERSION.txt
+    perl -pi -e "s/(VERSION_PATCH)\s+[0-9]+/\1 $patch/g" VERSION.txt
 
-	if [[ -n "$gpg_sign" ]]; then
-		echo "Create a SIGNED release"
-	
-		# Create a SIGNED release commit
-		git commit -a -S -m "Incrementing version number to $major.$minor.$patch"
+    if [[ -n "$gpg_sign" ]]; then
+        echo "Create a SIGNED release"
 
-		# Tag it like a champ!
-		git tag -s "v$major.$minor.$patch" -m "$version_message"
-	else
-		echo "Create an UNSIGNED release"
-	
-		# Create an UNSIGNED release commit
-		git commit -am "Incrementing version number to $major.$minor.$patch"
+        # Create a SIGNED release commit
+        git commit -a -S -m "Incrementing version number to $major.$minor.$patch"
 
-		# Create an UNSIGNED tag
-		git tag -a "v$major.$minor.$patch" -m "$version_message"
-	fi
+        # Tag it like a champ!
+        git tag -s "v$major.$minor.$patch" -m "$version_message"
+    else
+        echo "Create an UNSIGNED release"
 
-	echo "Committed and tagged a new release"
-	read -p "Push commit and tag to remote? [Y/N]: " -n 1 -r
-	echo
-	if [[ $REPLY =~ ^[Yy]$ ]]; then
-		git push origin master
-		git push origin "v$major.$minor.$patch"
-		echo "Pushed data to remote. Congrats!"
-	else
-		echo "You need to 'git push origin master' and 'git push origin --tags' manually."
-	fi
+        # Create an UNSIGNED release commit
+        git commit -am "Incrementing version number to $major.$minor.$patch"
+
+        # Create an UNSIGNED tag
+        git tag -a "v$major.$minor.$patch" -m "$version_message"
+    fi
+
+    echo "Committed and tagged a new release"
+    read -p "Push commit and tag to remote? [Y/N]: " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        git push origin master
+        git push origin "v$major.$minor.$patch"
+        echo "Pushed data to remote. Congrats!"
+    else
+        echo "You need to 'git push origin master' and 'git push origin --tags' manually."
+    fi
 else
-  echo "Chicken!"
+    echo "Chicken!"
 fi
