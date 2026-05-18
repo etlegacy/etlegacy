@@ -128,30 +128,33 @@ if /i "%REPLY%"=="Y" (
 		echo Create a SIGNED release
 	
 		:: Create a SIGNED release commit
-		git commit -a -S -m "Incrementing version number to v%major%.%minor%.%patch%"
+		git commit -a -S -m "Incrementing version number to v!major!.!minor!.!patch!"
 
 		:: Tag it like a champ!
-        git tag -s "v%major%.%minor%.%patch%" -m "%version_message%"
+        git tag -s "v!major!.!minor!.!patch!" -m "!version_message!"
     ) else (
 		echo Create an UNSIGNED release
 	
 		:: Create an UNSIGNED release commit
-		git commit -am "Incrementing version number to v%major%.%minor%.%patch%"
+		git commit -am "Incrementing version number to v!major!.!minor!.!patch!"
 		
 		:: Create an UNSIGNED tag
-        git tag -a "v%major%.%minor%.%patch%" -m "%version_message%"
+        git tag -a "v!major!.!minor!.!patch!" -m "%version_message%"
     )
 
     echo Committed and tagged a new release
+	
+	set /p "upstream=Enter the name of the upstream remote (default: origin): "
+	if "!upstream!"=="" set "upstream=origin"
     
-    set /p "REPLY_PUSH=Push commit and tag to remote? [Y/N]: "
+    set /p "REPLY_PUSH=Push commit and tag to remote !upstream!? [Y/N]: "
     echo.
     if /i "!REPLY_PUSH!"=="Y" (
-        git push origin master
-        git push origin "v%major%.%minor%.%patch%"
-        echo Pushed data to remote. Congrats!
+        git push "!upstream!" HEAD
+        git push "!upstream!" "v!major!.!minor!.!patch!"
+        echo Pushed data to remote !upstream!. Congrats!
     ) else (
-        echo You need to 'git push origin master' and 'git push origin --tags' manually.
+        echo You need to 'git push !upstream! HEAD' and 'git push !upstream! --tags' manually.
     )
 ) else (
     echo Chicken!

@@ -125,14 +125,18 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     fi
 
     echo "Committed and tagged a new release"
-    read -p "Push commit and tag to remote? [Y/N]: " -n 1 -r
+
+    read -p "Enter the name of the upstream remote (default: origin): " upstream -r
+    upstream=${upstream:-origin}
+
+    read -p "Push commit and tag to remote '$upstream'? [Y/N]: " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-        git push origin master
-        git push origin "v$major.$minor.$patch"
-        echo "Pushed data to remote. Congrats!"
+        git push "$upstream" HEAD
+        git push "$upstream" "$major.$minor.$patch"
+        echo "Pushed data to remote '$upstream'. Congrats!"
     else
-        echo "You need to 'git push origin master' and 'git push origin --tags' manually."
+        echo "You need to 'git push $upstream HEAD' and 'git push $upstream --tags' manually."
     fi
 else
     echo "Chicken!"
