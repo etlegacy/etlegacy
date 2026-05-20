@@ -471,6 +471,9 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 
 	switch (meansOfDeath)
 	{
+	case MOD_FEAR:
+		weap = GetMODTableData(self->client->lasthurt_mod)->weaponIcon;
+		break;
 	case MOD_FALLING:
 		weap = WP_NONE;
 		if (self->client->pmext.shoved)
@@ -595,7 +598,19 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	}
 
 	// death stats handled out-of-band of G_Damage for external calls
-	G_addStats(self, attacker, damage, meansOfDeath);
+	if (meansOfDeath == MOD_FEAR)
+	{
+		// reward last valid attacker which inflict damage to suicided client
+		G_addStats(self, attacker, damage, self->client->lasthurt_mod);
+		G_AddKillSkillPoints(attacker, self->client->lasthurt_mod, HR_NUM_HITREGIONS, qfalse);
+
+		// give assist point to other players
+		G_AddKillAssistPoints(self, &g_entities[self->client->lasthurt_client]);
+	}
+	else
+	{
+		G_addStats(self, attacker, damage, meansOfDeath);
+	}
 
 	self->client->ps.pm_type = PM_DEAD;
 
@@ -731,7 +746,8 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 	{
 		attacker->client->pers.lastkilled_client = self->s.clientNum;
 
-		if (attacker == self || dieFromSameTeam)
+		// self or team mate
+		if (dieFromSameTeam)
 		{
 			G_CheckComplaint(self, inflictor, attacker, meansOfDeath);
 
@@ -743,6 +759,18 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		}
 		else
 		{
+			// reward attacker for killing objective carrier
+			if (G_DropItems(self))
+			{
+				G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 5.f, "obj. carrier killed");
+			}
+
+			// reward attacker for killing player on TOI area
+			if (self->client->touchingTOI || G_FindNearestTOI(self))
+			{
+				G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 3.f, "kill near obj.");
+			}
+
 			if (g_gametype.integer == GT_WOLF_LMS)
 			{
 				if (level.firstbloodTeam == -1)
@@ -761,24 +789,6 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		if (g_gametype.integer == GT_WOLF_LMS)
 		{
 			AddKillScore(self, -1);
-		}
-	}
-
-	if (G_DropItems(self))
-	{
-		// reward attacker for killing objective carrier
-		if (attackerClient && !dieFromSameTeam)
-		{
-			G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 5.f, "obj. carrier killed");
-		}
-	}
-
-	// reward attacker for killing player on TOI area
-	if (self->client->touchingTOI || G_FindNearestTOI(self))
-	{
-		if (attackerClient && !dieFromSameTeam)
-		{
-			G_AddSkillPoints(attacker, SK_BATTLE_SENSE, 3.f, "kill near obj.");
 		}
 	}
 
@@ -905,7 +915,7 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 #endif
 		limbo(self, qfalse);   // but no corpse
 	}
-	else if (meansOfDeath == MOD_SUICIDE)
+	else if (meansOfDeath == MOD_SUICIDE || meansOfDeath == MOD_FEAR)
 	{
 #ifdef FEATURE_SERVERMDX
 		self->client->deathAnim = qtrue;    // add animation time

@@ -1254,6 +1254,21 @@ void Cmd_Nostamina_f(gentity_t *ent, unsigned int dwCommand, int value)
 }
 
 /**
+ * @brief Check if player is suiciding while behing hit by enemy players
+ * @param[in] ent The player issuing suicide
+ * @return true if the player suicide by fear, otherwise false
+ */
+ID_INLINE qboolean G_FearCheck(gentity_t *ent)
+{
+	const int KILL_BY_FEAR_TIME = 1500;
+
+	return IS_VALID_CLIENT_NUM(ent->client->lasthurt_client) &&
+	       g_entities[ent->client->lasthurt_client].health > 0 &&
+	       !OnSameTeam(ent, &g_entities[ent->client->lasthurt_client]) &&
+	       ent->client->lasthurt_time + KILL_BY_FEAR_TIME >= level.time;
+}
+
+/**
  * @brief Cmd_Kill_f
  * @param[in,out] ent
  * @param dwCommand - unused
@@ -1261,7 +1276,6 @@ void Cmd_Nostamina_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 void Cmd_Kill_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-
 	if (level.match_pause != PAUSE_NONE)
 	{
 		CP("cp \"Can't ^3/kill^7 while game in pause.\n\"");
@@ -1291,7 +1305,15 @@ void Cmd_Kill_f(gentity_t *ent, unsigned int dwCommand, int value)
 	ent->client->ps.persistant[PERS_HWEAPON_USE] = 0; // if using /kill while at MG42
 	ent->sound1to2                               = HR_NUM_HITREGIONS; // not a headshot kill
 
-	player_die(ent, ent, ent, (g_gamestate.integer == GS_PLAYING) ? 100000 : 135, MOD_SUICIDE);
+	if (G_FearCheck(ent))
+	{
+		player_die(ent, &g_entities[ent->client->lasthurt_client], &g_entities[ent->client->lasthurt_client],
+		           (g_gamestate.integer == GS_PLAYING) ? 100000 : 135, MOD_FEAR);
+	}
+	else
+	{
+		player_die(ent, ent, ent, (g_gamestate.integer == GS_PLAYING) ? 100000 : 135, MOD_SUICIDE);
+	}
 }
 
 /**
@@ -1586,7 +1608,16 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 			ent->flags                        &= ~FL_GODMODE;
 			ent->client->ps.stats[STAT_HEALTH] = ent->health = 0;
 			ent->sound1to2                     = HR_NUM_HITREGIONS;           // not a headshot kill
-			player_die(ent, ent, ent, 100000, MOD_SWITCHTEAM);
+
+			if (G_FearCheck(ent))
+			{
+				player_die(ent, &g_entities[ent->client->lasthurt_client], &g_entities[ent->client->lasthurt_client],
+				           100000, MOD_FEAR);
+			}
+			else
+			{
+				player_die(ent, ent, ent, 100000, MOD_SWITCHTEAM);
+			}
 		}
 	}
 	// they go to the end of the line for tournements
