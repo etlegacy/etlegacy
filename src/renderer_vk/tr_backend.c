@@ -1503,7 +1503,7 @@ const void *RB_SwapBuffers(const void *data)
 
 	// End the render pass, submit the recorded command buffer and present
 	// the swapchain image (counterpart to VK_BeginFrame() called at the top
-	// of RB_ExecuteRenderCommands()).
+	// of RE_BeginFrame()).
 	VK_EndFrame();
 
 	ri.GLimp_SwapFrame();
@@ -1559,12 +1559,6 @@ void RB_ExecuteRenderCommands(const void *data)
 	int t1, t2;
 
 	t1 = ri.Milliseconds();
-
-	// Begin recording the Vulkan command buffer/render pass for this frame
-	// so that any RC_STRETCH_PIC / RC_2DPOLYS / RC_DRAW_SURFS commands below
-	// can submit real draw calls via VK_Draw2D(). Paired with VK_EndFrame()
-	// in RB_SwapBuffers(), which also submits and presents the frame.
-	VK_BeginFrame();
 
 	while (1)
 	{

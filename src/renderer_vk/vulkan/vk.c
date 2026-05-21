@@ -106,19 +106,6 @@ typedef struct
 	qboolean uiPipelineBoundThisFrame;
 	qboolean uiViewportSetThisFrame;
 
-	// R_IssuePendingRenderCommands() can invoke RB_ExecuteRenderCommands()
-	// several times within a single real (presented) frame - e.g. whenever
-	// a cvar-driven state change needs to flush pending GL-compat commands
-	// - but only the final call (the one appending RC_SWAP_BUFFERS) actually
-	// swaps/presents. VK_BeginFrame()/VK_EndFrame() must therefore be
-	// idempotent across those intermediate flushes: only the first
-	// VK_BeginFrame() call of a real frame should wait/acquire/begin the
-	// command buffer, and only RB_SwapBuffers()'s VK_EndFrame() call should
-	// submit+present. Without this, an intermediate flush would leave the
-	// in-flight fence reset but never re-signaled (no matching submit),
-	// deadlocking the next VK_BeginFrame()'s vkWaitForFences() forever.
-	qboolean frameInProgress;
-
 	qboolean initialized;
 	uint32_t currentImageIndex;
 } vkContext_t;
@@ -1253,16 +1240,6 @@ void VK_BeginFrame(void)
 		return;
 	}
 
-	// Idempotent per real frame: RB_ExecuteRenderCommands() may be invoked
-	// several times before the frame that actually swaps/presents (see the
-	// frameInProgress comment at its declaration). Only the first call
-	// should wait on the fence / acquire / begin the command buffer.
-	if (vk.frameInProgress)
-	{
-		return;
-	}
-	vk.frameInProgress = qtrue;
-
 	// reset the per-frame vertex/index arenas and UI
 	// pipeline/viewport-bound tracking before any draw calls are recorded.
 	vk.vertexArenaOffset        = 0;
@@ -1303,11 +1280,10 @@ void VK_EndFrame(void)
 	VkPresentInfoKHR     presentInfo;
 	VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
-	if (!vk.initialized || !vk.frameInProgress)
+	if (!vk.initialized)
 	{
 		return;
 	}
-	vk.frameInProgress = qfalse;
 
 	vkCmdEndRenderPass(vk.commandBuffer);
 	vkEndCommandBuffer(vk.commandBuffer);
