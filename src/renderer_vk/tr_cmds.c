@@ -33,6 +33,7 @@
  */
 
 #include "tr_local.h"
+#include "vulkan/vk.h"
 
 /**
  * @brief R_PerformanceCounters
@@ -447,6 +448,17 @@ void RE_BeginFrame(void)
 	{
 		return;
 	}
+
+	// RE_BeginFrame() is called exactly once per real (presented) frame -
+	// unlike RB_ExecuteRenderCommands(), which R_IssuePendingRenderCommands()
+	// below may trigger several times within this same frame (e.g. for
+	// r_textureMode/r_gamma cvar changes) without ever swapping/presenting.
+	// So this is the correct, single place to start the Vulkan frame:
+	// wait on the in-flight fence, acquire the swapchain image and begin
+	// recording the command buffer/render pass. The matching submit+present
+	// happens once, in RB_SwapBuffers() via VK_EndFrame().
+	VK_BeginFrame();
+
 	glState.finishCalled = qfalse;
 
 	tr.frameCount++;
