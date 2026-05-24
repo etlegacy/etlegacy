@@ -3142,25 +3142,7 @@ void CG_Debriefing_PlayerName_Draw(panel_button_t *button)
 
 	ci = CG_Debriefing_GetSelectedClientInfo();
 
-	switch (ci->team)
-	{
-	case TEAM_AXIS:
-		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, cgs.media.axisFlag);
-		break;
-	case TEAM_ALLIES:
-		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, cgs.media.alliedFlag);
-		break;
-	case TEAM_SPECTATOR: // fall through
-	default:
-		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, cgs.media.limboTeamButtonBack_on);
-		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, cgs.media.limboTeamButtonSpec);
-		break;
-	}
-
-	if (ci->team == TEAM_AXIS || ci->team == TEAM_ALLIES)
-	{
-		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, ci->team == TEAM_AXIS ? cgs.media.axisFlag : cgs.media.alliedFlag);
-	}
+	CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, CG_GetTeamFlag(ci->team));
 	CG_Text_Paint_Ext(button->rect.x + 22, button->rect.y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 27, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
@@ -3986,21 +3968,7 @@ void CG_Debriefing_Awards_Draw(panel_button_t *button)
 			continue;
 		}
 
-		switch (cgs.dbAwardTeams[i + cgs.dbAwardsListOffset])
-		{
-		case TEAM_AXIS:
-			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.axisFlag);
-			break;
-		case TEAM_ALLIES:
-			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.alliedFlag);
-			break;
-		case TEAM_SPECTATOR: // fall through
-		default:
-			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonBack_on);
-			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonSpec); // TEAM_FREE shouldn't occur
-			break;
-		}
-
+		CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, CG_GetTeamFlag(cgs.dbAwardTeams[i + cgs.dbAwardsListOffset]));
 		CG_Text_Paint_Ext(button->rect.x + 28, y + 11, 0.19f, 0.19f, clrTxtBck, CG_TranslateString(awardNames[i + cgs.dbAwardsListOffset]), 0, 0, 0, &cgs.media.limboFont2);
 		CG_Text_Paint_Ext(button->rect.x + 28 + 180, y + 11, 0.19f, 0.19f, clrTxtBck, va("^7%s", cgs.dbAwardNames[i + cgs.dbAwardsListOffset]), 0, 0, 0, &cgs.media.limboFont2);
 		y += 16;

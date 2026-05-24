@@ -40,9 +40,6 @@
 
 void CG_CalcVrect(void);
 
-qhandle_t axis_flag   = 0;
-qhandle_t allies_flag = 0;
-
 extern vec4_t HUD_Border;
 extern vec4_t HUD_Background;
 extern vec4_t HUD_Text;
@@ -1044,30 +1041,9 @@ void CG_mvOverlayDisplay(void)
 
 			if (cg.mvTotalTeam[j] == 0)
 			{
-				qhandle_t flag_used = 0;
-
-				switch (j)
-				{
-				case TEAM_AXIS:
-					if (!axis_flag)
-					{
-						axis_flag = cgs.media.axisFlag;
-					}
-					flag_used = axis_flag;
-					break;
-				case TEAM_ALLIES:
-				default:
-					if (!allies_flag)
-					{
-						allies_flag = cgs.media.alliedFlag;
-					}
-					flag_used = allies_flag;
-					break;
-				}
-
 				y += charHeight * 2.0f;
 
-				CG_DrawPic(x - 18, y - charHeight * 2.0f - 12, 18, 12, flag_used);
+				CG_DrawPic(x - 18, y - charHeight * 2.0f - 12, 18, 12, CG_GetTeamFlag(j));
 				CG_DrawRect_FixedBorder(x - 19, y - charHeight * 2.0f - 13, 20, 14, 1, HUD_Border);
 			}
 
