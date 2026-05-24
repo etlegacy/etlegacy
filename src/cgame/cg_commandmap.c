@@ -348,6 +348,20 @@ static float CG_PlayerDistanceScaling(mapEntityData_t *player)
 	return minScale;
 }
 
+#define COMPASS_MARGIN_OFFSET 0.25f
+
+/**
+ * @brief CG_IsCompassDecorDraw
+ * @param[in] style
+ * @return
+ */
+static ID_INLINE qboolean CG_IsCompassDecorDraw(int style)
+{
+	return (style & COMPASS_DECOR)
+	       || (style & COMPASS_CARDINAL_POINTS)
+	       || !(style & COMPASS_DRAW_ICONS_INSIDE);
+}
+
 /**
  * @brief Calculate the scaled (zoomed) yet unshifted coordinate for
  * each map entity within the automap
@@ -361,9 +375,12 @@ void CG_TransformAutomapEntity(void)
 
 	if (hud)
 	{
-		// subtract surrounding decoration of the compass
-		w = hud->compass.location.w - (hud->compass.location.w * 0.25f);
-		h = hud->compass.location.h - (hud->compass.location.h * 0.25f);
+		// subtract surrounding decoration of the compass if draw
+		if (CG_IsCompassDecorDraw(hud->compass.style))
+		{
+			w = hud->compass.location.w - (hud->compass.location.w * COMPASS_MARGIN_OFFSET);
+			h = hud->compass.location.h - (hud->compass.location.h * COMPASS_MARGIN_OFFSET);
+		}
 
 		w = h = hypotf(w, h);
 	}
@@ -2038,7 +2055,6 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 	float        h;
 	float        wMap;
 	float        hMap;
-	float        diff;
 	vec2_t       automapTransformed;
 	mapScissor_t mapScissor;
 	snapshot_t   *snap;
@@ -2064,11 +2080,22 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 	}
 #endif
 
-	diff = basew * 0.25f;
-	x    = basex + (diff / 2);
-	y    = basey + (diff / 2);
-	w    = basew - diff;
-	h    = baseh - diff;
+	// subtract surrounding decoration of the compass if draw
+	if (CG_IsCompassDecorDraw(style))
+	{
+		x = basex + (basew * COMPASS_MARGIN_OFFSET * 0.5f);
+		y = basey + (baseh * COMPASS_MARGIN_OFFSET * 0.5f);
+		w = basew - basew * COMPASS_MARGIN_OFFSET;
+		h = baseh - baseh * COMPASS_MARGIN_OFFSET;
+	}
+	else
+	{
+		// substract border tickness
+		x = basex + 0.5f;
+		y = basey + 0.5f;
+		w = basew - 1.f;
+		h = baseh - 1.f;
+	}
 
 	Com_Memset(&mapScissor, 0, sizeof(mapScissor));
 	mapScissor.circular   = !(style & COMPASS_SQUARE);
@@ -2118,7 +2145,8 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 	{
 		if (style & COMPASS_DECOR)
 		{
-			CG_DrawPic(basex, basey, basew, baseh, cgs.media.limboObjectiveBack[2]);
+			// substract border tickness, otherwise it will be hided
+			CG_DrawPic(basex + 0.5f, basey + 0.5f, basew - 1, baseh - 1, cgs.media.limboObjectiveBack[2]);
 		}
 	}
 
@@ -2671,20 +2699,28 @@ void CG_CommandMap_DrawHighlightText(void)
 }
 
 /**
-* @brief CG_DrawCompassIcon
-* @param[in] x
-* @param[in] y
-* @param[in] w
-* @param[in] h
-* @param[in] origin
-* @param[in] dest
-* @param[in] shader
-* @param[in] style
-*/
-void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader, float dstScale, float baseSize, mapScissor_t *scissor, int style)
+ * @brief CG_DrawCompassIcon
+ * @param[in] x
+ * @param[in] y
+ * @param[in] w
+ * @param[in] h
+ * @param[in] origin
+ * @param[in] dest
+ * @param[in] shader
+ * @param[in] dstScale
+ * @param[in] baseSize
+ * @param[in] scissor
+ * @param[in] style
+ */
+void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_t dest, qhandle_t shader,
+                        float dstScale, float baseSize, mapScissor_t *scissor, int style)
 {
-	float    iconx, icony, iconWidth, iconHeight, radius;
-	float    angle, len, diff;
+	float    iconx;
+	float    icony;
+	float    iconSize;
+	float    angle, len;
+	float    cosAngle;
+	float    sinAngle;
 	vec3_t   v1, angles;
 	qboolean drawIconInside   = style & COMPASS_DRAW_ICONS_INSIDE;
 	qboolean pointTowardNorth = (style & COMPASS_POINT_TOWARD_NORTH && !(style & COMPASS_DYNAMIC_TICKS));
@@ -2702,74 +2738,71 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 
 	angles[YAW] = AngleSubtract(pointTowardNorth ? 90.f : cg.refdefViewAngles[YAW], angles[YAW]);
 	angle       = ((angles[YAW] + 180.f) / 360.f - (0.50f / 2.f)) * M_TAU_F;
+	cosAngle    = cosf(angle);
+	sinAngle    = sinf(angle);
 
-	len        = 1 - MIN(1.f, len / 2000.f * dstScale);
-	iconWidth  = baseSize * len + 8;
-	iconHeight = baseSize * len + 8;
+	len       = 1 - MIN(1.f, len / 2000.f * dstScale);
+	iconSize  = baseSize * len + 8;
+	iconSize *= ((scissor->zoomFactor + 2.5f) / AUTOMAP_ZOOM);
 
 	if (scissor->circular)
 	{
-		w *= 0.5f;
-		h *= 0.5f;
-
-		iconx = x + w;
-		icony = y + h;
-
-		if (drawIconInside)
+		// subtract surrounding decoration of the compass if draw
+		// and only if we draw inside the compass, not on the decor
+		if (((style & COMPASS_DECOR) || (style & COMPASS_CARDINAL_POINTS)) && drawIconInside)
 		{
-			w -= baseSize * 2;
-			h -= baseSize * 2;
+			x = x + (w * COMPASS_MARGIN_OFFSET * 0.5f);
+			y = y + (h * COMPASS_MARGIN_OFFSET * 0.5f);
+			w = w - w * COMPASS_MARGIN_OFFSET;
+			h = h - h * COMPASS_MARGIN_OFFSET;
 		}
 
-		radius = (float)sqrt((w * w) + (h * h)) / 3.f * 2.f * 0.9f;
+		iconx = x + (w * 0.5f);
+		icony = y + (h * 0.5f);
 
-		iconx += (float)cos(angle) * radius;
-		icony += (float)sin(angle) * radius;
-
-		iconx -= iconWidth * 0.5f;
-		icony -= iconHeight * 0.5f;
+		iconx += cosAngle * (w * 0.5f - (cosAngle >= 0 ? iconSize : 0));
+		icony += sinAngle * (h * 0.5f - (sinAngle >= 0 ? iconSize : 0));
 	}
 	else
 	{
-		diff = w * 0.25f;
-		x    = x + (diff * 0.5f);
-		y    = y + (diff * 0.5f);
-		w    = w - diff;
-		h    = h - diff;
+		float radius;
+
+		// subtract surrounding decoration of the compass if draw
+		if (CG_IsCompassDecorDraw(style))
+		{
+			x = x + (w * COMPASS_MARGIN_OFFSET * 0.5f);
+			y = y + (h * COMPASS_MARGIN_OFFSET * 0.5f);
+			w = w - w * COMPASS_MARGIN_OFFSET;
+			h = h - h * COMPASS_MARGIN_OFFSET;
+		}
 
 		iconx = x + (w * 0.5f);
 		icony = y + (h * 0.5f);
 
 		if (!drawIconInside)
 		{
-			w += baseSize * 2;
-			h += baseSize * 2;
+			w += iconSize * 2.f;
+			h += iconSize * 2.f;
 		}
 
-		radius = (float)sqrt((w * w) + (h * h)) * 0.5f;
+		radius = hypotf(w, h) * 0.5f;
 
-		iconx += (float)cos(angle) * radius;
-		icony += (float)sin(angle) * radius;
-
-		iconWidth  *= ((scissor->zoomFactor + 2.5f) / AUTOMAP_ZOOM);
-		iconHeight *= ((scissor->zoomFactor + 2.5f) / AUTOMAP_ZOOM);
-
-		iconx -= iconWidth * 0.5f;
-		icony -= iconHeight * 0.5f;
+		iconx += cosAngle * (radius - (cosAngle >= 0 ? iconSize : 0));
+		icony += sinAngle * (radius - (sinAngle >= 0 ? iconSize : 0));
 
 		if (drawIconInside)
 		{
 			// keep the icon from going outside map boundaries
-			iconx = Com_Clamp(x, x + w - iconWidth, iconx);
-			icony = Com_Clamp(y, y + h - iconHeight, icony);
+			iconx = Com_Clamp(x, x + w - iconSize, iconx);
+			icony = Com_Clamp(y, y + h - iconSize, icony);
 		}
 		else
 		{
 			// keep the icon from going outside comp boundaries
-			iconx = Com_Clamp(x - iconWidth, x + w - baseSize * 2.f, iconx);
-			icony = Com_Clamp(y - iconHeight, y + h - baseSize * 2.f, icony);
+			iconx = Com_Clamp(x - iconSize, x + w - iconSize * 2, iconx);
+			icony = Com_Clamp(y - iconSize, y + h - iconSize * 2, icony);
 		}
 	}
 
-	CG_DrawPic(iconx, icony, iconWidth, iconHeight, shader);
+	CG_DrawPic(iconx, icony, iconSize, iconSize, shader);
 }
