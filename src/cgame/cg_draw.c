@@ -3211,15 +3211,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 	// Spectators view teamflags
 	if (cg.snap->ps.clientNum != cg.clientNum && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 	{
-		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
-		{
-			CG_DrawPic(comp->location.x + 1, y, lineHeight * 1.5f, lineHeight, cgs.media.alliedFlag);
-		}
-		else
-		{
-			CG_DrawPic(comp->location.x + 1, y, lineHeight * 1.5f, lineHeight, cgs.media.axisFlag);
-		}
-
+		CG_DrawPic(comp->location.x + 1, y, lineHeight * 1.5f, lineHeight, CG_GetTeamFlag(cgs.clientinfo[cg.snap->ps.clientNum].team));
 		CG_DrawRect_FixedBorder(comp->location.x, y - 1, lineHeight * 1.5f + 2, lineHeight + 2, 1, HUD_Border);
 
 		y += lineHeight;

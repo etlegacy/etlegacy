@@ -2042,8 +2042,8 @@ void CG_DrawObjectiveStatus(hudComponent_t *comp)
 			// display team flag
 			color[3] = 1.f;
 			trap_R_SetColor(color);
-			CG_DrawPic(comp->location.x, comp->location.y + flagIconHeightOffset, flagIconWidth, flagIconHeight, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.axisFlag : cgs.media.alliedFlag);
-			CG_DrawPic(comp->location.x + comp->location.w - flagIconWidth, comp->location.y + flagIconHeightOffset, flagIconWidth, flagIconHeight, ps->persistant[PERS_TEAM] == TEAM_AXIS ? cgs.media.alliedFlag : cgs.media.axisFlag);
+			CG_DrawPic(comp->location.x, comp->location.y + flagIconHeightOffset, flagIconWidth, flagIconHeight, CG_GetTeamFlag(ps->persistant[PERS_TEAM]));
+			CG_DrawPic(comp->location.x + comp->location.w - flagIconWidth, comp->location.y + flagIconHeightOffset, flagIconWidth, flagIconHeight, CG_GetTeamFlag(ps->persistant[PERS_TEAM] == TEAM_AXIS ? TEAM_ALLIES : TEAM_AXIS));
 
 			// clear debug flag
 			cg.flagIndicator &= ~(1 << PW_NUM_POWERUPS);
