@@ -4762,13 +4762,22 @@ static void CG_NoiseGenerator()
 	trap_Cvar_Set("cl_noprint", "1");
 
 	// banner
-	CG_AddToBannerPrint("Iaculatores coniunctis: incesserit servitium castrensi post velut et deinde virgae.");
+	if (!cg.bannerPrintTime)
+	{
+		CG_AddToBannerPrint(NOISE_BANNER_TEXT);
+	}
 
 	// center print
-	CG_CenterPrint("Insulari sufficiente postulatus aut nullo delatus hostiles iniecto aut suos.");
+	if (!cg.centerPrintTime)
+	{
+		CG_CenterPrint(NOISE_CENTER_TEXT);
+	}
 
-	// objevive print
-	CG_ObjectivePrint("You are near an amazing place and everyone envy you.");
+	// objective print
+	if (!cg.oidPrintTime)
+	{
+		CG_ObjectivePrint(NOISE_OBJECTIVE_TEXT);
+	}
 
 	// chat
 	CG_AddToTeamChat("Lorem ipsum dolor sit amet, consectetuer adipiscing elit.", cg.snap->ps.clientNum);
@@ -4812,8 +4821,11 @@ static void CG_NoiseGenerator()
 	cg.flagIndicator |= (1 << PW_NUM_POWERUPS);
 
 	// vote
-	cgs.voteTime = cg.time - VOTE_TIME + 1;
-	Q_strncpyz(cgs.voteString, "Do you want cast a vote ?", sizeof(cgs.voteString));
+	if (!cgs.voteTime)
+	{
+		cgs.voteTime = cg.time;
+		Q_strncpyz(cgs.voteString, NOISE_VOTE_TEXT, sizeof(cgs.voteString));
+	}
 
 	// missile camera
 	cg.latestMissile = &cg_entities[cg.snap->ps.clientNum];

@@ -2925,6 +2925,11 @@ void CG_EventHandling(int type, qboolean fForced);
 int CG_RoundTime(qtime_t *qtime);
 qboolean CG_IsDemoVersionBelow(int major, int minor, int patch);
 
+#define NOISE_BANNER_TEXT "Iaculatores coniunctis: incesserit servitium castrensi post velut et deinde virgae."
+#define NOISE_CENTER_TEXT "Insulari sufficiente postulatus aut nullo delatus hostiles iniecto aut suos."
+#define NOISE_OBJECTIVE_TEXT "You are near an amazing place and everyone envy you."
+#define NOISE_VOTE_TEXT "Do you want cast a vote ?"
+
 void CG_HudEditor_Cleanup();
 
 qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *orientation);

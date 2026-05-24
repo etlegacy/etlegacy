@@ -809,12 +809,32 @@ void CG_HudEditor_Cleanup(void)
 	int i;
 
 	CG_InitPM();
-	cg.bannerPrintTime  = 0;
-	cg.centerPrintTime  = 0;
-	cgs.voteTime        = 0;
 	cg.cursorHintTime   = 0;
 	cg.crosshairEntTime = 0;
-	cg.oidPrintTime     = 0;
+
+	// overwrite on noise banner print
+	if (!Q_strncmp(cg.bannerPrint, NOISE_BANNER_TEXT, sizeof(cg.bannerPrint)))
+	{
+		cg.bannerPrintTime = 0;
+	}
+
+	// overwrite on noise center print
+	if (!Q_strncmp(cg.centerPrint, NOISE_CENTER_TEXT, sizeof(cg.centerPrint)))
+	{
+		cg.centerPrintTime = 0;
+	}
+
+	// overwrite on noise objective print
+	if (!Q_strncmp(cg.oidPrint, NOISE_OBJECTIVE_TEXT, sizeof(cg.oidPrint)))
+	{
+		cg.oidPrintTime = 0;
+	}
+
+	// overwrite on noise vote
+	if (!Q_strncmp(cgs.voteString, NOISE_VOTE_TEXT, sizeof(cgs.voteString)))
+	{
+		cgs.voteTime = 0;
+	}
 
 	for (i = 0; i < TEAMCHAT_MSG_MAX; i++)
 	{
