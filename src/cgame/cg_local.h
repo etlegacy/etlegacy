@@ -3049,6 +3049,7 @@ void CG_InitStatsDebug(void);
 void CG_StatsDebugAddText(const char *text);
 void CG_DrawDebugArtillery(centity_t *cent);
 
+void CG_ComputeFPS(void);
 void CG_AddLagometerFrameInfo(void);
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
 void CG_CenterPrint(const char *str);

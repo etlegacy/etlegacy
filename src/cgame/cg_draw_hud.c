@@ -40,6 +40,7 @@ hudData_t      hudData;
 hudComponent_t *showOnlyHudComponent = NULL;
 
 static lagometer_t lagometer;
+static int         fps;
 
 /**
 * @var hudComponentFields
@@ -3067,20 +3068,19 @@ void CG_DrawSpeed(hudComponent_t *comp)
 #define MAX_FPS_FRAMES  500
 
 /**
- * @brief CG_DrawFPS
- * @param[in] comp
- * @return
+ * @brief CG_ComputeFPS
  */
-void CG_DrawFPS(hudComponent_t *comp)
+void CG_ComputeFPS(void)
 {
 	static int          previousTimes[MAX_FPS_FRAMES];
 	static int          previous;
 	static unsigned int index;
-	const char          *s;
 	int                 t;
 	int                 frameTime;
 
-	t = trap_Milliseconds(); // don't use serverTime, because that will be drifting to correct for internet lag changes, timescales, timedemos, etc
+	// don't use serverTime, because that will be drifting
+	// to correct for internet lag changes, timescales, timedemos, etc
+	t = trap_Milliseconds();
 
 	frameTime = t - previous;
 	previous  = t;
@@ -3090,11 +3090,11 @@ void CG_DrawFPS(hudComponent_t *comp)
 
 	if (index > MAX_FPS_FRAMES)
 	{
-		int i, fps;
+		unsigned int i;
 		// average multiple frames together to smooth changes out a bit
 		int total = 0;
 
-		for (i = 0 ; i < MAX_FPS_FRAMES ; ++i)
+		for (i = 0; i < MAX_FPS_FRAMES; ++i)
 		{
 			total += previousTimes[i];
 		}
@@ -3102,15 +3102,22 @@ void CG_DrawFPS(hudComponent_t *comp)
 		total = total ? total : 1;
 
 		fps = 1000 * MAX_FPS_FRAMES / total;
-
-		s = va("%i FPS", fps);
 	}
 	else
 	{
-		s = "estimating";
+		fps = -1;
 	}
+}
 
-	CG_DrawCompText(comp, s, comp->colorMain, comp->styleText, &cgs.media.limboFont1);
+/**
+ * @brief CG_DrawFPS
+ * @param[in] comp
+ * @return
+ */
+void CG_DrawFPS(hudComponent_t *comp)
+{
+	CG_DrawCompText(comp, (fps == -1) ? "estimating" : va("%i FPS", fps),
+	                comp->colorMain, comp->styleText, &cgs.media.limboFont1);
 }
 
 /**
