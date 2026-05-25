@@ -1819,8 +1819,11 @@ qboolean G_readyMatchState(void)
 		level.ref_allready = qfalse;
 		if (g_doWarmup.integer > 0 || (g_gametype.integer == GT_WOLF_LMS && g_lms_lockTeams.integer))
 		{
-			teamInfo[TEAM_AXIS].team_lock   = qtrue;
-			teamInfo[TEAM_ALLIES].team_lock = qtrue;
+			if (g_gametype.integer != GT_WOLF_CAMPAIGN && g_gametype.integer != GT_WOLF_MAPVOTE)
+			{
+				teamInfo[TEAM_AXIS].team_lock   = qtrue;
+				teamInfo[TEAM_ALLIES].team_lock = qtrue;
+			}
 		}
 
 		return qtrue;
