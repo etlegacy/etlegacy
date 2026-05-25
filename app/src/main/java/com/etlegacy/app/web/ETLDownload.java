@@ -163,6 +163,9 @@ public class ETLDownload {
 
 	private void createHttpConnection(final Request request, ThrowableCallable<HttpURLConnection> handler) throws Exception {
 		URL url = new URL(request.url);
+		if (!"https".equalsIgnoreCase(url.getProtocol())) {
+			throw new IOException("Only HTTPS connections are allowed");
+		}
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		try {
 			connection.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(10));
