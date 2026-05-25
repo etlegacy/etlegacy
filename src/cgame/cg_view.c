@@ -2806,6 +2806,9 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 		Com_Memcpy(cg.refdef.areamask, cg.snap->areamask, sizeof(cg.refdef.areamask));
 
 		DEBUGTIME
+		
+		//fps sample
+		CG_ComputeFPS();
 
 		//lagometer sample
 		CG_AddLagometerFrameInfo();
