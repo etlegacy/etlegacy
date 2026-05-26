@@ -167,6 +167,80 @@ void CG_ParseTeamXPs(int n)
 
 void CG_LimboPanel_SendSetupMsg(qboolean forceteam);
 
+// used to save player's stats during intermission, if they receive a clientinfo update
+typedef struct
+{
+	float totalWeapAcc;
+	float totalWeapHSpct;
+
+	int timeAxis;
+	int timeAllies;
+	int timePlayed;
+
+	float rating;
+	float deltaRating;
+
+	int kills;
+	int killsAssists;
+	int deaths;
+	int gibs;
+	int selfKills;
+	int teamKills;
+	int teamGibs;
+} statBackup_t;
+
+/**
+ * @brief CG_BackupPlayerStats
+ * @param[in] statBackup
+ * @param[in] ci
+ */
+static void CG_BackupPlayerStats(statBackup_t *statBackup, const clientInfo_t *ci)
+{
+	statBackup->totalWeapAcc   = ci->totalWeapAcc;
+	statBackup->totalWeapHSpct = ci->totalWeapHSpct;
+
+	statBackup->timeAxis   = ci->timeAxis;
+	statBackup->timeAllies = ci->timeAllies;
+	statBackup->timePlayed = ci->timePlayed;
+
+	statBackup->rating      = ci->rating;
+	statBackup->deltaRating = ci->deltaRating;
+
+	statBackup->kills        = ci->kills;
+	statBackup->killsAssists = ci->killsAssists;
+	statBackup->deaths       = ci->deaths;
+	statBackup->gibs         = ci->gibs;
+	statBackup->selfKills    = ci->selfKills;
+	statBackup->teamKills    = ci->teamKills;
+	statBackup->teamGibs     = ci->teamGibs;
+}
+
+/**
+ * @brief CG_RestorePlayerStats
+ * @param[in] statBackup
+ * @param[in] ci
+ */
+static void CG_RestorePlayerStats(const statBackup_t *statBackup, clientInfo_t *ci)
+{
+	ci->totalWeapAcc   = statBackup->totalWeapAcc;
+	ci->totalWeapHSpct = statBackup->totalWeapHSpct;
+
+	ci->timeAxis   = statBackup->timeAxis;
+	ci->timeAllies = statBackup->timeAllies;
+	ci->timePlayed = statBackup->timePlayed;
+
+	ci->rating      = statBackup->rating;
+	ci->deltaRating = statBackup->deltaRating;
+
+	ci->kills        = statBackup->kills;
+	ci->killsAssists = statBackup->killsAssists;
+	ci->deaths       = statBackup->deaths;
+	ci->gibs         = statBackup->gibs;
+	ci->selfKills    = statBackup->selfKills;
+	ci->teamKills    = statBackup->teamKills;
+	ci->teamGibs     = statBackup->teamGibs;
+}
+
 /**
  * @brief CG_NewClientInfo
  * @param[in] clientNum
@@ -175,6 +249,7 @@ void CG_NewClientInfo(int clientNum)
 {
 	clientInfo_t *ci = &cgs.clientinfo[clientNum];
 	clientInfo_t newInfo;
+	statBackup_t statBackup;
 	const char   *configstring;
 	const char   *v;
 
@@ -505,9 +580,19 @@ void CG_NewClientInfo(int clientNum)
 	// can't calculate it properly from the clientinfo
 	CG_LoadClientInfo(clientNum);
 
+	if (cgs.gamestate == GS_INTERMISSION)
+	{
+		CG_BackupPlayerStats(&statBackup, ci);
+	}
+
 	// replace whatever was there with the new one
 	newInfo.infoValid = qtrue;
 	*ci               = newInfo;
+
+	if (cgs.gamestate == GS_INTERMISSION)
+	{
+		CG_RestorePlayerStats(&statBackup, ci);
+	}
 
 	// make sure we have a character set
 	if (!ci->character)
