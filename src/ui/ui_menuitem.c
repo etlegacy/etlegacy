@@ -3889,6 +3889,10 @@ void Item_ListBox_Paint(itemDef_t *item)
 
 					for (j = 0; j < listPtr->numColumns; j++)
 					{
+						// replay menu needs offset on icon drawing
+						const float iconOfs = item->special == FEEDER_DEMOS ? 4.0f : 0.0f;
+						float       textOfs = 0.0f;
+
 						text = DC->feederItemText(item->special, i, j, optionalImages, &numOptionalImages);
 						if (numOptionalImages > 0)
 						{
@@ -3896,16 +3900,19 @@ void Item_ListBox_Paint(itemDef_t *item)
 							{
 								if (optionalImages[k] >= 0)
 								{
-									DC->drawHandlePic(x + listPtr->columnInfo[j].pos + k * listPtr->elementHeight + 1,
+									DC->drawHandlePic(x + iconOfs + listPtr->columnInfo[j].pos + k * listPtr->elementHeight + 1,
 									                  y + 1, listPtr->elementHeight - 2, listPtr->elementHeight - 2, optionalImages[k]);
 								}
 							}
 
-							//DC->drawHandlePic( x + 4 + listPtr->columnInfo[j].pos, y - 1 + listPtr->elementHeight / 2, listPtr->columnInfo[j].width, listPtr->columnInfo[j].width, optionalImage);
+							// elementWidth is the entire width of the list item,
+							// so using height for offsetting makes more sense
+							textOfs = listPtr->elementHeight + 2;
 						}
-						else if (text)
+
+						if (text)
 						{
-							DC->drawText(x + 4 + listPtr->columnInfo[j].pos + item->textalignx,
+							DC->drawText(x + 4 + textOfs + listPtr->columnInfo[j].pos + item->textalignx,
 							             y + listPtr->elementHeight + item->textaligny, item->textscale, item->window.foreColor, text, 0, listPtr->columnInfo[j].maxChars, item->textStyle);
 						}
 					}
