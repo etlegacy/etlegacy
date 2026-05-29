@@ -237,6 +237,10 @@ void AssetCache(void)
 		uiInfo.uiDC.Assets.crosshairShader[n]    = trap_R_RegisterShaderNoMip(va("gfx/2d/crosshair%c", 'a' + n));
 		uiInfo.uiDC.Assets.crosshairAltShader[n] = trap_R_RegisterShaderNoMip(va("gfx/2d/crosshair%c_alt", 'a' + n));
 	}
+
+	uiInfo.uiDC.Assets.replayDirectory = trap_R_RegisterShaderNoMip(ASSET_REPLAY_DIRECTORY);
+	uiInfo.uiDC.Assets.replayHome      = trap_R_RegisterShaderNoMip(ASSET_REPLAY_HOME);
+	uiInfo.uiDC.Assets.replayUp        = trap_R_RegisterShaderNoMip(ASSET_REPLAY_UP);
 }
 
 /**
@@ -4497,11 +4501,18 @@ static void UI_LoadDemos(void)
 	Com_sprintf(path, sizeof(path), "demos");
 	if (uiInfo.demos.path[0])
 	{
+		// If we are already checking a subdirectory then show a home path selector
+		uiInfo.demos.items[uiInfo.demos.count].path   = String_Alloc("^3demos");
+		uiInfo.demos.items[uiInfo.demos.count].handle = uiInfo.uiDC.Assets.replayHome;
+		uiInfo.demos.items[uiInfo.demos.count].file   = qfalse;
+		uiInfo.demos.count++;
+
 		Q_strcat(path, sizeof(path), va("/%s", uiInfo.demos.path));
 
 		// If we are already checking a subdirectory then show a parent path selector
-		uiInfo.demos.items[0].path = String_Alloc("^2..");
-		uiInfo.demos.items[0].file = qfalse;
+		uiInfo.demos.items[uiInfo.demos.count].path   = String_Alloc("^2..");
+		uiInfo.demos.items[uiInfo.demos.count].handle = uiInfo.uiDC.Assets.replayUp;
+		uiInfo.demos.items[uiInfo.demos.count].file   = qfalse;
 		uiInfo.demos.count++;
 	}
 
@@ -4527,8 +4538,9 @@ static void UI_LoadDemos(void)
 			// Skip . and .. and hidden folders in unix
 			if (len && fileName[0] != '.')
 			{
-				uiInfo.demos.items[uiInfo.demos.count].path = String_Alloc(va("^2%s", fileName));
-				uiInfo.demos.items[uiInfo.demos.count].file = qfalse;
+				uiInfo.demos.items[uiInfo.demos.count].path   = String_Alloc(va("^2%s", fileName));
+				uiInfo.demos.items[uiInfo.demos.count].handle = uiInfo.uiDC.Assets.replayDirectory;
+				uiInfo.demos.items[uiInfo.demos.count].file   = qfalse;
 				uiInfo.demos.count++;
 			}
 
@@ -4558,9 +4570,10 @@ static void UI_LoadDemos(void)
 			{
 				fileName[len - strlen(demoExt)] = '\0';
 			}
-			uiInfo.demos.items[uiInfo.demos.count + i].path = String_Alloc(fileName);
-			uiInfo.demos.items[uiInfo.demos.count + i].file = qtrue;
-			fileName                                       += len + 1;
+			uiInfo.demos.items[uiInfo.demos.count + i].path   = String_Alloc(fileName);
+			uiInfo.demos.items[uiInfo.demos.count + i].handle = 0;
+			uiInfo.demos.items[uiInfo.demos.count + i].file   = qtrue;
+			fileName                                         += len + 1;
 		}
 
 		uiInfo.demos.count += count;
@@ -5030,8 +5043,13 @@ void UI_RunMenuScript(char **args)
 				// Is a folder selector
 				if (!uiInfo.demos.items[uiInfo.demos.index].file)
 				{
+					// is home folders ?
+					if (!Q_stricmp(&uiInfo.demos.items[uiInfo.demos.index].path[2], "demos"))
+					{
+						uiInfo.demos.path[0] = '\0';
+					}
 					// is a parent path?
-					if (!strcmp(&uiInfo.demos.items[uiInfo.demos.index].path[2], ".."))
+					else if (!Q_stricmp(&uiInfo.demos.items[uiInfo.demos.index].path[2], ".."))
 					{
 						char *last = strrchr(uiInfo.demos.path, '/');
 						if (last)
@@ -5043,6 +5061,7 @@ void UI_RunMenuScript(char **args)
 							uiInfo.demos.path[0] = '\0';
 						}
 					}
+					// is subfolders ?
 					else if (uiInfo.demos.path[0])
 					{
 						Q_strcat(uiInfo.demos.path, sizeof(uiInfo.demos.path),
@@ -8085,6 +8104,11 @@ const char *UI_FeederItemText(int feederID, int index, int column, qhandle_t *ha
 	case FEEDER_DEMOS:
 		if (index >= 0 && index < uiInfo.demos.count)
 		{
+			if (uiInfo.demos.items[index].handle)
+			{
+				*numhandles = 1;
+				handles[0]  = uiInfo.demos.items[index].handle;
+			}
 			return uiInfo.demos.items[index].path;
 		}
 		break;

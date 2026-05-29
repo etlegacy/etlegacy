@@ -225,3 +225,43 @@ ui/assets/mp_wrench_red
 	}
 }
 //========================================//
+
+
+//========================================//
+// Replay menu
+//========================================//
+ui/assets/directory
+{
+	noPicMip
+	noMipMaps
+	nocompress
+	{
+		map ui/assets/directory.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+ui/assets/home
+{
+	noPicMip
+	noMipMaps
+	nocompress
+	{
+		map ui/assets/home.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}
+
+ui/assets/up
+{
+	noPicMip
+	noMipMaps
+	nocompress
+	{
+		map ui/assets/up.tga
+		blendFunc GL_SRC_ALPHA GL_ONE_MINUS_SRC_ALPHA
+		rgbGen vertex
+	}
+}

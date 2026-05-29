@@ -494,6 +494,7 @@ typedef struct
 typedef struct
 {
 	const char *path;
+	qhandle_t handle;   // icons
 	qboolean file;
 } demoItem_t;
 
