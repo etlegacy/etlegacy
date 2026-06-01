@@ -2223,7 +2223,7 @@ static gentity_t *G_FindClosestTeamSpawnEntity(const team_t team, const vec3_t o
  * @param[in] target_origin either spawn blobs origin or autospawn origin
  * @return Spawn point index or -1.
  */
-static int G_ResolveSpawnPointIndex(team_t team, const vec3_t *target_origin)
+static int G_ResolveSpawnPointIndex(team_t team, const vec_t *target_origin)
 {
 	int i;
 	int closestTeamSpawnPt;
@@ -2256,7 +2256,7 @@ static int G_ResolveSpawnPointIndex(team_t team, const vec3_t *target_origin)
 		{
 			continue;
 		}
-		VectorSubtract(*target_origin, teamSpawnPointState->origin, diffVector);
+		VectorSubtract(target_origin, teamSpawnPointState->origin, diffVector);
 		distance = VectorLength(diffVector);
 		if ((closestTeamSpawnPtDist < 0) || (closestTeamSpawnPtDist > distance))
 		{
@@ -2342,11 +2342,11 @@ playerSpawn_t G_GetSpawnForClient(const gclient_t *client, const int resolvedAut
 
 		if (!resolvedBlob)
 		{
-			resolvedSpawnPt = G_ResolveSpawnPointIndex(client->sess.sessionTeam, &level.spawnPointStates[targetSpawnPt].origin);
+			resolvedSpawnPt = G_ResolveSpawnPointIndex(client->sess.sessionTeam, level.spawnPointStates[targetSpawnPt].origin);
 		}
 		else
 		{
-			resolvedSpawnPt = G_ResolveSpawnPointIndex(client->sess.sessionTeam, &resolvedBlob->s.origin);
+			resolvedSpawnPt = G_ResolveSpawnPointIndex(client->sess.sessionTeam, resolvedBlob->s.origin);
 		}
 		if (resolvedSpawnPt == -1)
 		{
