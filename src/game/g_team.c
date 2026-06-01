@@ -479,14 +479,16 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int majorSpawn
 
 	count = 0;
 
-	spot = NULL;
+	spot         = NULL;
 	fallbackSpot = NULL;
 
-	while (count < MAX_TEAM_SPAWN_POINTS) {
+	while (count < MAX_TEAM_SPAWN_POINTS)
+	{
 		// check next spot
 		spot = G_Find(spot, FOFS(classname), classname);
 
-		if (spot == NULL) {
+		if (spot == NULL)
+		{
 			break;
 		}
 
@@ -503,8 +505,10 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int majorSpawn
 		}
 
 		// if this minor spawn is selected add that spot even if unavailable
-		if (spot->spawnId != minorSpawn && SpotWouldTelefrag(spot)) {
-			if (!fallbackSpot) {
+		if (spot->spawnId != minorSpawn && SpotWouldTelefrag(spot))
+		{
+			if (!fallbackSpot)
+			{
 				fallbackSpot = spot; // even if this spot telefrags it's a spot
 			}
 			continue;
@@ -521,7 +525,8 @@ gentity_t *SelectRandomTeamSpawnPoint(int teamstate, team_t team, int majorSpawn
 
 	if (!count)     // no spots that won't telefrag
 	{
-		if (fallbackSpot != NULL) {
+		if (fallbackSpot != NULL)
+		{
 			return fallbackSpot;
 		}
 		return G_Find(NULL, FOFS(classname), classname);
@@ -2109,8 +2114,9 @@ qboolean G_desiredFollow(gentity_t *ent, int nTeam)
  * @param[in] team Desired team.
  * @return qtrue if the entity belongs to the given team.
  */
-static qboolean G_IsSpawnEntityOwnedByTeam(const gentity_t *spot, const team_t team) {
-	int closestIdx = -1;
+static qboolean G_IsSpawnEntityOwnedByTeam(const gentity_t *spot, const team_t team)
+{
+	int closestIdx    = -1;
 	float closestDist = -1;
 	int i;
 
@@ -2128,7 +2134,7 @@ static qboolean G_IsSpawnEntityOwnedByTeam(const gentity_t *spot, const team_t t
 		if (closestDist < 0 || distance < closestDist)
 		{
 			closestDist = distance;
-			closestIdx = i;
+			closestIdx  = i;
 		}
 	}
 
@@ -2149,49 +2155,59 @@ static qboolean G_IsSpawnEntityOwnedByTeam(const gentity_t *spot, const team_t t
  * @param[in] minorSpawn
  * @return Closest spawn entity, or NULL if none found.
  */
-static gentity_t *G_FindClosestTeamSpawnEntity(const team_t team, const vec3_t origin, int minorSpawn) {
-	gentity_t *spot = NULL;
+static gentity_t *G_FindClosestTeamSpawnEntity(const team_t team, const vec3_t origin, int minorSpawn)
+{
+	gentity_t *spot    = NULL;
 	gentity_t *closest = NULL;
-	float shortest = MAX_MAP_SIZE * 2;
+	float shortest     = MAX_MAP_SIZE * 2;
 	float tmp;
 	vec3_t target;
 	static const char *spawnClassnames[] = { "team_CTF_redspawn", "team_CTF_bluespawn" };
 	int c;
 
-	if (team != TEAM_AXIS && team != TEAM_ALLIES) {
+	if (team != TEAM_AXIS && team != TEAM_ALLIES)
+	{
 		return NULL;
 	}
 
-	for (c = 0; c < 2; c++) {
+	for (c = 0; c < 2; c++)
+	{
 		spot = NULL;
-		while ((spot = G_Find(spot, FOFS(classname), spawnClassnames[c])) != NULL) {
-			if (spot->spawnId <= 0) {
+		while ((spot = G_Find(spot, FOFS(classname), spawnClassnames[c])) != NULL)
+		{
+			if (spot->spawnId <= 0)
+			{
 				continue;
 			}
 
-			if (!(spot->spawnflags & 2)) {
+			if (!(spot->spawnflags & 2))
+			{
 				continue;
 			}
 
-			if (spot->entstate == STATE_INVISIBLE || spot->entstate == STATE_UNDERCONSTRUCTION) {
+			if (spot->entstate == STATE_INVISIBLE || spot->entstate == STATE_UNDERCONSTRUCTION)
+			{
 				continue;
 			}
 
-			if (!G_IsSpawnEntityOwnedByTeam(spot, team)) {
+			if (!G_IsSpawnEntityOwnedByTeam(spot, team))
+			{
 				continue;
 			}
 
 			// this is weird but works same as an actual algorithm used to pick spawn blob
-			if (minorSpawn > 0 && spot->spawnId != minorSpawn) {
+			if (minorSpawn > 0 && spot->spawnId != minorSpawn)
+			{
 				continue;
 			}
 
 			VectorSubtract(origin, spot->s.origin, target);
 			tmp = VectorLength(target);
 
-			if (tmp < shortest) {
+			if (tmp < shortest)
+			{
 				shortest = tmp;
-				closest = spot;
+				closest  = spot;
 			}
 		}
 	}
@@ -2207,13 +2223,14 @@ static gentity_t *G_FindClosestTeamSpawnEntity(const team_t team, const vec3_t o
  * @param[in] target_origin either spawn blobs origin or autospawn origin
  * @return Spawn point index or -1.
  */
-static int G_ResolveSpawnPointIndex(team_t team, const vec3_t* target_origin)
+static int G_ResolveSpawnPointIndex(team_t team, const vec3_t *target_origin)
 {
 	int i;
 	int closestTeamSpawnPt;
 	float closestTeamSpawnPtDist;
 
-	if (target_origin == NULL) {
+	if (target_origin == NULL)
+	{
 		// fallback: find first team spawn point
 		for (i = 0; i < level.numSpawnPoints; i++)
 		{
@@ -2228,7 +2245,7 @@ static int G_ResolveSpawnPointIndex(team_t team, const vec3_t* target_origin)
 	}
 
 	// find major spawnpt closest to target_origin
-	closestTeamSpawnPt = -1;
+	closestTeamSpawnPt     = -1;
 	closestTeamSpawnPtDist = -1;
 	for (i = 0; i < level.numSpawnPoints; i++)
 	{
@@ -2257,11 +2274,14 @@ static int G_ResolveSpawnPointIndex(team_t team, const vec3_t* target_origin)
  * @param[in] targetSpawnPt Player selected spawn point.
  * @return Spawn point index or -1.
  */
-static int G_ResolveAutoSpawnPointIndex(team_t team, int targetSpawnPt) {
-	if (targetSpawnPt >= 0 && targetSpawnPt < level.numSpawnPoints) {
+static int G_ResolveAutoSpawnPointIndex(team_t team, int targetSpawnPt)
+{
+	if (targetSpawnPt >= 0 && targetSpawnPt < level.numSpawnPoints)
+	{
 		const spawnPointState_t *targetSpawnPointState = &level.spawnPointStates[targetSpawnPt];
 		// if this spawn point is already owned by the team, no further actions necessary
-		if (targetSpawnPointState->isActive && targetSpawnPointState->team == team) {
+		if (targetSpawnPointState->isActive && targetSpawnPointState->team == team)
+		{
 			return targetSpawnPt;
 		}
 	}
@@ -2290,7 +2310,8 @@ static int G_ConvertToSpawnPointIndex(int spawnPointValue, int defaultSpawnPoint
  * @param[in] resolvedAutoSpawnPts array containing default spawns for each team
  * @return Resolved major and minor spawnpt of given client.
  */
-playerSpawn_t G_GetSpawnForClient(const gclient_t *client, const int resolvedAutoSpawnPts[2]) {
+playerSpawn_t G_GetSpawnForClient(const gclient_t *client, const int resolvedAutoSpawnPts[2])
+{
 	int teamAutoSpawnPt;
 	int targetSpawnPt;
 	int resolvedSpawnPt;
@@ -2302,39 +2323,43 @@ playerSpawn_t G_GetSpawnForClient(const gclient_t *client, const int resolvedAut
 	// skip non-playing clients
 	if (client->sess.sessionTeam != TEAM_AXIS && client->sess.sessionTeam != TEAM_ALLIES)
 	{
-		return (playerSpawn_t){ -1, -1 };
+		return (playerSpawn_t) { -1, -1 };
 	}
 	teamAutoSpawnPt = resolvedAutoSpawnPts[(client->sess.sessionTeam == TEAM_AXIS) ? 0 : 1];
 	// no spawn points are found for the given team
 	if (teamAutoSpawnPt == -1)
 	{
-		return (playerSpawn_t){ -1, -1 };
+		return (playerSpawn_t) { -1, -1 };
 	}
 	targetSpawnPt = G_ConvertToSpawnPointIndex(client->sess.userSpawnPointValue, teamAutoSpawnPt);
 	// selected spawn point is owned by the opposite team, find closest team spawn point
 	if (level.spawnPointStates[targetSpawnPt].team != client->sess.sessionTeam ||
-			level.spawnPointStates[targetSpawnPt].isActive != 1)
+	    level.spawnPointStates[targetSpawnPt].isActive != 1)
 	{
 		resolvedBlob = G_FindClosestTeamSpawnEntity(
 			client->sess.sessionTeam, level.spawnPointStates[targetSpawnPt].origin,
 			client->sess.userMinorSpawnPointValue);
 
-		if (!resolvedBlob) {
+		if (!resolvedBlob)
+		{
 			resolvedSpawnPt = G_ResolveSpawnPointIndex(client->sess.sessionTeam, &level.spawnPointStates[targetSpawnPt].origin);
 		}
-		else {
+		else
+		{
 			resolvedSpawnPt = G_ResolveSpawnPointIndex(client->sess.sessionTeam, &resolvedBlob->s.origin);
 		}
 		if (resolvedSpawnPt == -1)
 		{
-			return (playerSpawn_t){ -1, -1 };
+			return (playerSpawn_t) { -1, -1 };
 		}
-	} else {
+	}
+	else
+	{
 		resolvedSpawnPt = targetSpawnPt;
 	}
 
 	resolvedMinorSpawnPt = resolvedBlob != NULL ? resolvedBlob->spawnId : -1;
-	return (playerSpawn_t){resolvedSpawnPt, resolvedMinorSpawnPt};
+	return (playerSpawn_t) { resolvedSpawnPt, resolvedMinorSpawnPt };
 }
 
 /**
@@ -2357,22 +2382,24 @@ void G_UpdateSpawnPointStatePlayerCounts()
 	// check updates
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
-		client = &level.clients[level.sortedClients[i]];
+		client        = &level.clients[level.sortedClients[i]];
 		resolvedSpawn = G_GetSpawnForClient(client, resolvedAutoSpawnPts);
 
-		if (resolvedSpawn.major == -1) {
+		if (resolvedSpawn.major == -1)
+		{
 			continue;
 		}
 
 		resolvedMinorSpawnPt = client->sess.userMinorSpawnPointValue;
-		if (client->sess.userMinorSpawnPointValue <= 0 && resolvedSpawn.minor > 0) {
+		if (client->sess.userMinorSpawnPointValue <= 0 && resolvedSpawn.minor > 0)
+		{
 			resolvedMinorSpawnPt = resolvedSpawn.minor;
 		}
 
 		playerCounts[resolvedSpawn.major] += 1;
 		if (client->sess.resolvedSpawnPointIndex != resolvedSpawn.major || client->sess.resolvedMinorSpawnPointIndex != resolvedMinorSpawnPt)
 		{
-			client->sess.resolvedSpawnPointIndex = resolvedSpawn.major;
+			client->sess.resolvedSpawnPointIndex      = resolvedSpawn.major;
 			client->sess.resolvedMinorSpawnPointIndex = resolvedMinorSpawnPt;
 			ClientUserinfoChanged(client - level.clients);
 		}
