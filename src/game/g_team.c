@@ -2110,11 +2110,11 @@ qboolean G_desiredFollow(gentity_t *ent, int nTeam)
  * @return qtrue if the entity belongs to the given team.
  */
 static qboolean G_IsSpawnEntityOwnedByTeam(const gentity_t *spot, const team_t team) {
-
 	int closestIdx = -1;
 	float closestDist = -1;
+	int i;
 
-	for (int i = 0; i < level.numSpawnPoints; i++)
+	for (i = 0; i < level.numSpawnPoints; i++)
 	{
 		vec3_t diffVector;
 		float distance;
@@ -2156,12 +2156,13 @@ static gentity_t *G_FindClosestTeamSpawnEntity(const team_t team, const vec3_t o
 	float tmp;
 	vec3_t target;
 	static const char *spawnClassnames[] = { "team_CTF_redspawn", "team_CTF_bluespawn" };
+	int c;
 
 	if (team != TEAM_AXIS && team != TEAM_ALLIES) {
 		return NULL;
 	}
 
-	for (int c = 0; c < 2; c++) {
+	for (c = 0; c < 2; c++) {
 		spot = NULL;
 		while ((spot = G_Find(spot, FOFS(classname), spawnClassnames[c])) != NULL) {
 			if (spot->spawnId <= 0) {
