@@ -171,8 +171,9 @@ void G_MissileImpact(gentity_t *ent, trace_t *trace, int impactDamage)
 	gentity_t      *other = &g_entities[trace->entityNum];
 	gentity_t      *temp;
 	vec3_t         velocity;
-	entity_event_t event = EV_NONE;
-	int            param = 0, otherentnum = 0;
+	entity_event_t event       = EV_NONE;
+	net_uint8_t    param       = 0;
+	int            otherentnum = 0;
 
 	// handle func_explosives
 	if (other->classname && Q_stricmp(other->classname, "func_explosive") == 0)
