@@ -76,8 +76,22 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	cJSON_AddNumberToObject(root, "spectatorClient", client->sess.spectatorClient);
 	cJSON_AddNumberToObject(root, "userSpectatorClient", client->sess.userSpectatorClient);
 	cJSON_AddNumberToObject(root, "playerType", client->sess.playerType);
-	cJSON_AddNumberToObject(root, "playerWeapon", client->sess.playerWeapon);
-	cJSON_AddNumberToObject(root, "playerWeapon2", client->sess.playerWeapon2);
+
+	// If the player is in limbo or dead, their playerWeapon is stale (only
+	// synced from latchPlayerWeapon at spawn time in ClientSpawn). Persist the
+	// latched values so that on session restore the stale active weapon doesn't
+	// ghost-occupy a restricted weapon slot
+	if (client->ps.pm_flags & PMF_LIMBO || client->ps.pm_type == PM_DEAD)
+	{
+		cJSON_AddNumberToObject(root, "playerWeapon", client->sess.latchPlayerWeapon);
+		cJSON_AddNumberToObject(root, "playerWeapon2", client->sess.latchPlayerWeapon2);
+	}
+	else
+	{
+		cJSON_AddNumberToObject(root, "playerWeapon", client->sess.playerWeapon);
+		cJSON_AddNumberToObject(root, "playerWeapon2", client->sess.playerWeapon2);
+	}
+
 	cJSON_AddNumberToObject(root, "latchPlayerType", client->sess.latchPlayerType);
 	cJSON_AddNumberToObject(root, "latchPlayerWeapon", client->sess.latchPlayerWeapon);
 	cJSON_AddNumberToObject(root, "latchPlayerWeapon2", client->sess.latchPlayerWeapon2);
@@ -342,14 +356,36 @@ void G_ReadSessionData(gclient_t *client)
 
 	root = Q_FSReadJsonFrom(fileName);
 
+	if (level.fResetStats)
+	{
+		restoreStats = qfalse;
+	}
+
 	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
 		campaign = cJSON_GetObjectItem(root, "campaign");
 
 		if (campaign)
 		{
-			restoreStats = Q_ReadIntValueJson(campaign, "campaign") == level.currentCampaign
-			               && Q_ReadIntValueJson(campaign, "map") == g_currentCampaignMap.integer;
+			if (Q_ReadIntValueJson(campaign, "campaign") == level.currentCampaign)
+			{
+				if (Q_ReadIntValueJson(campaign, "map") == g_currentCampaignMap.integer)
+				{
+					restoreStats = qtrue;
+				}
+				else if (g_gamestate.integer == GS_WARMUP || g_gamestate.integer == GS_WARMUP_COUNTDOWN)
+				{
+					restoreStats = qtrue;
+				}
+				else
+				{
+					restoreStats = qfalse;
+				}
+			}
+			else
+			{
+				restoreStats = qfalse;
+			}
 		}
 	}
 
@@ -735,6 +771,7 @@ void G_WriteSessionData(qboolean restart)
 	{
 		if ((g_gamestate.integer == GS_WARMUP_COUNTDOWN &&
 		     ((g_gametype.integer == GT_WOLF_STOPWATCH && level.clients[level.sortedClients[i]].sess.rounds >= 2) ||
+		      (g_gametype.integer == GT_WOLF_STOPWATCH && level.clients[level.sortedClients[i]].sess.rounds > 0 && g_currentRound.integer == 0) ||
 		      (g_gametype.integer != GT_WOLF_STOPWATCH && level.clients[level.sortedClients[i]].sess.rounds >= 1))))
 		{
 			level.fResetStats = qtrue;
@@ -747,6 +784,17 @@ void G_WriteSessionData(qboolean restart)
 		if (level.clients[level.sortedClients[i]].pers.connected == CON_CONNECTED || level.fResetStats)
 		{
 			G_WriteClientSessionData(&level.clients[level.sortedClients[i]], restart);
+		}
+	}
+
+	if (level.fResetStats)
+	{
+		for (i = 0; i < level.numConnectedClients; i++)
+		{
+			if (g_gamestate.integer == GS_PLAYING)
+			{
+				G_deleteStats(level.sortedClients[i]);
+			}
 		}
 	}
 

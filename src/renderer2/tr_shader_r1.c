@@ -114,11 +114,6 @@ qboolean ParseShaderR1(char *_text)
 
 	while (1)
 	{
-		if (R_ParseEtlDirective(text, &shader.maxPicMip, shader.name, qtrue))
-		{
-			continue;
-		}
-
 		token = COM_ParseExt2(text, qtrue);
 		if (!token[0])
 		{
@@ -956,6 +951,7 @@ int ScanAndLoadShaderFilesR1()
 {
 	char         **shaderFiles;
 	char         *buffers[MAX_SHADER_FILES];
+	int          bufferslen[MAX_SHADER_FILES];
 	char         *p;
 	int          numShaderFiles, i;
 	char         *oldp, *token, *textEnd;
@@ -967,6 +963,7 @@ int ScanAndLoadShaderFilesR1()
 
 	Com_Memset(buffers, 0, sizeof(buffers));
 	Com_Memset(shaderTextHashTableSizes, 0, sizeof(shaderTextHashTableSizes));
+	Com_Memset(bufferslen, 0, MAX_SHADER_FILES);
 
 	// scan for shader files
 	shaderFiles = ri.FS_ListFiles("scripts", ".shader", &numShaderFiles);
@@ -991,7 +988,8 @@ int ScanAndLoadShaderFilesR1()
 		COM_BeginParseSession(filename);
 
 		Ren_Developer("...loading '%s'\n", filename);
-		summand = ri.FS_ReadFile(filename, (void **)&buffers[i]);
+		summand       = ri.FS_ReadFile(filename, (void **)&buffers[i]);
+		bufferslen[i] = summand;
 
 		if (!buffers[i])
 		{
@@ -1054,9 +1052,11 @@ int ScanAndLoadShaderFilesR1()
 			continue;
 		}
 
-		Q_strcat(textEnd, size - strlen(textEnd), buffers[i]);
-		Q_strcat(textEnd, size - strlen(textEnd), "\n");
-		textEnd += strlen(textEnd);
+		Com_Memcpy(textEnd, buffers[i], bufferslen[i]);
+		textEnd += bufferslen[i];
+		*textEnd = '\n';
+		textEnd++;
+		*textEnd = 0; // this doesn't appear to be necessary
 		ri.FS_FreeFile(buffers[i]);
 	}
 

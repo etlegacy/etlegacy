@@ -1577,7 +1577,7 @@ void G_ClientSound(gentity_t *ent, int soundIndex);
 void G_TouchTriggers(gentity_t *ent);
 
 void G_AddPredictableEvent(gentity_t *ent, int event, int eventParm);
-void G_AddEvent(gentity_t *ent, int event, int eventParm);
+void G_AddEvent(gentity_t *ent, int event, net_uint8_t eventParm);
 void G_SetOrigin(gentity_t *ent, vec3_t origin);
 void AddRemap(const char *oldShader, const char *newShader, float timeOffset);
 void G_ResetRemappedShaders(void);
@@ -1655,6 +1655,7 @@ void G_Damage(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t
 void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t point, int damage, int dflags, meansOfDeath_t mod, int *hitEventType);
 qboolean G_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, meansOfDeath_t mod);
 qboolean etpro_RadiusDamage(vec3_t origin, gentity_t *inflictor, gentity_t *attacker, float damage, float radius, gentity_t *ignore, meansOfDeath_t mod, qboolean clientsonly);
+void GibEntity(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, qboolean heavyDirectGib);
 void body_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, meansOfDeath_t meansOfDeath);
 void TossWeapons(gentity_t *self);
 gentity_t *G_BuildHead(gentity_t *ent, grefEntity_t *refent, qboolean newRefent);

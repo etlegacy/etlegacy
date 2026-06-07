@@ -1027,32 +1027,126 @@ void CG_DrawLine(const vec3_t start, const vec3_t end, float width, const vec4_t
 */
 
 /**
+ * @brief CG_DrawChatLines
+ * @param[in] chatPosX
+ * @param[in] chatPosY
+ * @param[in] chatWidth
+ * @param[in] chatHeight
+ * @param[in] lineHeight
+ * @param[in] scale
+ * @param[in] colorAlpha
+ * @param[in] colorBGAlpha
+ * @param[in] styleText
+ * @param[in] showFlag
+ * @param[in] fadeOut
+ * @param[in] fullBackground
+ */
+void CG_DrawChatLines(float chatPosX, float chatPosY, float chatWidth, int chatHeight, float lineHeight, float scale,
+                      float colorAlpha, float colorBgAlpha, int styleText, qboolean showFlag, qboolean fadeOut, qboolean fullLineBg)
+{
+	int          i;
+	float        icon_width  = 12.f * scale * 5;
+	float        icon_height = 8.f * scale * 5;
+	float        flagOffsetX = 0;
+	qhandle_t    flag        = 0;
+	fontHelper_t *font       = &cgs.media.limboFont2;
+	int          maxLineLength;
+
+	maxLineLength = (chatWidth - (showFlag ? (16.f * scale * 5.f) : 0)) / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * scale * Q_UTF8_GlyphScale(font));
+
+	for (i = cgs.teamChatPos - 1; i >= cgs.teamLastChatPos; --i)
+	{
+		int    j;
+		vec4_t hcolor;
+		float  alphapercent;
+		int    chatWidthCur = 0;
+		int    chatWidthMax = 0;
+
+		if (fadeOut)
+		{
+			alphapercent = 1.0f - (cg.time - cgs.teamChatMsgTimes[i % chatHeight]) / (float)(cg_teamChatTime.integer);
+			alphapercent = Com_Clamp(0.0f, 1.0f, alphapercent);
+		}
+		else
+		{
+			alphapercent = 1.f;
+		}
+
+		// chatter team instead
+		if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
+		{
+			hcolor[0] = 1;
+			hcolor[1] = 0;
+			hcolor[2] = 0;
+		}
+		else if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_ALLIES)
+		{
+			hcolor[0] = 0;
+			hcolor[1] = 0;
+			hcolor[2] = 1;
+		}
+		else
+		{
+			hcolor[0] = 0;
+			hcolor[1] = 1;
+			hcolor[2] = 0;
+		}
+
+		hcolor[3] = colorBgAlpha * alphapercent;
+
+		trap_R_SetColor(hcolor);
+
+		if (showFlag)
+		{
+			flagOffsetX = 16.f * scale * 5;
+			flag        = CG_GetTeamFlag(cgs.teamChatMsgTeams[i % chatHeight]);
+		}
+
+		if (fullLineBg)
+		{
+			chatWidthMax = chatWidth;
+		}
+		else
+		{
+			// get the longest chat message on screen, use that for the width of chat background
+			for (j = 0; j < chatHeight; j++)
+			{
+				chatWidthCur = CG_Text_Width_Ext(cgs.teamChatMsgs[j % chatHeight], scale, maxLineLength, &cgs.media.limboFont2);
+
+				if (chatWidthCur > chatWidthMax)
+				{
+					chatWidthMax = chatWidthCur;
+				}
+			}
+		}
+
+		// line background
+		CG_DrawPic(chatPosX + flagOffsetX, chatPosY - (cgs.teamChatPos - i) * lineHeight, chatWidthMax + 2, lineHeight, cgs.media.teamStatusBar);     // +2 width for some padding at the end
+
+		hcolor[0] = hcolor[1] = hcolor[2] = 1.0;
+		hcolor[3] = colorAlpha * alphapercent;
+		trap_R_SetColor(hcolor);
+
+		// chat icons, draw it only on the first starting line text
+		if (flag && cgs.teamChatStartLine[i % chatHeight])
+		{
+			CG_DrawPic(chatPosX, chatPosY - (cgs.teamChatPos - i - 1) * lineHeight - icon_height, icon_width, icon_height, flag);
+		}
+		CG_Text_Paint_Ext(chatPosX + flagOffsetX, chatPosY - (cgs.teamChatPos - i - 1) * lineHeight - 1, scale, scale, hcolor,
+		                  cgs.teamChatMsgs[i % chatHeight], 0, 0, styleText, font);
+	}
+}
+
+/**
  * @brief CG_DrawTeamInfo
+ * @param[in] comp
  */
 void CG_DrawTeamInfo(hudComponent_t *comp)
 {
 	if (cgs.teamLastChatPos != cgs.teamChatPos)
 	{
-		vec4_t       hcolor;
-		int          i, j;
-		float        alphapercent;
-		float        lineHeight = CG_Text_Height_Ext("A", CG_ComputeScale(comp), 0, &cgs.media.limboFont2) * 1.75f;
-		int          chatHeight = comp->location.h / lineHeight;
-		float        icon_width;
-		float        icon_height;
-		float        flagOffsetX = 0;
-		qhandle_t    flag        = 0;
-		fontHelper_t *font       = &cgs.media.limboFont2;
-		int          maxLineLength;
-		int          chatPosX = comp->location.x;
-		int          chatPosY = comp->location.y + comp->location.h;
-		float        scale;
-
-		scale = CG_ComputeScale(comp /*lineHeight, comp->scale, font*/);
-
-		icon_width    = 12.f * scale * 5;
-		icon_height   = 8.f * scale * 5;
-		maxLineLength = (comp->location.w - (!comp->style ? (16.f * scale * 5.f) : 0)) / ((float)Q_UTF8_GetGlyph(font, "A")->xSkip * scale * Q_UTF8_GlyphScale(font));
+		float lineHeight = CG_Text_Height_Ext("A", CG_ComputeScale(comp), 0, &cgs.media.limboFont2) * 1.75f;
+		int   chatHeight = comp->location.h / lineHeight;
 
 		if (comp->showBackGround)
 		{
@@ -1064,90 +1158,15 @@ void CG_DrawTeamInfo(hudComponent_t *comp)
 			CG_DrawRect_FixedBorder(comp->location.x, comp->location.y, comp->location.w, comp->location.h, 1, comp->colorBorder);
 		}
 
+		// skip older chat message
 		if (cg.time - cgs.teamChatMsgTimes[cgs.teamLastChatPos % chatHeight] > cg_teamChatTime.integer)
 		{
 			cgs.teamLastChatPos++;
 		}
 
-		for (i = cgs.teamChatPos - 1; i >= cgs.teamLastChatPos; i--)
-		{
-			int chatWidthCur = 0;
-			int chatWidthMax = 0;
-
-			alphapercent = 1.0f - (cg.time - cgs.teamChatMsgTimes[i % chatHeight]) / (float)(cg_teamChatTime.integer);
-			alphapercent = Com_Clamp(0.0f, 1.0f, alphapercent);
-
-			// chatter team instead
-			if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
-			{
-				hcolor[0] = 1;
-				hcolor[1] = 0;
-				hcolor[2] = 0;
-			}
-			else if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_ALLIES)
-			{
-				hcolor[0] = 0;
-				hcolor[1] = 0;
-				hcolor[2] = 1;
-			}
-			else
-			{
-				hcolor[0] = 0;
-				hcolor[1] = 1;
-				hcolor[2] = 0;
-			}
-
-			hcolor[3] = comp->colorBackground[3] * alphapercent;
-
-			trap_R_SetColor(hcolor);
-
-			if (!(comp->style & 1))
-			{
-				flagOffsetX = 16.f * scale * 5;
-				if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
-				{
-					flag = cgs.media.axisFlag;
-				}
-				else if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_ALLIES)
-				{
-					flag = cgs.media.alliedFlag;
-				}
-				else if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_SPECTATOR)
-				{
-					flag = cgs.media.pmImageSpecFlag;
-				}
-				else
-				{
-					flag = 0;
-				}
-			}
-
-			// get the longest chat message on screen, use that for the width of chat background
-			for (j = 0; j < chatHeight; j++)
-			{
-				chatWidthCur = CG_Text_Width_Ext(cgs.teamChatMsgs[j % chatHeight], scale, maxLineLength, &cgs.media.limboFont2);
-
-				if (chatWidthCur > chatWidthMax)
-				{
-					chatWidthMax = chatWidthCur;
-				}
-			}
-
-			// line background
-			CG_DrawPic(chatPosX + flagOffsetX, chatPosY - (cgs.teamChatPos - i) * lineHeight, chatWidthMax + 2, lineHeight, cgs.media.teamStatusBar); // +2 width for some padding at the end
-
-			hcolor[0] = hcolor[1] = hcolor[2] = 1.0;
-			hcolor[3] = comp->colorMain[3] * alphapercent;
-			trap_R_SetColor(hcolor);
-
-			// chat icons, draw it only on the first starting line text
-			if (flag && cgs.teamChatStartLine[i % chatHeight])
-			{
-				CG_DrawPic(chatPosX, chatPosY - (cgs.teamChatPos - i - 1) * lineHeight - icon_height, icon_width, icon_height, flag);
-			}
-			CG_Text_Paint_Ext(chatPosX + flagOffsetX, chatPosY - (cgs.teamChatPos - i - 1) * lineHeight - 1, scale, scale, hcolor, cgs.teamChatMsgs[i % chatHeight], 0, 0, comp->styleText, &cgs.media.limboFont2);
-		}
-		trap_R_SetColor(NULL);
+		// draw chat lines
+		CG_DrawChatLines(comp->location.x, comp->location.y + comp->location.h, comp->location.w, chatHeight, lineHeight, CG_ComputeScale(comp),
+		                 comp->colorMain[3], comp->colorBackground[3], comp->styleText, !(comp->style & 1), qtrue, qfalse);
 	}
 }
 
@@ -3192,15 +3211,7 @@ void CG_DrawFollow(hudComponent_t *comp)
 	// Spectators view teamflags
 	if (cg.snap->ps.clientNum != cg.clientNum && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR)
 	{
-		if (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_ALLIES)
-		{
-			CG_DrawPic(comp->location.x + 1, y, lineHeight * 1.5f, lineHeight, cgs.media.alliedFlag);
-		}
-		else
-		{
-			CG_DrawPic(comp->location.x + 1, y, lineHeight * 1.5f, lineHeight, cgs.media.axisFlag);
-		}
-
+		CG_DrawPic(comp->location.x + 1, y, lineHeight * 1.5f, lineHeight, CG_GetTeamFlag(cgs.clientinfo[cg.snap->ps.clientNum].team));
 		CG_DrawRect_FixedBorder(comp->location.x, y - 1, lineHeight * 1.5f + 2, lineHeight + 2, 1, HUD_Border);
 
 		y += lineHeight;
@@ -4751,13 +4762,22 @@ static void CG_NoiseGenerator()
 	trap_Cvar_Set("cl_noprint", "1");
 
 	// banner
-	CG_AddToBannerPrint("Iaculatores coniunctis: incesserit servitium castrensi post velut et deinde virgae.");
+	if (!cg.bannerPrintTime)
+	{
+		CG_AddToBannerPrint(NOISE_BANNER_TEXT);
+	}
 
 	// center print
-	CG_CenterPrint("Insulari sufficiente postulatus aut nullo delatus hostiles iniecto aut suos.");
+	if (!cg.centerPrintTime)
+	{
+		CG_CenterPrint(NOISE_CENTER_TEXT);
+	}
 
-	// objevive print
-	CG_ObjectivePrint("You are near an amazing place and everyone envy you.");
+	// objective print
+	if (!cg.oidPrintTime)
+	{
+		CG_ObjectivePrint(NOISE_OBJECTIVE_TEXT);
+	}
 
 	// chat
 	CG_AddToTeamChat("Lorem ipsum dolor sit amet, consectetuer adipiscing elit.", cg.snap->ps.clientNum);
@@ -4801,8 +4821,11 @@ static void CG_NoiseGenerator()
 	cg.flagIndicator |= (1 << PW_NUM_POWERUPS);
 
 	// vote
-	cgs.voteTime = cg.time - VOTE_TIME + 1;
-	Q_strncpyz(cgs.voteString, "Do you want cast a vote ?", sizeof(cgs.voteString));
+	if (!cgs.voteTime)
+	{
+		cgs.voteTime = cg.time;
+		Q_strncpyz(cgs.voteString, NOISE_VOTE_TEXT, sizeof(cgs.voteString));
+	}
 
 	// missile camera
 	cg.latestMissile = &cg_entities[cg.snap->ps.clientNum];

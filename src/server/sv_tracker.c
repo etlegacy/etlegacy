@@ -54,11 +54,86 @@ enum
 } catchBot;
 qboolean catchBotNum = 0;
 
-netadr_t addr;
+/**
+ * @def MAX_TRACKERS
+ * @brief Maximum number of tracker endpoints parsed from the sv_tracker cvar.
+ *
+ * @note The sv_tracker cvar value is bounded by MAX_CVAR_VALUE_STRING (256)
+ *       chars by the cvar system itself, so fitting MAX_TRACKERS entries
+ *       only works when the configured hostnames / IPs are reasonably short.
+ *       Prefer short hostnames or raw IPs when configuring many endpoints.
+ */
+#define MAX_TRACKERS 8
+
+netadr_t trackerAddrs[MAX_TRACKERS];
+int      numTrackerAddrs = 0;
+static cvar_t *sv_tracker_cvar = NULL;
 
 char infostring[MAX_INFO_STRING];
 
 char *Tracker_getGUID(client_t *cl);
+
+/**
+ * @brief Try to resolve a single address and add it to the tracker list
+ * @param[in] addr_str Address string (already trimmed, non-empty)
+ */
+static void Tracker_AddAddress(const char *addr_str)
+{
+	if (numTrackerAddrs >= MAX_TRACKERS)
+	{
+		Com_Printf("Max trackers (%i) reached, ignoring: %s\n", MAX_TRACKERS, addr_str);
+		return;
+	}
+
+	Com_Printf("Resolving %s\n", addr_str);
+	if (!NET_StringToAdr(addr_str, &trackerAddrs[numTrackerAddrs], NA_IP))
+	{
+		Com_Printf("Couldn't resolve address: %s\n", addr_str);
+		return;
+	}
+
+	Com_Printf("%s resolved to %i.%i.%i.%i:%i\n", addr_str,
+	           trackerAddrs[numTrackerAddrs].ip[0],
+	           trackerAddrs[numTrackerAddrs].ip[1],
+	           trackerAddrs[numTrackerAddrs].ip[2],
+	           trackerAddrs[numTrackerAddrs].ip[3],
+	           BigShort(trackerAddrs[numTrackerAddrs].port));
+	numTrackerAddrs++;
+}
+
+/**
+ * @brief Parse a whitespace-separated list of addresses and resolve each entry
+ * @param[in] list Raw list from sv_tracker cvar
+ *
+ * Uses COM_ParseExt() to stay consistent with the engine's standard tokenizer
+ * used elsewhere for cvar lists. Tokens are separated by any whitespace
+ * (space, tab). Example cvar value: "tracker1.example.com:4444 tracker2.example.com:4444".
+ */
+static void Tracker_ParseAddressList(const char *list)
+{
+	char buf[MAX_CVAR_VALUE_STRING];
+	char *p;
+	char *token;
+
+	if (!list || !*list)
+	{
+		return;
+	}
+
+	Q_strncpyz(buf, list, sizeof(buf));
+	p = buf;
+
+	while (1)
+	{
+		token = COM_ParseExt(&p, qfalse);
+		if (!token[0])
+		{
+			break;
+		}
+
+		Tracker_AddAddress(token);
+	}
+}
 
 /**
  * @brief Sends data to Tracker
@@ -68,12 +143,16 @@ void Tracker_Send(char *format, ...)
 {
 	va_list argptr;
 	char    msg[MAX_MSGLEN];
+	int i;
 
 	va_start(argptr, format);
 	Q_vsnprintf(msg, sizeof(msg), format, argptr);
 	va_end(argptr);
 
-	NET_OutOfBandPrint(NS_SERVER, &addr, "%s", msg);
+	for (i = 0; i < numTrackerAddrs; i++)
+	{
+		NET_OutOfBandPrint(NS_SERVER, &trackerAddrs[i], "%s", msg);
+	}
 }
 
 /**
@@ -81,7 +160,7 @@ void Tracker_Send(char *format, ...)
  */
 void Tracker_Init(void)
 {
-	char *tracker;
+	const char *tracker;
 
 	if (!(sv_advert->integer & SVA_TRACKER))
 	{
@@ -89,20 +168,16 @@ void Tracker_Init(void)
 		return;
 	}
 
-	tracker   = Cvar_VariableString("sv_tracker");
-	t         = time(0);
-	expectnum = 0;
+	sv_tracker_cvar = Cvar_Get("sv_tracker", "et-tracker.trackbase.net:4444", CVAR_PROTECTED);
+	tracker         = sv_tracker_cvar->string;
+	sv_tracker_cvar->modified = qfalse;
+	t               = time(0);
+	expectnum       = 0;
+	numTrackerAddrs = 0;
 
-	Com_Printf("Resolving %s\n", tracker);
-	if (!NET_StringToAdr(tracker, &addr, NA_IP))
-	{
-		Com_Printf("Couldn't resolve address: %s\n", tracker);
-	}
-	else
-	{
-		Com_Printf("%s resolved to %i.%i.%i.%i:%i\n", tracker, addr.ip[0], addr.ip[1], addr.ip[2], addr.ip[3], BigShort(addr.port));
-	}
-	Com_Printf("Tracker: Server communication enabled.\n");
+	Tracker_ParseAddressList(tracker);
+
+	Com_Printf("Tracker: Server communication enabled (%i endpoint(s)).\n", numTrackerAddrs);
 }
 
 /**
@@ -315,6 +390,13 @@ void Tracker_Frame(int msec)
 {
 	if (!(sv_advert->integer & SVA_TRACKER))
 	{
+		return;
+	}
+
+	if (sv_tracker_cvar && sv_tracker_cvar->modified)
+	{
+		Com_Printf("Tracker: sv_tracker changed, reinitializing...\n");
+		Tracker_Init();
 		return;
 	}
 

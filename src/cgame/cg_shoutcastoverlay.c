@@ -766,14 +766,7 @@ void CG_DrawShoutcastPlayerStatus(hudComponent_t *comp)
 	}
 
 	// draw team flag
-	if (player->team == TEAM_ALLIES)
-	{
-		CG_DrawPic(nameBoxX + 4, nameBoxY + (nameBoxHeight / 2) - 4.5f, 14, 9, cgs.media.alliedFlag);
-	}
-	else
-	{
-		CG_DrawPic(nameBoxX + 4, nameBoxY + (nameBoxHeight / 2) - 4.5f, 14, 9, cgs.media.axisFlag);
-	}
+	CG_DrawPic(nameBoxX + 4, nameBoxY + (nameBoxHeight / 2) - 4.5f, 14, 9, CG_GetTeamFlag(player->team));
 
 	// draw name limit 20 chars, width 110
 	Q_ColorizeString('7', player->cleanname, name, MAX_NAME_LENGTH + 2);

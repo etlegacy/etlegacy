@@ -17,11 +17,11 @@ uniform sampler2D u_CurrentMap;
 #if defined(USE_NORMAL_MAPPING)
 uniform sampler2D u_NormalMap;
 // fresnel
-uniform float     u_FresnelBias;
-uniform float     u_FresnelPower;
-uniform float     u_FresnelScale;
+uniform float u_FresnelBias;
+uniform float u_FresnelPower;
+uniform float u_FresnelScale;
 // refraction
-uniform float     u_RefractionIndex;
+uniform float u_RefractionIndex;
 // reflection
 #if defined(USE_REFLECTIONS)
 #if 1
@@ -44,7 +44,7 @@ varying vec2 var_TexNormal;
 #if defined(USE_WATER)
 varying vec2 var_TexNormal2;
 #endif
-varying vec3 var_LightDirection; 
+varying vec3 var_LightDirection;
 varying vec3 var_ViewOrigin2; // vieworigin in worldspace
 #if defined(USE_PARALLAX_MAPPING)
 varying vec2 var_S; // size and start position of search in texture space
@@ -72,7 +72,7 @@ void main()
 	vec3 L = var_LightDirection;
 
 	// view direction
-	vec3 V = var_ViewOrigin.xyz; // tangentspace
+	vec3 V  = var_ViewOrigin.xyz; // tangentspace
 	vec3 Vw = var_ViewOrigin2.xyz; // worldspace
 
 	// calculate the screen texcoord in the 0.0 to 1.0 range
@@ -105,7 +105,7 @@ void main()
 
 	// compute fresnel term
 	// ratio reflection/refraction
-	float dotNV = max(0.0, dot(N, V)); // float dotNV = dot(var_Normal, V);
+	float dotNV   = max(0.0, dot(N, V)); // float dotNV = dot(var_Normal, V);
 	float fresnel = clamp(u_FresnelBias + pow(dotNV, u_FresnelPower) * u_FresnelScale, 0.0, 1.0);
 
 	// refraction
@@ -128,7 +128,7 @@ void main()
 	color.rgb = refractColor;
 #endif // USE_REFLECTIONS
 
-	color.a   = 1.0; // do not blend (it would blend the currentMap with the water-surface, and you'd see things double)
+	color.a = 1.0;   // do not blend (it would blend the currentMap with the water-surface, and you'd see things double)
 
 
 #else // USE_NORMAL_MAPPING
@@ -148,7 +148,7 @@ void main()
 	{
 		// reconstruct vertex position in world space
 		float depth = texture2D(u_DepthMap, texScreen).r;
-		vec4  P = u_UnprojectMatrix * vec4(gl_FragCoord.xy, depth, 1.0);
+		vec4  P     = u_UnprojectMatrix * vec4(gl_FragCoord.xy, depth, 1.0);
 		P.xyz /= P.w;
 
 		// calculate fog distance

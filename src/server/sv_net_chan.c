@@ -37,6 +37,16 @@
 #include "server.h"
 
 /**
+ * @def MAX_NETCHAN_QUEUE
+ * @brief Per-client cap on queued outgoing netchan messages. Worst-case gamestate is
+ * ~18KB, so 32 entries bound a single client to ~576KB of zone usage; with
+ * MAX_CLIENTS=64 that stays well under the 64MB main zone (DEF_COMZONEMEGS).
+ * Hitting the cap means the client is not draining fragments and the queue is
+ * growing unboundedly: drop them rather than fail Z_Malloc, which is fatal.
+ */
+#define MAX_NETCHAN_QUEUE 32
+
+/**
  * @brief SV_Netchan_Encode
  * @param[in] client
  * @param[in,out] msg
@@ -260,6 +270,33 @@ void SV_Netchan_Transmit(client_t *client, msg_t *msg)
 		netchan_buffer_t *netbuf;
 		size_t           netSize = sizeof(netchan_buffer_t);
 		size_t           cmdLen  = strlen(client->lastClientCommandString) + 1;
+
+		// Bound the per-client outgoing queue. An attacker (or a stalled client)
+		// can otherwise force unbounded Z_Malloc growth here, exhausting or
+		// fragmenting the main zone and crashing the entire server with
+		// ERR_FATAL. Drop just this client instead.
+		if (client->netchan_start_queue)
+		{
+			netchan_buffer_t *next = client->netchan_start_queue;
+			int              count = 0;
+			while (next)
+			{
+				count++;
+				next = next->next;
+				if (count > MAX_NETCHAN_QUEUE)
+				{
+					Com_Printf(S_COLOR_YELLOW "WARNING: netchan queue overflow for %s [%s] "
+					           "- dropping client (queued=%d, msg=%d bytes)\n",
+					           client->name,
+					           NET_AdrToString(&client->netchan.remoteAddress),
+					           count, msg->cursize);
+
+					SV_DropClient(client, "netchan queue overflow");
+					return;
+				}
+			}
+		}
+
 		Com_DPrintf("SV_Netchan_Transmit: unsent fragments, stacked\n");
 		netbuf                             = (netchan_buffer_t *)Z_Malloc(netSize + msg->cursize + cmdLen);
 		netbuf->msgBuffer                  = ((byte *)netbuf) + netSize;

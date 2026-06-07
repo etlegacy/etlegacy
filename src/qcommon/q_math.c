@@ -303,7 +303,7 @@ void ClampColor(vec4_t color)
  *
  * @note This isn't a real cheap function to call!
  */
-int DirToByte(vec3_t dir)
+net_uint8_t DirToByte(vec3_t dir)
 {
 	int   i, best;
 	float d, bestd;
@@ -333,7 +333,7 @@ int DirToByte(vec3_t dir)
  * @param[in] b
  * @param[out] dir
  */
-void ByteToDir(int b, vec3_t dir)
+void ByteToDir(net_uint8_t b, vec3_t dir)
 {
 	if (b < 0 || b >= NUMVERTEXNORMALS)
 	{

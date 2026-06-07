@@ -201,6 +201,7 @@ vmCvar_t cg_refereePassword;
 vmCvar_t cg_atmosphericEffects;
 
 vmCvar_t cg_instanttapout;
+vmCvar_t cg_allowSelfKillSpawnProtection;
 
 vmCvar_t cg_debugSkills;
 
@@ -243,6 +244,8 @@ vmCvar_t cg_sharetimerText;
 
 vmCvar_t cg_simpleItems;
 vmCvar_t cg_simpleItemsScale;
+vmCvar_t cg_iconfeedStayTime;
+vmCvar_t cg_iconfeedScale;
 
 vmCvar_t cg_automapZoom;
 vmCvar_t cg_autoCmd;
@@ -520,6 +523,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_refereePassword,                    "auth_refereePassword",                  "",            CVAR_TEMP,                    0 },
 
 	{ &cg_instanttapout,                      "cg_instanttapout",                      "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_allowSelfKillSpawnProtection,       "cg_allowSelfKillSpawnProtection",       "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_debugSkills,                        "cg_debugSkills",                        "0",           0,                            0 },
 	{ NULL,                                   "cg_etVersion",                          "",            CVAR_USERINFO | CVAR_ROM,     0 },
 #if 0
@@ -558,6 +562,8 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_simpleItems,                        "cg_simpleItems",                        "0",           CVAR_ARCHIVE,                 0 },           // Bugged atm
 	{ &cg_simpleItemsScale,                   "cg_simpleItemsScale",                   "1.0",         CVAR_ARCHIVE,                 0 },
+	{ &cg_iconfeedStayTime,                   "cg_iconfeedStayTime",                   "5000",        CVAR_ARCHIVE,                 0 },
+	{ &cg_iconfeedScale,                      "cg_iconfeedScale",                      "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_automapZoom,                        "cg_automapZoom",                        "5.159",       CVAR_ARCHIVE,                 0 },
 	{ &cg_autoCmd,                            "cg_autoCmd",                            "",            CVAR_TEMP,                    0 },
 	{ &cg_weapaltReloads,                     "cg_weapaltReloads",                     "0",           CVAR_ARCHIVE,                 0 },

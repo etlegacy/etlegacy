@@ -605,7 +605,7 @@ gotnewcl:
 	*newcl    = temp;
 	clientNum = newcl - svs.clients;
 
-	if (!svcls.isTVGame)
+	if (!svcls.TVServer)
 	{
 		newcl->gentity            = SV_GentityNum(clientNum);
 		newcl->gentity->r.svFlags = 0; // clear client flags on new connection.
@@ -684,7 +684,7 @@ gotnewcl:
 	{
 		int clients = sv_maxclients->integer;
 
-		if (svcls.isTVGame)
+		if (svcls.TVServer)
 		{
 			clients = MAX_CLIENTS;
 		}
@@ -920,7 +920,7 @@ void SV_SendClientGameState(client_t *client)
 
 	MSG_WriteByte(&msg, svc_EOF);
 
-	if (svcls.isTVGame)
+	if (svcls.TVServer)
 	{
 		MSG_WriteLong(&msg, svclc.clientNum);
 	}
@@ -969,9 +969,15 @@ void SV_ClientEnterWorld(client_t *client, usercmd_t *cmd)
 	}
 
 	// set up the entity for the client
-	ent           = SV_GentityNum(clientNum);
-	ent->s.number = clientNum;
-
+	if (svcls.TVServer)
+	{
+		ent = SV_GentityNum(svclc.clientNum);
+	}
+	else
+	{
+		ent           = SV_GentityNum(clientNum);
+		ent->s.number = clientNum;
+	}
 	// Differentiate between players and bots to properly replay gamestates
 	if (client->demoClient && strlen(client->userinfo) && strlen(Info_ValueForKey(client->userinfo, "cg_etVersion")))
 	{

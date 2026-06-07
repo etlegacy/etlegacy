@@ -632,17 +632,6 @@ static void CG_TeamVoiceChat_f(void)
 		return;
 	}
 
-	// don't let spectators voice chat
-	// NOTE - This cg.snap will be the person you are following, but its just for intermission test
-	if (cg.snap && (cg.snap->ps.pm_type != PM_INTERMISSION))
-	{
-		if (cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_FREE)
-		{
-			CG_Printf("%s", CG_TranslateString("Can't team voice chat as a spectator.\n")); // FIXME? find a way to print this on screen
-			return;
-		}
-	}
-
 	trap_Argv(1, chatCmd, 64);
 
 	trap_SendConsoleCommand(va("cmd vsay_team %s\n", chatCmd));
@@ -1298,6 +1287,25 @@ static void CG_UndoSpeaker_f(void)
 void CG_ForceTapOut_f(void)
 {
 	trap_SendClientCommand("forcetapout");
+}
+
+/**
+ * @brief Client-side handler for the /kill command.
+ */
+static void CG_Kill_f(void)
+{
+	if (cg.demoPlayback || !cg.snap || (cg.snap->ps.pm_flags & PMF_FOLLOW))
+	{
+		return;
+	}
+
+	if (cgs.gamestate == GS_PLAYING && !cg_allowSelfKillSpawnProtection.integer && cg.spawnInvulnerability && cg.snap->ps.powerups[PW_INVULNERABLE] > cg.time)
+	{
+		CG_CenterPrint("You are invulnerable - ^3/kill^7 is disabled.");
+		return;
+	}
+
+	trap_SendClientCommand("kill");
 }
 
 /**
@@ -3588,6 +3596,7 @@ static consoleCommand_t commands[] =
 	{ "undoSpeaker",            CG_UndoSpeaker_f             },
 	{ "cpm",                    CG_CPM_f                     },
 	{ "forcetapout",            CG_ForceTapOut_f             },
+	{ "kill",                   CG_Kill_f                    },
 	{ "timerSet",               CG_TimerSet_f                },
 	{ "timerReset",             CG_TimerReset_f              },
 	{ "resetTimer",             CG_TimerReset_f              }, // keep ETPro compatibility
@@ -3714,7 +3723,6 @@ static const char *gameCommand[] =
 	"imwa",
 	"imws",
 	//   "invite",
-	"kill",
 	"lock",
 	"mapvote",
 #ifdef FEATURE_MULTIVIEW

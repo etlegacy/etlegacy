@@ -56,8 +56,8 @@ void main()
 #if defined(USE_NORMAL_MAPPING)
 
 	// texture coordinates
-	vec2 texDiffuse  = var_TexDiffuseNormal.st;
-	vec2 texNormal   = var_TexDiffuseNormal.pq;
+	vec2 texDiffuse = var_TexDiffuseNormal.st;
+	vec2 texNormal  = var_TexDiffuseNormal.pq;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 	vec2 texSpecular = var_TexSpecular.st;
 #endif // USE_REFLECTIONS || USE_SPECULAR
@@ -78,8 +78,8 @@ void main()
 		texOffset += height * Normal.z * var_S;
 	}
 #endif // 1
-	texDiffuse  += texOffset;
-	texNormal   += texOffset;
+	texDiffuse += texOffset;
+	texNormal  += texOffset;
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 	texSpecular += texOffset;
 #endif // USE_REFLECTIONS || USE_SPECULAR
@@ -127,14 +127,14 @@ void main()
 	// compute the specular term (and reflections)
 	//! https://en.wikipedia.org/wiki/Specular_highlight
 #if defined(USE_SPECULAR) && !defined(USE_REFLECTIONS)
-	vec4 map = texture2D(u_SpecularMap, texSpecular);
+	vec4 map      = texture2D(u_SpecularMap, texSpecular);
 	vec3 specular = computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent) * map.rgb;
 #elif defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
-	vec4 map = texture2D(u_SpecularMap, texSpecular);
+	vec4 map      = texture2D(u_SpecularMap, texSpecular);
 	vec3 specular = (computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation) * 0.07)
-					+ (computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent) * map.rgb);
+	                + (computeSpecular2(dotNL, V, N, L, u_LightColor, r_SpecularExponent) * map.rgb);
 #elif !defined(USE_SPECULAR) && defined(USE_REFLECTIONS)
-	vec4 map = texture2D(u_SpecularMap, texSpecular);
+	vec4 map      = texture2D(u_SpecularMap, texSpecular);
 	vec3 specular = computeReflections(V, N, u_EnvironmentMap0, u_EnvironmentMap1, u_EnvironmentInterpolation) * map.rgb * 0.07;
 #endif
 
@@ -150,7 +150,7 @@ void main()
 #if defined(USE_REFLECTIONS) || defined(USE_SPECULAR)
 	color.rgb += specular;
 #endif // USE_REFLECTIONS || USE_SPECULAR
-	color *= var_LightColor;
+	color       *= var_LightColor;
 	gl_FragColor = color;
 
 

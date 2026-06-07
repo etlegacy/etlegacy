@@ -206,6 +206,7 @@ extern vmCvar_t cg_debugSkills;
 
 // some optimization cvars
 extern vmCvar_t cg_instanttapout;
+extern vmCvar_t cg_allowSelfKillSpawnProtection;
 
 // demo recording cvars
 extern vmCvar_t cl_demorecording;
@@ -239,6 +240,8 @@ extern vmCvar_t cg_fireteamSpritesColorSelected;
 
 extern vmCvar_t cg_simpleItems;
 extern vmCvar_t cg_simpleItemsScale;
+extern vmCvar_t cg_iconfeedStayTime;
+extern vmCvar_t cg_iconfeedScale;
 
 extern vmCvar_t cg_weapaltReloads;
 extern vmCvar_t cg_weapaltSwitches;

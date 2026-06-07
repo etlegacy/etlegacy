@@ -97,13 +97,14 @@ if(UNIX)
 	endif()
 
 	if(CMAKE_SYSTEM MATCHES "OpenBSD*")
-		target_link_libraries(os_libraries INTERFACE m pthread)
+		# backtrace() lives in libexecinfo on the BSDs, not libc
+		target_link_libraries(os_libraries INTERFACE m pthread execinfo)
 		set(LIB_SUFFIX ".mp.obsd.")
 	elseif(CMAKE_SYSTEM MATCHES "FreeBSD")
-		target_link_libraries(os_libraries INTERFACE m pthread)
+		target_link_libraries(os_libraries INTERFACE m pthread execinfo)
 		set(LIB_SUFFIX ".mp.fbsd.")
 	elseif(CMAKE_SYSTEM MATCHES "NetBSD")
-		target_link_libraries(os_libraries INTERFACE m pthread)
+		target_link_libraries(os_libraries INTERFACE m pthread execinfo)
 		set(LIB_SUFFIX ".mp.nbsd.")
     elseif(ANDROID)
 		target_link_libraries(os_libraries INTERFACE android log OpenSLES)
@@ -234,14 +235,17 @@ elseif(WIN32)
 		if(FORCE_STATIC_VCRT)
 			set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /EHsc /O2")
 			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /EHa /W3")
+			set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /O2 /Zi")
 
 			set(CompilerFlags
 				CMAKE_CXX_FLAGS
 				CMAKE_CXX_FLAGS_DEBUG
 				CMAKE_CXX_FLAGS_RELEASE
+				CMAKE_CXX_FLAGS_RELWITHDEBINFO
 				CMAKE_C_FLAGS
 				CMAKE_C_FLAGS_DEBUG
 				CMAKE_C_FLAGS_RELEASE
+				CMAKE_C_FLAGS_RELWITHDEBINFO
 			)
 
 			foreach(CompilerFlag ${CompilerFlags})
@@ -255,9 +259,15 @@ elseif(WIN32)
 		# Should we always use this?
 		# add_definitions(-DC_ONLY)
 		add_definitions(-D_CRT_SECURE_NO_WARNINGS) # Do not show CRT warnings
-	endif(MSVC)
-
-	if(MINGW)
+		
+	elseif(MINGW)
+	
+		# optimization/debug flags
+		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math")
+		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -Wall -Wextra")
+	
+		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffast-math")
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -Wall -Wextra")
 
 		# This is not yet supported, but most likely will happen in the future.
 		if(ENABLE_ASAN)

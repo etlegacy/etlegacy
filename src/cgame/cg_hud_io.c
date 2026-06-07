@@ -873,6 +873,9 @@ void CG_HudComponentsFill(hudStucture_t *hud)
 {
 	int i, componentOffset;
 
+	// Clear stale pointers so short fills remain safe if the component count drifts.
+	Com_Memset(hud->components, 0, sizeof(hud->components));
+
 	// setup component pointers to the components list
 	for (i = 0, componentOffset = 0; hudComponentFields[i].name; i++)
 	{
@@ -880,10 +883,23 @@ void CG_HudComponentsFill(hudStucture_t *hud)
 		{
 			continue;
 		}
+
+		// Stop before writing past the component pointer table if the definitions get out of sync.
+		if (componentOffset >= ARRAY_LEN(hud->components))
+		{
+			Com_Printf(S_COLOR_RED "CG_HudComponentsFill: HUD component count overflow (%d)\n", componentOffset);
+			break;
+		}
+
 		hud->components[componentOffset++] = (hudComponent_t *)((char * )hud + hudComponentFields[i].offset);
 	}
 	// sort the components by their offset
-	qsort(hud->components, sizeof(hud->components) / sizeof(hudComponent_t *), sizeof(hudComponent_t *), CG_HudComponentSort);
+	qsort(hud->components, componentOffset, sizeof(hud->components[0]), CG_HudComponentSort);
+
+	if (componentOffset != ARRAY_LEN(hud->components))
+	{
+		Com_Printf(S_COLOR_YELLOW "CG_HudComponentsFill: expected %d HUD components, found %d\n", (int)ARRAY_LEN(hud->components), componentOffset);
+	}
 }
 
 //  HUD SCRIPT FUNCTIONS BELLOW

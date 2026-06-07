@@ -1114,9 +1114,7 @@ void CL_Vid_Restart_f(void)
 	// initialize the renderer interface
 	CL_InitRef();
 
-#ifdef FEATURE_GETTEXT
 	I18N_Init();
-#endif
 
 	// startup all the client stuff
 	CL_StartHunkUsers();
@@ -3246,9 +3244,7 @@ void CL_Init(void)
 	Cvar_Get("cl_guid", "", CVAR_USERINFO | CVAR_ROM | CVAR_NOTABCOMPLETE);
 	CL_UpdateGUID();
 
-#ifdef FEATURE_GETTEXT
 	I18N_Init();
-#endif
 
 #if defined(WIN32) || defined(_WIN64)
 	// According to the SDL 2.0.4 it was suppose to be 1ms by default

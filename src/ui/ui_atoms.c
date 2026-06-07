@@ -131,74 +131,81 @@ static void UI_Cache_f(void)
 }
 
 /**
+ * @brief UI_ShowMenu_f
+ */
+static void UI_ShowMenu_f(void)
+{
+	char *menu_name;
+
+	if (!DC->getCVarValue("developer"))
+	{
+		Com_Printf("You need to enable developer mod to use this command\n");
+		return;
+	}
+
+	menu_name = UI_Argv(1);
+	if (menu_name)
+	{
+		Menus_OpenByName(menu_name);
+	}
+	else
+	{
+		Com_Printf("Need a menu name as argument\n");
+	}
+}
+
+static uiConsoleCommand_t commands[] =
+{
+	{ "ui_test",       UI_ShowPostGame          },
+	{ "ui_report",     UI_Report                },
+	{ "ui_load",       UI_Load,                 },
+	{ "ui_cache",      UI_Cache_f               },
+	{ "listfavs",      UI_ListFavourites_f      },
+	{ "removefavs",    UI_RemoveAllFavourites_f },
+	{ "show_menu",     UI_ShowMenu_f            },
+	{ "campaign",      UI_Campaign_f            },
+	{ "listcampaigns", UI_ListCampaigns_f       },
+	{ NULL,            NULL,                    },
+};
+
+/**
+ * @brief Init Console Command
+ */
+void UI_InitConsoleCommand()
+{
+	int i;
+
+	for (i = 0; commands[i].cmd; ++i)
+	{
+		trap_AddCommand(commands[i].cmd);
+	}
+}
+
+/**
  * @brief UI_ConsoleCommand
  * @param[in] realTime
  * @return
  */
 qboolean UI_ConsoleCommand(int realTime)
 {
-	char            *cmd;
-	uiClientState_t cstate;
+	int  i;
+	char *cmd;
 
 	uiInfo.uiDC.frameTime = realTime - uiInfo.uiDC.realTime;
 	uiInfo.uiDC.realTime  = realTime;
 
 	cmd = UI_Argv(0);
 
-	if (Q_stricmp(cmd, "ui_test") == 0)
+	for (i = 0; commands[i].cmd; ++i)
 	{
-		UI_ShowPostGame();
-	}
-	else if (Q_stricmp(cmd, "ui_report") == 0)
-	{
-		UI_Report();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "ui_load") == 0)
-	{
-		UI_Load();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "ui_cache") == 0)
-	{
-		UI_Cache_f();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "listfavs") == 0)
-	{
-		UI_ListFavourites_f();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "removefavs") == 0)
-	{
-		UI_RemoveAllFavourites_f();
-		return qtrue;
-	}
-	else if (Q_stricmp(cmd, "show_menu") == 0 && DC->getCVarValue("developer") != 0.f)
-	{
-		char *menu_name = UI_Argv(1);
-		if (menu_name)
+		if (!Q_stricmp(cmd, commands[i].cmd))
 		{
-			Menus_OpenByName(menu_name);
+			commands[i].function();
+			break;
 		}
 	}
 
-	trap_GetClientState(&cstate);
-	if (cstate.connState == CA_DISCONNECTED)
-	{
-		if (Q_stricmp(cmd, "campaign") == 0)
-		{
-			UI_Campaign_f();
-			return qtrue;
-		}
-		else if (Q_stricmp(cmd, "listcampaigns") == 0)
-		{
-			UI_ListCampaigns_f();
-			return qtrue;
-		}
-	}
-
-	return qfalse;
+	return commands[i].cmd ? qtrue : qfalse;
 }
 
 /**

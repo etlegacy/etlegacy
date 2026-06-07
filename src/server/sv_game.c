@@ -746,7 +746,7 @@ void SV_ShutdownGameProgs(void)
 	VM_Free(gvm);
 	gvm = NULL;
 
-	svcls.isTVGame = qfalse;
+	svcls.TVServer = qfalse;
 }
 
 /**
@@ -767,7 +767,7 @@ static void SV_InitGameVM(qboolean restart)
 		svs.clients[i].gentity = NULL;
 	}
 
-	if (svcls.isTVGame && !restart)
+	if (svcls.TVServer && !restart)
 	{
 		for (i = 0; i < MAX_CONFIGSTRINGS; i++)
 		{
@@ -825,7 +825,7 @@ void SV_InitGameProgs(void)
 	if (svcls.state >= CA_AUTHORIZING)
 	{
 		gvm            = VM_Create("tvgame", qfalse, SV_GameSystemCalls, VMI_NATIVE);
-		svcls.isTVGame = gvm != NULL;
+		svcls.TVServer = gvm != NULL;
 	}
 	else
 	{

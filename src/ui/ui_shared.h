@@ -120,6 +120,10 @@
 #define ASSET_CHECKBOX_CHECK_NOT    "ui/assets/check_not.tga"
 #define ASSET_CHECKBOX_CHECK_NO     "ui/assets/check_no.tga"
 
+#define ASSET_REPLAY_DIRECTORY "ui/assets/directory.tga"
+#define ASSET_REPLAY_HOME      "ui/assets/home.tga"
+#define ASSET_REPLAY_UP        "ui/assets/up.tga"
+
 #define SCROLLBAR_SIZE      16.0f
 #define SLIDER_WIDTH        96.0f
 #define SLIDER_HEIGHT       10.0f    ///< 16.0
@@ -448,6 +452,11 @@ typedef struct
 	qhandle_t fxPic[7];
 	qhandle_t crosshairShader[NUM_CROSSHAIRS];
 	qhandle_t crosshairAltShader[NUM_CROSSHAIRS];
+
+	// replay menu
+	qhandle_t replayDirectory;
+	qhandle_t replayHome;
+	qhandle_t replayUp;
 
 } cachedAssets_t;
 

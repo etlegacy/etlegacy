@@ -2134,6 +2134,9 @@ void BG_AddPredictableEventToPlayerstate(int newEvent, int eventParm, playerStat
 
 void BG_PlayerStateToEntityState(playerState_t *ps, entityState_t *s, int time, qboolean snap);
 
+qboolean BG_PlayerTouchesBox(playerState_t *ps, entityState_t *item, int atTime, int sideLength);
+qboolean BG_PlayerTouchesCylender(playerState_t *ps, entityState_t *item, int atTime, int sideLength);
+
 qboolean BG_PlayerTouchesObjective(playerState_t *ps, entityState_t *item, int atTime);
 qboolean BG_PlayerTouchesItem(playerState_t *ps, entityState_t *item, int atTime);
 qboolean BG_PlayerSeesItem(playerState_t *ps, entityState_t *item, int atTime);
@@ -2784,7 +2787,7 @@ extern const char *bg_fireteamNamesAxis[MAX_FIRETEAMS / 2];
 typedef struct
 {
 	int ident;
-	char joinOrder[MAX_CLIENTS];    ///< order in which clients joined the fire team (server), client uses to store if a client is on this fireteam
+	signed char joinOrder[MAX_CLIENTS];    ///< order in which clients joined the fire team (server), client uses to store if a client is on this fireteam
 	int leader;                     ///< leader = joinOrder[0] on server, stored here on client
 	qboolean inuse;
 	qboolean priv;

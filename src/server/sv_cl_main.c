@@ -1286,7 +1286,7 @@ static void SV_CL_PacketEvent(const netadr_t *from, msg_t *msg)
 
 	if (!NET_CompareAdr(from, &svclc.serverAddress))
 	{
-		if (svcls.isTVGame)
+		if (svcls.TVServer)
 		{
 			SV_PacketEvent(from, msg);
 		}
@@ -1380,9 +1380,10 @@ void SV_CL_FlushMemory(void)
 		// clear collision map data
 		CM_ClearMap();
 
-		while (svMsgQueueHead)
+		if (svMsgQueueHead)
 		{
-			SV_CL_FreeServerMessage();
+			Z_FreeTags(TAG_TVSERVER);
+			svMsgQueueHead = svMsgQueueTail = NULL;
 		}
 	}
 	else
@@ -1408,7 +1409,7 @@ void SV_CL_ClearState(void)
  */
 int SV_CL_GetPlayerstate(int clientNum, playerState_t *ps)
 {
-	if (!svcls.isTVGame)
+	if (!svcls.TVServer)
 	{
 		Com_Error(ERR_FATAL, "SV_CL_GetPlayerstate: TVGame not loaded");
 	}

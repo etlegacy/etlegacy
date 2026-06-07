@@ -602,6 +602,7 @@ qboolean CG_OwnerDrawVisible(int flags)
 void CG_DrawWeapStability(hudComponent_t *comp)
 {
 	static vec4_t goodColor = { 0, 1, 0, 0.5f }, badColor = { 1, 0, 0, 0.5f };
+	float         spread;
 
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
@@ -621,26 +622,30 @@ void CG_DrawWeapStability(hudComponent_t *comp)
 		return;
 	}
 
-	if (!(cg.snap->ps.aimSpreadScale))
-	{
-		return;
-	}
-
 	if (cg.renderingThirdPerson)
 	{
 		return;
 	}
 
+	if (cg.predictedPlayerState.groundEntityNum == ENTITYNUM_NONE)
+	{
+		spread = 255.0f;
+	}
+	else
+	{
+		spread = (float)cg.snap->ps.aimSpreadScale;
+	}
+
 	if (comp->barStyle & BAR_CIRCULAR)
 	{
 		CG_DrawCircle(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor,
-		              comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, 0.f, comp->barStyle, -1,
+		              comp->colorBackground, comp->colorBorder, spread / 255.0f, 0.f, comp->barStyle, -1,
 		              comp->circleDensityPoint, comp->circleStartAngle, comp->circleEndAngle, comp->circleThickness);
 	}
 	else
 	{
 		CG_FilledBar(comp->location.x, comp->location.y, comp->location.w, comp->location.h, goodColor, badColor,
-		             comp->colorBackground, comp->colorBorder, (float)cg.snap->ps.aimSpreadScale / 255.0f, 0.f, comp->barStyle, -1);
+		             comp->colorBackground, comp->colorBorder, spread / 255.0f, 0.f, comp->barStyle, -1);
 	}
 }
 
@@ -804,12 +809,32 @@ void CG_HudEditor_Cleanup(void)
 	int i;
 
 	CG_InitPM();
-	cg.bannerPrintTime  = 0;
-	cg.centerPrintTime  = 0;
-	cgs.voteTime        = 0;
 	cg.cursorHintTime   = 0;
 	cg.crosshairEntTime = 0;
-	cg.oidPrintTime     = 0;
+
+	// overwrite on noise banner print
+	if (!Q_strncmp(cg.bannerPrint, NOISE_BANNER_TEXT, sizeof(cg.bannerPrint)))
+	{
+		cg.bannerPrintTime = 0;
+	}
+
+	// overwrite on noise center print
+	if (!Q_strncmp(cg.centerPrint, NOISE_CENTER_TEXT, sizeof(cg.centerPrint)))
+	{
+		cg.centerPrintTime = 0;
+	}
+
+	// overwrite on noise objective print
+	if (!Q_strncmp(cg.oidPrint, NOISE_OBJECTIVE_TEXT, sizeof(cg.oidPrint)))
+	{
+		cg.oidPrintTime = 0;
+	}
+
+	// overwrite on noise vote
+	if (!Q_strncmp(cgs.voteString, NOISE_VOTE_TEXT, sizeof(cgs.voteString)))
+	{
+		cgs.voteTime = 0;
+	}
 
 	for (i = 0; i < TEAMCHAT_MSG_MAX; i++)
 	{

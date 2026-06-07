@@ -1353,6 +1353,7 @@ typedef struct
 	int grenLastTime;
 	int lastBeingRevivedTime;
 	int lastReviveTime;
+	qboolean spawnInvulnerability;
 
 	int switchbackWeapon;
 	int lastFiredWeapon;
@@ -2043,7 +2044,6 @@ typedef struct
 	qhandle_t pmImageAxisMine;
 	qhandle_t pmImageAlliesFlag;
 	qhandle_t pmImageAxisFlag;
-	qhandle_t pmImageSpecFlag;
 	qhandle_t hintKey;
 
 	qhandle_t pmImageSlime;
@@ -2058,6 +2058,7 @@ typedef struct
 
 	qhandle_t axisFlag;
 	qhandle_t alliedFlag;
+	qhandle_t spectatorFlag;
 
 	qhandle_t disconnectIcon;
 
@@ -2448,6 +2449,15 @@ typedef enum
 } mlType_t;
 #endif
 
+/** Values matter for sorting/drawing. */
+typedef enum
+{
+	CG_HUD_ICONFEED_NONE      = 0,
+	CG_HUD_ICONFEED_KILL      = 1,
+	CG_HUD_ICONFEED_KILL_SELF = 10,
+	CG_HUD_ICONFEED_KILL_TEAM = 2,
+} cgHudIconFeedType_t;
+
 // limbopanel
 #define SECONDARY_SLOT 0
 #define PRIMARY_SLOT 1
@@ -2836,6 +2846,13 @@ enum
 	LOCALTIME_12HOUR = BIT(1),
 };
 
+// reinforcement/spawn timer flags
+enum
+{
+	REINFORCEMENT_TIMER_DOUBLE_DIGITS  = BIT(0),
+	REINFORCEMENT_TIMER_COLOR_GRADIENT = BIT(1),
+};
+
 // crosshairs flags
 enum
 {
@@ -2908,6 +2925,11 @@ void CG_EventHandling(int type, qboolean fForced);
 int CG_RoundTime(qtime_t *qtime);
 qboolean CG_IsDemoVersionBelow(int major, int minor, int patch);
 
+#define NOISE_BANNER_TEXT "Iaculatores coniunctis: incesserit servitium castrensi post velut et deinde virgae."
+#define NOISE_CENTER_TEXT "Insulari sufficiente postulatus aut nullo delatus hostiles iniecto aut suos."
+#define NOISE_OBJECTIVE_TEXT "You are near an amazing place and everyone envy you."
+#define NOISE_VOTE_TEXT "Do you want cast a vote ?"
+
 void CG_HudEditor_Cleanup();
 
 qboolean CG_GetTag(int clientNum, const char *tagname, orientation_t *orientation);
@@ -2942,6 +2964,19 @@ void CG_DrawSkyBoxPortal(qboolean fLocalView);
 void CG_Letterbox(float xsize, float ysize, qboolean center);
 
 void CG_DrawLine(const vec3_t start, const vec3_t end, float width, const vec4_t color, qhandle_t shader);
+
+void CG_DrawChatLines(float chatPosX,
+                      float chatPosY,
+                      float chatWidth,
+                      int chatHeight,
+                      float lineHeight,
+                      float scale,
+                      float colorAlpha,
+                      float colorBgAlpha,
+                      int styleText,
+                      qboolean showFlag,
+                      qboolean fadeOut,
+                      qboolean fullLineBg);
 
 void CG_SetupDlightstyles(void);
 
@@ -3014,11 +3049,13 @@ void CG_InitStatsDebug(void);
 void CG_StatsDebugAddText(const char *text);
 void CG_DrawDebugArtillery(centity_t *cent);
 
+void CG_ComputeFPS(void);
 void CG_AddLagometerFrameInfo(void);
 void CG_AddLagometerSnapshotInfo(snapshot_t *snap);
 void CG_CenterPrint(const char *str);
 void CG_PriorityCenterPrint(const char *str, int priority);
 void CG_ObjectivePrint(const char *str);
+void CG_Hud_IconFeed_Add(cgHudIconFeedType_t type);
 void CG_DrawActive(void);
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team);
 void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, const char *text, float adjust, int limit, int style, fontHelper_t *font);
@@ -3298,7 +3335,7 @@ localEntity_t *CG_SmokePuff(const vec3_t p,
 
 void CG_BubbleTrail(vec3_t start, vec3_t end, float size, float spacing);
 
-void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir, int damage);
+void CG_GibPlayer(centity_t *cent, vec3_t playerOrigin, vec3_t gdir, int damage, qboolean heavyDirectGib);
 void CG_LoseHat(centity_t *cent, vec3_t dir);
 
 void CG_Bleed(vec3_t origin, int entityNum);
@@ -4158,7 +4195,11 @@ typedef struct
 	anchorPoint_t point;
 } anchor_t;
 
-#define HUD_COMPONENTS_NUM 62
+/*
+ * NOTE : Keep this in sync with the concrete HUD component members in
+ * hudStucture_t and the non-alias entries in hudComponentFields[].
+ */
+#define HUD_COMPONENTS_NUM 63
 
 typedef struct hudComponent_s
 {
@@ -4276,6 +4317,7 @@ typedef struct hudStructure_s
 	hudComponent_t scPlayerListAllies;
 	hudComponent_t scTeamNamesAxis;
 	hudComponent_t scTeamNamesAllies;
+	hudComponent_t iconfeed;
 
 	hudComponent_t *components[HUD_COMPONENTS_NUM];
 } hudStucture_t;
@@ -4378,6 +4420,7 @@ void CG_DrawCursorhint(hudComponent_t *comp);
 void CG_DrawCursorHintBar(hudComponent_t *comp);
 void CG_DrawCursorHintText(hudComponent_t *comp);
 void CG_DrawCrosshair(hudComponent_t *comp);
+void CG_DrawIconFeed(hudComponent_t *comp);
 
 void CG_DrawPlayerStatusHead(hudComponent_t *comp);
 void CG_DrawGunIcon(hudComponent_t *comp);
@@ -4453,6 +4496,8 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
 float CG_ComputeScale(hudComponent_t *comp /*, float height, float scale, fontHelper_t *font*/);
 
 void CG_DrawCursor(float x, float y);
+
+qhandle_t CG_GetTeamFlag(team_t team);
 
 void CG_DemoBackwardsCompatInit();
 #endif // #ifndef INCLUDE_CG_LOCAL_H

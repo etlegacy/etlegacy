@@ -2807,6 +2807,9 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 		DEBUGTIME
 
+		//fps sample
+		CG_ComputeFPS();
+
 		//lagometer sample
 		CG_AddLagometerFrameInfo();
 

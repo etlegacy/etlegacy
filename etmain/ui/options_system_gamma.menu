@@ -72,8 +72,8 @@ menuDef {
 
 // Buttons //
 #ifdef FUI
-	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_system_gamma ; fadeoutmenu background_black ; open background_1 ; open options_system )
+	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("MSGID_MENU_BACK"), .3, 14, close options_system_gamma ; fadeoutmenu background_black ; open background_1 ; open options_system )
 #else
-	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("BACK"), .3, 14, close options_system_gamma ; fadeoutmenu background_black ; open options_system )
+	BUTTON( 6, WINDOW_HEIGHT-24, WINDOW_WIDTH-12, 18, _("MSGID_MENU_BACK"), .3, 14, close options_system_gamma ; fadeoutmenu background_black ; open options_system )
 #endif // FUI
 }

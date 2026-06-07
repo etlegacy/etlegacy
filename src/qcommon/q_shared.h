@@ -103,8 +103,28 @@
 #define SLASH_COMMAND 1        ///< Will the client require a '/' sign in front of commands
 
 // ET: Legacy specific - used by mod code
+// NOTE: this is not a perfect and reliable solution - vanilla client sends garbage data to VM calls
+// for unused arguments, which makes the arguments used to detect ET: Legacy clients unreliable.
+// A more reliable method on cgame/ui is to check for 'etVersion' cvar, although this is not
+// fool proof either, as old clients may just set this themselves as 'CVAR_USER_CREATED'.
+#ifdef GAMEDLL
 #define MOD_CHECK_ETLEGACY(isETLegacy, versionNum, outputValue) outputValue = (isETLegacy == qtrue ? qtrue : qfalse); \
 		if (outputValue) { outputValue = versionNum; }
+#else
+#define MOD_CHECK_ETLEGACY(clientVersion, outVersion) \
+		{ \
+			char versionString[128]; \
+			char versionStringCmp[128]; \
+\
+			trap_Cvar_VariableStringBuffer("etVersion", versionString, sizeof(versionString)); \
+			Com_sprintf(versionStringCmp, sizeof(versionStringCmp), "%s %s", PRODUCT_LABEL, ETLEGACY_VERSION); \
+\
+			if (!Q_stricmpn(versionString, versionStringCmp, 13)) /* "ET Legacy v2." */ \
+			{ \
+				outVersion = clientVersion; \
+			} \
+		}
+#endif
 
 #ifdef _MSC_VER
 #pragma warning(disable : 4018) // signed/unsigned mismatch
@@ -504,7 +524,7 @@ typedef float net_float;
 #define DEFAULT_SV_FPS     20
 #define DEFAULT_SV_FPS_STR "20"
 // default server frametime at sv_fps 20, for framerate independent timings
-#define DEFAULT_SV_FRAMETIME 1000 / DEFAULT_SV_FPS
+#define DEFAULT_SV_FRAMETIME (1000 / DEFAULT_SV_FPS)
 
 extern char *GlobalGameTitle;
 
@@ -861,10 +881,12 @@ const char *Q_stristr(const char *s, const char *find);
 #define Q_strcpy(dest, src) strcpy(dest, src)
 
 /// buffer size safe library replacements
-void Q_strncpyz(char *dest, const char *src, size_t destsize);
+#define Q_strncpyz(dest, src, destsize) Q_strncpyz_f(dest, src, destsize, __func__, ETL_FILENAME, __LINE__)
+void Q_strncpyz_f(char *dest, const char *src, int destsize, const char *func, const char *file, int line);
 
 /// buffer size safe library replacements
-void Q_strcat(char *dest, size_t size, const char *src);
+#define Q_strcat(dest, size, src) Q_strcat_f(dest, size, src, __func__, ETL_FILENAME, __LINE__)
+void Q_strcat_f(char *dest, int size, const char *src, const char *func, const char *file, int line);
 
 /// strlen that discounts Quake color sequences
 int Q_PrintStrlen(const char *string);
@@ -2170,6 +2192,10 @@ static ID_INLINE int Q_sscanfc(const char *str, int count, const char *fmt, ...)
 // functional gate syscall number
 #define COM_TRAP_GETVALUE 700
 #define MOD_EXPORT_PADDING 1337
+
+void I18N_Init(void);
+const char *I18N_Translate(const char *msgid);
+const char *I18N_TranslateMod(const char *msgid);
 
 #ifdef MODLIB
 // This is just a wrapper for getting the string noticed by xgettext

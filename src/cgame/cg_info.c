@@ -1007,14 +1007,7 @@ qboolean CG_ViewingDraw()
 		int        startClass = CG_Text_Width_Ext(viewInfo, fontScale, 0, &cgs.media.limboFont2) + charWidth;
 
 		// teamflags
-		if (cgs.clientinfo[pID].team == TEAM_ALLIES)
-		{
-			CG_DrawPic(9, y - charHeight * 2.0f - 12, 18, 12, cgs.media.alliedFlag);
-		}
-		else
-		{
-			CG_DrawPic(9, y - charHeight * 2.0f - 12, 18, 12, cgs.media.axisFlag);
-		}
+		CG_DrawPic(9, y - charHeight * 2.0f - 12, 18, 12, CG_GetTeamFlag(cgs.clientinfo[pID].team));
 
 		CG_DrawRect_FixedBorder(8, y - charHeight * 2.0f - 13, 20, 14, 1, HUD_Border);
 

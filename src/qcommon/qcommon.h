@@ -1152,7 +1152,8 @@ typedef enum
 	TAG_BOTLIB,
 	TAG_RENDERER,
 	TAG_SMALL,
-	TAG_STATIC
+	TAG_STATIC,
+	TAG_TVSERVER
 } memtag_t;
 
 /*
@@ -1171,6 +1172,9 @@ renderer models
 temp file loading
 --- high memory ---
 */
+
+#define DEF_TVZONEMEGS   24
+#define DEF_TVZONEMEGS_S XSTRING(DEF_TVZONEMEGS)
 
 #if defined(ETLEGACY_DEBUG) && !defined(ZONE_DEBUG)
 #define ZONE_DEBUG
@@ -1610,22 +1614,11 @@ void Com_GetHunkInfo(int *hunkused, int *hunkexpected);
 Native language support
 ==============================================================
 */
-#ifdef FEATURE_GETTEXT
-
 #define _(x) I18N_Translate(x)
 #define __(x) I18N_TranslateMod(x)
 
-void I18N_Init(void);
 void I18N_SetLanguage(const char *language);
-const char *I18N_Translate(const char *msgid);
-const char *I18N_TranslateMod(const char *msgid);
-
 extern qboolean doTranslateMod;
-
-#else // FEATURE_GETTEXT
-#define _(x) x
-#define __(x) x
-#endif
 
 // auth.c
 #ifdef LEGACY_AUTH

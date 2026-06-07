@@ -953,7 +953,15 @@ gentity_t *G_TempEntity(vec3_t origin, entity_event_t event)
 
 	e->s.eType = ET_EVENTS + event;
 
-	e->classname      = "tempEntity";
+	if (event < EV_NONE || event >= EV_MAX_EVENTS)
+	{
+		e->classname = "tempEntity";
+	}
+	else
+	{
+		e->classname = eventnames[event];
+	}
+
 	e->eventTime      = level.time;
 	e->r.eventTime    = level.time;
 	e->freeAfterEvent = qtrue;

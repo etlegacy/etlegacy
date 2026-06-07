@@ -243,11 +243,13 @@ static void CG_Obituary(entityState_t *ent)
 				else
 				{
 					s = va("%s %s", CG_TranslateString("^1You killed teammate^7"), ci->name);
+					CG_Hud_IconFeed_Add(CG_HUD_ICONFEED_KILL_TEAM);
 				}
 			}
 			else
 			{
 				s = va("%s %s", CG_TranslateString("You killed"), ci->name);
+				CG_Hud_IconFeed_Add(CG_HUD_ICONFEED_KILL);
 			}
 
 			CG_PriorityCenterPrint(s, 1);
@@ -274,6 +276,13 @@ static void CG_Obituary(entityState_t *ent)
 
 			CG_PriorityCenterPrint(s, 1);
 		}
+	}
+
+	// Add the self-kill icon once per obituary event, not once per
+	// visible popupmessages stack.
+	if (attacker == target && attacker == cg.snap->ps.clientNum && mod != MOD_SUICIDE)
+	{
+		CG_Hud_IconFeed_Add(CG_HUD_ICONFEED_KILL_SELF);
 	}
 
 	for (i = 0; i < 3; ++i)
@@ -2608,7 +2617,8 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 
 		trap_S_StartSound(es->pos.trBase, -1, CHAN_AUTO, cgs.media.gibSound);
 		ByteToDir(es->eventParm, dir);
-		CG_GibPlayer(bodyCent, bodyCent->lerpOrigin, dir, es->effect3Time);
+		// EV_GIB_PLAYER reuses the weapon byte as a 0/1 heavy-direct gib flag.
+		CG_GibPlayer(bodyCent, bodyCent->lerpOrigin, dir, es->effect3Time, (qboolean)es->weapon);
 	}
 	break;
 	// particles

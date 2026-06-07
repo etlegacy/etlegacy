@@ -1591,6 +1591,7 @@ static void CG_RegisterGraphics(void)
 
 	cgs.media.axisFlag       = trap_R_RegisterShaderNoMip("gfx/limbo/flag_axis");
 	cgs.media.alliedFlag     = trap_R_RegisterShaderNoMip("gfx/limbo/flag_allied");
+	cgs.media.spectatorFlag  = trap_R_RegisterShaderNoMip("gfx/limbo/flag_spectator");
 	cgs.media.disconnectIcon = trap_R_RegisterShaderNoMip("gfx/2d/net");
 
 	cgs.media.cm_spec_icon  = trap_R_RegisterShaderNoMip("ui/assets/mp_spec");
@@ -2197,7 +2198,9 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum, qbo
 
 	cg.demoPlayback = demoPlayback;
 
-	MOD_CHECK_ETLEGACY(etLegacyClient, clientVersion, cg.etLegacyClient);
+	MOD_CHECK_ETLEGACY(clientVersion, cg.etLegacyClient);
+
+	I18N_Init();
 
 	// get the rendering configuration from the client system
 	trap_GetGlconfig(&cgs.glconfig);

@@ -267,7 +267,7 @@ void UI_LoadMenus(const char *menuFile, qboolean reset);
 void  UI_SetActiveMenu(uiMenuCommand_t menu);
 uiMenuCommand_t UI_GetActiveMenu(void);
 int UI_AdjustTimeByGame(int time);
-void UI_ShowPostGame();
+void UI_ShowPostGame(void);
 void UI_LoadArenas(void);
 void UI_LoadCampaigns(void);
 mapInfo *UI_FindMapInfoByMapname(const char *name);
@@ -349,8 +349,10 @@ typedef struct scrollInfo_s
 	int scrollKey;
 	float xStart;
 	float yStart;
+	float thumbStart;
 	itemDef_t *item;
 	qboolean scrollDir;
+	qboolean draggingThumb;
 } scrollInfo_t;
 
 extern scrollInfo_t scrollInfo;
@@ -492,6 +494,7 @@ typedef struct
 typedef struct
 {
 	const char *path;
+	qhandle_t handle;   // icons
 	qboolean file;
 } demoItem_t;
 
@@ -630,6 +633,7 @@ extern uiInfo_t uiInfo;
 extern displayContextDef_t *DC;
 
 // ui_atoms.c
+extern void UI_InitConsoleCommand();
 extern qboolean UI_ConsoleCommand(int realTime);
 extern void UI_DrawHandlePic(float x, float y, float w, float h, qhandle_t hShader);
 extern void UI_FillRect(float x, float y, float width, float height, const float *color);
@@ -759,5 +763,15 @@ const char *UI_DescriptionForCampaign(void);
 const char *UI_NameForCampaign(void);
 
 #define EDITFIELD_TEMP_CVAR         "ui_textfield_temp"
+
+/**
+ * @struct uiConsoleCommand_t
+ * @brief
+ */
+typedef struct
+{
+	const char *cmd;
+	void (*function)(void);
+} uiConsoleCommand_t;
 
 #endif

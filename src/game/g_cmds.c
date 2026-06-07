@@ -905,6 +905,16 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 					Add_Ammo(ent, weapon, 9999, qtrue);
 				}
 			}
+
+			// Ensure team grenades are included even if not currently in the weapon bitfield.
+			if (ent->client->sess.sessionTeam == TEAM_AXIS)
+			{
+				Add_Ammo(ent, WP_GRENADE_LAUNCHER, 9999, qtrue);
+			}
+			else if (ent->client->sess.sessionTeam == TEAM_ALLIES)
+			{
+				Add_Ammo(ent, WP_GRENADE_PINEAPPLE, 9999, qtrue);
+			}
 		}
 		else if (isNoneAmount)  // empty ammo completely on all weapons
 		{
@@ -1261,12 +1271,6 @@ void Cmd_Kill_f(gentity_t *ent, unsigned int dwCommand, int value)
 	if (ent->client->freezed)
 	{
 		trap_SendServerCommand(ent - g_entities, "cp \"You are frozen - ^3/kill^7 is disabled.\"");
-		return;
-	}
-
-	if (g_gamestate.integer == GS_PLAYING && ent->client->isSpawnInvulnerability && ent->client->ps.powerups[PW_INVULNERABLE] > level.time && !g_cheats.value)
-	{
-		trap_SendServerCommand(ent - g_entities, "cp \"You are invulnerable - ^3/kill^7 is disabled.\"");
 		return;
 	}
 
@@ -1908,9 +1912,27 @@ int G_TeamCount(gentity_t *ent, int weap)
 
 		if (weap != -1)
 		{
-			if (level.clients[j].sess.playerWeapon != weap && level.clients[j].sess.latchPlayerWeapon != weap)
+			// For alive players (not in limbo), check the weapon they are
+			// actively carrying. For dead/limbo players, only check the
+			// weapon they intend to spawn with. Previously both fields were
+			// checked unconditionally, which caused a stale playerWeapon
+			// (only synced at spawn time in ClientSpawn) to permanently
+			// "latch" a weapon slot across map changes
+			if (level.clients[j].ps.pm_flags & PMF_LIMBO
+			    || level.clients[j].ps.pm_type == PM_DEAD
+			    || level.clients[j].sess.sessionTeam == TEAM_SPECTATOR)
 			{
-				continue;
+				if (level.clients[j].sess.latchPlayerWeapon != weap)
+				{
+					continue;
+				}
+			}
+			else
+			{
+				if (level.clients[j].sess.playerWeapon != weap && level.clients[j].sess.latchPlayerWeapon != weap)
+				{
+					continue;
+				}
 			}
 		}
 

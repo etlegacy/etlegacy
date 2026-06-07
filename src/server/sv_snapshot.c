@@ -266,7 +266,7 @@ static void SV_ETTV_EmitPlayerstates(client_t *client, msg_t *msg)
 
 	MSG_WriteByte(msg, svc_ettv_playerstates);
 
-	if (!svcls.isTVGame)
+	if (!svcls.TVServer)
 	{
 		for (i = 0; i < sv_maxclients->integer; i++)
 		{
@@ -668,7 +668,7 @@ static void SV_AddEntitiesVisibleFromPoint(client_t *cl, vec3_t origin, clientSn
 			continue;
 		}
 
-		if (cl->ettvClient || (svcls.isTVGame && ent->s.number < MAX_CLIENTS))
+		if (cl->ettvClient || (svcls.TVServer && ent->s.number < MAX_CLIENTS))
 		{
 			SV_AddEntToSnapshot(cl, playerEnt, svEnt, ent, eNums);
 			continue;

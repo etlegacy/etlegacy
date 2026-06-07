@@ -121,7 +121,7 @@
 	       ("setcvar ui_glPreset 0 ; uiScript update ui_glPreset")
 	           ("copycvar com_recommended ui_glPreset ; uiScript update ui_glPreset") "-1")
 
-	BUTTON(SUBWINDOW_X + 6, SUBWINDOW_Y + SUBWINDOW_HEIGHT - 24, .5 * (SUBWINDOW_WIDTH - 18), 18, _("BACK"), .3, 14, close profile_create ; open profile)
+	BUTTON(SUBWINDOW_X + 6, SUBWINDOW_Y + SUBWINDOW_HEIGHT - 24, .5 * (SUBWINDOW_WIDTH - 18), 18, _("MSGID_MENU_BACK"), .3, 14, close profile_create ; open profile)
 	BUTTON(SUBWINDOW_X + 6 + .5 * (SUBWINDOW_WIDTH - 18) + 6, SUBWINDOW_Y + SUBWINDOW_HEIGHT - 24, .5 * (SUBWINDOW_WIDTH - 18), 18, _("CREATE"), .3, 14,
 	       conditionalscript UIProfileValidName 2
 	       ("clearFocus")

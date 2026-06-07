@@ -1635,56 +1635,15 @@ void CG_Debriefing_ChatBox_Draw(panel_button_t *button)
 {
 	if (cgs.teamLastChatPos != cgs.teamChatPos)
 	{
-		vec4_t hcolor;
-		float  lineHeight = 9.f;
-		int    i;
-		int    chatWidth  = button->rect.w;
-		int    chatHeight = button->rect.h;
+		int i;
+		int chatHeight = button->rect.h;
 
-		for (i = cgs.teamLastChatPos; i < cgs.teamChatPos; i++)
+		for (i = cgs.teamLastChatPos; i < cgs.teamChatPos; ++i)
 		{
 			CG_Text_Width_Ext(cgs.teamChatMsgs[i % chatHeight], 0.2f, 0, &cgs.media.limboFont2);
 		}
 
-		for (i = cgs.teamChatPos - 1; i >= cgs.teamLastChatPos; i--)
-		{
-			if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_AXIS)
-			{
-				hcolor[0] = 1;
-				hcolor[1] = 0;
-				hcolor[2] = 0;
-			}
-			else if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_ALLIES)
-			{
-				hcolor[0] = 0;
-				hcolor[1] = 0;
-				hcolor[2] = 1;
-			}
-			else
-			{
-				hcolor[0] = 0;
-				hcolor[1] = 1;
-				hcolor[2] = 0;
-			}
-
-			hcolor[3] = 0.33f;
-
-			trap_R_SetColor(hcolor);
-			CG_DrawPic(button->rect.x, button->rect.y - (cgs.teamChatPos - i) * lineHeight, chatWidth, lineHeight, cgs.media.teamStatusBar);
-
-			trap_R_SetColor(NULL);
-
-			if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_AXIS)
-			{
-				CG_DrawPic(button->rect.x, button->rect.y - (cgs.teamChatPos - i - 1) * lineHeight - 8, 12, 10, cgs.media.axisFlag);
-			}
-			else if (cgs.teamChatMsgTeams[i % chatHeight] == TEAM_ALLIES)
-			{
-				CG_DrawPic(button->rect.x, button->rect.y - (cgs.teamChatPos - i - 1) * lineHeight - 8, 12, 10, cgs.media.alliedFlag);
-			}
-
-			CG_Text_Paint_Ext(button->rect.x + 12, button->rect.y - (cgs.teamChatPos - i - 1) * lineHeight, 0.2f, 0.2f, colorWhite, cgs.teamChatMsgs[i % chatHeight], 0, 0, 0, &cgs.media.limboFont2);
-		}
+		CG_DrawChatLines(button->rect.x, button->rect.y, button->rect.w, chatHeight, 9.f, 0.2f, 1.f, 0.33f, 0, qtrue, qfalse, qtrue);
 	}
 }
 
@@ -2479,7 +2438,7 @@ void CG_Debriefing_ParseAwards(void)
 		cgs.dbAwardNames[i] = s;
 
 		len   = strlen(s);
-		size -= len;
+		size -= len + 1;
 		s    += len + 1;
 
 		// team
@@ -3183,25 +3142,7 @@ void CG_Debriefing_PlayerName_Draw(panel_button_t *button)
 
 	ci = CG_Debriefing_GetSelectedClientInfo();
 
-	switch (ci->team)
-	{
-	case TEAM_AXIS:
-		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, cgs.media.axisFlag);
-		break;
-	case TEAM_ALLIES:
-		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, cgs.media.alliedFlag);
-		break;
-	case TEAM_SPECTATOR: // fall through
-	default:
-		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, cgs.media.limboTeamButtonBack_on);
-		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, cgs.media.limboTeamButtonSpec);
-		break;
-	}
-
-	if (ci->team == TEAM_AXIS || ci->team == TEAM_ALLIES)
-	{
-		CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, ci->team == TEAM_AXIS ? cgs.media.axisFlag : cgs.media.alliedFlag);
-	}
+	CG_DrawPic(button->rect.x, button->rect.y - 9, 18, 12, CG_GetTeamFlag(ci->team));
 	CG_Text_Paint_Ext(button->rect.x + 22, button->rect.y, button->font->scalex, button->font->scaley, colorWhite, ci->name, 0, 27, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
 }
 
@@ -4027,21 +3968,7 @@ void CG_Debriefing_Awards_Draw(panel_button_t *button)
 			continue;
 		}
 
-		switch (cgs.dbAwardTeams[i + cgs.dbAwardsListOffset])
-		{
-		case TEAM_AXIS:
-			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.axisFlag);
-			break;
-		case TEAM_ALLIES:
-			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.alliedFlag);
-			break;
-		case TEAM_SPECTATOR: // fall through
-		default:
-			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonBack_on);
-			CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, cgs.media.limboTeamButtonSpec); // TEAM_FREE shouldn't occur
-			break;
-		}
-
+		CG_DrawPic(button->rect.x + 6, y + 2, 18, 12, CG_GetTeamFlag(cgs.dbAwardTeams[i + cgs.dbAwardsListOffset]));
 		CG_Text_Paint_Ext(button->rect.x + 28, y + 11, 0.19f, 0.19f, clrTxtBck, CG_TranslateString(awardNames[i + cgs.dbAwardsListOffset]), 0, 0, 0, &cgs.media.limboFont2);
 		CG_Text_Paint_Ext(button->rect.x + 28 + 180, y + 11, 0.19f, 0.19f, clrTxtBck, va("^7%s", cgs.dbAwardNames[i + cgs.dbAwardsListOffset]), 0, 0, 0, &cgs.media.limboFont2);
 		y += 16;
