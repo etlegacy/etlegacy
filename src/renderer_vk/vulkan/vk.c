@@ -47,8 +47,25 @@
 // time; see the FEATURE_RENDERER_VULKAN block in cmake/ETLBuildRenderer.cmake.
 #include "ui.vert.glsl.h"
 #include "ui.frag.glsl.h"
+#include "tr3d.vert.glsl.h"
+#include "tr3d.frag.glsl.h"
+#include "tr3d_lm.vert.glsl.h"
+#include "tr3d_lm.frag.glsl.h"
 
 #define VK_MAX_SWAPCHAIN_IMAGES 8
+
+// A world can have many distinct shader stateBits/cullType combinations;
+// pipelines are created lazily and cached for the life of the renderer.
+#define VK_MAX_SCENE_PIPELINES 128
+
+// One lazily-created pipeline variant for a given (stateBits, cullType)
+// pair used by the 3D scene pipelines.
+typedef struct
+{
+	unsigned long stateBits;
+	int cullType;
+	VkPipeline pipeline;
+} vkScenePipelineEntry_t;
 
 typedef struct
 {
@@ -73,6 +90,12 @@ typedef struct
 	VkRenderPass renderPass;
 	VkCommandPool commandPool;
 	VkCommandBuffer commandBuffer;
+
+	// depth buffer, recreated alongside the swapchain.
+	VkFormat depthFormat;
+	VkImage depthImage;
+	VkDeviceMemory depthImageMemory;
+	VkImageView depthImageView;
 
 	VkSemaphore imageAvailableSemaphore;
 	VkSemaphore renderFinishedSemaphore;
@@ -106,6 +129,43 @@ typedef struct
 	qboolean uiPipelineBoundThisFrame;
 	qboolean uiViewportSetThisFrame;
 
+	// static 3D geometry pipelines + resources.
+	VkPipelineLayout scenePipelineLayout;   // 1 descriptor set (base texture)
+	VkPipelineLayout sceneLMPipelineLayout; // 2 descriptor sets (base + lightmap)
+
+	VkShaderModule sceneVertModule;
+	VkShaderModule sceneFragModule;
+	VkShaderModule sceneLMVertModule;
+	VkShaderModule sceneLMFragModule;
+
+	vkScenePipelineEntry_t scenePipelines[VK_MAX_SCENE_PIPELINES];
+	int numScenePipelines;
+	vkScenePipelineEntry_t sceneLMPipelines[VK_MAX_SCENE_PIPELINES];
+	int numSceneLMPipelines;
+
+	VkPipeline lastBoundScenePipeline;
+	qboolean sceneViewportSetThisFrame;
+
+	// GL-convention (column-major) projection/modelview matrices captured
+	// from the no-op'd glLoadMatrixf() call sites in tr_backend.c (see
+	// VK_SetProjectionMatrix/VK_SetModelViewMatrix). projMatrix already has
+	// the GL->Vulkan clip-space correction (Y-flip + depth 0..1) baked in.
+	float projMatrix[16];
+	float modelMatrix[16];
+	float mvpMatrix[16];
+
+	VkBuffer sceneVertexArenaBuffer;
+	VkDeviceMemory sceneVertexArenaMemory;
+	void *sceneVertexArenaMapped;
+	VkDeviceSize sceneVertexArenaSize;
+	VkDeviceSize sceneVertexArenaOffset;
+
+	VkBuffer sceneIndexArenaBuffer;
+	VkDeviceMemory sceneIndexArenaMemory;
+	void *sceneIndexArenaMapped;
+	VkDeviceSize sceneIndexArenaSize;
+	VkDeviceSize sceneIndexArenaOffset;
+
 	qboolean initialized;
 	uint32_t currentImageIndex;
 } vkContext_t;
@@ -127,6 +187,25 @@ typedef struct
 // can issue dozens of such batches.
 #define VK_UI_VERTEX_ARENA_SIZE (16 * 1024 * 1024)
 #define VK_UI_INDEX_ARENA_SIZE  (4 * 1024 * 1024)
+
+// vertex formats fed into the 3D scene pipelines.
+typedef struct
+{
+	float pos[3];
+	float uv[2];
+	byte color[4];
+} vk3DVertex_t;
+
+typedef struct
+{
+	float pos[3];
+	float uv0[2];
+	float uv1[2];
+	byte color[4];
+} vk3DVertexLM_t;
+
+#define VK_SCENE_VERTEX_ARENA_SIZE (32 * 1024 * 1024)
+#define VK_SCENE_INDEX_ARENA_SIZE  (8 * 1024 * 1024)
 #define VK_UI_MAX_DESCRIPTOR_SETS 2048
 
 /**
@@ -491,14 +570,94 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 	return qtrue;
 }
 
+/**
+ * @brief Finds a device memory type index matching both the given
+ * memory-type bitmask (from a VkMemoryRequirements) and the requested
+ * property flags (host-visible, device-local, ...).
+ */
+static uint32_t VK_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+
+/**
+ * @brief creates the depth buffer (image + memory + view)
+ * sized to match the current swapchain extent. Recreated alongside the
+ * swapchain on resize (see VK_ResizeSwapchain).
+ */
+static qboolean VK_CreateDepthResources(void)
+{
+	VkImageCreateInfo     imageInfo;
+	VkMemoryRequirements  memRequirements;
+	VkMemoryAllocateInfo  allocInfo;
+	VkImageViewCreateInfo viewInfo;
+
+	vk.depthFormat = VK_FORMAT_D32_SFLOAT;
+
+	Com_Memset(&imageInfo, 0, sizeof(imageInfo));
+	imageInfo.sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	imageInfo.imageType     = VK_IMAGE_TYPE_2D;
+	imageInfo.extent.width  = vk.swapchainExtent.width;
+	imageInfo.extent.height = vk.swapchainExtent.height;
+	imageInfo.extent.depth  = 1;
+	imageInfo.mipLevels     = 1;
+	imageInfo.arrayLayers   = 1;
+	imageInfo.format        = vk.depthFormat;
+	imageInfo.tiling        = VK_IMAGE_TILING_OPTIMAL;
+	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	imageInfo.usage         = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+	imageInfo.samples       = VK_SAMPLE_COUNT_1_BIT;
+	imageInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
+
+	if (!VK_CheckResult(vkCreateImage(vk.device, &imageInfo, NULL, &vk.depthImage), "vkCreateImage(depth)"))
+	{
+		return qfalse;
+	}
+
+	vkGetImageMemoryRequirements(vk.device, vk.depthImage, &memRequirements);
+
+	Com_Memset(&allocInfo, 0, sizeof(allocInfo));
+	allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize  = memRequirements.size;
+	allocInfo.memoryTypeIndex = VK_FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+	if (!VK_CheckResult(vkAllocateMemory(vk.device, &allocInfo, NULL, &vk.depthImageMemory), "vkAllocateMemory(depth)"))
+	{
+		return qfalse;
+	}
+
+	vkBindImageMemory(vk.device, vk.depthImage, vk.depthImageMemory, 0);
+
+	Com_Memset(&viewInfo, 0, sizeof(viewInfo));
+	viewInfo.sType                       = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	viewInfo.image                       = vk.depthImage;
+	viewInfo.viewType                    = VK_IMAGE_VIEW_TYPE_2D;
+	viewInfo.format                      = vk.depthFormat;
+	viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+	viewInfo.subresourceRange.levelCount = 1;
+	viewInfo.subresourceRange.layerCount = 1;
+
+	if (!VK_CheckResult(vkCreateImageView(vk.device, &viewInfo, NULL, &vk.depthImageView), "vkCreateImageView(depth)"))
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
 static qboolean VK_CreateRenderPassAndFramebuffers(void)
 {
 	VkAttachmentDescription colorAttachment;
 	VkAttachmentReference   colorAttachmentRef;
+	VkAttachmentDescription depthAttachment;
+	VkAttachmentReference   depthAttachmentRef;
+	VkAttachmentDescription attachments[2];
 	VkSubpassDescription    subpass;
 	VkSubpassDependency     dependency;
 	VkRenderPassCreateInfo  renderPassInfo;
 	uint32_t                i;
+
+	if (!VK_CreateDepthResources())
+	{
+		return qfalse;
+	}
 
 	Com_Memset(&colorAttachment, 0, sizeof(colorAttachment));
 	colorAttachment.format         = vk.swapchainFormat;
@@ -514,23 +673,41 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	colorAttachmentRef.attachment = 0;
 	colorAttachmentRef.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
+	Com_Memset(&depthAttachment, 0, sizeof(depthAttachment));
+	depthAttachment.format         = vk.depthFormat;
+	depthAttachment.samples        = VK_SAMPLE_COUNT_1_BIT;
+	depthAttachment.loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	depthAttachment.storeOp        = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	depthAttachment.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	depthAttachment.initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED;
+	depthAttachment.finalLayout    = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+	Com_Memset(&depthAttachmentRef, 0, sizeof(depthAttachmentRef));
+	depthAttachmentRef.attachment = 1;
+	depthAttachmentRef.layout     = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+	attachments[0] = colorAttachment;
+	attachments[1] = depthAttachment;
+
 	Com_Memset(&subpass, 0, sizeof(subpass));
-	subpass.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS;
-	subpass.colorAttachmentCount = 1;
-	subpass.pColorAttachments    = &colorAttachmentRef;
+	subpass.pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS;
+	subpass.colorAttachmentCount    = 1;
+	subpass.pColorAttachments       = &colorAttachmentRef;
+	subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
 	Com_Memset(&dependency, 0, sizeof(dependency));
 	dependency.srcSubpass    = VK_SUBPASS_EXTERNAL;
 	dependency.dstSubpass    = 0;
-	dependency.srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
 	dependency.srcAccessMask = 0;
-	dependency.dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	dependency.dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
 	Com_Memset(&renderPassInfo, 0, sizeof(renderPassInfo));
 	renderPassInfo.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	renderPassInfo.attachmentCount = 1;
-	renderPassInfo.pAttachments    = &colorAttachment;
+	renderPassInfo.attachmentCount = 2;
+	renderPassInfo.pAttachments    = attachments;
 	renderPassInfo.subpassCount    = 1;
 	renderPassInfo.pSubpasses      = &subpass;
 	renderPassInfo.dependencyCount = 1;
@@ -544,12 +721,16 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	for (i = 0; i < vk.swapchainImageCount; i++)
 	{
 		VkFramebufferCreateInfo framebufferInfo;
+		VkImageView             fbAttachments[2];
+
+		fbAttachments[0] = vk.swapchainImageViews[i];
+		fbAttachments[1] = vk.depthImageView;
 
 		Com_Memset(&framebufferInfo, 0, sizeof(framebufferInfo));
 		framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 		framebufferInfo.renderPass      = vk.renderPass;
-		framebufferInfo.attachmentCount = 1;
-		framebufferInfo.pAttachments    = &vk.swapchainImageViews[i];
+		framebufferInfo.attachmentCount = 2;
+		framebufferInfo.pAttachments    = fbAttachments;
 		framebufferInfo.width           = vk.swapchainExtent.width;
 		framebufferInfo.height          = vk.swapchainExtent.height;
 		framebufferInfo.layers          = 1;
@@ -1017,6 +1198,390 @@ static qboolean VK_CreateUIArenaBuffers(void)
 	return qtrue;
 }
 
+/**
+ * @brief persistently-mapped vertex/index arena buffers for
+ * 3D scene draws, analogous to the UI arena buffers but with their own
+ * (larger) backing storage and vertex formats.
+ */
+static qboolean VK_CreateSceneArenaBuffers(void)
+{
+	vk.sceneVertexArenaSize = VK_SCENE_VERTEX_ARENA_SIZE;
+	vk.sceneIndexArenaSize  = VK_SCENE_INDEX_ARENA_SIZE;
+
+	if (!VK_CreateBuffer(vk.sceneVertexArenaSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	                     &vk.sceneVertexArenaBuffer, &vk.sceneVertexArenaMemory))
+	{
+		return qfalse;
+	}
+	if (!VK_CreateBuffer(vk.sceneIndexArenaSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	                     &vk.sceneIndexArenaBuffer, &vk.sceneIndexArenaMemory))
+	{
+		return qfalse;
+	}
+
+	vkMapMemory(vk.device, vk.sceneVertexArenaMemory, 0, vk.sceneVertexArenaSize, 0, &vk.sceneVertexArenaMapped);
+	vkMapMemory(vk.device, vk.sceneIndexArenaMemory, 0, vk.sceneIndexArenaSize, 0, &vk.sceneIndexArenaMapped);
+
+	return qtrue;
+}
+
+/**
+ * @brief creates the two pipeline layouts used by static 3D
+ * geometry draws - one with a single descriptor set (base texture only,
+ * used by RB_StageIteratorGeneric/VertexLitTexture) and one with two
+ * descriptor sets (base + lightmap, used by RB_StageIteratorLightmappedMultitexture
+ * and 2-stage shaders in the generic path). Both reuse
+ * vk.uiDescriptorSetLayout (single combined-image-sampler) since every
+ * image already gets one such descriptor set from VK_CreateImageTexture.
+ * Also pre-compiles the shader modules shared by every lazily-created
+ * pipeline variant.
+ */
+static qboolean VK_CreateScenePipelineLayouts(void)
+{
+	VkPushConstantRange        pushConstantRange;
+	VkPipelineLayoutCreateInfo layoutInfo;
+	VkDescriptorSetLayout      twoSetLayouts[2];
+
+	Com_Memset(&pushConstantRange, 0, sizeof(pushConstantRange));
+	pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+	pushConstantRange.offset     = 0;
+	pushConstantRange.size       = sizeof(float) * 20; // mat4 mvp + vec4 alphaTest
+
+	Com_Memset(&layoutInfo, 0, sizeof(layoutInfo));
+	layoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	layoutInfo.setLayoutCount         = 1;
+	layoutInfo.pSetLayouts            = &vk.uiDescriptorSetLayout;
+	layoutInfo.pushConstantRangeCount = 1;
+	layoutInfo.pPushConstantRanges    = &pushConstantRange;
+
+	if (!VK_CheckResult(vkCreatePipelineLayout(vk.device, &layoutInfo, NULL, &vk.scenePipelineLayout), "vkCreatePipelineLayout(scene)"))
+	{
+		return qfalse;
+	}
+
+	twoSetLayouts[0] = vk.uiDescriptorSetLayout;
+	twoSetLayouts[1] = vk.uiDescriptorSetLayout;
+
+	layoutInfo.setLayoutCount = 2;
+	layoutInfo.pSetLayouts    = twoSetLayouts;
+
+	if (!VK_CheckResult(vkCreatePipelineLayout(vk.device, &layoutInfo, NULL, &vk.sceneLMPipelineLayout), "vkCreatePipelineLayout(sceneLM)"))
+	{
+		return qfalse;
+	}
+
+	vk.sceneVertModule   = VK_CreateShaderModule(tr3d_vert_spv, tr3d_vert_spv_SIZE);
+	vk.sceneFragModule   = VK_CreateShaderModule(tr3d_frag_spv, tr3d_frag_spv_SIZE);
+	vk.sceneLMVertModule = VK_CreateShaderModule(tr3d_lm_vert_spv, tr3d_lm_vert_spv_SIZE);
+	vk.sceneLMFragModule = VK_CreateShaderModule(tr3d_lm_frag_spv, tr3d_lm_frag_spv_SIZE);
+
+	if (vk.sceneVertModule == VK_NULL_HANDLE || vk.sceneFragModule == VK_NULL_HANDLE ||
+	    vk.sceneLMVertModule == VK_NULL_HANDLE || vk.sceneLMFragModule == VK_NULL_HANDLE)
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/**
+ * @brief Maps the engine's GLS_SRCBLEND_* / GLS_DSTBLEND_* state bits to the
+ * matching VkBlendFactor, mirroring GL_State()'s switch in tr_backend.c.
+ */
+static VkBlendFactor VK_SrcBlendFactor(unsigned long stateBits)
+{
+	switch (stateBits & GLS_SRCBLEND_BITS)
+	{
+	case GLS_SRCBLEND_ZERO: return VK_BLEND_FACTOR_ZERO;
+	case GLS_SRCBLEND_ONE: return VK_BLEND_FACTOR_ONE;
+	case GLS_SRCBLEND_DST_COLOR: return VK_BLEND_FACTOR_DST_COLOR;
+	case GLS_SRCBLEND_ONE_MINUS_DST_COLOR: return VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
+	case GLS_SRCBLEND_SRC_ALPHA: return VK_BLEND_FACTOR_SRC_ALPHA;
+	case GLS_SRCBLEND_ONE_MINUS_SRC_ALPHA: return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	case GLS_SRCBLEND_DST_ALPHA: return VK_BLEND_FACTOR_DST_ALPHA;
+	case GLS_SRCBLEND_ONE_MINUS_DST_ALPHA: return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+	case GLS_SRCBLEND_ALPHA_SATURATE: return VK_BLEND_FACTOR_SRC_ALPHA_SATURATE;
+	default: return VK_BLEND_FACTOR_ONE;
+	}
+}
+
+static VkBlendFactor VK_DstBlendFactor(unsigned long stateBits)
+{
+	switch (stateBits & GLS_DSTBLEND_BITS)
+	{
+	case GLS_DSTBLEND_ZERO: return VK_BLEND_FACTOR_ZERO;
+	case GLS_DSTBLEND_ONE: return VK_BLEND_FACTOR_ONE;
+	case GLS_DSTBLEND_SRC_COLOR: return VK_BLEND_FACTOR_SRC_COLOR;
+	case GLS_DSTBLEND_ONE_MINUS_SRC_COLOR: return VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
+	case GLS_DSTBLEND_SRC_ALPHA: return VK_BLEND_FACTOR_SRC_ALPHA;
+	case GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA: return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	case GLS_DSTBLEND_DST_ALPHA: return VK_BLEND_FACTOR_DST_ALPHA;
+	case GLS_DSTBLEND_ONE_MINUS_DST_ALPHA: return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+	default: return VK_BLEND_FACTOR_ZERO;
+	}
+}
+
+/**
+ * @brief Creates one 3D scene pipeline variant for the given (stateBits,
+ * cullType) pair. `lightmapped` selects the vertex format/shaders/pipeline
+ * layout (vk3DVertex_t + tr3d.* vs. vk3DVertexLM_t + tr3d_lm.*).
+ */
+static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cullType, qboolean lightmapped)
+{
+	VkPipelineShaderStageCreateInfo        stages[2];
+	VkVertexInputBindingDescription        vertexBinding;
+	VkVertexInputAttributeDescription      vertexAttributes[4];
+	uint32_t                               attributeCount;
+	VkPipelineVertexInputStateCreateInfo   vertexInputInfo;
+	VkPipelineInputAssemblyStateCreateInfo inputAssembly;
+	VkPipelineViewportStateCreateInfo      viewportState;
+	VkPipelineRasterizationStateCreateInfo rasterizer;
+	VkPipelineMultisampleStateCreateInfo   multisampling;
+	VkPipelineDepthStencilStateCreateInfo  depthStencil;
+	VkPipelineColorBlendAttachmentState    colorBlendAttachment;
+	VkPipelineColorBlendStateCreateInfo    colorBlending;
+	VkDynamicState                         dynamicStates[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+	VkPipelineDynamicStateCreateInfo       dynamicState;
+	VkGraphicsPipelineCreateInfo           pipelineInfo;
+	VkPipeline                             pipeline = VK_NULL_HANDLE;
+	qboolean                               cullFront;
+	uint32_t                               ai;
+
+	Com_Memset(stages, 0, sizeof(stages));
+	stages[0].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	stages[0].stage  = VK_SHADER_STAGE_VERTEX_BIT;
+	stages[0].module = lightmapped ? vk.sceneLMVertModule : vk.sceneVertModule;
+	stages[0].pName  = "main";
+	stages[1].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	stages[1].stage  = VK_SHADER_STAGE_FRAGMENT_BIT;
+	stages[1].module = lightmapped ? vk.sceneLMFragModule : vk.sceneFragModule;
+	stages[1].pName  = "main";
+
+	Com_Memset(&vertexBinding, 0, sizeof(vertexBinding));
+	vertexBinding.binding   = 0;
+	vertexBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+	Com_Memset(vertexAttributes, 0, sizeof(vertexAttributes));
+	if (lightmapped)
+	{
+		vertexBinding.stride = sizeof(vk3DVertexLM_t);
+
+		vertexAttributes[0].location = 0;
+		vertexAttributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
+		vertexAttributes[0].offset   = offsetof(vk3DVertexLM_t, pos);
+		vertexAttributes[1].location = 1;
+		vertexAttributes[1].format   = VK_FORMAT_R32G32_SFLOAT;
+		vertexAttributes[1].offset   = offsetof(vk3DVertexLM_t, uv0);
+		vertexAttributes[2].location = 2;
+		vertexAttributes[2].format   = VK_FORMAT_R32G32_SFLOAT;
+		vertexAttributes[2].offset   = offsetof(vk3DVertexLM_t, uv1);
+		vertexAttributes[3].location = 3;
+		vertexAttributes[3].format   = VK_FORMAT_R8G8B8A8_UNORM;
+		vertexAttributes[3].offset   = offsetof(vk3DVertexLM_t, color);
+		attributeCount               = 4;
+	}
+	else
+	{
+		vertexBinding.stride = sizeof(vk3DVertex_t);
+
+		vertexAttributes[0].location = 0;
+		vertexAttributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
+		vertexAttributes[0].offset   = offsetof(vk3DVertex_t, pos);
+		vertexAttributes[1].location = 1;
+		vertexAttributes[1].format   = VK_FORMAT_R32G32_SFLOAT;
+		vertexAttributes[1].offset   = offsetof(vk3DVertex_t, uv);
+		vertexAttributes[2].location = 2;
+		vertexAttributes[2].format   = VK_FORMAT_R8G8B8A8_UNORM;
+		vertexAttributes[2].offset   = offsetof(vk3DVertex_t, color);
+		attributeCount               = 3;
+	}
+	for (ai = 0; ai < attributeCount; ai++)
+	{
+		vertexAttributes[ai].binding = 0;
+	}
+
+	Com_Memset(&vertexInputInfo, 0, sizeof(vertexInputInfo));
+	vertexInputInfo.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	vertexInputInfo.vertexBindingDescriptionCount   = 1;
+	vertexInputInfo.pVertexBindingDescriptions      = &vertexBinding;
+	vertexInputInfo.vertexAttributeDescriptionCount = attributeCount;
+	vertexInputInfo.pVertexAttributeDescriptions    = vertexAttributes;
+
+	Com_Memset(&inputAssembly, 0, sizeof(inputAssembly));
+	inputAssembly.sType    = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
+	Com_Memset(&viewportState, 0, sizeof(viewportState));
+	viewportState.sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+	viewportState.viewportCount = 1;
+	viewportState.scissorCount  = 1;
+
+	// GL_Cull: cullFront = (cullType == CT_FRONT_SIDED); glCullFace(cullFront ? GL_FRONT : GL_BACK).
+	// The Vulkan clip-space Y-flip baked into VK_SetProjectionMatrix cancels
+	// out against Vulkan's inherently Y-down viewport mapping, so winding
+	// order as seen by the rasterizer matches GL's - no frontFace flip needed.
+	cullFront = (cullType == CT_FRONT_SIDED);
+
+	Com_Memset(&rasterizer, 0, sizeof(rasterizer));
+	rasterizer.sType       = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+	rasterizer.cullMode    = (cullType == CT_TWO_SIDED) ? VK_CULL_MODE_NONE : (cullFront ? VK_CULL_MODE_FRONT_BIT : VK_CULL_MODE_BACK_BIT);
+	rasterizer.frontFace   = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+	rasterizer.lineWidth   = 1.0f;
+
+	Com_Memset(&multisampling, 0, sizeof(multisampling));
+	multisampling.sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+	Com_Memset(&depthStencil, 0, sizeof(depthStencil));
+	depthStencil.sType            = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	depthStencil.depthTestEnable  = (stateBits & GLS_DEPTHTEST_DISABLE) ? VK_FALSE : VK_TRUE;
+	depthStencil.depthWriteEnable = (stateBits & GLS_DEPTHMASK_TRUE) ? VK_TRUE : VK_FALSE;
+	depthStencil.depthCompareOp   = (stateBits & GLS_DEPTHFUNC_EQUAL) ? VK_COMPARE_OP_EQUAL : VK_COMPARE_OP_LESS_OR_EQUAL;
+
+	Com_Memset(&colorBlendAttachment, 0, sizeof(colorBlendAttachment));
+	colorBlendAttachment.blendEnable         = (stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) ? VK_TRUE : VK_FALSE;
+	colorBlendAttachment.srcColorBlendFactor = VK_SrcBlendFactor(stateBits);
+	colorBlendAttachment.dstColorBlendFactor = VK_DstBlendFactor(stateBits);
+	colorBlendAttachment.colorBlendOp        = VK_BLEND_OP_ADD;
+	colorBlendAttachment.srcAlphaBlendFactor = VK_SrcBlendFactor(stateBits);
+	colorBlendAttachment.dstAlphaBlendFactor = VK_DstBlendFactor(stateBits);
+	colorBlendAttachment.alphaBlendOp        = VK_BLEND_OP_ADD;
+	colorBlendAttachment.colorWriteMask      = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+	                                           VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+
+	Com_Memset(&colorBlending, 0, sizeof(colorBlending));
+	colorBlending.sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	colorBlending.attachmentCount = 1;
+	colorBlending.pAttachments    = &colorBlendAttachment;
+
+	Com_Memset(&dynamicState, 0, sizeof(dynamicState));
+	dynamicState.sType             = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	dynamicState.dynamicStateCount = 2;
+	dynamicState.pDynamicStates    = dynamicStates;
+
+	Com_Memset(&pipelineInfo, 0, sizeof(pipelineInfo));
+	pipelineInfo.sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+	pipelineInfo.stageCount          = 2;
+	pipelineInfo.pStages             = stages;
+	pipelineInfo.pVertexInputState   = &vertexInputInfo;
+	pipelineInfo.pInputAssemblyState = &inputAssembly;
+	pipelineInfo.pViewportState      = &viewportState;
+	pipelineInfo.pRasterizationState = &rasterizer;
+	pipelineInfo.pMultisampleState   = &multisampling;
+	pipelineInfo.pDepthStencilState  = &depthStencil;
+	pipelineInfo.pColorBlendState    = &colorBlending;
+	pipelineInfo.pDynamicState       = &dynamicState;
+	pipelineInfo.layout              = lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout;
+	pipelineInfo.renderPass          = vk.renderPass;
+	pipelineInfo.subpass             = 0;
+
+	if (!VK_CheckResult(vkCreateGraphicsPipelines(vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &pipeline), "vkCreateGraphicsPipelines(scene)"))
+	{
+		return VK_NULL_HANDLE;
+	}
+
+	return pipeline;
+}
+
+/**
+ * @brief Returns the cached pipeline for this (stateBits, cullType) pair,
+ * creating and caching it on first use. Returns VK_NULL_HANDLE if the
+ * cache is full or creation failed (caller should skip the draw).
+ */
+static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qboolean lightmapped)
+{
+	vkScenePipelineEntry_t *entries = lightmapped ? vk.sceneLMPipelines : vk.scenePipelines;
+	int                    *count   = lightmapped ? &vk.numSceneLMPipelines : &vk.numScenePipelines;
+	int                    i;
+	VkPipeline             pipeline;
+
+	for (i = 0; i < *count; i++)
+	{
+		if (entries[i].stateBits == stateBits && entries[i].cullType == cullType)
+		{
+			return entries[i].pipeline;
+		}
+	}
+
+	if (*count >= VK_MAX_SCENE_PIPELINES)
+	{
+		Ren_Print("Vulkan: scene pipeline cache full, dropping draw\n");
+		return VK_NULL_HANDLE;
+	}
+
+	pipeline = VK_CreateScenePipelineVariant(stateBits, cullType, lightmapped);
+	if (pipeline == VK_NULL_HANDLE)
+	{
+		return VK_NULL_HANDLE;
+	}
+
+	entries[*count].stateBits = stateBits;
+	entries[*count].cullType  = cullType;
+	entries[*count].pipeline  = pipeline;
+	(*count)++;
+
+	return pipeline;
+}
+
+/**
+ * @brief Multiplies two column-major 4x4 matrices (GL convention: index =
+ * col*4+row), out = a * b. `out` must not alias `a` or `b`.
+ */
+static void VK_Mat4Mul(float *out, const float *a, const float *b)
+{
+	int c, r, k;
+
+	for (c = 0; c < 4; c++)
+	{
+		for (r = 0; r < 4; r++)
+		{
+			float sum = 0.0f;
+
+			for (k = 0; k < 4; k++)
+			{
+				sum += a[k * 4 + r] * b[c * 4 + k];
+			}
+			out[c * 4 + r] = sum;
+		}
+	}
+}
+
+/**
+ * @brief Captures the engine's GL-convention projection matrix (called
+ * from the no-op'd glLoadMatrixf(backEnd.viewParms.projectionMatrix) call
+ * site in SetViewportAndScissor()) and bakes in the GL -> Vulkan
+ * clip-space correction: negate the Y row (Vulkan NDC Y maps to the
+ * viewport opposite of GL's, so this keeps the final image right-side up)
+ * and remap Z from GL's [-1,1] range to Vulkan's [0,1] range.
+ */
+void VK_SetProjectionMatrix(const float *m)
+{
+	int c;
+
+	for (c = 0; c < 4; c++)
+	{
+		vk.projMatrix[c * 4 + 0] = m[c * 4 + 0];
+		vk.projMatrix[c * 4 + 1] = -m[c * 4 + 1];
+		vk.projMatrix[c * 4 + 2] = 0.5f * m[c * 4 + 2] + 0.5f * m[c * 4 + 3];
+		vk.projMatrix[c * 4 + 3] = m[c * 4 + 3];
+	}
+}
+
+/**
+ * @brief Captures the engine's GL-convention modelview matrix (called from
+ * the no-op'd glLoadMatrixf(backEnd.orientation.modelMatrix)/
+ * glLoadMatrixf(backEnd.viewParms.world.modelMatrix) call sites in
+ * tr_backend.c) and recomputes the cached MVP used by VK_Draw3D*().
+ */
+void VK_SetModelViewMatrix(const float *m)
+{
+	Com_Memcpy(vk.modelMatrix, m, sizeof(vk.modelMatrix));
+	VK_Mat4Mul(vk.mvpMatrix, vk.projMatrix, vk.modelMatrix);
+}
+
 static void VK_DestroySwapchainObjects(void)
 {
 	uint32_t i;
@@ -1046,6 +1611,22 @@ static void VK_DestroySwapchainObjects(void)
 	{
 		vkDestroyRenderPass(vk.device, vk.renderPass, NULL);
 		vk.renderPass = VK_NULL_HANDLE;
+	}
+
+	if (vk.depthImageView != VK_NULL_HANDLE)
+	{
+		vkDestroyImageView(vk.device, vk.depthImageView, NULL);
+		vk.depthImageView = VK_NULL_HANDLE;
+	}
+	if (vk.depthImage != VK_NULL_HANDLE)
+	{
+		vkDestroyImage(vk.device, vk.depthImage, NULL);
+		vk.depthImage = VK_NULL_HANDLE;
+	}
+	if (vk.depthImageMemory != VK_NULL_HANDLE)
+	{
+		vkFreeMemory(vk.device, vk.depthImageMemory, NULL);
+		vk.depthImageMemory = VK_NULL_HANDLE;
 	}
 
 	if (vk.swapchain != VK_NULL_HANDLE)
@@ -1123,6 +1704,15 @@ qboolean VK_Init(int width, int height)
 		return qfalse;
 	}
 
+	// static 3D geometry pipeline layouts + arena buffers.
+	// Actual pipelines are created lazily per (stateBits, cullType) the
+	// first time they're needed (see VK_GetScenePipeline/VK_GetSceneLMPipeline).
+	if (!VK_CreateScenePipelineLayouts() ||
+	    !VK_CreateSceneArenaBuffers())
+	{
+		return qfalse;
+	}
+
 	vkGetPhysicalDeviceProperties(vk.physicalDevice, &props);
 	Q_strncpyz(glConfig.vendor_string, "Vulkan", sizeof(glConfig.vendor_string));
 	Q_strncpyz(glConfig.renderer_string, props.deviceName, sizeof(glConfig.renderer_string));
@@ -1195,6 +1785,68 @@ void VK_Shutdown(void)
 		{
 			vkDestroySampler(vk.device, vk.uiSamplerClamp, NULL);
 		}
+
+		// static 3D geometry resources.
+		if (vk.sceneVertexArenaMapped)
+		{
+			vkUnmapMemory(vk.device, vk.sceneVertexArenaMemory);
+		}
+		if (vk.sceneIndexArenaMapped)
+		{
+			vkUnmapMemory(vk.device, vk.sceneIndexArenaMemory);
+		}
+		if (vk.sceneVertexArenaBuffer != VK_NULL_HANDLE)
+		{
+			vkDestroyBuffer(vk.device, vk.sceneVertexArenaBuffer, NULL);
+		}
+		if (vk.sceneVertexArenaMemory != VK_NULL_HANDLE)
+		{
+			vkFreeMemory(vk.device, vk.sceneVertexArenaMemory, NULL);
+		}
+		if (vk.sceneIndexArenaBuffer != VK_NULL_HANDLE)
+		{
+			vkDestroyBuffer(vk.device, vk.sceneIndexArenaBuffer, NULL);
+		}
+		if (vk.sceneIndexArenaMemory != VK_NULL_HANDLE)
+		{
+			vkFreeMemory(vk.device, vk.sceneIndexArenaMemory, NULL);
+		}
+		{
+			int pi;
+
+			for (pi = 0; pi < vk.numScenePipelines; pi++)
+			{
+				vkDestroyPipeline(vk.device, vk.scenePipelines[pi].pipeline, NULL);
+			}
+			for (pi = 0; pi < vk.numSceneLMPipelines; pi++)
+			{
+				vkDestroyPipeline(vk.device, vk.sceneLMPipelines[pi].pipeline, NULL);
+			}
+		}
+		if (vk.scenePipelineLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyPipelineLayout(vk.device, vk.scenePipelineLayout, NULL);
+		}
+		if (vk.sceneLMPipelineLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyPipelineLayout(vk.device, vk.sceneLMPipelineLayout, NULL);
+		}
+		if (vk.sceneVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneVertModule, NULL);
+		}
+		if (vk.sceneFragModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneFragModule, NULL);
+		}
+		if (vk.sceneLMVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneLMVertModule, NULL);
+		}
+		if (vk.sceneLMFragModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneLMFragModule, NULL);
+		}
 	}
 
 	if (vk.imageAvailableSemaphore != VK_NULL_HANDLE)
@@ -1233,7 +1885,7 @@ void VK_BeginFrame(void)
 {
 	VkCommandBufferBeginInfo beginInfo;
 	VkRenderPassBeginInfo    renderPassInfo;
-	VkClearValue             clearColor;
+	VkClearValue             clearValues[2];
 
 	if (!vk.initialized)
 	{
@@ -1247,6 +1899,12 @@ void VK_BeginFrame(void)
 	vk.uiPipelineBoundThisFrame = qfalse;
 	vk.uiViewportSetThisFrame   = qfalse;
 
+	// same for the 3D scene arenas/pipeline-bound tracking.
+	vk.sceneVertexArenaOffset    = 0;
+	vk.sceneIndexArenaOffset     = 0;
+	vk.lastBoundScenePipeline    = VK_NULL_HANDLE;
+	vk.sceneViewportSetThisFrame = qfalse;
+
 	vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX);
 	vkResetFences(vk.device, 1, &vk.inFlightFence);
 
@@ -1258,18 +1916,21 @@ void VK_BeginFrame(void)
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	vkBeginCommandBuffer(vk.commandBuffer, &beginInfo);
 
-	clearColor.color.float32[0] = 0.0f;
-	clearColor.color.float32[1] = 0.0f;
-	clearColor.color.float32[2] = 0.0f;
-	clearColor.color.float32[3] = 1.0f;
+	Com_Memset(clearValues, 0, sizeof(clearValues));
+	clearValues[0].color.float32[0]     = 0.0f;
+	clearValues[0].color.float32[1]     = 0.0f;
+	clearValues[0].color.float32[2]     = 0.0f;
+	clearValues[0].color.float32[3]     = 1.0f;
+	clearValues[1].depthStencil.depth   = 1.0f;
+	clearValues[1].depthStencil.stencil = 0;
 
 	Com_Memset(&renderPassInfo, 0, sizeof(renderPassInfo));
 	renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	renderPassInfo.renderPass        = vk.renderPass;
 	renderPassInfo.framebuffer       = vk.swapchainFramebuffers[vk.currentImageIndex];
 	renderPassInfo.renderArea.extent = vk.swapchainExtent;
-	renderPassInfo.clearValueCount   = 1;
-	renderPassInfo.pClearValues      = &clearColor;
+	renderPassInfo.clearValueCount   = 2;
+	renderPassInfo.pClearValues      = clearValues;
 
 	vkCmdBeginRenderPass(vk.commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 }
@@ -1659,4 +2320,268 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image)
 
 	vk.vertexArenaOffset += vertexBytes;
 	vk.indexArenaOffset  += indexBytes;
+}
+
+/**
+ * @brief Converts the engine's GLS_ATEST_* state bits into the alphaTest.x
+ * mode value consumed by tr3d.frag.glsl (0=off, 1=GT_0, 2=LT_80, 3=GE_80).
+ */
+static float VK_AlphaTestMode(unsigned long stateBits)
+{
+	switch (stateBits & GLS_ATEST_BITS)
+	{
+	case GLS_ATEST_GT_0: return 1.0f;
+	case GLS_ATEST_LT_80: return 2.0f;
+	case GLS_ATEST_GE_80: return 3.0f;
+	default: return 0.0f;
+	}
+}
+
+/**
+ * @brief Sets the dynamic viewport/scissor for 3D scene draws from the
+ * current backEnd.viewParms, once per frame (cheap/redundant re-sets are
+ * harmless, but there is only ever a single full-window view).
+ */
+static void VK_SetSceneViewport(void)
+{
+	VkViewport viewport;
+	VkRect2D   scissor;
+
+	if (vk.sceneViewportSetThisFrame)
+	{
+		return;
+	}
+
+	Com_Memset(&viewport, 0, sizeof(viewport));
+	viewport.x        = (float)backEnd.viewParms.viewportX;
+	viewport.y        = (float)backEnd.viewParms.viewportY;
+	viewport.width    = (float)backEnd.viewParms.viewportWidth;
+	viewport.height   = (float)backEnd.viewParms.viewportHeight;
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+	vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
+
+	Com_Memset(&scissor, 0, sizeof(scissor));
+	scissor.offset.x      = backEnd.viewParms.viewportX;
+	scissor.offset.y      = backEnd.viewParms.viewportY;
+	scissor.extent.width  = (uint32_t)backEnd.viewParms.viewportWidth;
+	scissor.extent.height = (uint32_t)backEnd.viewParms.viewportHeight;
+	vkCmdSetScissor(vk.commandBuffer, 0, 1, &scissor);
+
+	vk.sceneViewportSetThisFrame = qtrue;
+}
+
+/**
+ * @brief submits one already-tessellated 3D shader stage
+ * batch (single texture) using the lazily-created pipeline variant that
+ * matches stateBits/cullType. Vertex data is read from input->xyz,
+ * input->svars.texcoords[0] and input->svars.colors (populated by
+ * ComputeColors()/ComputeTexCoords() in tr_shade.c).
+ */
+void VK_Draw3D(shaderCommands_t *input, struct image_s *image, unsigned long stateBits, int cullType)
+{
+	int             numVertexes, numIndexes, i;
+	VkDeviceSize    vertexBytes, indexBytes;
+	vk3DVertex_t    *dstVerts;
+	uint32_t        *dstIndexes;
+	float           pushConstants[20];
+	VkPipeline      pipeline;
+	VkDescriptorSet descriptorSet;
+	VkBuffer        vertexBuffers[1];
+	VkDeviceSize    offsets[1];
+
+	if (!vk.initialized || !input || input->numVertexes == 0 || input->numIndexes == 0)
+	{
+		return;
+	}
+
+	if (!image)
+	{
+		image = tr.whiteImage;
+	}
+	if (!image || !image->vkDescriptorSet)
+	{
+		return;
+	}
+
+	pipeline = VK_GetScenePipeline(stateBits, cullType, qfalse);
+	if (pipeline == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	numVertexes = input->numVertexes;
+	numIndexes  = input->numIndexes;
+
+	vertexBytes = (VkDeviceSize)numVertexes * sizeof(vk3DVertex_t);
+	indexBytes  = (VkDeviceSize)numIndexes * sizeof(uint32_t);
+
+	if (vk.sceneVertexArenaOffset + vertexBytes > vk.sceneVertexArenaSize ||
+	    vk.sceneIndexArenaOffset + indexBytes > vk.sceneIndexArenaSize)
+	{
+		static int lastWarnFrame = -1;
+
+		if (backEnd.refdef.time != lastWarnFrame)
+		{
+			Ren_Print("Vulkan: VK_Draw3D - scene vertex/index arena exhausted this frame, dropping remaining 3D draws\n");
+			lastWarnFrame = backEnd.refdef.time;
+		}
+		return;
+	}
+
+	dstVerts = (vk3DVertex_t *)((byte *)vk.sceneVertexArenaMapped + vk.sceneVertexArenaOffset);
+	for (i = 0; i < numVertexes; i++)
+	{
+		dstVerts[i].pos[0]   = input->xyz[i][0];
+		dstVerts[i].pos[1]   = input->xyz[i][1];
+		dstVerts[i].pos[2]   = input->xyz[i][2];
+		dstVerts[i].uv[0]    = input->svars.texcoords[0][i][0];
+		dstVerts[i].uv[1]    = input->svars.texcoords[0][i][1];
+		dstVerts[i].color[0] = input->svars.colors[i][0];
+		dstVerts[i].color[1] = input->svars.colors[i][1];
+		dstVerts[i].color[2] = input->svars.colors[i][2];
+		dstVerts[i].color[3] = input->svars.colors[i][3];
+	}
+
+	dstIndexes = (uint32_t *)((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset);
+	Com_Memcpy(dstIndexes, input->indexes, (size_t)indexBytes);
+
+	if (vk.lastBoundScenePipeline != pipeline)
+	{
+		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+		vk.lastBoundScenePipeline = pipeline;
+	}
+
+	VK_SetSceneViewport();
+
+	Com_Memcpy(pushConstants, vk.mvpMatrix, sizeof(vk.mvpMatrix));
+	pushConstants[16] = VK_AlphaTestMode(stateBits);
+	pushConstants[17] = 0.0f;
+	pushConstants[18] = 0.0f;
+	pushConstants[19] = 0.0f;
+	vkCmdPushConstants(vk.commandBuffer, vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pushConstants), pushConstants);
+
+	descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
+	vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.scenePipelineLayout, 0, 1, &descriptorSet, 0, NULL);
+
+	vertexBuffers[0] = vk.sceneVertexArenaBuffer;
+	offsets[0]       = vk.sceneVertexArenaOffset;
+	vkCmdBindVertexBuffers(vk.commandBuffer, 0, 1, vertexBuffers, offsets);
+	vkCmdBindIndexBuffer(vk.commandBuffer, vk.sceneIndexArenaBuffer, vk.sceneIndexArenaOffset, VK_INDEX_TYPE_UINT32);
+
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, 0, 0, 0);
+
+	vk.sceneVertexArenaOffset += vertexBytes;
+	vk.sceneIndexArenaOffset  += indexBytes;
+}
+
+/**
+ * @brief submits one already-tessellated 3D shader stage
+ * batch modulating two textures (base * lightmap), used by
+ * RB_StageIteratorLightmappedMultitexture and 2-stage (base+lightmap)
+ * shaders handled by RB_StageIteratorGeneric's 3D path. UVs are read from
+ * input->svars.texcoords[0]/[1], color from input->svars.colors.
+ */
+void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct image_s *lightmap, unsigned long stateBits, int cullType)
+{
+	int             numVertexes, numIndexes, i;
+	VkDeviceSize    vertexBytes, indexBytes;
+	vk3DVertexLM_t  *dstVerts;
+	uint32_t        *dstIndexes;
+	float           pushConstants[20];
+	VkPipeline      pipeline;
+	VkDescriptorSet descriptorSets[2];
+	VkBuffer        vertexBuffers[1];
+	VkDeviceSize    offsets[1];
+
+	if (!vk.initialized || !input || input->numVertexes == 0 || input->numIndexes == 0)
+	{
+		return;
+	}
+
+	if (!base)
+	{
+		base = tr.whiteImage;
+	}
+	if (!lightmap)
+	{
+		lightmap = tr.whiteImage;
+	}
+	if (!base->vkDescriptorSet || !lightmap->vkDescriptorSet)
+	{
+		return;
+	}
+
+	pipeline = VK_GetScenePipeline(stateBits, cullType, qtrue);
+	if (pipeline == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	numVertexes = input->numVertexes;
+	numIndexes  = input->numIndexes;
+
+	vertexBytes = (VkDeviceSize)numVertexes * sizeof(vk3DVertexLM_t);
+	indexBytes  = (VkDeviceSize)numIndexes * sizeof(uint32_t);
+
+	if (vk.sceneVertexArenaOffset + vertexBytes > vk.sceneVertexArenaSize ||
+	    vk.sceneIndexArenaOffset + indexBytes > vk.sceneIndexArenaSize)
+	{
+		static int lastWarnFrame = -1;
+
+		if (backEnd.refdef.time != lastWarnFrame)
+		{
+			Ren_Print("Vulkan: VK_Draw3DLightmapped - scene vertex/index arena exhausted this frame, dropping remaining 3D draws\n");
+			lastWarnFrame = backEnd.refdef.time;
+		}
+		return;
+	}
+
+	dstVerts = (vk3DVertexLM_t *)((byte *)vk.sceneVertexArenaMapped + vk.sceneVertexArenaOffset);
+	for (i = 0; i < numVertexes; i++)
+	{
+		dstVerts[i].pos[0]   = input->xyz[i][0];
+		dstVerts[i].pos[1]   = input->xyz[i][1];
+		dstVerts[i].pos[2]   = input->xyz[i][2];
+		dstVerts[i].uv0[0]   = input->svars.texcoords[0][i][0];
+		dstVerts[i].uv0[1]   = input->svars.texcoords[0][i][1];
+		dstVerts[i].uv1[0]   = input->svars.texcoords[1][i][0];
+		dstVerts[i].uv1[1]   = input->svars.texcoords[1][i][1];
+		dstVerts[i].color[0] = input->svars.colors[i][0];
+		dstVerts[i].color[1] = input->svars.colors[i][1];
+		dstVerts[i].color[2] = input->svars.colors[i][2];
+		dstVerts[i].color[3] = input->svars.colors[i][3];
+	}
+
+	dstIndexes = (uint32_t *)((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset);
+	Com_Memcpy(dstIndexes, input->indexes, (size_t)indexBytes);
+
+	if (vk.lastBoundScenePipeline != pipeline)
+	{
+		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+		vk.lastBoundScenePipeline = pipeline;
+	}
+
+	VK_SetSceneViewport();
+
+	Com_Memcpy(pushConstants, vk.mvpMatrix, sizeof(vk.mvpMatrix));
+	pushConstants[16] = 0.0f;
+	pushConstants[17] = 0.0f;
+	pushConstants[18] = 0.0f;
+	pushConstants[19] = 0.0f;
+	vkCmdPushConstants(vk.commandBuffer, vk.sceneLMPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pushConstants), pushConstants);
+
+	descriptorSets[0] = (VkDescriptorSet)base->vkDescriptorSet;
+	descriptorSets[1] = (VkDescriptorSet)lightmap->vkDescriptorSet;
+	vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.sceneLMPipelineLayout, 0, 2, descriptorSets, 0, NULL);
+
+	vertexBuffers[0] = vk.sceneVertexArenaBuffer;
+	offsets[0]       = vk.sceneVertexArenaOffset;
+	vkCmdBindVertexBuffers(vk.commandBuffer, 0, 1, vertexBuffers, offsets);
+	vkCmdBindIndexBuffer(vk.commandBuffer, vk.sceneIndexArenaBuffer, vk.sceneIndexArenaOffset, VK_INDEX_TYPE_UINT32);
+
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, 0, 0, 0);
+
+	vk.sceneVertexArenaOffset += vertexBytes;
+	vk.sceneIndexArenaOffset  += indexBytes;
 }
