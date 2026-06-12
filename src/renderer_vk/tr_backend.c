@@ -434,6 +434,10 @@ static void SetViewportAndScissor(void)
 	glLoadMatrixf(backEnd.viewParms.projectionMatrix);
 	glMatrixMode(GL_MODELVIEW);
 
+	// glLoadMatrixf() is a no-op (no real GL context), so this
+	// is the real capture point for the 3D projection matrix.
+	VK_SetProjectionMatrix(backEnd.viewParms.projectionMatrix);
+
 	// set the window clipping
 	glViewport(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY,
 	           backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
@@ -750,6 +754,9 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 
 			glLoadMatrixf(backEnd.orientation.modelMatrix);
 
+			// real capture point (glLoadMatrixf is a no-op here).
+			VK_SetModelViewMatrix(backEnd.orientation.modelMatrix);
+
 			// change depthrange if needed
 			if (oldDepthRange != depthRange)
 			{
@@ -784,6 +791,10 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 	R_TransformDlights(backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd.orientation);
 
 	glLoadMatrixf(backEnd.viewParms.world.modelMatrix);
+
+	// real capture point (glLoadMatrixf is a no-op here).
+	VK_SetModelViewMatrix(backEnd.viewParms.world.modelMatrix);
+
 	if (depthRange)
 	{
 		glDepthRange(0, 1);

@@ -102,4 +102,31 @@ void VK_DeleteImageTexture(struct image_s *image);
  */
 void VK_Draw2D(struct shaderCommands_s *input, struct image_s *image);
 
+/**
+ * @brief captures the GL-convention projection matrix (see
+ * tr_backend.c's SetViewportAndScissor()) and bakes in the GL -> Vulkan
+ * clip-space correction (Y-flip + depth range remap).
+ */
+void VK_SetProjectionMatrix(const float *m);
+
+/**
+ * @brief captures the GL-convention modelview matrix (world
+ * or per-entity, see tr_backend.c's RB_RenderDrawSurfList()) and
+ * recomputes the cached MVP used by VK_Draw3D()/VK_Draw3DLightmapped().
+ */
+void VK_SetModelViewMatrix(const float *m);
+
+/**
+ * @brief submits one already-tessellated 3D shader stage
+ * batch (single texture) using a pipeline variant matching stateBits/
+ * cullType, transformed by the current projection * modelview matrix.
+ */
+void VK_Draw3D(struct shaderCommands_s *input, struct image_s *image, unsigned long stateBits, int cullType);
+
+/**
+ * @brief submits one already-tessellated 3D shader stage
+ * batch modulating two textures (base * lightmap).
+ */
+void VK_Draw3DLightmapped(struct shaderCommands_s *input, struct image_s *base, struct image_s *lightmap, unsigned long stateBits, int cullType);
+
 #endif // VK_H

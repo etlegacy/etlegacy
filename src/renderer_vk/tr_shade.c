@@ -34,10 +34,10 @@
  *
  * @note renderer1's tr_shade.c submits tessellated geometry via immediate
  * OpenGL vertex-array calls (glVertexPointer/glDrawElements/etc.), which has
- * no Vulkan equivalent. Currently, 2D/UI batches (backEnd.projection2D)
- * are submitted for real via VK_Draw2D() (see vulkan/vk.c). 3D world/model
- * surfaces still fall through RB_StageIteratorGeneric/VertexLitTexture/
- * LightmappedMultitexture as no-ops and are rasterized separately.
+ * no Vulkan equivalent. 2D/UI batches (backEnd.projection2D) are submitted
+ * via VK_Draw2D(); 3D batches via VK_Draw3D()/VK_Draw3DLightmapped() (see
+ * vulkan/vk.c). ComputeColors()/ComputeTexCoords() are ported verbatim from
+ * renderer1 (pure CPU math, no GL calls).
  */
 
 #include "tr_local.h"
@@ -126,37 +126,540 @@ void SetIteratorFog(void)
 }
 
 /**
- * @brief for 2D/UI draws (backEnd.projection2D), submits the
- * tessellated batch via the Vulkan UI pipeline. 3D world/model rendering
- * isn't implemented yet, so this remains a no-op outside of
- * the 2D path (RB_DrawSurfs/RB_RenderDrawSurfList reuse this same iterator
- * for 3D surfaces).
+ * @brief ComputeColors/ComputeTexCoords ported verbatim from renderer1's
+ * tr_shade.c (pure CPU math writing into tess.svars; no GL calls).
+ */
+static void ComputeColors(shaderStage_t *pStage)
+{
+	// rgbGen
+	switch (pStage->rgbGen)
+	{
+	case CGEN_IDENTITY:
+		Com_Memset(tess.svars.colors, 0xff, tess.numVertexes * 4);
+		break;
+	default:
+	case CGEN_IDENTITY_LIGHTING:
+		Com_Memset(tess.svars.colors, tr.identityLightByte, tess.numVertexes * 4);
+		break;
+	case CGEN_LIGHTING_DIFFUSE:
+		RB_CalcDiffuseColor(( unsigned char * ) tess.svars.colors);
+		break;
+	case CGEN_EXACT_VERTEX:
+		Com_Memcpy(tess.svars.colors, tess.vertexColors, tess.numVertexes * sizeof(tess.vertexColors[0]));
+		break;
+	case CGEN_CONST:
+	{
+		int i;
+
+		for (i = 0; i < tess.numVertexes; i++)
+		{
+			*(int *)tess.svars.colors[i] = *(int *)pStage->constantColor;
+		}
+	}
+	break;
+	case CGEN_VERTEX:
+		if (tr.identityLight == 1)
+		{
+			Com_Memcpy(tess.svars.colors, tess.vertexColors, tess.numVertexes * sizeof(tess.vertexColors[0]));
+		}
+		else
+		{
+			int i;
+
+			for (i = 0; i < tess.numVertexes; i++)
+			{
+				tess.svars.colors[i][0] = tess.vertexColors[i][0] * tr.identityLight;
+				tess.svars.colors[i][1] = tess.vertexColors[i][1] * tr.identityLight;
+				tess.svars.colors[i][2] = tess.vertexColors[i][2] * tr.identityLight;
+				tess.svars.colors[i][3] = tess.vertexColors[i][3];
+			}
+		}
+		break;
+	case CGEN_ONE_MINUS_VERTEX:
+	{
+		int i;
+
+		if (tr.identityLight == 1)
+		{
+			for (i = 0; i < tess.numVertexes; i++)
+			{
+				tess.svars.colors[i][0] = 255 - tess.vertexColors[i][0];
+				tess.svars.colors[i][1] = 255 - tess.vertexColors[i][1];
+				tess.svars.colors[i][2] = 255 - tess.vertexColors[i][2];
+			}
+		}
+		else
+		{
+			for (i = 0; i < tess.numVertexes; i++)
+			{
+				tess.svars.colors[i][0] = (255 - tess.vertexColors[i][0]) * tr.identityLight;
+				tess.svars.colors[i][1] = (255 - tess.vertexColors[i][1]) * tr.identityLight;
+				tess.svars.colors[i][2] = (255 - tess.vertexColors[i][2]) * tr.identityLight;
+			}
+		}
+	}
+	break;
+	case CGEN_FOG:
+	{
+		int   i;
+		fog_t *fog = tr.world->fogs + tess.fogNum;
+
+		for (i = 0; i < tess.numVertexes; i++)
+		{
+			*( int * )&tess.svars.colors[i] = fog->shader->fogParms.colorInt;
+		}
+	}
+	break;
+	case CGEN_WAVEFORM:
+		RB_CalcWaveColor(&pStage->rgbWave, ( unsigned char * ) tess.svars.colors);
+		break;
+	case CGEN_ENTITY:
+		RB_CalcColorFromEntity(( unsigned char * ) tess.svars.colors);
+		break;
+	case CGEN_ONE_MINUS_ENTITY:
+		RB_CalcColorFromOneMinusEntity(( unsigned char * ) tess.svars.colors);
+		break;
+	}
+
+	// alphaGen
+	switch (pStage->alphaGen)
+	{
+	case AGEN_SKIP:
+		break;
+	case AGEN_IDENTITY:
+		if (pStage->rgbGen != CGEN_IDENTITY)
+		{
+			if ((pStage->rgbGen == CGEN_VERTEX && tr.identityLight != 1) ||
+			    pStage->rgbGen != CGEN_VERTEX)
+			{
+				int i;
+
+				for (i = 0; i < tess.numVertexes; i++)
+				{
+					tess.svars.colors[i][3] = 0xff;
+				}
+			}
+		}
+		break;
+	case AGEN_CONST:
+		if (pStage->rgbGen != CGEN_CONST)
+		{
+			int i;
+
+			for (i = 0; i < tess.numVertexes; i++)
+			{
+				tess.svars.colors[i][3] = pStage->constantColor[3];
+			}
+		}
+		break;
+	case AGEN_WAVEFORM:
+		RB_CalcWaveAlpha(&pStage->alphaWave, ( unsigned char * ) tess.svars.colors);
+		break;
+	case AGEN_LIGHTING_SPECULAR:
+		RB_CalcSpecularAlpha(( unsigned char * ) tess.svars.colors);
+		break;
+	case AGEN_ENTITY:
+		RB_CalcAlphaFromEntity(( unsigned char * ) tess.svars.colors);
+		break;
+	case AGEN_ONE_MINUS_ENTITY:
+		RB_CalcAlphaFromOneMinusEntity(( unsigned char * ) tess.svars.colors);
+		break;
+	case AGEN_NORMALZFADE:
+	{
+		float    alpha, range, lowest, highest, dot;
+		vec3_t   worldUp;
+		int      i;
+		qboolean zombieEffect = qfalse;
+
+		if (VectorCompare(backEnd.currentEntity->e.fireRiseDir, vec3_origin))
+		{
+			VectorSet(backEnd.currentEntity->e.fireRiseDir, 0, 0, 1);
+		}
+
+		if (backEnd.currentEntity->e.hModel)        // world surfaces dont have an axis
+		{
+			VectorRotate(backEnd.currentEntity->e.fireRiseDir, backEnd.currentEntity->e.axis, worldUp);
+		}
+		else
+		{
+			VectorCopy(backEnd.currentEntity->e.fireRiseDir, worldUp);
+		}
+
+		lowest = pStage->zFadeBounds[0];
+		if (lowest == -1000)        // use entity alpha
+		{
+			lowest       = backEnd.currentEntity->e.shaderTime;
+			zombieEffect = qtrue;
+		}
+		highest = pStage->zFadeBounds[1];
+		if (highest == -1000)       // use entity alpha
+		{
+			highest      = backEnd.currentEntity->e.shaderTime;
+			zombieEffect = qtrue;
+		}
+		range = highest - lowest;
+		for (i = 0; i < tess.numVertexes; i++)
+		{
+			dot = DotProduct(tess.normal[i], worldUp);
+
+			// special handling for Zombie fade effect
+			if (zombieEffect)
+			{
+				alpha  = (float)backEnd.currentEntity->e.shaderRGBA[3] * (dot + 1.0f) / 2.0f;
+				alpha += (2.0f * (float)backEnd.currentEntity->e.shaderRGBA[3]) * (1.0f - (dot + 1.0f) / 2.0f);
+				if (alpha > 255.0f)
+				{
+					alpha = 255.0f;
+				}
+				else if (alpha < 0.0f)
+				{
+					alpha = 0.0f;
+				}
+				tess.svars.colors[i][3] = (byte)(alpha);
+				continue;
+			}
+
+			if (dot < highest)
+			{
+				if (dot > lowest)
+				{
+					if (dot < lowest + range / 2)
+					{
+						alpha = ((float)pStage->constantColor[3] * ((dot - lowest) / (range / 2)));
+					}
+					else
+					{
+						alpha = ((float)pStage->constantColor[3] * (1.0f - ((dot - lowest - range / 2) / (range / 2))));
+					}
+					if (alpha > 255.0f)
+					{
+						alpha = 255.0f;
+					}
+					else if (alpha < 0.0f)
+					{
+						alpha = 0.0f;
+					}
+
+					// finally, scale according to the entity's alpha
+					if (backEnd.currentEntity->e.hModel)
+					{
+						alpha *= (float)backEnd.currentEntity->e.shaderRGBA[3] / 255.0f;
+					}
+
+					tess.svars.colors[i][3] = (byte)(alpha);
+				}
+				else
+				{
+					tess.svars.colors[i][3] = 0;
+				}
+			}
+			else
+			{
+				tess.svars.colors[i][3] = 0;
+			}
+		}
+	}
+	break;
+	case AGEN_VERTEX:
+		if (pStage->rgbGen != CGEN_VERTEX)
+		{
+			int i;
+
+			for (i = 0; i < tess.numVertexes; i++)
+			{
+				tess.svars.colors[i][3] = tess.vertexColors[i][3];
+			}
+		}
+		break;
+	case AGEN_ONE_MINUS_VERTEX:
+	{
+		int i;
+
+		for (i = 0; i < tess.numVertexes; i++)
+		{
+			tess.svars.colors[i][3] = 255 - tess.vertexColors[i][3];
+		}
+	}
+	break;
+	case AGEN_PORTAL:
+	{
+		unsigned char alpha;
+		float         len;
+		vec3_t        v;
+		int           i;
+
+		for (i = 0; i < tess.numVertexes; i++)
+		{
+			VectorSubtract(tess.xyz[i], backEnd.viewParms.orientation.origin, v);
+			len = VectorLength(v);
+
+			len /= tess.shader->portalRange;
+
+			if (len < 0)
+			{
+				alpha = 0;
+			}
+			else if (len > 1)
+			{
+				alpha = 0xff;
+			}
+			else
+			{
+				alpha = len * 0xff;
+			}
+
+			tess.svars.colors[i][3] = alpha;
+		}
+	}
+	break;
+	}
+
+	// fog adjustment for colors to fade out as fog increases
+	if (tess.fogNum && !tess.shader->noFog)
+	{
+		switch (pStage->adjustColorsForFog)
+		{
+		case ACFF_MODULATE_RGB:
+			RB_CalcModulateColorsByFog(( unsigned char * ) tess.svars.colors);
+			break;
+		case ACFF_MODULATE_ALPHA:
+			RB_CalcModulateAlphasByFog(( unsigned char * ) tess.svars.colors);
+			break;
+		case ACFF_MODULATE_RGBA:
+			RB_CalcModulateRGBAsByFog(( unsigned char * ) tess.svars.colors);
+			break;
+		case ACFF_NONE:
+			break;
+		}
+	}
+}
+
+/**
+ * @brief ComputeTexCoords
+ * @param[in] pStage
+ */
+static void ComputeTexCoords(shaderStage_t *pStage)
+{
+	int i;
+	int b;
+	int tm;
+
+	for (b = 0; b < NUM_TEXTURE_BUNDLES; b++)
+	{
+		// generate the texture coordinates
+		switch (pStage->bundle[b].tcGen)
+		{
+		case TCGEN_IDENTITY:
+			Com_Memset(tess.svars.texcoords[b], 0, sizeof(float) * 2 * tess.numVertexes);
+			break;
+		case TCGEN_TEXTURE:
+			for (i = 0 ; i < tess.numVertexes ; i++)
+			{
+				tess.svars.texcoords[b][i][0] = tess.texCoords[i][0][0];
+				tess.svars.texcoords[b][i][1] = tess.texCoords[i][0][1];
+			}
+			break;
+		case TCGEN_LIGHTMAP:
+			for (i = 0 ; i < tess.numVertexes ; i++)
+			{
+				tess.svars.texcoords[b][i][0] = tess.texCoords[i][1][0];
+				tess.svars.texcoords[b][i][1] = tess.texCoords[i][1][1];
+			}
+			break;
+		case TCGEN_VECTOR:
+			for (i = 0 ; i < tess.numVertexes ; i++)
+			{
+				tess.svars.texcoords[b][i][0] = DotProduct(tess.xyz[i], pStage->bundle[b].tcGenVectors[0]);
+				tess.svars.texcoords[b][i][1] = DotProduct(tess.xyz[i], pStage->bundle[b].tcGenVectors[1]);
+			}
+			break;
+		case TCGEN_FOG:
+			RB_CalcFogTexCoords(( float * ) tess.svars.texcoords[b]);
+			break;
+		case TCGEN_ENVIRONMENT_MAPPED:
+			RB_CalcEnvironmentTexCoords(( float * ) tess.svars.texcoords[b]);
+			break;
+		case TCGEN_FIRERISEENV_MAPPED:
+			RB_CalcFireRiseEnvTexCoords(( float * ) tess.svars.texcoords[b]);
+			break;
+		case TCGEN_BAD:
+			return;
+		}
+
+		// alter texture coordinates
+		for (tm = 0; tm < pStage->bundle[b].numTexMods ; tm++)
+		{
+			switch (pStage->bundle[b].texMods[tm].type)
+			{
+			case TMOD_NONE:
+				tm = TR_MAX_TEXMODS;        // break out of for loop
+				break;
+
+			case TMOD_SWAP:
+				RB_CalcSwapTexCoords(( float * ) tess.svars.texcoords[b]);
+				break;
+
+			case TMOD_TURBULENT:
+				RB_CalcTurbulentTexCoords(&pStage->bundle[b].texMods[tm].wave,
+				                          ( float * ) tess.svars.texcoords[b]);
+				break;
+
+			case TMOD_ENTITY_TRANSLATE:
+				RB_CalcScrollTexCoords(backEnd.currentEntity->e.shaderTexCoord,
+				                       ( float * ) tess.svars.texcoords[b]);
+				break;
+
+			case TMOD_SCROLL:
+				RB_CalcScrollTexCoords(pStage->bundle[b].texMods[tm].scroll,
+				                       ( float * ) tess.svars.texcoords[b]);
+				break;
+
+			case TMOD_SCALE:
+				RB_CalcScaleTexCoords(pStage->bundle[b].texMods[tm].scale,
+				                      ( float * ) tess.svars.texcoords[b]);
+				break;
+
+			case TMOD_STRETCH:
+				RB_CalcStretchTexCoords(&pStage->bundle[b].texMods[tm].wave,
+				                        ( float * ) tess.svars.texcoords[b]);
+				break;
+
+			case TMOD_TRANSFORM:
+				RB_CalcTransformTexCoords(&pStage->bundle[b].texMods[tm],
+				                          ( float * ) tess.svars.texcoords[b]);
+				break;
+
+			case TMOD_ROTATE:
+				RB_CalcRotateTexCoords(pStage->bundle[b].texMods[tm].rotateSpeed,
+				                       ( float * ) tess.svars.texcoords[b]);
+				break;
+
+			default:
+				Ren_Drop("ERROR: unknown texmod '%d' in shader '%s'\n", pStage->bundle[b].texMods[tm].type, tess.shader->name);
+			}
+		}
+	}
+}
+
+
+/**
+ * @brief For 2D/UI draws (backEnd.projection2D), submits the tessellated
+ * batch via the Vulkan UI pipeline. For 3D surfaces, computes
+ * colors/texcoords per stage and submits via VK_Draw3D/VK_Draw3DLightmapped.
+ *
+ * @note Deferred scope: dynamic lighting/dlights, in-shader fog, polygon
+ * offset (decals), r_lightMap debug override, and true multi-pass combiner
+ * blending beyond base+lightmap are not yet implemented.
  */
 void RB_StageIteratorGeneric(void)
 {
-	shaderCommands_t *input = &tess;
+	shaderCommands_t *input  = &tess;
+	shader_t         *shader = input->shader;
 	image_t          *image;
 
-	if (!backEnd.projection2D)
+	if (backEnd.projection2D)
+	{
+		image = NULL;
+		if (input->xstages && input->xstages[0])
+		{
+			image = input->xstages[0]->bundle[0].image[0];
+		}
+
+		VK_Draw2D(input, image);
+		return;
+	}
+
+	// static opaque 3D geometry.
+	RB_DeformTessGeometry();
+
+	SetIteratorFog();
+
+	if (shader->numUnfoggedPasses == 0)
 	{
 		return;
 	}
 
-	image = NULL;
-	if (input->xstages && input->xstages[0])
 	{
-		image = input->xstages[0]->bundle[0].image[0];
-	}
+		int stage;
 
-	VK_Draw2D(input, image);
+		for (stage = 0; stage < MAX_SHADER_STAGES; stage++)
+		{
+			shaderStage_t *pStage = tess.xstages[stage];
+
+			if (!pStage)
+			{
+				break;
+			}
+
+			ComputeColors(pStage);
+			ComputeTexCoords(pStage);
+
+			if (pStage->bundle[1].image[0] != 0)
+			{
+				VK_Draw3DLightmapped(input, pStage->bundle[0].image[0], pStage->bundle[1].image[0],
+				                     pStage->stateBits, shader->cullType);
+			}
+			else
+			{
+				VK_Draw3D(input, pStage->bundle[0].image[0], pStage->stateBits, shader->cullType);
+			}
+		}
+	}
 }
 
+/**
+ * @brief fast-path iterator for single-texture,
+ * per-vertex-lit-diffuse-color surfaces (models with CGEN_LIGHTING_DIFFUSE,
+ * no tcMods). Ported from renderer1's RB_StageIteratorVertexLitTexture,
+ * minus the GL immediate-mode array plumbing.
+ */
 void RB_StageIteratorVertexLitTexture(void)
 {
+	shaderCommands_t *input  = &tess;
+	shader_t         *shader = input->shader;
+	int              i;
+
+	RB_CalcDiffuseColor(( unsigned char * ) tess.svars.colors);
+
+	SetIteratorFog();
+
+	// bundle[0].tcGen is guaranteed TCGEN_TEXTURE for this fast path, so
+	// texcoords can be copied directly without going through ComputeTexCoords.
+	for (i = 0; i < tess.numVertexes; i++)
+	{
+		tess.svars.texcoords[0][i][0] = tess.texCoords[i][0][0];
+		tess.svars.texcoords[0][i][1] = tess.texCoords[i][0][1];
+	}
+
+	VK_Draw3D(input, tess.xstages[0]->bundle[0].image[0], tess.xstages[0]->stateBits, shader->cullType);
 }
 
+/**
+ * @brief fast-path iterator for base+lightmap 2-stage
+ * surfaces (most world/BSP geometry). Ported from renderer1's
+ * RB_StageIteratorLightmappedMultitexture, minus the GL immediate-mode
+ * array/multitexture plumbing.
+ */
 void RB_StageIteratorLightmappedMultitexture(void)
 {
+	shaderCommands_t *input  = &tess;
+	shader_t         *shader = input->shader;
+	int              i;
+
+	SetIteratorFog();
+
+	Com_Memcpy(tess.svars.colors, tess.constantColor255, tess.numVertexes * sizeof(tess.constantColor255[0]));
+
+	for (i = 0; i < tess.numVertexes; i++)
+	{
+		tess.svars.texcoords[0][i][0] = tess.texCoords[i][0][0];
+		tess.svars.texcoords[0][i][1] = tess.texCoords[i][0][1];
+		tess.svars.texcoords[1][i][0] = tess.texCoords[i][1][0];
+		tess.svars.texcoords[1][i][1] = tess.texCoords[i][1][1];
+	}
+
+	VK_Draw3DLightmapped(input, tess.xstages[0]->bundle[0].image[0], tess.xstages[0]->bundle[1].image[0],
+	                     GLS_DEFAULT, shader->cullType);
 }
 
 /**
