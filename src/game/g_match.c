@@ -712,7 +712,8 @@ void G_deleteStats(int nClient)
 	cl->sess.startskillpoints[SK_HEAVY_WEAPONS]                            = 0;
 	cl->sess.startskillpoints[SK_MILITARY_INTELLIGENCE_AND_SCOPED_WEAPONS] = 0;
 
-	if (!(g_gametype.integer == GT_WOLF_CAMPAIGN && !level.newCampaign && (g_gamestate.integer == GS_WARMUP || g_gamestate.integer == GS_WARMUP_COUNTDOWN)))
+	if (!(g_gametype.integer == GT_WOLF_CAMPAIGN && !level.newCampaign && (g_gamestate.integer == GS_WARMUP || g_gamestate.integer == GS_WARMUP_COUNTDOWN)) &&
+	      !(g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer == GS_WARMUP))
 	{
 		Com_Memset(&cl->sess.aWeaponStats, 0, sizeof(cl->sess.aWeaponStats));
 	}
