@@ -126,9 +126,6 @@ typedef struct
 	VkDeviceSize indexArenaSize;
 	VkDeviceSize indexArenaOffset;
 
-	qboolean uiPipelineBoundThisFrame;
-	qboolean uiViewportSetThisFrame;
-
 	// static 3D geometry pipelines + resources.
 	VkPipelineLayout scenePipelineLayout;   // 1 descriptor set (base texture)
 	VkPipelineLayout sceneLMPipelineLayout; // 2 descriptor sets (base + lightmap)
@@ -143,8 +140,12 @@ typedef struct
 	vkScenePipelineEntry_t sceneLMPipelines[VK_MAX_SCENE_PIPELINES];
 	int numSceneLMPipelines;
 
-	VkPipeline lastBoundScenePipeline;
-	qboolean sceneViewportSetThisFrame;
+	// Shared across UI and scene draws: tracks whichever pipeline (UI or
+	// one of the scene variants) was bound most recently in this command
+	// buffer, so a redundant vkCmdBindPipeline can be skipped safely even
+	// when UI and 3D draws are interleaved within the same frame (e.g. the
+	// limbo menu's 2D background/buttons around its small 3D model preview).
+	VkPipeline lastBoundPipeline;
 
 	// GL-convention (column-major) projection/modelview matrices captured
 	// from the no-op'd glLoadMatrixf() call sites in tr_backend.c (see
@@ -1427,7 +1428,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	Com_Memset(&rasterizer, 0, sizeof(rasterizer));
 	rasterizer.sType       = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 	rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
-	rasterizer.cullMode    = (cullType == CT_TWO_SIDED) ? VK_CULL_MODE_NONE : (cullFront ? VK_CULL_MODE_FRONT_BIT : VK_CULL_MODE_BACK_BIT);
+	rasterizer.cullMode    = cullType == CT_TWO_SIDED ? VK_CULL_MODE_NONE : (cullFront ? VK_CULL_MODE_FRONT_BIT : VK_CULL_MODE_BACK_BIT);
 	rasterizer.frontFace   = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 	rasterizer.lineWidth   = 1.0f;
 
@@ -1892,18 +1893,17 @@ void VK_BeginFrame(void)
 		return;
 	}
 
-	// reset the per-frame vertex/index arenas and UI
-	// pipeline/viewport-bound tracking before any draw calls are recorded.
-	vk.vertexArenaOffset        = 0;
-	vk.indexArenaOffset         = 0;
-	vk.uiPipelineBoundThisFrame = qfalse;
-	vk.uiViewportSetThisFrame   = qfalse;
+	// reset the per-frame vertex/index arenas.
+	vk.vertexArenaOffset = 0;
+	vk.indexArenaOffset  = 0;
 
-	// same for the 3D scene arenas/pipeline-bound tracking.
-	vk.sceneVertexArenaOffset    = 0;
-	vk.sceneIndexArenaOffset     = 0;
-	vk.lastBoundScenePipeline    = VK_NULL_HANDLE;
-	vk.sceneViewportSetThisFrame = qfalse;
+	// same for the 3D scene arenas. lastBoundPipeline is shared
+	// across UI and scene draws (viewport/scissor are set per-view, not
+	// cached per-frame - see VK_SetSceneViewport(), called from
+	// tr_backend.c's SetViewportAndScissor()).
+	vk.sceneVertexArenaOffset = 0;
+	vk.sceneIndexArenaOffset  = 0;
+	vk.lastBoundPipeline      = VK_NULL_HANDLE;
 
 	vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX);
 	vkResetFences(vk.device, 1, &vk.inFlightFence);
@@ -2279,28 +2279,29 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image)
 	dstIndexes = (uint32_t *)((byte *)vk.indexArenaMapped + vk.indexArenaOffset);
 	Com_Memcpy(dstIndexes, input->indexes, (size_t)indexBytes);
 
-	if (!vk.uiPipelineBoundThisFrame)
+	if (vk.lastBoundPipeline != vk.uiPipeline)
 	{
 		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.uiPipeline);
-		vk.uiPipelineBoundThisFrame = qtrue;
+		vk.lastBoundPipeline = vk.uiPipeline;
 	}
 
-	if (!vk.uiViewportSetThisFrame)
-	{
-		Com_Memset(&viewport, 0, sizeof(viewport));
-		viewport.width    = (float)glConfig.vidWidth;
-		viewport.height   = (float)glConfig.vidHeight;
-		viewport.minDepth = 0.0f;
-		viewport.maxDepth = 1.0f;
-		vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
+	// Always set the full-window viewport/scissor for 2D/UI draws: viewport/
+	// scissor are dynamic command-buffer state that persists across pipeline
+	// binds, so if a 3D sub-view (e.g. the limbo menu's small player-model
+	// preview) sets a smaller viewport earlier in this same frame, caching
+	// "set once per frame" here would leave later UI draws incorrectly
+	// clipped to that stale, smaller rect.
+	Com_Memset(&viewport, 0, sizeof(viewport));
+	viewport.width    = (float)glConfig.vidWidth;
+	viewport.height   = (float)glConfig.vidHeight;
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+	vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
 
-		Com_Memset(&scissor, 0, sizeof(scissor));
-		scissor.extent.width  = (uint32_t)glConfig.vidWidth;
-		scissor.extent.height = (uint32_t)glConfig.vidHeight;
-		vkCmdSetScissor(vk.commandBuffer, 0, 1, &scissor);
-
-		vk.uiViewportSetThisFrame = qtrue;
-	}
+	Com_Memset(&scissor, 0, sizeof(scissor));
+	scissor.extent.width  = (uint32_t)glConfig.vidWidth;
+	scissor.extent.height = (uint32_t)glConfig.vidHeight;
+	vkCmdSetScissor(vk.commandBuffer, 0, 1, &scissor);
 
 	pushConstants[0] = 2.0f / (float)glConfig.vidWidth;
 	pushConstants[1] = 2.0f / (float)glConfig.vidHeight;
@@ -2338,37 +2339,49 @@ static float VK_AlphaTestMode(unsigned long stateBits)
 }
 
 /**
- * @brief Sets the dynamic viewport/scissor for 3D scene draws from the
- * current backEnd.viewParms, once per frame (cheap/redundant re-sets are
- * harmless, but there is only ever a single full-window view).
+ * @brief Sets the dynamic viewport/scissor for 3D scene draws. Must be
+ * called once per view (from SetViewportAndScissor() in tr_backend.c,
+ * alongside VK_SetProjectionMatrix) rather than cached per-frame: a single
+ * frame may contain multiple 3D views with different viewport rects (e.g.
+ * the limbo menu's small player-model preview rendered alongside the main
+ * world view), so a "set once per frame" cache would leave later views
+ * incorrectly using an earlier view's viewport/scissor.
  */
-static void VK_SetSceneViewport(void)
+void VK_SetSceneViewport(int x, int y, int width, int height)
 {
 	VkViewport viewport;
 	VkRect2D   scissor;
+	int        flippedY;
 
-	if (vk.sceneViewportSetThisFrame)
+	if (!vk.initialized)
 	{
 		return;
 	}
 
+	// backEnd.viewParms.viewportX/Y use GL's bottom-left-origin convention
+	// (y is measured up from the bottom of the window), but Vulkan's
+	// viewport/scissor use a top-left-origin convention. This cancels out
+	// for full-height views (y=0, height=screenHeight) but must be
+	// converted explicitly for partial-height views such as the limbo
+	// menu's small player-model preview, otherwise the scissor rect ends
+	// up in the wrong place and silently clips the view's geometry away.
+	flippedY = (int)vk.swapchainExtent.height - (y + height);
+
 	Com_Memset(&viewport, 0, sizeof(viewport));
-	viewport.x        = (float)backEnd.viewParms.viewportX;
-	viewport.y        = (float)backEnd.viewParms.viewportY;
-	viewport.width    = (float)backEnd.viewParms.viewportWidth;
-	viewport.height   = (float)backEnd.viewParms.viewportHeight;
+	viewport.x        = (float)x;
+	viewport.y        = (float)flippedY;
+	viewport.width    = (float)width;
+	viewport.height   = (float)height;
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
 	vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
 
 	Com_Memset(&scissor, 0, sizeof(scissor));
-	scissor.offset.x      = backEnd.viewParms.viewportX;
-	scissor.offset.y      = backEnd.viewParms.viewportY;
-	scissor.extent.width  = (uint32_t)backEnd.viewParms.viewportWidth;
-	scissor.extent.height = (uint32_t)backEnd.viewParms.viewportHeight;
+	scissor.offset.x      = x;
+	scissor.offset.y      = flippedY;
+	scissor.extent.width  = (uint32_t)width;
+	scissor.extent.height = (uint32_t)height;
 	vkCmdSetScissor(vk.commandBuffer, 0, 1, &scissor);
-
-	vk.sceneViewportSetThisFrame = qtrue;
 }
 
 /**
@@ -2446,13 +2459,11 @@ void VK_Draw3D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 	dstIndexes = (uint32_t *)((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset);
 	Com_Memcpy(dstIndexes, input->indexes, (size_t)indexBytes);
 
-	if (vk.lastBoundScenePipeline != pipeline)
+	if (vk.lastBoundPipeline != pipeline)
 	{
 		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-		vk.lastBoundScenePipeline = pipeline;
+		vk.lastBoundPipeline = pipeline;
 	}
-
-	VK_SetSceneViewport();
 
 	Com_Memcpy(pushConstants, vk.mvpMatrix, sizeof(vk.mvpMatrix));
 	pushConstants[16] = VK_AlphaTestMode(stateBits);
@@ -2556,13 +2567,11 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 	dstIndexes = (uint32_t *)((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset);
 	Com_Memcpy(dstIndexes, input->indexes, (size_t)indexBytes);
 
-	if (vk.lastBoundScenePipeline != pipeline)
+	if (vk.lastBoundPipeline != pipeline)
 	{
 		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-		vk.lastBoundScenePipeline = pipeline;
+		vk.lastBoundPipeline = pipeline;
 	}
-
-	VK_SetSceneViewport();
 
 	Com_Memcpy(pushConstants, vk.mvpMatrix, sizeof(vk.mvpMatrix));
 	pushConstants[16] = 0.0f;
