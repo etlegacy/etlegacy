@@ -38,7 +38,8 @@ vmCvar_t cg_shadows;
 vmCvar_t cg_gibs;
 vmCvar_t cg_draw2D;
 vmCvar_t cg_drawCrosshair;
-vmCvar_t cg_drawCrosshairFade;
+vmCvar_t cg_crosshairBarAndTextFade;
+vmCvar_t cg_crosshairBarAndTextAlpha;
 vmCvar_t cg_crosshairHintsFade;
 vmCvar_t cg_crosshairHintsAlpha;
 vmCvar_t cg_drawCrosshairPickups;
@@ -367,7 +368,8 @@ static cvarTable_t cvarTable[] =
 	{ &cg_railTrailTime,                      "cg_railTrailTime",                      "750",         CVAR_ARCHIVE,                 0 },
 	{ &cg_drawStatus,                         "cg_drawStatus",                         "0",           CVAR_CHEAT,                   0 },
 	{ &cg_drawCrosshair,                      "cg_drawCrosshair",                      "1",           CVAR_ARCHIVE,                 0 },
-	{ &cg_drawCrosshairFade,                  "cg_drawCrosshairFade",                  "250",         CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairBarAndTextFade,            "cg_crosshairBarAndTextFade",            "250",         CVAR_ARCHIVE,                 0 },
+	{ &cg_crosshairBarAndTextAlpha,           "cg_crosshairBarAndTextAlpha",           "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairHintsFade,                 "cg_crosshairHintsFade",                 "50",          CVAR_ARCHIVE,                 0 },
 	{ &cg_crosshairHintsAlpha,                "cg_crosshairHintsAlpha",                "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_drawCrosshairPickups,               "cg_drawCrosshairPickups",               "1",           CVAR_ARCHIVE,                 0 },
