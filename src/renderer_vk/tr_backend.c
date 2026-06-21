@@ -443,6 +443,13 @@ static void SetViewportAndScissor(void)
 	           backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
 	glScissor(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY,
 	          backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
+
+	// real capture point (glViewport/glScissor are no-ops here).
+	// Must be set per-view, not cached per-frame: a frame may contain
+	// multiple 3D views with different viewport rects (e.g. the limbo
+	// menu's small player-model preview alongside the main world view).
+	VK_SetSceneViewport(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY,
+	                    backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
 }
 
 /**

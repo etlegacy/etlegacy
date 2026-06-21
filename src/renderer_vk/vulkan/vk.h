@@ -110,6 +110,14 @@ void VK_Draw2D(struct shaderCommands_s *input, struct image_s *image);
 void VK_SetProjectionMatrix(const float *m);
 
 /**
+ * @brief sets the dynamic viewport/scissor for 3D scene
+ * draws. Must be called once per view (a single frame may contain
+ * multiple 3D views with different viewport rects, e.g. the limbo menu's
+ * small player-model preview alongside the main world view).
+ */
+void VK_SetSceneViewport(int x, int y, int width, int height);
+
+/**
  * @brief captures the GL-convention modelview matrix (world
  * or per-entity, see tr_backend.c's RB_RenderDrawSurfList()) and
  * recomputes the cached MVP used by VK_Draw3D()/VK_Draw3DLightmapped().
