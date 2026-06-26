@@ -193,6 +193,13 @@ if(BUILD_CLIENT)
 		list(APPEND CLIENT_SRC ${IRC_CLIENT_FILES})
 	endif()
 
+	if(MSVC AND FEATURE_DISCORD)
+		target_compile_definitions(client_libraries INTERFACE FEATURE_DISCORD)
+		list(APPEND CLIENT_SRC "${SRC}/discord/cl_discord.c" "${SRC}/discord/discord_log2_shim.c")
+		target_link_libraries(client_libraries INTERFACE "${SRC}/discord/win32-static/lib/discord-rpc.lib")
+		target_include_directories(client_libraries INTERFACE "${SRC}/discord/win32-static/include")
+	endif()
+
 	if(FEATURE_PAKISOLATION)
 		target_compile_definitions(engine_libraries INTERFACE FEATURE_PAKISOLATION)
 	endif()

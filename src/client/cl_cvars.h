@@ -139,6 +139,9 @@ extern cvar_t *cl_consoleKeys;
 
 extern cvar_t *cl_interpolation;
 
+extern cvar_t *cl_discordPresence;
+extern cvar_t *cl_discordAppId;
+
 extern cvar_t *con_scale;
 
 #endif  // #ifndef INCLUDE_CL_CVARS_H
