@@ -94,6 +94,7 @@ option(FEATURE_AUTH				"Enable central authentication support"					ON)
 option(FEATURE_LUAJIT			"Build with LuaJIT instead of PUC Lua"					OFF)
 
 cmake_dependent_option(FEATURE_WINDOWS_CONSOLE	"Build win32 executables with Windows console"	ON "WIN32" OFF)
+cmake_dependent_option(FEATURE_DISCORD	"Enable Discord Rich Presence (client)"	ON "MSVC" OFF)
 
 cmake_dependent_option(FEATURE_LUA		"Enable Lua support (mod)"						ON "BUILD_SERVER_MOD" OFF)
 cmake_dependent_option(FEATURE_LUASQL	"Enable LuaSQL sqlite3 backend (mod)"			ON "FEATURE_LUA" OFF)

@@ -167,12 +167,13 @@ menuDef {
 
 // Networking //
 #define NETWORK_Y (AUDIO_Y + AUDIO_H + SUBWINDOW_OPTION_Y_PADDING)
-#define NETWORK_H SUBWINDOW_OPTION_COMPUTE_H(3)
+#define NETWORK_H SUBWINDOW_OPTION_COMPUTE_H(4)
 	SUBWINDOW(SUBWINDOW_OPTION_HEADER_X2_START, NETWORK_Y, SUBWINDOW_OPTION_HEADER_WIDTH_R, NETWORK_H, _("NETWORK"))
 	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 1), SUBWINDOW_OPTION_WIDTH_R, 10, _("Max Packets:"), .2, 8, "ui_cl_maxpackets", cvarFloatList { "Very Low (15)" 15 "Low (30)" 30 "Medium (60)" 60 "High (100)" 100 "Very High (125)" 125 }, uiScript update "ui_cl_maxpackets", _("Cap for upstream data packet transmissions"))
 	MULTIACTION(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 2), SUBWINDOW_OPTION_WIDTH_R, 10, _("Packet Duplication:"), .2, 8, "ui_cl_packetdup", cvarFloatList { "No" 0 "x1" 1 "x2" 2 }, uiScript update "ui_cl_packetdup", _("Set number of duplicates for every data packet sent upstream, minimized packetloss"))
 	CVARFLOATLABEL(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 3), SUBWINDOW_OPTION_WIDTH_R, 10, "cl_timenudge", .2, ITEM_ALIGN_RIGHT, $evalfloat(SUBWINDOW_OPTION_WIDTH_R), 8)
 	SLIDER(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 3), SUBWINDOW_OPTION_WIDTH_R, 10, _("Time Nudge:"), .2, 8, "cl_timenudge" .25 0 1, _("Allows more or less latency to be added\nin the interest of better smoothness or better responsiveness"))
+	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(NETWORK_Y, 4), SUBWINDOW_OPTION_WIDTH_R, 10, _("Discord Rich Presence:"), .2, 8, "cl_discordPresence", _("Broadcast my current game activity to Discord"))
 
 // Downloads //
 #define DOWNLOADS_Y (NETWORK_Y + NETWORK_H + SUBWINDOW_OPTION_Y_PADDING)
