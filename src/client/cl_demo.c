@@ -926,6 +926,12 @@ void CL_FreeDemoPoints(void)
  */
 void CL_AllocateDemoPoints(void)
 {
+	// only legacy mod supports rewinding, don't try to allocate anything if we're not running it
+	if (!IS_DEFAULT_MOD)
+	{
+		return;
+	}
+
 	CL_FreeDemoPoints();
 
 	maxRewindBackups = cl_maxRewindBackups->integer;
