@@ -89,7 +89,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(sprinttext),         CG_DrawPlayerSprint,              HUD_COMP_TYPE_TEXT,      0.25f, { "Draw Suffix" } },
 	{ HUDF(breathtext),         CG_DrawPlayerBreath,              HUD_COMP_TYPE_TEXT,      0.25f, { "Draw Suffix" } },
 	{ HUDF(weaponchargetext),   CG_DrawWeaponCharge,              HUD_COMP_TYPE_TEXT,      0.25f, { "Draw Suffix" } },
-	{ HUDF(fps),                CG_DrawFPS,                       HUD_COMP_TYPE_TEXT,      0.19f, { 0 } },
+	{ HUDF(fps),                CG_DrawFPS,                       HUD_COMP_TYPE_TEXT,      0.19f, { "Draw Suffix" } },
 	{ HUDF(snapshot),           CG_DrawSnapshot,                  HUD_COMP_TYPE_MULTITEXT, 0.19f, { 0 } },
 	{ HUDF(ping),               CG_DrawPing,                      HUD_COMP_TYPE_TEXT,      0.19f, { "Draw Prefix" } },
 	{ HUDF(speed),              CG_DrawSpeed,                     HUD_COMP_TYPE_MULTITEXT, 0.19f, { "Max Speed",     "Draw Suffix" } },
@@ -238,7 +238,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->sprinttext         = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, 1, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, 0, 0, 0, CG_DrawPlayerSprint);
 	hud->breathtext         = CG_getComponent(20, SCREEN_HEIGHT - 96, 57, 14, qfalse, 1, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, 0, 0, 0, CG_DrawPlayerBreath);
 	hud->weaponchargetext   = CG_getComponent(SCREEN_WIDTH - 16, SCREEN_HEIGHT - 96, 57, 14, qfalse, 1, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.25f, 0, 0, 0, CG_DrawWeaponCharge);
-	hud->fps                = CG_getComponent(SCREEN_WIDTH - 60, 184, 57, 14, qfalse, 0, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawFPS);
+	hud->fps                = CG_getComponent(SCREEN_WIDTH - 60, 184, 57, 14, qfalse, 1, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawFPS);
 	hud->snapshot           = CG_getComponent(SCREEN_WIDTH - 60, 305, 57, 38, qfalse, 0, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER2, qfalse, 0.19f, 0, 0, 0, CG_DrawSnapshot);
 	hud->ping               = CG_getComponent(SCREEN_WIDTH - 60, 200, 57, 14, qfalse, 1, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawPing);
 	hud->speed              = CG_getComponent(SCREEN_WIDTH - 60, 275, 57, 14, qfalse, 2, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawSpeed);
@@ -3116,7 +3116,7 @@ void CG_ComputeFPS(void)
  */
 void CG_DrawFPS(hudComponent_t *comp)
 {
-	CG_DrawCompText(comp, (fps == -1) ? "estimating" : va("%i FPS", fps),
+	CG_DrawCompText(comp, (fps == -1) ? "estimating" : va("%i %s", fps, comp->style & 1 ? "FPS" : ""),
 	                comp->colorMain, comp->styleText, &cgs.media.limboFont1);
 }
 
