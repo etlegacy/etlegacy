@@ -184,7 +184,7 @@ static void CG_HudInvalidFilePath(const char *filename, char *output, int len)
 /**
  * @brief Treats zero-length files as existing migration targets
  * @param[in] filename
- * @return 
+ * @return
  */
 static qboolean CG_HudFileExists(const char *filename)
 {
@@ -205,7 +205,7 @@ static qboolean CG_HudFileExists(const char *filename)
  * @brief Reads only enough JSON metadata to drive migration
  * @param[in] filename
  * @param[out] version
- * @return 
+ * @return
  */
 static qboolean CG_ReadHudFileVersion(const char *filename, int *version)
 {
@@ -251,11 +251,11 @@ static qboolean CG_ReadHudFileVersion(const char *filename, int *version)
  * 4. Delete the source only after the target has passed validation. If any
  *    step fails, the source is left in place so migration never destroys the
  *    user's only copy of the HUD.
- *    
+ *
  * @param[in] source
  * @param[in] target
  * @param[in] expectedVersion
- * @return 
+ * @return
  */
 static qboolean CG_MoveHudFile(const char *source, const char *target, int expectedVersion)
 {
@@ -268,9 +268,6 @@ static qboolean CG_MoveHudFile(const char *source, const char *target, int expec
 	int          chunk;
 	int          written;
 	int          targetVersion;
-	qboolean     targetCreated;
-
-	targetCreated = qfalse;
 
 	// Do the collision check before opening the source. A pre-existing target
 	// means the migration would overwrite user data, so the move must abort.
@@ -296,38 +293,30 @@ static qboolean CG_MoveHudFile(const char *source, const char *target, int expec
 	}
 
 	// Only open the target after the source is known to be readable.
+	targetFile = 0;
+	if (trap_FS_FOpenFile(target, &targetFile, FS_WRITE) < 0 || !targetFile)
 	{
-		targetFile = 0;
-		if (trap_FS_FOpenFile(target, &targetFile, FS_WRITE) < 0 || !targetFile)
-		{
-			trap_FS_FCloseFile(sourceFile);
-			CG_Printf(S_COLOR_RED "ERROR CG_MoveHudFile: failed to write target '%s'\n", target);
-			return qfalse;
-		}
-		targetCreated = qtrue;
+		trap_FS_FCloseFile(sourceFile);
+		CG_Printf(S_COLOR_RED "ERROR CG_MoveHudFile: failed to write target '%s'\n", target);
+		return qfalse;
 	}
 
 	// Copy in fixed-size chunks to avoid allocating a buffer sized to the HUD.
+	remaining = sourceLen;
+	while (remaining > 0)
 	{
-		remaining = sourceLen;
-		while (remaining > 0)
+		chunk = remaining > (int)sizeof(buffer) ? (int)sizeof(buffer) : remaining;
+		trap_FS_Read(buffer, chunk, sourceFile);
+		written = trap_FS_Write(buffer, chunk, targetFile);
+		if (written != chunk)
 		{
-			chunk = remaining > (int)sizeof(buffer) ? (int)sizeof(buffer) : remaining;
-			trap_FS_Read(buffer, chunk, sourceFile);
-			written = trap_FS_Write(buffer, chunk, targetFile);
-			if (written != chunk)
-			{
-				trap_FS_FCloseFile(sourceFile);
-				trap_FS_FCloseFile(targetFile);
-				if (targetCreated)
-				{
-					trap_FS_Delete(target);
-				}
-				CG_Printf(S_COLOR_RED "ERROR CG_MoveHudFile: short write while moving '%s' to '%s'\n", source, target);
-				return qfalse;
-			}
-			remaining -= chunk;
+			trap_FS_FCloseFile(sourceFile);
+			trap_FS_FCloseFile(targetFile);
+			trap_FS_Delete(target);
+			CG_Printf(S_COLOR_RED "ERROR CG_MoveHudFile: short write while moving '%s' to '%s'\n", source, target);
+			return qfalse;
 		}
+		remaining -= chunk;
 	}
 
 	// Validation is done through a new read handle, so close the write handle
@@ -341,10 +330,7 @@ static qboolean CG_MoveHudFile(const char *source, const char *target, int expec
 	{
 		if (!CG_ReadHudFileVersion(target, &targetVersion) || targetVersion != expectedVersion)
 		{
-			if (targetCreated)
-			{
-				trap_FS_Delete(target);
-			}
+			trap_FS_Delete(target);
 			CG_Printf(S_COLOR_RED "ERROR CG_MoveHudFile: target validation failed '%s'\n", target);
 			return qfalse;
 		}
@@ -359,12 +345,10 @@ static qboolean CG_MoveHudFile(const char *source, const char *target, int expec
 		{
 			trap_FS_FCloseFile(targetFile);
 		}
+
 		if (targetLen != sourceLen)
 		{
-			if (targetCreated)
-			{
-				trap_FS_Delete(target);
-			}
+			trap_FS_Delete(target);
 			CG_Printf(S_COLOR_RED "ERROR CG_MoveHudFile: target size validation failed '%s'\n", target);
 			return qfalse;
 		}
@@ -386,7 +370,7 @@ static qboolean CG_MoveHudFile(const char *source, const char *target, int expec
  * @brief Accepts only canonical hud_v<version>.dat files
  * @param[in] filename
  * @param[out] version
- * @return 
+ * @return
  */
 static qboolean CG_ParseHudVersionFilename(const char *filename, int *version)
 {
