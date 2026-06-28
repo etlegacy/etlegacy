@@ -464,7 +464,7 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		CG_DrawPic(x, 2, Ccg_WideXReverse(192), 144, bg_mappic);
 
 		x = 16 + cgs.wideXoffset + Ccg_WideXReverse(80);
-		CG_DrawPic(x, 2 + 6, Ccg_WideXReverse(20), 20, bg_pin);
+		CG_DrawPic(x, 2 + 6, Ccg_WideXReverse(20), Ccg_WideXReverse(20), bg_pin);
 	}
 
 	if (forcerefresh)
