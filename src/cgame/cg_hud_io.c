@@ -57,7 +57,11 @@ typedef struct
 
 static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp);
 
-// CG_HudTimestamp writes the timestamp format used by HUD backup filenames.
+/**
+ * @brief Writes the timestamp format used by HUD backup filenames
+ * @param[out] output
+ * @param[in] len
+ */
 static void CG_HudTimestamp(char *output, int len)
 {
 	qtime_t ct;
@@ -67,7 +71,11 @@ static void CG_HudTimestamp(char *output, int len)
 	Com_sprintf(output, len, "%d-%02d-%02d-%02d%02d%02d", 1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday, ct.tm_hour, ct.tm_min, ct.tm_sec);
 }
 
-// CG_HudVersionedDirPath returns the profile-local directory for versioned HUDs.
+/**
+ * @brief Returns the profile-local directory for versioned HUDs
+ * @param[out] output
+ * @param[in] len
+ */
 static void CG_HudVersionedDirPath(char *output, int len)
 {
 	char profile[MAX_OSPATH];
@@ -78,7 +86,12 @@ static void CG_HudVersionedDirPath(char *output, int len)
 	Com_sprintf(output, len, HUDS_USER_DIR_PATH, profile);
 }
 
-// CG_HudFilePathForVersion returns the canonical path for one JSON HUD version.
+/**
+ * @brief Returns the canonical path for one JSON HUD version
+ * @param[out] output
+ * @param[in] len
+ * @param[in] version
+ */
 static void CG_HudFilePathForVersion(char *output, int len, int version)
 {
 	char hudDir[MAX_OSPATH];
@@ -103,7 +116,12 @@ static const char *CG_HudFilePath()
 	return filePath;
 }
 
-// CG_HudBackupFilePathForVersion returns the collision-checked migration backup path.
+/**
+ * @brief Returns the collision-checked migration backup path
+ * @param[out] output
+ * @param[in] len
+ * @param[in] version
+ */
 static void CG_HudBackupFilePathForVersion(char *output, int len, int version)
 {
 	char profile[MAX_OSPATH];
@@ -116,7 +134,12 @@ static void CG_HudBackupFilePathForVersion(char *output, int len, int version)
 	Com_sprintf(output, len, HUDS_USER_BACKUP_PATH, profile, version, timestamp);
 }
 
-// CG_HudInvalidFilePath keeps invalid files next to their original name.
+/**
+ * @brief Keeps invalid files next to their original name
+ * @param[in] filename
+ * @param[out] output
+ * @param[in] len
+ */
 static void CG_HudInvalidFilePath(const char *filename, char *output, int len)
 {
 	const char *scan;
@@ -158,7 +181,11 @@ static void CG_HudInvalidFilePath(const char *filename, char *output, int len)
 	Q_strcat(output, len, va("_invalid(%s)%s", timestamp, dot));
 }
 
-// CG_HudFileExists treats zero-length files as existing migration targets.
+/**
+ * @brief Treats zero-length files as existing migration targets
+ * @param[in] filename
+ * @return 
+ */
 static qboolean CG_HudFileExists(const char *filename)
 {
 	fileHandle_t file;
@@ -174,7 +201,12 @@ static qboolean CG_HudFileExists(const char *filename)
 	return len >= 0 ? qtrue : qfalse;
 }
 
-// CG_ReadHudFileVersion reads only enough JSON metadata to drive migration.
+/**
+ * @brief Reads only enough JSON metadata to drive migration
+ * @param[in] filename
+ * @param[out] version
+ * @return 
+ */
 static qboolean CG_ReadHudFileVersion(const char *filename, int *version)
 {
 	cJSON *root;
@@ -201,7 +233,8 @@ static qboolean CG_ReadHudFileVersion(const char *filename, int *version)
 }
 
 /**
- * HUD migration intentionally avoids filesystem rename semantics because the
+ * @brief CG_MoveHudFile
+ * @details HUD migration intentionally avoids filesystem rename semantics because the
  * cgame VM only has portable read, write, close, list, and delete syscalls.
  *
  * A "move" is therefore done as a transactional copy:
@@ -218,6 +251,11 @@ static qboolean CG_ReadHudFileVersion(const char *filename, int *version)
  * 4. Delete the source only after the target has passed validation. If any
  *    step fails, the source is left in place so migration never destroys the
  *    user's only copy of the HUD.
+ *    
+ * @param[in] source
+ * @param[in] target
+ * @param[in] expectedVersion
+ * @return 
  */
 static qboolean CG_MoveHudFile(const char *source, const char *target, int expectedVersion)
 {
@@ -344,7 +382,12 @@ static qboolean CG_MoveHudFile(const char *source, const char *target, int expec
 	return qtrue;
 }
 
-// CG_ParseHudVersionFilename accepts only canonical hud_v<version>.dat files.
+/**
+ * @brief Accepts only canonical hud_v<version>.dat files
+ * @param[in] filename
+ * @param[out] version
+ * @return 
+ */
 static qboolean CG_ParseHudVersionFilename(const char *filename, int *version)
 {
 	const char *scan;
