@@ -2161,6 +2161,10 @@ void ClientUserinfoChanged(int clientNum)
 	}
 #endif
 
+	// the full CS_PLAYERS rebuild below includes the current 'sp'/'msp' values,
+	// so any pending targeted spawn info update (G_FlushSpawnPointInfoChanges) is supercession
+	client->pers.spawnInfoChangePending = qfalse;
+
 	trap_GetConfigstring(CS_PLAYERS + clientNum, oldname, sizeof(oldname));
 	trap_SetConfigstring(CS_PLAYERS + clientNum, configStr);
 
@@ -2177,6 +2181,85 @@ void ClientUserinfoChanged(int clientNum)
 
 	G_LogPrintf("ClientUserinfoChanged: %i %s\n", clientNum, configStr);
 	G_DPrintf("ClientUserinfoChanged: %i :: %s\n", clientNum, configStr);
+}
+
+/// max targeted CS_PLAYERS spawn info updates pushed per server frame; at sv_fps 20 a
+/// value of 8 flushes a 64-player burst in <= 8 frames (400ms) instead of one frame
+#define MAX_SPAWN_INFO_UPDATES_PER_FRAME 8
+
+/**
+ * @brief Applies pending spawn point info updates to the CS_PLAYERS configstrings.
+ *
+ * @details When an objective or flag changes ownership, G_UpdateSpawnPointStatePlayerCounts()
+ * re-checks every player's resolved spawn point in one pass.
+ *
+ * The old approach called ClientUserinfoChanged() for each affected player during that pass.
+ * That works, but it also rebuilds and broadcasts the full CS_PLAYERS configstring for much
+ * of the server in a single frame. With enough clients, this can create a
+ * burst of reliable messages, which shows up as a server-side lag spike whenever a flag is
+ * captured.
+ *
+ * Instead, affected clients are marked with pers.spawnInfoChangePending. This function is
+ * then called once per server frame from G_RunFrame() and updates only the spawn-related
+ * keys, 'sp' and 'msp', in the existing CS_PLAYERS configstring.
+ *
+ * To avoid doing too much work in one frame, only up to MAX_SPAWN_INFO_UPDATES_PER_FRAME
+ * clients are processed per frame. The written keys and values match what
+ * ClientUserinfoChanged() would produce, so existing client features such as fireteam
+ * overlay spawn numbers continue to behave the same.
+ *
+ * Since the engine only broadcasts configstrings that actually changed, this also becomes
+ * a no-op when the resolved spawn values end up matching the previous values.
+ */
+
+void G_FlushSpawnPointInfoChanges(void)
+{
+	static char cs[MAX_STRING_CHARS];
+	gclient_t   *client;
+	int         i, clientNum, updates = 0;
+
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		client = &level.clients[level.sortedClients[i]];
+
+		if (!client->pers.spawnInfoChangePending)
+		{
+			continue;
+		}
+
+		// budget exhausted - remaining clients keep their pending flag
+		// and are flushed over the following frames
+		if (updates >= MAX_SPAWN_INFO_UPDATES_PER_FRAME)
+		{
+			break;
+		}
+
+		client->pers.spawnInfoChangePending = qfalse;
+
+		// not fully connected yet: ClientBegin -> ClientUserinfoChanged writes
+		// the full configstring (including sp/msp) anyway
+		if (client->pers.connected != CON_CONNECTED)
+		{
+			continue;
+		}
+
+		clientNum = client - level.clients;
+
+		trap_GetConfigstring(CS_PLAYERS + clientNum, cs, sizeof(cs));
+
+		if (!cs[0])
+		{
+			continue;
+		}
+
+		// same keys/values as the full rebuild in ClientUserinfoChanged()
+		Info_SetValueForKey(cs, "sp", va("%i", Com_Clamp(0, (level.numSpawnPoints - 1), client->sess.resolvedSpawnPointIndex) + 1));
+		Info_SetValueForKey(cs, "msp", va("%i", client->sess.resolvedMinorSpawnPointIndex));
+
+		trap_SetConfigstring(CS_PLAYERS + clientNum, cs);
+
+		updates++;
+	}
 }
 
 extern const char *country_name[MAX_COUNTRY_NUM];

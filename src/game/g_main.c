@@ -4654,6 +4654,9 @@ void G_RunFrame(int levelTime)
 
 	G_UpdateTeamMapData();
 
+	// push deferred CS_PLAYERS 'sp'/'msp' updates (rate-limited, see g_client.c)
+	G_FlushSpawnPointInfoChanges();
+
 	if (level.gameManager)
 	{
 		level.gameManager->s.otherEntityNum  = MAX(0, team_maxLandmines.integer - G_CountTeamLandmines(TEAM_AXIS));
