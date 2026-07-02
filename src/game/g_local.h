@@ -859,6 +859,8 @@ typedef struct
 	int savedClassWeaponTimeCvop;
 	int savedClassWeaponTime;
 
+	qboolean spawnInfoChangePending;    ///< resolved spawn point changed; CS_PLAYERS 'sp'/'msp' keys need a defered update
+
 } clientPersistant_t;
 
 /**
@@ -1842,6 +1844,7 @@ qboolean G_DemoRunFrame(void);
 // g_client.c
 char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot);
 void ClientUserinfoChanged(int clientNum);
+void G_FlushSpawnPointInfoChanges(void);
 void ClientDisconnect(int clientNum);
 void ClientBegin(int clientNum);
 void ClientCommand(int clientNum);

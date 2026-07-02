@@ -2401,7 +2401,13 @@ void G_UpdateSpawnPointStatePlayerCounts()
 		{
 			client->sess.resolvedSpawnPointIndex      = resolvedSpawn.major;
 			client->sess.resolvedMinorSpawnPointIndex = resolvedMinorSpawnPt;
-			ClientUserinfoChanged(client - level.clients);
+			// don't call ClientUserinfoChanged() here: on objective/flag capture the resolved
+			// spawn point changes for most of the server at once, and rebuilding and broadcasting
+			// the full CS_PLAYERS configstring for every client in a single frame causes a
+			// noticeable server lag spike (reliable messages in thousands). Instead flag the
+			// client and let G_FlushSpawnPointInfoChanges() (G_RunFrame) push a targeted,
+			// rate-limited update of just the 'sp'/'msp' keys.
+			client->pers.spawnInfoChangePending = qtrue;
 		}
 	}
 	// update configstring, if necessary
