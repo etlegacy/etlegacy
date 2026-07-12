@@ -1,0 +1,84 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define MENU_NAME "options_customise_game_weapons"
+#define GROUP_NAME "grpOptionsCustomiseGame"
+
+// Customise Game Menu //
+menuDef {
+	name MENU_NAME
+    visible     0
+	fullscreen  0
+	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style WINDOW_STYLE_FILLED
+
+	    onESC {
+		close MENU_NAME ;
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif // FUI
+	}
+
+	WINDOW(_("OPTIONS"), 122)
+
+	MAINBUTTON_ACTIVE(1, _("MSGID_MENU_OPTION_GAME"), close MENU_NAME; open options_customise_game)
+	MAINBUTTON(2, _("MSGID_MENU_OPTION_VIEW"), close MENU_NAME; open options_customise_hud)
+	MAINBUTTON(3, _("MSGID_MENU_OPTION_CONTROLS"), close MENU_NAME; open options_controls)
+	MAINBUTTON(4, _("MSGID_MENU_OPTION_SYSTEM"), close MENU_NAME; open options_system)
+
+	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
+
+#define NUM_SUBMENUS 8
+#define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
+
+	SIDEBUTTON(1, "PLAYER", close MENU_NAME; open options_customise_game_player)
+	SIDEBUTTON(2, "PHYSICS", close MENU_NAME; open options_customise_game_physics)
+	SIDEBUTTON(3, "MOVEMENT", close MENU_NAME; open options_customise_game_movement)
+	SIDEBUTTON_ACTIVE(4, "WEAPONS", close MENU_NAME; open options_customise_game_weapons)
+	SIDEBUTTON(5, "SCOPE", close MENU_NAME; open options_customise_game_scope)
+	SIDEBUTTON(6, "CHAT", close MENU_NAME; open options_customise_game_chat)
+	SIDEBUTTON(7, "SOUND", close MENU_NAME; open options_customise_game_sounds)
+	SIDEBUTTON(8, "MISCELLANEOUS", close MENU_NAME; open options_customise_game_miscellaneous)
+
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "WEAPONS")
+
+    YESNO(OPTION_ITEM_POS(1), _("Automatic Reload:"), .2, 8, "cg_autoReload", _("Automatically reload when ammo clip runs out"))
+	YESNO(OPTION_ITEM_POS(2), _("No Ammo Auto Switch:"), .2, 8, "cg_noAmmoAutoSwitch", _("Automatically switch to a new weapon when out of ammo"))
+	YESNO(OPTION_ITEM_POS(3), _("No Ammo Sounds Switch:"), .2, 8, "cg_weapSwitchNoAmmoSounds", _("Play a sound when trying to switch to a weapon with no ammo"))
+	YESNO(OPTION_ITEM_POS(4), _("Alt Weapon Reloads:"), .2, 8, "cg_weapaltReloads", _("Provide an alternative way to reload a weapon\nthat doesn't have weapon an alternative fire"))
+	YESNO(OPTION_ITEM_POS(5), _("Alt Weapon Switches:"), .2, 8, "cg_weapaltSwitches", _("Provide an alternative way to use an alt weapon\nby pressing the respective weaponbank bind"))
+	MULTI(OPTION_ITEM_POS(6), _("Pickup Auto Switch:"), .2, 8, "cg_autoswitch", cvarFloatList { "Off" 0 "Always Switch" 1 "If New" 2 "If Better" 3 "New or Better" 4}, _("Automatically switch to a new weapon on pickup"))
+	YESNO(OPTION_ITEM_POS(7), _("Weapon Bank Collision:"), .2, 8, "cg_weapBankCollisions", _("Handle weapon bank collisions when multiple weapons\nuse the same bank number (e.g. Soldier with PF and SMG)"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(8), "cg_weaponCycleDelay", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(8), _("Weapon Cycle Delay:"), .2, 8, "cg_weaponCycleDelay" 150 0 500, _("Handle the minimum required time between banks selection to be issued"))
+	YESNO(OPTION_ITEM_POS(9), _("Cycle All Weapons:"), .2, 8, "cg_cycleAllWeaps", _("Toggle the cycling to parse each weapons in bank before cycling another bank"))
+	YESNO(OPTION_ITEM_POS(10), _("MG Auto Prone:"), .2, 8, "cg_weapaltMgAutoProne", _("Toggle automatic proning when deploying Soldier MG"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(11), "cg_weapzoomFov", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(11), _("Weapon Zoom Fov:"), .2, 8, "cg_weapzoomFov" 75 75 160, _("The fov level used when zoomed in with weapon"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(12), "cg_weapzoomInTimeMs ", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(12), _("Weapon Zoom In Time:"), .2, 8, "cg_weapzoomInTimeMs " 100 0 1500, _("Handle the duration of the zoom in transition in ms"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(13), "cg_weapzoomOutTimeMs ", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(13), _("Weapon Zoom Out Time:"), .2, 8, "cg_weapzoomOutTimeMs " 100 0 1500, _("Handle the duration of the zoom out transition in ms"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(14), "cg_weapzoomSensitivityScale  ", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(14), _("Weapon Zoom Sens. Scale:"), .2, 8, "cg_weapzoomSensitivityScale  " 1.0 0 2, _("Set the zoom in mouse sensitivity scaling\ndepending of mouse sensitivity"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(15), "cg_weapzoomSensitivityOverride   ", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(15), _("Weap. Zoom Sens. Over.:"), .2, 8, "cg_weapzoomSensitivityOverride   " 1.0 0 30, _("Overide the zoom mouse sensitivity while zoom in"))
+	EDITFIELD(OPTION_EF_POS(16), _("On Weapon Zoom Start:"), .2, 8, "cg_onWeapzoomStart", 15, 13, _("Set the command to be triggered on weapon zoom in"))
+	EDITFIELD(OPTION_EF_POS(17), _("On Weapon Zoom End:"), .2, 8, "cg_onWeapzoomEnd", 15, 13, _("Set the command to be triggered on weapon zoom out"))
+
+#ifdef FUI
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
+#else
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open ingame_main)
+#endif
+	LOWERBUTTON(2, _("MSGID_MENU_OPTION_OPEN_HOME"), close MENU_NAME ; uiScript open_homepath)
+
+#ifdef FUI
+	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; open options_hudeditor_fui)
+#else
+	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; uiScript edithud ; close MENU_NAME)
+#endif
+}

@@ -1,0 +1,74 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define MENU_NAME "options_customise_hud_weapons"
+#define GROUP_NAME "grpOptionsCustomiseHud"
+
+// Customise Game Menu //
+menuDef {
+	name MENU_NAME
+    visible     0
+	fullscreen  0
+	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style WINDOW_STYLE_FILLED
+
+    onESC {
+		close MENU_NAME ;
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif // FUI
+	}
+
+	WINDOW(_("OPTIONS"), 122)
+
+	MAINBUTTON(1, _("MSGID_MENU_OPTION_GAME"), close MENU_NAME; open options_customise_game)
+	MAINBUTTON_ACTIVE(2, _("MSGID_MENU_OPTION_VIEW"), close MENU_NAME; open options_customise_hud)
+	MAINBUTTON(3, _("MSGID_MENU_OPTION_CONTROLS"), close MENU_NAME; open options_controls)
+	MAINBUTTON(4, _("MSGID_MENU_OPTION_SYSTEM"), close MENU_NAME; open options_system)
+
+	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
+
+#define NUM_SUBMENUS 13
+#define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
+
+    SIDEBUTTON(1, "BLOOD & GIB", close MENU_NAME; open options_customise_hud_blood)
+    SIDEBUTTON(2, "COMPASS", close MENU_NAME; open options_customise_hud_compass)
+    SIDEBUTTON(3, "CROSSHAIR", close MENU_NAME; open options_customise_hud_crosshair)
+    SIDEBUTTON(4, "CUSTOM CROSSHAIR", close MENU_NAME; open options_customise_hud_custom_crosshair)
+    SIDEBUTTON(5, "FIRETEAM", close MENU_NAME; open options_customise_hud_fireteam)
+    SIDEBUTTON(6, "GEOLOCATION", close MENU_NAME; open options_customise_hud_geolocation)
+    SIDEBUTTON(7, "HINT", close MENU_NAME; open options_customise_hud_hint)
+	SIDEBUTTON(8, "HUD DISPLAY", close MENU_NAME; open options_customise_hud_display)
+	SIDEBUTTON(9, "IN-GAME DISPLAY", close MENU_NAME; open options_customise_hud_ingame_display)
+	SIDEBUTTON(10, "ITEMS", close MENU_NAME; open options_customise_hud_items)
+	SIDEBUTTON(11, "SCOPE RETICLE", close MENU_NAME; open options_customise_hud_scope)
+	SIDEBUTTON(12, "SHOUTCAST", close MENU_NAME; open options_customise_hud_shoutcast)
+	SIDEBUTTON_ACTIVE(13, "WEAPONS DISPLAY", close MENU_NAME; open options_customise_hud_weapons)
+
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "WEAPONS DISPLAY")
+	
+	MULTI(OPTION_ITEM_POS(1), _("Draw Weapon:"), .2, 8, "cg_drawGun", cvarFloatList { "Off" 0 "On" 1 "Hide Weapons Only" 2 }, _("Show gun model on-screen"))
+	NUMERICFIELD(OPTION_EF_POS(2), _("Freeze Gun Frame:"), .2, 8, "cg_gun_frame", 3, _("Freeze the gun animation to a single chosen frame"))
+	MULTI(OPTION_ITEM_POS(3), _("Weapon Animations:"), .2, 8, "cg_weapAnims", cvarFloatList { "None" 0 "Move" 1 "Firing" 2 "Reload" 4 "Switch" 8 "Move + Firing" 3 "Move + Reload" 5 "Move + Switch" 9 "Move + Firing + Reload" 7 "Move + Firing + Switch" 11 "Move + Reload + Switch" 13 "Firing + Reload" 6 "Firing + Switch" 10 "Firing + Reload + Switch" 14 "Reload + Switch" 12 "All" 15 }, _("Set which weapon animations to play"))
+	YESNO(OPTION_ITEM_POS(4), _("Weapon Revive Raising:"), .2, 8, "cg_gunReviveFadeIn", _("Toggle weapon animation raising in while being revived"))
+	NUMERICFIELD(OPTION_EF_POS(5), _("Gun Fov Offset:"), .2, 8, "cg_gunFovOffset", 3, _("Set the gun fov offset"))
+	NUMERICFIELD(OPTION_EF_POS(6), _("Weapon X Offset:"), .2, 8, "cg_gunX", 3, _("Set the weapon position offset on X axis"))
+	NUMERICFIELD(OPTION_EF_POS(7), _("Weapon Y Offset:"), .2, 8, "cg_gunY", 3, _("Set the weapon position offset on Y axis"))
+	NUMERICFIELD(OPTION_EF_POS(8), _("Weapon Z Offset:"), .2, 8, "cg_gunZ", 3, _("Set the weapon position offset on Z axis"))
+
+#ifdef FUI
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
+#else
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open ingame_main)
+#endif
+	LOWERBUTTON(2, _("MSGID_MENU_OPTION_OPEN_HOME"), close MENU_NAME ; uiScript open_homepath)
+
+#ifdef FUI
+	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; open options_hudeditor_fui)
+#else
+	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; uiScript edithud ; close MENU_NAME)
+#endif
+}

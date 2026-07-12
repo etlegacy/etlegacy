@@ -3279,16 +3279,16 @@ void Item_Combo_Paint(itemDef_t *item)
 		}
 	}
 
-	selectorOffset = widestText + selectedTextOffset - 4 + borderOffset;
+	selectorOffset = widestText + selectedTextOffset + 7 + borderOffset;
 
 	selectorSize = DC->textWidth(COMBO_SELECTORCHAR, item->textscale, 0);
 
 	rect.x = selectedTextOffset;
 	rect.y = item->textRect.y - item->textRect.h - borderOffset;
-	rect.w = widestText + 4 + selectorSize + borderOffset;
+	rect.w = widestText + selectorSize + 12 + (borderOffset * 2);
 	rect.h = item->textRect.h + (borderOffset * 2);
 
-	selectorRect.x = rect.x + (rect.w - selectorSize - 8 - (borderOffset * 2));
+	selectorRect.x = rect.x + widestText + 4;
 	selectorRect.y = rect.y;
 	selectorRect.w = selectorSize + 8 + (borderOffset * 2);
 	selectorRect.h = rect.h;

@@ -1,8 +1,6 @@
 #include "ui/menudef.h"
 
 // Defines //
-#define WINDOW_WIDTH	__WINDOW_WIDTH
-#define WINDOW_HEIGHT	480
 
 assetGlobalDef {
 	// font
@@ -38,12 +36,12 @@ menuDef {
 menuDef {
 	name		"background_1"
 	fullScreen	0
-	rect		0 0 WINDOW_WIDTH WINDOW_HEIGHT
+	rect		0 0 FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
 	visible		0
 
 	itemDef {
 		name		"colour"
-		rect		0 0 WINDOW_WIDTH WINDOW_HEIGHT
+		rect		0 0 FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
 		style		WINDOW_STYLE_FILLED
 		backcolor	.70 .63 .49 1
 		visible		1
@@ -52,7 +50,7 @@ menuDef {
 
 	itemDef {
 		name		"clouds"
-		rect		0 0 640 WINDOW_HEIGHT // no resize on widescreen
+		rect		0 0 640 FULL_WINDOW_HEIGHT // no resize on widescreen
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/et_clouds"
 		visible		1
@@ -61,7 +59,7 @@ menuDef {
 
 	itemDef {
 		name		"image"
-		rect		$evalint(WINDOW_WIDTH/2-100) 140 200 200
+		rect		$evalint(FULL_WINDOW_WIDTH/2-100) 140 200 200
 		style		WINDOW_STYLE_SHADER
 		background	"ui/assets/etl_logo_huge_dark"
 		visible		1
@@ -72,12 +70,12 @@ menuDef {
 menuDef {
 	name		"background_black"
 	fullScreen	0
-	rect		0 0 WINDOW_WIDTH WINDOW_HEIGHT
+	rect		0 0 FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
 	visible		0
 
 	itemDef {
 		name		"colour"
-		rect		0 0 WINDOW_WIDTH WINDOW_HEIGHT
+		rect		0 0 FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
 		style		WINDOW_STYLE_FILLED
 		background	"ui/assets/fadebox.tga"
 		backcolor	0 0 0 0
@@ -90,13 +88,13 @@ menuDef {
 menuDef {
 	name		"fadebox_black"
 	fullScreen	0
-	rect		0 0 WINDOW_WIDTH WINDOW_HEIGHT
+	rect		0 0 FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
 	visible		1
 	alwaysontop
 
 	itemDef {
       	name		"fadebox"
-		rect		0 0 WINDOW_WIDTH WINDOW_HEIGHT
+		rect		0 0 FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
       	style		WINDOW_STYLE_FILLED
  		background	"ui/assets/fadebox.tga"
 		backcolor	0 0 0 0

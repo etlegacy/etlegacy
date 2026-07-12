@@ -1,0 +1,71 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define MENU_NAME "options_customise_hud_fireteam"
+#define GROUP_NAME "grpOptionsCustomiseHud"
+
+// Customise Game Menu //
+menuDef {
+	name MENU_NAME
+    visible     0
+	fullscreen  0
+	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style WINDOW_STYLE_FILLED
+
+    onESC {
+		close MENU_NAME ;
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif // FUI
+	}
+
+	WINDOW(_("OPTIONS"), 122)
+
+	MAINBUTTON(1, _("MSGID_MENU_OPTION_GAME"), close MENU_NAME; open options_customise_game)
+	MAINBUTTON_ACTIVE(2, _("MSGID_MENU_OPTION_VIEW"), close MENU_NAME; open options_customise_hud)
+	MAINBUTTON(3, _("MSGID_MENU_OPTION_CONTROLS"), close MENU_NAME; open options_controls)
+	MAINBUTTON(4, _("MSGID_MENU_OPTION_SYSTEM"), close MENU_NAME; open options_system)
+
+	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
+
+#define NUM_SUBMENUS 13
+#define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
+
+    SIDEBUTTON(1, "BLOOD & GIB", close MENU_NAME; open options_customise_hud_blood)
+    SIDEBUTTON(2, "COMPASS", close MENU_NAME; open options_customise_hud_compass)
+    SIDEBUTTON(3, "CROSSHAIR", close MENU_NAME; open options_customise_hud_crosshair)
+    SIDEBUTTON(4, "CUSTOM CROSSHAIR", close MENU_NAME; open options_customise_hud_custom_crosshair)
+    SIDEBUTTON_ACTIVE(5, "FIRETEAM", close MENU_NAME; open options_customise_hud_fireteam)
+    SIDEBUTTON(6, "GEOLOCATION", close MENU_NAME; open options_customise_hud_geolocation)
+    SIDEBUTTON(7, "HINT", close MENU_NAME; open options_customise_hud_hint)
+	SIDEBUTTON(8, "HUD DISPLAY", close MENU_NAME; open options_customise_hud_display)
+	SIDEBUTTON(9, "IN-GAME DISPLAY", close MENU_NAME; open options_customise_hud_ingame_display)
+	SIDEBUTTON(10, "ITEMS", close MENU_NAME; open options_customise_hud_items)
+	SIDEBUTTON(11, "SCOPE RETICLE", close MENU_NAME; open options_customise_hud_scope)
+	SIDEBUTTON(12, "SHOUTCAST", close MENU_NAME; open options_customise_hud_shoutcast)
+	SIDEBUTTON(13, "WEAPONS DISPLAY", close MENU_NAME; open options_customise_hud_weapons)
+
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "FIRETEAM")
+	
+	NUMERICFIELD(OPTION_EF_POS(1), _("Name Max Chars:"), .2, 8, "cg_fireteamNameMaxChars", 2, _("Set the maximum characters used to display names"))
+    YESNO(OPTION_ITEM_POS(2), _("Name Align:"), .2, 8, "cg_allowGeoIP", _("Force Name to be right aligned in fireteam overlay"))
+    YESNO(OPTION_ITEM_POS(3), _("Draw Sprites:"), .2, 8, "cg_fireteamSprites", _("Toggle fireteam sprites over players head"))
+    MULTI(OPTION_ITEM_POS(4), _("Sprites Color:"), .2, 8, "cg_fireteamSpritesColor", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the fireteam sprites"))
+	MULTI(OPTION_ITEM_POS(5), _("Sprites Color Selected:"), .2, 8, "cg_fireteamSpritesColorSelected", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the fireteam sprites selected"))
+
+#ifdef FUI
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
+#else
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open ingame_main)
+#endif
+	LOWERBUTTON(2, _("MSGID_MENU_OPTION_OPEN_HOME"), close MENU_NAME ; uiScript open_homepath)
+
+#ifdef FUI
+	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; open options_hudeditor_fui)
+#else
+	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; uiScript edithud ; close MENU_NAME)
+#endif
+}
