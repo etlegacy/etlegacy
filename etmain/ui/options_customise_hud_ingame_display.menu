@@ -1,0 +1,87 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define MENU_NAME "options_customise_hud_ingame_display"
+#define GROUP_NAME "grpOptionsCustomiseHud"
+
+// Customise Game Menu //
+menuDef {
+	name MENU_NAME
+    visible     0
+	fullscreen  0
+	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style WINDOW_STYLE_FILLED
+
+    onESC {
+		close MENU_NAME ;
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif // FUI
+	}
+
+	WINDOW(_("OPTIONS"), 122)
+
+	MAINBUTTON(1, _("MSGID_MENU_OPTION_GAME"), close MENU_NAME; open options_customise_game)
+	MAINBUTTON_ACTIVE(2, _("MSGID_MENU_OPTION_VIEW"), close MENU_NAME; open options_customise_hud)
+	MAINBUTTON(3, _("MSGID_MENU_OPTION_CONTROLS"), close MENU_NAME; open options_controls)
+	MAINBUTTON(4, _("MSGID_MENU_OPTION_SYSTEM"), close MENU_NAME; open options_system)
+
+	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
+
+#define NUM_SUBMENUS 13
+#define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
+
+    SIDEBUTTON(1, "BLOOD & GIB", close MENU_NAME; open options_customise_hud_blood)
+    SIDEBUTTON(2, "COMPASS", close MENU_NAME; open options_customise_hud_compass)
+    SIDEBUTTON(3, "CROSSHAIR", close MENU_NAME; open options_customise_hud_crosshair)
+    SIDEBUTTON(4, "CUSTOM CROSSHAIR", close MENU_NAME; open options_customise_hud_custom_crosshair)
+    SIDEBUTTON(5, "FIRETEAM", close MENU_NAME; open options_customise_hud_fireteam)
+    SIDEBUTTON(6, "GEOLOCATION", close MENU_NAME; open options_customise_hud_geolocation)
+    SIDEBUTTON(7, "HINT", close MENU_NAME; open options_customise_hud_hint)
+	SIDEBUTTON(8, "HUD DISPLAY", close MENU_NAME; open options_customise_hud_display)
+	SIDEBUTTON_ACTIVE(9, "IN-GAME DISPLAY", close MENU_NAME; open options_customise_hud_ingame_display)
+	SIDEBUTTON(10, "ITEMS", close MENU_NAME; open options_customise_hud_items)
+	SIDEBUTTON(11, "SCOPE RETICLE", close MENU_NAME; open options_customise_hud_scope)
+	SIDEBUTTON(12, "SHOUTCAST", close MENU_NAME; open options_customise_hud_shoutcast)
+	SIDEBUTTON(13, "WEAPONS DISPLAY", close MENU_NAME; open options_customise_hud_weapons)
+
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "IN-GAME DISPLAY")
+	
+	YESNO(OPTION_ITEM_POS(1), _("Muzzle Flash:"), .2, 8, "cg_muzzleflash", _("Toggle display of weapon flash when firing"))
+	MULTI(OPTION_ITEM_POS(2), _("Muzzle Dynamic Flash:"), .2, 8, "cg_muzzleFlashDlight", cvarFloatList { "Default" 0 "Force Off" 1 "Force On" 2 "Force On But Self" 3 }, _("Handle where muzzle flash dynamic light shall be applied"))
+	YESNO(OPTION_ITEM_POS(3), _("Muzzle Flash Old Scale:"), .2, 8, "cg_muzzleFlashOld", _("Toggle to vanilla muzzle flash scalling (bigger scale)"))
+	MULTIACTION(OPTION_ITEM_POS(4), _("Ejecting Brass:"), .2, 8, "cg_brasstime", cvarFloatList { "High" 15000 "Med" 2500 "Off" 0 }, uiScript glPreset, _("Set the duration ejected bullet shells last for"))
+	MULTI(OPTION_ITEM_POS(5), _("Bullet Tracers:"), .2, 8, "cg_tracers", cvarFloatList { "Off" 0 "On" 1 "Only own tracers" 2 "Only others tracers" 3 }, _("Toggle display of bullet tracers"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(6), "cg_railTrailTime", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(6), _("Rail Trail Time:"), .2, 8, "cg_railTrailTime" 750 0 3000, _("Set the duration time before rail trail disappear"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(7), "cg_fov", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(7), _("Field Of View:"), .2, 8, "cg_fov" 90 75 160, _("Set field of view"))
+	MULTI(OPTION_ITEM_POS(8), _("Draw Corona:"), .2, 8, "cg_coronas", cvarFloatList { "Off" 0 "On" 1 "Forced" 2 }, _("Draw corona on screen"))
+	MULTI(OPTION_ITEM_POS(9), _("Corona Distance:"), .2, 8, "cg_coronafardist", cvarFloatList { "Off" 0 "Near" 800 "Normal" 1536 "Far" 4096 "Extreme" 16000 }, _("Set the maximum distance light corona is displayed"))
+	MULTI(OPTION_ITEM_POS(10), _("Wall Mark Lifetime:"), .2, 8, "cg_markTime", cvarFloatList { "Off" 0 "Short" 10000 "Normal" 20000 "Long" 30000 }, _("Set duration of bullet marks on walls"))
+	YESNO(OPTION_ITEM_POS(11), _("Atmospheric Effects:"), .2, 8, "cg_atmosphericEffects", _("Draw atmospheric effects (snow/rain) on-screen"))
+	YESNO(OPTION_ITEM_POS(12), _("Visual Effects:"), .2, 8, "cg_visualEffects", _("Draw additional visual effects (debris)"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(13), "cg_swingSpeed", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(13), _("Swing Speed:"), .2, 8, "cg_swingSpeed" .1 0 5, _("Set the torso and legs swing speed while rotating"))
+	YESNO(OPTION_ITEM_POS(14), _("Sprites Follow Heads:"), .2, 8, "cg_spritesFollowHeads", _("Draw player icons (revive icon etc.) to follow\nplayer heads when they are downed"))
+	YESNO(OPTION_ITEM_POS(15), _("Draw Breath Puffs:"), .2, 8, "cg_drawBreathPuffs", _("Draw players breath puff"))
+	YESNO(OPTION_ITEM_POS(16), _("Draw Airstrike Planes:"), .2, 8, "cg_drawAirstrikePlanes", _("Show airstrike plane models in the sky"))
+	YESNO(OPTION_ITEM_POS(17), _("Draw Spawn Points:"), .2, 8, "cg_drawSpawnpoints", _("Draw spawn points slots on ground during warmup"))
+	MULTI(OPTION_ITEM_POS(18), _("Spectator Draw Names:"), .2, 8, "cg_drawSpectatorNames", cvarFloatList { "Off" 0 "White Color" 1 "Full Color" 2 }, _("Display players names above their heads while spectating"))
+
+#ifdef FUI
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
+#else
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open ingame_main)
+#endif
+	LOWERBUTTON(2, _("MSGID_MENU_OPTION_OPEN_HOME"), close MENU_NAME ; uiScript open_homepath)
+
+#ifdef FUI
+	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; open options_hudeditor_fui)
+#else
+	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; uiScript edithud ; close MENU_NAME)
+#endif
+}

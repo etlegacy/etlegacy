@@ -1,0 +1,86 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define MENU_NAME "options_customise_hud_display"
+#define GROUP_NAME "grpOptionsCustomiseHud"
+
+// Customise Game Menu //
+menuDef {
+	name MENU_NAME
+    visible     0
+	fullscreen  0
+	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style WINDOW_STYLE_FILLED
+
+    onESC {
+		close MENU_NAME ;
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif // FUI
+	}
+
+	WINDOW(_("OPTIONS"), 122)
+
+	MAINBUTTON(1, _("MSGID_MENU_OPTION_GAME"), close MENU_NAME; open options_customise_game)
+	MAINBUTTON_ACTIVE(2, _("MSGID_MENU_OPTION_VIEW"), close MENU_NAME; open options_customise_hud)
+	MAINBUTTON(3, _("MSGID_MENU_OPTION_CONTROLS"), close MENU_NAME; open options_controls)
+	MAINBUTTON(4, _("MSGID_MENU_OPTION_SYSTEM"), close MENU_NAME; open options_system)
+
+	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
+
+#define NUM_SUBMENUS 13
+#define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
+
+    SIDEBUTTON(1, "BLOOD & GIB", close MENU_NAME; open options_customise_hud_blood)
+    SIDEBUTTON(2, "COMPASS", close MENU_NAME; open options_customise_hud_compass)
+    SIDEBUTTON(3, "CROSSHAIR", close MENU_NAME; open options_customise_hud_crosshair)
+    SIDEBUTTON(4, "CUSTOM CROSSHAIR", close MENU_NAME; open options_customise_hud_custom_crosshair)
+    SIDEBUTTON(5, "FIRETEAM", close MENU_NAME; open options_customise_hud_fireteam)
+    SIDEBUTTON(6, "GEOLOCATION", close MENU_NAME; open options_customise_hud_geolocation)
+    SIDEBUTTON(7, "HINT", close MENU_NAME; open options_customise_hud_hint)
+	SIDEBUTTON_ACTIVE(8, "HUD DISPLAY", close MENU_NAME; open options_customise_hud_display)
+	SIDEBUTTON(9, "IN-GAME DISPLAY", close MENU_NAME; open options_customise_hud_ingame_display)
+	SIDEBUTTON(10, "ITEMS", close MENU_NAME; open options_customise_hud_items)
+	SIDEBUTTON(11, "SCOPE RETICLE", close MENU_NAME; open options_customise_hud_scope)
+	SIDEBUTTON(12, "SHOUTCAST", close MENU_NAME; open options_customise_hud_shoutcast)
+	SIDEBUTTON(13, "WEAPONS DISPLAY", close MENU_NAME; open options_customise_hud_weapons)
+
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "HUD DISPLAY")
+	
+	YESNO(OPTION_ITEM_POS(1), _("Draw 2D:"), .2, 8, "cg_draw2D", _("Toggle display of all HUD elements"))
+	MULTI(OPTION_ITEM_POS(2), _("Show Locations:"), .2, 8, "cg_locations", cvarFloatList { "Coordinates Only" 0 "Fireteam Overlay" 1 "Team and Fireteam Chat" 2 "Chat + FT Overlay" 3 }, _("Display locations in fireteam"))
+	NUMERICFIELD(OPTION_EF_POS(3), _("Locations Max Chars:"), .2, 8, "cg_locationMaxChars", 3, _("Set the maximum characters used to display location"))
+	MULTI(OPTION_ITEM_POS(4), _("Unit System:"), .2, 8, "cg_drawUnit", cvarFloatList { "Unit" 0 "Metric" 1 "Imperial" 2 }, _("Set unit system"))
+	MULTI(OPTION_ITEM_POS(5), _("Switch HUD:"), .2, 8, "cg_altHud", cvarFloatList { "Standard Hud" 0 "Alternate Hud 1" 1 "Alternate Hud 2" 2 }, _("Switch between different HUD"))
+	EDITFIELD(OPTION_EF_POS(6), _("Shoutcaster HUD:"), .2, 8, "cg_shoutcasterHud", 36, 18, _("Enter the HUD name used in shoutcaster mod"))
+	MULTI(OPTION_ITEM_POS(7), _("Environment Awareness:"), .2, 8, "cg_drawEnvAwareness", cvarFloatList { "Off" 0 "Item objectives" 1 "Secondary objectives" 2 "Primary objectives" 4 "Item + Secondary obj" 3 "Item + Primary obj" 5 "Primary + Secondary obj" 6 "All" 7 }, _("Display objective icons on HUD"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(8), "cg_drawEnvAwarenessScale", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(8), _("Env Awarn. Scale:"), .2, 8, "cg_drawEnvAwarenessScale" 0.15 0 0.5, _("Set the scale distance from the screen border\nto draw environement awareness icons"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(9), "cg_drawEnvAwarenessIconSize", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(9), _("Env Awarn. Icons Size:"), .2, 8, "cg_drawEnvAwarenessIconSize" 0.15 0 0.5, _("Set the size of the draw environement awareness icons"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(10), "cg_fontScaleSP", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(10), _("Side Print:"), .2, 8, "cg_fontScaleSP" 0.15 0 0.5, _("Set font size for multiview/scorboard texts"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(11), "cg_bannerTime", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(11), _("Banner Time:"), .2, 8, "cg_bannerTime" 2500 0 10000, _("Set the time the banner stays visible"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(12), "cg_centerTime", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(12), _("Center Print Time:"), .2, 8, "cg_centerTime" 5 0 30, _("Set the time the center print stays visible"))
+	MULTI(OPTION_ITEM_POS(13), _("Scoreboard Tab:"), .2, 8, "cg_scoreboard", cvarFloatList { "XP" 0 "SkillRating" 1 "Prestige" 2 }, _("Select the scoreboard to be displyed by default"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(14), "cg_commandMapTime", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(14), _("Command Map Time:"), .2, 8, "cg_commandMapTime" 5 0 30, _("Set the delay to fully fade in/out commad map"))
+
+#ifdef FUI
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
+#else
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open ingame_main)
+#endif
+	LOWERBUTTON(2, _("MSGID_MENU_OPTION_OPEN_HOME"), close MENU_NAME ; uiScript open_homepath)
+
+#ifdef FUI
+	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; open options_hudeditor_fui)
+#else
+	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; uiScript edithud ; close MENU_NAME)
+#endif
+}

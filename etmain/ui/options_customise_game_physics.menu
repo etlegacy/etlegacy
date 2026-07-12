@@ -1,0 +1,64 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define MENU_NAME "options_customise_game_physics"
+#define GROUP_NAME "grpOptionsCustomiseGame"
+
+// Customise Game Menu //
+menuDef {
+	name MENU_NAME
+    visible     0
+	fullscreen  0
+	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style WINDOW_STYLE_FILLED
+
+	    onESC {
+		close MENU_NAME ;
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif // FUI
+	}
+
+	WINDOW(_("OPTIONS"), 122)
+
+	MAINBUTTON_ACTIVE(1, _("MSGID_MENU_OPTION_GAME"), close MENU_NAME; open options_customise_game)
+	MAINBUTTON(2, _("MSGID_MENU_OPTION_VIEW"), close MENU_NAME; open options_customise_hud)
+	MAINBUTTON(3, _("MSGID_MENU_OPTION_CONTROLS"), close MENU_NAME; open options_controls)
+	MAINBUTTON(4, _("MSGID_MENU_OPTION_SYSTEM"), close MENU_NAME; open options_system)
+
+	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
+
+#define NUM_SUBMENUS 8
+#define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
+
+	SIDEBUTTON(1, "PLAYER", close MENU_NAME; open options_customise_game_player)
+	SIDEBUTTON_ACTIVE(2, "PHYSICS", close MENU_NAME; open options_customise_game_physics)
+	SIDEBUTTON(3, "MOVEMENT", close MENU_NAME; open options_customise_game_movement)
+	SIDEBUTTON(4, "WEAPONS", close MENU_NAME; open options_customise_game_weapons)
+	SIDEBUTTON(5, "SCOPE", close MENU_NAME; open options_customise_game_scope)
+	SIDEBUTTON(6, "CHAT", close MENU_NAME; open options_customise_game_chat)
+	SIDEBUTTON(7, "SOUND", close MENU_NAME; open options_customise_game_sounds)
+	SIDEBUTTON(8, "MISCELLANEOUS", close MENU_NAME; open options_customise_game_miscellaneous)
+
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "PHYSICS")
+
+	YESNO(OPTION_ITEM_POS(1), _("Auto Pickup:"), .2, 8, "cg_autoactive", _("Toggle auto pickup for items and weapons"))
+	YESNO(OPTION_ITEM_POS(2), _("Instant Tapout:"), .2, 8, "cg_instanttapout", _("Toggle instant tap out on respawn"))
+	YESNO(OPTION_ITEM_POS(3), _("Optimize Prediction:"), .2, 8, "cg_optimizePrediction", _("Toggle prediction optimization for a smooth game experience"))
+
+#ifdef FUI
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
+#else
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open ingame_main)
+#endif
+	LOWERBUTTON(2, _("MSGID_MENU_OPTION_OPEN_HOME"), close MENU_NAME ; uiScript open_homepath)
+
+#ifdef FUI
+	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; open options_hudeditor_fui)
+#else
+	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; uiScript edithud ; close MENU_NAME)
+#endif
+}
