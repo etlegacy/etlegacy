@@ -2,10 +2,10 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define WINDOW_X		16
-#define WINDOW_Y		16
-#define WINDOW_WIDTH	__WINDOW_WIDTH-32
-#define WINDOW_HEIGHT	448
+#define CUSTOM_WINDOW_X		16
+#define CUSTOM_WINDOW_Y		16
+#define CUSTOM_WINDOW_WIDTH	__WINDOW_WIDTH-32
+#define CUSTOM_WINDOW_HEIGHT	448
 #define MENU_WIDTH		128
 #define MENU_HEIGHT		255
 #define DISCORD_X		0
@@ -19,7 +19,7 @@ menuDef {
 	name		"main_opener"
 	visible		0
 	fullscreen	0
-	rect		WINDOW_X WINDOW_Y MENU_WIDTH MENU_HEIGHT
+	rect		CUSTOM_WINDOW_X CUSTOM_WINDOW_Y MENU_WIDTH MENU_HEIGHT
 
 	onOpen {
 		open fadebox_black ;
@@ -37,7 +37,7 @@ menuDef {
 	name		"main"
 	visible		0
 	fullscreen	0
-	rect		WINDOW_X WINDOW_Y $evalint(WINDOW_WIDTH) WINDOW_HEIGHT
+	rect		CUSTOM_WINDOW_X CUSTOM_WINDOW_Y $evalint(CUSTOM_WINDOW_WIDTH) CUSTOM_WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
 
 	onOpen {

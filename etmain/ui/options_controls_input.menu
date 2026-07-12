@@ -1,0 +1,69 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define MENU_NAME     "options_controls_input"
+#define GROUP_NAME    "grpOptionsControls"
+
+// Controls Menu //
+menuDef {
+	name MENU_NAME
+    visible     0
+	fullscreen  0
+	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style WINDOW_STYLE_FILLED
+
+    onESC {
+		close MENU_NAME ;
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif // FUI
+	}
+
+// Window //
+	WINDOW(_("OPTIONS"), 122)
+
+	MAINBUTTON(1, _("MSGID_MENU_OPTION_GAME"), close MENU_NAME; open options_customise_game)
+	MAINBUTTON(2, _("MSGID_MENU_OPTION_VIEW"), close MENU_NAME; open options_customise_hud)
+	MAINBUTTON_ACTIVE(3, _("MSGID_MENU_OPTION_CONTROLS"), close MENU_NAME; open options_controls)
+	MAINBUTTON(4, _("MSGID_MENU_OPTION_SYSTEM"), close MENU_NAME; open options_system)
+
+	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
+
+#define NUM_SUBMENUS 11
+#define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
+
+	SIDEBUTTON(1, "MOVE", close MENU_NAME; open options_controls_move)
+	SIDEBUTTON(2, "USE WEAPONS", close MENU_NAME; open options_controls_weapons)
+	SIDEBUTTON(3, "POP-UPS", close MENU_NAME; open options_controls_popups)
+	SIDEBUTTON(4, "SEL. CLASS/WEAPONS", close MENU_NAME; open options_controls_select_class_weapon)
+	SIDEBUTTON(5, "CHAT", close MENU_NAME; open options_controls_chat)
+	SIDEBUTTON_ACTIVE(6, "INPUT", close MENU_NAME; open options_controls_input)
+	SIDEBUTTON(7, "MISCELLANEOUS", close MENU_NAME; open options_controls_miscellaneous)
+	SIDEBUTTON(8, "FIRE-TEAMS", close MENU_NAME; open options_controls_fireteams)
+	SIDEBUTTON(9, "JOYSTICK", close MENU_NAME; open options_controls_joystick)
+	SIDEBUTTON(10, "SHOUTCASTER", close MENU_NAME; open options_controls_shoutcaster)
+	SIDEBUTTON(11, "SELECTION MENUS", close MENU_NAME; open options_controls_selection_menus)
+
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "INPUT")
+	
+	CHECKBOXALIGNXACTION(OPTION_ITEM_POS(1), _("Invert Mouse:"), .2, 24, 8, "ui_mousePitch", uiScript update ui_mousePitch, _("Invert mouse pitch"))
+	CHECKBOXALIGNX(OPTION_ITEM_POS(2), _("Smooth Mouse:"), .2, 24, 8, "m_filter", _("Smooth out the mouse using interpolation"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(3), "sensitivity", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(3), _("Mouse Sensitivity:"), .2, 8, "sensitivity" 5 1 30, _("Set mouse sensitivity"))
+	MULTI(OPTION_ITEM_POS(4), _("Mouse Pitch:"), .2, 8, "m_pitch", cvarFloatList { "0.015 (lowest allowed)" 0.0151 "0.016" 0.016 "0.017" 0.017 "0.018" 0.018 "0.019" 0.019 "0.020" 0.020 "0.021" 0.021 "0.022 (default)" 0.022 }, _("Set crosshair up-down motion while moving"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(5), "cg_scopedSensitivityScaler", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(5), _("Scoped Sensitivity:"), .2, 8, "cg_scopedSensitivityScaler" 5 0 30, _("Set scoped mouse sensitivity. The value is a scalar used to calculate the sensitivity\ndepending on field of view when scoped(zoom value)"))
+
+#ifdef FUI
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
+#else
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open ingame_main)
+#endif
+	LOWERBUTTON(2, _("MSGID_MENU_OPTION_OPEN_HOME"), close MENU_NAME ; uiScript open_homepath)
+
+
+	LOWERBUTTON(3, _("MSGID_MENU_DEFAULT"), clearfocus; open options_controls_default)
+}
