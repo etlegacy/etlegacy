@@ -3078,6 +3078,9 @@ void Item_CheckBox_Paint(itemDef_t *item)
 	menuDef_t  *parent      = (menuDef_t *)item->parent;
 	qboolean   hasMultiText = qfalse;
 	multiDef_t *multiPtr    = (multiDef_t *)item->typeData;
+	float      x;
+	float      y;
+	qhandle_t  handler;
 
 	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
@@ -3102,51 +3105,38 @@ void Item_CheckBox_Paint(itemDef_t *item)
 	if (item->text)
 	{
 		Item_Text_Paint(item);
-		if (item->type == ITEM_TYPE_TRICHECKBOX && value == 2.f)
-		{
-			DC->drawHandlePic(item->textRect.x + item->textRect.w + 8, item->window.rect.y, item->window.rect.h, item->window.rect.h, DC->Assets.checkboxCheckNo);
-		}
-		else if (value != 0.f)
-		{
-			DC->drawHandlePic(item->textRect.x + item->textRect.w + 8, item->window.rect.y, item->window.rect.h, item->window.rect.h, DC->Assets.checkboxCheck);
-		}
-		else
-		{
-			DC->drawHandlePic(item->textRect.x + item->textRect.w + 8, item->window.rect.y, item->window.rect.h, item->window.rect.h, DC->Assets.checkboxCheckNot);
-		}
-
-		if (hasMultiText)
-		{
-			vec4_t colour;
-
-			Item_TextColor(item, &colour);
-			DC->drawText(item->textRect.x + item->textRect.w + 8 + item->window.rect.h + 4, item->textRect.y, item->textscale,
-			             colour, Item_Multi_Setting(item), 0, 0, item->textStyle);
-		}
+		x = item->textRect.x + item->textRect.w + 8;
+		y = item->window.rect.y + 1.5f;
 	}
 	else
 	{
-		if (item->type == ITEM_TYPE_TRICHECKBOX && value == 2.f)
-		{
-			DC->drawHandlePic(item->window.rect.x, item->window.rect.y, item->window.rect.h, item->window.rect.h, DC->Assets.checkboxCheckNo);
-		}
-		else if (value != 0.f)
-		{
-			DC->drawHandlePic(item->window.rect.x, item->window.rect.y, item->window.rect.h, item->window.rect.h, DC->Assets.checkboxCheck);
-		}
-		else
-		{
-			DC->drawHandlePic(item->window.rect.x, item->window.rect.y, item->window.rect.h, item->window.rect.h, DC->Assets.checkboxCheckNot);
-		}
+		x = item->window.rect.x;
+		y = item->window.rect.y;
+	}
 
-		if (hasMultiText)
-		{
-			vec4_t colour;
+	if (item->type == ITEM_TYPE_TRICHECKBOX && value == 2.f)
+	{
+		handler = DC->Assets.checkboxCheckNo;
+	}
+	else if (value != 0.f)
+	{
+		handler = DC->Assets.checkboxCheck;
+	}
+	else
+	{
+		handler = DC->Assets.checkboxCheckNot;
+	}
 
-			Item_TextColor(item, &colour);
-			DC->drawText(item->window.rect.x + item->window.rect.h + 4, item->window.rect.y + item->textaligny, item->textscale,
-			             colour, Item_Multi_Setting(item), 0, 0, item->textStyle);
-		}
+	DC->drawHandlePic(x, y, item->window.rect.h, item->window.rect.h, handler);
+
+	if (hasMultiText)
+	{
+		vec4_t colour;
+		y = item->text ? item->textRect.y : item->window.rect.y + item->textaligny;
+
+		Item_TextColor(item, &colour);
+		DC->drawText(x + item->window.rect.h + 4, y, item->textscale,
+		             colour, Item_Multi_Setting(item), 0, 0, item->textStyle);
 	}
 }
 
