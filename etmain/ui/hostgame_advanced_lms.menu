@@ -2,7 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define MENU_NAME     "hostgame_advanced"
+#define MENU_NAME     "hostgame_advanced_lms"
 #define GROUP_NAME		"grpHostGameAdvanced"
 
 // Host Game Advanced Menu //
@@ -31,13 +31,18 @@ menuDef {
 
 	SIDEBUTTON(1, _("GENERAL"), close MENU_NAME; open hostgame_advanced_general)
 	SIDEBUTTON(2, _("MATCH"), close MENU_NAME; open hostgame_advanced_match)
-	SIDEBUTTON(3, _("LAST MAN STANDING"), close MENU_NAME; open hostgame_advanced_lms)
+	SIDEBUTTON_ACTIVE(3, _("LAST MAN STANDING"), close MENU_NAME; open hostgame_advanced_lms)
 	SIDEBUTTON(4, _("ADMIN"), close MENU_NAME; open hostgame_advanced_admin)
 	SIDEBUTTON(5, _("VOTES"), close MENU_NAME; open hostgame_advanced_votes)
 	SIDEBUTTON(6, _("MESSAGE OF THE DAY"), close MENU_NAME; open hostgame_advanced_motd)
 	SIDEBUTTON(7, _("DOWNLOAD"), close MENU_NAME; open hostgame_advanced_download)
 
-	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "<== Select a menu on left to show related options")
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, _("LAST MAN STANDING"))
+	
+	NUMERICFIELD(OPTION_EF_POS(1), _("LMS Rounds Per Match:"), .2, 8, "g_lms_roundlimit", 2, _("Override the default LMS rounds per match") )	// fixme: range check
+	NUMERICFIELD(OPTION_EF_POS(2), _("LMS Matches Per Map:"), .2, 8, "g_lms_matchlimit", 2, _("Override the default LMS matches (comprising of rounds) per map") )	// fixme: range check
+	YESNO(OPTION_ITEM_POS(3), _("LMS Spectate Team Only:"), .2, 8, "g_lms_followTeamOnly", _("Stop players spectating the enemy team" ))
+	YESNO(OPTION_ITEM_POS(4), _("LMS Locked Teams:"), .2, 8, "g_lms_lockTeams", _("Stop players being able to switch teams") )
 
 // Buttons //
 	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME ; open hostgame)

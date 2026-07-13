@@ -2,11 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpHostGame"
+#define MENU_NAME	"hostgame"
+#define GROUP_NAME	"grpHostGame"
 
 // System Menu //
 menuDef {
-	name		"hostgame"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
@@ -19,7 +20,7 @@ menuDef {
 	}
 
 	onESC {
-		close hostgame ;
+		close MENU_NAME ;
 		open main
 	}
 
@@ -187,8 +188,8 @@ menuDef {
     }
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_BACK"), .3, 14, close hostgame ; open main )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_ADVANCED"), .3, 14, close hostgame ; open hostgame_advanced )
+	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open main )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_ADVANCED"), .3, 14, close MENU_NAME ; open hostgame_advanced )
 	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_HOST_START_SERVER"), .3, 14,
 		conditionalScript ui_dedicated 0
 		( "open hostgame_dedicated_warning" )
