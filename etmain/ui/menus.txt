@@ -16,7 +16,13 @@
 	loadMenu { "ui/playonline_deletefavs.menu" }
 	loadMenu { "ui/hostgame.menu" }
 	loadMenu { "ui/hostgame_advanced.menu" }
-	loadMenu { "ui/hostgame_extended.menu" }
+	loadMenu { "ui/hostgame_advanced_admin.menu" }
+	loadMenu { "ui/hostgame_advanced_votes.menu" }
+	loadMenu { "ui/hostgame_advanced_download.menu" }
+	loadMenu { "ui/hostgame_advanced_general.menu" }
+	loadMenu { "ui/hostgame_advanced_lms.menu" }
+	loadMenu { "ui/hostgame_advanced_match.menu" }
+	loadMenu { "ui/hostgame_advanced_motd.menu" }
 	loadMenu { "ui/hostgame_advanced_default.menu" }
 	loadMenu { "ui/hostgame_dedicated_warning.menu" }
 	loadMenu { "ui/mods.menu" }

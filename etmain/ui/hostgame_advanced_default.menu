@@ -2,6 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
+#define MENU_NAME		"hostgame_advanced_default"
 #define GROUP_NAME		"grpHostgameAdvancedDefault"
 
 // Host Game Advanced Default Menu //
@@ -86,12 +87,13 @@
 
 menuDef
 {
-	name		"hostgame_advanced_default"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
 	popup
+	modal
 
 	fadeClamp	0.5
 
@@ -103,8 +105,7 @@ menuDef
 
 	onESC
 	{
-		close hostgame_advanced_default ;
-		open hostgame_advanced
+		close MENU_NAME ;
 	}
 
 // Background //
@@ -127,6 +128,6 @@ menuDef
 	SUBWINDOWBLACK( SUBFULL_WINDOW_X, SUBFULL_WINDOW_Y, SUBFULL_WINDOW_WIDTH, SUBFULL_WINDOW_HEIGHT, _("DEFAULT SERVER SETTINGS") )
 	LABEL( SUBFULL_WINDOW_X+2, SUBFULL_WINDOW_Y+16, (SUBFULL_WINDOW_WIDTH)-8, 10, _("Reset server settings to default?"), .2, ITEM_ALIGN_CENTER, .5*((SUBFULL_WINDOW_WIDTH)-4), 8 )
 
-	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, close hostgame_advanced_default ; close hostgame_extended ; open hostgame_advanced ; DEFAULT_SETTINGS )
-	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close hostgame_advanced_default ; close hostgame_extended ; open hostgame_advanced )
+	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, close MENU_NAME ; DEFAULT_SETTINGS)
+	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close MENU_NAME)
 }

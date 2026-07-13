@@ -2,7 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define MENU_NAME     "hostgame_advanced"
+#define MENU_NAME     "hostgame_advanced_download"
 #define GROUP_NAME		"grpHostGameAdvanced"
 
 // Host Game Advanced Menu //
@@ -35,9 +35,14 @@ menuDef {
 	SIDEBUTTON(4, _("ADMIN"), close MENU_NAME; open hostgame_advanced_admin)
 	SIDEBUTTON(5, _("VOTES"), close MENU_NAME; open hostgame_advanced_votes)
 	SIDEBUTTON(6, _("MESSAGE OF THE DAY"), close MENU_NAME; open hostgame_advanced_motd)
-	SIDEBUTTON(7, _("DOWNLOAD"), close MENU_NAME; open hostgame_advanced_download)
+	SIDEBUTTON_ACTIVE(7, _("DOWNLOAD"), close MENU_NAME; open hostgame_advanced_download)
 
-	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "<== Select a menu on left to show related options")
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, _("DOWNLOAD"))
+	
+	YESNO(OPTION_ITEM_POS(1), _("Client Downloads:"), .2, 8, "sv_allowDownload", _("Allows players to download missing files from the server") )
+	NUMERICFIELD(OPTION_EF_POS(2), _("Maximum Download Rate:"), .2, 8, "sv_dlRate", 6, _("Specifies the maximum download rate from the server for players with missing files") )
+	YESNO(OPTION_ITEM_POS(3), _("FTP/HTTP Redirects:"), .2, 8, "sv_wwwDownload", _("Redirects players with missing files to another server") )
+	EDITFIELD(OPTION_EF_POS(4), _("Base URL:"), .2, 8, "sv_wwwDaveUrl", 64, 18, _("Used to build the URL given to clients for download") )
 
 // Buttons //
 	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME ; open hostgame)
