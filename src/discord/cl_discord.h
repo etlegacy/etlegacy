@@ -31,8 +31,6 @@
 /**
  * @file cl_discord.h
  * @brief Discord Rich Presence client wrapper
- *
- * @note This is FEATURE_DISCORD and _WIN32 only
  */
 
 #ifndef CL_DISCORD_H

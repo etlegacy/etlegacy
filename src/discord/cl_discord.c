@@ -32,15 +32,13 @@
  * @file cl_discord.c
  * @brief Discord Rich Presence client wrapper
  *
- * @note This is FEATURE_DISCORD and _WIN32 only
+ * @note The Discord RPC implementation is available on Windows and macOS.
  */
-
-// this is FEATURE_DISCORD and _WIN32 only
 
 #include "../client/client.h"
 #include "cl_discord.h"
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__APPLE__)
 #include "discord_rpc.h"
 
 #define DISCORD_PRESENCE_UPDATE_INTERVAL 15000   /**< ms — throttle for Discord_UpdatePresence (FR #6) */
@@ -307,4 +305,18 @@ void CL_DiscordShutdown(void)
 	DRP_Teardown();
 }
 
-#endif /* _WIN32 */
+#else
+
+void CL_DiscordInit(void)
+{
+}
+
+void CL_DiscordFrame(void)
+{
+}
+
+void CL_DiscordShutdown(void)
+{
+}
+
+#endif /* defined(_WIN32) || defined(__APPLE__) */
