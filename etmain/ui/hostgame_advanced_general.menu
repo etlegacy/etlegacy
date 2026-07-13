@@ -1,0 +1,54 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define MENU_NAME     "hostgame_advanced_general"
+#define GROUP_NAME		"grpHostGameAdvanced"
+
+// Host Game Advanced Menu //
+menuDef {
+	name		MENU_NAME
+	visible		0
+	fullscreen	0
+	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style		WINDOW_STYLE_FILLED
+
+	onESC {
+		close MENU_NAME ;
+		open hostgame
+	}
+
+// Window //
+	WINDOW( _("HOST: ADVANCED"), 266 )
+	
+// There is only one main menu for now
+	BUTTONACTIVE(BTN_MAIN_X, BTN_MAIN_Y, WINDOW_WIDTH - MAIN_ELEMENT_MARGIN * 2, BTN_MAIN_H, "ADVANCED", 0.25, BTN_MAIN_TEXT_ALIGN, setfocus MENU_NAME)
+	
+	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
+
+#define NUM_SUBMENUS 7
+#define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
+
+	SIDEBUTTON_ACTIVE(1, _("GENERAL"), close MENU_NAME; open hostgame_advanced_general)
+	SIDEBUTTON(2, _("MATCH"), close MENU_NAME; open hostgame_advanced_match)
+	SIDEBUTTON(3, _("LAST MAN STANDING"), close MENU_NAME; open hostgame_advanced_lms)
+	SIDEBUTTON(4, _("ADMIN"), close MENU_NAME; open hostgame_advanced_admin)
+	SIDEBUTTON(5, _("VOTES"), close MENU_NAME; open hostgame_advanced_votes)
+	SIDEBUTTON(6, _("MESSAGE OF THE DAY"), close MENU_NAME; open hostgame_advanced_motd)
+	SIDEBUTTON(7, _("DOWNLOAD"), close MENU_NAME; open hostgame_advanced_download)
+
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, _("GENERAL"))
+	
+	NUMERICFIELD(OPTION_EF_POS(1), _("Minimum Ping:"), .2, 8, "sv_minping", 4, _("Setting the minimum ping can be used to exclude LPBs (0 = No Minimum)") )
+	NUMERICFIELD(OPTION_EF_POS(2), _("Maximum Ping:"), .2, 8, "sv_maxping", 4, _("Setting the maximum ping can be used to exclude HPBs (0 = No Maximum)") )
+	NUMERICFIELD(OPTION_EF_POS(3), _("Maximum Game Rate:"), .2, 8, "sv_maxrate", 6, _("Maximum rate to send game data to clients (0 = match client rate settings)") )
+	NUMERICFIELD(OPTION_EF_POS(4), _("Player Inactivity:"), .2, 8, "g_inactivity", 3, _("Max time (in sec) a player can remain idle before being kicked from the server (0 = disabled)") )
+	NUMERICFIELD(OPTION_EF_POS(5), _("Spectator Inactivity:"), .2, 8, "g_spectatorInactivity", 3, _("Max time (in sec) a spectator can remain idle before being kicked from the server (0 = disabled)") )
+	NUMERICFIELD(OPTION_EF_POS(6), _("Intermission Time:"), .2, 8, "g_intermissionTime", 3, _("Time of intermission") )
+	MULTI(OPTION_ITEM_POS(7), _("Intermission Ready %:"), .2, 8, "g_intermissionReadyPercent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, _("Percentage of 'ready' players to start next map") )
+	MULTI(OPTION_ITEM_POS(8), _("Country Flags:"), .2, 8, "g_countryflags", cvarFloatList { "No" 0 "Yes" 1 }, _("Enable country flags on the server") )
+
+// Buttons //
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME ; open hostgame)
+	LOWERBUTTON(3, _("MSGID_MENU_DEFAULT"), open hostgame_advanced_default)
+}
