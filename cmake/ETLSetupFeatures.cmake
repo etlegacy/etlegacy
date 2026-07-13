@@ -210,6 +210,23 @@ if(BUILD_CLIENT)
 				${appkit_library}
 			)
 			target_include_directories(client_libraries INTERFACE "${SRC}/discord/osx-static/include")
+		elseif(UNIX)
+			set(_etl_discord_arch "${CMAKE_SYSTEM_PROCESSOR}")
+			if(_etl_discord_arch MATCHES "^(i.86|x86|X86)$")
+				set(_etl_discord_arch "i386")
+			elseif(_etl_discord_arch MATCHES "^(amd64|AMD64|x86_64)$")
+				set(_etl_discord_arch "x86_64")
+			endif()
+			set(_etl_discord_lib "${SRC}/discord/linux-static/lib/${_etl_discord_arch}/libdiscord-rpc.a")
+			if(NOT EXISTS "${_etl_discord_lib}")
+				message(FATAL_ERROR "FEATURE_DISCORD: no vendored libdiscord-rpc.a for '${_etl_discord_arch}' (looked for ${_etl_discord_lib})")
+			endif()
+			target_link_libraries(client_libraries INTERFACE
+				"${_etl_discord_lib}"
+				stdc++
+				pthread
+			)
+			target_include_directories(client_libraries INTERFACE "${SRC}/discord/linux-static/include")
 		endif()
 	endif()
 
