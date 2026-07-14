@@ -2659,7 +2659,7 @@ void CG_EBS_Fireteam(centity_t *cent)
 		ci->health        = EBS_ReadBitsWithSign(&ebs, EBS_FT_HEALTH_SIZE);
 		ci->currentWeapon = EBS_ReadBits(&ebs, EBS_FT_WEAPON_SIZE);
 		ci->spawnpt       = EBS_ReadBits(&ebs, EBS_FT_MAJORSPAWN_SIZE);
-		ci->mspawnpt      = EBS_ReadBits(&ebs, EBS_FT_MINORSPAWN_SIZE);
+		ci->mspawnpt      = EBS_ReadBitsWithSign(&ebs, EBS_FT_MINORSPAWN_SIZE);
 
 		if (oldSpawnpt != ci->spawnpt || oldMspawnpt != ci->mspawnpt)
 		{
