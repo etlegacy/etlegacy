@@ -2607,7 +2607,7 @@ void G_EBS_ShoutcastThink(gentity_t *ent)
 /**
  * @brief G_EBS_ShoutcastEnabled
  */
-ID_INLINE qboolean G_EBS_ShoutcastEnabled(void)
+qboolean G_EBS_ShoutcastEnabled(void)
 {
 	return dll_trap_SnapshotCallbackExt && dll_trap_SnapshotSetClientMask;
 }

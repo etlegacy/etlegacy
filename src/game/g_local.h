@@ -2473,12 +2473,12 @@ void G_clientFlagIndicator(gentity_t *ent);
 qboolean G_EBS_ShoutcastCallback(int clientNumReal);
 void G_EBS_ShoutcastThink(gentity_t *ent);
 void G_EBS_InitShoutcast(void);
-ID_INLINE qboolean G_EBS_ShoutcastEnabled(void);
+qboolean G_EBS_ShoutcastEnabled(void);
 
 qboolean G_EBS_FireteamCallback(int entityNum, int clientNumReal);
 void G_EBS_FireteamThink(gentity_t *ent);
 void G_EBS_InitFireteam(void);
-ID_INLINE qboolean G_EBS_FireteamEnabled(void);
+qboolean G_EBS_FireteamEnabled(void);
 
 // g_vote.c
 int G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd);

@@ -1438,7 +1438,7 @@ void Cmd_FireTeam_MP_f(gentity_t *ent, unsigned int dwCommand, int value)
 /**
  * @brief G_EBS_FireteamEnabled
  */
-ID_INLINE qboolean G_EBS_FireteamEnabled(void)
+qboolean G_EBS_FireteamEnabled(void)
 {
 	return dll_trap_SnapshotCallbackExt;
 }
