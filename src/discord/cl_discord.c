@@ -32,14 +32,20 @@
  * @file cl_discord.c
  * @brief Discord Rich Presence client wrapper
  *
- * @note The Discord RPC implementation is available on Windows and macOS.
+ * @note The Discord RPC implementation is available on Windows, macOS and Linux.
  */
 
 #include "../client/client.h"
 #include "cl_discord.h"
 
-#if defined(_WIN32) || defined(__APPLE__)
+#if defined(_WIN32) || defined(__APPLE__) || defined(__linux__)
 #include "discord_rpc.h"
+
+#if defined(__linux__)
+#include <limits.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#endif
 
 #define DISCORD_PRESENCE_UPDATE_INTERVAL 15000   /**< ms — throttle for Discord_UpdatePresence (FR #6) */
 #define DISCORD_LARGE_IMAGE_KEY          "etlegacy_logo"
@@ -172,6 +178,62 @@ static void DRP_UpdatePresence(void)
 	Discord_UpdatePresence(&presence);
 }
 
+#if defined(__linux__)
+/**
+ * @brief DRP_LinkSandboxedSocket — the vendored discord-rpc client only probes
+ * $XDG_RUNTIME_DIR/discord-ipc-<n> (plus $TMPDIR/$TMP/$TEMP//tmp). Snap and Flatpak
+ * installs of Discord run sandboxed and expose the IPC socket under a private
+ * runtime subdir instead, which is never found there, so the connection silently
+ * never establishes and presence updates are dropped with no error. Symlink the
+ * plain path to whichever sandboxed candidate we find, so the existing probing
+ * logic picks it up unmodified.
+ */
+static void DRP_LinkSandboxedSocket(void)
+{
+	static const char *candidates[] = { "snap.discord", "app/com.discordapp.Discord" };
+	const char         *runtimeDir  = getenv("XDG_RUNTIME_DIR");
+	struct stat        st;
+	char               plainPath[PATH_MAX];
+	size_t             i;
+	int                n;
+
+	if (!runtimeDir || !runtimeDir[0])
+	{
+		return;
+	}
+
+	for (n = 0; n < 10; n++)
+	{
+		Com_sprintf(plainPath, sizeof(plainPath), "%s/discord-ipc-%d", runtimeDir, n);
+
+		if (lstat(plainPath, &st) == 0)
+		{
+			return;   /* already resolvable (real socket, or a symlink we made before) */
+		}
+	}
+
+	for (i = 0; i < ARRAY_LEN(candidates); i++)
+	{
+		for (n = 0; n < 10; n++)
+		{
+			char sandboxPath[PATH_MAX];
+
+			Com_sprintf(sandboxPath, sizeof(sandboxPath), "%s/%s/discord-ipc-%d", runtimeDir, candidates[i], n);
+
+			if (lstat(sandboxPath, &st) == 0)
+			{
+				Com_sprintf(plainPath, sizeof(plainPath), "%s/discord-ipc-%d", runtimeDir, n);
+				if (symlink(sandboxPath, plainPath) != 0)
+				{
+					Com_DPrintf("Discord: failed to link sandboxed socket %s -> %s\n", sandboxPath, plainPath);
+				}
+				return;
+			}
+		}
+	}
+}
+#endif
+
 /**
  * @brief DRP_Startup — initialize the SDK + push initial presence.
  * @return qtrue if activated; qfalse if no applicationId is set (D17).
@@ -185,6 +247,10 @@ static qboolean DRP_Startup(void)
 	{
 		return qfalse;
 	}
+
+#if defined(__linux__)
+	DRP_LinkSandboxedSocket();
+#endif
 
 	Com_Memset(&handlers, 0, sizeof(handlers));
 	handlers.ready        = DRP_OnReady;
@@ -319,4 +385,4 @@ void CL_DiscordShutdown(void)
 {
 }
 
-#endif /* defined(_WIN32) || defined(__APPLE__) */
+#endif /* defined(_WIN32) || defined(__APPLE__) || defined(__linux__) */
