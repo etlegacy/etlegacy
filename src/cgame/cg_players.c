@@ -267,13 +267,14 @@ void CG_NewClientInfo(int clientNum)
 	// grabbing some older stuff, if it's a new client, tinfo will update within one second anyway, otherwise you get the health thing flashing red
 	// NOTE: why are we bothering to do all this setting up of a new clientInfo_t anyway? it was all for deffered clients iirc, which we dont have
 	VectorCopy(ci->location, newInfo.location);
-	newInfo.health       = ci->health;
-	newInfo.fireteamData = ci->fireteamData;
-	newInfo.clientNum    = clientNum;
-	newInfo.selected     = ci->selected;
-	newInfo.ammo         = ci->ammo;
-	newInfo.ammoclip     = ci->ammoclip;
-	newInfo.powerups     = ci->powerups;
+	newInfo.health        = ci->health;
+	newInfo.fireteamData  = ci->fireteamData;
+	newInfo.clientNum     = clientNum;
+	newInfo.selected      = ci->selected;
+	newInfo.ammo          = ci->ammo;
+	newInfo.ammoclip      = ci->ammoclip;
+	newInfo.powerups      = ci->powerups;
+	newInfo.currentWeapon = ci->currentWeapon;
 
 	// isolate the player's name
 	v = Info_ValueForKey(configstring, "n");
@@ -297,9 +298,11 @@ void CG_NewClientInfo(int clientNum)
 	v                  = Info_ValueForKey(configstring, "lc");
 	newInfo.latchedcls = Q_atoi(v);
 
+	// backward compatibility
 	v               = Info_ValueForKey(configstring, "sp");
 	newInfo.spawnpt = Q_atoi(v);
 
+	// backward compatibility
 	v                = Info_ValueForKey(configstring, "msp");
 	newInfo.mspawnpt = Q_atoi(v);
 
@@ -571,6 +574,7 @@ void CG_NewClientInfo(int clientNum)
 		CG_ToggleShoutcasterMode(newInfo.shoutcaster);
 	}
 
+	// backward compatibility
 	if (newInfo.spawnpt != ci->spawnpt || newInfo.mspawnpt != ci->mspawnpt)
 	{
 		newInfo.spawnChangedTime = cg.time;

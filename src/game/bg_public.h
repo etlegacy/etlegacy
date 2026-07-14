@@ -2794,6 +2794,11 @@ typedef struct
 #ifdef CGAMEDLL
 	int membersNumber;              ///< store members number client side on parsing CS
 #endif
+#ifdef GAMEDLL
+	int playerSlots[MAX_FIRETEAM_MEMBERS];  ///< players occupy same position for delta compression
+	uint64_t playerMask;                    ///< players inside the fireteam, bitmask
+	int entNum;                             ///< gentity_t entityBitStream_t number
+#endif
 } fireteamData_t;
 
 long BG_StringHashValue(const char *fname);

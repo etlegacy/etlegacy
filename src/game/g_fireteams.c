@@ -33,6 +33,8 @@
  */
 
 #include "g_local.h"
+#include "bg_ebs.h"
+#include "bg_b64.h"
 
 #ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
@@ -334,9 +336,11 @@ int G_FindFreeFireteamIdent(team_t team)
  */
 void G_RegisterFireteam(int entityNum)
 {
-	fireteamData_t *ft;
-	gentity_t      *leader;
-	int            count, ident;
+	entityBitStream_t ebs;
+	gentity_t         *ebsEnt;
+	gentity_t         *leader;
+	fireteamData_t    *ft;
+	int               count, ident;
 
 	if (entityNum < 0 || entityNum >= MAX_CLIENTS)
 	{
@@ -385,6 +389,13 @@ void G_RegisterFireteam(int entityNum)
 	Com_Memset(ft->joinOrder, -1, sizeof(level.fireTeams[0].joinOrder));
 	ft->joinOrder[0] = leader - g_entities;
 	ft->ident        = ident;
+
+	Com_Memset(ft->playerSlots, -1, sizeof(level.fireTeams[0].playerSlots));
+	ft->playerSlots[0] = entityNum;
+	ft->playerMask     = (1ULL << entityNum);
+	ebsEnt             = &g_entities[ft->entNum];
+	ebsEnt->r.linked   = qtrue;
+	EBS_InitWrite(&ebs, &ebsEnt->s, qtrue);
 
 	switch (g_autoFireteams.integer)
 	{
@@ -450,6 +461,16 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 	{
 		G_ClientPrint(entityNum, "Too many players already on this fireteam");
 		return;
+	}
+
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
+	{
+		if (ft->playerSlots[i] == -1)
+		{
+			ft->playerSlots[i] = entityNum;
+			ft->playerMask    |= (1ULL << entityNum);
+			break;
+		}
 	}
 
 	for (i = 0; i < MAX_CLIENTS; i++)
@@ -595,6 +616,16 @@ void G_RemoveClientFromFireteams(int entityNum, qboolean update, qboolean print)
 				}
 				ft->joinOrder[g_maxclients.integer - 1] = -1;
 
+				break;
+			}
+		}
+
+		for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
+		{
+			if (ft->playerSlots[i] == entityNum)
+			{
+				ft->playerSlots[i] = -1;
+				ft->playerMask    &= ~(1ULL << entityNum);
 				break;
 			}
 		}
@@ -1401,5 +1432,147 @@ void Cmd_FireTeam_MP_f(gentity_t *ent, unsigned int dwCommand, int value)
 		}
 
 		G_GiveAdminOfFireTeam(ent - g_entities, clientnum - 1);
+	}
+}
+
+/**
+ * @brief G_EBS_FireteamEnabled
+ */
+ID_INLINE qboolean G_EBS_FireteamEnabled(void)
+{
+	return dll_trap_SnapshotCallbackExt;
+}
+
+/**
+ * @brief G_EBS_FireteamCallback
+ * @param[in] entityNum
+ * @param[in] clientNumReal
+ * @return
+ */
+qboolean G_EBS_FireteamCallback(int entityNum, int clientNumReal)
+{
+	gentity_t      *ent   = &g_entities[entityNum];
+	fireteamData_t *fteam = &level.fireTeams[ent->key];
+
+	// should never happen
+	if (!fteam->inuse)
+	{
+		return qfalse;
+	}
+
+	if (fteam->playerMask & (1ULL << clientNumReal))
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief G_EBS_FireteamWritePlayer
+ * @param[in] ent
+ * @param[in] ebs
+ */
+static void G_EBS_FireteamWritePlayer(gentity_t *ent, entityBitStream_t *ebs)
+{
+	int health;
+
+	// if in LIMBO, don't show followee's health
+	if (ent->client->ps.pm_flags & PMF_LIMBO)
+	{
+		health = -1;
+	}
+	else
+	{
+		health = MAX(0, ent->client->ps.stats[STAT_HEALTH]);
+	}
+
+	EBS_WriteBits(ebs, ent->s.number, EBS_FT_CLIENTNUM_SIZE);
+	EBS_WriteBitsWithSign(ebs, health, EBS_FT_HEALTH_SIZE);
+	EBS_WriteBits(ebs, ent->client->ps.weapon, EBS_FT_WEAPON_SIZE);
+	EBS_WriteBits(ebs, Com_Clamp(0, (level.numSpawnPoints - 1), ent->client->sess.resolvedSpawnPointIndex) + 1, EBS_FT_MAJORSPAWN_SIZE);
+	EBS_WriteBitsWithSign(ebs, ent->client->sess.resolvedMinorSpawnPointIndex, EBS_FT_MINORSPAWN_SIZE);
+}
+
+#define EBS_FT_NEXT_THINK_TIME (level.time + level.frameTime)
+
+void G_EBS_FireteamThink(gentity_t *ent)
+{
+	entityBitStream_t ebs;
+	gentity_t         *playerEnt;
+	fireteamData_t    *fteam = &level.fireTeams[ent->key];
+	int               i, slotMask = 0;
+
+	ent->nextthink = EBS_FT_NEXT_THINK_TIME;
+
+	if (!fteam->inuse)
+	{
+		// unlink to stop unnecessary engine snapshot callbacks
+		ent->r.linked = qfalse;
+		return;
+	}
+
+	ent->r.linked = qtrue;
+
+	EBS_InitWrite(&ebs, &ent->s, qfalse);
+	EBS_WriteBits(&ebs, 0, EBS_FT_VERSION_SIZE); // version
+
+	// reserved for slotMask
+	EBS_Skip(&ebs, EBS_FT_SLOTMASK_SIZE);
+
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
+	{
+		if (fteam->playerSlots[i] != -1)
+		{
+			playerEnt = &g_entities[fteam->playerSlots[i]];
+
+			G_EBS_FireteamWritePlayer(playerEnt, &ebs);
+
+			slotMask |= BIT(i);
+			continue;
+		}
+
+		EBS_Skip(&ebs, EBS_FT_PLAYER_SIZE);
+	}
+
+	// write slotMask indicating which slot is valid for read
+	EBS_InitWrite(&ebs, &ent->s, qfalse);
+	EBS_Skip(&ebs, EBS_FT_VERSION_SIZE);
+	EBS_WriteBits(&ebs, slotMask, EBS_FT_SLOTMASK_SIZE);
+}
+
+/**
+ * @brief G_EBS_InitShoutcast
+ */
+void G_EBS_InitFireteam(void)
+{
+	gentity_t         *ent;
+	entityBitStream_t s;
+	int               i;
+
+	if (!G_EBS_FireteamEnabled())
+	{
+		return;
+	}
+
+#ifdef EBS_TESTS
+	EBS_RunTests();
+#endif
+
+	for (i = 0; i < MAX_FIRETEAMS; i++)
+	{
+		ent                       = G_Spawn();
+		ent->classname            = "EBS_Fireteam";
+		ent->neverFree            = qtrue;
+		ent->s.eType              = ET_EBS_FIRETEAM;
+		ent->key                  = i;
+		ent->think                = G_EBS_FireteamThink;
+		ent->nextthink            = level.time + 1000;
+		ent->r.svFlags            = SVF_BROADCAST;
+		ent->r.linked             = qfalse;
+		ent->r.snapshotCallback   = qtrue;
+		level.fireTeams[i].entNum = ent - g_entities;
+
+		EBS_InitWrite(&s, &ent->s, qtrue);
 	}
 }

@@ -3049,7 +3049,8 @@ void CG_CheckEvents(centity_t *cent)
 {
 	int i, event;
 
-	if (cent->currentState.eType == ET_EBS_SHOUTCAST)
+	if (cent->currentState.eType == ET_EBS_SHOUTCAST ||
+	    cent->currentState.eType == ET_EBS_FIRETEAM)
 	{
 		return;
 	}
