@@ -731,15 +731,28 @@ void G_InitWorldSession(void)
 			{
 				char str[8];
 				char *l = strchr(c, ' ');
+				int  num;
 
 				if (!l)
 				{
 					break;
 				}
 				Q_strncpyz(str, c, l - c + 1);
-				str[l - c]                        = '\0';
-				level.fireTeams[i].joinOrder[j++] = Q_atoi(str);
-				c                                 = l + 1;
+				str[l - c]                      = '\0';
+				num                             = Q_atoi(str);
+				level.fireTeams[i].joinOrder[j] = num;
+				c                               = l + 1;
+
+				if (j < MAX_FIRETEAM_MEMBERS)
+				{
+					level.fireTeams[i].playerSlots[j] = num;
+					if (num != -1)
+					{
+						level.fireTeams[i].playerMask |= (1ULL << num);
+					}
+				}
+
+				j++;
 			}
 		}
 

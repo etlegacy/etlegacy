@@ -267,13 +267,16 @@ void CG_NewClientInfo(int clientNum)
 	// grabbing some older stuff, if it's a new client, tinfo will update within one second anyway, otherwise you get the health thing flashing red
 	// NOTE: why are we bothering to do all this setting up of a new clientInfo_t anyway? it was all for deffered clients iirc, which we dont have
 	VectorCopy(ci->location, newInfo.location);
-	newInfo.health       = ci->health;
-	newInfo.fireteamData = ci->fireteamData;
-	newInfo.clientNum    = clientNum;
-	newInfo.selected     = ci->selected;
-	newInfo.ammo         = ci->ammo;
-	newInfo.ammoclip     = ci->ammoclip;
-	newInfo.powerups     = ci->powerups;
+	newInfo.health        = ci->health;
+	newInfo.fireteamData  = ci->fireteamData;
+	newInfo.clientNum     = clientNum;
+	newInfo.selected      = ci->selected;
+	newInfo.ammo          = ci->ammo;
+	newInfo.ammoclip      = ci->ammoclip;
+	newInfo.powerups      = ci->powerups;
+	newInfo.currentWeapon = ci->currentWeapon;
+	newInfo.spawnpt       = ci->spawnpt;
+	newInfo.mspawnpt      = ci->mspawnpt;
 
 	// isolate the player's name
 	v = Info_ValueForKey(configstring, "n");
@@ -297,11 +300,14 @@ void CG_NewClientInfo(int clientNum)
 	v                  = Info_ValueForKey(configstring, "lc");
 	newInfo.latchedcls = Q_atoi(v);
 
-	v               = Info_ValueForKey(configstring, "sp");
-	newInfo.spawnpt = Q_atoi(v);
+	if (CG_IsDemoVersionBelow(2, 85, 0))
+	{
+		v               = Info_ValueForKey(configstring, "sp");
+		newInfo.spawnpt = Q_atoi(v);
 
-	v                = Info_ValueForKey(configstring, "msp");
-	newInfo.mspawnpt = Q_atoi(v);
+		v                = Info_ValueForKey(configstring, "msp");
+		newInfo.mspawnpt = Q_atoi(v);
+	}
 
 	// rank
 	v            = Info_ValueForKey(configstring, "r");
@@ -571,9 +577,12 @@ void CG_NewClientInfo(int clientNum)
 		CG_ToggleShoutcasterMode(newInfo.shoutcaster);
 	}
 
-	if (newInfo.spawnpt != ci->spawnpt || newInfo.mspawnpt != ci->mspawnpt)
+	if (CG_IsDemoVersionBelow(2, 85, 0))
 	{
-		newInfo.spawnChangedTime = cg.time;
+		if (newInfo.spawnpt != ci->spawnpt || newInfo.mspawnpt != ci->mspawnpt)
+		{
+			newInfo.spawnChangedTime = cg.time;
+		}
 	}
 
 	// passing the clientNum since that's all we need, and we

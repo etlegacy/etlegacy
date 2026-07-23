@@ -446,9 +446,13 @@ static ID_INLINE int CG_FireTeamClientCurrentWeapon(clientInfo_t *ci)
 	{
 		return WP_MOBILE_MG42;
 	}
-	else
+	else if (cg_entities[ci->clientNum].currentValid || !ci->currentWeapon)
 	{
 		return cg_entities[ci->clientNum].currentState.weapon;
+	}
+	else
+	{
+		return ci->currentWeapon;
 	}
 }
 
@@ -804,7 +808,7 @@ static void CG_FTOverlay_DrawWeaponIcon(fireteamOverlay_t *fto)
 		{
 			const float width = cg_weapons[fto->currentWeapon].weaponIconScale * fto->weaponIconSize;
 
-			trap_R_SetColor((cg_entities[fto->ci->clientNum].currentValid || fto->ci->clientNum == cg.clientNum)
+			trap_R_SetColor((cg_entities[fto->ci->clientNum].currentValid || fto->ci->currentWeapon || fto->ci->clientNum == cg.clientNum)
 			       ? fto->iconColor
 			       : fto->iconColorAlt);
 			CG_DrawPic(fto->x + (fto->bestWeaponIconWidthScale * fto->weaponIconSize - width) * 0.5f, fto->y + fto->weaponIconHeightOffset,

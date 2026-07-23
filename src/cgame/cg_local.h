@@ -673,6 +673,7 @@ typedef struct clientInfo_s
 	int secondaryweapon;
 	int latchedweapon;
 	int latchedsecondaryweapon;
+	int currentWeapon;
 
 	int refStatus;
 	int shoutcaster;
@@ -3170,6 +3171,7 @@ qboolean CG_AddLinkedEntity(centity_t *cent, qboolean ignoreframe, int atTime);
 void CG_PositionEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName, int startIndex, vec3_t *offset);
 void CG_PositionRotatedEntityOnTag(refEntity_t *entity, const refEntity_t *parent, const char *tagName);
 void CG_EBS_Shoutcast(centity_t *cent);
+void CG_EBS_Fireteam(centity_t *cent);
 
 // cg_weapons_io.c
 void CG_RegisterWeapon(int weaponNum, qboolean force);

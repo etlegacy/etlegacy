@@ -1470,6 +1470,11 @@ static qboolean SV_OverheadIsEBSShoutcastEntity(const entityState_t *ent)
 	return ent->eType == ET_EBS_SHOUTCAST;
 }
 
+static qboolean SV_OverheadIsEBSFireteamEntity(const entityState_t *ent)
+{
+	return ent->eType == ET_EBS_FIRETEAM;
+}
+
 static qboolean SV_OverheadIsPlayerEntity(const entityState_t *ent)
 {
 	return ent->eType == ET_PLAYER;
@@ -1486,8 +1491,11 @@ void SV_InitNetworkOverhead(void)
 	net_overhead.slices[1].name            = "ET_EBS_SHOUTCAST";
 	net_overhead.slices[1].processEntity_f = &SV_OverheadIsEBSShoutcastEntity;
 
-	net_overhead.slices[2].name            = "ET_PLAYER";
-	net_overhead.slices[2].processEntity_f = &SV_OverheadIsPlayerEntity;
+	net_overhead.slices[2].name            = "ET_EBS_FIRETEAM";
+	net_overhead.slices[2].processEntity_f = &SV_OverheadIsEBSFireteamEntity;
+
+	net_overhead.slices[3].name            = "ET_PLAYER";
+	net_overhead.slices[3].processEntity_f = &SV_OverheadIsPlayerEntity;
 	net_overhead.numSlices                 = 0;
 }
 

@@ -88,7 +88,8 @@ static void CG_ResetEntity(centity_t *cent)
  */
 static void CG_TransitionEntity(centity_t *cent)
 {
-	if (cent->nextState.eType == ET_EBS_SHOUTCAST)
+	if (cent->nextState.eType == ET_EBS_SHOUTCAST ||
+	    cent->nextState.eType == ET_EBS_FIRETEAM)
 	{
 		if (!memcmp(&cent->currentState, &cent->nextState, sizeof(entityState_t)))
 		{
@@ -97,7 +98,15 @@ static void CG_TransitionEntity(centity_t *cent)
 
 		cent->currentState = cent->nextState;
 
-		CG_EBS_Shoutcast(cent);
+		if (cent->nextState.eType == ET_EBS_SHOUTCAST)
+		{
+			CG_EBS_Shoutcast(cent);
+		}
+		else
+		{
+			CG_EBS_Fireteam(cent);
+		}
+
 		return;
 	}
 

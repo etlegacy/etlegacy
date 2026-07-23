@@ -2401,7 +2401,6 @@ void G_UpdateSpawnPointStatePlayerCounts()
 		{
 			client->sess.resolvedSpawnPointIndex      = resolvedSpawn.major;
 			client->sess.resolvedMinorSpawnPointIndex = resolvedMinorSpawnPt;
-			ClientUserinfoChanged(client - level.clients);
 		}
 	}
 	// update configstring, if necessary
@@ -2461,9 +2460,7 @@ void G_UpdateSpawnPointState(gentity_t *ent)
  */
 qboolean G_EBS_ShoutcastCallback(int clientNumReal)
 {
-	gentity_t *ent = &g_entities[clientNumReal];
-
-	if (ent->client->sess.shoutcaster && ent->client->pers.connected == CON_CONNECTED)
+	if (level.shoutcasters & (1ULL << clientNumReal))
 	{
 		return qtrue;
 	}
@@ -2490,21 +2487,21 @@ static void G_EBS_ShoutcastWritePlayer(gentity_t *ent, entityBitStream_t *ebs)
 		health = MAX(0, ent->client->ps.stats[STAT_HEALTH]);
 	}
 
-	EBS_WriteBits(ebs, ent->s.number, EBS_SHOUTCAST_CLIENTNUM_SIZE);
-	EBS_WriteBitsWithSign(ebs, health, EBS_SHOUTCAST_HEALTH_SIZE);
+	EBS_WriteBits(ebs, ent->s.number, EBS_SC_CLIENTNUM_SIZE);
+	EBS_WriteBitsWithSign(ebs, health, EBS_SC_HEALTH_SIZE);
 
 	if (!(ent->client->ps.pm_flags & PMF_FOLLOW))
 	{
-		EBS_WriteBits(ebs, ent->client->ps.ammoclip[ent->client->ps.weapon], EBS_SHOUTCAST_AMMOCLIP_SIZE);
-		EBS_WriteBits(ebs, ent->client->ps.ammo[ent->client->ps.weapon], EBS_SHOUTCAST_AMMO_SIZE);
+		EBS_WriteBits(ebs, ent->client->ps.ammoclip[ent->client->ps.weapon], EBS_SC_AMMOCLIP_SIZE);
+		EBS_WriteBits(ebs, ent->client->ps.ammo[ent->client->ps.weapon], EBS_SC_AMMO_SIZE);
 	}
 	else
 	{
-		EBS_Skip(ebs, EBS_SHOUTCAST_AMMOCLIP_SIZE + EBS_SHOUTCAST_AMMO_SIZE);
+		EBS_Skip(ebs, EBS_SC_AMMOCLIP_SIZE + EBS_SC_AMMO_SIZE);
 	}
 }
 
-#define EBS_SHOUTCAST_NEXT_THINK_TIME (level.time + level.frameTime)
+#define EBS_SC_NEXT_THINK_TIME (level.time + level.frameTime)
 
 /**
  * @brief G_EBS_ShoutcastThink write player(s) into the same entityBitStream fields
@@ -2531,18 +2528,22 @@ void G_EBS_ShoutcastThink(gentity_t *ent)
 	static uint64_t playerSlotsMask[2];
 	qboolean skipSlot;
 
-	ent->nextthink = EBS_SHOUTCAST_NEXT_THINK_TIME;
+	ent->nextthink = EBS_SC_NEXT_THINK_TIME;
 
 	if (g_gametype.integer != GT_WOLF_STOPWATCH || !level.shoutcasters)
 	{
+		// unlink to stop unnecessary engine snapshot callbacks
+		ent->r.linked = qfalse;
 		return;
 	}
 
+	ent->r.linked = qtrue;
+
 	EBS_InitWrite(&ebs, &ent->s, qfalse);
-	EBS_WriteBits(&ebs, 0, EBS_SHOUTCAST_VERSION_SIZE); // Version
+	EBS_WriteBits(&ebs, 0, EBS_SC_VERSION_SIZE); // Version
 
 	// reserved for slotMask
-	EBS_Skip(&ebs, EBS_SHOUTCAST_SLOTMASK_SIZE);
+	EBS_Skip(&ebs, EBS_SC_SLOTMASK_SIZE);
 
 	for (i = 0; i < 6; i++)
 	{
@@ -2593,20 +2594,20 @@ void G_EBS_ShoutcastThink(gentity_t *ent)
 
 		if (skipSlot)
 		{
-			EBS_Skip(&ebs, EBS_SHOUTCAST_PLAYER_SIZE);
+			EBS_Skip(&ebs, EBS_SC_PLAYER_SIZE);
 		}
 	}
 
 	// write slotMask indicating which slot is valid for read
 	EBS_InitWrite(&ebs, &ent->s, qfalse);
-	EBS_Skip(&ebs, EBS_SHOUTCAST_VERSION_SIZE);
-	EBS_WriteBits(&ebs, slotMask, EBS_SHOUTCAST_SLOTMASK_SIZE);
+	EBS_Skip(&ebs, EBS_SC_VERSION_SIZE);
+	EBS_WriteBits(&ebs, slotMask, EBS_SC_SLOTMASK_SIZE);
 }
 
 /**
  * @brief G_EBS_ShoutcastEnabled
  */
-ID_INLINE qboolean G_EBS_ShoutcastEnabled(void)
+qboolean G_EBS_ShoutcastEnabled(void)
 {
 	return dll_trap_SnapshotCallbackExt && dll_trap_SnapshotSetClientMask;
 }
@@ -2639,8 +2640,10 @@ void G_EBS_InitShoutcast(void)
 		ent->think              = G_EBS_ShoutcastThink;
 		ent->nextthink          = level.time + 1000;
 		ent->r.svFlags          = SVF_BROADCAST;
-		ent->r.linked           = qtrue;
+		ent->r.linked           = qfalse;
 		ent->r.snapshotCallback = qtrue;
+
+		level.ebs_shoutcast[i] = ent - g_entities;
 
 		EBS_InitWrite(&s, &ent->s, qtrue);
 	}

@@ -124,6 +124,11 @@ static qboolean G_SnapshotCallbackExt(int entityNum, int clientNum, int clientNu
 		return G_EBS_ShoutcastCallback(clientNumReal);
 	}
 
+	if (ent->s.eType == ET_EBS_FIRETEAM)
+	{
+		return G_EBS_FireteamCallback(entityNum, clientNumReal);
+	}
+
 	return qtrue;
 }
 
@@ -1868,6 +1873,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	G_loadMatchGame();
 
 	G_EBS_InitShoutcast();
+	G_EBS_InitFireteam();
 
 	GeoIP_open(); // GeoIP open/update
 
@@ -4315,9 +4321,10 @@ void G_RunEntity(gentity_t *ent, int msec)
 		return;
 	}
 
-	if (ent->s.eType == ET_EBS_SHOUTCAST)
+	if (ent->s.eType == ET_EBS_SHOUTCAST ||
+	    ent->s.eType == ET_EBS_FIRETEAM)
 	{
-		G_RunThink(ent);
+		ent->runthisframe = qfalse;
 		return;
 	}
 
@@ -4542,6 +4549,38 @@ void G_RunEntity(gentity_t *ent, int msec)
 }
 
 /**
+ * @brief G_EBS_RunEntities shoutcast and fireteam entities contain player information
+ *                          so they should run after anything that can modify it
+ */
+void G_EBS_RunEntities(void)
+{
+	gentity_t *ent;
+	int       i;
+
+	if (G_EBS_ShoutcastEnabled())
+	{
+		for (i = 0; i < 2; i++)
+		{
+			ent               = &g_entities[level.ebs_shoutcast[i]];
+			ent->runthisframe = qtrue;
+
+			G_RunThink(ent);
+		}
+	}
+
+	if (G_EBS_FireteamEnabled())
+	{
+		for (i = 0; i < MAX_FIRETEAMS; i++)
+		{
+			ent               = &g_entities[level.fireTeams[i].entNum];
+			ent->runthisframe = qtrue;
+
+			G_RunThink(ent);
+		}
+	}
+}
+
+/**
  * @brief Advances the non-player objects in the world
  * @param[in] levelTime
  */
@@ -4662,6 +4701,8 @@ void G_RunFrame(int levelTime)
 #ifdef FEATURE_LUA
 	G_LuaHook_RunFrame(levelTime);
 #endif
+
+	G_EBS_RunEntities();
 
 	level.frameStartTime = trap_Milliseconds();
 }

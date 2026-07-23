@@ -2626,6 +2626,49 @@ void CG_CalcEntityLerpPositions(centity_t *cent)
 }
 
 /**
+ * @brief CG_EBS_Fireteam
+ * @param[in] cent
+ */
+void CG_EBS_Fireteam(centity_t *cent)
+{
+	entityBitStream_t ebs;
+	clientInfo_t      *ci;
+	int               i, UNUSED_VAR version, slotMask, clientNum;
+	int               oldSpawnpt, oldMspawnpt;
+
+	EBS_InitRead(&ebs, &cent->currentState);
+
+	version = EBS_ReadBits(&ebs, EBS_FT_VERSION_SIZE);
+	etl_assert(version == 0);
+
+	slotMask = EBS_ReadBits(&ebs, EBS_FT_SLOTMASK_SIZE);
+
+	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
+	{
+		if (!(slotMask & (BIT(i))))
+		{
+			EBS_Skip(&ebs, EBS_FT_PLAYER_SIZE);
+			continue;
+		}
+
+		clientNum   = EBS_ReadBits(&ebs, EBS_FT_CLIENTNUM_SIZE);
+		ci          = &cgs.clientinfo[clientNum];
+		oldSpawnpt  = ci->spawnpt;
+		oldMspawnpt = ci->mspawnpt;
+
+		ci->health        = EBS_ReadBitsWithSign(&ebs, EBS_FT_HEALTH_SIZE);
+		ci->currentWeapon = EBS_ReadBits(&ebs, EBS_FT_WEAPON_SIZE);
+		ci->spawnpt       = EBS_ReadBits(&ebs, EBS_FT_MAJORSPAWN_SIZE);
+		ci->mspawnpt      = EBS_ReadBitsWithSign(&ebs, EBS_FT_MINORSPAWN_SIZE);
+
+		if (oldSpawnpt != ci->spawnpt || oldMspawnpt != ci->mspawnpt)
+		{
+			ci->spawnChangedTime = cg.time;
+		}
+	}
+}
+
+/**
  * @brief CG_EBS_Shoutcast
  * @param[in] cent
  */
@@ -2643,25 +2686,25 @@ void CG_EBS_Shoutcast(centity_t *cent)
 
 	EBS_InitRead(&ebs, &cent->currentState);
 
-	version = EBS_ReadBits(&ebs, EBS_SHOUTCAST_VERSION_SIZE);
+	version = EBS_ReadBits(&ebs, EBS_SC_VERSION_SIZE);
 	etl_assert(version == 0);
 
-	slotMask = EBS_ReadBits(&ebs, EBS_SHOUTCAST_SLOTMASK_SIZE);
+	slotMask = EBS_ReadBits(&ebs, EBS_SC_SLOTMASK_SIZE);
 
 	for (i = 0; i < 6; i++)
 	{
 		if (!(slotMask & (BIT(i))))
 		{
-			EBS_Skip(&ebs, EBS_SHOUTCAST_PLAYER_SIZE);
+			EBS_Skip(&ebs, EBS_SC_PLAYER_SIZE);
 			continue;
 		}
 
-		clientNum = EBS_ReadBits(&ebs, EBS_SHOUTCAST_CLIENTNUM_SIZE);
+		clientNum = EBS_ReadBits(&ebs, EBS_SC_CLIENTNUM_SIZE);
 		ci        = &cgs.clientinfo[clientNum];
 
-		ci->health   = EBS_ReadBitsWithSign(&ebs, EBS_SHOUTCAST_HEALTH_SIZE);
-		ci->ammoclip = EBS_ReadBits(&ebs, EBS_SHOUTCAST_AMMOCLIP_SIZE);
-		ci->ammo     = EBS_ReadBits(&ebs, EBS_SHOUTCAST_AMMO_SIZE);
+		ci->health   = EBS_ReadBitsWithSign(&ebs, EBS_SC_HEALTH_SIZE);
+		ci->ammoclip = EBS_ReadBits(&ebs, EBS_SC_AMMOCLIP_SIZE);
+		ci->ammo     = EBS_ReadBits(&ebs, EBS_SC_AMMO_SIZE);
 	}
 }
 
@@ -3108,7 +3151,8 @@ qboolean CG_AddCEntity_Filter(centity_t *cent)
 	}
 
 	// processed in CG_TransitionEntity
-	if (cent->currentState.eType == ET_EBS_SHOUTCAST)
+	if (cent->currentState.eType == ET_EBS_SHOUTCAST ||
+	    cent->currentState.eType == ET_EBS_FIRETEAM)
 	{
 		return qtrue;
 	}

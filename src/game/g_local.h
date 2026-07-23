@@ -1413,7 +1413,8 @@ typedef struct level_locals_s
 	int demoClientsNum;        ///< number of reserved slots for demo clients
 	int demoClientBotNum;      ///< clientNum of bot that collects stats during recording, optional
 
-	uint64_t shoutcasters;     ///< clients bits of shoutcasters
+	uint64_t shoutcasters;     ///< shoutcasters, bitmask
+	int ebs_shoutcast[2];      ///< ebs shoutcast entities numbers
 } level_locals_t;
 
 /**
@@ -2472,7 +2473,12 @@ void G_clientFlagIndicator(gentity_t *ent);
 qboolean G_EBS_ShoutcastCallback(int clientNumReal);
 void G_EBS_ShoutcastThink(gentity_t *ent);
 void G_EBS_InitShoutcast(void);
-ID_INLINE qboolean G_EBS_ShoutcastEnabled(void);
+qboolean G_EBS_ShoutcastEnabled(void);
+
+qboolean G_EBS_FireteamCallback(int entityNum, int clientNumReal);
+void G_EBS_FireteamThink(gentity_t *ent);
+void G_EBS_InitFireteam(void);
+qboolean G_EBS_FireteamEnabled(void);
 
 // g_vote.c
 int G_voteCmdCheck(gentity_t *ent, char *arg, char *arg2, qboolean fRefereeCmd);

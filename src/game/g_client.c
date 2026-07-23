@@ -2088,13 +2088,11 @@ void ClientUserinfoChanged(int clientNum)
 	               );
 	*/
 	infoLen = sizeof(configStr);
-	len     = snprintf(configStr, infoLen - len, "n\\%s\\t\\%i\\c\\%i\\lc\\%i\\sp\\%i\\msp\\%i\\r\\%i\\m\\%s\\s\\%s",
+	len     = snprintf(configStr, infoLen - len, "n\\%s\\t\\%i\\c\\%i\\lc\\%i\\r\\%i\\m\\%s\\s\\%s",
 	                   client->pers.netname,
 	                   client->sess.sessionTeam,
 	                   client->sess.playerType,
 	                   client->sess.latchPlayerType,
-	                   Com_Clamp(0, (level.numSpawnPoints - 1), ent->client->sess.resolvedSpawnPointIndex) + 1,
-	                   client->sess.resolvedMinorSpawnPointIndex,
 	                   client->sess.rank,
 	                   medalStr,
 	                   skillStr

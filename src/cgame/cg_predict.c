@@ -103,6 +103,7 @@ void CG_BuildSolidList(void)
 			cg_numTriggerEntities++;
 			break;
 		case ET_EBS_SHOUTCAST:
+		case ET_EBS_FIRETEAM:
 			continue;
 		default:
 			break;

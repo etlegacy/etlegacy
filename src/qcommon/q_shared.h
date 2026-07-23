@@ -1680,8 +1680,8 @@ typedef enum ETL_DEMO_EXTEND
 
 	//ET_LANDMINE_HINT,         ///< obsolete/unused (landmine hint for botsetgoalstate filter)
 	//ET_ATTRACTOR_HINT,        ///< obsolete/unused (attractor hint for botsetgoalstate filter)
-	//ET_SNIPER_HINT,           ///< obsolete/unused (sniper hint for botsetgoalstate filter)
-	ET_EBS_SHOUTCAST = 58,      ///< replaced ET_LANDMINESPOT_HINT
+	ET_EBS_FIRETEAM = 57,       ///< replaced ET_SNIPER_HINT
+	ET_EBS_SHOUTCAST,           ///< replaced ET_LANDMINESPOT_HINT
 
 	ET_COMMANDMAP_MARKER,
 
