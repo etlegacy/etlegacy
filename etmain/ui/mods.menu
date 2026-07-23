@@ -2,11 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpMods"
+#define MENU_NAME	"mods"
+#define GROUP_NAME	"grpMods"
 
 // View Mods Menu //
 menuDef {
-	name		"mods"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
@@ -17,7 +18,7 @@ menuDef {
 	}
 
 	onESC {
-		close mods ;
+		close MENU_NAME ;
 		open main
 	}
 
@@ -51,6 +52,6 @@ menuDef {
 	}
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("MSGID_MENU_BACK"), .3, 14, close mods ; open main )
+	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open main )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("MSGID_MENU_MODS_LOAD"), .3, 14, uiScript RunMod )
 }

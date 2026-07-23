@@ -2,8 +2,8 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define MENU_NAME		"hostgame_advanced_default"
-#define GROUP_NAME		"grpHostgameAdvancedDefault"
+#define MENU_NAME	"hostgame_advanced_default"
+#define GROUP_NAME	"grpHostgameAdvancedDefault"
 
 // Host Game Advanced Default Menu //
 #define DEFAULT_SETTINGS	setcvar sv_hostname "ETLHost" ;			\

@@ -2,11 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpQuit"
+#define MENU_NAME	"quit"
+#define GROUP_NAME	"grpQuit"
 
 // Quit Menu //
 menuDef {
-	name		"quit"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
@@ -22,7 +23,7 @@ menuDef {
 	}
 
 	onESC {
-		close quit ;
+		close MENU_NAME ;
 #ifdef FUI
 		open main
 #else
@@ -31,7 +32,7 @@ menuDef {
 	}
 
 	onEnter {
-		close quit ;
+		close MENU_NAME ;
 #ifdef FUI
 		close main
 #else
@@ -62,10 +63,10 @@ menuDef {
 	LABEL( SUBFULL_WINDOW_X+2, SUBFULL_WINDOW_Y+28, (SUBFULL_WINDOW_WIDTH)-4, 10, _("anything better to do!"), .2, ITEM_ALIGN_CENTER, .5*((SUBFULL_WINDOW_WIDTH)-4), 8 )
 
 #ifdef FUI
-	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, close quit ; close main ; uiScript Quit )
-	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close quit ; open main )
+	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, close MENU_NAME ; close main ; uiScript Quit )
+	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close MENU_NAME ; open main )
 #else
-	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, close quit ; close ingame_main ; uiScript Quit )
-	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close quit ; open ingame_main )
+	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, close MENU_NAME ; close ingame_main ; uiScript Quit )
+	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close MENU_NAME ; open ingame_main )
 #endif // FUI
 }

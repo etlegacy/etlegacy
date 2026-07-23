@@ -2,15 +2,16 @@
 #include "ui/menumacros.h"
 
 // Defines //
+#define MENU_NAME	"ingame_vote_map"
 #define CUSTOM_WINDOW_X		16
 #define CUSTOM_WINDOW_Y		16
 #define CUSTOM_WINDOW_WIDTH	252
 #define CUSTOM_WINDOW_HEIGHT	350
-#define GROUP_NAME		"grpIngameVoteMap"
+#define GROUP_NAME	"grpIngameVoteMap"
 
 // Map Vote Menu //
 menuDef {
-	name		"ingame_vote_map"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		CUSTOM_WINDOW_X CUSTOM_WINDOW_Y CUSTOM_WINDOW_WIDTH CUSTOM_WINDOW_HEIGHT
@@ -26,7 +27,7 @@ menuDef {
 	}
 
 	onEsc {
-		close ingame_vote_map ;
+		close MENU_NAME ;
 		open ingame_vote
 	}
 
@@ -78,7 +79,7 @@ menuDef {
 	}
 
 // Buttons //
-	BUTTON( 6, CUSTOM_WINDOW_HEIGHT-24, .5*(CUSTOM_WINDOW_WIDTH-18), 18, _("MSGID_MENU_BACK"), .3, 14, close ingame_vote_map ; open ingame_vote )
+	BUTTON( 6, CUSTOM_WINDOW_HEIGHT-24, .5*(CUSTOM_WINDOW_WIDTH-18), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open ingame_vote )
 	BUTTONEXT( 6+.5*(CUSTOM_WINDOW_WIDTH-18)+6, CUSTOM_WINDOW_HEIGHT-24, .5*(CUSTOM_WINDOW_WIDTH-18), 18, _("MSGID_MENU_OK"), .3, 14, uiScript voteMap ; uiScript closeingame, cvarTest "authLevel" showCVar { RL_NONE } )
 	BUTTONEXT( 6+.5*(CUSTOM_WINDOW_WIDTH-18)+6, CUSTOM_WINDOW_HEIGHT-24, .5*(CUSTOM_WINDOW_WIDTH-18), 18, _("MSGID_MENU_OK"), .3, 14, uiScript refMap ; uiScript closeingame, cvarTest "authLevel" showCVar { RL_REFEREE } )
 	BUTTONEXT( 6+.5*(CUSTOM_WINDOW_WIDTH-18)+6, CUSTOM_WINDOW_HEIGHT-24, .5*(CUSTOM_WINDOW_WIDTH-18), 18, _("MSGID_MENU_OK"), .3, 14, uiScript refMap ; uiScript closeingame, cvarTest "authLevel" showCVar { RL_RCON } )

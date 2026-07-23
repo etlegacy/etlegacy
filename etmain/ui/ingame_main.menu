@@ -2,6 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
+#define MENU_NAME	"ingame_main"
 #define CUSTOM_WINDOW_X		16
 #define CUSTOM_WINDOW_Y		16
 #define CUSTOM_WINDOW_WIDTH	160
@@ -10,11 +11,11 @@
 #else
 #define CUSTOM_WINDOW_HEIGHT	224
 #endif
-#define GROUP_NAME		"grpIngameMain"
+#define GROUP_NAME	"grpIngameMain"
 
 // Main Menu //
 menuDef {
-	name		"ingame_main"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		CUSTOM_WINDOW_X CUSTOM_WINDOW_Y CUSTOM_WINDOW_WIDTH CUSTOM_WINDOW_HEIGHT
@@ -27,7 +28,7 @@ menuDef {
 	}
 
 	onEsc {
-		close ingame_main ;
+		close MENU_NAME ;
 	}
 
 // Window //
@@ -38,21 +39,21 @@ menuDef {
 
 // Buttons //
 // FIXME: tooltips with BUTTONEXT don't work when conditionalScript or cvartest is used?! ...
-	BUTTONEXT( 6, 32, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_LIMBO_MENU"), .3, 14, exec "openlimbomenu" ; close ingame_main, tooltip _("Select your team, class, weapon and spawnpoint") )
+	BUTTONEXT( 6, 32, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_LIMBO_MENU"), .3, 14, exec "openlimbomenu" ; close MENU_NAME, tooltip _("Select your team, class, weapon and spawnpoint") )
 	BUTTONEXT( 6, 56, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_VOTE"), .3, 14, uiScript clientCheckVote ;
 		conditionalScript cg_ui_novote 0
 		( "clearFocus ; open ingame_votedisabled" )
-		( "close ingame_main ; open ingame_vote" ),
+		( "close MENU_NAME ; open ingame_vote" ),
 		cvarTest "authLevel" showCVar { RL_NONE } )
-	BUTTONEXT( 6, 56, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_REFEREE"), .3, 14, close ingame_main ; open ingame_vote, cvarTest "authLevel" showCVar { RL_REFEREE } )
-	BUTTONEXT( 6, 56, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_RCON"), .3, 14, close ingame_main ; open ingame_vote, cvarTest "authLevel" showCVar { RL_RCON } )
+	BUTTONEXT( 6, 56, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_REFEREE"), .3, 14, close MENU_NAME ; open ingame_vote, cvarTest "authLevel" showCVar { RL_REFEREE } )
+	BUTTONEXT( 6, 56, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_RCON"), .3, 14, close MENU_NAME ; open ingame_vote, cvarTest "authLevel" showCVar { RL_RCON } )
 	BUTTONEXT( 6, 80, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_SERVER_INFO"), .3, 14, clearFocus ; open ingame_serverinfo, tooltip _("Print all server info") )
-	BUTTONEXT( 6, 104, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_OPTIONS"), .3, 14, close ingame_main ; open options, tooltip _("Set available game options") )
+	BUTTONEXT( 6, 104, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_OPTIONS"), .3, 14, close MENU_NAME ; open options, tooltip _("Set available game options") )
 	BUTTONEXT( 6, 128, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_FAVORITE"), .3, 14, uiScript clientCheckFavorite ;
 		conditionalScript cg_ui_favorite 0
 		( "open popupRemoveFavorite" )
         ( "open popupAddFavorite" ), tooltip _("Set or unset this server as favorite") )
-	BUTTONEXT( 6, 152, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_CHANGELOG"), .3, 14, setcvar ui_changelog_ingame 1 ; close ingame_main ; open changelog_popup, tooltip _("Browse changelog files") )
+	BUTTONEXT( 6, 152, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_CHANGELOG"), .3, 14, setcvar ui_changelog_ingame 1 ; close MENU_NAME ; open changelog_popup, tooltip _("Browse changelog files") )
 	BUTTONEXT( 6, 176, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_DISCONNECT"), .3, 14, clearFocus ; open ingame_disconnect, tooltip _("Disconnect your connection from current server") )
 	BUTTONEXT( 6, 200, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_EXIT"), .3, 14, clearFocus ; open quit, tooltip _("Don't press this. Be warned!") )
 #ifdef OLD_CLIENT

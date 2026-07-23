@@ -2,11 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpViewReplayDelete"
+#define MENU_NAME	"viewreplay_delete"
+#define GROUP_NAME	"grpViewReplayDelete"
 
 // Replay Profile Menu //
 menuDef {
-	name		"viewreplay_delete"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
@@ -22,7 +23,7 @@ menuDef {
 	}
 
 	onESC {
-		close viewreplay_delete ;
+		close MENU_NAME ;
 		open viewreplay
 	}
 
@@ -46,6 +47,6 @@ menuDef {
 	SUBWINDOWBLACK( SUBFULL_WINDOW_X, SUBFULL_WINDOW_Y, SUBFULL_WINDOW_WIDTH, SUBFULL_WINDOW_HEIGHT, _("DELETE REPLAY") )
 	LABEL( SUBFULL_WINDOW_X+2, SUBFULL_WINDOW_Y+16, (SUBFULL_WINDOW_WIDTH)-4, 10, _("Are you sure?"), .2, ITEM_ALIGN_CENTER, .5*((SUBFULL_WINDOW_WIDTH)-4), 8 )
 
-	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, close viewreplay_delete ; uiScript deleteDemo ; open viewreplay )
-	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close viewreplay_delete ; open viewreplay )
+	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, close MENU_NAME ; uiScript deleteDemo ; open viewreplay )
+	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close MENU_NAME ; open viewreplay )
 }

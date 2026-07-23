@@ -2,7 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpPopupError_pbenable"
+#define GROUP_NAME	"grpPopupError_pbenable"
 
 // Error Popup //
 menuDef {

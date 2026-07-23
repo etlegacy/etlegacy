@@ -2,11 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpQuit"
+#define MENU_NAME	"playonline_deletefavs"
+#define GROUP_NAME	"grpQuit"
 
 // DELETE favourites Menu //
 menuDef {
-	name		"playonline_deletefavs"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
@@ -22,7 +23,7 @@ menuDef {
 	}
 
 	onESC {
-		close playonline_deletefavs;
+		close MENU_NAME;
 		open playonline
 	}
 
@@ -47,6 +48,6 @@ menuDef {
 	LABEL( SUBFULL_WINDOW_X+2, SUBFULL_WINDOW_Y+16, (SUBFULL_WINDOW_WIDTH)-4, 10, _("Do you really want to"), .2, ITEM_ALIGN_CENTER, .5*((SUBFULL_WINDOW_WIDTH)-4), 8 )
 	LABEL( SUBFULL_WINDOW_X+2, SUBFULL_WINDOW_Y+28, (SUBFULL_WINDOW_WIDTH)-4, 10, _("delete YOUR favourites?"), .2, ITEM_ALIGN_CENTER, .5*((SUBFULL_WINDOW_WIDTH)-4), 8 )
 
-	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, uiScript removeFavorites ; close playonline_deletefavs ; open playonline )
-	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close playonline_deletefavs ; open playonline )
+	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, uiScript removeFavorites ; close MENU_NAME ; open playonline )
+	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close MENU_NAME ; open playonline )
 }

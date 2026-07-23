@@ -2,11 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpProfileDeleteError"
+#define MENU_NAME	"profile_delete_error"
+#define GROUP_NAME	"grpProfileDeleteError"
 
 // Delete Profile Menu //
 menuDef {
-	name		"profile_delete_error"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
@@ -22,7 +23,7 @@ menuDef {
 	}
 
 	onESC {
-		close profile_delete_error ;
+		close MENU_NAME ;
 		open profile
 	}
 
@@ -47,5 +48,5 @@ menuDef {
 	LABEL( SUBFULL_WINDOW_X+2, SUBFULL_WINDOW_Y+16, (SUBFULL_WINDOW_WIDTH)-4, 10, _("Can't delete"), .2, ITEM_ALIGN_CENTER, .5*((SUBFULL_WINDOW_WIDTH)-4), 8 )
 	LABEL( SUBFULL_WINDOW_X+2, SUBFULL_WINDOW_Y+28, (SUBFULL_WINDOW_WIDTH)-4, 10, _("active profile."), .2, ITEM_ALIGN_CENTER, .5*((SUBFULL_WINDOW_WIDTH)-4), 8 )
 
-	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, SUBFULL_WINDOW_WIDTH-12, 18, _("MSGID_MENU_BACK"), .3, 14, close profile_delete_error ; open profile )
+	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, SUBFULL_WINDOW_WIDTH-12, 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open profile )
 }
