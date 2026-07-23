@@ -37,8 +37,10 @@
 #include "json.h"
 
 #define HUDS_DEFAULT_PATH "ui/huds.hud"
-#define HUDS_USER_PATH "profiles/%s/hud.dat"
-#define HUDS_USER_BACKUP_PATH "profiles/%s/hud_backup(%s).dat"
+#define HUDS_USER_LEGACY_PATH "profiles/%s/hud.dat"
+#define HUDS_USER_DIR_PATH "profiles/%s/huds"
+#define HUDS_USER_BACKUP_PATH HUDS_USER_DIR_PATH "/hud_v%i_backup(%s).dat"
+#define HUDS_FILE_LIST_BUFFER_SIZE 32768
 
 typedef struct
 {
@@ -56,6 +58,49 @@ typedef struct
 static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp);
 
 /**
+ * @brief Writes the timestamp format used by HUD backup filenames
+ * @param[out] output
+ * @param[in] len
+ */
+static void CG_HudTimestamp(char *output, int len)
+{
+	qtime_t ct;
+
+	output[0] = '\0';
+	trap_RealTime(&ct);
+	Com_sprintf(output, len, "%d-%02d-%02d-%02d%02d%02d", 1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday, ct.tm_hour, ct.tm_min, ct.tm_sec);
+}
+
+/**
+ * @brief Returns the profile-local directory for versioned HUDs
+ * @param[out] output
+ * @param[in] len
+ */
+static void CG_HudVersionedDirPath(char *output, int len)
+{
+	char profile[MAX_OSPATH];
+
+	profile[0] = '\0';
+	output[0]  = '\0';
+	trap_Cvar_VariableStringBuffer("cl_profile", profile, MAX_OSPATH);
+	Com_sprintf(output, len, HUDS_USER_DIR_PATH, profile);
+}
+
+/**
+ * @brief Returns the canonical path for one JSON HUD version
+ * @param[out] output
+ * @param[in] len
+ * @param[in] version
+ */
+static void CG_HudFilePathForVersion(char *output, int len, int version)
+{
+	char hudDir[MAX_OSPATH];
+
+	CG_HudVersionedDirPath(hudDir, sizeof(hudDir));
+	Com_sprintf(output, len, "%s/hud_v%i.dat", hudDir, version);
+}
+
+/**
  * @brief CG_HudFilePath
  * @return
  */
@@ -65,31 +110,299 @@ static const char *CG_HudFilePath()
 
 	if (!filePath[0])
 	{
-		char tmp[MAX_OSPATH];
-
-		tmp[0] = '\0';
-		trap_Cvar_VariableStringBuffer("cl_profile", tmp, MAX_OSPATH);
-		Com_sprintf(filePath, MAX_OSPATH, HUDS_USER_PATH, tmp);
+		CG_HudFilePathForVersion(filePath, MAX_OSPATH, CURRENT_HUD_JSON_VERSION);
 	}
 
 	return filePath;
 }
 
 /**
- * @brief CG_HudBackupFilePath
- * @param[in] output
+ * @brief Returns the collision-checked migration backup path
+ * @param[out] output
+ * @param[in] len
+ * @param[in] version
+ */
+static void CG_HudBackupFilePathForVersion(char *output, int len, int version)
+{
+	char profile[MAX_OSPATH];
+	char timestamp[32];
+
+	profile[0] = '\0';
+	output[0]  = '\0';
+	trap_Cvar_VariableStringBuffer("cl_profile", profile, MAX_OSPATH);
+	CG_HudTimestamp(timestamp, sizeof(timestamp));
+	Com_sprintf(output, len, HUDS_USER_BACKUP_PATH, profile, version, timestamp);
+}
+
+/**
+ * @brief Keeps invalid files next to their original name
+ * @param[in] filename
+ * @param[out] output
  * @param[in] len
  */
-static void CG_HudBackupFilePath(char *output, int len)
+static void CG_HudInvalidFilePath(const char *filename, char *output, int len)
 {
-	qtime_t ct;
-	char    tmp[MAX_OSPATH];
+	const char *scan;
+	const char *dot;
+	char       timestamp[32];
+	int        prefixLen;
 
-	tmp[0]    = '\0';
 	output[0] = '\0';
-	trap_Cvar_VariableStringBuffer("cl_profile", tmp, MAX_OSPATH);
-	trap_RealTime(&ct);
-	Com_sprintf(output, len, HUDS_USER_BACKUP_PATH, tmp, va("%d-%02d-%02d-%02d%02d%02d", 1900 + ct.tm_year, ct.tm_mon + 1, ct.tm_mday, ct.tm_hour, ct.tm_min, ct.tm_sec));
+	dot       = NULL;
+
+	// Only a dot after the last path separator is treated as an extension.
+	for (scan = filename; *scan; scan++)
+	{
+		if (*scan == '/' || *scan == '\\')
+		{
+			dot = NULL;
+		}
+		else if (*scan == '.')
+		{
+			dot = scan;
+		}
+	}
+
+	CG_HudTimestamp(timestamp, sizeof(timestamp));
+
+	if (!dot)
+	{
+		Com_sprintf(output, len, "%s_invalid(%s)", filename, timestamp);
+		return;
+	}
+
+	prefixLen = (int)(dot - filename);
+	if (prefixLen + 1 >= len)
+	{
+		return;
+	}
+
+	Q_strncpyz(output, filename, prefixLen + 1);
+	Q_strcat(output, len, va("_invalid(%s)%s", timestamp, dot));
+}
+
+/**
+ * @brief Treats zero-length files as existing migration targets
+ * @param[in] filename
+ * @return
+ */
+static qboolean CG_HudFileExists(const char *filename)
+{
+	fileHandle_t file;
+	int          len;
+
+	file = 0;
+	len  = trap_FS_FOpenFile(filename, &file, FS_READ);
+	if (file)
+	{
+		trap_FS_FCloseFile(file);
+	}
+
+	return len >= 0 ? qtrue : qfalse;
+}
+
+/**
+ * @brief Reads only enough JSON metadata to drive migration
+ * @param[in] filename
+ * @param[out] version
+ * @return
+ */
+static qboolean CG_ReadHudFileVersion(const char *filename, int *version)
+{
+	cJSON *root;
+	cJSON *versionItem;
+
+	*version = 0;
+	root     = Q_FSReadJsonFrom(filename);
+	if (!root)
+	{
+		return qfalse;
+	}
+
+	versionItem = cJSON_GetObjectItem(root, "version");
+	if (!versionItem || !cJSON_IsNumber(versionItem))
+	{
+		cJSON_Delete(root);
+		return qfalse;
+	}
+
+	*version = (int)cJSON_GetNumberValue(versionItem);
+	cJSON_Delete(root);
+
+	return *version > 0 ? qtrue : qfalse;
+}
+
+/**
+ * @brief CG_MoveHudFile
+ * @details HUD migration intentionally avoids filesystem rename semantics because the
+ * cgame VM only has portable read, write, close, list, and delete syscalls.
+ *
+ * A "move" is therefore done as a transactional copy:
+ *
+ * 1. Refuse to start when the target path already exists. This keeps from
+ *    accidentally overwriting existing HUDs, timestamped backups, and
+ *    timestamped invalid files.
+ * 2. Copy the complete source file into the target path and close both files.
+ *    Closing first makes sure a later validation read sees what was written.
+ * 3. Re-open the target and validate it. Normal HUD moves validate the JSON
+ *    version field against the expected version. Invalid HUD preservation
+ *    cannot parse JSON by definition, so it validates that the copied size
+ *    matches the original source size.
+ * 4. Delete the source only after the target has passed validation. If any
+ *    step fails, the source is left in place so migration never destroys the
+ *    user's only copy of the HUD.
+ *
+ * @param[in] source
+ * @param[in] target
+ * @param[in] expectedVersion
+ * @return
+ */
+static qboolean CG_MoveHudFile(const char *source, const char *target, int expectedVersion)
+{
+	fileHandle_t sourceFile;
+	fileHandle_t targetFile;
+	byte         buffer[16384];
+	int          sourceLen;
+	int          targetLen;
+	int          remaining;
+	int          chunk;
+	int          written;
+	int          targetVersion;
+
+	// Do the collision check before opening the source. A pre-existing target
+	// means the migration would overwrite user data, so the move must abort.
+	if (CG_HudFileExists(target))
+	{
+		CG_Printf(S_COLOR_RED "ERROR CG_MoveHudFile: target already exists '%s'\n", target);
+		return qfalse;
+	}
+
+	// Open the source first so failures never create an empty target file.
+	{
+		sourceFile = 0;
+		sourceLen  = trap_FS_FOpenFile(source, &sourceFile, FS_READ);
+		if (sourceLen < 0 || !sourceFile)
+		{
+			if (sourceFile)
+			{
+				trap_FS_FCloseFile(sourceFile);
+			}
+			CG_Printf(S_COLOR_RED "ERROR CG_MoveHudFile: failed to read source '%s'\n", source);
+			return qfalse;
+		}
+	}
+
+	// Only open the target after the source is known to be readable.
+	targetFile = 0;
+	if (trap_FS_FOpenFile(target, &targetFile, FS_WRITE) < 0 || !targetFile)
+	{
+		trap_FS_FCloseFile(sourceFile);
+		CG_Printf(S_COLOR_RED "ERROR CG_MoveHudFile: failed to write target '%s'\n", target);
+		return qfalse;
+	}
+
+	// Copy in fixed-size chunks to avoid allocating a buffer sized to the HUD.
+	remaining = sourceLen;
+	while (remaining > 0)
+	{
+		chunk = remaining > (int)sizeof(buffer) ? (int)sizeof(buffer) : remaining;
+		trap_FS_Read(buffer, chunk, sourceFile);
+		written = trap_FS_Write(buffer, chunk, targetFile);
+		if (written != chunk)
+		{
+			trap_FS_FCloseFile(sourceFile);
+			trap_FS_FCloseFile(targetFile);
+			trap_FS_Delete(target);
+			CG_Printf(S_COLOR_RED "ERROR CG_MoveHudFile: short write while moving '%s' to '%s'\n", source, target);
+			return qfalse;
+		}
+		remaining -= chunk;
+	}
+
+	// Validation is done through a new read handle, so close the write handle
+	// first and make the just-written target visible to the filesystem layer.
+	trap_FS_FCloseFile(sourceFile);
+	trap_FS_FCloseFile(targetFile);
+
+	// Valid HUD migrations re-read the copied JSON. Invalid HUD preservation
+	// can only validate that the copied file exists with the expected size.
+	if (expectedVersion > 0)
+	{
+		if (!CG_ReadHudFileVersion(target, &targetVersion) || targetVersion != expectedVersion)
+		{
+			trap_FS_Delete(target);
+			CG_Printf(S_COLOR_RED "ERROR CG_MoveHudFile: target validation failed '%s'\n", target);
+			return qfalse;
+		}
+	}
+	else
+	{
+		// Invalid HUD files cannot be parsed, so the only meaningful
+		// post-copy validation is that the target has the same byte length.
+		targetFile = 0;
+		targetLen  = trap_FS_FOpenFile(target, &targetFile, FS_READ);
+		if (targetFile)
+		{
+			trap_FS_FCloseFile(targetFile);
+		}
+
+		if (targetLen != sourceLen)
+		{
+			trap_FS_Delete(target);
+			CG_Printf(S_COLOR_RED "ERROR CG_MoveHudFile: target size validation failed '%s'\n", target);
+			return qfalse;
+		}
+	}
+
+	// Source deletion is the final step. Every earlier failure path returns
+	// before this point, leaving the original HUD file untouched.
+	if (!trap_FS_Delete(source))
+	{
+		CG_Printf(S_COLOR_RED "ERROR CG_MoveHudFile: failed to delete source '%s'\n", source);
+		return qfalse;
+	}
+
+	CG_Printf(S_COLOR_CYAN "Moved HUD file '%s' to '%s'\n", source, target);
+	return qtrue;
+}
+
+/**
+ * @brief Accepts only canonical hud_v<version>.dat files
+ * @param[in] filename
+ * @param[out] version
+ * @return
+ */
+static qboolean CG_ParseHudVersionFilename(const char *filename, int *version)
+{
+	const char *scan;
+	int        parsedVersion;
+
+	*version = 0;
+	if (Q_strncmp(filename, "hud_v", 5))
+	{
+		return qfalse;
+	}
+
+	scan = filename + 5;
+	if (!Q_isnumeric(*scan))
+	{
+		return qfalse;
+	}
+
+	parsedVersion = 0;
+	while (Q_isnumeric(*scan))
+	{
+		parsedVersion = parsedVersion * 10 + (*scan - '0');
+		scan++;
+	}
+
+	if (Q_stricmp(scan, ".dat"))
+	{
+		return qfalse;
+	}
+
+	*version = parsedVersion;
+	return qtrue;
 }
 
 /**
@@ -725,72 +1038,6 @@ static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp
 }
 
 /**
- * @brief CG_BackupHudFile
- * @param[in] filename
- * @param[in] upgrade - if true, the old file will be kept
- * @return
- */
-void CG_BackupHudFile(const char *filename, const qboolean upgrade)
-{
-	fileHandle_t tmp, backup;
-	byte         *buffer;
-	int          len;
-	qboolean     backupOk = qfalse;
-
-	len = trap_FS_FOpenFile(filename, &tmp, FS_READ);
-	if (len > 0)
-	{
-		char path[MAX_OSPATH];
-
-		CG_HudBackupFilePath(path, MAX_OSPATH);
-
-		buffer = Com_Allocate(len + 1);
-		if (!buffer)
-		{
-			trap_FS_FCloseFile(tmp);
-			CG_Error("CG_ReadHudsFromFile: Failed to allocate buffer\n");
-			return;
-		}
-
-		trap_FS_Read(buffer, len, tmp);
-		buffer[len] = 0;
-
-		if (trap_FS_FOpenFile(path, &backup, FS_WRITE) < 0)
-		{
-			CG_Printf(S_COLOR_RED "ERROR CG_ReadHudsFromFile: failed to save huds backup to '%s'\n", path);
-		}
-		else
-		{
-			trap_FS_Write(buffer, len, backup);
-			trap_FS_FCloseFile(backup);
-			backupOk = qtrue;
-
-			if (upgrade)
-			{
-				CG_Printf(S_COLOR_CYAN "Upgrading HUD version, backed up old custom hud data to '%s'\n", path);
-			}
-			else
-			{
-				CG_Printf(S_COLOR_CYAN "Backed up users custom hud data to '%s'\n", path);
-			}
-		}
-
-		Com_Dealloc(buffer);
-	}
-
-	if (len >= 0)
-	{
-		trap_FS_FCloseFile(tmp);
-	}
-
-	if (!upgrade && backupOk)
-	{
-		trap_FS_Delete(filename);
-		CG_Printf(S_COLOR_RED "Removed users custom hud file due to invalid format '%s'\n", filename);
-	}
-}
-
-/**
  * @brief CG_WriteHudsToFile
  * @return
  */
@@ -800,20 +1047,41 @@ qboolean CG_WriteHudsToFile()
 	hudStucture_t *hud;
 	cJSON         *root, *huds, *hudObj;
 	const char    *hudFilePath;
+	char          backupPath[MAX_OSPATH];
+	char          invalidPath[MAX_OSPATH];
+	int           oldVersion;
 
 	hudFilePath = CG_HudFilePath();
 
-	// read the old HUD file first, so we can check if we're upgrading the HUD version
-	root = Q_FSReadJsonFrom(hudFilePath);
-
-	if (root)
+	// Existing lower-version data is moved aside before the current file is
+	// written, so a failed save does not destroy the downgrade copy.
+	if (CG_HudFileExists(hudFilePath))
 	{
-		const int oldVersion = Q_ReadIntValueJson(root, "version");
-
-		// backup old file in case we're upgrading to new version, so downgrading is easy for the user
-		if (oldVersion < CURRENT_HUD_JSON_VERSION)
+		if (CG_ReadHudFileVersion(hudFilePath, &oldVersion))
 		{
-			CG_BackupHudFile(hudFilePath, qtrue);
+			if (oldVersion < CURRENT_HUD_JSON_VERSION)
+			{
+				CG_HudBackupFilePathForVersion(backupPath, sizeof(backupPath), oldVersion);
+				if (!CG_MoveHudFile(hudFilePath, backupPath, oldVersion))
+				{
+					CG_Printf(S_COLOR_RED "ERROR CG_HudSave: failed to move old HUD to '%s'\n", backupPath);
+					return qfalse;
+				}
+			}
+			else if (oldVersion > CURRENT_HUD_JSON_VERSION)
+			{
+				CG_Printf(S_COLOR_RED "ERROR CG_HudSave: refusing to overwrite future HUD '%s'\n", hudFilePath);
+				return qfalse;
+			}
+		}
+		else
+		{
+			CG_HudInvalidFilePath(hudFilePath, invalidPath, sizeof(invalidPath));
+			if (!CG_MoveHudFile(hudFilePath, invalidPath, 0))
+			{
+				CG_Printf(S_COLOR_RED "ERROR CG_HudSave: failed to preserve invalid HUD '%s'\n", hudFilePath);
+				return qfalse;
+			}
 		}
 	}
 
@@ -1985,20 +2253,227 @@ qboolean CG_TryReadHudFromFile(const char *filename, qboolean isEditable)
 void CG_ReadHudsFromFile(void)
 {
 	const char *hudFilePath;
+	char       profileName[MAX_OSPATH];
+	char       legacyPath[MAX_OSPATH];
+	char       hudDir[MAX_OSPATH];
+	char       fileList[HUDS_FILE_LIST_BUFFER_SIZE];
+	char       sourcePath[MAX_OSPATH];
+	char       targetPath[MAX_OSPATH];
+	char       backupPath[MAX_OSPATH];
+	char       invalidPath[MAX_OSPATH];
+	char       latestCompatibleHudPath[MAX_OSPATH];
+	char       *fileName;
+	int        fileCount;
+	int        fileIndex;
+	int        filenameVersion;
+	int        parsedVersion;
+	int        currentVersion;
+	int        latestCompatibleHudVersion;
+	qboolean   userHudsLoaded;
+	qboolean   currentHudUsable;
 
-	hudFilePath = CG_HudFilePath();
+	hudFilePath                = CG_HudFilePath();
+	userHudsLoaded             = qfalse;
+	currentHudUsable           = qfalse;
+	latestCompatibleHudPath[0] = '\0';
 
+	// Always load packaged HUD definitions first. User HUDs are editable
+	// overlays and may replace or extend these definitions later.
 	if (!CG_TryReadHudFromFile(HUDS_DEFAULT_PATH, qfalse))
 	{
 		Com_Printf("^1ERROR while reading hud file\n");
 	}
 
-	// This needs to be a .dat file to go around the file extension restrictions of the engine.
-	if (!CG_TryReadHudFromFile(hudFilePath, qtrue))
+	// Migrate the unversioned legacy path into the versioned HUD directory,
+	// preserving the JSON version from the file itself.
 	{
-		// If the reading of the custom user hud file fails, then it's possible that the hud file is of "old" format
-		// back it up and then remove the file
-		CG_BackupHudFile(hudFilePath, qfalse);
+		profileName[0] = '\0';
+		trap_Cvar_VariableStringBuffer("cl_profile", profileName, sizeof(profileName));
+		Com_sprintf(legacyPath, sizeof(legacyPath), HUDS_USER_LEGACY_PATH, profileName);
+
+		if (CG_HudFileExists(legacyPath))
+		{
+			if (CG_ReadHudFileVersion(legacyPath, &parsedVersion))
+			{
+				CG_HudFilePathForVersion(targetPath, sizeof(targetPath), parsedVersion);
+				if (CG_HudFileExists(targetPath))
+				{
+					// A versioned HUD already exists, so keep both files by moving
+					// the legacy file to a timestamped backup for its JSON version.
+					CG_HudBackupFilePathForVersion(backupPath, sizeof(backupPath), parsedVersion);
+					if (!CG_MoveHudFile(legacyPath, backupPath, parsedVersion))
+					{
+						CG_Printf(S_COLOR_RED "ERROR CG_ReadHudsFromFile: failed to preserve legacy HUD '%s'\n", legacyPath);
+					}
+				}
+				else
+				{
+					if (!CG_MoveHudFile(legacyPath, targetPath, parsedVersion))
+					{
+						// Keep the user's HUD active for this session even if
+						// the filesystem refused the canonical migration.
+						userHudsLoaded = CG_ReadHudJsonFile(legacyPath, qtrue);
+					}
+				}
+			}
+			else
+			{
+				// Invalid legacy data is not usable for migration, but it may
+				// still be user-authored data, so preserve it instead of
+				// deleting it.
+				CG_HudInvalidFilePath(legacyPath, invalidPath, sizeof(invalidPath));
+				if (!CG_MoveHudFile(legacyPath, invalidPath, 0))
+				{
+					CG_Printf(S_COLOR_RED "ERROR CG_ReadHudsFromFile: failed to preserve invalid legacy HUD '%s'\n", legacyPath);
+				}
+			}
+		}
+	}
+
+	// Normalize existing versioned filenames before choosing a HUD to load.
+	// e.g. if `hud_v9.dat` contains JSON version 7, try to move it to
+	// `hud_v7.dat`
+	{
+		CG_HudVersionedDirPath(hudDir, sizeof(hudDir));
+		fileCount = trap_FS_GetFileList(hudDir, ".dat", fileList, sizeof(fileList));
+		fileName  = fileList;
+		for (fileIndex = 0; fileIndex < fileCount; fileIndex++)
+		{
+			if (CG_ParseHudVersionFilename(fileName, &filenameVersion) && filenameVersion <= CURRENT_HUD_JSON_VERSION)
+			{
+				Com_sprintf(sourcePath, sizeof(sourcePath), "%s/%s", hudDir, fileName);
+				if (CG_ReadHudFileVersion(sourcePath, &parsedVersion))
+				{
+					// Once the JSON version is known, future-version HUDs are left
+					// untouched so another ET:L version can keep using them.
+					if (parsedVersion <= CURRENT_HUD_JSON_VERSION && parsedVersion != filenameVersion)
+					{
+						CG_HudFilePathForVersion(targetPath, sizeof(targetPath), parsedVersion);
+						if (CG_HudFileExists(targetPath))
+						{
+							// The corrected path is already occupied, so preserve
+							// the mismatched file as a backup of its JSON version.
+							CG_HudBackupFilePathForVersion(backupPath, sizeof(backupPath), parsedVersion);
+							if (!CG_MoveHudFile(sourcePath, backupPath, parsedVersion))
+							{
+								continue;
+							}
+						}
+						else
+						{
+							if (!CG_MoveHudFile(sourcePath, targetPath, parsedVersion))
+							{
+								continue;
+							}
+						}
+					}
+				}
+				else
+				{
+					// Files matching hud_v*.dat are part of the migration set. If
+					// they cannot expose a valid version field, move them aside.
+					CG_HudInvalidFilePath(sourcePath, invalidPath, sizeof(invalidPath));
+					if (!CG_MoveHudFile(sourcePath, invalidPath, 0))
+					{
+						continue;
+					}
+				}
+			}
+			fileName += strlen(fileName) + 1;
+		}
+	}
+
+	// Check if current hud is usable (i.e. if the parsed version field matches
+	// the current version).
+	//
+	// Older JSON in this filename must be upgraded/moved from a compatible
+	// source path instead of being loaded directly.
+	if (CG_HudFileExists(hudFilePath))
+	{
+		if (CG_ReadHudFileVersion(hudFilePath, &currentVersion))
+		{
+			currentHudUsable = currentVersion == CURRENT_HUD_JSON_VERSION ? qtrue : qfalse;
+		}
+		else
+		{
+			// The current path exists but cannot be parsed. Preserve it before
+			// looking for another HUD that can regenerate the current file.
+			CG_HudInvalidFilePath(hudFilePath, invalidPath, sizeof(invalidPath));
+			if (!CG_MoveHudFile(hudFilePath, invalidPath, 0))
+			{
+				CG_Printf(S_COLOR_RED "ERROR CG_ReadHudsFromFile: failed to preserve invalid HUD '%s'\n", hudFilePath);
+			}
+		}
+	}
+
+	// Otherwise, scan all compatible versioned HUDs and pick the highest JSON
+	// version that this build can upgrade.
+	if (!currentHudUsable)
+	{
+		latestCompatibleHudVersion = 0;
+		fileCount                  = trap_FS_GetFileList(hudDir, ".dat", fileList, sizeof(fileList));
+		fileName                   = fileList;
+		for (fileIndex = 0; fileIndex < fileCount; fileIndex++)
+		{
+			if (CG_ParseHudVersionFilename(fileName, &filenameVersion) && filenameVersion <= CURRENT_HUD_JSON_VERSION)
+			{
+				Com_sprintf(sourcePath, sizeof(sourcePath), "%s/%s", hudDir, fileName);
+				if (CG_ReadHudFileVersion(sourcePath, &parsedVersion))
+				{
+					// The JSON version is authoritative because filenames can
+					// be stale or mismatched after manual user edits.
+					if (filenameVersion == parsedVersion && parsedVersion <= CURRENT_HUD_JSON_VERSION && parsedVersion > latestCompatibleHudVersion)
+					{
+						latestCompatibleHudVersion = parsedVersion;
+						Q_strncpyz(latestCompatibleHudPath, sourcePath, sizeof(latestCompatibleHudPath));
+					}
+				}
+				else
+				{
+					// Invalid candidates cannot participate in upgrade
+					// selection. Move them out of the way.
+					CG_HudInvalidFilePath(sourcePath, invalidPath, sizeof(invalidPath));
+					if (!CG_MoveHudFile(sourcePath, invalidPath, 0))
+					{
+						continue;
+					}
+				}
+			}
+			fileName += strlen(fileName) + 1;
+		}
+
+		if (latestCompatibleHudPath[0] && CG_ReadHudJsonFile(latestCompatibleHudPath, qtrue))
+		{
+			userHudsLoaded = qtrue;
+			// Reading an older HUD applies the normal in-memory upgrade path;
+			// immediately write that upgraded data to the current path.
+			if (!CG_HudFileExists(hudFilePath))
+			{
+				CG_WriteHudsToFile();
+			}
+		}
+		else if (latestCompatibleHudPath[0])
+		{
+			// A file with a version field can still fail full HUD parsing.
+			// Preserve it so a bad candidate does not get retried forever.
+			CG_HudInvalidFilePath(latestCompatibleHudPath, invalidPath, sizeof(invalidPath));
+			if (!CG_MoveHudFile(latestCompatibleHudPath, invalidPath, 0))
+			{
+				CG_Printf(S_COLOR_RED "ERROR CG_ReadHudsFromFile: failed to preserve invalid HUD '%s'\n", latestCompatibleHudPath);
+			}
+		}
+	}
+
+	// This needs to be a .dat file to go around the file extension restrictions of the engine.
+	if (!userHudsLoaded && currentHudUsable && !CG_ReadHudJsonFile(hudFilePath, qtrue))
+	{
+		// If the canonical file passed version probing but failed a full read,
+		// preserve it as invalid and continue with the packaged HUDs.
+		CG_HudInvalidFilePath(hudFilePath, invalidPath, sizeof(invalidPath));
+		if (!CG_MoveHudFile(hudFilePath, invalidPath, 0))
+		{
+			CG_Printf(S_COLOR_RED "ERROR CG_ReadHudsFromFile: failed to preserve invalid HUD '%s'\n", hudFilePath);
+		}
 	}
 
 	Com_Printf("...hud count: %i\n", hudData.count);
