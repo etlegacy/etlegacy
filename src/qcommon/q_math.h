@@ -671,4 +671,6 @@ float Q_ClosestMultipleFloat(float n, float x, int decimal);
 
 void Rotate2DPointAroundPoint(vec2_t *point, const vec2_t *origin, float theta);
 
+int Q_GetDigitNumbersBeforeDecimal(float x);
+
 #endif

@@ -2881,9 +2881,22 @@ void Item_Text_Paint(itemDef_t *item)
 				item->textRect.w = 0;   // force recalculation
 			}
 			else if (item->window.flags & WINDOW_TEXTASFLOAT)
-			{
-				char *s = va("%.2f", atof(text));
-				Q_strncpyz(text, s, sizeof(text));
+			{				
+				float value;
+				int digitNumber;
+				int precision = 0;
+				
+				value = atof(text);
+				
+				// retrieved the number of digit before decimal 
+				// to cap the number of digit after decimal
+				digitNumber = Q_GetDigitNumbersBeforeDecimal(value);
+				if (digitNumber < 5) 
+				{
+					precision = 5 - digitNumber;
+				}
+				
+				Q_strncpyz(text, va("%.*f", precision, value), sizeof(text));
 				item->textRect.w = 0;   // force recalculation
 			}
 
