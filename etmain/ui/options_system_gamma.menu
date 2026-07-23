@@ -1,7 +1,7 @@
 #include "ui/menudef.h"
 
 // Defines //
-#define GROUP_NAME		"grpOptionsSystemGamma"
+#define GROUP_NAME	"grpOptionsSystemGamma"
 
 // Macros //
 #include "ui/menumacros.h"

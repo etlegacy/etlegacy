@@ -65,10 +65,10 @@ menuDef {
 	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "IRC CLIENT")
 	
 	MULTI(OPTION_ITEM_POS(1), _("Mode:"), .2, 8, "irc_mode", cvarFloatList { "Disabled" 0 "Direct connect" 1 "Override nickname" 2 "Mute channel" 4 "Direct + Override" 3 "Direct + Mute" 5 "Override + Mute" 6 "Direct + Over. + Mute" 7 }, _("Specify IRC client behavior"))
-	EDITFIELD(OPTION_EF_POS(2), _("Server:"), .2, 8, "irc_server", 25, 18, _("Set IRC server name"))
-	EDITFIELD(OPTION_EF_POS(3), _("Channel #:"), .2, 8, "irc_channel", 25, 18, _("Set IRC channel name (no '#' required)"))
+	EDITFIELD(OPTION_EF_POS(2), _("Server:"), .2, 8, "irc_server", 64, 32, _("Set IRC server name"))
+	EDITFIELD(OPTION_EF_POS(3), _("Channel #:"), .2, 8, "irc_channel", 64, 32, _("Set IRC channel name (no '#' required)"))
 	NUMERICFIELD(OPTION_EF_POS(4), _("Port:"), .2, 8, "irc_port", 5, _("Set IRC server port"))
-	EDITFIELD(OPTION_EF_POS(5), _("Nickname:"), .2, 8, "irc_nickname", 25, 18, _("Set IRC nickame"))
+	EDITFIELD(OPTION_EF_POS(5), _("Nickname:"), .2, 8, "irc_nickname", 64, 32, _("Set IRC nickame"))
 	NUMERICFIELD(OPTION_EF_POS(6), _("Kick rejoin time ms:"), .2, 8, "irc_kick_rejoin", 5, _("Set auto rejoin time after kick in ms"))
 	NUMERICFIELD(OPTION_EF_POS(7), _("Reconnect time ms:"), .2, 8, "irc_reconnect_delay", 5, _("Set auto reconnect time in ms"))
 	

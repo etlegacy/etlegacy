@@ -65,12 +65,15 @@ menuDef {
 	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "CONSOLE")
 	
 	YESNO(OPTION_ITEM_POS(1), _("Auto Clear:"), .2, 8, "con_autoclear", _("Toggle persistent console input."))
-	MULTI(OPTION_ITEM_POS(2), _("Open Speed:"), .2, 8, "scr_conspeed", cvarFloatList { "Slow" 1 "Default" 3 "Fast" 6 "Instant" 200 }, _("Specify the console open speed."))
+	
 #ifdef ETLEGACY	
+	MULTI(OPTION_ITEM_POS(2), _("Open Speed:"), .2, 8, "con_openspeed", cvarFloatList { "Slow" 1 "Default" 3 "Fast" 6 "Instant" 200 }, _("Specify the console open speed."))
 	CVARFLOATLABEL(OPTION_ITEM_POS(3), "con_defaultHeight", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
 	SLIDER(OPTION_ITEM_POS(3), _("Default Height:"), .2, 8, "con_defaultHeight" 0.5 0 1, _("Specify custom console height ratio (0.0 to 1.0)."))
-	EDITFIELD(OPTION_EF_POS(4), _("Font Name:"), .2, 8, "con_fontName", 25, 18, _("Set the font console. Use listfonts commands in console to check available fonts."))
-	EDITFIELD(OPTION_EF_POS(5), _("Background Color:"), .2, 8, "con_background", 25, 18, _("Specify the console background color. Accepted Format RRGGBB[AA] as hex value (00 to FF)\nor R G B [A] as float value (0.0 to 1.0) or colorName as string."))
+	EDITFIELD(OPTION_EF_POS(4), _("Font Name:"), .2, 8, "con_fontName", 64, 32, _("Set the font console. Use listfonts commands in console to check available fonts."))
+	EDITFIELD(OPTION_EF_POS(5), _("Background Color:"), .2, 8, "con_background", 64, 32, _("Specify the console background color. Accepted Format RRGGBB[AA] as hex value (00 to FF)\nor R G B [A] as float value (0.0 to 1.0) or colorName as string."))
+#else
+	MULTI(OPTION_ITEM_POS(2), _("Open Speed:"), .2, 8, "scr_conspeed", cvarFloatList { "Slow" 1 "Default" 3 "Fast" 6 "Instant" 200 }, _("Specify the console open speed."))
 #endif
 	
 #ifdef FUI

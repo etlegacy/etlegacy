@@ -66,8 +66,8 @@ menuDef {
 
 #ifdef FEATURE_EDV
     YESNO(OPTION_ITEM_POS(1), _("Weapon Camera:"), .2, 8, "demo_weaponcam", _("Toggle weapon camera window draw"))
-	EDITFIELD(OPTION_EF_POS(2), _("Follow Distance:"), .2, 8, "demo_followDistance", 25, 18, _("Set follow distance by X Y Z corrdinate. Format: X Y Z"))
-	EDITFIELD(OPTION_EF_POS(3), _("Axis Speed:"), .2, 8, "demo_yawPitchRollSpeed", 25, 18, _("Set yaw Pitch Roll Speed. Format: X Y Z"))
+	EDITFIELD(OPTION_EF_POS(2), _("Follow Distance:"), .2, 8, "demo_followDistance", 64, 32, _("Set follow distance by X Y Z corrdinate. Format: X Y Z"))
+	EDITFIELD(OPTION_EF_POS(3), _("Axis Speed:"), .2, 8, "demo_yawPitchRollSpeed", 64, 32, _("Set yaw Pitch Roll Speed. Format: X Y Z"))
 	CVARFLOATLABEL(OPTION_ITEM_POS(4), "demo_freecamspeed", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
 	SLIDER(OPTION_ITEM_POS(4), _("Free Cam Speed:"), .2, 8, "demo_freecamspeed" 800 0 5000, _("Set the free camaera speed movement"))
 	YESNO(OPTION_ITEM_POS(5), _("No Pitch:"), .2, 8, "demo_nopitch", _("Toggle no pitch for missile"))
