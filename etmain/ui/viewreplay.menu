@@ -2,11 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpViewReplay"
+#define MENU_NAME	"viewreplay"
+#define GROUP_NAME	"grpViewReplay"
 
 // View Replay Menu //
 menuDef {
-	name		"viewreplay"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
@@ -18,7 +19,7 @@ menuDef {
 	}
 
 	onESC {
-		close viewreplay ;
+		close MENU_NAME ;
 		open main
 	}
 
@@ -65,7 +66,7 @@ menuDef {
 	}
 
 	// Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_BACK"), .3, 14, close viewreplay ; open main )
+	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open main )
 	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_REPLAYS_DELETE"), .3, 14, conditionalScript ValidReplaySelected 2
 		( "clearFocus ; open viewreplay_delete" )
 		( "clearFocus" ) )

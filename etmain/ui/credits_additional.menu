@@ -2,7 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpCreditsAdditional"
+#define GROUP_NAME	"grpCreditsAdditional"
 
 // Additional Menu //
 menuDef {

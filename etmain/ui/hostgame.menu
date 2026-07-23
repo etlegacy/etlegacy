@@ -38,7 +38,7 @@ menuDef {
 	// TODO: use FEEDER to automatically show available configs
 	MULTI( 8, 84, (SUBWINDOW_WIDTH)-4, 10, _("Auto-Configure Server:"), .2, 8, "g_customConfig", cvarStrList { "No" 0 "Public Settings" defaultpublic "Competition 1on1" legacy1 "Competition 3on3" legacy3 "Competition 5on5" legacy5 "Competition 6on6" legacy6 }, _("Automatically configure server to specified default settings") )
 	MULTI( 8, 96, (SUBWINDOW_WIDTH)-4, 10, _("Dedicated Server:"), .2, 8, "ui_dedicated", cvarFloatList { "No" 0 "Yes - LAN" 1 "Yes - Internet" 2 }, _("Specify if the server should be \"dedicated\" for LAN or Internet play (no client)") )
-	EDITFIELD( 8, 108, (SUBWINDOW_WIDTH)-4, 10, _("Password:"), .2, 8, "g_password", 25, 18, _("Password clients must set to join the server") )
+	EDITFIELD( 8, 108, (SUBWINDOW_WIDTH)-4, 10, _("Password:"), .2, 8, "g_password", 64, 18, _("Password clients must set to join the server") )
 
 // Settings //
 	SUBWINDOW( 6, 126, (SUBWINDOW_WIDTH), 52, _("FEATURES") )

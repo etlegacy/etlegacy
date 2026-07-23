@@ -2,18 +2,19 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpCreditsAttributions"
+#define MENU_NAME	"credits_attributions"
+#define GROUP_NAME	"grpCreditsAttributions"
 
 // Attributions Menu //
 menuDef {
-	name		"credits_attributions"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
 
 	onESC {
-		close credits_attributions ;
+		close MENU_NAME ;
 #ifdef FUI
 		open main
 #else
@@ -75,10 +76,10 @@ menuDef {
 
 // Buttons //
 #ifdef FUI
-	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, close credits_attributions ; open main )
+	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open main )
 #else
-	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, close credits_attributions ; open ingame_main )
+	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open ingame_main )
 #endif
-	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "ET LEGACY", .3, 14, close credits_attributions ; open credits_etlegacy )
-	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("SPLASH DAMAGE"), .3, 14, close credits_attributions ; open credits_splashdamage )
+	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "ET LEGACY", .3, 14, close MENU_NAME ; open credits_etlegacy )
+	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("SPLASH DAMAGE"), .3, 14, close MENU_NAME ; open credits_splashdamage )
 }

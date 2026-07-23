@@ -3,7 +3,7 @@
 
 // Defines //
 #define MENU_NAME     "hostgame_advanced_general"
-#define GROUP_NAME		"grpHostGameAdvanced"
+#define GROUP_NAME	"grpHostGameAdvanced"
 
 // Host Game Advanced Menu //
 menuDef {

@@ -2,22 +2,23 @@
 #include "ui/menumacros.h"
 
 // Defines //
+#define MENU_NAME	"ingame_vote_players"
 #define CUSTOM_WINDOW_X		16
 #define CUSTOM_WINDOW_Y		16
 #define CUSTOM_WINDOW_WIDTH	348
 #define CUSTOM_WINDOW_HEIGHT	350
-#define GROUP_NAME		"grpIngameVotePlayers"
+#define GROUP_NAME	"grpIngameVotePlayers"
 
 // Players Vote Menu //
 menuDef {
-	name		"ingame_vote_players"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		CUSTOM_WINDOW_X CUSTOM_WINDOW_Y CUSTOM_WINDOW_WIDTH CUSTOM_WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
 
 	onEsc {
-		close ingame_vote_players ;
+		close MENU_NAME ;
 		open ingame_vote
 	}
 
@@ -71,8 +72,8 @@ menuDef {
 	BUTTONEXT( 208, 140, CUSTOM_WINDOW_WIDTH-208-6, 14, _("UN-SHOUTCAST"), .24, 11, uiScript refRemoveShoutcaster ; uiScript closeingame, ownerdrawFlag UI_SHOW_PLAYERSHOUTCASTER cvarTest "authLevel" showCVar { RL_REFEREE } )
 	BUTTONEXT( 208, 140, CUSTOM_WINDOW_WIDTH-208-6, 14, _("UN-SHOUTCAST"), .24, 11, uiScript rconRemoveShoutcaster ; uiScript closeingame, ownerdrawFlag UI_SHOW_PLAYERSHOUTCASTER cvarTest "authLevel" showCVar { RL_RCON } )
 
-	BUTTONEXT( 208, 158, CUSTOM_WINDOW_WIDTH-208-6, 14, _("WARN"), .24, 11, open ingame_vote_players_warn, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
+	BUTTONEXT( 208, 158, CUSTOM_WINDOW_WIDTH-208-6, 14, _("WARN"), .24, 11, open MENU_NAME_warn, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
 	BUTTONEXT( 208, 170, CUSTOM_WINDOW_WIDTH-208-6, 14, _("BAN"), .24, 11, uiScript rconBan ; uiScript closeingame, cvarTest "authLevel" showCVar { RL_RCON } )
 
-	BUTTON( 6, CUSTOM_WINDOW_HEIGHT-24, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_BACK"), .3, 14, close ingame_vote_players ; open ingame_vote )
+	BUTTON( 6, CUSTOM_WINDOW_HEIGHT-24, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open ingame_vote )
 }

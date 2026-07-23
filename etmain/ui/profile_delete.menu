@@ -2,11 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpProfileDelete"
+#define MENU_NAME	"profile_delete"
+#define GROUP_NAME	"grpProfileDelete"
 
 // Delete Profile Menu //
 menuDef {
-	name		"profile_delete"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
@@ -22,7 +23,7 @@ menuDef {
 	}
 
 	onESC {
-		close profile_delete ;
+		close MENU_NAME ;
 		open profile
 	}
 
@@ -48,7 +49,7 @@ menuDef {
 
 	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14,
 		conditionalscript ui_profile 1
-		( "close profile_delete ; uiScript deleteProfile ; open profile" )
-		( "open profile_delete" ) )
-	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close profile_delete ; open profile )
+		( "close MENU_NAME ; uiScript deleteProfile ; open profile" )
+		( "open MENU_NAME" ) )
+	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close MENU_NAME ; open profile )
 }

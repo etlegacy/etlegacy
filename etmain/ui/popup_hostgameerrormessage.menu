@@ -2,7 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpHostGamePopupError"
+#define GROUP_NAME	"grpHostGamePopupError"
 
 // Host GAme Error Popup //
 menuDef {

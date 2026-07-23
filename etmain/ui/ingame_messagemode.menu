@@ -2,7 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpMessageMode"
+#define GROUP_NAME	"grpMessageMode"
 
 // Ingame MessageMode Menu //
 menuDef {

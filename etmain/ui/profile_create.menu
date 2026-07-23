@@ -2,7 +2,8 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME      "grpProfileCreate"
+#define MENU_NAME	"profile_create"
+#define GROUP_NAME	"grpProfileCreate"
 
 // Create Profile Menu //
 #define DEFAULT_SETTINGS    setcvar ui_cl_lang en ;                 \
@@ -16,7 +17,7 @@
 	uiScript glPreset                       \
 
     menuDef {
-	name        "profile_create"
+	name        MENU_NAME
 	visible     0
 	fullscreen  0
 	rect FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
@@ -50,7 +51,7 @@
 	}
 
 	onESC {
-		close    profile_create ;
+		close    MENU_NAME ;
 		open     profile ;
 		uiScript systemCvarsReset ;
 		uiScript profileCvarsReset
@@ -117,7 +118,7 @@
 	       ("setcvar ui_glPreset 0 ; uiScript update ui_glPreset")
 	           ("copycvar com_recommended ui_glPreset ; uiScript update ui_glPreset") "-1")
 
-	BUTTON(SUBFULL_WINDOW_X + 6, SUBFULL_WINDOW_Y + SUBFULL_WINDOW_HEIGHT - 24, .5 * (SUBFULL_WINDOW_WIDTH - 18), 18, _("MSGID_MENU_BACK"), .3, 14, close profile_create ; open profile)
+	BUTTON(SUBFULL_WINDOW_X + 6, SUBFULL_WINDOW_Y + SUBFULL_WINDOW_HEIGHT - 24, .5 * (SUBFULL_WINDOW_WIDTH - 18), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open profile)
 	BUTTON(SUBFULL_WINDOW_X + 6 + .5 * (SUBFULL_WINDOW_WIDTH - 18) + 6, SUBFULL_WINDOW_Y + SUBFULL_WINDOW_HEIGHT - 24, .5 * (SUBFULL_WINDOW_WIDTH - 18), 18, _("CREATE"), .3, 14,
 	       conditionalscript UIProfileValidName 2
 	       ("clearFocus")
@@ -129,7 +130,7 @@
 	       ("setcvar ui_profile_create_error \\\"Can't create profile. A profile with the same name already exists.\\\" ; open profile_create_error ; abort")
 	           ("clearFocus")
 
-	       close profile_create ;
+	       close MENU_NAME ;
 	       uiScript createProfile ;
 	       uiScript vidSave ;
 	       uiScript clearPID ;

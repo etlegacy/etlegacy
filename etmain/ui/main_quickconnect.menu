@@ -2,11 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpPlayOnlineConnectToIP"
+#define MENU_NAME	"main_quickconnect"
+#define GROUP_NAME	"grpPlayOnlineConnectToIP"
 
 // Connect To IP Menu //
 menuDef {
-	name		"main_quickconnect"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
@@ -23,7 +24,7 @@ menuDef {
 	}
 
 	onESC {
-		close main_quickconnect ;
+		close MENU_NAME ;
 		open main
 	}
 
@@ -65,7 +66,7 @@ menuDef {
 	EDITFIELDLEFTACTION( SUBFULL_WINDOW_X+4, SUBFULL_WINDOW_Y+16, (SUBFULL_WINDOW_WIDTH)-8, 10, _("Server IP:"), .2, 8, "ui_connectToIPAddress", 32, 25,
 		conditionalscript ui_connectToIPAddress 1
 		( "uiScript JoinDirectServer" )
-		( "open main_quickconnect" ), _("Enter the IP address seperated by dots: xxx.xxx.xxx.xxx") )
+		( "open MENU_NAME" ), _("Enter the IP address seperated by dots: xxx.xxx.xxx.xxx") )
 
 	itemDef {
 		name		"efleftbackServer PW:"
@@ -79,11 +80,11 @@ menuDef {
 	EDITFIELDLEFTACTION( SUBFULL_WINDOW_X+4, SUBFULL_WINDOW_Y+30, (SUBFULL_WINDOW_WIDTH)-8, 10, _("Server PW:"), .2, 8, "password", 32, 25,
 		conditionalscript ui_connectToIPAddress 1
 		( "uiScript JoinDirectServer" )
-		( "open main_quickconnect" ), _("Enter the server password if any") )
+		( "open MENU_NAME" ), _("Enter the server password if any") )
 
-	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_BACK"), .3, 14, close main_quickconnect ; open main )
+	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open main )
 	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("CONNECT"), .3, 14,
 		conditionalscript ui_connectToIPAddress 1
 		( "uiScript JoinDirectServer" )
-		( "open main_quickconnect" ) )
+		( "open MENU_NAME" ) )
 }

@@ -2,7 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpPopupAddFavorite"
+#define GROUP_NAME	"grpPopupAddFavorite"
 
 // Add Favorite Menu //
 menuDef {

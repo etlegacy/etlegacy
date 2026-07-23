@@ -2,7 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpIngameVoteDisabled"
+#define GROUP_NAME	"grpIngameVoteDisabled"
 
 // Vote Disabled Menu //
 menuDef {

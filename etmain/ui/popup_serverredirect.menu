@@ -2,7 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpPopupServerRedirect"
+#define GROUP_NAME	"grpPopupServerRedirect"
 
 // Redirect Popup //
 menuDef {
