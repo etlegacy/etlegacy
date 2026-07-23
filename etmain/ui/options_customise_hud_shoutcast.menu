@@ -52,8 +52,8 @@ menuDef {
 	
 	MULTI(OPTION_ITEM_POS(1), _("Show grenade trail:"), .2, 8, "cg_shoutcastGrenadeTrail", cvarFloatList { "Off" 0 "On" 1 }, _("Display red trail for grenades"))
 	MULTI(OPTION_ITEM_POS(2), _("Show player health:"), .2, 8, "cg_shoutcastDrawHealth", cvarFloatList { "Off" 0 "As text" 1 "As health bar" 2 }, _("Display player health above them"))
-	EDITFIELD(OPTION_EF_POS(3), _("Axis team name:"), .2, 8, "cg_shoutcastTeamNameRed", 64, 18, _("Set axis team name (Axis if empty)"))
-	EDITFIELD(OPTION_EF_POS(4), _("Allies team name:"), .2, 8, "cg_shoutcastTeamNameBlue", 64, 18, _("Set allies team name (Allies if empty)"))
+	EDITFIELD(OPTION_EF_POS(3), _("Axis team name:"), .2, 8, "cg_shoutcastTeamNameRed", 64, 32, _("Set axis team name (Axis if empty)"))
+	EDITFIELD(OPTION_EF_POS(4), _("Allies team name:"), .2, 8, "cg_shoutcastTeamNameBlue", 64, 32, _("Set allies team name (Allies if empty)"))
 
 #ifdef FUI
 	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)

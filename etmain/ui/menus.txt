@@ -62,12 +62,11 @@
 	loadMenu { "ui/options_controls_weapons.menu" }
 	loadMenu { "ui/options_controls_chat.menu" }
 	loadMenu { "ui/options_controls_fireteam.menu" }
-	loadMenu { "ui/options_controls_input.menu" }
+	loadMenu { "ui/options_controls_mouse.menu" }
 	loadMenu { "ui/options_controls_joystick.menu" }
 	loadMenu { "ui/options_controls_miscellaneous.menu" }
 	loadMenu { "ui/options_controls_move.menu" }
 	loadMenu { "ui/options_controls_popups.menu" }
-	loadMenu { "ui/options_controls_select_class_weapon.menu" }
 	loadMenu { "ui/options_controls_default.menu" }
 	loadMenu { "ui/options_system.menu" }
 	loadMenu { "ui/options_system_irc_client.menu" }

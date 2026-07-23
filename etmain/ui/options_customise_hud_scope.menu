@@ -51,8 +51,8 @@ menuDef {
 	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "SCOPE RETICLE")
 	
 	MULTI(OPTION_ITEM_POS(1), _("Reticle Style:"), .2, 8, "cg_scopeReticleStyle", cvarFloatList { "Default" 0 "Fine reticle" 1 "German Reticle" 2 }, _("Select the reticle draw with scoped weapon"))
-	EDITFIELD(OPTION_EF_POS(2), _("Line Color:"), .2, 8, "cg_scopeReticleColor", 25, 18, _("Set the line reticle color. Accepted Format RRGGBB[AA] as hex value (00 to FF)\nor R G B [A] as float value (0.0 to 1.0) or colorName as string."))
-    EDITFIELD(OPTION_EF_POS(3), _("Dot Color:"), .2, 8, "cg_scopeReticleDotColor", 25, 18, _("Set the dot color. Accepted Format RRGGBB[AA] as hex value (00 to FF)\nor R G B [A] as float value (0.0 to 1.0) or colorName as string."))
+	EDITFIELD(OPTION_EF_POS(2), _("Line Color:"), .2, 8, "cg_scopeReticleColor", 64, 32, _("Set the line reticle color. Accepted Format RRGGBB[AA] as hex value (00 to FF)\nor R G B [A] as float value (0.0 to 1.0) or colorName as string."))
+    EDITFIELD(OPTION_EF_POS(3), _("Dot Color:"), .2, 8, "cg_scopeReticleDotColor", 64, 32, _("Set the dot color. Accepted Format RRGGBB[AA] as hex value (00 to FF)\nor R G B [A] as float value (0.0 to 1.0) or colorName as string."))
     CVARFLOATLABEL(OPTION_ITEM_POS(4), "cg_scopeReticleLineThickness", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
 	SLIDER(OPTION_ITEM_POS(4), _("Reticle Line Thickness:"), .2, 8, "cg_scopeReticleLineThickness" 2 0 10, _("Set the reticle line thickness"))
 	CVARFLOATLABEL(OPTION_ITEM_POS(5), "cg_scopeReticleDotThickness", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
