@@ -2,11 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpPlayOnline"
+#define MENU_NAME	"playonline"
+#define GROUP_NAME	"grpPlayOnline"
 
 // System Menu //
 menuDef {
-	name		"playonline"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
@@ -45,7 +46,7 @@ menuDef {
 	onESC {
 		uiScript ServerSort 2 ;
 		uiScript closeJoin ;
-		close playonline ;
+		close MENU_NAME ;
 		open main
 	}
 
@@ -627,7 +628,7 @@ menuDef {
 		visible			1
 
 		doubleClick {
-			/*close playonline ;*/
+			/*close MENU_NAME ;*/
 			uiScript JoinServer
 		}
 
@@ -645,6 +646,6 @@ menuDef {
 	BUTTON( 6+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6+(.25*((SUBWINDOW_WIDTH)-30))+6, 102+316-20, .25*((SUBWINDOW_WIDTH)-30), 14, _("MSGID_MENU_PLAY_DELETE_FAVS"), .24, 11, clearFocus ; open playonline_deletefavs )
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("MSGID_MENU_BACK"), .3, 14, uiScript ServerSort 2 ; close playonline ; open main )
+	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("MSGID_MENU_BACK"), .3, 14, uiScript ServerSort 2 ; close MENU_NAME ; open main )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("MSGID_MENU_PLAY_JOIN_SERVER"), .3, 14, uiScript JoinServer )
 }

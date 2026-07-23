@@ -3,7 +3,7 @@
 
 // Defines //
 #define MENU_NAME     "hostgame_advanced_admin"
-#define GROUP_NAME		"grpHostGameAdvanced"
+#define GROUP_NAME	"grpHostGameAdvanced"
 
 // Host Game Advanced Menu //
 menuDef {
@@ -40,10 +40,10 @@ menuDef {
 	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, _("ADMIN"))
 	
 	YESNO(OPTION_ITEM_POS(1), _("Pure Server:"), .2, 8, "sv_pure", _("Limit game content to that contained in PK3 files on both the client and server with matching CRCs") )
-	EDITFIELD(OPTION_EF_POS(2), _("Password:"), .2, 8, "g_password", 25, 18, _("Set the password required for players to join the server") )
-	EDITFIELD(OPTION_EF_POS(3), _("Referee Password:"), .2, 8, "refereePassword", 25, 18, _("Password to utilize the \"ref\" command for match control and remote game administration") )
-	EDITFIELD(OPTION_EF_POS(4), _("Shoutcast Password:"), .2, 8, "shoutcastPassword", 25, 18, _("Password to access the shoutcaster status for live match commentaries") )
-	EDITFIELD(OPTION_EF_POS(5), _("RCON Password:"), .2, 8, "rconPassword", 25, 18, _("Password to utilize the remote game server console (very powerful, so keep this password safe)") )
+	EDITFIELD(OPTION_EF_POS(2), _("Password:"), .2, 8, "g_password", 64, 32, _("Set the password required for players to join the server") )
+	EDITFIELD(OPTION_EF_POS(3), _("Referee Password:"), .2, 8, "refereePassword", 64, 32, _("Password to utilize the \"ref\" command for match control and remote game administration") )
+	EDITFIELD(OPTION_EF_POS(4), _("Shoutcast Password:"), .2, 8, "shoutcastPassword", 64, 32, _("Password to access the shoutcaster status for live match commentaries") )
+	EDITFIELD(OPTION_EF_POS(5), _("RCON Password:"), .2, 8, "rconPassword", 64, 32, _("Password to utilize the remote game server console (very powerful, so keep this password safe)") )
 
 // Buttons //
 	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME ; open hostgame)

@@ -2,15 +2,16 @@
 #include "ui/menumacros.h"
 
 // Defines //
+#define MENU_NAME	"ingame_vote"
 #define CUSTOM_WINDOW_X		16
 #define CUSTOM_WINDOW_Y		16
 #define CUSTOM_WINDOW_WIDTH	160
 #define CUSTOM_WINDOW_HEIGHT	152
-#define GROUP_NAME		"grpIngameVote"
+#define GROUP_NAME	"grpIngameVote"
 
 // Vote Menu //
 menuDef {
-	name		"ingame_vote"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		CUSTOM_WINDOW_X CUSTOM_WINDOW_Y CUSTOM_WINDOW_WIDTH CUSTOM_WINDOW_HEIGHT
@@ -21,7 +22,7 @@ menuDef {
 	}
 
 	onEsc {
-		close ingame_vote ;
+		close MENU_NAME ;
 		open ingame_main
 	}
 
@@ -83,12 +84,12 @@ menuDef {
 	}
 
 // Buttons //
-	BUTTONEXT( 6, 32, CUSTOM_WINDOW_WIDTH-12, 18, _("MISC"), .3, 14, close ingame_vote ; open ingame_vote_misc, cvarTest "authLevel" showCVar { RL_NONE } )
-	BUTTONEXT( 6, 32, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_REFEREE_MISC"), .3, 14, close ingame_vote ; open ingame_vote_misc_refrcon, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
-	BUTTONEXT( 6, 56, CUSTOM_WINDOW_WIDTH-12, 18, _("MAPS"), .3, 14, close ingame_vote ; open ingame_vote_map, cvarTest "authLevel" showCVar { RL_NONE } voteflag CV_SVF_MAP )
-	BUTTONEXT( 6, 56, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_REFEREE_MAPS"), .3, 14, close ingame_vote ; open ingame_vote_map, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
-	BUTTONEXT( 6, 80, CUSTOM_WINDOW_WIDTH-12, 18, _("PLAYERS"), .3, 14, close ingame_vote ; open ingame_vote_players, cvarTest "authLevel" showCVar { RL_NONE } voteFlag $evalint(CV_SVF_KICK + CV_SVF_REFEREE + CV_SVF_MUTING) )
-	BUTTONEXT( 6, 80, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_REFEREE_PLAYERS"), .3, 14, close ingame_vote ; open ingame_vote_players, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
-	BUTTONEXT( 6, 104, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_REFEREE_BOTS"), .3, 14, close ingame_vote ; open ingame_vote_bot, cvarTest "authLevel" showCVar { RL_REFEREE } )
-	BUTTON( 6, 128, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_BACK"), .3, 14, close ingame_vote ; open ingame_main )
+	BUTTONEXT( 6, 32, CUSTOM_WINDOW_WIDTH-12, 18, _("MISC"), .3, 14, close MENU_NAME ; open ingame_vote_misc, cvarTest "authLevel" showCVar { RL_NONE } )
+	BUTTONEXT( 6, 32, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_REFEREE_MISC"), .3, 14, close MENU_NAME ; open ingame_vote_misc_refrcon, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
+	BUTTONEXT( 6, 56, CUSTOM_WINDOW_WIDTH-12, 18, _("MAPS"), .3, 14, close MENU_NAME ; open ingame_vote_map, cvarTest "authLevel" showCVar { RL_NONE } voteflag CV_SVF_MAP )
+	BUTTONEXT( 6, 56, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_REFEREE_MAPS"), .3, 14, close MENU_NAME ; open ingame_vote_map, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
+	BUTTONEXT( 6, 80, CUSTOM_WINDOW_WIDTH-12, 18, _("PLAYERS"), .3, 14, close MENU_NAME ; open ingame_vote_players, cvarTest "authLevel" showCVar { RL_NONE } voteFlag $evalint(CV_SVF_KICK + CV_SVF_REFEREE + CV_SVF_MUTING) )
+	BUTTONEXT( 6, 80, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_REFEREE_PLAYERS"), .3, 14, close MENU_NAME ; open ingame_vote_players, cvarTest "authLevel" showCVar { RL_REFEREE RL_RCON } )
+	BUTTONEXT( 6, 104, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_REFEREE_BOTS"), .3, 14, close MENU_NAME ; open ingame_vote_bot, cvarTest "authLevel" showCVar { RL_REFEREE } )
+	BUTTON( 6, 128, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open ingame_main )
 }

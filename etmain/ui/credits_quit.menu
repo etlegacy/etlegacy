@@ -2,7 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpCreditsQuit"
+#define GROUP_NAME	"grpCreditsQuit"
 
 // Quit Credits Menu //
 menuDef {

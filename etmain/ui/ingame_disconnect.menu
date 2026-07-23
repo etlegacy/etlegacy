@@ -2,11 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpIngameDisconnect"
+#define MENU_NAME	"ingame_disconnect"
+#define GROUP_NAME	"grpIngameDisconnect"
 
 // Disconnect Menu //
 menuDef {
-	name		"ingame_disconnect"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
@@ -22,13 +23,13 @@ menuDef {
 	}
 
 	onEnter {
-		close ingame_disconnect ;
+		close MENU_NAME ;
 		close main ;
 		uiScript leave
 	}
 
 	onESC {
-		close ingame_disconnect ;
+		close MENU_NAME ;
 		open ingame_main
 	}
 
@@ -53,6 +54,6 @@ menuDef {
 	LABEL( SUBFULL_WINDOW_X+2, SUBFULL_WINDOW_Y+16, (SUBFULL_WINDOW_WIDTH)-4, 10, _("Do you want to disconnect"), .2, ITEM_ALIGN_CENTER, .5*((SUBFULL_WINDOW_WIDTH)-4), 8 )
 	LABEL( SUBFULL_WINDOW_X+2, SUBFULL_WINDOW_Y+28, (SUBFULL_WINDOW_WIDTH)-4, 10, _("from the server?"), .2, ITEM_ALIGN_CENTER, .5*((SUBFULL_WINDOW_WIDTH)-4), 8 )
 
-	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, close ingame_disconnect ; close main ; uiScript leave )
-	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close ingame_disconnect ; open ingame_main )
+	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, close MENU_NAME ; close main ; uiScript leave )
+	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close MENU_NAME ; open ingame_main )
 }

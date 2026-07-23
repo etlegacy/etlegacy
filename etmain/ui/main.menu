@@ -2,6 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
+#define MENU_NAME	"main_opener"
 #define CUSTOM_WINDOW_X		16
 #define CUSTOM_WINDOW_Y		16
 #define CUSTOM_WINDOW_WIDTH	__WINDOW_WIDTH-32
@@ -12,11 +13,11 @@
 #define DISCORD_Y		MENU_HEIGHT+6
 #define DISCORD_WIDTH	MENU_WIDTH
 #define DISCORD_HEIGHT	89
-#define GROUP_NAME		"grpMain"
+#define GROUP_NAME	"grpMain"
 
 // Opener //
 menuDef {
-	name		"main_opener"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		CUSTOM_WINDOW_X CUSTOM_WINDOW_Y MENU_WIDTH MENU_HEIGHT
@@ -28,7 +29,7 @@ menuDef {
 		fadeoutmenu fadebox_black ;
 		open main ;
 		clearcvar ui_profile_create_error ;
-		close main_opener
+		close MENU_NAME
 	}
 }
 

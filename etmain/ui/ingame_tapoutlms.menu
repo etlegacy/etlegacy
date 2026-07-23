@@ -2,7 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"tapoutgrplms"
+#define GROUP_NAME	"tapoutgrplms"
 
 menuDef
 {

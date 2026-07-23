@@ -2,12 +2,13 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpVidConfirm"
+#define MENU_NAME	"vid_confirm"
+#define GROUP_NAME	"grpVidConfirm"
 
 // Confirm Video Mode Menu //
 menuDef
 {
-	name		"vid_confirm"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
@@ -77,9 +78,9 @@ menuDef
     }
 
 #ifdef FUI
-	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, uiScript vidConfirm ; close vid_confirm ; open main )
+	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, uiScript vidConfirm ; close MENU_NAME ; open main )
 #else
-	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, uiScript vidConfirm ; close vid_confirm ; open ingame_main )
+	BUTTON( SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, uiScript vidConfirm ; close MENU_NAME ; open ingame_main )
 #endif // FUI
 
 	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, uiScript vidReset ; exec "vid_restart" )

@@ -2,11 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpIngameServerInfo"
+#define MENU_NAME	"ingame_serverinfo"
+#define GROUP_NAME	"grpIngameServerInfo"
 
 // Server Info Menu //
 menuDef {
-	name		"ingame_serverinfo"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
@@ -24,7 +25,7 @@ menuDef {
 	}
 
 	onESC {
-		close ingame_serverinfo ;
+		close MENU_NAME ;
 		open ingame_main
 	}
 
@@ -69,9 +70,9 @@ menuDef {
 		notselectable
 	}
 
-	BUTTON( (SUBFULL_WINDOW_X)+6, (SUBFULL_WINDOW_Y)+(SUBFULL_WINDOW_HEIGHT)-24, .25*((SUBFULL_WINDOW_WIDTH)-24), 18, _("MSGID_MENU_BACK"), .3, 14, close ingame_serverinfo ; open ingame_main )
+	BUTTON( (SUBFULL_WINDOW_X)+6, (SUBFULL_WINDOW_Y)+(SUBFULL_WINDOW_HEIGHT)-24, .25*((SUBFULL_WINDOW_WIDTH)-24), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open ingame_main )
 	BUTTON( (SUBFULL_WINDOW_X)+6+.25*((SUBFULL_WINDOW_WIDTH)-24)+6, (SUBFULL_WINDOW_Y)+(SUBFULL_WINDOW_HEIGHT)-24, .25*((SUBFULL_WINDOW_WIDTH)-24), 18, _("MSGID_MENU_INGAME_SERVER_INFO_REFRESH"), .3, 14, uiScript ServerStatus )
-	BUTTON( (SUBFULL_WINDOW_X)+6+.25*((SUBFULL_WINDOW_WIDTH)-24)+6+.25*((SUBFULL_WINDOW_WIDTH)-24)+6, (SUBFULL_WINDOW_Y)+(SUBFULL_WINDOW_HEIGHT)-24, .5*((SUBFULL_WINDOW_WIDTH)-24), 18, _("MSGID_MENU_INGAME_SERVER_INFO_FAVORITE"), .3, 14, clearFocus ; close ingame_serverinfo ; uiScript clientCheckFavorite ;
+	BUTTON( (SUBFULL_WINDOW_X)+6+.25*((SUBFULL_WINDOW_WIDTH)-24)+6+.25*((SUBFULL_WINDOW_WIDTH)-24)+6, (SUBFULL_WINDOW_Y)+(SUBFULL_WINDOW_HEIGHT)-24, .5*((SUBFULL_WINDOW_WIDTH)-24), 18, _("MSGID_MENU_INGAME_SERVER_INFO_FAVORITE"), .3, 14, clearFocus ; close MENU_NAME ; uiScript clientCheckFavorite ;
 		conditionalScript cg_ui_favorite 0
         ( "open popupRemoveFavorite" )
 		( "open popupAddFavorite" ) )

@@ -2,11 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpPlayOnlineServerInfo"
+#define MENU_NAME	"playonline_serverinfo"
+#define GROUP_NAME	"grpPlayOnlineServerInfo"
 
 // Server Info Menu //
 menuDef {
-	name		"playonline_serverinfo"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
@@ -24,7 +25,7 @@ menuDef {
 	}
 
 	onESC {
-		close playonline_serverinfo ;
+		close MENU_NAME ;
 		open playonline
 	}
 
@@ -69,7 +70,7 @@ menuDef {
 		notselectable
 	}
 
-	BUTTON( (SUBFULL_WINDOW_X)+6, (SUBFULL_WINDOW_Y)+(SUBFULL_WINDOW_HEIGHT)-24, .33*((SUBFULL_WINDOW_WIDTH)-24), 18, _("MSGID_MENU_BACK"), .3, 14, close playonline_serverinfo ; open playonline )
+	BUTTON( (SUBFULL_WINDOW_X)+6, (SUBFULL_WINDOW_Y)+(SUBFULL_WINDOW_HEIGHT)-24, .33*((SUBFULL_WINDOW_WIDTH)-24), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open playonline )
 	BUTTON( (SUBFULL_WINDOW_X)+6+.33*((SUBFULL_WINDOW_WIDTH)-24)+6, (SUBFULL_WINDOW_Y)+(SUBFULL_WINDOW_HEIGHT)-24, .34*((SUBFULL_WINDOW_WIDTH)-24), 18, _("MSGID_MENU_PLAY_SERVER_INFO_REFRESH"), .3, 14, uiScript ServerStatus )
 	BUTTON( (SUBFULL_WINDOW_X)+6+.33*((SUBFULL_WINDOW_WIDTH)-24)+6+.34*((SUBFULL_WINDOW_WIDTH)-24)+6, (SUBFULL_WINDOW_Y)+(SUBFULL_WINDOW_HEIGHT)-24, .33*((SUBFULL_WINDOW_WIDTH)-24), 18, _("MSGID_MENU_PLAY_JOIN_SERVER"), .3, 14, uiScript JoinServer )
 }

@@ -2,7 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME		"grpIngameVotePlayersWarn"
+#define GROUP_NAME	"grpIngameVotePlayersWarn"
 
 // Vote Players Warn Menu //
 menuDef {

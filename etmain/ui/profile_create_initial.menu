@@ -2,7 +2,8 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define GROUP_NAME      "grpProfileCreateInitial"
+#define MENU_NAME	"profile_create_initial"
+#define GROUP_NAME	"grpProfileCreateInitial"
 
 // Create Profile Menu //
 #define INITIAL_PROFILEDEFAULT_SETTINGS     uiScript systemCvarsGet ;               \
@@ -24,7 +25,7 @@
 	onOpen {
 		INITIAL_PROFILEDEFAULT_SETTINGS ;
 
-		open  profile_create_initial ;
+		open  MENU_NAME ;
 		close profile_create_initial_opener ;
 
 		conditionalscript com_recommendedSet 0
@@ -38,7 +39,7 @@
 }
 
 menuDef {
-	name        "profile_create_initial"
+	name        MENU_NAME
 	visible     0
 	fullscreen  0
 	rect FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
@@ -126,7 +127,7 @@ menuDef {
 	LABEL(6, SUBFULL_WINDOW_Y + 304, .7 * (FULL_WINDOW_WIDTH - 24), 10, _("^1LET'S KEEP ET ALIVE!"), .2, ITEM_ALIGN_CENTER, .5 * (FULL_WINDOW_WIDTH - 24), 8)
 	LABEL(6, SUBFULL_WINDOW_Y + 316, .7 * (FULL_WINDOW_WIDTH - 24), 10, _("Thank you for installing ET: Legacy"), .2, ITEM_ALIGN_CENTER, .5 * (FULL_WINDOW_WIDTH - 24), 8)
 
-	BUTTON(SUBFULL_WINDOW_X + 6, SUBFULL_WINDOW_Y + SUBFULL_WINDOW_HEIGHT - 24, .5 * (SUBFULL_WINDOW_WIDTH - 18), 18, _("QUIT"), .3, 14, close profile_create_initial ; close main ; open credits_quit)
+	BUTTON(SUBFULL_WINDOW_X + 6, SUBFULL_WINDOW_Y + SUBFULL_WINDOW_HEIGHT - 24, .5 * (SUBFULL_WINDOW_WIDTH - 18), 18, _("QUIT"), .3, 14, close MENU_NAME ; close main ; open credits_quit)
 	BUTTON(SUBFULL_WINDOW_X + 6 + .5 * (SUBFULL_WINDOW_WIDTH - 18) + 6, SUBFULL_WINDOW_Y + SUBFULL_WINDOW_HEIGHT - 24, .5 * (SUBFULL_WINDOW_WIDTH - 18), 18, _("CREATE"), .3, 14,
 	       conditionalscript UIProfileValidName 2
 	       ("clearFocus")
@@ -135,7 +136,7 @@ menuDef {
 	       ("setcvar ui_profile_create_error \\\"Can't create profile. A profile with the same name already exists.\\\" ; open profile_create_error ; abort")
 	           ("clearFocus")
 
-	       close profile_create_initial ;
+	       close MENU_NAME ;
 	       uiScript createProfile ;
 	       uiScript vidSave ;
 	       uiScript setDefaultProfile ;

@@ -2,10 +2,11 @@
 #include "ui/menumacros.h"
 
 // Defines //
+#define MENU_NAME	"changelog_popup"
 #define GROUP_NAME      "grpChangelogPopup"
 
 menuDef {
-	name        "changelog_popup"
+	name        MENU_NAME
 	visible     0
 	fullscreen  0
 	rect        FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
@@ -27,8 +28,8 @@ menuDef {
 
 	onEsc {
 		conditionalscript ui_changelog_ingame 0
-			( "close changelog_popup ; open ingame_main" )
-			( "close changelog_popup" )
+			( "close MENU_NAME; open ingame_main" )
+			( "close MENU_NAME" )
 	}
 
 // Background //
@@ -72,7 +73,7 @@ menuDef {
 		notselectable
 	}
 
-	BUTTON( (SUBFULL_WINDOW_X)+8, (SUBFULL_WINDOW_Y)+(SUBFULL_WINDOW_HEIGHT)-24, .333*((SUBFULL_WINDOW_WIDTH)-22), 18, _("MSGID_MENU_BACK"), .3, 14, conditionalscript ui_changelog_ingame 0 ( "close changelog_popup ; open ingame_main" ) ( "close changelog_popup" ) )
+	BUTTON( (SUBFULL_WINDOW_X)+8, (SUBFULL_WINDOW_Y)+(SUBFULL_WINDOW_HEIGHT)-24, .333*((SUBFULL_WINDOW_WIDTH)-22), 18, _("MSGID_MENU_BACK"), .3, 14, conditionalscript ui_changelog_ingame 0 ( "close MENU_NAME; open ingame_main" ) ( "close MENU_NAME" ) )
 	BUTTONEXT( (SUBFULL_WINDOW_X)+8+.333*((SUBFULL_WINDOW_WIDTH)-22)+3, (SUBFULL_WINDOW_Y)+(SUBFULL_WINDOW_HEIGHT)-24, .333*((SUBFULL_WINDOW_WIDTH)-22), 18, _("MSGID_MENU_CHANGELOG_NEWER"), .3, 14, uiScript ChangelogNext, cvarTest "ui_changelog_has_prev" disableCvar { 0 } )
 	BUTTONEXT( (SUBFULL_WINDOW_X)+8+2*.333*((SUBFULL_WINDOW_WIDTH)-22)+6, (SUBFULL_WINDOW_Y)+(SUBFULL_WINDOW_HEIGHT)-24, .334*((SUBFULL_WINDOW_WIDTH)-22), 18, _("MSGID_MENU_CHANGELOG_OLDER"), .3, 14, uiScript ChangelogPrevious, cvarTest "ui_changelog_has_next" disableCvar { 0 } )
 }

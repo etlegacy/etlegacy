@@ -1,7 +1,7 @@
 #include "ui/menudef.h"
 #include "ui/menumacros.h"
 
-#define GROUP_NAME			"grpVidRestart"
+#define GROUP_NAME		"grpVidRestart"
 #define SUBFULL_WINDOW_WIDTH		192
 #define SUBFULL_WINDOW_HEIGHT	64
 #define SUBFULL_WINDOW_X			.5 * (FULL_WINDOW_WIDTH - SUBFULL_WINDOW_WIDTH)
