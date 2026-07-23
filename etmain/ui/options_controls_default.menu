@@ -2,7 +2,7 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define MENU_NAME		"options_controls_default"
+#define MENU_NAME	"options_controls_default"
 #define GROUP_NAME      "grpControlsDefault"
 
 // Controls Default Menu //

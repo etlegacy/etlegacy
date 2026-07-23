@@ -48,7 +48,7 @@ menuDef {
     YESNO(OPTION_ITEM_POS(1), _("Log Important Messages:"), .2, 8, "cg_printObjectiveInfo", _("Print important game messages to the console"))
 	YESNO(OPTION_ITEM_POS(2), _("Show Tool Tips:"), .2, 8, "ui_showtooltips", _("Display Tool Tips in the UI"))
 	EDITFIELD(OPTION_EF_POS(3), _("Chat Log:"), .2, 8, "cg_logFile", 15, 13, _("Set the name of the chat log file (if empty logging is disabled)"))
-	EDITFIELD(OPTION_EF_POS(4), _("Sharetimer Custom Text:"), .2, 8, "cg_sharetimerText", 64, 18, _("Specify a custom text to announce the next enemy spawn.\nUse ${nextspawn} and ${enemylimbotime} as variables."))
+	EDITFIELD(OPTION_EF_POS(4), _("Sharetimer Custom Text:"), .2, 8, "cg_sharetimerText", 64, 32, _("Specify a custom text to announce the next enemy spawn.\nUse ${nextspawn} and ${enemylimbotime} as variables."))
 	YESNO(OPTION_ITEM_POS(5), _("Limbo Class Click:"), .2, 8, "cg_limboClassClickConfirm", _("Toggle to stop Class Limbo Selection take effect immediately after selection"))
 	YESNO(OPTION_ITEM_POS(6), _("Draw Notify Text:"), .2, 8, "cg_drawNotifyText", _("Print message starting by [cgnotify] to client"))
 	EDITFIELD(OPTION_EF_POS(7), _("Auto Command:"), .2, 8, "cg_autoCmd", 15, 13, _("Set a command to be executed on map start / restart"))
