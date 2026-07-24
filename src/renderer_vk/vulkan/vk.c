@@ -155,6 +155,34 @@ typedef struct
 	float modelMatrix[16];
 	float mvpMatrix[16];
 
+	// current fog state, mirroring renderer1's glfogsettings
+	// (R_Fog()/R_FogOff() in tr_main.c call VK_SetFog()/VK_SetFogOff()
+	// instead of the no-op'd glFog*() calls). Linear fog only (GL_LINEAR
+	// is the mode R_Fog() defaults to when a fog volume doesn't specify
+	// one, which covers the vast majority of ET fog usage).
+	qboolean fogEnabled;
+	float fogColor[4];
+	float fogStart;
+	float fogEnd;
+
+	// last scene viewport rect (post Y-flip), stashed so
+	// VK_SetSkyDepthRange() can reissue vkCmdSetViewport with the same
+	// rect but a different depth range (sky is drawn pinned to the far
+	// depth plane, same as renderer1's glDepthRange(1,1) trick).
+	int lastViewportX;
+	int lastViewportFlippedY;
+	int lastViewportWidth;
+	int lastViewportHeight;
+
+	// portal/mirror eye-space clip plane, mirroring
+	// renderer1's glClipPlane(GL_CLIP_PLANE0, ...)/glEnable(GL_CLIP_PLANE0)
+	// (RB_BeginDrawingView in tr_backend.c, no-op'd here). Vulkan has no
+	// fixed-function clip-plane equivalent that's portable without extra
+	// device features, so this is applied as a per-fragment discard in
+	// the scene shaders instead (see tr3d*.frag.glsl).
+	qboolean clipPlaneEnabled;
+	float clipPlane[4];
+
 	VkBuffer sceneVertexArenaBuffer;
 	VkDeviceMemory sceneVertexArenaMemory;
 	void *sceneVertexArenaMapped;
@@ -1248,7 +1276,7 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 	Com_Memset(&pushConstantRange, 0, sizeof(pushConstantRange));
 	pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 	pushConstantRange.offset     = 0;
-	pushConstantRange.size       = sizeof(float) * 20; // mat4 mvp + vec4 alphaTest
+	pushConstantRange.size       = sizeof(float) * 48; // mat4 mvp + mat4 modelView + vec4 alphaTest + vec4 fogColor + vec4 fogParams + vec4 clipPlane
 
 	Com_Memset(&layoutInfo, 0, sizeof(layoutInfo));
 	layoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -1569,6 +1597,31 @@ void VK_SetProjectionMatrix(const float *m)
 		vk.projMatrix[c * 4 + 2] = 0.5f * m[c * 4 + 2] + 0.5f * m[c * 4 + 3];
 		vk.projMatrix[c * 4 + 3] = m[c * 4 + 3];
 	}
+
+	VK_Mat4Mul(vk.mvpMatrix, vk.projMatrix, vk.modelMatrix);
+}
+
+/**
+ * @brief copies out the already-Vulkan-converted projection
+ * matrix (used by flare rendering to save/restore the world projection
+ * around its own screen-space ortho projection, mirroring renderer1's
+ * glPushMatrix/glPopMatrix around glOrtho()).
+ */
+void VK_GetProjectionMatrix(float *m)
+{
+	Com_Memcpy(m, vk.projMatrix, sizeof(vk.projMatrix));
+}
+
+/**
+ * @brief sets the Vulkan-space projection matrix directly,
+ * bypassing the GL->Vulkan conversion VK_SetProjectionMatrix() applies.
+ * Used to restore a matrix previously captured with
+ * VK_GetProjectionMatrix(), which is already in Vulkan convention.
+ */
+void VK_SetRawProjectionMatrix(const float *m)
+{
+	Com_Memcpy(vk.projMatrix, m, sizeof(vk.projMatrix));
+	VK_Mat4Mul(vk.mvpMatrix, vk.projMatrix, vk.modelMatrix);
 }
 
 /**
@@ -1581,6 +1634,63 @@ void VK_SetModelViewMatrix(const float *m)
 {
 	Com_Memcpy(vk.modelMatrix, m, sizeof(vk.modelMatrix));
 	VK_Mat4Mul(vk.mvpMatrix, vk.projMatrix, vk.modelMatrix);
+}
+
+/**
+ * @brief copies out the currently-set modelview matrix, so sky
+ * rendering can temporarily zero its translation component (the classic
+ * "infinite skybox stays centered on the camera" trick, matching
+ * renderer1's glTranslatef(viewerOrigin) applied on top of an
+ * already-loaded view matrix) and restore the original afterwards.
+ */
+void VK_GetModelViewMatrix(float *m)
+{
+	Com_Memcpy(m, vk.modelMatrix, sizeof(vk.modelMatrix));
+}
+
+/**
+ * @brief records the current linear-fog parameters, called
+ * from R_Fog() (tr_main.c) in place of the no-op'd glFog*() calls.
+ * Picked up per-draw by VK_Draw3D()/VK_Draw3DLightmapped() and applied in
+ * the fragment shader based on each vertex's eye-space depth.
+ */
+void VK_SetFog(const float *color, float start, float end)
+{
+	vk.fogEnabled  = qtrue;
+	vk.fogColor[0] = color[0];
+	vk.fogColor[1] = color[1];
+	vk.fogColor[2] = color[2];
+	vk.fogColor[3] = color[3];
+	vk.fogStart    = start;
+	vk.fogEnd      = end;
+}
+
+void VK_SetFogOff(void)
+{
+	vk.fogEnabled = qfalse;
+}
+
+/**
+ * @brief records an eye-space portal/mirror clip-plane
+ * equation (ax+by+cz+dw, same convention as GL_CLIP_PLANE0: fragments
+ * with dot(eyePos, plane.xyz) + plane.w < 0 are clipped), called from
+ * RB_BeginDrawingView() (tr_backend.c) in place of the no-op'd
+ * glClipPlane()/glEnable(GL_CLIP_PLANE0) calls. Applied as a per-fragment
+ * discard in the scene shaders since Vulkan has no portable
+ * fixed-function clip-plane equivalent.
+ */
+void VK_SetPortalClip(const float *planeEq)
+{
+	vk.clipPlaneEnabled = qtrue;
+	vk.clipPlane[0]     = planeEq[0];
+	vk.clipPlane[1]     = planeEq[1];
+	vk.clipPlane[2]     = planeEq[2];
+	vk.clipPlane[3]     = planeEq[3];
+}
+
+void VK_ClearPortalClip(void)
+{
+	vk.clipPlaneEnabled = qfalse;
 }
 
 static void VK_DestroySwapchainObjects(void)
@@ -1935,11 +2045,140 @@ void VK_BeginFrame(void)
 	vkCmdBeginRenderPass(vk.commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 }
 
+/**
+ * @brief TEMP DEBUG: dumps the current swapchain image to a PPM file for
+ * offline visual inspection (reads our own rendered image data directly
+ * from the GPU, not the user's display).
+ */
+static void VK_DebugDumpSwapchainImage(const char *path)
+{
+	VkCommandBufferAllocateInfo allocCmdInfo;
+	VkCommandBuffer             cmd;
+	VkCommandBufferBeginInfo    beginInfo;
+	VkImageMemoryBarrier        barrier;
+	VkBufferCreateInfo          bufInfo;
+	VkBuffer                    readbackBuffer;
+	VkMemoryRequirements        memReq;
+	VkMemoryAllocateInfo        memAllocInfo;
+	VkDeviceMemory              readbackMemory;
+	VkBufferImageCopy           region;
+	VkSubmitInfo                submitInfo;
+	VkDeviceSize                bufSize = (VkDeviceSize)vk.swapchainExtent.width * vk.swapchainExtent.height * 4;
+	void                        *mapped;
+	FILE                        *f;
+	uint32_t                    x, y;
+
+	vkDeviceWaitIdle(vk.device);
+
+	Com_Memset(&bufInfo, 0, sizeof(bufInfo));
+	bufInfo.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	bufInfo.size        = bufSize;
+	bufInfo.usage       = VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+	bufInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	vkCreateBuffer(vk.device, &bufInfo, NULL, &readbackBuffer);
+
+	vkGetBufferMemoryRequirements(vk.device, readbackBuffer, &memReq);
+	Com_Memset(&memAllocInfo, 0, sizeof(memAllocInfo));
+	memAllocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	memAllocInfo.allocationSize  = memReq.size;
+	memAllocInfo.memoryTypeIndex = VK_FindMemoryType(memReq.memoryTypeBits,
+	                                                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	vkAllocateMemory(vk.device, &memAllocInfo, NULL, &readbackMemory);
+	vkBindBufferMemory(vk.device, readbackBuffer, readbackMemory, 0);
+
+	Com_Memset(&allocCmdInfo, 0, sizeof(allocCmdInfo));
+	allocCmdInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	allocCmdInfo.commandPool        = vk.commandPool;
+	allocCmdInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	allocCmdInfo.commandBufferCount = 1;
+	vkAllocateCommandBuffers(vk.device, &allocCmdInfo, &cmd);
+
+	Com_Memset(&beginInfo, 0, sizeof(beginInfo));
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+	vkBeginCommandBuffer(cmd, &beginInfo);
+
+	Com_Memset(&barrier, 0, sizeof(barrier));
+	barrier.sType                       = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barrier.oldLayout                   = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+	barrier.newLayout                   = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+	barrier.srcQueueFamilyIndex         = VK_QUEUE_FAMILY_IGNORED;
+	barrier.dstQueueFamilyIndex         = VK_QUEUE_FAMILY_IGNORED;
+	barrier.image                       = vk.swapchainImages[vk.currentImageIndex];
+	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	barrier.subresourceRange.levelCount = 1;
+	barrier.subresourceRange.layerCount = 1;
+	barrier.srcAccessMask               = VK_ACCESS_MEMORY_READ_BIT;
+	barrier.dstAccessMask               = VK_ACCESS_TRANSFER_READ_BIT;
+	vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, NULL, 0, NULL, 1, &barrier);
+
+	Com_Memset(&region, 0, sizeof(region));
+	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	region.imageSubresource.layerCount = 1;
+	region.imageExtent.width           = vk.swapchainExtent.width;
+	region.imageExtent.height          = vk.swapchainExtent.height;
+	region.imageExtent.depth           = 1;
+	vkCmdCopyImageToBuffer(cmd, vk.swapchainImages[vk.currentImageIndex], VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, readbackBuffer, 1, &region);
+
+	barrier.oldLayout     = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+	barrier.newLayout     = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+	barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+	barrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+	vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, NULL, 0, NULL, 1, &barrier);
+
+	vkEndCommandBuffer(cmd);
+
+	Com_Memset(&submitInfo, 0, sizeof(submitInfo));
+	submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = 1;
+	submitInfo.pCommandBuffers    = &cmd;
+	vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+	vkQueueWaitIdle(vk.graphicsQueue);
+
+	vkMapMemory(vk.device, readbackMemory, 0, bufSize, 0, &mapped);
+
+	f = fopen(path, "wb");
+	if (f)
+	{
+		byte *px = (byte *)mapped;
+
+		fprintf(f, "P6\n%u %u\n255\n", vk.swapchainExtent.width, vk.swapchainExtent.height);
+		for (y = 0; y < vk.swapchainExtent.height; y++)
+		{
+			for (x = 0; x < vk.swapchainExtent.width; x++)
+			{
+				byte *p = px + (y * vk.swapchainExtent.width + x) * 4;
+
+				if (vk.swapchainFormat == VK_FORMAT_B8G8R8A8_UNORM)
+				{
+					fputc(p[2], f);
+					fputc(p[1], f);
+					fputc(p[0], f);
+				}
+				else
+				{
+					fputc(p[0], f);
+					fputc(p[1], f);
+					fputc(p[2], f);
+				}
+			}
+		}
+		fclose(f);
+		Ren_Print("VK_DebugDumpSwapchainImage: wrote %s\n", path);
+	}
+
+	vkUnmapMemory(vk.device, readbackMemory);
+	vkFreeCommandBuffers(vk.device, vk.commandPool, 1, &cmd);
+	vkDestroyBuffer(vk.device, readbackBuffer, NULL);
+	vkFreeMemory(vk.device, readbackMemory, NULL);
+}
+
 void VK_EndFrame(void)
 {
 	VkSubmitInfo         submitInfo;
 	VkPresentInfoKHR     presentInfo;
-	VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	VkPipelineStageFlags waitStage       = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	static int           debugFrameCount = 0;
 
 	if (!vk.initialized)
 	{
@@ -1970,6 +2209,12 @@ void VK_EndFrame(void)
 	presentInfo.pImageIndices      = &vk.currentImageIndex;
 
 	vkQueuePresentKHR(vk.presentQueue, &presentInfo);
+
+	debugFrameCount++;
+	if (debugFrameCount == 200)
+	{
+		VK_DebugDumpSwapchainImage("/tmp/vk_capture.ppm");
+	}
 }
 
 /**
@@ -2367,6 +2612,13 @@ void VK_SetSceneViewport(int x, int y, int width, int height)
 	// up in the wrong place and silently clips the view's geometry away.
 	flippedY = (int)vk.swapchainExtent.height - (y + height);
 
+	// stashed so VK_SetSkyDepthRange() can reissue the viewport with the
+	// same rect but a different depth range.
+	vk.lastViewportX        = x;
+	vk.lastViewportFlippedY = flippedY;
+	vk.lastViewportWidth    = width;
+	vk.lastViewportHeight   = height;
+
 	Com_Memset(&viewport, 0, sizeof(viewport));
 	viewport.x        = (float)x;
 	viewport.y        = (float)flippedY;
@@ -2385,6 +2637,32 @@ void VK_SetSceneViewport(int x, int y, int width, int height)
 }
 
 /**
+ * @brief reissues the last scene viewport with a different
+ * depth range, pinning sky geometry to the far depth plane (mirroring
+ * renderer1's RB_StageIteratorSky glDepthRange(1,1) trick: drawing sky
+ * first at maximum depth lets normally-depth-tested opaque surfaces
+ * drawn afterwards cover it everywhere they're present).
+ */
+void VK_SetSkyDepthRange(float minDepth, float maxDepth)
+{
+	VkViewport viewport;
+
+	if (!vk.initialized)
+	{
+		return;
+	}
+
+	Com_Memset(&viewport, 0, sizeof(viewport));
+	viewport.x        = (float)vk.lastViewportX;
+	viewport.y        = (float)vk.lastViewportFlippedY;
+	viewport.width    = (float)vk.lastViewportWidth;
+	viewport.height   = (float)vk.lastViewportHeight;
+	viewport.minDepth = minDepth;
+	viewport.maxDepth = maxDepth;
+	vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
+}
+
+/**
  * @brief submits one already-tessellated 3D shader stage
  * batch (single texture) using the lazily-created pipeline variant that
  * matches stateBits/cullType. Vertex data is read from input->xyz,
@@ -2397,7 +2675,7 @@ void VK_Draw3D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 	VkDeviceSize    vertexBytes, indexBytes;
 	vk3DVertex_t    *dstVerts;
 	uint32_t        *dstIndexes;
-	float           pushConstants[20];
+	float           pushConstants[48];
 	VkPipeline      pipeline;
 	VkDescriptorSet descriptorSet;
 	VkBuffer        vertexBuffers[1];
@@ -2466,10 +2744,23 @@ void VK_Draw3D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 	}
 
 	Com_Memcpy(pushConstants, vk.mvpMatrix, sizeof(vk.mvpMatrix));
-	pushConstants[16] = VK_AlphaTestMode(stateBits);
-	pushConstants[17] = 0.0f;
-	pushConstants[18] = 0.0f;
-	pushConstants[19] = 0.0f;
+	Com_Memcpy(pushConstants + 16, vk.modelMatrix, sizeof(vk.modelMatrix));
+	pushConstants[32] = VK_AlphaTestMode(stateBits);
+	pushConstants[33] = 0.0f;
+	pushConstants[34] = 0.0f;
+	pushConstants[35] = 0.0f;
+	pushConstants[36] = vk.fogColor[0];
+	pushConstants[37] = vk.fogColor[1];
+	pushConstants[38] = vk.fogColor[2];
+	pushConstants[39] = vk.fogColor[3];
+	pushConstants[40] = vk.fogEnabled ? 1.0f : 0.0f;
+	pushConstants[41] = vk.fogStart;
+	pushConstants[42] = vk.fogEnd;
+	pushConstants[43] = vk.clipPlaneEnabled ? 1.0f : 0.0f;
+	pushConstants[44] = vk.clipPlane[0];
+	pushConstants[45] = vk.clipPlane[1];
+	pushConstants[46] = vk.clipPlane[2];
+	pushConstants[47] = vk.clipPlane[3];
 	vkCmdPushConstants(vk.commandBuffer, vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pushConstants), pushConstants);
 
 	descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
@@ -2499,7 +2790,7 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 	VkDeviceSize    vertexBytes, indexBytes;
 	vk3DVertexLM_t  *dstVerts;
 	uint32_t        *dstIndexes;
-	float           pushConstants[20];
+	float           pushConstants[48];
 	VkPipeline      pipeline;
 	VkDescriptorSet descriptorSets[2];
 	VkBuffer        vertexBuffers[1];
@@ -2574,10 +2865,23 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 	}
 
 	Com_Memcpy(pushConstants, vk.mvpMatrix, sizeof(vk.mvpMatrix));
-	pushConstants[16] = 0.0f;
-	pushConstants[17] = 0.0f;
-	pushConstants[18] = 0.0f;
-	pushConstants[19] = 0.0f;
+	Com_Memcpy(pushConstants + 16, vk.modelMatrix, sizeof(vk.modelMatrix));
+	pushConstants[32] = 0.0f;
+	pushConstants[33] = 0.0f;
+	pushConstants[34] = 0.0f;
+	pushConstants[35] = 0.0f;
+	pushConstants[36] = vk.fogColor[0];
+	pushConstants[37] = vk.fogColor[1];
+	pushConstants[38] = vk.fogColor[2];
+	pushConstants[39] = vk.fogColor[3];
+	pushConstants[40] = vk.fogEnabled ? 1.0f : 0.0f;
+	pushConstants[41] = vk.fogStart;
+	pushConstants[42] = vk.fogEnd;
+	pushConstants[43] = vk.clipPlaneEnabled ? 1.0f : 0.0f;
+	pushConstants[44] = vk.clipPlane[0];
+	pushConstants[45] = vk.clipPlane[1];
+	pushConstants[46] = vk.clipPlane[2];
+	pushConstants[47] = vk.clipPlane[3];
 	vkCmdPushConstants(vk.commandBuffer, vk.sceneLMPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pushConstants), pushConstants);
 
 	descriptorSets[0] = (VkDescriptorSet)base->vkDescriptorSet;

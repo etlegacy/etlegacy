@@ -34,6 +34,7 @@
  */
 
 #include "tr_local.h"
+#include "vulkan/vk.h"
 
 trGlobals_t tr;
 
@@ -67,6 +68,8 @@ qboolean    fogIsOn  = qfalse;
  */
 void R_Fog(glfog_t *curfog)
 {
+	float fogEnd;
+
 	if (!r_wolfFog->integer)
 	{
 		R_FogOff();
@@ -105,16 +108,15 @@ void R_Fog(glfog_t *curfog)
 
 	glFogf(GL_FOG_START, curfog->start);
 
-	if (r_zFar->value != 0.f)                 // allow override for helping level designers test fog distances
-	{
-		glFogf(GL_FOG_END, r_zFar->value);
-	}
-	else
-	{
-		glFogf(GL_FOG_END, curfog->end);
-	}
+	// allow override for helping level designers test fog distances
+	fogEnd = (r_zFar->value != 0.f) ? r_zFar->value : curfog->end;
+	glFogf(GL_FOG_END, fogEnd);
 
 	glClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
+
+	// glFog*() above are no-ops (no real GL context); this is
+	// the real capture point for the Vulkan backend's linear-fog state.
+	VK_SetFog(curfog->color, curfog->start, fogEnd);
 }
 
 /**
@@ -122,6 +124,8 @@ void R_Fog(glfog_t *curfog)
  */
 void R_FogOff(void)
 {
+	VK_SetFogOff();
+
 	if (!fogIsOn)
 	{
 		return;

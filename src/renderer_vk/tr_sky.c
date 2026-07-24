@@ -33,6 +33,7 @@
  */
 
 #include "tr_local.h"
+#include "vulkan/vk.h"
 
 #define SKY_SUBDIVISIONS        8
 #define HALF_SKY_SUBDIVISIONS   (SKY_SUBDIVISIONS / 2)
@@ -430,6 +431,66 @@ static vec3_t s_skyPoints[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1];
 static float  s_skyTexCoords[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1][2];
 
 /**
+ * @brief builds one skybox face's (mins..maxs) point/texcoord
+ * grid into tess as a triangle list and submits it via VK_Draw3D(), since
+ * Vulkan has no equivalent of the original glBegin(GL_TRIANGLE_STRIP)
+ * immediate-mode submission. Two-sided (no culling) since winding of the
+ * generated quads isn't guaranteed to match a single GL convention.
+ */
+static void VK_SubmitSkyGrid(struct image_s *image, const int mins[2], const int maxs[2], unsigned long stateBits)
+{
+	int tBase    = mins[1] + HALF_SKY_SUBDIVISIONS;
+	int tEnd     = maxs[1] + HALF_SKY_SUBDIVISIONS;
+	int sBase    = mins[0] + HALF_SKY_SUBDIVISIONS;
+	int sEnd     = maxs[0] + HALF_SKY_SUBDIVISIONS;
+	int rowCount = sEnd - sBase + 1;
+	int t, s;
+
+	tess.numVertexes = 0;
+	tess.numIndexes  = 0;
+
+	for (t = tBase; t <= tEnd; t++)
+	{
+		for (s = sBase; s <= sEnd; s++)
+		{
+			int vi = tess.numVertexes;
+
+			VectorCopy(s_skyPoints[t][s], tess.xyz[vi]);
+			tess.svars.texcoords[0][vi][0]  = s_skyTexCoords[t][s][0];
+			tess.svars.texcoords[0][vi][1]  = s_skyTexCoords[t][s][1];
+			*( int * )tess.svars.colors[vi] = *( int * )tess.constantColor255[0];
+			tess.numVertexes++;
+		}
+	}
+
+	for (t = 0; t < tEnd - tBase; t++)
+	{
+		for (s = 0; s < rowCount - 1; s++)
+		{
+			int a = t * rowCount + s;
+			int b = a + 1;
+			int c = a + rowCount;
+			int d = c + 1;
+
+			tess.indexes[tess.numIndexes++] = a;
+			tess.indexes[tess.numIndexes++] = c;
+			tess.indexes[tess.numIndexes++] = b;
+			tess.indexes[tess.numIndexes++] = b;
+			tess.indexes[tess.numIndexes++] = c;
+			tess.indexes[tess.numIndexes++] = d;
+		}
+	}
+
+	if (tess.numVertexes > 0 && tess.numIndexes > 0)
+	{
+		VK_Draw3D(&tess, image, stateBits, CT_TWO_SIDED);
+	}
+
+	tess.numVertexes = 0;
+	tess.numIndexes  = 0;
+}
+
+/**
  * @brief DrawSkySide
  * @param[in] image
  * @param[in] mins
@@ -437,25 +498,7 @@ static float  s_skyTexCoords[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1][2];
  */
 static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs[2])
 {
-	int s, t;
-
-	GL_Bind(image);
-
-	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t < maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
-	{
-		glBegin(GL_TRIANGLE_STRIP);
-
-		for (s = mins[0] + HALF_SKY_SUBDIVISIONS; s <= maxs[0] + HALF_SKY_SUBDIVISIONS; s++)
-		{
-			glTexCoord2fv(s_skyTexCoords[t][s]);
-			glVertex3fv(s_skyPoints[t][s]);
-
-			glTexCoord2fv(s_skyTexCoords[t + 1][s]);
-			glVertex3fv(s_skyPoints[t + 1][s]);
-		}
-
-		glEnd();
-	}
+	VK_SubmitSkyGrid(image, mins, maxs, GLS_DEPTHMASK_TRUE);
 }
 
 /**
@@ -466,32 +509,7 @@ static void DrawSkySide(struct image_s *image, const int mins[2], const int maxs
  */
 static void DrawSkySideInner(struct image_s *image, const int mins[2], const int maxs[2])
 {
-	int s, t;
-
-	GL_Bind(image);
-
-	//glDisable (GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	GL_TexEnv(GL_MODULATE);
-
-	for (t = mins[1] + HALF_SKY_SUBDIVISIONS; t < maxs[1] + HALF_SKY_SUBDIVISIONS; t++)
-	{
-		glBegin(GL_TRIANGLE_STRIP);
-
-		for (s = mins[0] + HALF_SKY_SUBDIVISIONS; s <= maxs[0] + HALF_SKY_SUBDIVISIONS; s++)
-		{
-			glTexCoord2fv(s_skyTexCoords[t][s]);
-			glVertex3fv(s_skyPoints[t][s]);
-
-			glTexCoord2fv(s_skyTexCoords[t + 1][s]);
-			glVertex3fv(s_skyPoints[t + 1][s]);
-		}
-
-		glEnd();
-	}
-
-	glDisable(GL_BLEND);
+	VK_SubmitSkyGrid(image, mins, maxs, GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
 }
 
 /**
@@ -1085,6 +1103,9 @@ void RB_DrawSun(void)
  */
 void RB_StageIteratorSky(void)
 {
+	float savedModelMatrix[16];
+	float skyModelMatrix[16];
+
 	if (r_fastSky->integer)
 	{
 		return;
@@ -1124,27 +1145,33 @@ void RB_StageIteratorSky(void)
 	// much sky is getting sucked in
 	if (r_showSky->integer)
 	{
-		glDepthRange(0.0, 0.0);
+		VK_SetSkyDepthRange(0.0f, 0.0f);
 	}
 	else
 	{
-		glDepthRange(1.0, 1.0);
+		VK_SetSkyDepthRange(1.0f, 1.0f);
 	}
-
-	GL_Cull(CT_TWO_SIDED);
 
 	// draw the outer skybox
 	if (tess.shader->sky.outerbox[0] && tess.shader->sky.outerbox[0] != tr.defaultImage)
 	{
-		glColor3f(tr.identityLight, tr.identityLight, tr.identityLight);
-
-		glPushMatrix();
-		GL_State(0);
-		glTranslatef(backEnd.viewParms.orientation.origin[0], backEnd.viewParms.orientation.origin[1], backEnd.viewParms.orientation.origin[2]);
+		// the classic "infinite skybox" trick — zero the
+		// translation component of the current modelview matrix so the
+		// skybox (modeled around the origin) always stays centered on
+		// the camera and only rotates with view direction, matching
+		// renderer1's glTranslatef(viewerOrigin) applied on top of an
+		// already-loaded view matrix (the two translations cancel,
+		// leaving only the rotation).
+		VK_GetModelViewMatrix(savedModelMatrix);
+		Com_Memcpy(skyModelMatrix, savedModelMatrix, sizeof(skyModelMatrix));
+		skyModelMatrix[12] = 0.0f;
+		skyModelMatrix[13] = 0.0f;
+		skyModelMatrix[14] = 0.0f;
+		VK_SetModelViewMatrix(skyModelMatrix);
 
 		DrawSkyBox(tess.shader);
 
-		glPopMatrix();
+		VK_SetModelViewMatrix(savedModelMatrix);
 	}
 
 	// generate the vertexes for all the clouds, which will be drawn
@@ -1156,19 +1183,20 @@ void RB_StageIteratorSky(void)
 	// draw the inner skybox
 	if (tess.shader->sky.innerbox[0] && tess.shader->sky.innerbox[0] != tr.defaultImage)
 	{
-		glColor3f(tr.identityLight, tr.identityLight, tr.identityLight);
-
-		glPushMatrix();
-		GL_State(0);
-		glTranslatef(backEnd.viewParms.orientation.origin[0], backEnd.viewParms.orientation.origin[1], backEnd.viewParms.orientation.origin[2]);
+		VK_GetModelViewMatrix(savedModelMatrix);
+		Com_Memcpy(skyModelMatrix, savedModelMatrix, sizeof(skyModelMatrix));
+		skyModelMatrix[12] = 0.0f;
+		skyModelMatrix[13] = 0.0f;
+		skyModelMatrix[14] = 0.0f;
+		VK_SetModelViewMatrix(skyModelMatrix);
 
 		DrawSkyBoxInner(tess.shader);
 
-		glPopMatrix();
+		VK_SetModelViewMatrix(savedModelMatrix);
 	}
 
 	// back to normal depth range
-	glDepthRange(0.0, 1.0);
+	VK_SetSkyDepthRange(0.0f, 1.0f);
 
 	backEnd.refdef.rdflags &= ~RDF_DRAWINGSKY;
 
