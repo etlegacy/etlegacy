@@ -648,10 +648,33 @@ void RB_BeginDrawingView(void)
 		glLoadMatrixf(s_flipMatrix);
 		glClipPlane(GL_CLIP_PLANE0, plane2);
 		glEnable(GL_CLIP_PLANE0);
+
+		// real capture point (glClipPlane/glEnable are
+		// no-ops here). Real GL's glClipPlane transforms the given plane
+		// by the *current* modelview's inverse-transpose at call time -
+		// which is s_flipMatrix here (just loaded), not the full world
+		// modelview - converting plane2 from the engine's native
+		// (X-forward) convention into GL's (-Z-forward) eye space, the
+		// same space our fragEyePos varying is computed in (since
+		// VK_SetModelViewMatrix() is fed backEnd.viewParms.world.modelMatrix,
+		// which itself bakes in this same flip). s_flipMatrix is
+		// orthogonal, so its inverse-transpose equals itself; apply it
+		// directly to the normal (the distance term is unaffected by a
+		// pure rotation of the normal).
+		{
+			float planeEqf[4];
+
+			planeEqf[0] = (float)-plane2[2];
+			planeEqf[1] = (float)-plane2[0];
+			planeEqf[2] = (float)plane2[1];
+			planeEqf[3] = (float)plane2[3];
+			VK_SetPortalClip(planeEqf);
+		}
 	}
 	else
 	{
 		glDisable(GL_CLIP_PLANE0);
+		VK_ClearPortalClip();
 	}
 }
 

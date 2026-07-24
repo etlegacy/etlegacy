@@ -108,6 +108,8 @@ void VK_Draw2D(struct shaderCommands_s *input, struct image_s *image);
  * clip-space correction (Y-flip + depth range remap).
  */
 void VK_SetProjectionMatrix(const float *m);
+void VK_GetProjectionMatrix(float *m);
+void VK_SetRawProjectionMatrix(const float *m);
 
 /**
  * @brief sets the dynamic viewport/scissor for 3D scene
@@ -118,11 +120,47 @@ void VK_SetProjectionMatrix(const float *m);
 void VK_SetSceneViewport(int x, int y, int width, int height);
 
 /**
+ * @brief reissues the last scene viewport with a different
+ * depth range (used by sky rendering to pin geometry to the far depth
+ * plane, matching renderer1's glDepthRange(1,1) trick).
+ */
+void VK_SetSkyDepthRange(float minDepth, float maxDepth);
+
+/**
  * @brief captures the GL-convention modelview matrix (world
  * or per-entity, see tr_backend.c's RB_RenderDrawSurfList()) and
  * recomputes the cached MVP used by VK_Draw3D()/VK_Draw3DLightmapped().
  */
 void VK_SetModelViewMatrix(const float *m);
+void VK_GetModelViewMatrix(float *m);
+
+/**
+ * @brief records linear-fog parameters (color + start/end
+ * distance) applied in the 3D fragment shaders based on eye-space depth.
+ * Called from R_Fog() (tr_main.c) in place of the no-op'd glFog*() calls.
+ */
+void VK_SetFog(const float *color, float start, float end);
+
+/**
+ * @brief disables fog for subsequent 3D draws. Called from
+ * R_FogOff() (tr_main.c) in place of the no-op'd glDisable(GL_FOG).
+ */
+void VK_SetFogOff(void);
+
+/**
+ * @brief records an eye-space portal/mirror clip-plane
+ * equation, applied as a per-fragment discard in the 3D fragment shaders.
+ * Called from RB_BeginDrawingView() (tr_backend.c) in place of the
+ * no-op'd glClipPlane()/glEnable(GL_CLIP_PLANE0) calls.
+ */
+void VK_SetPortalClip(const float *planeEq);
+
+/**
+ * @brief disables the portal/mirror clip plane for
+ * subsequent 3D draws. Called in place of the no-op'd
+ * glDisable(GL_CLIP_PLANE0).
+ */
+void VK_ClearPortalClip(void);
 
 /**
  * @brief submits one already-tessellated 3D shader stage

@@ -58,6 +58,7 @@
  */
 
 #include "tr_local.h"
+#include "vulkan/vk.h"
 
 /**
  * @struct flare_s
@@ -539,24 +540,53 @@ void RB_RenderFlares(void)
 		glDisable(GL_CLIP_PLANE0);
 	}
 
-	glPushMatrix();
-	glLoadIdentity();
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-	glOrtho(backEnd.viewParms.viewportX, backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth,
-	        backEnd.viewParms.viewportY, backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight,
-	        -99999, 99999);
-
-	for (f = r_activeFlares ; f ; f = f->next)
+	// glPushMatrix/glOrtho/glPopMatrix are no-ops here — build
+	// the equivalent GL-convention ortho matrix (RB_RenderFlare() writes
+	// raw window-space pixel coordinates into tess.xyz, same as the
+	// original immediate-mode code expected) and feed it through the real
+	// capture points, saving/restoring the current (3D world) proj +
+	// modelview so later draws this frame aren't affected.
 	{
-		if (f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal && f->drawIntensity != 0.f)
+		float savedProj[16], savedModel[16];
+		float orthoMatrix[16];
+		float left               = backEnd.viewParms.viewportX;
+		float right              = backEnd.viewParms.viewportX + backEnd.viewParms.viewportWidth;
+		float bottom             = backEnd.viewParms.viewportY;
+		float top                = backEnd.viewParms.viewportY + backEnd.viewParms.viewportHeight;
+		float znear              = -99999.0f;
+		float zfar               = 99999.0f;
+		float identityMatrix[16] =
 		{
-			RB_RenderFlare(f);
-		}
-	}
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1
+		};
 
-	glPopMatrix();
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
+		VK_GetProjectionMatrix(savedProj);
+		VK_GetModelViewMatrix(savedModel);
+
+		Com_Memset(orthoMatrix, 0, sizeof(orthoMatrix));
+		orthoMatrix[0]  = 2.0f / (right - left);
+		orthoMatrix[5]  = 2.0f / (top - bottom);
+		orthoMatrix[10] = -2.0f / (zfar - znear);
+		orthoMatrix[12] = -(right + left) / (right - left);
+		orthoMatrix[13] = -(top + bottom) / (top - bottom);
+		orthoMatrix[14] = -(zfar + znear) / (zfar - znear);
+		orthoMatrix[15] = 1.0f;
+
+		VK_SetProjectionMatrix(orthoMatrix);
+		VK_SetModelViewMatrix(identityMatrix);
+
+		for (f = r_activeFlares ; f ; f = f->next)
+		{
+			if (f->frameSceneNum == backEnd.viewParms.frameSceneNum && f->inPortal == backEnd.viewParms.isPortal && f->drawIntensity != 0.f)
+			{
+				RB_RenderFlare(f);
+			}
+		}
+
+		VK_SetRawProjectionMatrix(savedProj);
+		VK_SetModelViewMatrix(savedModel);
+	}
 }
