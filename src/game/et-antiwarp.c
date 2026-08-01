@@ -193,6 +193,11 @@ void DoClientThinks(gentity_t *ent)
 		serverTime = cmd->serverTime;
 		totalDelta = latestTime - cmd->serverTime;
 
+		// remember the command time the client actually authored - antilag
+		// must rewind to this time, since cmd->serverTime may be rewritten
+		// below (deltahax) to enforce the movement budget
+		ent->client->realCmdServerTime = cmd->serverTime;
+
 		if (pmove_fixed.integer || ent->client->pers.pmoveFixed)
 		{
 			serverTime = ((serverTime + pmove_msec.integer - 1) / pmove_msec.integer) * pmove_msec.integer;
