@@ -220,6 +220,13 @@ void DoClientThinks(gentity_t *ent)
 			goto drop_packet;
 		}
 
+		// remember the command time the client actually authored - antilag
+		// must rewind to this time, since cmd->serverTime may be rewritten
+		// below (deltahax) to enforce the movement budget. Set only once the
+		// command is known to be executed, so a dropped one can't leave a
+		// bogus rewind time behind
+		ent->client->realCmdServerTime = cmd->serverTime;
+
 		scale = 1.f / LAG_DECAY;
 
 		speed = G_CmdScale(ent, cmd);
