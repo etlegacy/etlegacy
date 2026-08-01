@@ -271,6 +271,10 @@ void DoClientThinks(gentity_t *ent)
 
 		ent->client->cmddelta += delta;
 
+		// antilag rewinds to the client-authored time, not the deltahax
+		// rewrite below - latch it just before the command executes
+		ent->client->realCmdServerTime = cmd->serverTime;
+
 		if (deltahax)
 		{
 			savedTime       = cmd->serverTime;
