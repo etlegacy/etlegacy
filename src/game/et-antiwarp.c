@@ -57,18 +57,19 @@ void etpro_AddUsercmd(int clientNum, usercmd_t *cmd)
 	gentity_t *ent = g_entities + clientNum;
 	int       idx  = (ent->client->cmdhead + ent->client->cmdcount) % LAG_MAX_COMMANDS;
 
-	ent->client->cmds[idx] = *cmd;
-
 	if (ent->client->cmdcount < LAG_MAX_COMMANDS)
 	{
+		ent->client->cmds[idx] = *cmd;
 		ent->client->cmdcount++;
 	}
 	else
 	{
 		// queue full, the oldest command is overwritten - rescue its button
-		// presses so they are not silently lost (refs #1408)
+		// presses before overwriting so they are not silently lost (refs #1408)
+		// (note: with a full queue, idx == cmdhead)
 		ent->client->droppedButtons  |= ent->client->cmds[ent->client->cmdhead].buttons;
 		ent->client->droppedWButtons |= ent->client->cmds[ent->client->cmdhead].wbuttons;
+		ent->client->cmds[idx]        = *cmd;
 		ent->client->cmdhead          = (ent->client->cmdhead + 1) % LAG_MAX_COMMANDS;
 	}
 }
