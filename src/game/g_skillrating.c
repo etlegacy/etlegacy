@@ -34,7 +34,7 @@
 							   "SELECT * FROM rating_maps;"
 #define SRCHECK_SQLWRAP_SCHEMA "SELECT guid, mu, sigma, created, updated FROM rating_users; " \
 							   "SELECT guid, mu, sigma, time_axis, time_allies FROM rating_match; " \
-							   "SELECT mapname, win_axis, win_allies FROM rating_maps;"
+							   "SELECT mapname, win_axis, win_allies, win_axis_f, win_allies_f, last_played FROM rating_maps;"
 #define SRMATCH_SQLWRAP_DELETE "DELETE FROM rating_match;"
 #define SRMATCH_SQLWRAP_SELECT "SELECT * FROM rating_match WHERE guid = '%s';"
 #define SRMATCH_SQLWRAP_INSERT "INSERT INTO rating_match " \
@@ -49,9 +49,9 @@
 #define SRMATCH_SQLWRAP_TABLE  "SELECT * FROM rating_match;"
 #define SRMAPS_SQLWRAP_SELECT  "SELECT * FROM rating_maps WHERE mapname = '%s';"
 #define SRMAPS_SQLWRAP_INSERT  "INSERT INTO rating_maps " \
-							   "(win_axis, win_allies, mapname) VALUES ('%i', '%i', '%s');"
+							   "(mapname, win_axis, win_allies, win_axis_f, win_allies_f, last_played) VALUES ('%s', '%i', '%i', '%f', '%f', CURRENT_TIMESTAMP);"
 #define SRMAPS_SQLWRAP_UPDATE  "UPDATE rating_maps " \
-							   "SET win_axis = win_axis + '%i', win_allies = win_allies + '%i' WHERE mapname = '%s';"
+							   "SET win_axis = win_axis + '%i', win_allies = win_allies + '%i', win_axis_f = '%f', win_allies_f = '%f', last_played = CURRENT_TIMESTAMP WHERE mapname = '%s';"
 
 // MU      25            - mean
 // SIGMA   MU / 3        - standard deviation
@@ -59,6 +59,7 @@
 // TAU     SIGMA / 100   - dynamics factor
 // EPSILON 0.f           - draw margin (assumed null)
 // LAMBDA  10            - map continuity correction
+// MAP_BIAS_N 200        - effective sample size of decayed map win counters (EMA cap)
 
 /**
  * @brief Checks if database exists, if tables exist and if schemas are correct
@@ -649,7 +650,6 @@ void G_SkillRatingSetClientRating(gclient_t *cl)
 float G_SkillRatingGetMapRating(char *mapname)
 {
 	float        mapProb;
-	int          win_axis, win_allies;
 	int          result;
 	char         *err_msg = NULL;
 	char         *sql;
@@ -682,23 +682,22 @@ float G_SkillRatingGetMapRating(char *mapname)
 
 	if (result == SQLITE_ROW)
 	{
-		// assign map data
-		win_axis   = sqlite3_column_int(sqlstmt, 1);
-		win_allies = sqlite3_column_int(sqlstmt, 2);
+		// assign decayed map data (EMA counters, see G_SkillRatingSetMapRating)
+		float win_axis   = (float)sqlite3_column_double(sqlstmt, 3);
+		float win_allies = (float)sqlite3_column_double(sqlstmt, 4);
 
 		// map bias continuity correction
 		if (win_axis + win_allies < 2 * LAMBDA)
 		{
-			// use integer division to decay one value for every 2 matches played
-			int win_corrected_axis   = win_axis + LAMBDA - (win_axis + win_allies) / 2;
-			int win_corrected_allies = win_allies + LAMBDA - (win_axis + win_allies) / 2;
+			// decay one value for every 2 matches played
+			float correction = LAMBDA - (win_axis + win_allies) / 2.f;
 
-			win_axis   = win_corrected_axis;
-			win_allies = win_corrected_allies;
+			win_axis   += correction;
+			win_allies += correction;
 		}
 
 		// calculate map bias
-		mapProb = win_axis / (float)(win_axis + win_allies);
+		mapProb = win_axis / (win_axis + win_allies);
 	}
 	else
 	{
@@ -731,6 +730,12 @@ float G_SkillRatingGetMapRating(char *mapname)
 
 /**
  * @brief Sets or updates map bias in the rating_maps table
+ * @details Map bias counters are an exponential moving average over plays with
+ *          exact cap MAP_BIAS_N: once the decayed counters reach N, history is
+ *          scaled by (N - 1) / total before each new result is added, so the
+ *          counters always sum to N and old results fade exponentially
+ *          (weight (N-1)/N per play). Raw INT counters are kept as lifetime
+ *          totals.
  * @param[in] mapname
  * @param[in] winner
  */
@@ -762,13 +767,14 @@ void G_SkillRatingSetMapRating(char *mapname, int winner)
 
 	if (result == SQLITE_DONE)
 	{
+		// first recorded play of this map
 		if (winner == TEAM_AXIS)
 		{
-			sql = va(SRMAPS_SQLWRAP_INSERT, 1, 0, mapname);
+			sql = va(SRMAPS_SQLWRAP_INSERT, mapname, 1, 0, 1.f, 0.f);
 		}
 		else // winner == TEAM_ALLIES
 		{
-			sql = va(SRMAPS_SQLWRAP_INSERT, 0, 1, mapname);
+			sql = va(SRMAPS_SQLWRAP_INSERT, mapname, 0, 1, 0.f, 1.f);
 		}
 
 		result = sqlite3_exec(level.database.db, sql, NULL, NULL, &err_msg);
@@ -780,15 +786,30 @@ void G_SkillRatingSetMapRating(char *mapname, int winner)
 			return;
 		}
 	}
-	else
+	else if (result == SQLITE_ROW)
 	{
+		float win_axis   = (float)sqlite3_column_double(sqlstmt, 3);
+		float win_allies = (float)sqlite3_column_double(sqlstmt, 4);
+		float total      = win_axis + win_allies;
+
+		// exact cap: scale history to make room for exactly one new result
+		if (total >= MAP_BIAS_N)
+		{
+			float scale = (MAP_BIAS_N - 1.f) / total;
+
+			win_axis   *= scale;
+			win_allies *= scale;
+		}
+
 		if (winner == TEAM_AXIS)
 		{
-			sql = va(SRMAPS_SQLWRAP_UPDATE, 1, 0, mapname);
+			win_axis += 1.f;
+			sql       = va(SRMAPS_SQLWRAP_UPDATE, 1, 0, win_axis, win_allies, mapname);
 		}
 		else // winner == TEAM_ALLIES
 		{
-			sql = va(SRMAPS_SQLWRAP_UPDATE, 0, 1, mapname);
+			win_allies += 1.f;
+			sql         = va(SRMAPS_SQLWRAP_UPDATE, 0, 1, win_axis, win_allies, mapname);
 		}
 
 		result = sqlite3_exec(level.database.db, sql, NULL, NULL, &err_msg);
@@ -799,6 +820,13 @@ void G_SkillRatingSetMapRating(char *mapname, int winner)
 			sqlite3_free(err_msg);
 			return;
 		}
+	}
+	else
+	{
+		G_Printf("G_SkillRatingSetMapRating: sqlite3_step failed: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		sqlite3_finalize(sqlstmt);
+		return;
 	}
 
 	result = sqlite3_finalize(sqlstmt);
