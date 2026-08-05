@@ -44,27 +44,10 @@ cvar_t *db_uri;
 sqlite3  *db = NULL;
 qboolean isDBActive;
 
-// Important Note
-// Always create optional feature tables see f.e. rating tables otherwise we can't ensure db integrity for updates
-
-// version 1
-//
-// table etl_version
-// table rating_users
-// table rating_match
-// table rating_maps
-
-// version 2
-//
-// table client_servers
-//   profile - profilepath
-//   source  - favorite source
-//   address - IP + port
-//   name    - server name
-//   mod     - server mod
-//   updated (last visit)
-//   created
-//
+// Important note:
+// Always create optional feature tables unconditionally (IF NOT EXISTS), even when the
+// feature is disabled (f.e. the rating tables) - schema migrations must be able to rely
+// on every table existing, otherwise we can't ensure db integrity for updates.
 
 const char *sql_Version_Statements[SQL_DBMS_SCHEMA_VERSION] =
 {
@@ -80,7 +63,13 @@ const char *sql_Version_Statements[SQL_DBMS_SCHEMA_VERSION] =
 	"CREATE INDEX IF NOT EXISTS client_servers_profile_idx ON client_servers(profile);"
 	"CREATE INDEX IF NOT EXISTS client_servers_address_idx ON client_servers(address);",     // client table
 	// version 3
-	"DROP TABLE IF EXISTS prestige_users;"     // server table
+	"DROP TABLE IF EXISTS prestige_users;",     // server table
+	// version 4
+	"ALTER TABLE rating_maps ADD COLUMN win_axis_f REAL;"
+	"ALTER TABLE rating_maps ADD COLUMN win_allies_f REAL;"
+	"ALTER TABLE rating_maps ADD COLUMN last_played TEXT;"
+	"UPDATE rating_maps SET win_axis_f = win_axis, win_allies_f = win_allies;"
+	"UPDATE rating_maps SET win_axis_f = win_axis_f * 200.0 / (win_axis_f + win_allies_f), win_allies_f = win_allies_f * 200.0 / (win_axis_f + win_allies_f) WHERE win_axis_f + win_allies_f > 200.0;"
 };
 
 /*
