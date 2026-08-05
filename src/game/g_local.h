@@ -2329,6 +2329,14 @@ int G_DB_DeInit(void);
 #define TAU     (SIGMA / 100)   ///< dynamics factor
 #define EPSILON 0.f             ///< draw margin (assumed null)
 #define LAMBDA  10              ///< map continuity correction (n = 2 * LAMBDA, n >= 20)
+// effective sample size of the decayed map win counters (EMA over plays with exact cap).
+// Lower bound from noise: bias error epsilon shifts expected performance by
+// 2 * MU * epsilon mu (MU = 25), so epsilon <= SIGMA / 2 (~8%) keeps it
+// below the rating system's own noise floor;
+// delta = 7% at 95% confidence gives N = (1.96 / (2 * 0.07))^2 ~ 196. Upper bound from
+// adaptation lag (~N plays to track a real change) argues against much larger values.
+// N = 200 maximizes responsiveness subject to the estimate not being noise.
+#define MAP_BIAS_N 200.f
 
 void G_CalculateSkillRatings(void);
 float G_CalculateWinProbability(int team);
