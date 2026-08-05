@@ -717,7 +717,7 @@ float G_SkillRatingGetMapRating(char *mapname)
 
 			G_Printf("G_SkillRatingGetMapRating: sqlite3_step failed: %s\n", err_msg);
 			sqlite3_free(err_msg);
-			return 1;
+			return 0.5f;
 		}
 	}
 
@@ -851,6 +851,13 @@ void G_CalculateSkillRatings(void)
 	// log
 	G_LogPrintf("SkillRating: Map: %s, Winner: %d, Time: %d, Timelimit: %d\n",
 	            level.rawmapname, winner, level.intermissionQueued - level.startTime - level.timeDelta, g_timelimit.integer * 60000);
+
+	// skip maps without decisive winner (draw or admin forced end)
+	if (winner != TEAM_AXIS && winner != TEAM_ALLIES)
+	{
+		G_LogPrintf("SkillRating: no decisive winner, map and player ratings not updated\n");
+		return;
+	}
 
 	// update map rating
 	if (g_skillRating.integer > 1)
