@@ -2434,7 +2434,12 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	}
 	else
 	{
-		G_ReadSessionData(client);
+		// read the session data, or initialize a fresh session
+		// if the stored session belongs to a different client
+		if (!G_ReadSessionData(client))
+		{
+			G_InitSessionData(client, userinfo);
+		}
 	}
 
 	// GeoIP
