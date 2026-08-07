@@ -1873,7 +1873,7 @@ void G_InitMemory(void);
 void Svcmd_GameMem_f(void);
 
 // g_session.c
-void G_ReadSessionData(gclient_t *client);
+qboolean G_ReadSessionData(gclient_t *client);
 void G_InitSessionData(gclient_t *client, const char *userinfo);
 
 void G_InitWorldSession(void);

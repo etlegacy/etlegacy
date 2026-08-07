@@ -70,6 +70,7 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 		Com_Error(ERR_FATAL, "Could not allocate memory for session data\n");
 	}
 
+	cJSON_AddStringToObject(root, "guid", client->pers.cl_guid);
 	cJSON_AddNumberToObject(root, "sessionTeam", client->sess.sessionTeam);
 	cJSON_AddNumberToObject(root, "spectatorTime", client->sess.spectatorTime);
 	cJSON_AddNumberToObject(root, "spectatorState", client->sess.spectatorState);
@@ -302,18 +303,38 @@ void G_CalcRank(gclient_t *client)
 /**
  * @brief Called on a reconnect
  * @param[in] client
+ * @return qtrue if the session data was restored, qfalse if there is no
+ *         session file or it belongs to a different client (guid mismatch)
  */
-void G_ReadSessionData(gclient_t *client)
+qboolean G_ReadSessionData(gclient_t *client)
 {
-	char     fileName[MAX_QPATH] = { 0 };
-	cJSON    *root = NULL, *wstats = NULL, *campaign = NULL;
-	qboolean test, restoreStats = qtrue;
-	int      i = 0;
+	char       fileName[MAX_QPATH] = { 0 };
+	const char *guid;
+	cJSON      *root = NULL, *wstats = NULL, *campaign = NULL;
+	qboolean   test, restoreStats = qtrue;
+	int        i = 0;
 
 	Com_sprintf(fileName, sizeof(fileName), "session/client%02i.json", (int)(client - level.clients));
 	Com_Printf("Reading session file %s\n", fileName);
 
 	root = Q_FSReadJsonFrom(fileName);
+
+	// no session file (or unreadable/corrupt) - start with a fresh session
+	if (!root)
+	{
+		return qfalse;
+	}
+
+	// session files are stored per client slot - ensure the stored session
+	// actually belongs to this client (e.g. not to the previous slot occupant)
+	guid = Q_ReadStringValueJson(root, "guid");
+
+	if (!guid || Q_stricmp(guid, client->pers.cl_guid))
+	{
+		G_LogPrintf("G_ReadSessionData: guid mismatch for client %i, skipping session restore\n", (int)(client - level.clients));
+		cJSON_Delete(root);
+		return qfalse;
+	}
 
 	if (level.fResetStats)
 	{
@@ -543,6 +564,8 @@ void G_ReadSessionData(gclient_t *client)
 		client->sess.startskillpoints[i] = client->sess.skillpoints[i];
 		client->sess.startxptotal       += client->sess.skillpoints[i];
 	}
+
+	return qtrue;
 }
 
 /**
