@@ -152,8 +152,6 @@ int G_XPSaver_CheckDB(char *db_path, int db_mode)
  */
 void G_XPSaver_Load(gclient_t *cl)
 {
-	char      userinfo[MAX_INFO_STRING];
-	char      *guid;
 	int       clientNum, i;
 	xpData_t  xp_data;
 	gentity_t *ent;
@@ -179,12 +177,15 @@ void G_XPSaver_Load(gclient_t *cl)
 		return;
 	}
 
-	// retrieve guid
-	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
-	guid = Info_ValueForKey(userinfo, "cl_guid");
+	// skip clients without a usable GUID (e.g. ETLTV slaves)
+	// pers.cl_guid is set at connect time (format-validated when g_guidCheck is enabled); userinfo may be stale on slot reuse
+	if (strlen(cl->pers.cl_guid) < MAX_GUID_LENGTH)
+	{
+		return;
+	}
 
 	// assign guid
-	xp_data.guid = (const unsigned char *)guid;
+	xp_data.guid = (const unsigned char *)cl->pers.cl_guid;
 
 	// retrieve current xp or assign default values
 	if (G_XPSaver_Read(&xp_data))
@@ -209,8 +210,6 @@ void G_XPSaver_Load(gclient_t *cl)
  */
 void G_XPSaver_Store(gclient_t *cl)
 {
-	char      userinfo[MAX_INFO_STRING];
-	char      *guid;
 	int       clientNum, i;
 	xpData_t  xp_data;
 	gentity_t *ent;
@@ -242,11 +241,14 @@ void G_XPSaver_Store(gclient_t *cl)
 		return;
 	}
 
-	// retrieve guid
-	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
-	guid = Info_ValueForKey(userinfo, "cl_guid");
+	// skip clients without a usable GUID (e.g. ETLTV slaves)
+	// pers.cl_guid is set at connect time (format-validated when g_guidCheck is enabled); userinfo may be stale on slot reuse
+	if (strlen(cl->pers.cl_guid) < MAX_GUID_LENGTH)
+	{
+		return;
+	}
 
-	xp_data.guid = (const unsigned char *)guid;
+	xp_data.guid = (const unsigned char *)cl->pers.cl_guid;
 
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{

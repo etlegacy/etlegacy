@@ -483,9 +483,6 @@ int G_SkillRatingSetUserRating(srData_t *sr_data)
  */
 void G_SkillRatingGetClientRating(gclient_t *cl)
 {
-	char     userinfo[MAX_INFO_STRING];
-	char     *guid;
-	int      clientNum;
 	srData_t sr_data;
 
 	// disable for these game types
@@ -505,14 +502,15 @@ void G_SkillRatingGetClientRating(gclient_t *cl)
 		return;
 	}
 
-	clientNum = cl - level.clients;
-
-	// retrieve guid
-	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
-	guid = Info_ValueForKey(userinfo, "cl_guid");
+	// skip clients without a usable GUID (e.g. ETLTV slaves)
+	// pers.cl_guid is set at connect time (format-validated when g_guidCheck is enabled); userinfo may be stale on slot reuse
+	if (strlen(cl->pers.cl_guid) < MAX_GUID_LENGTH)
+	{
+		return;
+	}
 
 	// assign guid
-	sr_data.guid = (const unsigned char *)guid;
+	sr_data.guid = (const unsigned char *)cl->pers.cl_guid;
 
 	// retrieve current rating or assign default values
 	if (level.warmupTime || level.intermissionQueued || level.intermissiontime)
@@ -579,9 +577,6 @@ void G_SkillRatingGetClientRating(gclient_t *cl)
  */
 void G_SkillRatingSetClientRating(gclient_t *cl)
 {
-	char     userinfo[MAX_INFO_STRING];
-	char     *guid;
-	int      clientNum;
 	srData_t sr_data;
 
 	// disable for these game types
@@ -607,14 +602,15 @@ void G_SkillRatingSetClientRating(gclient_t *cl)
 		return;
 	}
 
-	clientNum = cl - level.clients;
-
-	// retrieve guid
-	trap_GetUserinfo(clientNum, userinfo, sizeof(userinfo));
-	guid = Info_ValueForKey(userinfo, "cl_guid");
+	// skip clients without a usable GUID (e.g. ETLTV slaves)
+	// pers.cl_guid is set at connect time (format-validated when g_guidCheck is enabled); userinfo may be stale on slot reuse
+	if (strlen(cl->pers.cl_guid) < MAX_GUID_LENGTH)
+	{
+		return;
+	}
 
 	// assign match data
-	sr_data.guid        = (const unsigned char *)guid;
+	sr_data.guid        = (const unsigned char *)cl->pers.cl_guid;
 	sr_data.mu          = cl->sess.mu;
 	sr_data.sigma       = cl->sess.sigma;
 	sr_data.time_axis   = cl->sess.time_axis;
