@@ -797,21 +797,21 @@ void G_printMatchInfo(gentity_t *ent)
 			continue;
 		}
 
-		tot_timex = 0;
-		tot_timel = 0;
-		tot_timep = 0;
-		tot_kills = 0;
+		tot_timex       = 0;
+		tot_timel       = 0;
+		tot_timep       = 0;
+		tot_kills       = 0;
 		tot_killassists = 0;
-		tot_deaths = 0;
-		tot_gibs = 0;
-		tot_sk = 0;
-		tot_tk = 0;
-		tot_tg = 0;
-		tot_dg = 0;
-		tot_dr = 0;
-		tot_tdg = 0;
-		tot_tdr = 0;
-		tot_xp = 0;
+		tot_deaths      = 0;
+		tot_gibs        = 0;
+		tot_sk          = 0;
+		tot_tk          = 0;
+		tot_tg          = 0;
+		tot_dg          = 0;
+		tot_dr          = 0;
+		tot_tdg         = 0;
+		tot_tdr         = 0;
+		tot_xp          = 0;
 
 		SMI("sc \"\n\"");
 #ifdef FEATURE_RATING
@@ -824,7 +824,7 @@ void G_printMatchInfo(gentity_t *ent)
 
 		for (j = 0; j < level.numConnectedClients; j++)
 		{
-			cl = level.clients + level.sortedClients[j];
+			cl     = level.clients + level.sortedClients[j];
 			cl_ent = g_entities + level.sortedClients[j];
 
 			if (cl->pers.connected != CON_CONNECTED || cl->sess.sessionTeam != i)
@@ -851,22 +851,22 @@ void G_printMatchInfo(gentity_t *ent)
 			Q_EscapeColorCodes(n2, '3');
 			namePadding = Q_CountPaddingWithColor(n2, SCORES_NAME_MAX_LEN);
 
-			ref = "^7";
-			tot_timex += cl->sess.time_axis;
-			tot_timel += cl->sess.time_allies;
-			tot_timep += cl->sess.time_played;
-			tot_kills += cl->sess.kills;
+			ref              = "^7";
+			tot_timex       += cl->sess.time_axis;
+			tot_timel       += cl->sess.time_allies;
+			tot_timep       += cl->sess.time_played;
+			tot_kills       += cl->sess.kills;
 			tot_killassists += cl->sess.kill_assists;
-			tot_deaths += cl->sess.deaths;
-			tot_gibs += cl->sess.gibs;
-			tot_sk += cl->sess.self_kills;
-			tot_tk += cl->sess.team_kills;
-			tot_tg += cl->sess.team_gibs;
-			tot_dg += cl->sess.damage_given;
-			tot_dr += cl->sess.damage_received;
-			tot_tdg += cl->sess.team_damage_given;
-			tot_tdr += cl->sess.team_damage_received;
-			tot_xp += (g_gametype.integer == GT_WOLF_LMS || g_gametype.integer == GT_WOLF_STOPWATCH) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP];
+			tot_deaths      += cl->sess.deaths;
+			tot_gibs        += cl->sess.gibs;
+			tot_sk          += cl->sess.self_kills;
+			tot_tk          += cl->sess.team_kills;
+			tot_tg          += cl->sess.team_gibs;
+			tot_dg          += cl->sess.damage_given;
+			tot_dr          += cl->sess.damage_received;
+			tot_tdg         += cl->sess.team_damage_given;
+			tot_tdr         += cl->sess.team_damage_received;
+			tot_xp          += (g_gametype.integer == GT_WOLF_LMS || g_gametype.integer == GT_WOLF_STOPWATCH) ? cl->ps.persistant[PERS_SCORE] : cl->ps.stats[STAT_XP];
 
 			eff = (cl->sess.deaths + cl->sess.kills == 0) ? 0 : 100 * cl->sess.kills / (cl->sess.deaths + cl->sess.kills);
 			if (eff < 0)

@@ -1080,7 +1080,7 @@ static panel_button_t *limboPanelButtons[] =
 	&filterButton5,           &filterButton6,             &filterButton7,         &filterButton8,
 	&filterTitleText,
 
-	&medalPic0,               &medalPic1,                 &medalPic2,             &medalPic3,     &medalPic4,    &medalPic5,  &medalPic6,
+	&medalPic0,               &medalPic1,                 &medalPic2,             &medalPic3,     &medalPic4,    &medalPic5,&medalPic6,
 
 	&teamCounter0,            &teamCounter1,              &teamCounter2,
 	&teamCounterLight0,       &teamCounterLight1,         &teamCounterLight2,
