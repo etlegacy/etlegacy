@@ -311,10 +311,6 @@ if(BUILD_MOD)
 		target_compile_definitions(mod_libraries INTERFACE FEATURE_RATING)
 	endif()
 
-	if(FEATURE_PRESTIGE)
-		target_compile_definitions(mod_libraries INTERFACE FEATURE_PRESTIGE)
-	endif()
-
 	if(FEATURE_LUA)
 		if(FEATURE_LUAJIT)
 			if(BUNDLED_LUA)
