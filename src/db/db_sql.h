@@ -42,7 +42,7 @@
 
 // when updating our DB schema in DB_CreateSchema increase this
 // for existing databases on servers we do the upgrade with Lua scripts or SQL commands stored in version table ...
-#define SQL_DBMS_SCHEMA_VERSION 2
+#define SQL_DBMS_SCHEMA_VERSION 3
 
 extern cvar_t *db_mode;     // 0 - disabled, 1 - sqlite3 memory db, 2 - sqlite3 file db
 extern cvar_t *db_uri;
