@@ -120,10 +120,6 @@ void G_WriteClientSessionData(gclient_t *client, qboolean restart)
 	}
 #endif
 
-#ifdef FEATURE_PRESTIGE
-	cJSON_AddNumberToObject(root, "prestige", client->sess.prestige);
-#endif
-
 #ifdef FEATURE_MULTIVIEW
 	{
 		int mvc = G_smvGenerateClientList(g_entities + (client - level.clients));
@@ -435,10 +431,6 @@ void G_ReadSessionData(gclient_t *client)
 			Q_JsonError("Rating object missing\n");
 		}
 	}
-#endif
-
-#ifdef FEATURE_PRESTIGE
-	client->sess.prestige = Q_ReadIntValueJson(root, "prestige");
 #endif
 
 #ifdef FEATURE_MULTIVIEW

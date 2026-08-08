@@ -103,15 +103,9 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "give",           CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_Give_f,                          " <all|skill|medal|health|weapons|ammo|allammo|keys>:^7 Gives something"                     },
 	{ "god",            CMD_USAGE_NO_INTERMISSION,   qtrue,       qfalse, Cmd_God_f,                           ":^7 God Mode"                                                                               },
 	{ "ignore",         CMD_USAGE_ANY_TIME,          qtrue,       qfalse, Cmd_Ignore_f,                        " <clientname>:^7 Ignore a player from chat"                                                 },
-#ifdef FEATURE_PRESTIGE
-	{ "imcollectpr",    CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionCollectPrestige_f,   ""                                                                                           },
-#endif
 	{ "immaplist",      CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, G_IntermissionMapList,               ""                                                                                           },
 	{ "immaphistory",   CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, G_IntermissionMapHistory,            ""                                                                                           },
 	{ "impkd",          CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionPlayerKillsDeaths_f, ""                                                                                           },
-#ifdef FEATURE_PRESTIGE
-	{ "impr",           CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionPrestige_f,          ""                                                                                           },
-#endif
 	{ "impt",           CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionPlayerTime_f,        ""                                                                                           },
 	{ "imready",        CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionReady_f,             ""                                                                                           },
 #ifdef FEATURE_RATING

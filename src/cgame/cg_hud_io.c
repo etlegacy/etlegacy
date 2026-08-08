@@ -2046,13 +2046,12 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 
 		if (!parentHud || (tmpHud->crosshairbar.style != parentHud->crosshairbar.style))
 		{
-			tmpHud->crosshairbar.barStyle  = (tmpHud->crosshairbar.style >> 3);  // remove "Class", "Rank", "Prestige" style from bar style
+			tmpHud->crosshairbar.barStyle  = (tmpHud->crosshairbar.style >> 3);  // remove "Class", "Rank" style from bar style
 			tmpHud->crosshairbar.barStyle &= ~(BAR_CIRCULAR << 1);   // remove dynamic coloration style from bar style
 
 			// retrived common style for crosshair bar
 			tmp |= (tmpHud->crosshairbar.style & CROSSHAIR_BAR_CLASS);
 			tmp |= (tmpHud->crosshairbar.style & CROSSHAIR_BAR_RANK);
-			tmp |= (tmpHud->crosshairbar.style & CROSSHAIR_BAR_PRESTIGE);
 			if (tmpHud->crosshairbar.style & (BAR_CIRCULAR << 4))
 			{
 				tmp |= CROSSHAIR_BAR_DYNAMIC_COLOR;

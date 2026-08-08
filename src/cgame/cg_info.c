@@ -1198,13 +1198,6 @@ void CG_GameStatsDraw(void)
 			CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "Skill Rating", 0.0f, 0, hStyle2, hFont2);
 		}
 #endif
-#ifdef FEATURE_PRESTIGE
-		if (cgs.prestige && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS && cgs.gametype != GT_WOLF_CAMPAIGN)
-		{
-			x += 85;
-			CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, "Prestige", 0.0f, 0, hStyle2, hFont2);
-		}
-#endif
 
 		x  = (Ccg_WideX(SCREEN_WIDTH) / 2) - (GS_W / 2);
 		y += 1 + tSpacing;
@@ -1220,13 +1213,6 @@ void CG_GameStatsDraw(void)
 		x += 86;
 		CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("Level"), 0.0f, 0, hStyle2, hFont2);
 		x += 74;
-#ifdef FEATURE_PRESTIGE
-		if (cgs.prestige && cgs.gametype != GT_WOLF_CAMPAIGN && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS)
-		{
-			CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("XP (Total / Next Level)"), 0.0f, 0, hStyle2, hFont2);
-		}
-		else
-#endif
 		{
 			CG_Text_Paint_Ext(x + 4, y, hScale2, hScaleY2, hdrColor, CG_TranslateString("XP / Next Level"), 0.0f, 0, hStyle2, hFont2);
 		}

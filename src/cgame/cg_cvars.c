@@ -261,7 +261,7 @@ vmCvar_t cg_optimizePrediction;
 vmCvar_t cg_debugPlayerHitboxes;
 vmCvar_t cg_debugBullets;
 
-#if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
+#if defined(FEATURE_RATING)
 // ratings scoreboard
 vmCvar_t cg_scoreboard;
 #endif
@@ -576,7 +576,7 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_optimizePrediction,                 "cg_optimizePrediction",                 "1",           CVAR_ARCHIVE,                 0 },           // unlagged optimized prediction
 
-#if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
+#if defined(FEATURE_RATING)
 	{ &cg_scoreboard,                         "cg_scoreboard",                         "0",           CVAR_ARCHIVE,                 0 },
 #endif
 

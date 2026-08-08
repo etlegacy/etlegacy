@@ -519,9 +519,6 @@ void CG_PMItemBigSound(pmListItem_t *item)
 	switch (item->type)
 	{
 	case PM_RANK:
-#ifdef FEATURE_PRESTIGE
-	case PM_PRESTIGE:
-#endif
 		trap_S_StartSound(NULL, cg.snap->ps.clientNum, CHAN_AUTO, cgs.media.sndRankUp);
 		break;
 	case PM_SKILL:

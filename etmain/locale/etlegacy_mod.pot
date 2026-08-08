@@ -2882,18 +2882,6 @@ msgid "Class + Rank"
 msgstr ""
 
 #: etmain/ui/options_customise_hud.menu:74
-msgid "Prestige"
-msgstr ""
-
-#: etmain/ui/options_customise_hud.menu:74
-msgid "Rank + Prestige"
-msgstr ""
-
-#: etmain/ui/options_customise_hud.menu:74
-msgid "Class + Rank + Prestige"
-msgstr ""
-
-#: etmain/ui/options_customise_hud.menu:74
 msgid "Displays player info when the crosshair is over a teammate"
 msgstr ""
 

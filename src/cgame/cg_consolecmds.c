@@ -300,17 +300,9 @@ void CG_objectivesUp_f(void)
  */
 void CG_ScoresDown_f(void)
 {
-#if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
-	if (
 #if defined(FEATURE_RATING)
+	if (
 		cgs.skillRating
-#endif
-#if defined(FEATURE_RATING) && defined(FEATURE_PRESTIGE)
-		||
-#endif
-#if defined(FEATURE_PRESTIGE)
-		cgs.prestige
-#endif
 		)
 	{
 		if (!cg.showScores && cg.scoresDownTime + 250 > cg.time && cg.scoreToggleTime < (cg.time - 500))
@@ -329,17 +321,10 @@ void CG_ScoresDown_f(void)
 			}
 #endif
 
-#ifdef FEATURE_PRESTIGE
-			if (cgs.prestige && sb == SCOREBOARD_PR && (cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF_CAMPAIGN))
-			{
-				sb += 1;
-			}
-#else
 			if (sb == SCOREBOARD_PR)
 			{
 				sb += 1;
 			}
-#endif
 			// cycle scoreboard type with a quick tap of +scores
 			if (sb < SCOREBOARD_XP || sb > SCOREBOARD_PR)
 			{
@@ -3705,15 +3690,9 @@ static const char *gameCommand[] =
 	"give",
 	"god",
 	"ignore",
-#ifdef FEATURE_PRESTIGE
-	"imcollectpr",
-#endif
 	"immaplist",
 	"immaphistory",
 	"impkd",
-#ifdef FEATURE_PRESTIGE
-	"impr",
-#endif
 	"impt",
 	"imready",
 #ifdef FEATURE_RATING

@@ -2098,10 +2098,6 @@ void ClientUserinfoChanged(int clientNum)
 	                   skillStr
 	                   );
 
-#ifdef FEATURE_PRESTIGE
-	len += snprintf(configStr + len, infoLen - len, "\\p\\%i", client->sess.prestige);
-#endif
-
 	if (client->disguiseClientNum)
 	{
 		len += snprintf(configStr + len, infoLen - len, "\\dn\\%i", client->disguiseClientNum);
@@ -2564,18 +2560,6 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 	{
 		G_SkillRatingGetClientRating(client);
 		G_CalcRank(client);
-	}
-#endif
-
-#ifdef FEATURE_PRESTIGE
-	if (g_prestige.integer && g_gametype.integer != GT_WOLF_CAMPAIGN && g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS)
-	{
-		G_GetClientPrestige(client);
-
-		for (i = 0; i < SK_NUM_SKILLS; i++)
-		{
-			G_SetPlayerSkill(client, i);
-		}
 	}
 #endif
 
@@ -3555,13 +3539,6 @@ void ClientDisconnect(int clientNum)
 	if (g_skillRating.integer && !level.intermissiontime)
 	{
 		G_SkillRatingSetClientRating(ent->client);
-	}
-#endif
-
-#ifdef FEATURE_PRESTIGE
-	if (g_prestige.integer && !level.intermissiontime)
-	{
-		G_SetClientPrestige(ent->client, qfalse);
 	}
 #endif
 

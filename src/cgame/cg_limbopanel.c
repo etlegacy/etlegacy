@@ -188,35 +188,6 @@ MEDAL_PIC(4);
 MEDAL_PIC(5);
 MEDAL_PIC(6);
 
-#ifdef FEATURE_PRESTIGE
-#define SKILL_PIC_GAP   ((SKILL_PIC_SIZE - (SKILL_PIC_WIDTH * SKILL_PIC_COUNT)) / (SKILL_PIC_COUNT + 1.f))
-#define SKILL_PIC_COUNT 7.f
-#define SKILL_PIC_WIDTH 22.f
-#define SKILL_PIC_X     450.f
-#define SKILL_PIC_SIZE  (630.f - SKILL_PIC_X)
-#define SKILL_PIC(number)                \
-		static panel_button_t skillPic ## number = {         \
-			NULL,                                   \
-			NULL,                                   \
-			{ SKILL_PIC_X + SKILL_PIC_GAP + ((number) * (SKILL_PIC_GAP + SKILL_PIC_WIDTH)),119,                                                                           SKILL_PIC_WIDTH, 26 }, \
-			{ number,                     0,                                                                             0,               0, 0, 0, 0, 0}, \
-			NULL,                         /* font       */              \
-			NULL,                         /* keyDown    */              \
-			NULL,                         /* keyUp  */                  \
-			CG_LimboPanel_RenderPrestige,        \
-			NULL,                                \
-			0,                                   \
-		}
-
-SKILL_PIC(0);
-SKILL_PIC(1);
-SKILL_PIC(2);
-SKILL_PIC(3);
-SKILL_PIC(4);
-SKILL_PIC(5);
-SKILL_PIC(6);
-#endif
-
 #define TEAM_COUNTER_GAP    ((TEAM_COUNTER_SIZE - (TEAM_COUNTER_WIDTH * TEAM_COUNTER_COUNT)) / (TEAM_COUNTER_COUNT + 1.f))
 #define TEAM_COUNTER_COUNT  3.f
 #define TEAM_COUNTER_WIDTH  20.f
@@ -542,36 +513,6 @@ static panel_button_t playerSkillIcon2 =
 	NULL,
 	0
 };
-
-#ifdef FEATURE_PRESTIGE
-static panel_button_t playerPrestigeText =
-{
-	NULL,
-	NULL,
-	{ 576,                      16,   60, 16 },
-	{ 0,                        0,    0,  0, 0, 0, 0, 0},
-	&spawnLimboFont,            // font
-	NULL,                       // keyDown
-	NULL,                       // keyUp
-	CG_LimboPanel_Prestige_Draw,
-	NULL,
-	0
-};
-
-static panel_button_t playerPrestigeIcon =
-{
-	NULL,
-	NULL,
-	{ 616,                           4,   16, 16 },
-	{ 2,                             0,   0,  0, 0, 0, 0, 0},
-	NULL,                            // font
-	NULL,                            // keyDown
-	NULL,                            // keyUp
-	CG_LimboPanel_RenderPrestigeIcon,
-	NULL,
-	0
-};
-#endif
 
 // =======================
 
@@ -1140,18 +1081,12 @@ static panel_button_t *limboPanelButtons[] =
 	&filterTitleText,
 
 	&medalPic0,               &medalPic1,                 &medalPic2,             &medalPic3,     &medalPic4,    &medalPic5,  &medalPic6,
-#ifdef FEATURE_PRESTIGE
-	&skillPic0,               &skillPic1,                 &skillPic2,             &skillPic3,     &skillPic4,    &skillPic5,  &skillPic6,
-#endif
 
 	&teamCounter0,            &teamCounter1,              &teamCounter2,
 	&teamCounterLight0,       &teamCounterLight1,         &teamCounterLight2,
 	&teamButton0,             &teamButton1,               &teamButton2,
 
 	&playerLimboHead,
-#ifdef FEATURE_PRESTIGE
-	&playerPrestigeText,      &playerPrestigeIcon,
-#endif
 	&playerXPCounter,         &playerXPCounterText,
 
 	&respawnCounter,          &respawnCounterText,
@@ -2408,94 +2343,6 @@ void CG_LimboPanel_RenderSkillIcon(panel_button_t *button)
 	CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, shader);
 }
 
-#ifdef FEATURE_PRESTIGE
-/**
- * @brief CG_LimboPanel_Prestige_Draw
- * @param[in] button
- */
-void CG_LimboPanel_Prestige_Draw(panel_button_t *button)
-{
-	const char *text = NULL;
-	float      w;
-
-	if (cg_gameType.integer == GT_WOLF_STOPWATCH || cg_gameType.integer == GT_WOLF_LMS || cg_gameType.integer == GT_WOLF_CAMPAIGN)
-	{
-		return;
-	}
-
-	if (!cgs.prestige)
-	{
-		return;
-	}
-
-	if (cgs.clientinfo[cg.clientNum].shoutcaster)
-	{
-		return;
-	}
-
-	text = va("%3i", cgs.clientinfo[cg.clientNum].prestige);
-
-	w = CG_Text_Width_Ext(text, button->font->scalex, 0, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x + (button->rect.w - w) * 0.5f, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString(text), 0, 0, button->font->style, button->font->font);
-}
-
-/**
- * @brief CG_LimboPanel_RenderPrestigeIcon
- * @param[in] button
- */
-void CG_LimboPanel_RenderPrestigeIcon(panel_button_t *button)
-{
-	int i, j, skillMax, cnt = 0;
-
-	if (cg_gameType.integer == GT_WOLF_STOPWATCH || cg_gameType.integer == GT_WOLF_LMS || cg_gameType.integer == GT_WOLF_CAMPAIGN)
-	{
-		return;
-	}
-
-	if (!cgs.prestige)
-	{
-		return;
-	}
-
-	if (cgs.clientinfo[cg.clientNum].shoutcaster)
-	{
-		return;
-	}
-
-	// count the number of maxed out skills
-	for (i = 0; i < SK_NUM_SKILLS; i++)
-	{
-		skillMax = 0;
-
-		// check skill max level
-		for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
-		{
-			if (GetSkillTableData(i)->skillLevels[j] >= 0)
-			{
-				skillMax = j;
-				break;
-			}
-		}
-
-		if (cgs.clientinfo[cg.clientNum].skill[i] >= skillMax)
-		{
-			cnt++;
-		}
-	}
-
-	if (cnt < SK_NUM_SKILLS)
-	{
-		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.prestigePics[0]);
-	}
-	else
-	{
-		trap_R_SetColor(colorYellow);
-		CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.prestigePics[2]);
-		trap_R_SetColor(NULL);
-	}
-}
-#endif
-
 /**
  * @brief CG_LimboPanel_WeaponLights_KeyDown
  * @param[in] button
@@ -3211,83 +3058,6 @@ void CG_LimboPanel_RenderMedal(panel_button_t *button)
 		CG_DrawPic(button->rect.x - 2, button->rect.y, button->rect.w + 4, button->rect.h, cgs.media.medals[button->data[0]]);
 	}
 }
-
-#ifdef FEATURE_PRESTIGE
-/**
- * @brief CG_LimboPanel_RenderPrestige
- * @param[in] button
- */
-void CG_LimboPanel_RenderPrestige(panel_button_t *button)
-{
-	qhandle_t shader;
-	vec4_t    color = { 1.0f, 1.0f, 1.0f, 0.4f };
-	int       i, skillMax = 0;
-
-	if (cgs.gametype == GT_WOLF_CAMPAIGN || cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS)
-	{
-		return;
-	}
-
-	if (!cgs.prestige)
-	{
-		return;
-	}
-
-	switch (button->data[0])
-	{
-	case 0:
-		shader = cgs.media.limboSkillsBS;
-		break;
-	case 1:
-		shader = cgs.media.limboClassButtons[PC_ENGINEER];
-		break;
-	case 2:
-		shader = cgs.media.limboClassButtons[PC_MEDIC];
-		break;
-	case 3:
-		shader = cgs.media.limboClassButtons[PC_FIELDOPS];
-		break;
-	case 4:
-		shader = cgs.media.limboSkillsLW;
-		break;
-	case 5:
-		shader = cgs.media.limboClassButtons[PC_SOLDIER];
-		break;
-	case 6:
-		shader = cgs.media.limboClassButtons[PC_COVERTOPS];
-		break;
-	default:
-		return;
-	}
-
-	CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.limboObjectiveBack[2]);
-
-	// check skill max level
-	for (i = NUM_SKILL_LEVELS - 1; i >= 0; i--)
-	{
-		if (GetSkillTableData(button->data[0])->skillLevels[i] >= 0)
-		{
-			skillMax = i;
-			break;
-		}
-	}
-
-	if (cgs.clientinfo[cg.clientNum].skill[button->data[0]] >= skillMax)
-	{
-		trap_R_SetColor(color);
-		CG_DrawPic(button->rect.x + 2, button->rect.y + 4, button->rect.w - 4, button->rect.h - 8, shader);
-		trap_R_SetColor(NULL);
-		CG_DrawPic(button->rect.x + 2, button->rect.y + 4, button->rect.w - 4, button->rect.h - 8, cgs.media.ccStamps[0]);
-	}
-	else
-	{
-		color[3] = 0.5f;
-		trap_R_SetColor(color);
-		CG_DrawPic(button->rect.x + 2, button->rect.y + 4, button->rect.w - 4, button->rect.h - 8, shader);
-		trap_R_SetColor(NULL);
-	}
-}
-#endif
 
 /**
  * @brief CG_LimboPanel_RenderCounter_IsReversed

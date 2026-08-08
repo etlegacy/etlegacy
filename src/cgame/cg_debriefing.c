@@ -669,36 +669,6 @@ static panel_button_t debriefPlayerInfoHS =
 	0
 };
 
-#ifdef FEATURE_PRESTIGE
-static panel_button_t debriefPlayerInfoPrestige =
-{
-	NULL,
-	NULL,
-	{ 170,                            142,   0, 0 },
-	{ 0,                              0,     0, 0, 0, 0, 0, 0},
-	&debriefPlayerInfoFont,           // font
-	NULL,                             // keyDown
-	NULL,                             // keyUp
-	CG_Debriefing_PlayerPrestige_Draw,
-	NULL,
-	0
-};
-
-static panel_button_t debriefPlayerPrestigeButton =
-{
-	NULL,
-	"^3COLLECT POINT",
-	{ 110,                            152,88, 16 },
-	{ 0,                              0,  0,  0, 0, 0, 0, 0},
-	&debriefPlayerInfoFont,           // font
-	CG_Debriefing_PrestigeButton_KeyDown,// keyDown
-	NULL,                             // keyUp
-	CG_Debriefing_PrestigeButton_Draw,
-	NULL,
-	0
-};
-#endif
-
 static panel_button_t debriefPlayerInfoHitRegions =
 {
 	NULL,
@@ -755,10 +725,6 @@ static panel_button_t *debriefPanelButtons[] =
 	&debriefPlayerInfoSkills4,
 	&debriefPlayerInfoSkills5,
 	&debriefPlayerInfoSkills6,
-#ifdef FEATURE_PRESTIGE
-	&debriefPlayerInfoPrestige,
-	&debriefPlayerPrestigeButton,
-#endif
 	&debriefPlayerInfoHitRegions,
 	&debriefPlayerWeaponStatsHeader,    &debriefPlayerWeaponStatsNameHeader,   &debriefPlayerWeaponStatsShotsHeader,
 	&debriefPlayerWeaponStatsHitsHeader,&debriefPlayerWeaponStatsKillsHeader,
@@ -1709,9 +1675,6 @@ void CG_Debriefing_Startup(void)
 #ifdef FEATURE_RATING
 	cgs.dbSkillRatingReceived = qfalse;
 #endif
-#ifdef FEATURE_PRESTIGE
-	cgs.dbPrestigeReceived = qfalse;
-#endif
 	cgs.dbLastScoreReceived = qfalse;
 
 	cgs.dbLastRequestTime = 0;
@@ -1819,14 +1782,6 @@ void CG_Debriefing_InfoRequests(void)
 	if (!cgs.dbSkillRatingReceived && cgs.skillRating)
 	{
 		trap_SendClientCommand("imsr");
-		return;
-	}
-#endif
-
-#ifdef FEATURE_PRESTIGE
-	if (!cgs.dbPrestigeReceived && cgs.prestige)
-	{
-		trap_SendClientCommand("impr");
 		return;
 	}
 #endif
@@ -2306,22 +2261,6 @@ void CG_Debriefing_ParseSkillRating(void)
 		cgs.clientinfo[i].deltaRating = atof(CG_Argv(i * 2 + 2));
 	}
 	cgs.dbSkillRatingReceived = qtrue;
-}
-#endif
-
-#ifdef FEATURE_PRESTIGE
-/**
- * @brief CG_Debriefing_ParsePrestige
- */
-void CG_Debriefing_ParsePrestige(void)
-{
-	int i;
-
-	for (i = 0; i < cgs.maxclients; i++)
-	{
-		cgs.clientinfo[i].prestige = Q_atoi(CG_Argv(i + 1));
-	}
-	cgs.dbPrestigeReceived = qtrue;
 }
 #endif
 
@@ -2953,30 +2892,6 @@ void CG_Debriefing_PlayerHitRegions_Draw(panel_button_t *button)
 	}
 }
 
-#ifdef FEATURE_PRESTIGE
-/**
- * @brief CG_Debriefing_PlayerPrestige_Draw
- * @param[in] button
- */
-void CG_Debriefing_PlayerPrestige_Draw(panel_button_t *button)
-{
-	clientInfo_t *ci;
-	float        w;
-
-	if (!cgs.prestige || cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS || cgs.gametype == GT_WOLF_CAMPAIGN)
-	{
-		return;
-	}
-
-	ci = CG_Debriefing_GetSelectedClientInfo();
-	w  = CG_Text_Width_Ext("Prestige: ", button->font->scalex, 0, button->font->font);
-
-	CG_Text_Paint_Ext(button->rect.x - w, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, CG_TranslateString("Prestige:"), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-	CG_Text_Paint_Ext(button->rect.x, button->rect.y, button->font->scalex, button->font->scaley, button->font->colour, va("^2%i", ci->prestige), 0, 0, ITEM_TEXTSTYLE_SHADOWED, button->font->font);
-}
-
-#endif
-
 /**
  * @brief CG_Debriefing_PlayerACC_Draw
  * @param[in] button
@@ -3368,83 +3283,6 @@ qboolean CG_Debriefing_NextButton_KeyDown(panel_button_t *button, int key)
 	return qfalse;
 }
 
-#ifdef FEATURE_PRESTIGE
-
-static qboolean prestigeButtonConfirmation = qfalse;
-
-/**
- * @brief CG_Debriefing_PrestigeButton_KeyDown
- * @param button - unused
- * @param[in] key
- * @return
- */
-qboolean CG_Debriefing_PrestigeButton_KeyDown(panel_button_t *button, int key)
-{
-	int i, j, skillMax, cnt = 0;
-
-	if (key == K_MOUSE1)
-	{
-		if (!cg.snap)
-		{
-			return qfalse;
-		}
-
-		// count the number of maxed out skills
-		for (i = 0; i < SK_NUM_SKILLS; i++)
-		{
-			skillMax = 0;
-
-			// check skill max level
-			for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
-			{
-				if (GetSkillTableData(i)->skillLevels[j] >= 0)
-				{
-					skillMax = j;
-					break;
-				}
-			}
-
-			if (cgs.clientinfo[cg.clientNum].skill[i] >= skillMax)
-			{
-				cnt++;
-			}
-		}
-
-		if (cnt < SK_NUM_SKILLS)
-		{
-			return qfalse;
-		}
-
-		// on first clic on the button, display confirmation message
-		// then accept collecting on second clic
-		if (!prestigeButtonConfirmation)
-		{
-			prestigeButtonConfirmation = qtrue;
-			return qfalse;
-		}
-
-		trap_SendClientCommand("imcollectpr");
-
-		// refresh data
-		cgs.dbPrestigeReceived = qfalse;
-
-		// refresh value display immediately to hide delayed effect
-		cgs.clientinfo[cg.clientNum].prestige += 1;
-
-		// reset skills client side only to keep current XPs value display
-		// server sync will happen at next map
-		for (i = 0; i < SK_NUM_SKILLS; i++)
-		{
-			cgs.clientinfo[cg.clientNum].skill[i] = 0;
-		}
-
-		return qtrue;
-	}
-
-	return qfalse;
-}
-#endif
-
 /**
  * @brief CG_Debriefing_VoteButton_Draw
  * @param[in] button
@@ -3493,99 +3331,6 @@ void CG_Debriefing_NextButton_Draw(panel_button_t *button)
 {
 	CG_PanelButtonsRender_Button(button);
 }
-
-#ifdef FEATURE_PRESTIGE
-/**
- * @brief CG_Debriefing_PrestigeButton_Draw
- * @param[in] button
- */
-void CG_Debriefing_PrestigeButton_Draw(panel_button_t *button)
-{
-	int i, j, cnt = 0, skillMax;
-
-	if (cgs.gametype == GT_WOLF_CAMPAIGN || cgs.gametype == GT_WOLF_STOPWATCH || cgs.gametype == GT_WOLF_LMS)
-	{
-		return;
-	}
-
-	if (!cgs.prestige)
-	{
-		return;
-	}
-
-	if (cgs.dbSelectedClient != cg.clientNum)
-	{
-		return;
-	}
-
-	// count the number of maxed out skills
-	for (i = 0; i < SK_NUM_SKILLS; i++)
-	{
-		skillMax = 0;
-
-		// check skill max level
-		for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
-		{
-			if (GetSkillTableData(i)->skillLevels[j] >= 0)
-			{
-				skillMax = j;
-				break;
-			}
-		}
-
-		if (cgs.clientinfo[cg.clientNum].skill[i] >= skillMax)
-		{
-			cnt++;
-		}
-	}
-
-	if (cnt < SK_NUM_SKILLS)
-	{
-		return;
-	}
-
-	CG_PanelButtonsRender_Button(button);
-
-	// draw the note only if we focus the button
-	if (BG_CursorInRect(&button->rect))
-	{
-		float  h;
-		char   *text;
-		vec4_t *color;
-		vec4_t clrBdr = { 0.5f, 0.5f, 0.5f, 0.5f };
-		vec4_t clrBck = { 0.0f, 0.0f, 0.0f, 0.8f };
-
-		h = CG_Text_Height_Ext("A", button->font->scalex, 0, button->font->font);
-
-		// on first clic on the button, display confirmation message
-		// then accept collecting on second clic
-		if (prestigeButtonConfirmation)
-		{
-			CG_FillRect(button->rect.x + button->rect.w + 18, button->rect.y - h * 2, button->rect.w * 1.6f, h * 5, clrBck);
-			CG_DrawRect_FixedBorder(button->rect.x + button->rect.w + 18, button->rect.y - h * 2, button->rect.w * 1.6f, h * 5, 1, clrBdr);
-
-			text  = "Are you sure?\nClick again to confirm.";
-			color = &colorYellow;
-		}
-		else
-		{
-			CG_FillRect(button->rect.x + button->rect.w + 18, button->rect.y - h * 2, button->rect.w * 1.6f, h * 11, clrBck);
-			CG_DrawRect_FixedBorder(button->rect.x + button->rect.w + 18, button->rect.y - h * 2, button->rect.w * 1.6f, h * 11, 1, clrBdr);
-
-			text  = "You may now collect\na prestige point.\n\nCollection resets\nskill levels.";
-			color = &button->font->colour;
-		}
-
-		CG_DrawMultilineText(button->rect.x + button->rect.w + 20, button->rect.y, button->rect.w, button->font->scalex, button->font->scaley, *color,
-		                     CG_TranslateString(text),
-		                     2 * h, 0, 0, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, button->font->font);
-	}
-	else
-	{
-		prestigeButtonConfirmation = qfalse;
-	}
-}
-#endif
 
 /**
  * @brief CG_Debriefing_ChatEditFinish
@@ -3912,9 +3657,6 @@ void CG_Debriefing_MissionTitle_Draw(panel_button_t *button)
 
 const char *awardNames[NUM_ENDGAME_AWARDS] =
 {
-#ifdef FEATURE_PRESTIGE
-	"Most Prestigious Player",
-#endif
 	"Highest Ranking Officer",
 #ifdef FEATURE_RATING
 	"Highest Skill Rating",

@@ -681,9 +681,6 @@ typedef struct
 	float oldmu;
 	float oldsigma;
 #endif
-#ifdef FEATURE_PRESTIGE
-	int prestige;
-#endif
 
 	// MAPVOTE
 	int mapVotedFor[3];
@@ -1471,8 +1468,6 @@ void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_IntermissionPlayerTime_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_IntermissionSkillRating_f(gentity_t *ent, unsigned int dwCommand, int value);
-void Cmd_IntermissionPrestige_f(gentity_t *ent, unsigned int dwCommand, int value);
-void Cmd_IntermissionCollectPrestige_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_IntermissionWeaponStats_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value);
@@ -2355,23 +2350,6 @@ void G_SkillRatingGetClientRating(gclient_t *cl);
 void G_SkillRatingSetClientRating(gclient_t *cl);
 float G_SkillRatingGetMapRating(char *mapname);
 void G_SkillRatingSetMapRating(char *mapname, int winner);
-#endif
-
-#ifdef FEATURE_PRESTIGE
-// g_prestige.c
-typedef struct prData_s
-{
-	const unsigned char *guid;
-	int prestige;
-	int streak;
-	int skillpoints[SK_NUM_SKILLS];
-} prData_t;
-
-int G_PrestigeDBCheck(char *db_path, int db_mode);
-void G_GetClientPrestige(gclient_t *cl);
-void G_SetClientPrestige(gclient_t *cl, qboolean streakUp);
-int G_ReadPrestige(prData_t *pr_data);
-int G_WritePrestige(prData_t *pr_data);
 #endif
 
 #define XPSF_ENABLE              1  ///< enable XP Save on disconnect
