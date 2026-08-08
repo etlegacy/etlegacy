@@ -144,7 +144,7 @@ extern vec3_t axisDefault[3];
 
 #define nanmask (255 << 23)
 
-#define IS_NAN(x) (((*(int *)&x)&nanmask) == nanmask)
+#define IS_NAN(x) (((*(int *)&x) & nanmask) == nanmask)
 
 int Q_isnan(float x);
 

@@ -65,8 +65,8 @@ qboolean catchBotNum = 0;
  */
 #define MAX_TRACKERS 8
 
-netadr_t trackerAddrs[MAX_TRACKERS];
-int      numTrackerAddrs = 0;
+netadr_t      trackerAddrs[MAX_TRACKERS];
+int           numTrackerAddrs  = 0;
 static cvar_t *sv_tracker_cvar = NULL;
 
 char infostring[MAX_INFO_STRING];
@@ -143,7 +143,7 @@ void Tracker_Send(char *format, ...)
 {
 	va_list argptr;
 	char    msg[MAX_MSGLEN];
-	int i;
+	int     i;
 
 	va_start(argptr, format);
 	Q_vsnprintf(msg, sizeof(msg), format, argptr);
@@ -168,12 +168,12 @@ void Tracker_Init(void)
 		return;
 	}
 
-	sv_tracker_cvar = Cvar_Get("sv_tracker", "et-tracker.trackbase.net:4444", CVAR_PROTECTED);
-	tracker         = sv_tracker_cvar->string;
+	sv_tracker_cvar           = Cvar_Get("sv_tracker", "et-tracker.trackbase.net:4444", CVAR_PROTECTED);
+	tracker                   = sv_tracker_cvar->string;
 	sv_tracker_cvar->modified = qfalse;
-	t               = time(0);
-	expectnum       = 0;
-	numTrackerAddrs = 0;
+	t                         = time(0);
+	expectnum                 = 0;
+	numTrackerAddrs           = 0;
 
 	Tracker_ParseAddressList(tracker);
 

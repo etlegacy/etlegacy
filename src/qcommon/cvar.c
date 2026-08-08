@@ -1248,7 +1248,7 @@ void Cvar_WriteVariables(fileHandle_t f, qboolean nodefaults)
 			if (strlen(var->name) + strlen(value) + 10 > sizeof(buffer))
 			{
 				Com_Printf(S_COLOR_YELLOW "WARNING: value of variable "
-				                          "\"%s\" too long to write to file\n", var->name);
+				           "\"%s\" too long to write to file\n", var->name);
 				continue;
 			}
 
