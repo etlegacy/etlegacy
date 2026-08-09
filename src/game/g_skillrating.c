@@ -532,6 +532,7 @@ void G_SkillRatingGetClientRating(gclient_t *cl)
 		{
 			cl->sess.time_axis   = 0;
 			cl->sess.time_allies = 0;
+			cl->sess.time_played = 0;
 		}
 
 		// prepare delta rating
