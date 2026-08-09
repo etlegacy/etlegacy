@@ -313,12 +313,6 @@ void CG_NewClientInfo(int clientNum)
 	v            = Info_ValueForKey(configstring, "r");
 	newInfo.rank = Q_atoi(v);
 
-#ifdef FEATURE_PRESTIGE
-	// prestige
-	v                = Info_ValueForKey(configstring, "p");
-	newInfo.prestige = Q_atoi(v);
-#endif
-
 	// fireteam
 	v                = Info_ValueForKey(configstring, "f");
 	newInfo.fireteam = Q_atoi(v);
@@ -474,61 +468,6 @@ void CG_NewClientInfo(int clientNum)
 						CG_PriorityCenterPrint(va(CG_TranslateString("You have been rewarded with %s"), CG_TranslateString(cg_skillRewards[i][newInfo.skill[i] - 1])), 99999);
 					}
 				}
-
-#ifdef FEATURE_PRESTIGE
-				if (cgs.prestige && cgs.gametype != GT_WOLF_STOPWATCH && cgs.gametype != GT_WOLF_LMS && cgs.gametype != GT_WOLF_CAMPAIGN)
-				{
-					int j;
-					int skillMax = 0, cnt = 0;
-
-					// check skill max level
-					for (j = NUM_SKILL_LEVELS - 1; j >= 0; j--)
-					{
-						if (GetSkillTableData(i)->skillLevels[j] >= 0)
-						{
-							skillMax = j;
-							break;
-						}
-					}
-
-					if (newInfo.skill[i] == skillMax)
-					{
-						// count the number of maxed out skills
-						for (j = 0; j < SK_NUM_SKILLS; j++)
-						{
-							int k;
-							skillMax = 0;
-
-							// check skill max level
-							for (k = NUM_SKILL_LEVELS - 1; k >= 0; k--)
-							{
-								if (GetSkillTableData(j)->skillLevels[k] >= 0)
-								{
-									skillMax = k;
-									break;
-								}
-							}
-
-							if (cgs.clientinfo[cg.clientNum].skill[j] >= skillMax)
-							{
-								cnt++;
-							}
-						}
-
-						if (!(CG_GetActiveHUD()->pmitemsbig.style & POPUP_BIG_FILTER_PRESTIGE))
-						{
-							if (cnt < SK_NUM_SKILLS)
-							{
-								CG_AddPMItemBig(PM_PRESTIGE, va(CG_TranslateString("Prestige point progression: %i/7"), cnt), cgs.media.prestigePics[1]);
-							}
-							else
-							{
-								CG_AddPMItemBig(PM_PRESTIGE, CG_TranslateString("Prestige point ready to be collected!"), cgs.media.prestigePics[2]);
-							}
-						}
-					}
-				}
-#endif
 			}
 		}
 

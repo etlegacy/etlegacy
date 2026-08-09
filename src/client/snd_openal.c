@@ -761,7 +761,7 @@ static void _S_AL_SanitiseVector(vec3_t v, int line)
 	if (Q_isnan(v[0]) || Q_isnan(v[1]) || Q_isnan(v[2]))
 	{
 		Com_DPrintf(S_COLOR_YELLOW "WARNING _S_AL_SanitiseVector: vector with one or more NaN components "
-		                           "being passed to OpenAL at %s:%d -- zeroing\n", __FILE__, line);
+		            "being passed to OpenAL at %s:%d -- zeroing\n", __FILE__, line);
 		VectorClear(v);
 	}
 }
@@ -1581,7 +1581,7 @@ static void S_AL_SrcLoop(alSrcPriority_t priority, sfxHandle_t sfx,
 		if (src == -1)
 		{
 			Com_DPrintf(S_COLOR_YELLOW "WARNING S_AL_SrcLoop: Failed to allocate source "
-			                           "for loop sfx %d\n on loop sound %d.", sfx, numLoopingSounds - 1);
+			            "for loop sfx %d\n on loop sound %d.", sfx, numLoopingSounds - 1);
 			return;
 		}
 
@@ -1788,7 +1788,7 @@ static void S_AL_SrcUpdate(void)
 								if (error != AL_INVALID_ENUM)
 								{
 									Com_Printf(S_COLOR_YELLOW "WARNING S_AL_SrcUpdate: Cannot get sample offset from source %d: "
-									                          "%s\n", i, S_AL_ErrorMsg(error));
+									           "%s\n", i, S_AL_ErrorMsg(error));
 								}
 							}
 							else

@@ -52,7 +52,8 @@ typedef struct
 	qboolean replaceWeaponIconStyle;                    //< added in version 5
 	qboolean addNoEchoToPopupmessageFilter;             //< added in version 5
 	qboolean shiftHealthBarDynamicColorStyle2;          //< added in version 6
-	qboolean moveBarStyleIntoOwnField;                 //< added in version 7
+	qboolean moveBarStyleIntoOwnField;                  //< added in version 7
+	qboolean shiftDynamicColorToPrestige;               //< added in version 8
 } hudFileUpgrades_t;
 
 static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp);
@@ -2052,12 +2053,23 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 			// retrived common style for crosshair bar
 			tmp |= (tmpHud->crosshairbar.style & CROSSHAIR_BAR_CLASS);
 			tmp |= (tmpHud->crosshairbar.style & CROSSHAIR_BAR_RANK);
-			tmp |= (tmpHud->crosshairbar.style & CROSSHAIR_BAR_PRESTIGE);
 			if (tmpHud->crosshairbar.style & (BAR_CIRCULAR << 4))
 			{
 				tmp |= CROSSHAIR_BAR_DYNAMIC_COLOR;
 			}
 			tmpHud->crosshairbar.style = tmp;
+		}
+	}
+
+	if (upgr->shiftDynamicColorToPrestige)
+	{
+		int oldDynamicColor = tmpHud->crosshairbar.style & BIT(3);
+
+		// Prestige has been removed; shift dynamic color from old BIT(3) to new BIT(2)
+		tmpHud->crosshairbar.style &= ~(BIT(2) | BIT(3));
+		if (oldDynamicColor)
+		{
+			tmpHud->crosshairbar.style |= CROSSHAIR_BAR_DYNAMIC_COLOR;
 		}
 	}
 
@@ -2125,6 +2137,9 @@ static void CG_CheckJsonFileUpgrades(cJSON *root, hudFileUpgrades_t *ret)
 	// fall through
 	case 6:         // 2.84 - move all bar style into his own field varible to be separated from real style option
 		ret->moveBarStyleIntoOwnField = qtrue;
+		break;
+	case 7:         // 2.84 - prestige removed, dynamic color shifted to previous prestige value
+		ret->shiftDynamicColorToPrestige = qtrue;
 		break;
 	default:
 		CG_Printf(S_COLOR_RED "ERROR CG_ReadHudJsonFile: invalid version used: %i only %i is supported\n", fileVersion, CURRENT_HUD_JSON_VERSION);

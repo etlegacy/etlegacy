@@ -317,10 +317,6 @@ vmCvar_t g_extendedNames;
 vmCvar_t g_skillRating;
 #endif
 
-#ifdef FEATURE_PRESTIGE
-vmCvar_t g_prestige;
-#endif
-
 #ifdef FEATURE_MULTIVIEW
 vmCvar_t g_multiview; // 0 - off, other - enabled
 #endif
@@ -649,9 +645,6 @@ cvarTable_t gameCvarTable[] =
 #ifdef FEATURE_RATING
 	{ &g_skillRating,                     "g_skillRating",                     "2",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
 #endif
-#ifdef FEATURE_PRESTIGE
-	{ &g_prestige,                        "g_prestige",                        "1",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
-#endif
 #ifdef FEATURE_MULTIVIEW
 	{ &g_multiview,                       "g_multiview",                       "0",                          CVAR_LATCH | CVAR_ARCHIVE,                       0, qfalse, qfalse },
 #endif
@@ -934,10 +927,6 @@ void G_UpdateCvars(void)
 					{
 						Info_SetValueForKey(cs, "M", va("%f", level.mapProb));
 					}
-#endif
-
-#ifdef FEATURE_PRESTIGE
-					Info_SetValueForKey(cs, "P", va("%i", g_prestige.integer));
 #endif
 
 #ifdef FEATURE_MULTIVIEW

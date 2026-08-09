@@ -1184,26 +1184,6 @@ qboolean TVG_Cmd_IntermissionPlayerKillsDeaths_f(gclient_t *client, tvcmd_refere
 }
 
 /**
-* @brief TVG_Cmd_IntermissionPrestige_f
-* @param[in] client
-* @param[in] self
-*/
-qboolean TVG_Cmd_IntermissionPrestige_f(gclient_t *client, tvcmd_reference_t *self)
-{
-	if (!client)
-	{
-		return TVG_IntermissionStatsUpdate(self);
-	}
-
-	if (level.cmds.imprValid)
-	{
-		trap_SendServerCommand(client - level.clients, level.cmds.impr);
-	}
-
-	return qtrue;
-}
-
-/**
  * @brief TVG_Cmd_IntermissionPlayerTime_f
  * @param[in] client
  * @param[in] self
@@ -1575,7 +1555,6 @@ static qboolean TVG_ETPRO_EncodedBitStreamCommand(char *cmd)
 #define IMSR_HASH           53398
 #define SR_HASH             27365
 #define SRA_HASH            39102
-#define IMPR_HASH           53035
 #define PR_HASH             27008
 #define MU_START_HASH       107698
 #define MU_PLAY_HASH        92607
@@ -1893,11 +1872,6 @@ static void TVG_MasterServerCommand(char *cmd)
 	case SRA_HASH:                                         // "sra"
 		level.cmds.sraValid = qtrue;
 		Q_strncpyz(level.cmds.sra, cmd, sizeof(level.cmds.sra));
-		return;
-
-	case IMPR_HASH:                                        // "impr"
-		level.cmds.imprValid = qtrue;
-		Q_strncpyz(level.cmds.impr, cmd, sizeof(level.cmds.impr));
 		return;
 
 	case PR_HASH:                                          // "pr"

@@ -78,12 +78,6 @@ int G_DB_Init()
 	}
 #endif
 
-#ifdef FEATURE_PRESTIGE
-	if (G_PrestigeDBCheck(level.database.path, db_mode))
-	{
-		return 1;
-	}
-#endif
 	if (G_XPSaver_CheckDB(level.database.path, db_mode))
 	{
 		return 1;

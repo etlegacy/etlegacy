@@ -2306,23 +2306,6 @@ void CG_DrawCrosshairHealthBar(hudComponent_t *comp)
 			w -= comp->location.h;
 		}
 
-#ifdef FEATURE_PRESTIGE
-		if (cgs.prestige && cgs.clientinfo[clientNum].prestige > 0 && (comp->style & CROSSHAIR_BAR_PRESTIGE))
-		{
-			char  *s = va("%d", cgs.clientinfo[clientNum].prestige);
-			float h;
-
-			w -= CG_Text_Width_Ext_Float(s, comp->scale, 0, &cgs.media.limboFont2);
-			h  = CG_Text_Height_Ext(s, comp->scale, 0, &cgs.media.limboFont2);
-
-			CG_Text_Paint_Ext(comp->location.x + w, comp->location.y + (comp->location.h - h) * 0.5f, comp->scale, comp->scale, fadeColor, s, 0, 0, 0, &cgs.media.limboFont2);
-
-			w -= comp->location.h;
-
-			CG_DrawPic(x + w, comp->location.y, comp->location.h, comp->location.h, cgs.media.prestigePics[0]);
-		}
-#endif
-
 		if (cgs.clientinfo[clientNum].rank > 0 && (comp->style & CROSSHAIR_BAR_RANK))
 		{
 			w -= comp->location.h;

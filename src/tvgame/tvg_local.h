@@ -415,9 +415,6 @@ typedef struct tvgamecommands_s
 	qboolean impkdValid;
 	char impkd[2][MAX_STRING_CHARS];
 
-	qboolean imprValid;
-	char impr[MAX_STRING_CHARS];
-
 	qboolean imptValid;
 	char impt[MAX_STRING_CHARS];
 
@@ -542,7 +539,6 @@ qboolean TVG_Cmd_Score_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_Ignore_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_UnIgnore_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_IntermissionPlayerKillsDeaths_f(gclient_t *client, tvcmd_reference_t *self);
-qboolean TVG_Cmd_IntermissionPrestige_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_IntermissionPlayerTime_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_IntermissionSkillRating_f(gclient_t *client, tvcmd_reference_t *self);
 qboolean TVG_Cmd_IntermissionWeaponAccuracies_f(gclient_t *client, tvcmd_reference_t *self);

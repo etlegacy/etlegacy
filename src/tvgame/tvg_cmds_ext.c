@@ -74,7 +74,6 @@ static tvcmd_reference_t tvCommandInfo[] =
 	{ "immaphistory", CMD_USAGE_INTERMISSION_ONLY,               0,     NOCD,       0, qfalse, TVG_IntermissionMapHistory,              LEGACY,         ""                                                                                           },
 
 	{ "impkd",        CMD_USAGE_INTERMISSION_ONLY,               0,     NOCD,       0, qfalse, TVG_Cmd_IntermissionPlayerKillsDeaths_f, ALL,            ""                                                                                           },
-	{ "impr",         CMD_USAGE_INTERMISSION_ONLY,               0,     NOCD,       0, qfalse, TVG_Cmd_IntermissionPrestige_f,          LEGACY,         ""                                                                                           },
 	{ "impt",         CMD_USAGE_INTERMISSION_ONLY,               0,     NOCD,       0, qfalse, TVG_Cmd_IntermissionPlayerTime_f,        LEGACY,         ""                                                                                           },
 	{ "imsr",         CMD_USAGE_INTERMISSION_ONLY,               0,     NOCD,       0, qfalse, TVG_Cmd_IntermissionSkillRating_f,       LEGACY,         ""                                                                                           },
 	{ "imwa",         CMD_USAGE_INTERMISSION_ONLY,               0,     NOCD,       0, qfalse, TVG_Cmd_IntermissionWeaponAccuracies_f,  ALL,            ""                                                                                           },

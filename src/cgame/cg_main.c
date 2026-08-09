@@ -1297,12 +1297,6 @@ static void CG_RegisterGraphics(void)
 	cgs.media.ccRedCross              = trap_R_RegisterShaderNoMip("sprites/cm_redcross");
 	cgs.media.ccFriendShader          = trap_R_RegisterShaderNoMip("sprites/cm_friendlycross");
 
-#ifdef FEATURE_PRESTIGE
-	cgs.media.prestigePics[0] = trap_R_RegisterShaderNoMip("gfx/hud/prestige/prestige");
-	cgs.media.prestigePics[1] = trap_R_RegisterShaderNoMip("gfx/hud/prestige/prestige_stamp");
-	cgs.media.prestigePics[2] = trap_R_RegisterShaderNoMip("gfx/hud/prestige/prestige_collect");
-#endif
-
 	CG_LoadRankIcons();
 
 	// limbo menu setup

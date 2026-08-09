@@ -592,13 +592,6 @@ static void WM_DrawClientScore_Score(int x, int y, float scaleX, float scaleY, c
 	}
 	else
 #endif
-#ifdef FEATURE_PRESTIGE
-	if (cgs.prestige && cg_scoreboard.integer == SCOREBOARD_PR)
-	{
-		CG_Text_Paint_RightAligned_Ext(x, y, scaleX, scaleY, colorWhite, va("^7%6i", score->prestige), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
-	}
-	else
-#endif
 	{
 		CG_Text_Paint_RightAligned_Ext(x, y, scaleX, scaleY, colorWhite, Com_ScaleNumberPerThousand((float) score->score, 2, 4), 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
 	}
@@ -1043,16 +1036,6 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 			}
 			else
 #endif
-#ifdef FEATURE_PRESTIGE
-			if (cgs.prestige && cg_scoreboard.integer == SCOREBOARD_PR)
-			{
-				s = va("%s (%d %s)", CG_TranslateString(teamText), cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
-
-				s2 = va("%s", CG_TranslateString("PRESTIGE"));
-				CG_Text_Paint_Ext(x + width - 5 - CG_Text_Width_Ext(s2, 0.19f, 0, FONT_HEADER), y + 13, 0.19f, 0.19f, SB_text, s2, 0, 0, 0, FONT_HEADER);
-			}
-			else
-#endif
 			{
 				s = va("%s [%d] (%d %s)", CG_TranslateString(teamText), cg.teamScores[team - 1], cg.teamPlayers[team], cg.teamPlayers[team] < 2 ? CG_TranslateString("PLAYER") : CG_TranslateString("PLAYERS"));
 
@@ -1102,13 +1085,6 @@ static int WM_TeamScoreboard(int x, int y, team_t team, float fade, int maxrows,
 		if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR)
 		{
 			CG_Text_Paint_RightAligned_Ext(tempx, y + 13, 0.24f, 0.28f, colorWhite, "SR", 0, 0, ITEM_TEXTSTYLE_SHADOWED, FONT_TEXT);
-		}
-		else
-#endif
-#ifdef FEATURE_PRESTIGE
-		if (cgs.prestige && cg_scoreboard.integer == SCOREBOARD_PR)
-		{
-			CG_DrawPic(tempx - 14, y + 2, 14, 14, cgs.media.prestigePics[0]);
 		}
 		else
 #endif
@@ -1270,7 +1246,7 @@ qboolean CG_DrawScoreboard(void)
 	int   x = 20, y = 6, x_right = SCREEN_WIDTH - x - (INFO_TOTAL_WIDTH - 5);
 	float fade;
 	int   width = SCREEN_WIDTH - 2 * x + 5;
-#if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
+#if defined(FEATURE_RATING)
 	int        w;
 	const char *s, *s2, *s3;
 #endif
@@ -1354,18 +1330,10 @@ qboolean CG_DrawScoreboard(void)
 	x = x_right;
 	WM_TeamScoreboard(x, y, TEAM_ALLIES, fade, maxrows, use_mini_chars);
 
-#if defined(FEATURE_RATING) || defined(FEATURE_PRESTIGE)
+#if defined(FEATURE_RATING)
 	if (cgs.gamestate != GS_INTERMISSION &&
 		(
-#if defined(FEATURE_RATING)
 			cgs.skillRating
-#endif
-#if defined(FEATURE_RATING) && defined(FEATURE_PRESTIGE)
-			||
-#endif
-#if defined(FEATURE_PRESTIGE)
-			cgs.prestige
-#endif
 	    ))
 	{
 		s2 = Binding_FromName("+scores");
@@ -1378,13 +1346,6 @@ qboolean CG_DrawScoreboard(void)
 		if (cgs.skillRating && cg_scoreboard.integer == SCOREBOARD_SR) // Skill Rating
 		{
 			s3 = CG_TranslateString("Skill Rating view");
-		}
-		else
-#endif
-#ifdef FEATURE_PRESTIGE
-		if (cgs.prestige && cg_scoreboard.integer == SCOREBOARD_PR)
-		{
-			s3 = CG_TranslateString("Prestige view");
 		}
 		else
 #endif

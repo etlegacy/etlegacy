@@ -1308,7 +1308,7 @@ void NET_SetMulticast6(void)
 	if (!*net_mcast6addr->string || !Sys_StringToSockaddr(net_mcast6addr->string, (struct sockaddr *) &addr, sizeof(addr), AF_INET6))
 	{
 		Com_Printf(S_COLOR_YELLOW "WARNING: NET_JoinMulticast6: Incorrect multicast address given, "
-		                          "please set cvar %s to a sane value.\n", net_mcast6addr->name);
+		           "please set cvar %s to a sane value.\n", net_mcast6addr->name);
 
 		Cvar_SetValue(net_enabled->name, net_enabled->integer | NET_DISABLEMCAST);
 

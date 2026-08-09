@@ -1752,14 +1752,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 		}
 #endif
 
-#ifdef FEATURE_PRESTIGE
-		if (g_prestige.integer)
-		{
-			G_Printf("^3WARNING: g_prestige changed to 0\n");
-			trap_Cvar_Set("g_prestige", "0");
-		}
-#endif
-
 		if (!(g_xpSaver.integer & XPSF_ENABLE))
 		{
 			G_Printf("^3WARNING: g_xpSaver changed to 0\n");
@@ -3023,24 +3015,6 @@ void G_LogExit(const char *string)
 	}
 #endif
 
-#ifdef FEATURE_PRESTIGE
-	// record prestige
-	if (g_prestige.integer && g_gametype.integer != GT_WOLF_CAMPAIGN && g_gametype.integer != GT_WOLF_STOPWATCH && g_gametype.integer != GT_WOLF_LMS)
-	{
-		for (i = 0; i < level.numConnectedClients; i++)
-		{
-			gentity_t *ent = &g_entities[level.sortedClients[i]];
-
-			if (!ent->inuse)
-			{
-				continue;
-			}
-
-			// record prestige before intermission
-			G_SetClientPrestige(ent->client, qtrue);
-		}
-	}
-#endif
 	if (
 		(g_xpSaver.integer & XPSF_ENABLE) && (
 			(g_gametype.integer == GT_WOLF_CAMPAIGN) ||

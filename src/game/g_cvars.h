@@ -299,10 +299,6 @@ extern vmCvar_t g_extendedNames;
 extern vmCvar_t g_skillRating;
 #endif
 
-#ifdef FEATURE_PRESTIGE
-extern vmCvar_t g_prestige;
-#endif
-
 #ifdef FEATURE_MULTIVIEW
 extern vmCvar_t g_multiview;
 #endif

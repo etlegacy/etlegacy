@@ -436,7 +436,7 @@ typedef float net_float;
 #define ENABLEBIT(x, y) x |= BIT(y)
 #define CLEARBIT(x, y) x  &= ~BIT(y)
 #define TOGGLEBIT(x, y) x ^= BIT(y)
-#define CHECKBIT(x, y) ((x)&BIT(y))
+#define CHECKBIT(x, y) ((x) & BIT(y))
 
 /**
  * @def Check whether input value is present or not in given bitwise.
@@ -822,7 +822,7 @@ int Com_HexStrToInt(const char *str);
 #define COLOR_NULL      '*'
 
 #define COLOR_BITS  31
-#define ColorIndex(c)   (((c) - '0')&COLOR_BITS)
+#define ColorIndex(c)   (((c) - '0') & COLOR_BITS)
 
 #define S_COLOR_BLACK       "^0"
 #define S_COLOR_RED         "^1"
