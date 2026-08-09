@@ -1979,7 +1979,7 @@ static void CG_DrawSquareCompassCase(float x, float y, float w, float h, int sty
 		float        offsetX                                 = (w * .01) * 3.f;
 		float        offsetY                                 = (h * .01) * 3.f;
 		fontHelper_t *font                                   = &cgs.media.limboFont2;
-		const char   *cardinalPoints[CARDINAL_POINTS_NUMBER] = { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
+		const char   *cardinalPoints[CARDINAL_POINTS_NUMBER] = { "W", "NW", "N", "NE", "E", "SE", "S", "SW" };
 		int          index                                   = 0;
 
 		CG_DrawRect_FixedBorder(x - 0.75f, y - 0.75f, w + 1.5f, h + 1.5f, 2, colorLtGrey);
@@ -2000,7 +2000,7 @@ static void CG_DrawSquareCompassCase(float x, float y, float w, float h, int sty
 		// force cardinals point to be aligned to direction in case dynamic map is on
 		if (style & COMPASS_DYNAMIC_TICKS || !(style & COMPASS_POINT_TOWARD_NORTH))
 		{
-			float angle = -cg.refdefViewAngles[YAW] + 90;
+			float angle = -cg.refdefViewAngles[YAW] + 180;
 
 			// keep angle between 0 <-> 360
 			angle = fmodf(angle, 360);
@@ -2181,12 +2181,14 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 
 		if (icon)
 		{
-			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, 14, &mapScissor, style);
+			float iconSize = MIN(basew * COMPASS_MARGIN_OFFSET * 0.5f, baseh * COMPASS_MARGIN_OFFSET * 0.5f);
+
+			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, iconSize, &mapScissor, style);
 
 			// draw overlapping shader for disguised covops
 			if (icon == cgs.media.friendShader)
 			{
-				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, 14, &mapScissor, style);
+				CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, cgs.media.buddyShader, 1.f, iconSize, &mapScissor, style);
 			}
 		}
 	}
@@ -2742,7 +2744,7 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 	sinAngle    = sinf(angle);
 
 	len       = 1 - MIN(1.f, len / 2000.f * dstScale);
-	iconSize  = baseSize * len + 8;
+	iconSize  = baseSize * len;
 	iconSize *= ((scissor->zoomFactor + 2.5f) / AUTOMAP_ZOOM);
 
 	if (scissor->circular)
