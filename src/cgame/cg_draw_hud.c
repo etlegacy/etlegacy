@@ -2808,7 +2808,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 	float      baseh           = comp->location.h;
 	float      expandedMapFrac = cg_commandMapTime.value / 250.f;
 	snapshot_t *snap;
-	qboolean   drawExtendedAutoMap = qfalse;
+	qboolean   drawExpandedAutoMap = qfalse;
 
 	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
 	{
@@ -2841,7 +2841,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		}
 		else
 		{
-			drawExtendedAutoMap = qtrue;
+			drawExpandedAutoMap = qtrue;
 		}
 	}
 	else
@@ -2850,7 +2850,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		    || (cg.time - cgs.autoMapExpandTime <= 250.f * expandedMapFrac
 		        && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR))
 		{
-			drawExtendedAutoMap = qtrue;
+			drawExpandedAutoMap = qtrue;
 		}
 		else if ((cg.time - cgs.autoMapExpandTime > 150.f * expandedMapFrac) && (cg.time - cgs.autoMapExpandTime < cg_commandMapTime.value))
 		{
@@ -2861,7 +2861,10 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		}
 	}
 
-	if (!drawExtendedAutoMap || comp->style & COMPASS_ALWAYS_DRAW)
+	// draw the compass behind the extended map
+	// as the compass map mask will not work properly on top
+	// of expanded map
+	if (!drawExpandedAutoMap || comp->style & COMPASS_ALWAYS_DRAW)
 	{
 		if (comp->showBackGround)
 		{
@@ -2876,7 +2879,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		CG_DrawAutoMap(basex, basey, basew, baseh, comp->style);
 	}
 
-	if (drawExtendedAutoMap)
+	if (drawExpandedAutoMap)
 	{
 		CG_DrawExpandedAutoMap();
 	}
