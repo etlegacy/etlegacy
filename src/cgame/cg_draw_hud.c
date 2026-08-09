@@ -2808,6 +2808,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 	float      baseh           = comp->location.h;
 	float      expandedMapFrac = cg_commandMapTime.value / 250.f;
 	snapshot_t *snap;
+	qboolean   drawExtendedAutoMap = qfalse;
 
 	if (cg.nextSnap && !cg.nextFrameTeleport && !cg.thisFrameTeleport)
 	{
@@ -2840,12 +2841,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		}
 		else
 		{
-			CG_DrawExpandedAutoMap();
-
-			if (!(comp->style & COMPASS_ALWAYS_DRAW))
-			{
-				return;
-			}
+			drawExtendedAutoMap = qtrue;
 		}
 	}
 	else
@@ -2854,12 +2850,7 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		    || (cg.time - cgs.autoMapExpandTime <= 250.f * expandedMapFrac
 		        && cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR))
 		{
-			CG_DrawExpandedAutoMap();
-
-			if (!(comp->style & COMPASS_ALWAYS_DRAW))
-			{
-				return;
-			}
+			drawExtendedAutoMap = qtrue;
 		}
 		else if ((cg.time - cgs.autoMapExpandTime > 150.f * expandedMapFrac) && (cg.time - cgs.autoMapExpandTime < cg_commandMapTime.value))
 		{
@@ -2870,17 +2861,25 @@ void CG_DrawNewCompass(hudComponent_t *comp)
 		}
 	}
 
-	if (comp->showBackGround)
+	if (!drawExtendedAutoMap || comp->style & COMPASS_ALWAYS_DRAW)
 	{
-		CG_FillRect(basex, basey, basew, baseh, comp->colorBackground);
+		if (comp->showBackGround)
+		{
+			CG_FillRect(basex, basey, basew, baseh, comp->colorBackground);
+		}
+
+		if (comp->showBorder)
+		{
+			CG_DrawRect_FixedBorder(basex, basey, basew, baseh, 1, comp->colorBorder);
+		}
+
+		CG_DrawAutoMap(basex, basey, basew, baseh, comp->style);
 	}
 
-	if (comp->showBorder)
+	if (drawExtendedAutoMap)
 	{
-		CG_DrawRect_FixedBorder(basex, basey, basew, baseh, 1, comp->colorBorder);
+		CG_DrawExpandedAutoMap();
 	}
-
-	CG_DrawAutoMap(basex, basey, basew, baseh, comp->style);
 }
 /**
  * @brief CG_DrawStatsDebug
