@@ -1159,10 +1159,6 @@ void G_UpdateSkillRating(int winner)
 		cl = level.clients + level.sortedClients[i];
 
 		G_SkillRatingGetClientRating(cl);
-
-		// update rank
-		G_CalcRank(cl);
-		ClientUserinfoChanged(level.sortedClients[i]);
 	}
 }
 
