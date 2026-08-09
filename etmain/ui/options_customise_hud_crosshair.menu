@@ -1,0 +1,110 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define MENU_NAME "options_customise_hud_crosshair"
+#define GROUP_NAME "grpOptionsCustomiseHud"
+
+// Customise Game Menu //
+menuDef {
+	name MENU_NAME
+    visible     0
+	fullscreen  0
+	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style WINDOW_STYLE_FILLED
+
+    onESC {
+		close MENU_NAME ;
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif // FUI
+	}
+
+	WINDOW(_("OPTIONS"), 122)
+
+	MAINBUTTON(1, _("MSGID_MENU_OPTION_GAME"), close MENU_NAME; open options_customise_game)
+	MAINBUTTON_ACTIVE(2, _("MSGID_MENU_OPTION_VIEW"), close MENU_NAME; open options_customise_hud)
+	MAINBUTTON(3, _("MSGID_MENU_OPTION_CONTROLS"), close MENU_NAME; open options_controls)
+	MAINBUTTON(4, _("MSGID_MENU_OPTION_SYSTEM"), close MENU_NAME; open options_system)
+
+	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
+
+#define NUM_SUBMENUS 13
+#define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
+
+    SIDEBUTTON(1, "BLOOD & GIB", close MENU_NAME; open options_customise_hud_blood)
+    SIDEBUTTON(2, "COMPASS", close MENU_NAME; open options_customise_hud_compass)
+    SIDEBUTTON_ACTIVE(3, "CROSSHAIR", close MENU_NAME; open options_customise_hud_crosshair)
+    SIDEBUTTON(4, "CUSTOM CROSSHAIR", close MENU_NAME; open options_customise_hud_custom_crosshair)
+    SIDEBUTTON(5, "FIRETEAM", close MENU_NAME; open options_customise_hud_fireteam)
+    SIDEBUTTON(6, "GEOLOCATION", close MENU_NAME; open options_customise_hud_geolocation)
+    SIDEBUTTON(7, "HINT", close MENU_NAME; open options_customise_hud_hint)
+	SIDEBUTTON(8, "HUD DISPLAY", close MENU_NAME; open options_customise_hud_display)
+	SIDEBUTTON(9, "IN-GAME DISPLAY", close MENU_NAME; open options_customise_hud_ingame_display)
+	SIDEBUTTON(10, "ITEMS", close MENU_NAME; open options_customise_hud_items)
+	SIDEBUTTON(11, "SCOPE RETICLE", close MENU_NAME; open options_customise_hud_scope)
+	SIDEBUTTON(12, "SHOUTCAST", close MENU_NAME; open options_customise_hud_shoutcast)
+	SIDEBUTTON(13, "WEAPONS DISPLAY", close MENU_NAME; open options_customise_hud_weapons)
+
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "CROSSHAIR")
+	
+	YESNO(OPTION_ITEM_POS(1), _("Use Cvar Crosshair:"), .2, 8, "cg_useCvarCrosshair", _("Force usage of cvar value for crosshair on map load/reload"))
+	MULTI(OPTION_ITEM_POS(2), _("Crosshair Size:"), .2, 8, "cg_crosshairsize", cvarFloatList { "Tiny" 24 "Small" 32 "Medium" 48 "Large" 64 "Huge" 96 }, _("Set the size of the displayed crosshair"))
+	YESNO(OPTION_ITEM_POS(3), _("Crosshair Pulsing:"), .2, 8, "cg_crosshairPulse", _("Toggle crosshair spread sizing while moving/firing"))
+	YESNO(OPTION_ITEM_POS(4), _("Crosshair Health Info:"), .2, 8, "cg_crosshairHealth", _("Color the crosshair based on current health (override crosshair color settings)"))
+	MULTI(OPTION_ITEM_POS(5), _("Primary Color:"), .2, 8, "cg_crosshairColor", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the primary crosshair"))
+	MULTI(OPTION_ITEM_POS(6), _("Secondary Color:"), .2, 8, "cg_crosshairColorAlt", cvarStrList { "White"; "white"; "Yellow"; "yellow"; "Red"; "red"; "Green"; "green"; "Blue"; "blue"; "Magenta"; "magenta"; "Cyan"; "cyan"; "Orange"; "orange"; "Light Blue"; "0xa0c0ff"; "Medium Blue"; "mdblue"; "Light Red"; "0xffc0a0"; "Medium Red"; "mdred"; "Light Green"; "0xa0ffc0"; "Medium Green"; "mdgreen"; "Dark Green"; "dkgreen"; "Medium Cyan"; "mdcyan"; "Medium Yellow"; "mdyellow"; "Medium Orange"; "mdorange"; "Light Grey"; "ltgrey"; "Medium Grey"; "mdgrey"; "Dark Grey"; "dkgrey"; "Black"; "black" }, _("Set the color for the secondary crosshair"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(7), "cg_crosshairAlpha", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(7), _("Primary Alpha:"), .2, 8, "cg_crosshairAlpha" 1 0 1, _("Set the transparency level for the primary crosshair"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(8), "cg_crosshairAlphaAlt", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(8), _("Secondary Alpha:"), .2, 8, "cg_crosshairAlphaAlt" 1 0 1, _("Set the transparency level for the secondary crosshair"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(9), "cg_drawCrosshairFade", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(9), _("Bar Fade:"), .2, 8, "cg_drawCrosshairFade" 250 0 3000, _("Set the display duration of crosshair bar before fading out"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(10), "cg_crosshairHintsLinger", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(10), _("Hint Fade:"), .2, 8, "cg_crosshairHintsLinger" 250 0 3000, _("Set the display duration of crosshair hint before fading out"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(11), "cg_crosshairHintsAlpha", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(11), _("Hint Alpha:"), .2, 8, "cg_crosshairHintsAlpha" 1 0 1, _("Set the transparency level for the crosshair hint"))
+	NUMERICFIELD(OPTION_EF_POS(12), _("X Offset:"), .2, 8, "cg_crosshairX", 3, _("Offset the crosshair X position"))
+	NUMERICFIELD(OPTION_EF_POS(13), _("Y Offset:"), .2, 8, "cg_crosshairY", 3, _("Offset the crosshair Y position"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(14), "cg_crosshairScaleX", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(14), _("Scale X:"), .2, 8, "cg_crosshairScaleX" 1 0 10, _("Scale the crosshair width"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(15), "cg_crosshairScaleY", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(15), _("Scale Y:"), .2, 8, "cg_crosshairScaleY" 1 0 10, _("Scale the crosshair height"))
+	
+    itemDef {
+        name        "crosshair_select"
+        group GROUP_NAME
+        rect        $evalfloat(OPTION_ITEM_X + (OPTION_SUBW_W * 0.5) - 22) $evalfloat(OPTION_ITEM_Y + ((OPTION_ITEM_H + OPTION_ITEM_MARGIN) * (17 - 1))) 44 44
+        style WINDOW_STYLE_FILLED
+        ownerdraw UI_CROSSHAIR
+        backcolor   .1 .1 .1 .9
+        border WINDOW_BORDER_FULL
+        bordercolor .6 .6 .6 1
+        visible     1
+        tooltip     _("Set crosshair type")
+
+        mouseEnter
+        {
+            setitemcolor "crosshair_select" bordercolor .9 .9 .9 1
+        }
+
+        mouseExit {
+            setitemcolor "crosshair_select" bordercolor .6 .6 .6 1
+        }
+    }
+
+#ifdef FUI
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
+#else
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open ingame_main)
+#endif
+	LOWERBUTTON(2, _("MSGID_MENU_OPTION_OPEN_HOME"), close MENU_NAME ; uiScript open_homepath)
+
+#ifdef FUI
+	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; open options_hudeditor_fui)
+#else
+	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; uiScript edithud ; close MENU_NAME)
+#endif
+}

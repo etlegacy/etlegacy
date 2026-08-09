@@ -16,7 +16,13 @@
 	loadMenu { "ui/playonline_deletefavs.menu" }
 	loadMenu { "ui/hostgame.menu" }
 	loadMenu { "ui/hostgame_advanced.menu" }
-	loadMenu { "ui/hostgame_extended.menu" }
+	loadMenu { "ui/hostgame_advanced_admin.menu" }
+	loadMenu { "ui/hostgame_advanced_votes.menu" }
+	loadMenu { "ui/hostgame_advanced_download.menu" }
+	loadMenu { "ui/hostgame_advanced_general.menu" }
+	loadMenu { "ui/hostgame_advanced_lms.menu" }
+	loadMenu { "ui/hostgame_advanced_match.menu" }
+	loadMenu { "ui/hostgame_advanced_motd.menu" }
 	loadMenu { "ui/hostgame_advanced_default.menu" }
 	loadMenu { "ui/hostgame_dedicated_warning.menu" }
 	loadMenu { "ui/mods.menu" }
@@ -24,14 +30,57 @@
 	loadMenu { "ui/viewreplay_delete.menu" }
 	loadMenu { "ui/options.menu" }
 	loadMenu { "ui/options_customise_game.menu" }
+	loadMenu { "ui/options_customise_game_player.menu" }
+	loadMenu { "ui/options_customise_game_physics.menu" }
+	loadMenu { "ui/options_customise_game_chat.menu" }
+	loadMenu { "ui/options_customise_game_miscellaneous.menu" }
+	loadMenu { "ui/options_customise_game_movement.menu" }
+	loadMenu { "ui/options_customise_game_scope.menu" }
+	loadMenu { "ui/options_customise_game_sounds.menu" }
+	loadMenu { "ui/options_customise_game_weapons.menu" }
+	loadMenu { "ui/options_customise_game_chat.menu" }
+	loadMenu { "ui/options_customise_game_chat.menu" }
 	loadMenu { "ui/options_customise_hud.menu" }
-	loadMenu { "ui/options_customise_hud_extended.menu" }
+	loadMenu { "ui/options_customise_hud.menu" }
+	loadMenu { "ui/options_customise_hud_blood.menu" }
+	loadMenu { "ui/options_customise_hud_compass.menu" }
+	loadMenu { "ui/options_customise_hud_crosshair.menu" }
+	loadMenu { "ui/options_customise_hud_custom_crosshair.menu" }
+	loadMenu { "ui/options_customise_hud_display.menu" }
+	loadMenu { "ui/options_customise_hud_fireteam.menu" }
+	loadMenu { "ui/options_customise_hud_geolocation.menu" }
+	loadMenu { "ui/options_customise_hud_hint.menu" }
+	loadMenu { "ui/options_customise_hud_ingame_display.menu" }
+	loadMenu { "ui/options_customise_hud_items.menu" }
+	loadMenu { "ui/options_customise_hud_scope.menu" }
+	loadMenu { "ui/options_customise_hud_shoutcast.menu" }
+	loadMenu { "ui/options_customise_hud_weapons.menu" }
 	loadMenu { "ui/options_customise_hudeditor_fui.menu" }
 	loadMenu { "ui/options_controls.menu" }
-	loadMenu { "ui/options_controls_advanced.menu" }
+	loadMenu { "ui/options_controls_selection_menus.menu" }
+	loadMenu { "ui/options_controls_shoutcaster.menu" }
+	loadMenu { "ui/options_controls_weapons.menu" }
+	loadMenu { "ui/options_controls_chat.menu" }
+	loadMenu { "ui/options_controls_fireteam.menu" }
+	loadMenu { "ui/options_controls_mouse.menu" }
+	loadMenu { "ui/options_controls_joystick.menu" }
+	loadMenu { "ui/options_controls_miscellaneous.menu" }
+	loadMenu { "ui/options_controls_move.menu" }
+	loadMenu { "ui/options_controls_popups.menu" }
 	loadMenu { "ui/options_controls_default.menu" }
 	loadMenu { "ui/options_system.menu" }
-	loadMenu { "ui/options_system_extended.menu" }
+	loadMenu { "ui/options_system_irc_client.menu" }
+	loadMenu { "ui/options_system_language.menu" }
+	loadMenu { "ui/options_system_multiview.menu" }
+	loadMenu { "ui/options_system_network.menu" }
+	loadMenu { "ui/options_system_screenshots.menu" }
+	loadMenu { "ui/options_system_advanced_graphics.menu" }
+	loadMenu { "ui/options_system_audio.menu" }
+	loadMenu { "ui/options_system_console.menu" }
+	loadMenu { "ui/options_system_demo.menu" }
+	loadMenu { "ui/options_system_downloads.menu" }
+	loadMenu { "ui/options_system_edv.menu" }
+	loadMenu { "ui/options_system_graphics.menu" }
 	loadMenu { "ui/options_system_gamma.menu" }
 	loadMenu { "ui/credits_attributions.menu" }
 	loadMenu { "ui/credits_etlegacy.menu" }

@@ -1,0 +1,105 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define MENU_NAME  "options_system_graphics"
+#define GROUP_NAME "grpOptionsSystem"
+
+menuDef {
+	name        MENU_NAME
+    visible     0
+	fullscreen  0
+	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style WINDOW_STYLE_FILLED
+	
+    onOpen
+	{
+		uiScript systemCvarsGet;
+		uiScript vidSave;
+		uiScript glCustom;
+		uiScript parseglPreset
+	}
+
+    onESC {
+        uiScript systemCvarsReset;
+		uiScript vidReset;
+		close MENU_NAME
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif // FUI
+	}
+
+	WINDOW(_("OPTIONS"), 122)
+
+	MAINBUTTON(1, _("MSGID_MENU_OPTION_GAME"), close MENU_NAME; open options_customise_game)
+	MAINBUTTON(2, _("MSGID_MENU_OPTION_VIEW"), close MENU_NAME; open options_customise_hud)
+	MAINBUTTON(3, _("MSGID_MENU_OPTION_CONTROLS"), close MENU_NAME; open options_controls)
+	MAINBUTTON_ACTIVE(4, _("MSGID_MENU_OPTION_SYSTEM"), close MENU_NAME; open options_system)
+
+	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
+
+#ifdef ETLEGACY
+#define NUM_SUBMENUS 12
+#else
+#define NUM_SUBMENUS 10
+#endif
+#define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
+
+	SIDEBUTTON_ACTIVE(1, "GRAPHICS", close MENU_NAME; open options_system_graphics)
+	SIDEBUTTON(2, "ADVANCED GRAPHICS", close MENU_NAME; open options_system_advanced_graphics)
+	SIDEBUTTON(3, "SCREENSHOTS", close MENU_NAME; open options_system_screenshots)
+	SIDEBUTTON(4, "AUDIO", close MENU_NAME; open options_system_audio)
+	SIDEBUTTON(5, "NETWORK", close MENU_NAME; open options_system_network)
+	SIDEBUTTON(6, "DOWNLOADS", close MENU_NAME; open options_system_download)
+	SIDEBUTTON(7, "CONSOLE", close MENU_NAME; open options_system_console)
+	SIDEBUTTON(8, "DEMO", close MENU_NAME; open options_system_demo)
+	SIDEBUTTON(9, "EDV", close MENU_NAME; open options_system_edv)
+	SIDEBUTTON(10, "MULTIVIEW", close MENU_NAME; open options_system_multiview)
+#ifdef ETLEGACY
+	SIDEBUTTON(11, "LANGUAGE", close MENU_NAME; open options_system_language)
+	SIDEBUTTON(12, "IRC CLIENT", close MENU_NAME; open options_system_irc_client)
+#endif
+
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "GRAPHICS")
+
+#ifdef ETLEGACY	
+	MULTIACTION(OPTION_ITEM_POS(1), _("Quality Preset:"), .2, 8, "ui_glPreset", cvarFloatList { "Very Low" 3 "Low" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glPreset", _("Set overall video quality"))
+	COMBO(OPTION_ITEM_POS(2), _("Resolution:"), .2, 8, "ui_r_mode", LEGACY_RESOLUTIONS, uiScript glCustom, _("Set rendering resolution"))
+	NUMERICFIELD(OPTION_EF_POS(3), _("Custom Width:"), .2, 8, "r_customwidth", 5, _("Specify custom resolution width (requires custom resolution set)"))
+	NUMERICFIELD(OPTION_EF_POS(4), _("Custom Height:"), .2, 8, "r_customheight", 5, _("Specify custom resolution height (requires custom resolution set)"))
+	COMBO(OPTION_ITEM_POS(5), _("Display Mode:"), .2, 8, "ui_r_windowmode", LEGACY_WINDOWMODES, uiScript glCustom, _("Set display mode"))
+	YESNO(OPTION_ITEM_POS(6), _("Center Window:"), .2, 8, "ui_r_centerwindow", _("Center window in windowed mode"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(7), "r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(7), _("Display Gamma:"), .2, 8, "r_gamma" 1.3 1 3, _("Set display gamma (requires vid_restart if using software gamma)"))
+	YESNO(OPTION_ITEM_POS(8), _("Ignore Hardware Gamma:"), .2, 8, "ui_r_ignorehwgamma", _("Ignore hardware gamma and use software gamma instead"))
+	MULTI(OPTION_ITEM_POS(9), _("Intensity:"), .2, 8, "ui_r_intensity", cvarFloatList { "1.0" 1.0 "1.1" 1.1 "1.2" 1.2 "1.3" 1.3 "1.4" 1.4 "1.5" 1.5 }, _("Set the color intensity of textures"))
+	MULTI(OPTION_ITEM_POS(10), _("Map Overbright Bits:"), .2, 8, "ui_r_mapoverbrightbits", cvarFloatList { "Very Dark" 0 "Dark" 1 "Normal" 2 "Bright" 3 }, _("Set texture brightness of the world"))
+	YESNO(OPTION_ITEM_POS(11), _("Overbright Bits:"), .2, 8, "ui_r_overBrightBits", _("Set overall screen brightness (requires hardware gamma)"))
+	MULTI(OPTION_ITEM_POS(12), _("Max FPS:"), .2, 8, "com_maxfps", cvarFloatList { "Low (43 FPS)" 43 "Medium (76 FPS)" 76 "High (125 FPS)" 125 "Very High (250 FPS)" 250 }, _("Set the FPS limit"))
+#else
+    MULTIACTION(OPTION_ITEM_POS(1), _("Quality Preset:"), .2, 8, "ui_glPreset", cvarFloatList { "Very Low" 3 "Low" 2 "Normal" 1 "High" 0 }, uiScript update "ui_glPreset", _("Set overall video quality"))
+	MULTI(OPTION_ITEM_POS(2), _("Resolution:"), .2, 8, "ui_r_mode", VANILLA_RESOLUTIONS, _("Set rendering resolution"))
+	NUMERICFIELD(OPTION_EF_POS(3), _("Custom Width:"), .2, 8, "r_customwidth", 5, _("Specify custom resolution width (requires custom resolution set)"))
+	NUMERICFIELD(OPTION_EF_POS(4), _("Custom Height:"), .2, 8, "r_customheight", 5, _("Specify custom resolution height (requires custom resolution set)"))
+	MULTI(OPTION_ITEM_POS(5), _("Display Mode:"), .2, 8, "ui_r_fullscreen", VANILLA_WINDOWMODES, _("Set display mode"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(6), "r_gamma", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(6), _("Display Gamma:"), .2, 8, "r_gamma" 1.3 1 3, _("Set display gamma (requires vid_restart if using software gamma)"))
+	YESNO(OPTION_ITEM_POS(7), _("Ignore Hardware Gamma:"), .2, 8, "ui_r_ignorehwgamma", _("Ignore hardware gamma and use software gamma instead"))
+	MULTI(OPTION_ITEM_POS(8), _("Intensity:"), .2, 8, "ui_r_intensity", cvarFloatList { "1.0" 1.0 "1.1" 1.1 "1.2" 1.2 "1.3" 1.3 "1.4" 1.4 "1.5" 1.5 }, _("Set the color intensity of textures"))
+	MULTI(OPTION_ITEM_POS(9), _("Map Overbright Bits:"), .2, 8, "ui_r_mapoverbrightbits", cvarFloatList { "0" 0 "1" 1 "2" 2 "3" 3 }, _("Set texture brightness of the world"))
+	YESNO(OPTION_ITEM_POS(10), _("Overbright Bits:"), .2, 8, "ui_r_overBrightBits", _("Set overall screen brightness (requires hardware gamma)"))
+	MULTI(OPTION_ITEM_POS(11), _("Max FPS:"), .2, 8, "com_maxfps", cvarFloatList { "Low (43 FPS)" 43 "Medium (76 FPS)" 76 "High (125 FPS)" 125 "Very High (250 FPS)" 250 }, _("Set the FPS limit"))
+#endif
+
+#ifdef FUI
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
+#else
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open ingame_main)
+#endif
+	LOWERBUTTON(2, _("MSGID_MENU_OPTION_OPEN_HOME"), close MENU_NAME ; uiScript open_homepath)
+
+
+	LOWERBUTTON(3, _("MSGID_MENU_APPLY"), conditionalScript vidrestartIsRequired 2 ("open vid_restart") ("uiScript systemCvarsApply"))
+}

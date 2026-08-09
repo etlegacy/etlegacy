@@ -1,0 +1,88 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define MENU_NAME  "options_system_console"
+#define GROUP_NAME "grpOptionsSystem"
+
+menuDef {
+	name        MENU_NAME
+    visible     0
+	fullscreen  0
+	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style WINDOW_STYLE_FILLED
+	
+    onOpen
+	{
+		uiScript systemCvarsGet;
+		uiScript vidSave;
+		uiScript glCustom;
+		uiScript parseglPreset
+	}
+
+    onESC {
+        uiScript systemCvarsReset;
+		uiScript vidReset;
+		close MENU_NAME
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif // FUI
+	}
+
+	WINDOW(_("OPTIONS"), 122)
+
+	MAINBUTTON(1, _("MSGID_MENU_OPTION_GAME"), close MENU_NAME; open options_customise_game)
+	MAINBUTTON(2, _("MSGID_MENU_OPTION_VIEW"), close MENU_NAME; open options_customise_hud)
+	MAINBUTTON(3, _("MSGID_MENU_OPTION_CONTROLS"), close MENU_NAME; open options_controls)
+	MAINBUTTON_ACTIVE(4, _("MSGID_MENU_OPTION_SYSTEM"), close MENU_NAME; open options_system)
+
+	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
+
+#ifdef ETLEGACY
+#define NUM_SUBMENUS 12
+#else
+#define NUM_SUBMENUS 10
+#endif
+#define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
+
+	SIDEBUTTON(1, "GRAPHICS", close MENU_NAME; open options_system_graphics)
+	SIDEBUTTON(2, "ADVANCED GRAPHICS", close MENU_NAME; open options_system_advanced_graphics)
+	SIDEBUTTON(3, "SCREENSHOTS", close MENU_NAME; open options_system_screenshots)
+	SIDEBUTTON(4, "AUDIO", close MENU_NAME; open options_system_audio)
+	SIDEBUTTON(5, "NETWORK", close MENU_NAME; open options_system_network)
+	SIDEBUTTON(6, "DOWNLOADS", close MENU_NAME; open options_system_download)
+	SIDEBUTTON_ACTIVE(7, "CONSOLE", close MENU_NAME; open options_system_console)
+	SIDEBUTTON(8, "DEMO", close MENU_NAME; open options_system_demo)
+	SIDEBUTTON(9, "EDV", close MENU_NAME; open options_system_edv)
+	SIDEBUTTON(10, "MULTIVIEW", close MENU_NAME; open options_system_multiview)
+#ifdef ETLEGACY
+	SIDEBUTTON(11, "LANGUAGE", close MENU_NAME; open options_system_language)
+	SIDEBUTTON(12, "IRC CLIENT", close MENU_NAME; open options_system_irc_client)
+#endif
+
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "CONSOLE")
+	
+	YESNO(OPTION_ITEM_POS(1), _("Auto Clear:"), .2, 8, "con_autoclear", _("Toggle persistent console input."))
+	
+#ifdef ETLEGACY	
+	MULTI(OPTION_ITEM_POS(2), _("Open Speed:"), .2, 8, "con_openspeed", cvarFloatList { "Slow" 1 "Default" 3 "Fast" 6 "Instant" 200 }, _("Specify the console open speed."))
+	CVARFLOATLABEL(OPTION_ITEM_POS(3), "con_defaultHeight", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(3), _("Default Height:"), .2, 8, "con_defaultHeight" 0.5 0 1, _("Specify custom console height ratio (0.0 to 1.0)."))
+	EDITFIELD(OPTION_EF_POS(4), _("Font Name:"), .2, 8, "con_fontName", 64, 32, _("Set the font console. Use listfonts commands in console to check available fonts."))
+	EDITFIELD(OPTION_EF_POS(5), _("Background Color:"), .2, 8, "con_background", 64, 32, _("Specify the console background color. Accepted Format RRGGBB[AA] as hex value (00 to FF)\nor R G B [A] as float value (0.0 to 1.0) or colorName as string."))
+#else
+	MULTI(OPTION_ITEM_POS(2), _("Open Speed:"), .2, 8, "scr_conspeed", cvarFloatList { "Slow" 1 "Default" 3 "Fast" 6 "Instant" 200 }, _("Specify the console open speed."))
+#endif
+	
+#ifdef FUI
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
+#else
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open ingame_main)
+#endif
+	LOWERBUTTON(2, _("MSGID_MENU_OPTION_OPEN_HOME"), close MENU_NAME ; uiScript open_homepath)
+
+
+	LOWERBUTTON(3, _("MSGID_MENU_APPLY"), conditionalScript vidrestartIsRequired 2 ("open vid_restart") ("uiScript systemCvarsApply"))
+}

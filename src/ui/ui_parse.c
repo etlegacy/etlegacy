@@ -1610,6 +1610,11 @@ qboolean ItemParse_cvar(itemDef_t *item, int handle)
 		return qfalse;
 	}
 
+	if (!item->cvar)
+	{
+		return qfalse;
+	}
+
 	Q_strlwr((char *)item->cvar);
 	if (item->typeData)
 	{

@@ -1,0 +1,68 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define MENU_NAME     "options_controls_shoutcaster"
+#define GROUP_NAME    "grpOptionsControls"
+
+// Controls Menu //
+menuDef {
+	name MENU_NAME
+    visible     0
+	fullscreen  0
+	rect WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style WINDOW_STYLE_FILLED
+
+    onESC {
+		close MENU_NAME ;
+#ifdef FUI
+		open main
+#else
+		open ingame_main
+#endif // FUI
+	}
+
+// Window //
+	WINDOW(_("OPTIONS"), 122)
+
+	MAINBUTTON(1, _("MSGID_MENU_OPTION_GAME"), close MENU_NAME; open options_customise_game)
+	MAINBUTTON(2, _("MSGID_MENU_OPTION_VIEW"), close MENU_NAME; open options_customise_hud)
+	MAINBUTTON_ACTIVE(3, _("MSGID_MENU_OPTION_CONTROLS"), close MENU_NAME; open options_controls)
+	MAINBUTTON(4, _("MSGID_MENU_OPTION_SYSTEM"), close MENU_NAME; open options_system)
+
+	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
+
+#define NUM_SUBMENUS 11
+#define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
+
+	SIDEBUTTON(1, "MOVE", close MENU_NAME; open options_controls_move)
+	SIDEBUTTON(2, "WEAPONS", close MENU_NAME; open options_controls_weapons)
+	SIDEBUTTON(3, "POP-UPS", close MENU_NAME; open options_controls_popups)
+	SIDEBUTTON(4, "CHAT", close MENU_NAME; open options_controls_chat)
+	SIDEBUTTON(5, "MOUSE", close MENU_NAME; open options_controls_input)
+	SIDEBUTTON(6, "MISCELLANEOUS", close MENU_NAME; open options_controls_miscellaneous)
+	SIDEBUTTON(7, "FIRE-TEAMS", close MENU_NAME; open options_controls_fireteams)
+	SIDEBUTTON(8, "JOYSTICK", close MENU_NAME; open options_controls_joystick)
+	SIDEBUTTON_ACTIVE(9, "SHOUTCASTER", close MENU_NAME; open options_controls_shoutcaster)
+	SIDEBUTTON(10, "SELECTION MENUS", close MENU_NAME; open options_controls_selection_menus)
+
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "SHOUTCASTER")
+	
+	BIND(OPTION_ITEM_POS(1), _("Increase red score:"), .2, 8, "scPlusRedScore", "Increase by 1 the score in the shoutcaster red team name banner")
+	BIND(OPTION_ITEM_POS(2), _("Decrease red score:"), .2, 8, "scMinusRedScore", "Decrease by 1 the score in the shoutcaster red team name banner")
+	BIND(OPTION_ITEM_POS(3), _("Reset red score:"), .2, 8, "scResetRedScore", "Reset to 0 the score in the shoutcaster red team name banner")
+	BIND(OPTION_ITEM_POS(4), _("Increase blue score:"), .2, 8, "scPlusBlueScore", "Increase by 1 the score in the shoutcaster blue team name banner")
+	BIND(OPTION_ITEM_POS(5), _("Decrease blue score:"), .2, 8, "scMinusBlueScore", "Decrease by 1 the score in the shoutcaster blue team name banner")
+	BIND(OPTION_ITEM_POS(6), _("Reset blue score:"), .2, 8, "scResetBlueScore", "Reset to 0 the score in the shoutcaster blue team name banner")
+	BIND(OPTION_ITEM_POS(7), _("Swap teams name & score:"), .2, 8, "scSwapTeamLabels", "Swap the shoutcaster red <-> blue team banner name and score. Helpful on teams swap")
+
+#ifdef FUI
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
+#else
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open ingame_main)
+#endif
+	LOWERBUTTON(2, _("MSGID_MENU_OPTION_OPEN_HOME"), close MENU_NAME ; uiScript open_homepath)
+
+
+	LOWERBUTTON(3, _("MSGID_MENU_DEFAULT"), clearfocus; open options_controls_default)
+}
