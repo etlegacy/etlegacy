@@ -228,19 +228,6 @@ void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 
 	G_DebugAddSkillLevel(ent, skill);
 
-#ifdef FEATURE_RATING
-	if (g_skillRating.integer)
-	{
-		ent->client->sess.rank = (int)(MAX(ent->client->sess.mu - 3 * ent->client->sess.sigma, 0.f) / (2 * MU) * NUM_EXPERIENCE_LEVELS);
-
-		if (ent->client->sess.rank > 10)
-		{
-			ent->client->sess.rank = 10;
-		}
-	}
-	else
-	{
-#endif
 	if (i == SK_NUM_SKILLS)
 	{
 		// increase rank
@@ -266,9 +253,6 @@ void G_UpgradeSkill(gentity_t *ent, skillType_t skill)
 			ent->client->sess.rank = 10;
 		}
 	}
-#ifdef FEATURE_RATING
-}
-#endif
 
 	ClientUserinfoChanged(ent - g_entities);
 
@@ -356,12 +340,7 @@ void G_ResetXP(gentity_t *ent)
 		return;
 	}
 
-#ifdef FEATURE_RATING
-	if (!g_skillRating.integer)
-#endif
-	{
-		ent->client->sess.rank = 0;
-	}
+	ent->client->sess.rank = 0;
 
 	for (i = 0; i < SK_NUM_SKILLS; i++)
 	{
