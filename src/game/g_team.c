@@ -2268,8 +2268,8 @@ static int G_ResolveSpawnPointIndex(team_t team, const vec_t *target_origin)
 }
 
 /**
- * @brief Finds suitable spawn point index for the given team.
- *        If auto selected spawn point is invalid, fallback to standard resolving method.
+ * @brief Return existing default spawn point for a team.
+ *				Can be inactive and doesn't have to belong to the team.
  * @param[in] team
  * @param[in] targetSpawnPt Player selected spawn point.
  * @return Spawn point index or -1.
@@ -2278,14 +2278,11 @@ static int G_ResolveAutoSpawnPointIndex(team_t team, int targetSpawnPt)
 {
 	if (targetSpawnPt >= 0 && targetSpawnPt < level.numSpawnPoints)
 	{
-		const spawnPointState_t *targetSpawnPointState = &level.spawnPointStates[targetSpawnPt];
-		// if this spawn point is already owned by the team, no further actions necessary
-		if (targetSpawnPointState->isActive && targetSpawnPointState->team == team)
-		{
-			return targetSpawnPt;
-		}
+		// if mapscript is set up incorrectly this spawn might not belong to the team or be inactive,
+		// in that case it should be resolved later
+		return targetSpawnPt;
 	}
-	// fallback:
+	// fallback, return any valid spawnpoint
 	return G_ResolveSpawnPointIndex(team, NULL);
 }
 
@@ -2326,13 +2323,13 @@ playerSpawn_t G_GetSpawnForClient(const gclient_t *client, const int resolvedAut
 		return (playerSpawn_t) { -1, -1 };
 	}
 	teamAutoSpawnPt = resolvedAutoSpawnPts[(client->sess.sessionTeam == TEAM_AXIS) ? 0 : 1];
-	// no spawn points are found for the given team
+	// no spawn points on the map
 	if (teamAutoSpawnPt == -1)
 	{
 		return (playerSpawn_t) { -1, -1 };
 	}
 	targetSpawnPt = G_ConvertToSpawnPointIndex(client->sess.userSpawnPointValue, teamAutoSpawnPt);
-	// selected spawn point is owned by the opposite team, find closest team spawn point
+	// selected spawn point is owned by the opposite team or is inactive, find the closest team spawn point
 	if (level.spawnPointStates[targetSpawnPt].team != client->sess.sessionTeam ||
 	    level.spawnPointStates[targetSpawnPt].isActive != 1)
 	{
