@@ -498,20 +498,10 @@ static void CG_FTOverlay_SetColors(fireteamOverlay_t *fto, const float alpha)
 
 static void CG_FTOverlay_StorePlayerName(fireteamOverlay_t *fto, const int row, const hudComponent_t *comp)
 {
-	if (comp->style & FT_COLORLESS_NAME || (comp->style & FT_STATUS_COLOR_NAME && (fto->ci->health <= 0 || fto->ci->ping >= 999)))
-	{
-		char escapedName[MAX_NAME_LENGTH];
+	qboolean isFullcolor = !(comp->style & FT_COLORLESS_NAME
+	                         || (comp->style & FT_STATUS_COLOR_NAME && (fto->ci->health <= 0 || fto->ci->ping >= 999)));
 
-		// use NULL color here rather than 'fto->ci->cleanname' directly,
-		// to make sure that a name with visible carets in it doesn't get colorized when drawing,
-		// and works as expected with colorless names/status colored names
-		Q_ColorizeString('*', fto->ci->cleanname, escapedName, sizeof(escapedName));
-		Q_strncpyz(fto->name[row], escapedName, sizeof(fto->name[row]));
-	}
-	else
-	{
-		Q_strncpyz(fto->name[row], fto->ci->name, sizeof(fto->name[row]));
-	}
+	Q_strncpyz(fto->name[row], CG_GetClientNameString(fto->ci->clientNum, isFullcolor), sizeof(fto->name[row]));
 
 	// truncate name if max chars is set
 	if (cg_fireteamNameMaxChars.integer > 0)
