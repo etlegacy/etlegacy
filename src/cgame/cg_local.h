@@ -4456,5 +4456,7 @@ void CG_DrawCursor(float x, float y);
 
 qhandle_t CG_GetTeamFlag(team_t team);
 
+char *CG_GetClientNameString(int clientNum, qboolean isFullcolor);
+
 void CG_DemoBackwardsCompatInit();
 #endif // #ifndef INCLUDE_CG_LOCAL_H

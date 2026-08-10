@@ -2255,7 +2255,7 @@ static void CG_PlayerSprites(centity_t *cent)
 
 		if (cg_drawSpectatorNames.integer > 0)
 		{
-			name = cg_drawSpectatorNames.integer == 1 ? ci->cleanname : ci->name;
+			name = CG_GetClientNameString(cent->currentState.clientNum, cg_drawSpectatorNames.integer);
 
 			if (cg_shoutcastDrawHealth.integer == 1 && cgs.clientinfo[cg.clientNum].shoutcaster)
 			{
@@ -2292,7 +2292,7 @@ static void CG_PlayerSprites(centity_t *cent)
 
 	if (cg.demoPlayback && cg_drawSpectatorNames.integer > 0)
 	{
-		CG_PlayerFloatText(cent, cg_drawSpectatorNames.integer == 1 ? ci->cleanname : ci->name, height + 8);
+		CG_PlayerFloatText(cent, CG_GetClientNameString(cent->currentState.clientNum, cg_drawSpectatorNames.integer == 1), height + 8);
 	}
 
 	if (cent->currentState.powerups & (1 << PW_INVULNERABLE))

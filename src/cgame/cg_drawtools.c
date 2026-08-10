@@ -1844,3 +1844,31 @@ qhandle_t CG_GetTeamFlag(team_t team)
 	default: return 0;
 	}
 }
+
+/**
+ * @brief CG_GetClientNameString
+ * @param[in] clientNum
+ * @param[in] isFullcolor
+ * @return a colorized or single color name string from selected client
+ */
+char *CG_GetClientNameString(int clientNum, qboolean isFullcolor)
+{
+	char colorized[MAX_NAME_LENGTH + 2] = { 0 };
+
+	// ensure the client is valid
+	if (!cgs.clientinfo[clientNum].infoValid)
+	{
+		return va("unknown");
+	}
+
+	if (isFullcolor)
+	{
+		// Draw them with full colors
+		return cgs.clientinfo[clientNum].name;
+	}
+
+	// Draw them with a single color
+	Q_ColorizeString('*', cgs.clientinfo[clientNum].name, colorized, MAX_NAME_LENGTH + 2);
+
+	return va("%s", colorized);
+}

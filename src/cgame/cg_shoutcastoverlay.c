@@ -211,8 +211,8 @@ static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t
 		CG_DrawPic(topRowX + (statusWidth / 2) - 10, y + (height / 2) - 10, 20, 20, cgs.media.scoreEliminatedShader);
 	}
 
-	// draw name limit 20 chars
-	Q_ColorizeString(player->health < 0 ? '9' : '7', player->cleanname, name, MAX_NAME_LENGTH + 2);
+	// draw name
+	Q_ColorizeString(player->health < 0 ? '9' : '7', player->name, name, MAX_NAME_LENGTH + 2);
 	textHeight = CG_Text_Height_Ext(name, 0.16f, 0, FONT_TEXT);
 	CG_Text_Paint_Ext(comp->location.x + statusWidth + 1, y + (height / 4) + (textHeight / 2), 0.16f, 0.16f, comp->colorMain, name, 0, 20, comp->styleText, FONT_TEXT);
 
@@ -367,8 +367,8 @@ static void CG_DrawShoutcastPlayerOverlayAllies(hudComponent_t *comp, clientInfo
 		CG_DrawPic(topRowX - (statusWidth / 2) - 10, y + (height / 2) - 10, 20, 20, cgs.media.scoreEliminatedShader);
 	}
 
-	// draw name limit 20 chars
-	Q_ColorizeString(player->health < 0 ? '9' : '7', player->cleanname, name, MAX_NAME_LENGTH + 2);
+	// draw name
+	Q_ColorizeString(player->health < 0 ? '9' : '7', player->name, name, MAX_NAME_LENGTH + 2);
 	textWidth  = CG_Text_Width_Ext(name, 0.16f, 0, FONT_TEXT);
 	textHeight = CG_Text_Height_Ext(name, 0.16f, 0, FONT_TEXT);
 	if (textWidth > 116)
@@ -768,8 +768,8 @@ void CG_DrawShoutcastPlayerStatus(hudComponent_t *comp)
 	// draw team flag
 	CG_DrawPic(nameBoxX + 4, nameBoxY + (nameBoxHeight / 2) - 4.5f, 14, 9, CG_GetTeamFlag(player->team));
 
-	// draw name limit 20 chars, width 110
-	Q_ColorizeString('7', player->cleanname, name, MAX_NAME_LENGTH + 2);
+	// draw name, width 110
+	Q_ColorizeString('7', player->name, name, MAX_NAME_LENGTH + 2);
 	textWidth  = CG_Text_Width_Ext(name, scale, 0, FONT_TEXT);
 	textHeight = CG_Text_Height_Ext(name, scale, 0, FONT_TEXT);
 	if (textWidth > 110)

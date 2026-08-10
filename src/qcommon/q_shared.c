@@ -2020,15 +2020,12 @@ void Q_EscapeColorCodes(char *string, char escapeColor)
 }
 
 /**
- * @brief Takes a plain "un-colored" string, and then colorizes it so the string is displayed in the given color.
+ * @brief Takes a plain string, and then colorizes it so the string is displayed in the given color.
  * If given a string such as "Bob" and asked to colorize to '1' (red)', the output would be "^1Bob". If given
- * "John^^7Candy" the output is "^1John^^1^^17Candy"  -- Note that when drawn, this would literally show
- * the text "John^^7Candy" in red.
- *
- * If the desired result is to see "John^Candy" in red, then create a clean un-colored string before calling this.
+ * "John^^7Candy" the output is "^1John^^1^^1Candy".
  *
  * REQUIREMENTS:
- *	- Callers must pass in a buffer that is *at least* 3 bytes long.
+ *  - Callers must pass in a buffer that is *at least* 3 bytes long.
  *  - inStr and outStr cannot overlap
  *
  * @param[in] colorCode
@@ -2068,9 +2065,17 @@ void Q_ColorizeString(char colorCode, const char *inStr, char *outStr, size_t ou
 			// chars plus possible terminator char
 			if (outOffset + 4 < outBufferLen)
 			{
-				outStr[outOffset++] = c;
-				outStr[outOffset++] = Q_COLOR_ESCAPE;
-				outStr[outOffset++] = colorCode;
+				if (inOffset + 1 < inLen && inStr[inOffset + 1] == '^')
+				{
+					outStr[outOffset++] = c;
+					outStr[outOffset++] = Q_COLOR_ESCAPE;
+					outStr[outOffset++] = colorCode;
+				}
+				else
+				{
+					// skip color escaped
+					inOffset += 1;
+				}
 			}
 			else
 			{
