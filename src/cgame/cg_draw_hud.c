@@ -55,6 +55,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(breathbar),          CG_DrawBreathBar,                 HUD_COMP_TYPE_BAR,       0.19f, { 0 } },
 	{ HUDF(healthbar),          CG_DrawPlayerHealthBar,           HUD_COMP_TYPE_BAR,       0.19f, { "Dynamic Color" } },
 	{ HUDF(weaponchargebar),    CG_DrawWeapRecharge,              HUD_COMP_TYPE_BAR,       0.19f, { 0 } },
+	{ HUDF(clipbar),            CG_DrawClipBar,                   HUD_COMP_TYPE_BAR,       0.25f, { "Dynamic Color" } },
 	{ HUDF(healthtext),         CG_DrawPlayerHealth,              HUD_COMP_TYPE_TEXT,      0.25f, { "Dynamic Color", "Draw Suffix" } },
 	{ HUDF(xptext),             CG_DrawXP,                        HUD_COMP_TYPE_TEXT,      0.25f, { "Draw Suffix" } },
 	{ HUDF(ranktext),           CG_DrawRank,                      HUD_COMP_TYPE_TEXT,      0.20f, { 0 } },
@@ -62,7 +63,6 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(weaponheatbar),      CG_DrawGunHeatBar,                HUD_COMP_TYPE_BAR,       0.19f, { 0 } },
 	{ HUDF(weaponicon),         CG_DrawGunIcon,                   HUD_COMP_TYPE_SPECIFIC,  0.19f, { "Icon Flash",    "Only Ticking" } },
 	{ HUDF(weaponammo),         CG_DrawAmmoCount,                 HUD_COMP_TYPE_TEXT,      0.25f, { "Dynamic Color" } },
-	{ HUDF(clipbar),            CG_DrawClipBar,                   HUD_COMP_TYPE_BAR,       0.25f, { "Dynamic Color" } },
 	{ HUDF(fireteam),           CG_DrawFireTeamOverlay,           HUD_COMP_TYPE_SPECIFIC,  0.20f, { "Latched Class", "No Header",    "Colorless Name", "Status Color Name", "Status Color Row", "Spawn Point", "Spawn Point Location", "Minor Spawn Point", "Health Text", "Mini Health Bar"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(popupmessages),      CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(popupmessages2),     CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud

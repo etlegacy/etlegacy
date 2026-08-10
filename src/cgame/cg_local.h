@@ -4205,29 +4205,30 @@ typedef struct hudStructure_s
 	char parent[MAX_QPATH];
 	qboolean isEditable;
 
+	// 1
 	hudComponent_t compass;
 	hudComponent_t staminabar;
 	hudComponent_t breathbar;
 	hudComponent_t healthbar;
 	hudComponent_t weaponchargebar;
+	hudComponent_t clipbar;
 	hudComponent_t healthtext;
 	hudComponent_t xptext;
 	hudComponent_t ranktext;
-	hudComponent_t statsdisplay;
 	// 10
+	hudComponent_t statsdisplay;
 	hudComponent_t weaponheatbar;
 	hudComponent_t weaponicon;
 	hudComponent_t weaponammo;
-	hudComponent_t clipbar;
 	hudComponent_t fireteam;
 	hudComponent_t popupmessages;
 	hudComponent_t popupmessages2;
 	hudComponent_t popupmessages3;
 	hudComponent_t popupmessages4;
 	hudComponent_t powerups;
+	// 20
 	hudComponent_t objectives;
 	hudComponent_t hudhead;
-	// 20
 	hudComponent_t cursorhints;
 	hudComponent_t cursorhintsbar;
 	hudComponent_t cursorhintstext;
@@ -4235,10 +4236,10 @@ typedef struct hudStructure_s
 	hudComponent_t livesleft;
 	hudComponent_t roundtimer;
 	hudComponent_t reinforcement;
+	// 30
 	hudComponent_t spawntimer;
 	hudComponent_t localtime;
 	hudComponent_t votetext;
-	// 30
 	hudComponent_t spectatortext;
 	hudComponent_t limbotext;
 	hudComponent_t followtext;
@@ -4246,10 +4247,10 @@ typedef struct hudStructure_s
 	hudComponent_t missilecamera;
 	hudComponent_t sprinttext;
 	hudComponent_t breathtext;
+	// 40
 	hudComponent_t weaponchargetext;
 	hudComponent_t fps;
 	hudComponent_t snapshot;
-	// 40
 	hudComponent_t ping;
 	hudComponent_t speed;
 	hudComponent_t lagometer;
@@ -4258,9 +4259,9 @@ typedef struct hudStructure_s
 	hudComponent_t spectatorstatus;
 	hudComponent_t pmitemsbig;
 	hudComponent_t warmuptitle;
+	// 50
 	hudComponent_t warmuptext;
 	hudComponent_t objectivetext;
-	// 50
 	hudComponent_t centerprint;
 	hudComponent_t banner;
 	hudComponent_t crosshair;
