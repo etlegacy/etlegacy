@@ -1957,6 +1957,12 @@ void G_ShutdownGame(int restart)
 	mdx_cleanup();
 #endif
 
+	// reset stats on any mid-match restart that didn't already handle them (e.g. console map_restart)
+	if (restart && !level.fResetStats && !trap_Cvar_VariableIntegerValue("g_restarted") && g_gamestate.integer == GS_PLAYING)
+	{
+		level.fResetStats = qtrue;
+	}
+
 	// write all the client session data so we can get it back
 	G_WriteSessionData(restart);
 }
