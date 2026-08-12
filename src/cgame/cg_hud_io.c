@@ -2296,14 +2296,13 @@ qboolean CG_TryReadHudFromFile(const char *filename, qboolean isEditable)
 
 /**
  * @brief CG_ReadHudsFromFile
- * 
- * @todo Once all server will do the transition to newer mod version
- * we shall remove the HUD legacyPath copy back to move function.
- * This is done on purpose to ease the migration process for players 
- * and server owner where players playing on different server with different version
- * may encounter annoyance if the hud.dat is moved from where it is supposed to be
- * on older mod version
- * 
+ *
+ * @todo Once all servers transition to the newer mod version,
+ * we will remove the HUD legacyPath copy-back logic and restore the move function.
+ * This is done intentionally to ease the migration process for players
+ * and server owners, as players playing across servers with different versions
+ * may experience issues if hud.dat is moved from where older mod versions
+ * expect it to be.
  */
 void CG_ReadHudsFromFile(void)
 {
