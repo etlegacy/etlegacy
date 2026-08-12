@@ -1141,6 +1141,10 @@ extern cvar_t *com_downloadURL;
 extern fileHandle_t com_journalFile;
 extern fileHandle_t com_journalDataFile;
 
+#ifndef DEDICATED
+extern qboolean cl_optimizedPatchServer;
+#endif
+
 /**
  * @enum memtag_t
  * @brief
@@ -1449,7 +1453,7 @@ double Sys_GetWindowsVer(void);
 
 #define sys_stat_t struct _stat
 int Sys_Stat(const char *path, void *stat);
-#define Sys_S_IsDir(m) ((m) & _S_IFDIR)
+#define Sys_S_IsDir(m) ((m)&_S_IFDIR)
 
 int Sys_Rename(const char *from, const char *to);
 char *Sys_RealPath(const char *path);

@@ -587,8 +587,9 @@ void CL_ParseSnapshot(msg_t *msg)
 
 //=====================================================================
 
-int cl_connectedToPureServer;
-int cl_connectedToCheatServer;
+int      cl_connectedToPureServer;
+int      cl_connectedToCheatServer;
+qboolean cl_optimizedPatchServer;
 
 void CL_PurgeCache(void);
 
@@ -658,6 +659,8 @@ void CL_SystemInfoChanged(void)
 	CL_SetPurePaks(qfalse);
 
 	gameSet = qfalse;
+	// assume vanilla patch collision
+	cl_optimizedPatchServer = qtrue;
 	// scan through all the variables in the systeminfo and locally set cvars to match
 	s = systemInfo;
 	while (s)
@@ -668,6 +671,11 @@ void CL_SystemInfoChanged(void)
 		if (!key[0])
 		{
 			break;
+		}
+
+		if (!Q_stricmp(key, "cm_optimizePatchPlanes"))
+		{
+			cl_optimizedPatchServer = Q_atoi(value) ? qtrue : qfalse;
 		}
 
 		// ehw!
