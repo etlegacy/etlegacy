@@ -160,8 +160,7 @@ int G_SkillRatingPrepareMatchRating(void)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingPrepareMatchRating: sqlite3_prepare failed: %s\n", err_msg);
-		sqlite3_free(err_msg);
+		G_Printf("G_SkillRatingPrepareMatchRating: sqlite3_prepare failed: %s\n", sqlite3_errmsg(level.database.db));
 		return 1;
 	}
 
@@ -198,7 +197,6 @@ int G_SkillRatingPrepareMatchRating(void)
 int G_SkillRatingGetMatchRating(srData_t *sr_data)
 {
 	int          result;
-	char         *err_msg = NULL;
 	char         *sql;
 	sqlite3_stmt *sqlstmt;
 	qboolean     datafound = qtrue;
@@ -215,8 +213,7 @@ int G_SkillRatingGetMatchRating(srData_t *sr_data)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingGetMatchRating: sqlite3_prepare failed: %s\n", err_msg);
-		sqlite3_free(err_msg);
+		G_Printf("G_SkillRatingGetMatchRating: sqlite3_prepare failed: %s\n", sqlite3_errmsg(level.database.db));
 		return 1;
 	}
 
@@ -247,8 +244,7 @@ int G_SkillRatingGetMatchRating(srData_t *sr_data)
 		{
 			sqlite3_finalize(sqlstmt);
 
-			G_Printf("G_SkillRatingGetMatchRating: sqlite3_step failed: %s\n", err_msg);
-			sqlite3_free(err_msg);
+			G_Printf("G_SkillRatingGetMatchRating: sqlite3_step failed: %s\n", sqlite3_errmsg(level.database.db));
 			return 1;
 		}
 	}
@@ -292,8 +288,7 @@ int G_SkillRatingSetMatchRating(srData_t *sr_data)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingSetMatchRating: sqlite3_prepare failed: %s\n", err_msg);
-		sqlite3_free(err_msg);
+		G_Printf("G_SkillRatingSetMatchRating: sqlite3_prepare failed: %s\n", sqlite3_errmsg(level.database.db));
 		return 1;
 	}
 
@@ -345,7 +340,6 @@ int G_SkillRatingSetMatchRating(srData_t *sr_data)
 int G_SkillRatingGetUserRating(srData_t *sr_data)
 {
 	int          result;
-	char         *err_msg = NULL;
 	char         *sql;
 	sqlite3_stmt *sqlstmt;
 
@@ -361,8 +355,7 @@ int G_SkillRatingGetUserRating(srData_t *sr_data)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingGetUserRating: sqlite3_prepare failed: %s\n", err_msg);
-		sqlite3_free(err_msg);
+		G_Printf("G_SkillRatingGetUserRating: sqlite3_prepare failed: %s\n", sqlite3_errmsg(level.database.db));
 		return 1;
 	}
 
@@ -391,8 +384,7 @@ int G_SkillRatingGetUserRating(srData_t *sr_data)
 		{
 			sqlite3_finalize(sqlstmt);
 
-			G_Printf("G_SkillRatingGetUserRating: sqlite3_step failed: %s\n", err_msg);
-			sqlite3_free(err_msg);
+			G_Printf("G_SkillRatingGetUserRating: sqlite3_step failed: %s\n", sqlite3_errmsg(level.database.db));
 			return 1;
 		}
 	}
@@ -432,8 +424,7 @@ int G_SkillRatingSetUserRating(srData_t *sr_data)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingSetUserRating: sqlite3_prepare failed: %s\n", err_msg);
-		sqlite3_free(err_msg);
+		G_Printf("G_SkillRatingSetUserRating: sqlite3_prepare failed: %s\n", sqlite3_errmsg(level.database.db));
 		return 1;
 	}
 
@@ -651,7 +642,6 @@ float G_SkillRatingGetMapRating(char *mapname)
 {
 	float        mapProb;
 	int          result;
-	char         *err_msg = NULL;
 	char         *sql;
 	sqlite3_stmt *sqlstmt;
 
@@ -673,8 +663,7 @@ float G_SkillRatingGetMapRating(char *mapname)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingGetMapRating: sqlite3_prepare failed: %s\n", err_msg);
-		sqlite3_free(err_msg);
+		G_Printf("G_SkillRatingGetMapRating: sqlite3_prepare failed: %s\n", sqlite3_errmsg(level.database.db));
 		return 0.5f;
 	}
 
@@ -711,8 +700,7 @@ float G_SkillRatingGetMapRating(char *mapname)
 		{
 			sqlite3_finalize(sqlstmt);
 
-			G_Printf("G_SkillRatingGetMapRating: sqlite3_step failed: %s\n", err_msg);
-			sqlite3_free(err_msg);
+			G_Printf("G_SkillRatingGetMapRating: sqlite3_step failed: %s\n", sqlite3_errmsg(level.database.db));
 			return 0.5f;
 		}
 	}
@@ -758,8 +746,7 @@ void G_SkillRatingSetMapRating(char *mapname, int winner)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingSetMapRating: sqlite3_prepare failed: %s\n", err_msg);
-		sqlite3_free(err_msg);
+		G_Printf("G_SkillRatingSetMapRating: sqlite3_prepare failed: %s\n", sqlite3_errmsg(level.database.db));
 		return;
 	}
 
@@ -823,8 +810,7 @@ void G_SkillRatingSetMapRating(char *mapname, int winner)
 	}
 	else
 	{
-		G_Printf("G_SkillRatingSetMapRating: sqlite3_step failed: %s\n", err_msg);
-		sqlite3_free(err_msg);
+		G_Printf("G_SkillRatingSetMapRating: sqlite3_step failed: %s\n", sqlite3_errmsg(level.database.db));
 		sqlite3_finalize(sqlstmt);
 		return;
 	}
@@ -982,7 +968,6 @@ float G_MapWinProb(int team)
 void G_UpdateSkillRating(int winner)
 {
 	int          result;
-	char         *err_msg = NULL;
 	sqlite3_stmt *sqlstmt;
 	srData_t     sr_data;
 
@@ -1025,8 +1010,7 @@ void G_UpdateSkillRating(int winner)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_UpdateSkillRating: sqlite3_prepare failed: %s\n", err_msg);
-		sqlite3_free(err_msg);
+		G_Printf("G_UpdateSkillRating: sqlite3_prepare failed: %s\n", sqlite3_errmsg(level.database.db));
 		return;
 	}
 
@@ -1107,8 +1091,7 @@ void G_UpdateSkillRating(int winner)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_UpdateSkillRating: sqlite3_prepare failed: %s\n", err_msg);
-		sqlite3_free(err_msg);
+		G_Printf("G_UpdateSkillRating: sqlite3_prepare failed: %s\n", sqlite3_errmsg(level.database.db));
 		return;
 	}
 
@@ -1285,7 +1268,6 @@ float G_CalculateWinProbability(int team)
 	if (g_gamestate.integer == GS_PLAYING)
 	{
 		int          result;
-		char         *err_msg = NULL;
 		sqlite3_stmt *sqlstmt;
 		srData_t     sr_data;
 
@@ -1293,8 +1275,7 @@ float G_CalculateWinProbability(int team)
 
 		if (result != SQLITE_OK)
 		{
-			G_Printf("G_CalculateWinProbability: sqlite3_prepare failed: %s\n", err_msg);
-			sqlite3_free(err_msg);
+			G_Printf("G_CalculateWinProbability: sqlite3_prepare failed: %s\n", sqlite3_errmsg(level.database.db));
 			return 0.5f;
 		}
 
