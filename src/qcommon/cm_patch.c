@@ -956,6 +956,22 @@ static qboolean CM_ValidateFacet(facet_t *facet)
 }
 
 /**
+ * @brief Whether we should enable VET patch plane optimizations or not
+ * @return qtrue if vanilla optimizations are enabled
+ */
+static ID_INLINE qboolean CM_UseVanillaOptimization(void)
+{
+#ifdef DEDICATED
+	return cm_optimizePatchPlanes->integer;
+#else
+	// if running local server, trust the cvar
+	return com_sv_running->integer
+	    ? cm_optimizePatchPlanes->integer
+	    : cl_optimizedPatchServer;
+#endif
+}
+
+/**
  * @brief CM_AddFacetBevels
  * @param[in,out] facet
  */
@@ -1021,7 +1037,7 @@ void CM_AddFacetBevels(facet_t *facet)
 			// see if the plane is already present
 			for (i = 0; i < facet->numBorders; i++)
 			{
-				if (!cm_optimizePatchPlanes->integer)
+				if (!CM_UseVanillaOptimization())
 				{
 					if (CM_PlaneEqual(&planes[facet->borderPlanes[i]], plane, &flipped))
 					{

@@ -669,7 +669,7 @@ void CM_LoadMap(const char *name, qboolean clientload, unsigned int *checksum)
 	cm_playerCurveClip = Cvar_Get("cm_playerCurveClip", "1", CVAR_ARCHIVE_ND | CVAR_CHEAT);
 	cm_optimize        = Cvar_Get("cm_optimize", "1", CVAR_CHEAT);
 
-	// pure client and not self hosted (to avoid mixing flags on local play)
+	// only server may set this, client just reads whatever the server communicates
 	if (clientload && !com_sv_running->integer)
 	{
 		cm_optimizePatchPlanes = Cvar_Get("cm_optimizePatchPlanes", "0", CVAR_ROM | CVAR_SYSTEMINFO);
