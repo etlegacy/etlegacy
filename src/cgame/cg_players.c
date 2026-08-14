@@ -177,8 +177,10 @@ typedef struct
 	int timeAllies;
 	int timePlayed;
 
+#ifdef FEATURE_RATING
 	float rating;
 	float deltaRating;
+#endif
 
 	int kills;
 	int killsAssists;
@@ -203,8 +205,10 @@ static void CG_BackupPlayerStats(statBackup_t *statBackup, const clientInfo_t *c
 	statBackup->timeAllies = ci->timeAllies;
 	statBackup->timePlayed = ci->timePlayed;
 
+#ifdef FEATURE_RATING
 	statBackup->rating      = ci->rating;
 	statBackup->deltaRating = ci->deltaRating;
+#endif
 
 	statBackup->kills        = ci->kills;
 	statBackup->killsAssists = ci->killsAssists;
@@ -229,8 +233,10 @@ static void CG_RestorePlayerStats(const statBackup_t *statBackup, clientInfo_t *
 	ci->timeAllies = statBackup->timeAllies;
 	ci->timePlayed = statBackup->timePlayed;
 
+#ifdef FEATURE_RATING
 	ci->rating      = statBackup->rating;
 	ci->deltaRating = statBackup->deltaRating;
+#endif
 
 	ci->kills        = statBackup->kills;
 	ci->killsAssists = statBackup->killsAssists;
