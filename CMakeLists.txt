@@ -97,6 +97,7 @@ cmake_dependent_option(FEATURE_WINDOWS_CONSOLE	"Build win32 executables with Win
 
 cmake_dependent_option(FEATURE_LUA		"Enable Lua support (mod)"						ON "BUILD_SERVER_MOD" OFF)
 cmake_dependent_option(FEATURE_LUASQL	"Enable LuaSQL sqlite3 backend (mod)"			ON "FEATURE_LUA AND FEATURE_DBMS" OFF)
+cmake_dependent_option(FEATURE_XPSAVE	"Enable XP save support (mod)"				    ON "FEATURE_DBMS" OFF)
 cmake_dependent_option(FEATURE_RATING	"Enable skill rating support (mod)"				ON "FEATURE_DBMS" OFF)
 cmake_dependent_option(FEATURE_OMNIBOT	"Enable Omni-bot support (mod)"					ON "( NOT MINGW AND WIN32 ) OR FORCE_OMNIBOT OR CMAKE_SYSTEM_NAME MATCHES Linux" OFF)
 
