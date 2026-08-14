@@ -4941,6 +4941,39 @@ void Cmd_IntermissionSkillRating_f(gentity_t *ent, unsigned int dwCommand, int v
 #endif
 
 /**
+ * @brief G_AccuracyScore
+ * @param[in] hits
+ * @param[in] shots
+ * @return Accuracy score in percent, used to rank accuracy-based awards fairly across sample sizes.
+ *         Small sample sizes are penalized, so a player can't win the accuracy award on a few lucky shots.
+ * @note Currently implemented as the lower bound of the 95% Wilson score confidence interval for hits/shots,
+ *       with continuity correction to further penalize very small sample sizes.
+ */
+static float G_AccuracyScore(int hits, int shots)
+{
+	const float z = 1.96f;
+	float n, phat, zz, radicand, correction;
+
+	if (hits <= 0 || shots <= 0)
+	{
+		return 0.f;
+	}
+
+	n  = (float)shots;
+	zz = z * z;
+
+	// hits and shots are accumulated from different counters (damage vs firing events),
+	// so clamp the ratio in case hits ever exceed shots
+	phat = Com_Clamp(0.f, 1.f, hits / n);
+
+	// w = [2*n*p + z^2 - (z * sqrt(z^2 - 1/n + 4*n*p*(1-p) + (4*p-2)) + 1)] / [2*(n + z^2)]
+	radicand   = zz - 1.f / n + 4.f * n * phat * (1.f - phat) + (4.f * phat - 2.f);
+	correction = z * sqrt(radicand) + 1.f;
+
+	return 100.f * (2.f * n * phat + zz - correction) / (2.f * (n + zz));
+}
+
+/**
  * @brief G_CalcClientAccuracies
  */
 void G_CalcClientAccuracies(void)
@@ -4969,13 +5002,17 @@ void G_CalcClientAccuracies(void)
 				headshots += level.clients[i].sess.aWeaponStats[j].headshots;
 			}
 
-			level.clients[i].acc   = shots ? 100 * hits / (float)shots : 0.f;
-			level.clients[i].hspct = hits ? 100 * headshots / (float)hits : 0.f;
+			level.clients[i].acc      = shots ? 100 * hits / (float)shots : 0.f;
+			level.clients[i].hspct    = hits ? 100 * headshots / (float)hits : 0.f;
+			level.clients[i].accscore = G_AccuracyScore(hits, shots);
+			level.clients[i].hsscore  = G_AccuracyScore(headshots, hits);
 		}
 		else
 		{
-			level.clients[i].acc   = 0.f;
-			level.clients[i].hspct = 0.f;
+			level.clients[i].acc      = 0.f;
+			level.clients[i].hspct    = 0.f;
+			level.clients[i].accscore = 0.f;
+			level.clients[i].hsscore  = 0.f;
 		}
 	}
 }

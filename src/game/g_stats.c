@@ -1091,7 +1091,7 @@ void G_BuildEndgameStats(void)
 
 	best = NULL;
 
-	// highest accuracy
+	// highest accuracy - ranked by the accuracy score (see G_AccuracyScore)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
@@ -1101,12 +1101,12 @@ void G_BuildEndgameStats(void)
 			continue;
 		}
 
-		if (cl->acc <= 0)
+		if (cl->accscore <= 0)
 		{
 			continue;
 		}
 
-		if (!best || cl->acc > best->acc)
+		if (!best || cl->accscore > best->accscore)
 		{
 			best          = cl;
 			bestClientNum = level.sortedClients[i];
@@ -1125,7 +1125,7 @@ void G_BuildEndgameStats(void)
 
 	best = NULL;
 
-	// highest HS percentage
+	// highest HS percentage - ranked by the accuracy score (see G_AccuracyScore)
 	for (i = 0; i < level.numConnectedClients; i++)
 	{
 		gclient_t *cl = &level.clients[level.sortedClients[i]];
@@ -1135,12 +1135,12 @@ void G_BuildEndgameStats(void)
 			continue;
 		}
 
-		if (cl->hspct <= 0)
+		if (cl->hsscore <= 0)
 		{
 			continue;
 		}
 
-		if (!best || cl->hspct > best->hspct)
+		if (!best || cl->hsscore > best->hsscore)
 		{
 			best          = cl;
 			bestClientNum = level.sortedClients[i];
