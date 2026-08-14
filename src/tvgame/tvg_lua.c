@@ -12,9 +12,7 @@
 #include "tvg_lua.h"
 
 #ifdef FEATURE_LUASQL
-#include "../../vendor/luasql/luasql.h"
-#include "../../vendor/luasql/luasql.c"
-#include "../../vendor/luasql/ls_sqlite3.c"
+#include "luasql.h"
 #endif
 
 #ifdef FEATURE_LUAJIT

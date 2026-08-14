@@ -70,8 +70,8 @@ if(BUILD_SERVER_MOD)
 	target_link_libraries(qagame qagame_libraries mod_libraries)
 	etl_enforce_linux_mod_no_undefined(qagame)
 
-	if(FEATURE_LUASQL AND FEATURE_DBMS)
-		target_compile_definitions(qagame PRIVATE FEATURE_DBMS FEATURE_LUASQL)
+	if(FEATURE_DBMS)
+		target_compile_definitions(qagame PRIVATE FEATURE_DBMS)
 
 		if(BUNDLED_SQLITE3)
 			target_link_libraries(qagame bundled_sqlite3)
@@ -80,13 +80,18 @@ if(BUILD_SERVER_MOD)
 			target_link_libraries(qagame ${SQLITE3_LIBRARY})
 			target_include_directories(qagame PUBLIC ${SQLITE3_INCLUDE_DIR})
 		endif()
+	endif()
+
+	if(FEATURE_LUASQL AND FEATURE_DBMS)
+		target_compile_definitions(qagame PRIVATE FEATURE_LUASQL)
+		target_include_directories(qagame PRIVATE ${CMAKE_SOURCE_DIR}/vendor/luasql)
 
 		FILE(GLOB LUASQL_SRC
-			"vendor/luasql/luasql.c"
-			"vendor/luasql/luasql.h"
-			"vendor/luasql/ls_sqlite3.c"
+			"${CMAKE_SOURCE_DIR}/vendor/luasql/luasql.c"
+			"${CMAKE_SOURCE_DIR}/vendor/luasql/luasql.h"
+			"${CMAKE_SOURCE_DIR}/vendor/luasql/ls_sqlite3.c"
 		)
-		set(QAGAME_SRC ${QAGAME_SRC} ${LUASQL_SRC})
+		target_sources(qagame PRIVATE ${LUASQL_SRC})
 	endif()
 
 	if(FEATURE_SERVERMDX)
@@ -117,8 +122,17 @@ if(BUILD_SERVER_MOD)
 	target_link_libraries(tvgame tvgame_libraries mod_libraries)
 	etl_enforce_linux_mod_no_undefined(tvgame)
 
+	# luasql sources are built separately now; the sqlite3 backend requires FEATURE_DBMS
 	if(FEATURE_LUASQL AND FEATURE_DBMS)
-		target_compile_definitions(tvgame PRIVATE FEATURE_DBMS FEATURE_LUASQL)
+		target_compile_definitions(tvgame PRIVATE FEATURE_LUASQL)
+		target_include_directories(tvgame PRIVATE ${CMAKE_SOURCE_DIR}/vendor/luasql)
+
+		FILE(GLOB LUASQL_SRC
+			"${CMAKE_SOURCE_DIR}/vendor/luasql/luasql.c"
+			"${CMAKE_SOURCE_DIR}/vendor/luasql/luasql.h"
+			"${CMAKE_SOURCE_DIR}/vendor/luasql/ls_sqlite3.c"
+		)
+		target_sources(tvgame PRIVATE ${LUASQL_SRC})
 
 		if(BUNDLED_SQLITE3)
 			target_link_libraries(tvgame bundled_sqlite3)
@@ -127,13 +141,6 @@ if(BUILD_SERVER_MOD)
 			target_link_libraries(tvgame ${SQLITE3_LIBRARY})
 			target_include_directories(tvgame PUBLIC ${SQLITE3_INCLUDE_DIR})
 		endif()
-
-		FILE(GLOB LUASQL_SRC
-			"vendor/luasql/luasql.c"
-			"vendor/luasql/luasql.h"
-			"vendor/luasql/ls_sqlite3.c"
-		)
-		set(TVGAME_SRC ${TVGAME_SRC} ${LUASQL_SRC})
 	endif()
 
 	set_target_properties(tvgame
