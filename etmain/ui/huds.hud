@@ -11,7 +11,7 @@
 						"w":	84,
 						"h":	84
 					},
-					"style":	14,
+					"style":	1102,
 					"anchor":	6,
 					"parent":	{
 						"anchor":	6,
@@ -1183,12 +1183,12 @@
 			"components":	{
 				"compass":	{
 					"rect":	{
-						"x":	17.25,
-						"y":	-23,
-						"w":	190,
-						"h":	190
+						"x":	0,
+						"y":	0,
+						"w":	145,
+						"h":	145
 					},
-					"style":	1,
+					"style":	513,
 					"anchor":	2,
 					"parent":	{
 						"anchor":	2,
