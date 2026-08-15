@@ -2434,6 +2434,11 @@ int CG_DrawSpawnPointInfo(float px, float py, float pw, float ph, qboolean draw,
 					point[0] += px - scissor->tl[0] - width;
 					point[1] += py - scissor->tl[1] + 4;
 
+					if (!pointTowardNorth)
+					{
+						CG_RotateMapEntCoordinatePoint(px, py, pw, ph, &point, cg.refdefViewAngles[YAW] - 90);
+					}
+
 					CG_Text_Paint_Ext(point[0], point[1], 0.15f, 0.15f, colorWhite, buffer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 				}
 				else if (!scissor)
