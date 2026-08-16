@@ -1671,14 +1671,23 @@ void G_shuffleTeamsXP(void)
 #ifdef FEATURE_RATING
 /**
  * @brief Shuffle active players onto teams by skill rating
+ *
+ * @details Greedy draft: while players remain, the team with the fewest players
+ * gets the next pick. If both teams have the same number of players, the team
+ * with the lowest combined skill rating picks. When counts and ratings are tied,
+ * map bias decides: the best player goes to the weakest side. If the map bias is
+ * exactly 0.5 (no bias), the pick is chosen at random.
  */
 void G_shuffleTeamsSR(void)
 {
 	int       i;
-	team_t    cTeam; //, cMedian = level.numNonSpectatorClients / 2;
+	team_t    cTeam;
 	int       cnt = 0;
 	int       sortClients[MAX_CLIENTS];
 	int       mapBias = 0;
+	int       axisCount = 0, alliesCount = 0;
+	float     axisRating = 0.0f, alliesRating = 0.0f;
+	float     rating;
 	gclient_t *cl;
 
 	G_teamReset(TEAM_AXIS, qtrue);
@@ -1698,24 +1707,49 @@ void G_shuffleTeamsSR(void)
 
 	qsort(sortClients, cnt, sizeof(int), G_SortPlayersBySR);
 
-	// map bias check (1 = axis advantage)
+	// map bias check (1 = axis advantage, -1 = allies advantage, 0 = no bias)
 	if (g_skillRating.integer > 1)
 	{
-		mapBias = level.mapProb > 0.5f ? 1 : 0;
+		mapBias = (level.mapProb > 0.5f) - (level.mapProb < 0.5f);
 	}
 
 	for (i = 0; i < cnt; i++)
 	{
-		cl = level.clients + sortClients[i];
+		cl     = level.clients + sortClients[i];
+		rating = cl->sess.mu - 3.0f * cl->sess.sigma;
 
-		// put best rated player on weakest side
-		if (g_skillRating.integer > 1 && mapBias)
+		// pick priority: player count, then combined rating, then map bias, then random
+		if (axisCount != alliesCount)
 		{
-			cTeam = 3 - ((((i + 1) % 4) - ((i + 1) % 2)) / 2 + TEAM_AXIS);
+			cTeam = (axisCount < alliesCount) ? TEAM_AXIS : TEAM_ALLIES;
+		}
+		else if (axisRating != alliesRating)
+		{
+			cTeam = (axisRating < alliesRating) ? TEAM_AXIS : TEAM_ALLIES;
+		}
+		else if (mapBias == 1)
+		{
+			cTeam = TEAM_ALLIES;
+		}
+		else if (mapBias == -1)
+		{
+			cTeam = TEAM_AXIS;
 		}
 		else
 		{
-			cTeam = (((i + 1) % 4) - ((i + 1) % 2)) / 2 + TEAM_AXIS;
+			cTeam = (rand() % 2) ? TEAM_AXIS : TEAM_ALLIES;
+		}
+
+		// update team trackers
+		if (cTeam == TEAM_AXIS)
+		{
+			axisCount++;
+			axisRating += rating;
+		}
+		else
+		{
+			alliesCount++;
+			alliesRating += rating;
 		}
 
 		if (cl->sess.sessionTeam != cTeam)
