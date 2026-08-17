@@ -182,7 +182,7 @@ int G_SkillRatingPrepareMatchRating(void)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingPrepareMatchRating: sqlite3_finalize failed\n");
+		G_Printf("G_SkillRatingPrepareMatchRating: sqlite3_finalize failed: %s\n", sqlite3_errmsg(level.database.db));
 		return 1;
 	}
 
@@ -253,7 +253,7 @@ int G_SkillRatingGetMatchRating(srData_t *sr_data)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingGetMatchRating: sqlite3_finalize failed\n");
+		G_Printf("G_SkillRatingGetMatchRating: sqlite3_finalize failed: %s\n", sqlite3_errmsg(level.database.db));
 		return 1;
 	}
 
@@ -325,7 +325,7 @@ int G_SkillRatingSetMatchRating(srData_t *sr_data)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingSetMatchRating: sqlite3_finalize failed\n");
+		G_Printf("G_SkillRatingSetMatchRating: sqlite3_finalize failed: %s\n", sqlite3_errmsg(level.database.db));
 		return 1;
 	}
 
@@ -393,7 +393,7 @@ int G_SkillRatingGetUserRating(srData_t *sr_data)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingGetUserRating: sqlite3_finalize failed\n");
+		G_Printf("G_SkillRatingGetUserRating: sqlite3_finalize failed: %s\n", sqlite3_errmsg(level.database.db));
 		return 1;
 	}
 
@@ -461,7 +461,7 @@ int G_SkillRatingSetUserRating(srData_t *sr_data)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingSetUserRating: sqlite3_finalize failed\n");
+		G_Printf("G_SkillRatingSetUserRating: sqlite3_finalize failed: %s\n", sqlite3_errmsg(level.database.db));
 		return 1;
 	}
 
@@ -709,7 +709,7 @@ float G_SkillRatingGetMapRating(char *mapname)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingGetMapRating: sqlite3_finalize failed\n");
+		G_Printf("G_SkillRatingGetMapRating: sqlite3_finalize failed: %s\n", sqlite3_errmsg(level.database.db));
 		return 0.5f;
 	}
 
@@ -819,7 +819,7 @@ void G_SkillRatingSetMapRating(char *mapname, int winner)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingSetMapRating: sqlite3_finalize failed\n");
+		G_Printf("G_SkillRatingSetMapRating: sqlite3_finalize failed: %s\n", sqlite3_errmsg(level.database.db));
 		return;
 	}
 }
@@ -844,7 +844,7 @@ static qboolean G_SkillRatingHasMatchPlayers(void)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_SkillRatingHasMatchPlayers: sqlite3_prepare failed\n");
+		G_Printf("G_SkillRatingHasMatchPlayers: sqlite3_prepare failed: %s\n", sqlite3_errmsg(level.database.db));
 		return qfalse;
 	}
 
@@ -1102,7 +1102,7 @@ void G_UpdateSkillRating(int winner)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_UpdateSkillRating: sqlite3_finalize failed\n");
+		G_Printf("G_UpdateSkillRating: sqlite3_finalize failed: %s\n", sqlite3_errmsg(level.database.db));
 		return;
 	}
 
@@ -1210,7 +1210,7 @@ void G_UpdateSkillRating(int winner)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_UpdateSkillRating: sqlite3_finalize failed\n");
+		G_Printf("G_UpdateSkillRating: sqlite3_finalize failed: %s\n", sqlite3_errmsg(level.database.db));
 		return;
 	}
 
@@ -1393,7 +1393,7 @@ float G_CalculateWinProbability(int team)
 
 		if (result != SQLITE_OK)
 		{
-			G_Printf("G_CalculateWinProbability: sqlite3_finalize failed\n");
+			G_Printf("G_CalculateWinProbability: sqlite3_finalize failed: %s\n", sqlite3_errmsg(level.database.db));
 			return 0.5f;
 		}
 	}
