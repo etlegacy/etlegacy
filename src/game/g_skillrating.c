@@ -825,6 +825,53 @@ void G_SkillRatingSetMapRating(char *mapname, int winner)
 }
 
 /**
+ * @brief Check if any player has played in the current match
+ * @return qtrue if at least one player has played, qfalse otherwise
+ */
+static qboolean G_SkillRatingHasMatchPlayers(void)
+{
+	int          result;
+	sqlite3_stmt *sqlstmt;
+	qboolean     hasPlayers = qfalse;
+
+	if (!level.database.initialized)
+	{
+		G_Printf("G_SkillRatingHasMatchPlayers: access to non-initialized database\n");
+		return qfalse;
+	}
+
+	result = sqlite3_prepare(level.database.db, SRMATCH_SQLWRAP_TABLE, strlen(SRMATCH_SQLWRAP_TABLE), &sqlstmt, NULL);
+
+	if (result != SQLITE_OK)
+	{
+		G_Printf("G_SkillRatingHasMatchPlayers: sqlite3_prepare failed\n");
+		return qfalse;
+	}
+
+	while (sqlite3_step(sqlstmt) == SQLITE_ROW)
+	{
+		int time_axis   = sqlite3_column_int(sqlstmt, 3);
+		int time_allies = sqlite3_column_int(sqlstmt, 4);
+
+		if (time_axis > 0 || time_allies > 0)
+		{
+			hasPlayers = qtrue;
+			break;
+		}
+	}
+
+	result = sqlite3_finalize(sqlstmt);
+
+	if (result != SQLITE_OK)
+	{
+		G_Printf("G_SkillRatingHasMatchPlayers: sqlite3_finalize failed: %s\n", sqlite3_errmsg(level.database.db));
+		return qfalse;
+	}
+
+	return hasPlayers;
+}
+
+/**
  * @brief Calculate skill ratings
  *         Called when intermissionQueued is triggered
  * @details Rate players in this map based on team performance
@@ -867,6 +914,13 @@ void G_CalculateSkillRatings(void)
 	if (winner != TEAM_AXIS && winner != TEAM_ALLIES)
 	{
 		G_LogPrintf("SkillRating: no decisive winner, map and player ratings not updated\n");
+		return;
+	}
+
+	// skip empty matches to avoid biasing map ratings when no one played
+	if (!G_SkillRatingHasMatchPlayers())
+	{
+		G_LogPrintf("SkillRating: no usable match data, map and player ratings not updated\n");
 		return;
 	}
 
