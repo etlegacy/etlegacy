@@ -935,6 +935,12 @@ void G_CalculateSkillRatings(void)
 		return;
 	}
 
+	// log last estimated win probability
+	G_LogPrintf("SkillRating: Win probability X/L: %.6f/%.6f\n", level.axisProb, level.alliesProb);
+
+	// update player ratings using the prior map bias
+	G_UpdateSkillRating(winner);
+
 	// update map rating
 	if (g_skillRating.integer > 1)
 	{
@@ -948,11 +954,6 @@ void G_CalculateSkillRatings(void)
 		Info_SetValueForKey(cs, "M", va("%f", level.mapProb));
 		trap_SetConfigstring(CS_MODINFO, cs);
 	}
-
-	// log last estimated win probability
-	G_LogPrintf("SkillRating: Win probability X/L: %.6f/%.6f\n", level.axisProb, level.alliesProb);
-
-	G_UpdateSkillRating(winner);
 }
 
 /**
@@ -1028,7 +1029,7 @@ float G_MapWinProb(int team)
 /**
  * @brief Update skill rating
  * @details Update player's skill rating based on team performance
- * @param[in] team
+ * @param[in] winner
  */
 void G_UpdateSkillRating(int winner)
 {
@@ -1061,10 +1062,11 @@ void G_UpdateSkillRating(int winner)
 		return;
 	}
 
-	// map side parameter
+	// map side parameter (read prior map bias)
 	if (g_skillRating.integer > 1)
 	{
-		mapProb  = G_MapWinProb(winner);
+		mapProb  = G_SkillRatingGetMapRating(level.rawmapname);
+		mapProb  = (winner == TEAM_AXIS) ? mapProb : 1.0f - mapProb;
 		mapMu    = 2 * MU * mapProb;
 		mapSigma = 2 * MU * sqrtf(mapProb * (1.0f - mapProb));
 		mapBeta  = mapSigma / 2;
