@@ -1005,24 +1005,20 @@ float W(float t, float epsilon)
 
 /**
  * @brief Map winning probability
- * @details Get wining parameter bias of the played map
+ * @details Get winning probability for the given team from the Axis map bias
  * @param[in] team
+ * @param[in] mapAxisProb Axis win probability for the map
  * @return map win probability
  */
-float G_MapWinProb(int team)
+float G_MapWinProb(int team, float mapAxisProb)
 {
-	if (!level.mapProb)
-	{
-		level.mapProb = 0.5f;
-	}
-
 	if (team == TEAM_AXIS)
 	{
-		return level.mapProb;
+		return mapAxisProb;
 	}
 	else
 	{
-		return 1.0f - level.mapProb;
+		return 1.0f - mapAxisProb;
 	}
 }
 
@@ -1065,8 +1061,7 @@ void G_UpdateSkillRating(int winner)
 	// map side parameter (read prior map bias)
 	if (g_skillRating.integer > 1)
 	{
-		mapProb  = G_SkillRatingGetMapRating(level.rawmapname);
-		mapProb  = (winner == TEAM_AXIS) ? mapProb : 1.0f - mapProb;
+		mapProb  = G_MapWinProb(winner, G_SkillRatingGetMapRating(level.rawmapname));
 		mapMu    = 2 * MU * mapProb;
 		mapSigma = 2 * MU * sqrtf(mapProb * (1.0f - mapProb));
 		mapBeta  = mapSigma / 2;
@@ -1298,7 +1293,7 @@ float G_CalculateWinProbability(int team)
 	// map side parameter
 	if (g_skillRating.integer > 1)
 	{
-		mapProb  = G_MapWinProb(team);
+		mapProb  = G_MapWinProb(team, level.mapProb ? level.mapProb : 0.5f);
 		mapMu    = 2 * MU * mapProb;
 		mapSigma = 2 * MU * sqrtf(mapProb * (1.0f - mapProb));
 		mapBeta  = mapSigma / 2;
