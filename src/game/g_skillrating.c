@@ -848,7 +848,9 @@ static qboolean G_SkillRatingHasMatchPlayers(void)
 		return qfalse;
 	}
 
-	while (sqlite3_step(sqlstmt) == SQLITE_ROW)
+	result = sqlite3_step(sqlstmt);
+
+	while (result == SQLITE_ROW)
 	{
 		int time_axis   = sqlite3_column_int(sqlstmt, 3);
 		int time_allies = sqlite3_column_int(sqlstmt, 4);
@@ -858,6 +860,15 @@ static qboolean G_SkillRatingHasMatchPlayers(void)
 			hasPlayers = qtrue;
 			break;
 		}
+
+		result = sqlite3_step(sqlstmt);
+	}
+
+	if (result != SQLITE_DONE && result != SQLITE_ROW)
+	{
+		sqlite3_finalize(sqlstmt);
+		G_Printf("G_SkillRatingHasMatchPlayers: sqlite3_step failed: %s\n", sqlite3_errmsg(level.database.db));
+		return qfalse;
 	}
 
 	result = sqlite3_finalize(sqlstmt);
@@ -1068,7 +1079,9 @@ void G_UpdateSkillRating(int winner)
 		return;
 	}
 
-	while (sqlite3_step(sqlstmt) == SQLITE_ROW)
+	result = sqlite3_step(sqlstmt);
+
+	while (result == SQLITE_ROW)
 	{
 		// assign match data
 		sr_data.mu          = sqlite3_column_double(sqlstmt, 1);
@@ -1079,6 +1092,7 @@ void G_UpdateSkillRating(int winner)
 		// player has not played at all
 		if (sr_data.time_axis == 0 && sr_data.time_allies == 0)
 		{
+			result = sqlite3_step(sqlstmt);
 			continue;
 		}
 
@@ -1096,6 +1110,15 @@ void G_UpdateSkillRating(int winner)
 			teamSigmaSqL += pow(sr_data.sigma, 2);
 			numPlayersL++;
 		}
+
+		result = sqlite3_step(sqlstmt);
+	}
+
+	if (result != SQLITE_DONE)
+	{
+		sqlite3_finalize(sqlstmt);
+		G_Printf("G_UpdateSkillRating: sqlite3_step failed: %s\n", sqlite3_errmsg(level.database.db));
+		return;
 	}
 
 	result = sqlite3_finalize(sqlstmt);
@@ -1149,7 +1172,9 @@ void G_UpdateSkillRating(int winner)
 		return;
 	}
 
-	while (sqlite3_step(sqlstmt) == SQLITE_ROW)
+	result = sqlite3_step(sqlstmt);
+
+	while (result == SQLITE_ROW)
 	{
 		// assign match data
 		sr_data.guid        = sqlite3_column_text(sqlstmt, 0);
@@ -1165,6 +1190,7 @@ void G_UpdateSkillRating(int winner)
 		// player has not played at all
 		if (sr_data.time_axis == 0 && sr_data.time_allies == 0)
 		{
+			result = sqlite3_step(sqlstmt);
 			continue;
 		}
 
@@ -1180,6 +1206,7 @@ void G_UpdateSkillRating(int winner)
 		else
 		{
 			// player has played exact same time in each team
+			result = sqlite3_step(sqlstmt);
 			continue;
 		}
 
@@ -1204,6 +1231,15 @@ void G_UpdateSkillRating(int winner)
 		            sr_data.mu - 3 * sr_data.sigma, sr_data.mu, sr_data.sigma,
 		            oldMu - 3 * oldSigma, oldMu, oldSigma,
 		            sr_data.time_axis, sr_data.time_allies);
+
+		result = sqlite3_step(sqlstmt);
+	}
+
+	if (result != SQLITE_DONE)
+	{
+		sqlite3_finalize(sqlstmt);
+		G_Printf("G_UpdateSkillRating: sqlite3_step failed: %s\n", sqlite3_errmsg(level.database.db));
+		return;
 	}
 
 	result = sqlite3_finalize(sqlstmt);
@@ -1333,7 +1369,9 @@ float G_CalculateWinProbability(int team)
 			return 0.5f;
 		}
 
-		while (sqlite3_step(sqlstmt) == SQLITE_ROW)
+		result = sqlite3_step(sqlstmt);
+
+		while (result == SQLITE_ROW)
 		{
 			qboolean isPlaying;
 
@@ -1347,6 +1385,7 @@ float G_CalculateWinProbability(int team)
 			// player has not played at all
 			if (sr_data.time_axis == 0 && sr_data.time_allies == 0)
 			{
+				result = sqlite3_step(sqlstmt);
 				continue;
 			}
 
@@ -1370,6 +1409,7 @@ float G_CalculateWinProbability(int team)
 
 			if (isPlaying)
 			{
+				result = sqlite3_step(sqlstmt);
 				continue;
 			}
 
@@ -1387,6 +1427,15 @@ float G_CalculateWinProbability(int team)
 				teamSigmaSqL += pow(sr_data.sigma, 2);
 				numPlayersL++;
 			}
+
+			result = sqlite3_step(sqlstmt);
+		}
+
+		if (result != SQLITE_DONE)
+		{
+			sqlite3_finalize(sqlstmt);
+			G_Printf("G_CalculateWinProbability: sqlite3_step failed: %s\n", sqlite3_errmsg(level.database.db));
+			return 0.5f;
 		}
 
 		result = sqlite3_finalize(sqlstmt);
