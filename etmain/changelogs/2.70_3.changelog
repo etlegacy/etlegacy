@@ -6,3 +6,5 @@
 * s_muteWhenMinimized set to 1 by default
 * ET: L now uses its own home directory (~/.etlegacy on linux)
 * Other minor changes
+
+***

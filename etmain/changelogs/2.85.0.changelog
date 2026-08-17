@@ -1,0 +1,66 @@
+^dEngine
+
+^fMacOS
+
+* Don't trigger additional minimize on focus lost event
+
+^dClient
+
+* Fixed ^8cm_optimizePatchPlanes^9 not correctly applying on first load - #3513
+
+^dMod
+
+^fGeneral
+
+* Fixed locked teams in warmup for campaign and mapvote
+* Fixed players stat reset on intermission stat due to ^8CS_PLAYERS^9 updates wiping
+  it
+* Added resolved minor spawnpoints information to client session about minor
+  spawnpoint into fireteam in case of a resolved spawn point
+* Fixed stats in SW was cleared out before warmup countdown on new map
+* Added version matching to HUD profile and keep invalid/unparsable HUD into suffixed
+  ^8_invalid^9 files
+* Added ^8ET_EBS_FIRETEAM^9 entity which contains player's health, weapon, major and
+  minor spawn points
+* Fixed shoutcast entity writing player information from previous frame
+* Fixed shoutcast entity unnecessary snapshot callbacks
+* Removed major and minor spawn points from CS_PLAYERS configstring
+* Fixed a visual bug which caused fireteam to display incorrect spawn point when
+  default map spawn for a team was invalid
+* Removed prestige system
+* Skipped skill rating updates for maps without decisive winner
+* Fixed time played statistics was not always accurate in SW and campaign modes
+* Fixed reset player stats on console ^8map_restart^9
+
+^fUI
+
+* Extended compass map to border when margin is not required (no decor, no cardinal
+  point draw and the icons are draw inside the maps)
+* Fixed player team flag was draw twice in debriefing stats panel
+* Fixed empty health bar when spectating a bot
+* Fixed misleading FPS drop in FPS meter when showing another view than in-game one
+  (i.e: limbo, scoreboard, ...)
+* Added ^8draw prefix^9 option to ^8fps^9 component
+* Fixed levelshot pin wasn't squared on 16:9 res
+* Fixed competitor HUD component missplacement
+* Fixed NW cardinal point display on compass
+* Added dynamic size for icons on compass edge
+* Draw expanded map behind compass
+* Changed clip bar component draw order behind ammo count component
+* Fixed forced mono colored UFT-8 name display for crosshair bar, fireteam and
+  shoutcaster overlay. The player name was missing UTF-8 characters.
+* Fixed alternate hud compass cardinals points were missing
+* Fixed reinforcement timer default scale font was twice the default value
+* Adjusted shoutcaster compass size and position to fit in the top right corner
+* Fixed not correctly positionned spawnpoint numbers for shoutcaster compass with
+  dynamic direction
+
+* HUD Editor
+  * Fixed noise generator overwrite message text such as vote, banner, center print
+    or objective print if a valid text message is displayed
+
+* Menus
+  * Added icons to replay menu folders
+  * Added ^8HOME^9 button to replay menu
+
+***

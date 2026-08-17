@@ -38,3 +38,5 @@
 * Changed cg_drawEnvAwareness to draw only static objectives
 * Fixed activate when trace starts inside BBox
 * Changed BBox height to prevent player from getting stuck into the world
+
+***

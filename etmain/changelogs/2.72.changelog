@@ -30,3 +30,5 @@
 * Fixed compatibility issue with older linux GLIBC versions
 
 ... we did also fix tons of defects detected by coverity.
+
+***
