@@ -27,3 +27,5 @@ At that location, the subdirectory called "pb" is the home "pb" directory. Launc
 PBWEB from the home directory. If PBWEB is not launched from inside the home "pb"
 directory, then it will not work. Note that PBWEB works for all games supported by
 PunkBuster and it works for both Players and also Admins running PB Servers.
+
+***

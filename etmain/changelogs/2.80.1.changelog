@@ -72,3 +72,5 @@
 ^fWeapons
 
 * Fixed airstrike first impact was delayed by 750ms (comparing to vanilla)
+
+***

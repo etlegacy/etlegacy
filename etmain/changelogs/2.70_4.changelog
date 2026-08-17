@@ -4,3 +4,5 @@
 * Alt+Enter switches from/to fullscreen mode on all platforms
 * Added: ability to mute sound when the game is minimized (thanks acQu)
 * Switched from Makefile to premake build system (inspired by ET-XreaL)
+
+***

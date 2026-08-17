@@ -1,5 +1,3 @@
-^7WIP^9
-
 ^dEngine
 
 ^fGeneral
@@ -438,3 +436,5 @@ immediate gameplay and reduces perceived join latency
     sensitivity
   * cg_onWeapzoomStart : trigger a custom command when zooming in 
   * cg_onWeapzoomEnd : trigger a custom command when zooming out
+
+***

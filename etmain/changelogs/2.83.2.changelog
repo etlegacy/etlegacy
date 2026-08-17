@@ -60,3 +60,5 @@
   almost 15 for FG42, decreasing too fast the spread recovery time
 * Removed slowdown while being scoped
 * Fixed scope / unscope switch time was twice too long
+
+***
