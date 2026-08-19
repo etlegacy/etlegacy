@@ -1468,6 +1468,9 @@ void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_IntermissionPlayerKillsDeaths_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_IntermissionPlayerTime_f(gentity_t *ent, unsigned int dwCommand, int value);
+#ifdef FEATURE_XPSAVE
+void Cmd_IntermissionXPSaveReset_f(gentity_t *ent, unsigned int dwCommand, int value);
+#endif
 void Cmd_IntermissionSkillRating_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_IntermissionWeaponAccuracies_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_IntermissionWeaponStats_f(gentity_t *ent, unsigned int dwCommand, int value);
@@ -2367,6 +2370,7 @@ int G_XPSave_CheckDB(char *db_path, int db_mode);
 void G_XPSave_Load(gclient_t *cl);
 void G_XPSave_Store(gclient_t *cl);
 int G_XPSave_Clear();
+int G_XPSave_Reset(const unsigned char *guid);
 #endif
 
 // g_stats.c

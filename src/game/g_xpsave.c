@@ -61,6 +61,7 @@ static int G_XPSave_Write(xpData_t *xp_data);
 #define XPUSERS_SQLWRAP_INSERT "INSERT INTO xpsave_users (guid, skills, medals, created, updated) VALUES ('%s', ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);"
 #define XPUSERS_SQLWRAP_UPDATE "UPDATE xpsave_users SET skills = ?, medals = ?, updated = CURRENT_TIMESTAMP WHERE guid = '%s';"
 #define XPUSERS_SQLWRAP_DELETE "DELETE FROM xpsave_users"
+#define XPUSERS_SQLWRAP_DELETE_GUID "DELETE FROM xpsave_users WHERE guid = '%s';"
 
 /**
  * @brief Checks if database exists, if tables exist and if schemas are correct
@@ -409,6 +410,40 @@ static int G_XPSave_Write(xpData_t *xp_data)
 
 	result = sqlite3_finalize(sqlstmt);
 	assert_return(result == SQLITE_OK, 1, sqlite3_errmsg(level.database.db));
+
+	return 0;
+}
+
+/**
+ * @brief Removes xp data for a single player from the table
+ * @param[in] guid
+ * @return 0 if successful, 1 otherwise.
+ */
+int G_XPSave_Reset(const unsigned char *guid)
+{
+	int  result;
+	char *err_msg = NULL;
+
+	if (!level.database.initialized)
+	{
+		G_Printf("G_XPSave_Reset: access to non-initialized database\n");
+		return 1;
+	}
+
+	if (!guid || guid[0] == '\0')
+	{
+		G_Printf("G_XPSave_Reset: invalid guid\n");
+		return 1;
+	}
+
+	result = sqlite3_exec(level.database.db, va(XPUSERS_SQLWRAP_DELETE_GUID, guid), 0, 0, &err_msg);
+
+	if (result != SQLITE_OK)
+	{
+		G_Printf("G_XPSave_Reset: sqlite3_exec failed: %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return 1;
+	}
 
 	return 0;
 }

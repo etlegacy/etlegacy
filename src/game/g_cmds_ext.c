@@ -112,6 +112,9 @@ static const cmd_reference_t aCommandInfo[] =
 	{ "imsr",           CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionSkillRating_f,       ""                                                                                           },
 #endif
 	{ "imvotetally",    CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, G_IntermissionVoteTally_cmd,         ""                                                                                           },
+#ifdef FEATURE_XPSAVE
+	{ "imxpsavereset",  CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionXPSaveReset_f,       ""                                                                                           },
+#endif
 	{ "imwa",           CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionWeaponAccuracies_f,  ""                                                                                           },
 	{ "imws",           CMD_USAGE_INTERMISSION_ONLY, qtrue,       qfalse, Cmd_IntermissionWeaponStats_f,       ""                                                                                           },
 //  { "invite",         CMD_USAGE_ANY_TIME,  qtrue,        NULL,                                " <player_ID>:^7 Invites a player to join a team" },
