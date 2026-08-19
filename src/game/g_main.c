@@ -1752,11 +1752,13 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 		}
 #endif
 
+#ifdef FEATURE_XPSAVE
 		if (g_xpSaver.integer)
 		{
 			G_Printf("^3WARNING: g_xpSaver changed to 0\n");
 			trap_Cvar_Set("g_xpSaver", "0");
 		}
+#endif
 	}
 #endif
 
@@ -1777,6 +1779,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	}
 #endif
 
+#ifdef FEATURE_XPSAVE
 	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
 		if (g_campaigns[level.currentCampaign].current == 0 || level.newCampaign)
@@ -1784,6 +1787,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 			G_XPSaver_Clear();
 		}
 	}
+#endif
 
 	// disable server engine flood protection if we have mod-sided flood protection enabled
 	// since they don't block the same commands
@@ -2066,9 +2070,12 @@ int QDECL SortRanks(const void *a, const void *b)
 			totalXP[1] += cb->sess.skillpoints[i];
 		}
 
-		if (!((g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
-		      (g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
-		      (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0)))
+		if (!(
+#ifdef FEATURE_XPSAVE
+				(g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
+#endif
+				(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+				(g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0)))
 		{
 			// current map XPs only
 			totalXP[0] -= ca->sess.startxptotal;
@@ -3005,6 +3012,7 @@ void G_LogExit(const char *string)
 	}
 #endif
 
+#ifdef FEATURE_XPSAVE
 	if (g_xpSaver.integer && g_gametype.integer == GT_WOLF_CAMPAIGN)
 	{
 		for (i = 0; i < level.numConnectedClients; i++)
@@ -3020,6 +3028,7 @@ void G_LogExit(const char *string)
 			G_XPSaver_Store(ent->client);
 		}
 	}
+#endif
 
 	level.intermissionQueued = level.time;
 
