@@ -305,7 +305,6 @@ extern vmCvar_t g_multiview;
 
 extern vmCvar_t g_stickyCharge;
 extern vmCvar_t g_xpSaver;
-extern vmCvar_t g_xpSaverMaxAge;
 
 extern vmCvar_t g_debugForSingleClient;
 extern vmCvar_t g_debugEvents;
