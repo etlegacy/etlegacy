@@ -475,7 +475,7 @@ qboolean G_ReadSessionData(gclient_t *client)
 			tmp = cJSON_GetObjectItem(restartObj, "skillpoints");
 			cJSON_ArrayForEach(tmp2, tmp)
 			{
-				if (i > SK_NUM_SKILLS)
+				if (i >= SK_NUM_SKILLS)
 				{
 					Q_JsonError("Invalid number of skills\n");
 					break;
@@ -487,7 +487,7 @@ qboolean G_ReadSessionData(gclient_t *client)
 			tmp = cJSON_GetObjectItem(restartObj, "medals");
 			cJSON_ArrayForEach(tmp2, tmp)
 			{
-				if (i > SK_NUM_SKILLS)
+				if (i >= SK_NUM_SKILLS)
 				{
 					Q_JsonError("Invalid number of medals\n");
 					break;
