@@ -59,10 +59,10 @@
 #   define Win_ShowConsole(x, y)
 #endif
 
-#ifdef FEATURE_DBMS
-#include "../db/db_sql.h"
 #include "q_unicode.h"
 
+#ifdef FEATURE_DBMS
+#include "../db/db_sql.h"
 #endif
 
 // NOTE: if protocol gets bumped please add 84 to the list before 0
