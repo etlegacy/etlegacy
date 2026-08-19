@@ -312,7 +312,11 @@ qboolean G_ReadSessionData(gclient_t *client)
 	const char *guid;
 	cJSON      *root = NULL, *wstats = NULL, *campaign = NULL;
 	qboolean   test, restoreStats = qtrue;
-	int        i = 0;
+	qboolean   restoreXP = qfalse;
+#ifdef FEATURE_XPSAVE
+	qboolean useDB = qfalse;
+#endif
+	int i = 0;
 
 	Com_sprintf(fileName, sizeof(fileName), "session/client%02i.json", (int)(client - level.clients));
 	Com_Printf("Reading session file %s\n", fileName);
@@ -457,48 +461,85 @@ qboolean G_ReadSessionData(gclient_t *client)
 		}
 	}
 
-	// likely there are more cases in which we don't want this
-	if (g_gametype.integer != GT_SINGLE_PLAYER &&
-	    g_gametype.integer != GT_COOP &&
-	    g_gametype.integer != GT_WOLF &&
-	    g_gametype.integer != GT_WOLF_STOPWATCH &&
-	    !(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current == 0  || level.newCampaign)) &&
-	    !(g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer == 0)
-#ifdef FEATURE_XPSAVE
-	    &&
-	    !(g_gametype.integer == GT_WOLF_CAMPAIGN) &&
-	    !(g_xpSave.integer && (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE))
-#endif
-	    )
+	// restore XP/medals from the appropriate source, depending on gametype
+	// campaign: carry over XP across maps, database is authoritative when available
+	if (g_gametype.integer == GT_WOLF_CAMPAIGN &&
+	    !(g_campaigns[level.currentCampaign].current == 0 || level.newCampaign))
 	{
-		cJSON *restartObj = cJSON_GetObjectItem(root, "restart");
+		restoreXP = qtrue;
+#ifdef FEATURE_XPSAVE
+		useDB = qtrue;
+#endif
+	}
+	// xpsave-enabled objective/mapvote: database is authoritative
+#ifdef FEATURE_XPSAVE
+	else if (g_xpSave.integer &&
+	         (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE))
+	{
+		restoreXP = qtrue;
+		useDB     = qtrue;
+	}
+#endif
+	// mapvote without xpsave: carry over via restart object
+	else if (g_gametype.integer == GT_WOLF_MAPVOTE)
+	{
+		restoreXP = qtrue;
+	}
+	// LMS: carry over XP across rounds via the restart object
+	else if (g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer > 0)
+	{
+		restoreXP = qtrue;
+	}
+	// any other gametype that needs restart-object carry-over
+	else if (g_gametype.integer != GT_SINGLE_PLAYER &&
+	         g_gametype.integer != GT_COOP &&
+	         g_gametype.integer != GT_WOLF &&
+	         g_gametype.integer != GT_WOLF_STOPWATCH &&
+	         g_gametype.integer != GT_WOLF_CAMPAIGN &&
+	         g_gametype.integer != GT_WOLF_LMS)
+	{
+		restoreXP = qtrue;
+	}
 
-		if (restartObj)
+	if (restoreXP)
+	{
+#ifdef FEATURE_XPSAVE
+		if (useDB)
 		{
-			cJSON *tmp, *tmp2;
+			G_XPSave_Load(client);
+		}
+		else
+#endif
+		{
+			cJSON *restartObj = cJSON_GetObjectItem(root, "restart");
 
-			i   = 0;
-			tmp = cJSON_GetObjectItem(restartObj, "skillpoints");
-			cJSON_ArrayForEach(tmp2, tmp)
+			if (restartObj)
 			{
-				if (i >= SK_NUM_SKILLS)
-				{
-					Q_JsonError("Invalid number of skills\n");
-					break;
-				}
-				client->sess.skillpoints[i++] = (float) cJSON_GetNumberValue(tmp2);
-			}
+				cJSON *tmp, *tmp2;
 
-			i   = 0;
-			tmp = cJSON_GetObjectItem(restartObj, "medals");
-			cJSON_ArrayForEach(tmp2, tmp)
-			{
-				if (i >= SK_NUM_SKILLS)
+				i   = 0;
+				tmp = cJSON_GetObjectItem(restartObj, "skillpoints");
+				cJSON_ArrayForEach(tmp2, tmp)
 				{
-					Q_JsonError("Invalid number of medals\n");
-					break;
+					if (i >= SK_NUM_SKILLS)
+					{
+						Q_JsonError("Invalid number of skills\n");
+						break;
+					}
+					client->sess.skillpoints[i++] = (float) cJSON_GetNumberValue(tmp2);
 				}
-				client->sess.medals[i++] = (int) cJSON_GetNumberValue(tmp2);
+
+				i   = 0;
+				tmp = cJSON_GetObjectItem(restartObj, "medals");
+				cJSON_ArrayForEach(tmp2, tmp)
+				{
+					if (i >= SK_NUM_SKILLS)
+					{
+						Q_JsonError("Invalid number of medals\n");
+						break;
+					}
+					client->sess.medals[i++] = (int) cJSON_GetNumberValue(tmp2);
+				}
 			}
 		}
 	}
