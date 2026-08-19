@@ -1788,9 +1788,10 @@ void SpectatorClientEndFrame(gentity_t *ent)
 
 		if (
 #ifdef FEATURE_XPSAVE
-			(g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
-#endif
+			(g_gametype.integer == GT_WOLF_CAMPAIGN) ||
+#else
 			(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+#endif
 			(g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
 		{
 			for (i = 0; i < SK_NUM_SKILLS; ++i)
@@ -2253,9 +2254,10 @@ void ClientEndFrame(gentity_t *ent)
 	ent->client->ps.stats[STAT_XP] = 0;
 	if (
 #ifdef FEATURE_XPSAVE
-		(g_gametype.integer == GT_WOLF_CAMPAIGN && g_xpSaver.integer) ||
-#endif
+		(g_gametype.integer == GT_WOLF_CAMPAIGN) ||
+#else
 		(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+#endif
 		(g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
 	{
 		for (i = 0; i < SK_NUM_SKILLS; ++i)
