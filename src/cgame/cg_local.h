@@ -3979,6 +3979,10 @@ qboolean CG_Debriefing_ReadyButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_Debriefing_QCButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_Debriefing_PanelButton_KeyDown(panel_button_t *button, int key);
 qboolean CG_Debriefing_NextButton_KeyDown(panel_button_t *button, int key);
+#ifdef FEATURE_XPSAVE
+qboolean CG_Debriefing_XPSaveResetButton_KeyDown(panel_button_t *button, int key);
+void CG_Debriefing_XPSaveResetButton_Draw(panel_button_t *button);
+#endif
 
 void CG_PanelButtonsRender_Button_Ext(rectDef_t *r, const char *text);
 

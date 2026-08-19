@@ -4901,6 +4901,61 @@ void Cmd_IntermissionPlayerTime_f(gentity_t *ent, unsigned int dwCommand, int va
 	trap_SendServerCommand(ent - g_entities, buffer);
 }
 
+#ifdef FEATURE_XPSAVE
+/**
+ * @brief Cmd_IntermissionXPSaveReset_f
+ * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
+ */
+void Cmd_IntermissionXPSaveReset_f(gentity_t *ent, unsigned int dwCommand, int value)
+{
+	char userinfo[MAX_INFO_STRING];
+	char *guid;
+	int i;
+	gclient_t *cl;
+
+	if (!ent || !ent->client)
+	{
+		return;
+	}
+
+	if (!g_xpSave.integer)
+	{
+		return;
+	}
+
+	if (g_gametype.integer != GT_WOLF && g_gametype.integer != GT_WOLF_MAPVOTE)
+	{
+		return;
+	}
+
+	cl = ent->client;
+
+	trap_GetUserinfo(ent - g_entities, userinfo, sizeof(userinfo));
+	guid = Info_ValueForKey(userinfo, "cl_guid");
+
+	if (G_XPSave_Reset((const unsigned char *)guid) != 0)
+	{
+		return;
+	}
+
+	// reset current session xp so the debriefing display updates immediately
+	Com_Memset(cl->sess.skillpoints, 0, sizeof(cl->sess.skillpoints));
+	Com_Memset(cl->sess.startskillpoints, 0, sizeof(cl->sess.startskillpoints));
+	Com_Memset(cl->sess.medals, 0, sizeof(cl->sess.medals));
+	cl->sess.startxptotal = 0;
+	cl->sess.rank         = 0;
+
+	for (i = 0; i < SK_NUM_SKILLS; i++)
+	{
+		cl->sess.skill[i] = 0;
+	}
+
+	trap_SendServerCommand(ent - g_entities, "print \"XP save data reset.\\n\"");
+}
+#endif
+
 #ifdef FEATURE_RATING
 /**
  * @brief Cmd_IntermissionSkillRating_f

@@ -563,6 +563,7 @@ void CG_ParseWolfinfo(void)
 	{
 		CG_ParseWarmup();
 	}
+
 }
 
 /**

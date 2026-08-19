@@ -40,6 +40,10 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos);
 
 int QDECL CG_SortPlayersByXP(const void *a, const void *b);
 
+#ifdef FEATURE_XPSAVE
+static qboolean xpSaveResetButtonConfirmation = qfalse;
+#endif
+
 static panel_button_text_t debriefPlayerHeadingSmallerFont =
 {
 	0.2f,                  0.2f,
@@ -683,6 +687,22 @@ static panel_button_t debriefPlayerInfoHitRegions =
 	0
 };
 
+#ifdef FEATURE_XPSAVE
+static panel_button_t debriefPlayerXPSaveResetButton =
+{
+	NULL,
+	"RESET XP",
+	{ 110,                               138,88, 16 },
+	{ 0,                                 0,  0,  0, 0, 0, 0, 0},
+	&debriefPlayerInfoFont,              // font
+	CG_Debriefing_XPSaveResetButton_KeyDown,// keyDown
+	NULL,                                // keyUp
+	CG_Debriefing_XPSaveResetButton_Draw,
+	NULL,
+	0
+};
+#endif
+
 #define PLAYERHEADER_SKILLS(number)           \
 		static panel_button_t debriefPlayerInfoSkills ## number = {      \
 			NULL,                                       \
@@ -726,6 +746,9 @@ static panel_button_t *debriefPanelButtons[] =
 	&debriefPlayerInfoSkills5,
 	&debriefPlayerInfoSkills6,
 	&debriefPlayerInfoHitRegions,
+#ifdef FEATURE_XPSAVE
+	&debriefPlayerXPSaveResetButton,
+#endif
 	&debriefPlayerWeaponStatsHeader,    &debriefPlayerWeaponStatsNameHeader,   &debriefPlayerWeaponStatsShotsHeader,
 	&debriefPlayerWeaponStatsHitsHeader,&debriefPlayerWeaponStatsKillsHeader,
 	&debriefPlayerWeaponStatsList,      &debriefPlayerWeaponStatsListScroll,
@@ -3268,6 +3291,104 @@ qboolean CG_Debriefing_NextButton_KeyDown(panel_button_t *button, int key)
 
 	return qfalse;
 }
+
+#ifdef FEATURE_XPSAVE
+/**
+ * @brief CG_Debriefing_XPSaveResetButton_KeyDown
+ * @param button - unused
+ * @param[in] key
+ * @return
+ */
+qboolean CG_Debriefing_XPSaveResetButton_KeyDown(panel_button_t *button, int key)
+{
+	if (key == K_MOUSE1)
+	{
+		// on first click on the button, display confirmation message
+		// then accept reset on second click
+		if (!xpSaveResetButtonConfirmation)
+		{
+			xpSaveResetButtonConfirmation = qtrue;
+			return qfalse;
+		}
+
+		trap_SendClientCommand("imxpsavereset");
+
+		// clear local xp display immediately to hide the button
+		Com_Memset(cgs.clientinfo[cg.clientNum].skillpoints, 0, sizeof(cgs.clientinfo[cg.clientNum].skillpoints));
+		Com_Memset(cgs.clientinfo[cg.clientNum].medals, 0, sizeof(cgs.clientinfo[cg.clientNum].medals));
+		Com_Memset(cgs.clientinfo[cg.clientNum].skill, 0, sizeof(cgs.clientinfo[cg.clientNum].skill));
+
+		xpSaveResetButtonConfirmation = qfalse;
+
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief CG_Debriefing_XPSaveResetButton_Draw
+ * @param[in] button
+ */
+void CG_Debriefing_XPSaveResetButton_Draw(panel_button_t *button)
+{
+	int i, totalXP = 0;
+
+	if (cgs.gametype != GT_WOLF && cgs.gametype != GT_WOLF_MAPVOTE)
+	{
+		return;
+	}
+
+	if (cgs.dbSelectedClient != cg.clientNum)
+	{
+		return;
+	}
+
+	for (i = 0; i < SK_NUM_SKILLS; i++)
+	{
+		totalXP += cgs.clientinfo[cg.clientNum].skillpoints[i];
+	}
+
+	if (totalXP <= 0)
+	{
+		return;
+	}
+
+	CG_PanelButtonsRender_Button(button);
+
+	if (BG_CursorInRect(&button->rect))
+	{
+		float  h;
+		char   *text;
+		vec4_t *color;
+		vec4_t clrBdr = { 0.5f, 0.5f, 0.5f, 0.5f };
+		vec4_t clrBck = { 0.0f, 0.0f, 0.0f, 0.8f };
+
+		h = CG_Text_Height_Ext("A", button->font->scalex, 0, button->font->font);
+
+		if (xpSaveResetButtonConfirmation)
+		{
+			CG_FillRect(button->rect.x + button->rect.w + 18, button->rect.y - h * 2, button->rect.w * 1.6f, h * 5, clrBck);
+			CG_DrawRect_FixedBorder(button->rect.x + button->rect.w + 18, button->rect.y - h * 2, button->rect.w * 1.6f, h * 5, 1, clrBdr);
+
+			text  = "Are you sure?\nClick again to confirm.";
+			color = &colorYellow;
+		}
+		else
+		{
+			CG_FillRect(button->rect.x + button->rect.w + 18, button->rect.y - h * 2, button->rect.w * 1.6f, h * 8, clrBck);
+			CG_DrawRect_FixedBorder(button->rect.x + button->rect.w + 18, button->rect.y - h * 2, button->rect.w * 1.6f, h * 8, 1, clrBdr);
+
+			text  = "Reset saved XP.\nThis map's earned XP\nwill not carry over.";
+			color = &button->font->colour;
+		}
+
+		CG_DrawMultilineText(button->rect.x + button->rect.w + 20, button->rect.y, button->rect.w, button->font->scalex, button->font->scaley, *color,
+		                     CG_TranslateString(text),
+		                     2 * h, 0, 0, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, button->font->font);
+	}
+}
+#endif
 
 /**
  * @brief CG_Debriefing_VoteButton_Draw
