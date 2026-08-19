@@ -367,9 +367,9 @@ qboolean G_SendScore_Add(gentity_t *ent, int i, char *buf, int bufsize)
 		if (
 #ifdef FEATURE_XPSAVE
 			(g_gametype.integer == GT_WOLF_CAMPAIGN) ||
-#else
-			(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+			(g_xpSave.integer && (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE)) ||
 #endif
+			(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
 			(g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0))
 		{
 			for (j = SK_BATTLE_SENSE; j < SK_NUM_SKILLS; j++)

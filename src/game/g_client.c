@@ -2561,9 +2561,11 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 #endif
 
 #ifdef FEATURE_XPSAVE
-	if (firstTime && g_gametype.integer == GT_WOLF_CAMPAIGN)
+	if (firstTime &&
+	    (g_gametype.integer == GT_WOLF_CAMPAIGN ||
+	     (g_xpSave.integer && (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE))))
 	{
-		G_XPSaver_Load(client);
+		G_XPSave_Load(client);
 
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
@@ -3517,9 +3519,11 @@ void ClientDisconnect(int clientNum)
 #endif
 
 #ifdef FEATURE_XPSAVE
-	if (g_gametype.integer == GT_WOLF_CAMPAIGN && !level.intermissiontime)
+	if (!level.intermissiontime &&
+	    (g_gametype.integer == GT_WOLF_CAMPAIGN ||
+	     (g_xpSave.integer && (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE))))
 	{
-		G_XPSaver_Store(ent->client);
+		G_XPSave_Store(ent->client);
 	}
 #endif
 

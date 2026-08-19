@@ -2362,11 +2362,11 @@ void G_SkillRatingSetMapRating(char *mapname, int winner);
 #endif
 
 #ifdef FEATURE_XPSAVE
-// g_xp_saver.c
-int G_XPSaver_CheckDB(char *db_path, int db_mode);
-void G_XPSaver_Load(gclient_t *cl);
-void G_XPSaver_Store(gclient_t *cl);
-int G_XPSaver_Clear();
+// g_xpsave.c
+int G_XPSave_CheckDB(char *db_path, int db_mode);
+void G_XPSave_Load(gclient_t *cl);
+void G_XPSave_Store(gclient_t *cl);
+int G_XPSave_Clear();
 #endif
 
 // g_stats.c

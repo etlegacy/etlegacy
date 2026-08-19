@@ -463,7 +463,13 @@ qboolean G_ReadSessionData(gclient_t *client)
 	    g_gametype.integer != GT_WOLF &&
 	    g_gametype.integer != GT_WOLF_STOPWATCH &&
 	    !(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current == 0  || level.newCampaign)) &&
-	    !(g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer == 0))
+	    !(g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer == 0)
+#ifdef FEATURE_XPSAVE
+	    &&
+	    !(g_gametype.integer == GT_WOLF_CAMPAIGN) &&
+	    !(g_xpSave.integer && (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE))
+#endif
+	    )
 	{
 		cJSON *restartObj = cJSON_GetObjectItem(root, "restart");
 

@@ -1719,6 +1719,14 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 			trap_Cvar_Set("g_skillRating", "0");
 		}
 #endif
+
+#ifdef FEATURE_XPSAVE
+		if (g_xpSave.integer)
+		{
+			G_Printf("^3WARNING: g_xpSave changed to 0\n");
+			trap_Cvar_Set("g_xpSave", "0");
+		}
+#endif
 	}
 #endif
 
@@ -1744,7 +1752,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	{
 		if (g_campaigns[level.currentCampaign].current == 0 || level.newCampaign)
 		{
-			G_XPSaver_Clear();
+			G_XPSave_Clear();
 		}
 	}
 #endif
@@ -2033,9 +2041,9 @@ int QDECL SortRanks(const void *a, const void *b)
 		if (!(
 #ifdef FEATURE_XPSAVE
 				(g_gametype.integer == GT_WOLF_CAMPAIGN) ||
-#else
-				(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
+				(g_xpSave.integer && (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE)) ||
 #endif
+				(g_gametype.integer == GT_WOLF_CAMPAIGN && (g_campaigns[level.currentCampaign].current != 0 && !level.newCampaign)) ||
 				(g_gametype.integer == GT_WOLF_LMS && g_currentRound.integer != 0)))
 		{
 			// current map XPs only
@@ -2969,7 +2977,8 @@ void G_LogExit(const char *string)
 #endif
 
 #ifdef FEATURE_XPSAVE
-	if (g_gametype.integer == GT_WOLF_CAMPAIGN)
+	if (g_gametype.integer == GT_WOLF_CAMPAIGN ||
+	    (g_xpSave.integer && (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE)))
 	{
 		for (i = 0; i < level.numConnectedClients; i++)
 		{
@@ -2981,7 +2990,7 @@ void G_LogExit(const char *string)
 			}
 
 			// record xp before intermission
-			G_XPSaver_Store(ent->client);
+			G_XPSave_Store(ent->client);
 		}
 	}
 #endif

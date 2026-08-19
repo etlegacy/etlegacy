@@ -18,7 +18,7 @@
  * along with ET: Legacy. If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * @file g_xp_saver.c
+ * @file g_xpsave.c
  * @brief Stores, loads and resets XP
  */
 #ifdef FEATURE_XPSAVE
@@ -52,8 +52,8 @@ typedef struct xpData_s
 	int medals[SK_NUM_SKILLS];
 } xpData_t;
 
-static int G_XPSaver_Read(xpData_t *xp_data);
-static int G_XPSaver_Write(xpData_t *xp_data);
+static int G_XPSave_Read(xpData_t *xp_data);
+static int G_XPSave_Write(xpData_t *xp_data);
 
 #define XPCHECK_SQLWRAP_TABLES "SELECT * FROM xpsave_users;"
 #define XPCHECK_SQLWRAP_SCHEMA "SELECT guid, skills, medals, created, updated FROM xpsave_users;"
@@ -68,14 +68,14 @@ static int G_XPSaver_Write(xpData_t *xp_data);
  * @param[in] db_mode
  * @return 0 if database check is successful, 1 otherwise.
  */
-int G_XPSaver_CheckDB(char *db_path, int db_mode)
+int G_XPSave_CheckDB(char *db_path, int db_mode)
 {
 	int     result;
 	sqlite3 *db;
 
 	if (!db_path || db_path[0] == '\0')
 	{
-		G_Printf("G_XPSaver_CheckDB: invalid path specified\n");
+		G_Printf("G_XPSave_CheckDB: invalid path specified\n");
 		return 1;
 	}
 
@@ -91,7 +91,7 @@ int G_XPSaver_CheckDB(char *db_path, int db_mode)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_XPSaver_CheckDB: sqlite3_open_v2 failed: %s\n", sqlite3_errstr(result));
+		G_Printf("G_XPSave_CheckDB: sqlite3_open_v2 failed: %s\n", sqlite3_errstr(result));
 		return 1;
 	}
 
@@ -100,13 +100,13 @@ int G_XPSaver_CheckDB(char *db_path, int db_mode)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_XPSaver_CheckDB: sqlite3_exec XPCHECK_SQLWRAP_TABLES failed: %s\n", sqlite3_errstr(result));
+		G_Printf("G_XPSave_CheckDB: sqlite3_exec XPCHECK_SQLWRAP_TABLES failed: %s\n", sqlite3_errstr(result));
 
 		result = sqlite3_close(db);
 
 		if (result != SQLITE_OK)
 		{
-			G_Printf("G_XPSaver_CheckDB: sqlite3_close failed: %s\n", sqlite3_errstr(result));
+			G_Printf("G_XPSave_CheckDB: sqlite3_close failed: %s\n", sqlite3_errstr(result));
 			return 1;
 		}
 		return 1;
@@ -117,13 +117,13 @@ int G_XPSaver_CheckDB(char *db_path, int db_mode)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_XPSaver_CheckDB: sqlite3_exec XPCHECK_SQLWRAP_SCHEMA failed: %s\n", sqlite3_errstr(result));
+		G_Printf("G_XPSave_CheckDB: sqlite3_exec XPCHECK_SQLWRAP_SCHEMA failed: %s\n", sqlite3_errstr(result));
 
 		result = sqlite3_close(db);
 
 		if (result != SQLITE_OK)
 		{
-			G_Printf("G_XPSaver_CheckDB: sqlite3_close failed: %s\n", sqlite3_errstr(result));
+			G_Printf("G_XPSave_CheckDB: sqlite3_close failed: %s\n", sqlite3_errstr(result));
 			return 1;
 		}
 		return 1;
@@ -134,7 +134,7 @@ int G_XPSaver_CheckDB(char *db_path, int db_mode)
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_XPSaver_CheckDB: sqlite3_close failed: %s\n", sqlite3_errstr(result));
+		G_Printf("G_XPSave_CheckDB: sqlite3_close failed: %s\n", sqlite3_errstr(result));
 		return 1;
 	}
 
@@ -145,7 +145,7 @@ int G_XPSaver_CheckDB(char *db_path, int db_mode)
  * @brief Retrieves xp for a client
  * @param[in] cl
  */
-void G_XPSaver_Load(gclient_t *cl)
+void G_XPSave_Load(gclient_t *cl)
 {
 	int       clientNum, i;
 	xpData_t  xp_data;
@@ -153,7 +153,7 @@ void G_XPSaver_Load(gclient_t *cl)
 
 	if (!level.database.initialized)
 	{
-		G_Printf("G_XPSaver_Load: access to non-initialized database\n");
+		G_Printf("G_XPSave_Load: access to non-initialized database\n");
 		return;
 	}
 
@@ -183,7 +183,7 @@ void G_XPSaver_Load(gclient_t *cl)
 	xp_data.guid = (const unsigned char *)cl->pers.cl_guid;
 
 	// retrieve current xp or assign default values
-	if (G_XPSaver_Read(&xp_data))
+	if (G_XPSave_Read(&xp_data))
 	{
 		return;
 	}
@@ -203,7 +203,7 @@ void G_XPSaver_Load(gclient_t *cl)
  * @brief Updates xp stats and timestamp for client
  * @param[in] cl
  */
-void G_XPSaver_Store(gclient_t *cl)
+void G_XPSave_Store(gclient_t *cl)
 {
 	int       clientNum, i;
 	xpData_t  xp_data;
@@ -211,7 +211,7 @@ void G_XPSaver_Store(gclient_t *cl)
 
 	if (!level.database.initialized)
 	{
-		G_Printf("G_XPSaver_Store: access to non-initialized database\n");
+		G_Printf("G_XPSave_Store: access to non-initialized database\n");
 		return;
 	}
 
@@ -252,7 +252,7 @@ void G_XPSaver_Store(gclient_t *cl)
 	}
 
 	// save or update xp
-	if (G_XPSaver_Write(&xp_data))
+	if (G_XPSave_Write(&xp_data))
 	{
 		return;
 	}
@@ -263,7 +263,7 @@ void G_XPSaver_Store(gclient_t *cl)
  * @param[in] xp_data
  * @return 0 if successful, 1 otherwise.
  */
-static int G_XPSaver_Read(xpData_t *xp_data)
+static int G_XPSave_Read(xpData_t *xp_data)
 {
 	int          result, i;
 	const char   *err;
@@ -276,7 +276,7 @@ static int G_XPSaver_Read(xpData_t *xp_data)
 
 	if (!level.database.initialized)
 	{
-		G_Printf("G_XPSaver_Read: access to non-initialized database\n");
+		G_Printf("G_XPSave_Read: access to non-initialized database\n");
 		return 1;
 	}
 
@@ -323,7 +323,7 @@ static int G_XPSaver_Read(xpData_t *xp_data)
  * @param[in] xp_data
  * @return 0 if successful, 1 otherwise.
  */
-static int G_XPSaver_Write(xpData_t *xp_data)
+static int G_XPSave_Write(xpData_t *xp_data)
 {
 	int          i;
 	int          result;
@@ -335,7 +335,7 @@ static int G_XPSaver_Write(xpData_t *xp_data)
 
 	if (!level.database.initialized)
 	{
-		G_Printf("G_XPSaver_Write: access to non-initialized database\n");
+		G_Printf("G_XPSave_Write: access to non-initialized database\n");
 		return 1;
 	}
 
@@ -395,14 +395,14 @@ static int G_XPSaver_Write(xpData_t *xp_data)
  * @brief Clears any xp data from the table
  * @return 0 if successful, 1 otherwise.
  */
-int G_XPSaver_Clear()
+int G_XPSave_Clear()
 {
 	int  result;
 	char *err_msg = NULL;
 
 	if (!level.database.initialized)
 	{
-		G_Printf("G_XPSaver_Clear: access to non-initialized database\n");
+		G_Printf("G_XPSave_Clear: access to non-initialized database\n");
 		return 1;
 	}
 
@@ -410,7 +410,7 @@ int G_XPSaver_Clear()
 
 	if (result != SQLITE_OK)
 	{
-		G_Printf("G_XPSaver_Clear: sqlite3_exec failed: %s\n", err_msg);
+		G_Printf("G_XPSave_Clear: sqlite3_exec failed: %s\n", err_msg);
 		sqlite3_free(err_msg);
 		return 1;
 	}
