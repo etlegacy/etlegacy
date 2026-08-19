@@ -21,6 +21,7 @@
  * @file g_xp_saver.c
  * @brief Stores, loads and resets XP
  */
+#ifdef FEATURE_XPSAVE
 
 #include "g_local.h"
 
@@ -416,3 +417,5 @@ int G_XPSaver_Clear()
 
 	return 0;
 }
+
+#endif

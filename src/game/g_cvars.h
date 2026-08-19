@@ -304,7 +304,10 @@ extern vmCvar_t g_multiview;
 #endif
 
 extern vmCvar_t g_stickyCharge;
+
+#ifdef FEATURE_XPSAVE
 extern vmCvar_t g_xpSaver;
+#endif
 
 extern vmCvar_t g_debugForSingleClient;
 extern vmCvar_t g_debugEvents;
