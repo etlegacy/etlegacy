@@ -79,7 +79,7 @@ int G_DB_Init()
 #endif
 
 #ifdef FEATURE_XPSAVE
-	if (G_XPSaver_CheckDB(level.database.path, db_mode))
+	if (G_XPSave_CheckDB(level.database.path, db_mode))
 	{
 		return 1;
 	}
