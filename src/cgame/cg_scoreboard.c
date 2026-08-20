@@ -377,7 +377,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			s = va(CG_TranslateString("MAP %i of %i"), cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
 			break;
 		case GT_WOLF_MAPVOTE:
-			s = (cgs.mapVoteMapY ? va(CG_TranslateString("MAP %i of %i"), cgs.mapVoteMapX + 1, cgs.mapVoteMapY) : "MAP");
+			s = "MAP";
 			break;
 		default:
 			s = "MAP";

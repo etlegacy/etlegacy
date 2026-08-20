@@ -356,8 +356,6 @@ void CG_ParseModInfo(void)
 
 	info = CG_ConfigString(CS_MODINFO);
 
-	cgs.mapVoteMapX = Q_atoi(Info_ValueForKey(info, "X"));
-	cgs.mapVoteMapY = Q_atoi(Info_ValueForKey(info, "Y"));
 #ifdef FEATURE_RATING
 	cgs.skillRating = Q_atoi(Info_ValueForKey(info, "R"));
 	if (cgs.skillRating > 1)

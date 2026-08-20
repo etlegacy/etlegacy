@@ -1643,35 +1643,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 	// MAPVOTE
 	if (g_gametype.integer == GT_WOLF_MAPVOTE)
 	{
-		char mapConfig[MAX_STRING_CHARS];
-
-		//trap_Cvar_Set("C", va("%d,%d",
-		//        ((level.mapsSinceLastXPReset >= g_resetXPMapCount.integer) ?
-		//               0 : level.mapsSinceLastXPReset)+1,
-		//       g_resetXPMapCount.integer));
-
-		if (g_mapConfigs.string[0] && g_resetXPMapCount.integer)
-		{
-			Q_strncpyz(mapConfig, "exec ", sizeof(mapConfig));
-			Q_strcat(mapConfig, sizeof(mapConfig), g_mapConfigs.string);
-			i = level.mapsSinceLastXPReset;
-			if (i == 0 || i == g_resetXPMapCount.integer)
-			{
-				i = 2;
-			}
-			else if (i + 2 <= g_resetXPMapCount.integer)
-			{
-				i += 2;
-			}
-			else
-			{
-				i = 1;
-			}
-			Q_strcat(mapConfig, sizeof(mapConfig), va("/vote_%d.cfg", i));
-
-			trap_SendConsoleCommand(EXEC_APPEND, mapConfig);
-		}
-
 		level.mapVotePlayersCount = CG_ParseMapVotePlayersCountConfig();
 	}
 
@@ -1731,9 +1702,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 
 	numSplinePaths = 0 ;
 	numPathCorners = 0;
-
-	// MAPVOTE
-	level.mapsSinceLastXPReset = 0;
 
 	// init objective indicator
 	level.flagIndicator   = 0;
@@ -2801,11 +2769,6 @@ void ExitLevel(void)
 	case GT_WOLF_MAPVOTE:
 	{
 		int nextMap = -1, highMapVote = 0, curMapVotes = 0, maxMaps, highMapAge = 0, curMapAge = 0;
-
-		if (g_resetXPMapCount.integer)
-		{
-			level.mapsSinceLastXPReset++;
-		}
 
 		maxMaps = Com_Clamp(0, level.mapVoteNumMaps, g_maxMapsVotedFor.integer);
 

@@ -235,7 +235,6 @@ extern vmCvar_t g_mapVoteFlags;
 extern vmCvar_t g_maxMapsVotedFor;
 extern vmCvar_t g_minMapAge;
 extern vmCvar_t g_excludedMaps;
-extern vmCvar_t g_resetXPMapCount;
 
 extern vmCvar_t g_campaignFile;
 
