@@ -2775,8 +2775,6 @@ typedef struct cgs_s
 	qboolean dbMapMultiVote;
 	int dbMapVotedFor[3];
 	sortedVotedMapByTotal_s dbSortedVotedMapsByTotal[MAX_VOTE_MAPS];
-	int mapVoteMapX;
-	int mapVoteMapY;
 
 	int fixedphysics;
 	int fixedphysicsfps;

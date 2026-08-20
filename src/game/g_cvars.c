@@ -244,7 +244,6 @@ vmCvar_t g_mapVoteFlags;
 vmCvar_t g_maxMapsVotedFor;
 vmCvar_t g_minMapAge;
 vmCvar_t g_excludedMaps;
-vmCvar_t g_resetXPMapCount;
 
 vmCvar_t g_campaignFile;
 
@@ -591,7 +590,6 @@ cvarTable_t gameCvarTable[] =
 	{ &g_maxMapsVotedFor,                 "g_maxMapsVotedFor",                 "6",                          0,                                               0, qfalse, qfalse },
 	{ &g_minMapAge,                       "g_minMapAge",                       "3",                          0,                                               0, qfalse, qfalse },
 	{ &g_excludedMaps,                    "g_excludedMaps",                    "",                           0,                                               0, qfalse, qfalse },
-	{ &g_resetXPMapCount,                 "g_resetXPMapCount",                 "0",                          0,                                               0, qfalse, qfalse },
 
 	{ &g_campaignFile,                    "g_campaignFile",                    "",                           0,                                               0, qfalse, qfalse },
 
@@ -914,14 +912,6 @@ void G_UpdateCvars(void)
 					char cs[MAX_INFO_STRING];
 
 					cs[0] = '\0';
-
-					// MAPVOTE
-					// FIXME: mapvote & xp
-					if (g_gametype.integer == GT_WOLF_MAPVOTE)
-					{
-						Info_SetValueForKey(cs, "X", va("%i", (level.mapsSinceLastXPReset >= g_resetXPMapCount.integer) ? 0 : level.mapsSinceLastXPReset));
-						Info_SetValueForKey(cs, "Y", (va("%i", g_resetXPMapCount.integer)));
-					}
 
 #ifdef FEATURE_RATING
 					Info_SetValueForKey(cs, "R", va("%i", g_skillRating.integer));

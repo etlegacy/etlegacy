@@ -1379,7 +1379,6 @@ typedef struct level_locals_s
 	int mapvotehistorycount;
 	char lastVotedMap[MAX_VOTE_MAPS];
 	int mapVoteNumMaps;
-	int mapsSinceLastXPReset;
 	qboolean mapVotePlayersCount;
 
 	// sv_cvars
