@@ -2409,7 +2409,7 @@ void CG_ReadHudsFromFile(void)
 
 			Com_sprintf(sourcePath, sizeof(sourcePath), "%s/hud_v%i.dat", hudDir, filenameVersion);
 
-			if (CG_HudFileExists(legacyPath))
+			if (CG_HudFileExists(sourcePath))
 			{
 				if (CG_ReadHudFileVersion(sourcePath, &parsedVersion))
 				{
@@ -2491,7 +2491,7 @@ void CG_ReadHudsFromFile(void)
 
 			Com_sprintf(sourcePath, sizeof(sourcePath), "%s/hud_v%i.dat", hudDir, filenameVersion);
 
-			if (CG_HudFileExists(legacyPath))
+			if (CG_HudFileExists(sourcePath))
 			{
 				if (CG_ReadHudFileVersion(sourcePath, &parsedVersion))
 				{
