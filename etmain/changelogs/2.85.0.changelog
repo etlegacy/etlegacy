@@ -6,7 +6,7 @@
 
 ^dClient
 
-* Fixed ^8cm_optimizePatchPlanes^9 not correctly applying on first load - #3513
+* Fixed ^8cm_optimizePatchPlanes^9 not correctly applying on first load
 
 ^dMod
 

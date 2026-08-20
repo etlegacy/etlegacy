@@ -1,0 +1,23 @@
+^dMod
+
+* Fixed hud_vX files were not listed properly when connection to pure server
+* Decoupled ranks from skill rating. This restore rank progression to the existing XP
+  system so that ranks reflect in-game progression again and are no longer dependent
+  on stale empirical data
+* Improved shuffle by SR algorithm with greedy SR draft that
+  - Prioritizes balanced team player counts.
+  - Assigns the highest remaining rated player to the team with the lowest combined
+    skill rating.
+  - Handles map bias as a tri-state:
+  - mapProb > 0.5f: Axis advantage, favor Allies.
+  - mapProb < 0.5f: Allies advantage, favor Axis.
+  - mapProb == 0.5f: No bias, use a random 50/50 choice.
+* Changed rank accuracy-based awards by a sample-size-aware score
+* Fixed SR data recorded without GUID by using connect-time guid for SR/XP db access
+  to ensure valid user ID are stored into DB
+* Fixed bot taking over player name and SR, resetting player SR
+* Made map bias more dynamic
+* Skipped skill rating updates when no players participated
+* Fixed SR update leaks current match into prior map bias
+
+***
