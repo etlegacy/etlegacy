@@ -2779,6 +2779,11 @@ typedef struct cgs_s
 	int fixedphysics;
 	int fixedphysicsfps;
 	int pronedelay;
+#ifdef FEATURE_XPSAVE
+	int xpSaveResetValue;
+	int xpSaveResetThreshold;
+	int xpSaveResetMode;
+#endif
 #ifdef FEATURE_RATING
 	int skillRating;
 	float mapProb;

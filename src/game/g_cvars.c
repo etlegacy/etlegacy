@@ -324,6 +324,9 @@ vmCvar_t g_stickyCharge;
 
 #ifdef FEATURE_XPSAVE
 vmCvar_t g_xpSave;
+vmCvar_t g_xpSaveResetMode;
+vmCvar_t g_xpSaveResetThreshold;
+vmCvar_t g_xpSaveResetValue;
 #endif
 
 vmCvar_t g_debugForSingleClient;
@@ -651,6 +654,9 @@ cvarTable_t gameCvarTable[] =
 	{ &g_stickyCharge,                    "g_stickyCharge",                    "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 #ifdef FEATURE_XPSAVE
 	{ &g_xpSave,                          "g_xpSave",                          "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &g_xpSaveResetMode,                 "g_xpSaveResetMode",                 "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &g_xpSaveResetThreshold,            "g_xpSaveResetThreshold",            "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
+	{ &g_xpSaveResetValue,                "g_xpSaveResetValue",                "0",                          CVAR_ARCHIVE,                                    0, qfalse, qfalse },
 #endif
 	{ &g_suddenDeath,                     "g_suddenDeath",                     "0",                          CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
 	{ &g_dropObjDelay,                    "g_dropObjDelay",                    "3000",                       CVAR_ARCHIVE,                                    0, qtrue,  qfalse },
@@ -912,6 +918,12 @@ void G_UpdateCvars(void)
 					char cs[MAX_INFO_STRING];
 
 					cs[0] = '\0';
+
+#ifdef FEATURE_XPSAVE
+					Info_SetValueForKey(cs, "X", va("%i", g_xpSaveResetValue.integer));
+					Info_SetValueForKey(cs, "Y", va("%i", g_xpSaveResetThreshold.integer));
+					Info_SetValueForKey(cs, "Z", va("%i", g_xpSaveResetMode.integer));
+#endif
 
 #ifdef FEATURE_RATING
 					Info_SetValueForKey(cs, "R", va("%i", g_skillRating.integer));

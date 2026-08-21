@@ -306,6 +306,9 @@ extern vmCvar_t g_stickyCharge;
 
 #ifdef FEATURE_XPSAVE
 extern vmCvar_t g_xpSave;
+extern vmCvar_t g_xpSaveResetMode;
+extern vmCvar_t g_xpSaveResetThreshold;
+extern vmCvar_t g_xpSaveResetValue;
 #endif
 
 extern vmCvar_t g_debugForSingleClient;

@@ -356,6 +356,12 @@ void CG_ParseModInfo(void)
 
 	info = CG_ConfigString(CS_MODINFO);
 
+#ifdef FEATURE_XPSAVE
+	cgs.xpSaveResetValue     = Q_atoi(Info_ValueForKey(info, "X"));
+	cgs.xpSaveResetThreshold = Q_atoi(Info_ValueForKey(info, "Y"));
+	cgs.xpSaveResetMode      = Q_atoi(Info_ValueForKey(info, "Z"));
+#endif
+
 #ifdef FEATURE_RATING
 	cgs.skillRating = Q_atoi(Info_ValueForKey(info, "R"));
 	if (cgs.skillRating > 1)
