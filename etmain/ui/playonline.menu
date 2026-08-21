@@ -189,7 +189,7 @@ menuDef {
 		visible		1
 		decoration
 	}
-	TRICHECKBOXACTIONMULTI( 8+.67*(FILTERS_WIDTH-6)+2+2+12, 138, .33*(FILTERS_WIDTH-6)-18, 10, .2, 8, "ui_browserShowHumans", cvarFloatList { "Filter Disabled" 0 "With humans..." 1 "Without humans..." 2 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting ET: Legacy Servers with Humans players", "Include or exclude ET: Legacy servers with humans from the server list" )
+	TRICHECKBOXACTIONMULTI( 8+.67*(FILTERS_WIDTH-6)+2+2+12, 138, .33*(FILTERS_WIDTH-6)-18, 10, .2, 8, "ui_browserShowHumans", cvarFloatList { "Filter Disabled" 0 "With humans..." 1 "Without humans..." 2 "Only humans..." 3 }, uiScript RefreshFilter ; setcvar ui_filterdescription "Filter affecting ET: Legacy Servers with Humans players", "Include or exclude ET: Legacy servers with humans from the server list" )
 
 	/*
 	itemDef {
