@@ -31,6 +31,8 @@
 
 #include "g_local.h"
 
+#include <time.h>
+
 #ifdef FEATURE_LUA
 #include "g_lua.h"
 #endif
@@ -743,6 +745,9 @@ void G_UpdateCvars(void)
 	qboolean    chargetimechanged  = qfalse;
 	qboolean    clsweaprestriction = qfalse;
 	qboolean    skillLevelPoints   = qfalse;
+#ifdef FEATURE_XPSAVE
+	static qboolean xpSaveResetModeInitialized = qfalse;
+#endif
 
 	for (i = 0, cv = gameCvarTable ; i < gameCvarTableSize ; i++, cv++)
 	{
@@ -906,6 +911,23 @@ void G_UpdateCvars(void)
 						G_RemoveAllShoutcasters();
 					}
 				}
+#ifdef FEATURE_XPSAVE
+				else if (cv->vmCvar == &g_xpSaveResetMode)
+				{
+					if (xpSaveResetModeInitialized)
+					{
+						if (g_xpSaveResetMode.integer == 1)
+						{
+							trap_Cvar_Set("g_xpSaveResetValue", "0");
+						}
+						else if (g_xpSaveResetMode.integer == 2)
+						{
+							trap_Cvar_Set("g_xpSaveResetValue", va("%i", (int)time(NULL)));
+						}
+					}
+					xpSaveResetModeInitialized = qtrue;
+				}
+#endif
 #ifdef FEATURE_LUA
 				else if (cv->vmCvar == &lua_modules || cv->vmCvar == &lua_allowedModules)
 				{

@@ -36,6 +36,8 @@
 
 #include "g_local.h"
 
+#include <time.h>
+
 #ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
