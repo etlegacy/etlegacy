@@ -35,6 +35,7 @@
 
 #include "cg_local.h"
 
+#include <math.h>
 #include <time.h>
 
 char *Binding_FromName(const char *cvar);
@@ -401,6 +402,13 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 				minutes = (remaining % 3600) / 60;
 
 				s = va(CG_TranslateString("XP RESET IN %ih %im"), hours, minutes);
+			}
+			else if (cgs.xpSaveResetMode == 3 && cgs.xpSaveResetThreshold > 0)
+			{
+				int halfLife = cgs.xpSaveResetThreshold;
+				int dailyPct = (int)round((1.0 - pow(0.5, 1.0 / halfLife)) * 100.0);
+
+				s = va(CG_TranslateString("XP DECAY %i%%/DAY (λ %iD)"), dailyPct, halfLife);
 			}
 			else
 #endif
