@@ -1770,6 +1770,15 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 			trap_Cvar_Set("g_xpSaveResetValue", "0");
 		}
 
+		if (g_xpSaveResetMode.integer < 0)
+		{
+			trap_Cvar_Set("g_xpSaveResetMode", "0");
+		}
+		else if (g_xpSaveResetMode.integer > 3)
+		{
+			trap_Cvar_Set("g_xpSaveResetMode", "0");
+		}
+
 		// if the value looks like it belongs to a different mode, reinitialize it
 		// (e.g. after a config change and server restart)
 		if (g_xpSaveResetMode.integer == 1 && g_xpSaveResetValue.integer > 1000000000)
