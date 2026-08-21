@@ -35,6 +35,8 @@
 
 #include "cg_local.h"
 
+#include <time.h>
+
 char *Binding_FromName(const char *cvar);
 
 // colors and fonts for overlays
@@ -382,6 +384,23 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			if (cgs.xpSaveResetMode == 1 && cgs.xpSaveResetThreshold > 0)
 			{
 				s = va(CG_TranslateString("MAP %i of %i"), cgs.xpSaveResetValue + 1, cgs.xpSaveResetThreshold);
+			}
+			else if (cgs.xpSaveResetMode == 2 && cgs.xpSaveResetThreshold > 0)
+			{
+				time_t now        = time(NULL);
+				time_t last_reset = (time_t)cgs.xpSaveResetValue;
+				int    remaining  = cgs.xpSaveResetThreshold * 3600 - (int)difftime(now, last_reset);
+				int    hours, minutes;
+
+				if (remaining < 0)
+				{
+					remaining = 0;
+				}
+
+				hours   = remaining / 3600;
+				minutes = (remaining % 3600) / 60;
+
+				s = va(CG_TranslateString("XP RESET IN %ih %im"), hours, minutes);
 			}
 			else
 #endif

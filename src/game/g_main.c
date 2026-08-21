@@ -34,6 +34,8 @@
 
 #include "g_local.h"
 
+#include <time.h>
+
 #ifdef FEATURE_OMNIBOT
 #include "g_etbot_interface.h"
 #endif
@@ -1768,6 +1770,17 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 			trap_Cvar_Set("g_xpSaveResetValue", "0");
 		}
 
+		// if the value looks like it belongs to a different mode, reinitialize it
+		// (e.g. after a config change and server restart)
+		if (g_xpSaveResetMode.integer == 1 && g_xpSaveResetValue.integer > 1000000000)
+		{
+			trap_Cvar_Set("g_xpSaveResetValue", "0");
+		}
+		else if (g_xpSaveResetMode.integer == 2 && (g_xpSaveResetValue.integer <= 0 || g_xpSaveResetValue.integer < 1000000000))
+		{
+			trap_Cvar_Set("g_xpSaveResetValue", va("%i", (int)time(NULL)));
+		}
+
 		// maps-based auto-reset
 		if (g_xpSaveResetMode.integer == 1 &&
 		    g_xpSaveResetThreshold.integer > 0 &&
@@ -1778,6 +1791,23 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 			if (G_XPSave_Clear() == 0)
 			{
 				trap_Cvar_Set("g_xpSaveResetValue", "0");
+			}
+		}
+		// time-based auto-reset (threshold is in hours)
+		else if (g_xpSaveResetMode.integer == 2 &&
+		         g_xpSaveResetThreshold.integer > 0)
+		{
+			time_t now        = time(NULL);
+			time_t last_reset = (time_t)g_xpSaveResetValue.integer;
+
+			if (difftime(now, last_reset) >= (double)(g_xpSaveResetThreshold.integer * 3600))
+			{
+				G_Printf("XP save: time-based auto-reset triggered\n");
+
+				if (G_XPSave_Clear() == 0)
+				{
+					trap_Cvar_Set("g_xpSaveResetValue", va("%i", (int)now));
+				}
 			}
 		}
 	}
