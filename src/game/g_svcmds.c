@@ -892,6 +892,37 @@ void Svcmd_ResetMatch(void)
 	Svcmd_ResetMatch_f(qtrue, qtrue);
 }
 
+#ifdef FEATURE_XPSAVE
+/**
+ * @brief Svcmd_ResetXPSave_f
+ * @details <code>reset_xpsave</code>: resets all persisted XP save data.
+ */
+void Svcmd_ResetXPSave_f(void)
+{
+	if (!g_xpSave.integer)
+	{
+		G_Printf("reset_xpsave: g_xpSave is disabled\n");
+		return;
+	}
+
+	if (g_gametype.integer != GT_WOLF && g_gametype.integer != GT_WOLF_MAPVOTE)
+	{
+		G_Printf("reset_xpsave: only available in Objective and Mapvote gametypes\n");
+		return;
+	}
+
+	if (G_XPSave_Clear() != 0)
+	{
+		G_Printf("reset_xpsave: failed to clear persisted XP\n");
+		return;
+	}
+
+	trap_Cvar_Set("g_xpSaveResetValue", "0");
+
+	G_Printf("reset_xpsave: all persisted XP has been reset\n");
+}
+#endif
+
 /**
  * @brief swaps all clients to opposite team
  */
@@ -2556,6 +2587,9 @@ static consoleCommandTable_t consoleCommandTable[] =
 	{ "listmaxlivesip",             PrintMaxLivesGUID             },
 	{ "start_match",                Svcmd_StartMatch_f            },
 	{ "reset_match",                Svcmd_ResetMatch              },
+#ifdef FEATURE_XPSAVE
+	{ "reset_xpsave",               Svcmd_ResetXPSave_f           },
+#endif
 	{ "swap_teams",                 Svcmd_SwapTeams_f             },
 	{ "shuffle_teams",              Svcmd_ShuffleTeamsXP          },
 	{ "shuffle_teams_norestart",    Svcmd_ShuffleTeamsXPNoRestart },
