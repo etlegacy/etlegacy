@@ -153,9 +153,8 @@ int G_XPSave_CheckDB(char *db_path, int db_mode)
  */
 void G_XPSave_Load(gclient_t *cl)
 {
-	int       clientNum, i;
-	xpData_t  xp_data;
-	gentity_t *ent;
+	int      i;
+	xpData_t xp_data;
 
 	if (!level.database.initialized)
 	{
@@ -164,16 +163,6 @@ void G_XPSave_Load(gclient_t *cl)
 	}
 
 	if (!cl)
-	{
-		return;
-	}
-
-	clientNum = cl - level.clients;
-
-	// ignore bots
-	ent = g_entities + clientNum;
-
-	if (ent->r.svFlags & SVF_BOT)
 	{
 		return;
 	}
@@ -220,9 +209,8 @@ void G_XPSave_Load(gclient_t *cl)
  */
 void G_XPSave_Store(gclient_t *cl)
 {
-	int       clientNum, i, j;
-	xpData_t  xp_data;
-	gentity_t *ent;
+	int      clientNum, i, j;
+	xpData_t xp_data;
 
 	if (!level.database.initialized)
 	{
@@ -242,14 +230,6 @@ void G_XPSave_Store(gclient_t *cl)
 	}
 
 	clientNum = cl - level.clients;
-
-	// ignore bots
-	ent = g_entities + clientNum;
-
-	if (ent->r.svFlags & SVF_BOT)
-	{
-		return;
-	}
 
 	// skip clients without a usable GUID (e.g. ETLTV slaves)
 	// pers.cl_guid is set at connect time (format-validated when g_guidCheck is enabled); userinfo may be stale on slot reuse
