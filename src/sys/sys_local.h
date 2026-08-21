@@ -77,6 +77,8 @@ NORETURN_MSVC void Sys_PlatformExit(int code) _attribute((noreturn));
 #endif
 
 void Sys_SigHandler(int signal);
+void Sys_HandleCrash(int signal, void *context);
+void Sys_InstallCrashHandler(void);
 void Sys_ErrorDialog(const char *error);
 void Sys_AnsiColorPrint(const char *msg);
 
