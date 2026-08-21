@@ -301,18 +301,16 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t
 	{
 		if (attacker && attacker->client)
 		{
-			weapon_t weap = GetMODTableData(mod)->weaponIcon;
-
 			// don't count hits/shots for hitscan weapons
-			if (!GetWeaponTableData(weap)->splashDamage)
+			// Keep flamethrower out as well: it is not flagged explosive, but it
+			// has splash-like continuous damage and should not lose a shot for
+			// every corpse it touches.
+			if (!GetMODTableData(mod)->isExplosive && mod != MOD_FLAMETHROWER)
 			{
-				int x;
-
-				x = attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts--;
-
-				if (x < 1)
+				// Only decrement if there is a shot to take back
+				if (attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts > 0)
 				{
-					attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts = 1;
+					attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].atts--;
 				}
 			}
 
