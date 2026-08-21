@@ -103,5 +103,8 @@ gradle/
 .gocache
 .gomodcache
 
+.wrapper-cache
+
 # Misc
 /misc/changelog-markdown-converter/changelog-markdown-converter
+
