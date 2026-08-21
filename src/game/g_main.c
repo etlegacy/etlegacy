@@ -1755,6 +1755,32 @@ void G_InitGame(int levelTime, int randomSeed, int restart, int etLegacyServer, 
 			G_XPSave_Clear();
 		}
 	}
+	else if (g_xpSave.integer && (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE))
+	{
+		// keep reset cvars sane
+		if (g_xpSaveResetThreshold.integer < 0)
+		{
+			trap_Cvar_Set("g_xpSaveResetThreshold", "0");
+		}
+
+		if (g_xpSaveResetValue.integer < 0)
+		{
+			trap_Cvar_Set("g_xpSaveResetValue", "0");
+		}
+
+		// maps-based auto-reset
+		if (g_xpSaveResetMode.integer == 1 &&
+		    g_xpSaveResetThreshold.integer > 0 &&
+		    g_xpSaveResetValue.integer >= g_xpSaveResetThreshold.integer)
+		{
+			G_Printf("XP save: auto-reset triggered after %i maps\n", g_xpSaveResetValue.integer);
+
+			if (G_XPSave_Clear() == 0)
+			{
+				trap_Cvar_Set("g_xpSaveResetValue", "0");
+			}
+		}
+	}
 #endif
 
 	// disable server engine flood protection if we have mod-sided flood protection enabled
@@ -2842,6 +2868,17 @@ void ExitLevel(void)
 			cl->ps.persistant[PERS_SCORE] = 0;
 		}
 	}
+
+#ifdef FEATURE_XPSAVE
+	// increment the global map counter for maps-based XP save reset
+	if (g_xpSave.integer &&
+	    g_xpSaveResetMode.integer == 1 &&
+	    g_xpSaveResetThreshold.integer > 0 &&
+	    (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE))
+	{
+		trap_Cvar_Set("g_xpSaveResetValue", va("%i", g_xpSaveResetValue.integer + 1));
+	}
+#endif
 
 	// we need to do this here before changing to CON_CONNECTING
 	G_WriteSessionData(qfalse);

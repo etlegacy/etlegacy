@@ -376,8 +376,18 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 		case GT_WOLF_CAMPAIGN:
 			s = va(CG_TranslateString("MAP %i of %i"), cgs.currentCampaignMap + 1, cgs.campaignData.mapCount);
 			break;
+		case GT_WOLF:
 		case GT_WOLF_MAPVOTE:
-			s = "MAP";
+#ifdef FEATURE_XPSAVE
+			if (cgs.xpSaveResetMode == 1 && cgs.xpSaveResetThreshold > 0)
+			{
+				s = va(CG_TranslateString("MAP %i of %i"), cgs.xpSaveResetValue + 1, cgs.xpSaveResetThreshold);
+			}
+			else
+#endif
+			{
+				s = "MAP";
+			}
 			break;
 		default:
 			s = "MAP";
