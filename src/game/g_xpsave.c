@@ -25,6 +25,9 @@
 
 #include "g_local.h"
 
+#include <math.h>
+#include <time.h>
+
 #ifdef FEATURE_DBMS
 #include <sqlite3.h>
 #else
@@ -50,14 +53,16 @@ typedef struct xpData_s
 	const unsigned char *guid;
 	int skillpoints[SK_NUM_SKILLS];
 	int medals[SK_NUM_SKILLS];
+	time_t updated;
 } xpData_t;
 
 static int G_XPSave_Read(xpData_t *xp_data);
 static int G_XPSave_Write(xpData_t *xp_data);
+static void G_XPSave_ApplyDecay(xpData_t *xp_data);
 
 #define XPCHECK_SQLWRAP_TABLES "SELECT * FROM xpsave_users;"
 #define XPCHECK_SQLWRAP_SCHEMA "SELECT guid, skills, medals, created, updated FROM xpsave_users;"
-#define XPUSERS_SQLWRAP_SELECT "SELECT * FROM xpsave_users WHERE guid = '%s';"
+#define XPUSERS_SQLWRAP_SELECT "SELECT guid, skills, medals, created, strftime('%%s', updated) FROM xpsave_users WHERE guid = '%s';"
 #define XPUSERS_SQLWRAP_INSERT "INSERT INTO xpsave_users (guid, skills, medals, created, updated) VALUES ('%s', ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);"
 #define XPUSERS_SQLWRAP_UPDATE "UPDATE xpsave_users SET skills = ?, medals = ?, updated = CURRENT_TIMESTAMP WHERE guid = '%s';"
 #define XPUSERS_SQLWRAP_DELETE "DELETE FROM xpsave_users"
@@ -189,6 +194,15 @@ void G_XPSave_Load(gclient_t *cl)
 		return;
 	}
 
+	// apply decay to inactive players
+	G_XPSave_ApplyDecay(&xp_data);
+
+	// persist decayed values so the next connect does not re-decay
+	if (xp_data.updated != 0 && g_xpSaveResetMode.integer == 3 && g_xpSaveResetThreshold.integer > 0)
+	{
+		G_XPSave_Write(&xp_data);
+	}
+
 	// assign user data to session
 	cl->sess.startxptotal = 0;
 	for (i = 0; i < SK_NUM_SKILLS; i++)
@@ -296,6 +310,7 @@ static int G_XPSave_Read(xpData_t *xp_data)
 
 	Com_Memset(xp_data->skillpoints, 0, sizeof(xp_data->skillpoints));
 	Com_Memset(xp_data->medals, 0, sizeof(xp_data->medals));
+	xp_data->updated = 0;
 
 	if (!level.database.initialized)
 	{
@@ -322,6 +337,8 @@ static int G_XPSave_Read(xpData_t *xp_data)
 			bf_read(pSkills, int, xp_data->skillpoints[i]);
 			bf_read(pMedals, int, xp_data->medals[i]);
 		}
+
+		xp_data->updated = (time_t)sqlite3_column_int64(sqlstmt, 4);
 	}
 	// no entry found or other failure
 	else if (result != SQLITE_DONE)
@@ -473,6 +490,71 @@ int G_XPSave_Clear()
 	}
 
 	return 0;
+}
+
+/**
+ * @brief Applies exponential decay to skillpoints based on inactivity.
+ *        g_xpSaveResetThreshold is interpreted as the half-life in days.
+ *        Medals are not decayed.
+ * @param[in,out] xp_data
+ */
+static void G_XPSave_ApplyDecay(xpData_t *xp_data)
+{
+	time_t now;
+	double days, halfLife, factor;
+	int    i, newXp, decayed = qfalse;
+
+	if (g_xpSaveResetMode.integer != 3)
+	{
+		return;
+	}
+
+	if (g_xpSaveResetThreshold.integer <= 0)
+	{
+		return;
+	}
+
+	if (xp_data->updated == 0)
+	{
+		return;
+	}
+
+	now      = time(NULL);
+	days     = difftime(now, xp_data->updated) / 86400.0;
+	halfLife = (double)g_xpSaveResetThreshold.integer;
+
+	if (days <= 0.0 || halfLife <= 0.0)
+	{
+		return;
+	}
+
+	factor = pow(0.5, days / halfLife);
+
+	for (i = 0; i < SK_NUM_SKILLS; i++)
+	{
+		if (xp_data->skillpoints[i] == 0)
+		{
+			continue;
+		}
+
+		newXp = (int)(xp_data->skillpoints[i] * factor);
+
+		if (newXp < 0)
+		{
+			newXp = 0;
+		}
+
+		if (newXp != xp_data->skillpoints[i])
+		{
+			xp_data->skillpoints[i] = newXp;
+			decayed                 = qtrue;
+		}
+	}
+
+	if (decayed)
+	{
+		G_DPrintf("XP save: decayed skills after %.2f days of inactivity (half-life %.0f days)\n", days, halfLife);
+	}
 }
 
 #endif
