@@ -2432,6 +2432,21 @@ char *ClientConnect(int clientNum, qboolean firstTime, qboolean isBot)
 		if (!G_ReadSessionData(client))
 		{
 			G_InitSessionData(client, userinfo);
+
+#ifdef FEATURE_XPSAVE
+			// session restore failed, but DB-backed modes should still load
+			// their persisted XP so we don't start at zero and overwrite the row
+			if (g_gametype.integer == GT_WOLF_CAMPAIGN ||
+			    (g_xpSave.integer && (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE)))
+			{
+				G_XPSave_Load(client);
+
+				for (i = 0; i < SK_NUM_SKILLS; i++)
+				{
+					G_SetPlayerSkill(client, i);
+				}
+			}
+#endif
 		}
 	}
 
