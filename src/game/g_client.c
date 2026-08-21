@@ -3437,6 +3437,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 	// initialize animations and other things
 	client->ps.commandTime           = level.time - 100;
 	ent->client->pers.cmd.serverTime = level.time;
+	ent->client->realCmdServerTime   = level.time;
 
 	ClientThink(ent - g_entities);
 
