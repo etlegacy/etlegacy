@@ -205,7 +205,7 @@ void G_XPSave_Load(gclient_t *cl)
  */
 void G_XPSave_Store(gclient_t *cl)
 {
-	int       clientNum, i;
+	int       clientNum, i, j;
 	xpData_t  xp_data;
 	gentity_t *ent;
 
@@ -241,6 +241,28 @@ void G_XPSave_Store(gclient_t *cl)
 	if (strlen(cl->pers.cl_guid) < MAX_GUID_LENGTH)
 	{
 		return;
+	}
+
+	// don't overwrite the database row while another connected client shares
+	// the same GUID (can happen with g_guidCheck disabled or cheats)
+	for (j = 0; j < level.maxclients; j++)
+	{
+		if (j == clientNum)
+		{
+			continue;
+		}
+		if (level.clients[j].pers.connected == CON_DISCONNECTED)
+		{
+			continue;
+		}
+		if (strlen(level.clients[j].pers.cl_guid) < MAX_GUID_LENGTH)
+		{
+			continue;
+		}
+		if (!Q_stricmp(cl->pers.cl_guid, level.clients[j].pers.cl_guid))
+		{
+			return;
+		}
 	}
 
 	xp_data.guid = (const unsigned char *)cl->pers.cl_guid;
