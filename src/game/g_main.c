@@ -2976,25 +2976,6 @@ void G_LogExit(const char *string)
 	}
 #endif
 
-#ifdef FEATURE_XPSAVE
-	if (g_gametype.integer == GT_WOLF_CAMPAIGN ||
-	    (g_xpSave.integer && (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE)))
-	{
-		for (i = 0; i < level.numConnectedClients; i++)
-		{
-			gentity_t *ent = &g_entities[level.sortedClients[i]];
-
-			if (!ent->inuse)
-			{
-				continue;
-			}
-
-			// record xp before intermission
-			G_XPSave_Store(ent->client);
-		}
-	}
-#endif
-
 	level.intermissionQueued = level.time;
 
 	// this will keep the clients from playing any voice sounds
@@ -3239,6 +3220,25 @@ void G_LogExit(const char *string)
 
 #ifdef FEATURE_OMNIBOT
 	Bot_Util_SendTrigger(NULL, NULL, "Round End.", "roundend");
+#endif
+
+#ifdef FEATURE_XPSAVE
+	// persist XP and medals after awards have been handed out
+	if (g_gametype.integer == GT_WOLF_CAMPAIGN ||
+	    (g_xpSave.integer && (g_gametype.integer == GT_WOLF || g_gametype.integer == GT_WOLF_MAPVOTE)))
+	{
+		for (i = 0; i < level.numConnectedClients; i++)
+		{
+			gentity_t *ent = &g_entities[level.sortedClients[i]];
+
+			if (!ent->inuse)
+			{
+				continue;
+			}
+
+			G_XPSave_Store(ent->client);
+		}
+	}
 #endif
 
 	G_BuildEndgameStats();
