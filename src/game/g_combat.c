@@ -671,6 +671,14 @@ void player_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int 
 		// fixes premature grenade explosion, ta bani ;)
 		fire_missile(self, launchspot, launchvel, self->s.weapon);
 
+		// this bypasses FireWeapon(), so count the shot for stats now
+#ifndef DEBUG_STATS
+		if (g_gamestate.integer == GS_PLAYING)
+#endif
+		{
+			self->client->sess.aWeaponStats[GetWeaponTableData(self->s.weapon)->indexWeaponStat].atts++;
+		}
+
 		// decrease ammo
 		if (GetWeaponTableData(self->client->ps.weapon)->type & WEAPON_TYPE_GRENADE)
 		{
