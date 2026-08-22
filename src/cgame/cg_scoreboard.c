@@ -393,15 +393,17 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 				int    remaining  = cgs.xpSaveResetThreshold * 3600 - (int)difftime(now, last_reset);
 				int    hours, minutes;
 
-				if (remaining < 0)
+				if (remaining <= 0)
 				{
-					remaining = 0;
+					s = CG_TranslateString("XP RESET AT NEXT MAP");
 				}
+				else
+				{
+					hours   = remaining / 3600;
+					minutes = (remaining % 3600) / 60;
 
-				hours   = remaining / 3600;
-				minutes = (remaining % 3600) / 60;
-
-				s = va(CG_TranslateString("XP RESET IN %ih %im"), hours, minutes);
+					s = va(CG_TranslateString("XP RESET IN %ih %im"), hours, minutes);
+				}
 			}
 			else if (cgs.xpSaveResetMode == 3 && cgs.xpSaveResetThreshold > 0)
 			{
