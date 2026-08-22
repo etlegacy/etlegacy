@@ -407,10 +407,22 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			}
 			else if (cgs.xpSaveResetMode == 3 && cgs.xpSaveResetThreshold > 0)
 			{
-				int halfLife = cgs.xpSaveResetThreshold;
-				int dailyPct = (int)round((1.0 - pow(0.5, 1.0 / halfLife)) * 100.0);
+				int halfLifeHours = cgs.xpSaveResetThreshold;
+				int days          = halfLifeHours / 24;
+				int hours         = halfLifeHours % 24;
 
-				s = va(CG_TranslateString("XP DECAY %i%%/DAY (λ %iD)"), dailyPct, halfLife);
+				if (days > 0 && hours > 0)
+				{
+					s = va(CG_TranslateString("XP DECAY λ %id %ih"), days, hours);
+				}
+				else if (days > 0)
+				{
+					s = va(CG_TranslateString("XP DECAY λ %id"), days);
+				}
+				else
+				{
+					s = va(CG_TranslateString("XP DECAY λ %ih"), hours);
+				}
 			}
 			else
 #endif
