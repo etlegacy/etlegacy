@@ -1164,15 +1164,15 @@ void CG_GameStatsDraw(void)
 				y += tSpacing;
 				CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, gs->strWS[i], 0.0f, 0, tStyle, tFont);
 			}
+		}
 
-			if (gs->fHasStats)
+		if (gs->fHasStats)
+		{
+			y += tSpacing;
+			for (i = 0; i < ARRAY_LEN(gs->strExtra); i++)
 			{
 				y += tSpacing;
-				for (i = 0; i < ARRAY_LEN(gs->strExtra); i++)
-				{
-					y += tSpacing;
-					CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, gs->strExtra[i], 0.0f, 0, tStyle, tFont);
-				}
+				CG_Text_Paint_Ext(x + 4, y, tScale, tScale, tColor, gs->strExtra[i], 0.0f, 0, tStyle, tFont);
 			}
 		}
 
