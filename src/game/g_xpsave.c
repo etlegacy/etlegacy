@@ -517,7 +517,7 @@ static void G_XPSave_ApplyDecay(xpData_t *xp_data)
 			continue;
 		}
 
-		newXp = (int)(xp_data->skillpoints[i] * factor);
+		newXp = (int)round(xp_data->skillpoints[i] * factor);
 
 		if (newXp < 0)
 		{
