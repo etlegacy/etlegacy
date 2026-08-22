@@ -484,17 +484,9 @@ static void G_XPSave_ApplyDecay(xpData_t *xp_data)
 	double days, halfLife, factor;
 	int    i, newXp, decayed = qfalse;
 
-	if (g_xpSaveResetMode.integer != 3)
-	{
-		return;
-	}
-
-	if (g_xpSaveResetThreshold.integer <= 0)
-	{
-		return;
-	}
-
-	if (xp_data->updated == 0)
+	if (g_xpSaveResetMode.integer != 3 ||
+	    g_xpSaveResetThreshold.integer <= 0 ||
+	    xp_data->updated == 0)
 	{
 		return;
 	}
@@ -503,7 +495,7 @@ static void G_XPSave_ApplyDecay(xpData_t *xp_data)
 	days     = difftime(now, xp_data->updated) / 86400.0;
 	halfLife = (double)g_xpSaveResetThreshold.integer;
 
-	if (days <= 0.0 || halfLife <= 0.0)
+	if (days <= 0.0)
 	{
 		return;
 	}
@@ -518,11 +510,6 @@ static void G_XPSave_ApplyDecay(xpData_t *xp_data)
 		}
 
 		newXp = (int)round(xp_data->skillpoints[i] * factor);
-
-		if (newXp < 0)
-		{
-			newXp = 0;
-		}
 
 		if (newXp != xp_data->skillpoints[i])
 		{
