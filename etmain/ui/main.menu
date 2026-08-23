@@ -121,7 +121,7 @@ menuDef {
 			setitemcolor "discord_button" backcolor .3 .3 .3 .4 ;
 			setitemcolor "discord_logo" forecolor .55 .55 .55 1 ;
 			clearFocus ;
-			uiScript validate_openURL "https://discord.gg/UBAZFys"
+			open main_discord
 		}
 	}
 
