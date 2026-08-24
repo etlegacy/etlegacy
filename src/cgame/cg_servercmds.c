@@ -2243,6 +2243,7 @@ void CG_parseWeaponStatsGS_cmd(void)
 	int          nClientID;
 	int          nRounds;
 	int          weaponMask;
+	int          damageMask;
 	int          skillMask, xp = 0;
 	int          totHits             = 0;
 	int          totShots            = 0;
@@ -2324,44 +2325,78 @@ void CG_parseWeaponStatsGS_cmd(void)
 				}
 			}
 		}
+	}
 
-		if (gs->fHasStats)
+	// Additional damage/general stats. The mask tells us which fields are present.
+	damageMask = Q_atoi(CG_Argv(iArg++));
+	if (damageMask)
+	{
+		int   dmg_given      = 0;
+		int   dmg_rcvd       = 0;
+		int   team_dmg_given = 0;
+		int   team_dmg_rcvd  = 0;
+		int   gibs           = 0;
+		int   assists        = 0;
+		int   selfKills      = 0;
+		int   teamKills      = 0;
+		int   teamGibs       = 0;
+		float ptRatio        = 0.0f;
+		float htRatio;
+		float hsRatio;
+
+		if (damageMask & (1 << DMG_GIVEN))
 		{
-			int   dmg_given;
-			int   dmg_rcvd;
-			int   team_dmg_given;
-			int   team_dmg_rcvd;
-			int   gibs;
-			int   assists;
-			int   selfKills;
-			int   teamKills;
-			int   teamGibs;
-			float ptRatio;
-			float htRatio;
-			float hsRatio;
-
-			dmg_given      = Q_atoi(CG_Argv(iArg++));
-			dmg_rcvd       = Q_atoi(CG_Argv(iArg++));
-			team_dmg_given = Q_atoi(CG_Argv(iArg++));
-			team_dmg_rcvd  = Q_atoi(CG_Argv(iArg++));
-			gibs           = Q_atoi(CG_Argv(iArg++));
-			assists        = Q_atoi(CG_Argv(iArg++));
-			selfKills      = Q_atoi(CG_Argv(iArg++));
-			teamKills      = Q_atoi(CG_Argv(iArg++));
-			teamGibs       = Q_atoi(CG_Argv(iArg++));
-			ptRatio        = Q_atof(CG_Argv(iArg++));
-
-			htRatio = (totShots == 0) ? 0.0f : (float)(totHits * 100.0f / (float)totShots);
-			hsRatio = (totHits == 0) ? 0.0f : (float)(totHeadshots * 100.0f / (float)totHeadshotableHits);
-
-			Q_strncpyz(gs->strExtra[0], va(CG_TranslateString("Damage Given: %6d      Team Damage Given: %6d"), dmg_given, team_dmg_given), sizeof(gs->strExtra[0]));
-			Q_strncpyz(gs->strExtra[1], va(CG_TranslateString("Damage Recvd: %6d      Team Damage Recvd: %6d"), dmg_rcvd, team_dmg_rcvd), sizeof(gs->strExtra[0]));
-			Q_strncpyz(gs->strExtra[2], "", sizeof(gs->strExtra[0]));
-			Q_strncpyz(gs->strExtra[3], va(CG_TranslateString("Kills:  %3d    Team Kills: %3d    Accuracy:  %5.1f%%"), totKills, teamKills, (double)htRatio), sizeof(gs->strExtra[0]));
-			Q_strncpyz(gs->strExtra[4], va(CG_TranslateString("Deaths: %3d    Self Kills: %3d    Headshots: %5.1f%%"), totDeaths, selfKills, (double)hsRatio), sizeof(gs->strExtra[0]));
-			Q_strncpyz(gs->strExtra[5], va(CG_TranslateString("Gibs:   %3d    Team Gibs:  %3d    Playtime:  %5.1f%%"), gibs, teamGibs, (double)ptRatio), sizeof(gs->strExtra[0]));
-			Q_strncpyz(gs->strExtra[6], va(CG_TranslateString("               Assists:    %3d                      "), assists), sizeof(gs->strExtra[0]));
+			dmg_given = Q_atoi(CG_Argv(iArg++));
 		}
+		if (damageMask & (1 << DMG_RECEIVED))
+		{
+			dmg_rcvd = Q_atoi(CG_Argv(iArg++));
+		}
+		if (damageMask & (1 << DMG_TEAM_GIVEN))
+		{
+			team_dmg_given = Q_atoi(CG_Argv(iArg++));
+		}
+		if (damageMask & (1 << DMG_TEAM_RECEIVED))
+		{
+			team_dmg_rcvd = Q_atoi(CG_Argv(iArg++));
+		}
+		if (damageMask & (1 << DMG_GIBS))
+		{
+			gibs = Q_atoi(CG_Argv(iArg++));
+		}
+		if (damageMask & (1 << DMG_ASSISTS))
+		{
+			assists = Q_atoi(CG_Argv(iArg++));
+		}
+		if (damageMask & (1 << DMG_SELF_KILLS))
+		{
+			selfKills = Q_atoi(CG_Argv(iArg++));
+		}
+		if (damageMask & (1 << DMG_TEAM_KILLS))
+		{
+			teamKills = Q_atoi(CG_Argv(iArg++));
+		}
+		if (damageMask & (1 << DMG_TEAM_GIBS))
+		{
+			teamGibs = Q_atoi(CG_Argv(iArg++));
+		}
+		if (damageMask & (1 << DMG_PLAYTIME))
+		{
+			ptRatio = Q_atof(CG_Argv(iArg++));
+		}
+
+		htRatio = (totShots == 0) ? 0.0f : (float)(totHits * 100.0f / (float)totShots);
+		hsRatio = (totHits == 0) ? 0.0f : (float)(totHeadshots * 100.0f / (float)totHeadshotableHits);
+
+		Q_strncpyz(gs->strExtra[0], va(CG_TranslateString("Damage Given: %6d      Team Damage Given: %6d"), dmg_given, team_dmg_given), sizeof(gs->strExtra[0]));
+		Q_strncpyz(gs->strExtra[1], va(CG_TranslateString("Damage Recvd: %6d      Team Damage Recvd: %6d"), dmg_rcvd, team_dmg_rcvd), sizeof(gs->strExtra[0]));
+		Q_strncpyz(gs->strExtra[2], "", sizeof(gs->strExtra[0]));
+		Q_strncpyz(gs->strExtra[3], va(CG_TranslateString("Kills:  %3d    Team Kills: %3d    Accuracy:  %5.1f%%"), totKills, teamKills, (double)htRatio), sizeof(gs->strExtra[0]));
+		Q_strncpyz(gs->strExtra[4], va(CG_TranslateString("Deaths: %3d    Self Kills: %3d    Headshots: %5.1f%%"), totDeaths, selfKills, (double)hsRatio), sizeof(gs->strExtra[0]));
+		Q_strncpyz(gs->strExtra[5], va(CG_TranslateString("Gibs:   %3d    Team Gibs:  %3d    Playtime:  %5.1f%%"), gibs, teamGibs, (double)ptRatio), sizeof(gs->strExtra[0]));
+		Q_strncpyz(gs->strExtra[6], va(CG_TranslateString("               Assists:    %3d                      "), assists), sizeof(gs->strExtra[0]));
+
+		gs->fHasStats = qtrue;
 	}
 
 	// Derive XP from individual skill XP
@@ -2437,13 +2472,13 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 {
 	clientInfo_t *ci;
 	qboolean     fFull;
-	qboolean     fHasStats = qfalse;
 	char         strName[MAX_NAME_LENGTH];
 	int          atts, deaths, hits, kills, headshots;
 	unsigned int i, iArg = 1;
 	unsigned int nClient;
 	unsigned int nRounds;
 	unsigned int dwWeaponMask;
+	unsigned int dwDamageMask;
 	unsigned int dwSkillPointMask;
 	int          xp                  = 0; // XP can be negative
 	int          totHits             = 0;
@@ -2486,19 +2521,6 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 	}
 	else
 	{
-		int   dmg_given;
-		int   dmg_rcvd;
-		int   team_dmg_given;
-		int   team_dmg_rcvd;
-		int   gibs;
-		int   assists;
-		int   selfKills;
-		int   teamKills;
-		int   teamGibs;
-		float ptRatio;
-		float htRatio;
-		float hsRatio;
-
 		for (i = WS_KNIFE; i < WS_MAX; i++)
 		{
 			if (dwWeaponMask & (1 << i))
@@ -2524,17 +2546,12 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 				if (atts > 0 || hits > 0)
 				{
 					float acc = (atts == 0) ? 0.0f : (float)(hits * 100.0f / (float)atts);
-					fHasStats = qtrue;
 
 					Q_strcat(strName, sizeof(strName), va("^7%s ^5%4d/%-4d ", va("%5.1f", (double)acc), hits, atts));
 				}
 				else
 				{
 					Q_strcat(strName, sizeof(strName), va("                "));
-					if (kills > 0 || deaths > 0)
-					{
-						fHasStats = qtrue;
-					}
 				}
 
 				// syringe doesn't have kill/death stats
@@ -2552,40 +2569,85 @@ void CG_parseWeaponStats_cmd(void(txt_dump) (const char *))
 				}
 			}
 		}
+	}
 
-		if (fHasStats)
+	// Additional damage/general stats. The mask tells us which fields are present.
+	dwDamageMask = Q_atoi(CG_Argv(iArg++));
+	if (dwDamageMask)
+	{
+		int   dmg_given      = 0;
+		int   dmg_rcvd       = 0;
+		int   team_dmg_given = 0;
+		int   team_dmg_rcvd  = 0;
+		int   gibs           = 0;
+		int   assists        = 0;
+		int   selfKills      = 0;
+		int   teamKills      = 0;
+		int   teamGibs       = 0;
+		float ptRatio        = 0.0f;
+		float htRatio;
+		float hsRatio;
+
+		if (dwDamageMask & (1 << DMG_GIVEN))
 		{
-			dmg_given      = Q_atoi(CG_Argv(iArg++));
-			dmg_rcvd       = Q_atoi(CG_Argv(iArg++));
-			team_dmg_given = Q_atoi(CG_Argv(iArg++));
-			team_dmg_rcvd  = Q_atoi(CG_Argv(iArg++));
-			gibs           = Q_atoi(CG_Argv(iArg++));
-			assists        = Q_atoi(CG_Argv(iArg++));
-			selfKills      = Q_atoi(CG_Argv(iArg++));
-			teamKills      = Q_atoi(CG_Argv(iArg++));
-			teamGibs       = Q_atoi(CG_Argv(iArg++));
-			ptRatio        = atof(CG_Argv(iArg++));
-
-			htRatio = (totShots == 0) ? 0.0 : (float)(totHits * 100.0 / (float)totShots);
-			hsRatio = (totHits == 0) ? 0.0 : (float)(totHeadshots * 100.0 / (float)totHeadshotableHits);
-
-			if (!fFull)
-			{
-				txt_dump("\n\n\n");
-			}
-			else
-			{
-				txt_dump("\n");
-			}
-
-			txt_dump(va("^3Damage Given: ^7%6d     ^3Team Damage Given: ^7%6d\n", dmg_given, team_dmg_given));
-			txt_dump(va("^3Damage Recvd: ^7%6d     ^3Team Damage Recvd: ^7%6d\n", dmg_rcvd, team_dmg_rcvd));
-			txt_dump("\n");
-			txt_dump(va("^3Kills:  ^7%3d   ^3Team Kills: ^7%3d   ^3Accuracy:  ^7 %5.1f%%\n", totKills, teamKills, htRatio));
-			txt_dump(va("^3Deaths: ^7%3d   ^3Self Kills: ^7%3d   ^3Headshots: ^7 %5.1f%%\n", totDeaths, selfKills, hsRatio));
-			txt_dump(va("^3Gibs:   ^7%3d   ^3Team Gibs:  ^7%3d   ^3Playtime:  ^7 %5.1f%%\n", gibs, teamGibs, ptRatio));
-			txt_dump(va("                  ^3Assists:    ^7%3d                          \n", assists));
+			dmg_given = Q_atoi(CG_Argv(iArg++));
 		}
+		if (dwDamageMask & (1 << DMG_RECEIVED))
+		{
+			dmg_rcvd = Q_atoi(CG_Argv(iArg++));
+		}
+		if (dwDamageMask & (1 << DMG_TEAM_GIVEN))
+		{
+			team_dmg_given = Q_atoi(CG_Argv(iArg++));
+		}
+		if (dwDamageMask & (1 << DMG_TEAM_RECEIVED))
+		{
+			team_dmg_rcvd = Q_atoi(CG_Argv(iArg++));
+		}
+		if (dwDamageMask & (1 << DMG_GIBS))
+		{
+			gibs = Q_atoi(CG_Argv(iArg++));
+		}
+		if (dwDamageMask & (1 << DMG_ASSISTS))
+		{
+			assists = Q_atoi(CG_Argv(iArg++));
+		}
+		if (dwDamageMask & (1 << DMG_SELF_KILLS))
+		{
+			selfKills = Q_atoi(CG_Argv(iArg++));
+		}
+		if (dwDamageMask & (1 << DMG_TEAM_KILLS))
+		{
+			teamKills = Q_atoi(CG_Argv(iArg++));
+		}
+		if (dwDamageMask & (1 << DMG_TEAM_GIBS))
+		{
+			teamGibs = Q_atoi(CG_Argv(iArg++));
+		}
+		if (dwDamageMask & (1 << DMG_PLAYTIME))
+		{
+			ptRatio = atof(CG_Argv(iArg++));
+		}
+
+		htRatio = (totShots == 0) ? 0.0 : (float)(totHits * 100.0 / (float)totShots);
+		hsRatio = (totHits == 0) ? 0.0 : (float)(totHeadshots * 100.0 / (float)totHeadshotableHits);
+
+		if (!fFull)
+		{
+			txt_dump("\n\n\n");
+		}
+		else
+		{
+			txt_dump("\n");
+		}
+
+		txt_dump(va("^3Damage Given: ^7%6d     ^3Team Damage Given: ^7%6d\n", dmg_given, team_dmg_given));
+		txt_dump(va("^3Damage Recvd: ^7%6d     ^3Team Damage Recvd: ^7%6d\n", dmg_rcvd, team_dmg_rcvd));
+		txt_dump("\n");
+		txt_dump(va("^3Kills:  ^7%3d   ^3Team Kills: ^7%3d   ^3Accuracy:  ^7 %5.1f%%\n", totKills, teamKills, htRatio));
+		txt_dump(va("^3Deaths: ^7%3d   ^3Self Kills: ^7%3d   ^3Headshots: ^7 %5.1f%%\n", totDeaths, selfKills, hsRatio));
+		txt_dump(va("^3Gibs:   ^7%3d   ^3Team Gibs:  ^7%3d   ^3Playtime:  ^7 %5.1f%%\n", gibs, teamGibs, ptRatio));
+		txt_dump(va("                  ^3Assists:    ^7%3d                          \n", assists));
 	}
 
 	if (!fFull)

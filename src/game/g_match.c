@@ -527,7 +527,7 @@ void G_createStatsJson(gentity_t *ent, void *target)
  */
 char *G_createStats(gentity_t *ent)
 {
-	unsigned int i, dwWeaponMask = 0, dwSkillPointMask = 0;
+	unsigned int i, dwWeaponMask = 0, dwDamageMask = 0, dwSkillPointMask = 0;
 	char         strWeapInfo[MAX_STRING_CHARS]  = { 0 };
 	char         strSkillInfo[MAX_STRING_CHARS] = { 0 };
 	gclient_t    *cl;
@@ -560,21 +560,90 @@ char *G_createStats(gentity_t *ent)
 	}
 
 	// Additional info
-	// Only send these when there are some weaponstats. This is what the client expects.
-	if (dwWeaponMask != 0)
+	if (ent->client->sess.damage_given)
 	{
-		Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d %d %d %d %d %d %d %d %d %.1f",
-		                                              ent->client->sess.damage_given,
-		                                              ent->client->sess.damage_received,
-		                                              ent->client->sess.team_damage_given,
-		                                              ent->client->sess.team_damage_received,
-		                                              ent->client->sess.gibs,
-		                                              ent->client->sess.kill_assists,
-		                                              ent->client->sess.self_kills,
-		                                              ent->client->sess.team_kills,
-		                                              ent->client->sess.team_gibs,
-		                                              (ent->client->sess.time_axis + ent->client->sess.time_allies) == 0 ? 0 : 100.0 * ent->client->sess.time_played / (ent->client->sess.time_axis + ent->client->sess.time_allies)
-		                                              ));
+		dwDamageMask |= (1 << DMG_GIVEN);
+	}
+	if (ent->client->sess.damage_received)
+	{
+		dwDamageMask |= (1 << DMG_RECEIVED);
+	}
+	if (ent->client->sess.team_damage_given)
+	{
+		dwDamageMask |= (1 << DMG_TEAM_GIVEN);
+	}
+	if (ent->client->sess.team_damage_received)
+	{
+		dwDamageMask |= (1 << DMG_TEAM_RECEIVED);
+	}
+	if (ent->client->sess.gibs)
+	{
+		dwDamageMask |= (1 << DMG_GIBS);
+	}
+	if (ent->client->sess.kill_assists)
+	{
+		dwDamageMask |= (1 << DMG_ASSISTS);
+	}
+	if (ent->client->sess.self_kills)
+	{
+		dwDamageMask |= (1 << DMG_SELF_KILLS);
+	}
+	if (ent->client->sess.team_kills)
+	{
+		dwDamageMask |= (1 << DMG_TEAM_KILLS);
+	}
+	if (ent->client->sess.team_gibs)
+	{
+		dwDamageMask |= (1 << DMG_TEAM_GIBS);
+	}
+	if (ent->client->sess.time_axis + ent->client->sess.time_allies > 0)
+	{
+		dwDamageMask |= (1 << DMG_PLAYTIME);
+	}
+
+	Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %u", dwDamageMask));
+	if (dwDamageMask)
+	{
+		if (dwDamageMask & (1 << DMG_GIVEN))
+		{
+			Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d", ent->client->sess.damage_given));
+		}
+		if (dwDamageMask & (1 << DMG_RECEIVED))
+		{
+			Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d", ent->client->sess.damage_received));
+		}
+		if (dwDamageMask & (1 << DMG_TEAM_GIVEN))
+		{
+			Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d", ent->client->sess.team_damage_given));
+		}
+		if (dwDamageMask & (1 << DMG_TEAM_RECEIVED))
+		{
+			Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d", ent->client->sess.team_damage_received));
+		}
+		if (dwDamageMask & (1 << DMG_GIBS))
+		{
+			Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d", ent->client->sess.gibs));
+		}
+		if (dwDamageMask & (1 << DMG_ASSISTS))
+		{
+			Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d", ent->client->sess.kill_assists));
+		}
+		if (dwDamageMask & (1 << DMG_SELF_KILLS))
+		{
+			Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d", ent->client->sess.self_kills));
+		}
+		if (dwDamageMask & (1 << DMG_TEAM_KILLS))
+		{
+			Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d", ent->client->sess.team_kills));
+		}
+		if (dwDamageMask & (1 << DMG_TEAM_GIBS))
+		{
+			Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d", ent->client->sess.team_gibs));
+		}
+		if (dwDamageMask & (1 << DMG_PLAYTIME))
+		{
+			Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %.1f", (ent->client->sess.time_axis + ent->client->sess.time_allies) == 0 ? 0 : 100.0 * ent->client->sess.time_played / (ent->client->sess.time_axis + ent->client->sess.time_allies)));
+		}
 	}
 
 	// Add skillpoints as necessary

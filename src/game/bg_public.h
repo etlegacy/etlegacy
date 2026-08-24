@@ -1875,6 +1875,26 @@ typedef struct
 
 extern const weap_ws_t aWeaponInfo[WS_MAX];
 
+/**
+ * @enum damageStat_t
+ * @brief Bitmask indices for the additional damage/general stats block sent with weapon stats.
+ */
+typedef enum
+{
+	DMG_GIVEN = 0,
+	DMG_RECEIVED,
+	DMG_TEAM_GIVEN,
+	DMG_TEAM_RECEIVED,
+	DMG_GIBS,
+	DMG_ASSISTS,
+	DMG_SELF_KILLS,
+	DMG_TEAM_KILLS,
+	DMG_TEAM_GIBS,
+	DMG_PLAYTIME,
+
+	DMG_MAX
+} damageStat_t;
+
 //---------------------------------------------------------
 
 /**
