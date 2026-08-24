@@ -1192,7 +1192,7 @@ typedef struct
 	int physicsTime;                        ///< either cg.snap->time or cg.nextSnap->time
 
 	int timelimitWarnings;                  ///< 5 min, 1 min, overtime
-	int ownWaveTicktockLastReinfTime;      ///< last own reinforcement time seen for one-shot ticktock warning
+	int ownWaveWarningLastReinfTime;        ///< last own reinforcement time seen for one-shot reinforcement warning
 
 	qboolean mapRestart;                    ///< set on a map restart to set back the weapon
 
@@ -1870,10 +1870,7 @@ typedef struct
 	sfxHandle_t countFight;
 	sfxHandle_t countPrepare;
 	sfxHandle_t goatAxis;
-	sfxHandle_t reinforceTickSound;
-	sfxHandle_t reinforceTockSound;
-	sfxHandle_t reinforceTickLoudSound;
-	sfxHandle_t reinforceTockLoudSound;
+	sfxHandle_t reinforceWarningSound;
 
 	// hitsounds
 	sfxHandle_t headShot;

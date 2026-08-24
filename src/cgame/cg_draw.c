@@ -3007,7 +3007,7 @@ void CG_DrawSpectatorMessage(hudComponent_t *comp)
 int CG_CalculateReinfTime(team_t team)
 {
 	int dwDeployTime = (team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer;
-	return (int)(1 + (dwDeployTime - ((cgs.aReinfOffset[team] + cg.time - cgs.levelStartTime) % dwDeployTime)) * 0.001f);
+	return 1 + (dwDeployTime - ((cgs.aReinfOffset[team] + cg.time - cgs.levelStartTime) % dwDeployTime)) / 1000;
 }
 
 /**
