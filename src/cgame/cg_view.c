@@ -2306,7 +2306,7 @@ static void CG_DrawSpawnpoints(void)
 	}
 }
 
-static ID_INLINE void CG_PlayAnnouncementReinforcementWarning()
+static ID_INLINE void CG_PlayReinforcementWarning()
 {
 	// Optionally play a single warning sound a configurable number of seconds before the own team reinforcement wave.
 	if (cg_reinforceWarningAudio.integer
@@ -2470,7 +2470,7 @@ static void CG_PlayAnnouncement()
 		}
 	}
 
-	CG_PlayAnnouncementReinforcementWarning();
+	CG_PlayReinforcementWarning();
 }
 
 /**

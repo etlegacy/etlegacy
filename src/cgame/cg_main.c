@@ -842,7 +842,7 @@ static void CG_RegisterSounds(void)
 	cgs.media.countFight            = trap_S_RegisterSound("sound/osp/fight.wav", qfalse);
 	cgs.media.countPrepare          = trap_S_RegisterSound("sound/osp/prepare.wav", qfalse);
 	cgs.media.goatAxis              = trap_S_RegisterSound("sound/osp/goat.wav", qfalse);
-	cgs.media.reinforceWarningSound = trap_S_RegisterSound("sound/menu/select.wav", qfalse);
+	cgs.media.reinforceWarningSound = trap_S_RegisterSound("sound/multiplayer/reinforceWarning.wav", qfalse);
 
 	cgs.media.headShot = trap_S_RegisterSound("sound/hitsounds/hithead.wav", qfalse);
 	cgs.media.bodyShot = trap_S_RegisterSound("sound/hitsounds/hit.wav", qfalse);
