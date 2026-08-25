@@ -106,7 +106,7 @@ menuDef {
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 2), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Voice chat:"), .2, 8, "cg_voiceChats", _("Play voice chat in-game"))
 	YESNO(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 3), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Team Voice chat:"), .2, 8, "cg_teamVoiceChatsOnly", _("Play only voice team chat in-game"))
 	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 4), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Hitsounds:"), .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Body Hit Sound" 3 "No Head Hit Sound" 5 "No Team Hit Sound" 9 }, _("Set hit sounds"))
-	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 5), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Reinforcement Warning:"), .2, 8, "cg_reinforceWarningTime", cvarFloatList { "Off" 0 "1 sec" 1 "2 sec" 2 "3 sec" 3 }, _("Play a warning sound this many seconds before reinforcement"))
+	MULTI(SUBWINDOW_OPTION_X2_START, SUBWINDOW_OPTION_COMPUTE_Y(SOUND_Y, 5), SUBWINDOW_OPTION_WIDTH_R, SUBWINDOW_OPTION_HEIGHT, _("Reinforcement Warning:"), .2, 8, "cg_reinforceWarningTime", cvarFloatList { "Off" 0 "1 sec" 1 "2 sec" 2 "3 sec" 3 }, _("Play a warning sound and color the timer yellow this many seconds before reinforcement"))
 
 // Miscellaneous //
 #define MISC_Y (SOUND_Y + SOUND_H + SUBWINDOW_OPTION_Y_PADDING)

@@ -50,7 +50,7 @@ static int         fps;
 */
 const hudComponentFields_t hudComponentFields[] =
 {
-	{ HUDF(crosshair),          CG_DrawCrosshair,                 HUD_COMP_TYPE_SPECIFIC,  0.19f, { "Pulse",         "Pulse Alt",    "Dynamic Color",  "Dynamic Color Alt" } },         // FIXME: outside cg_draw_hud
+	{ HUDF(crosshair),          CG_DrawCrosshair,                 HUD_COMP_TYPE_SPECIFIC,  0.19f, { "Pulse",         "Pulse Alt",     "Dynamic Color",  "Dynamic Color Alt" } },        // FIXME: outside cg_draw_hud
 	{ HUDF(staminabar),         CG_DrawStaminaBar,                HUD_COMP_TYPE_BAR,       0.19f, { 0 } },
 	{ HUDF(breathbar),          CG_DrawBreathBar,                 HUD_COMP_TYPE_BAR,       0.19f, { 0 } },
 	{ HUDF(healthbar),          CG_DrawPlayerHealthBar,           HUD_COMP_TYPE_BAR,       0.19f, { "Dynamic Color" } },
@@ -63,21 +63,21 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(weaponheatbar),      CG_DrawGunHeatBar,                HUD_COMP_TYPE_BAR,       0.19f, { 0 } },
 	{ HUDF(weaponicon),         CG_DrawGunIcon,                   HUD_COMP_TYPE_SPECIFIC,  0.19f, { "Icon Flash",    "Only Ticking" } },
 	{ HUDF(weaponammo),         CG_DrawAmmoCount,                 HUD_COMP_TYPE_TEXT,      0.25f, { "Dynamic Color" } },
-	{ HUDF(fireteam),           CG_DrawFireTeamOverlay,           HUD_COMP_TYPE_SPECIFIC,  0.20f, { "Latched Class", "No Header",    "Colorless Name", "Status Color Name", "Status Color Row", "Spawn Point", "Spawn Point Location", "Minor Spawn Point", "Health Text", "Mini Health Bar"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages),      CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages2),     CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages3),     CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
-	{ HUDF(popupmessages4),     CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",  "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(fireteam),           CG_DrawFireTeamOverlay,           HUD_COMP_TYPE_SPECIFIC,  0.20f, { "Latched Class", "No Header",     "Colorless Name", "Status Color Name", "Status Color Row", "Spawn Point", "Spawn Point Location", "Minor Spawn Point", "Health Text", "Mini Health Bar"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages),      CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",   "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages2),     CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",   "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages3),     CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",   "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
+	{ HUDF(popupmessages4),     CG_DrawPM,                        HUD_COMP_TYPE_FEED,      0.22f, { "No Connect",    "No TeamJoin",   "No Mission",     "No Pickup", "No Death", "No Echo", "Weapon Icon", "Alt Weap Icons", "Swap V<->K", "Force Colors", "Scroll Down"} }, // FIXME: outside cg_draw_hud
 	{ HUDF(powerups),           CG_DrawPowerUps,                  HUD_COMP_TYPE_SPECIFIC,  0.19f, { 0 } },
 	{ HUDF(objectives),         CG_DrawObjectiveStatus,           HUD_COMP_TYPE_SPECIFIC,  0.19f, { 0 } },
 	{ HUDF(hudhead),            CG_DrawPlayerStatusHead,          HUD_COMP_TYPE_SPECIFIC,  0.19f, { 0 } },
-	{ HUDF(cursorhints),        CG_DrawCursorhint,                HUD_COMP_TYPE_SPECIFIC,  0.19f, { "Size Pulse",    "Strobe Pulse", "Alpha Pulse" } },// FIXME: outside cg_draw_hud
+	{ HUDF(cursorhints),        CG_DrawCursorhint,                HUD_COMP_TYPE_SPECIFIC,  0.19f, { "Size Pulse",    "Strobe Pulse",  "Alpha Pulse" } },// FIXME: outside cg_draw_hud
 	{ HUDF(cursorhintsbar),     CG_DrawCursorHintBar,             HUD_COMP_TYPE_BAR,       0.19f, { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(cursorhintstext),    CG_DrawCursorHintText,            HUD_COMP_TYPE_TEXT,      0.19f, { "Draw Suffix" } },// FIXME: outside cg_draw_hud
 	{ HUDF(weaponstability),    CG_DrawWeapStability,             HUD_COMP_TYPE_BAR,       0.19f, { "Always" } },    // FIXME: outside cg_draw_hud
 	{ HUDF(livesleft),          CG_DrawLivesLeft,                 HUD_COMP_TYPE_SPECIFIC,  0.19f, { 0 } },
-	{ HUDF(roundtimer),         CG_DrawRoundTimer,                HUD_COMP_TYPE_TEXT,      0.19f, { "Simple",        "Double Digits" } },
-	{ HUDF(reinforcement),      CG_DrawRespawnTimer,              HUD_COMP_TYPE_TEXT,      0.19f, { "Double Digits", "Color Gradient" } },
+	{ HUDF(roundtimer),         CG_DrawRoundTimer,                HUD_COMP_TYPE_TEXT,      0.19f, { "Simple",        "Double Digits", "Reinforce Warning" } },
+	{ HUDF(reinforcement),      CG_DrawRespawnTimer,              HUD_COMP_TYPE_TEXT,      0.19f, { "Double Digits", "Reinforce Warning" } },
 	{ HUDF(spawntimer),         CG_DrawSpawnTimer,                HUD_COMP_TYPE_TEXT,      0.19f, { "Double Digits" } },
 	{ HUDF(localtime),          CG_DrawLocalTime,                 HUD_COMP_TYPE_TEXT,      0.19f, { "Second",        "12 Hours" } },
 	{ HUDF(votetext),           CG_DrawVote,                      HUD_COMP_TYPE_MULTITEXT, 0.22f, { "Complaint" } }, // FIXME: outside cg_draw_hud
@@ -97,7 +97,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(disconnect),         CG_DrawDisconnect,                HUD_COMP_TYPE_SPECIFIC,  0.35f, { "No Text" } },
 	{ HUDF(chat),               CG_DrawTeamInfo,                  HUD_COMP_TYPE_FEED,      0.20f, { "No Team Flag" } },// FIXME: outside cg_draw_hud
 	{ HUDF(spectatorstatus),    CG_DrawSpectator,                 HUD_COMP_TYPE_TEXT,      0.35f, { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(pmitemsbig),         CG_DrawPMItemsBig,                HUD_COMP_TYPE_FEED,      0.22f, { "No Skill",      "No Rank" } },  // FIXME: outside cg_draw_hud
+	{ HUDF(pmitemsbig),         CG_DrawPMItemsBig,                HUD_COMP_TYPE_FEED,      0.22f, { "No Skill",      "No Rank" } },   // FIXME: outside cg_draw_hud
 	{ HUDF(warmuptitle),        CG_DrawWarmupTitle,               HUD_COMP_TYPE_TEXT,      0.35f, { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(warmuptext),         CG_DrawWarmupText,                HUD_COMP_TYPE_MULTITEXT, 0.22f, { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(objectivetext),      CG_DrawObjectiveInfo,             HUD_COMP_TYPE_MULTITEXT, 0.22f, { 0 } },           // FIXME: outside cg_draw_hud
@@ -105,14 +105,14 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(centerprint),        CG_DrawCenterString,              HUD_COMP_TYPE_MULTITEXT, 0.22f, { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(banner),             CG_DrawBannerPrint,               HUD_COMP_TYPE_MULTITEXT, 0.23f, { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(crosshairtext),      CG_DrawCrosshairNames,            HUD_COMP_TYPE_TEXT,      0.25f, { "Full Color",    "Explosive Owner" } },// FIXME: outside cg_draw_hud
-	{ HUDF(crosshairbar),       CG_DrawCrosshairHealthBar,        HUD_COMP_TYPE_BAR,       0.25f, { "Class",         "Rank",         "Dynamic Color" } },// FIXME: outside cg_draw_hud
+	{ HUDF(crosshairbar),       CG_DrawCrosshairHealthBar,        HUD_COMP_TYPE_BAR,       0.25f, { "Class",         "Rank",          "Dynamic Color" } },// FIXME: outside cg_draw_hud
 	{ HUDF(stats),              CG_DrawShoutcastPlayerStatus,     HUD_COMP_TYPE_SPECIFIC,  0.19f, { 0 } },           // FIXME: outside cg_draw_hud
-	{ HUDF(xpgain),             CG_DrawPMItemsXPGain,             HUD_COMP_TYPE_FEED,      0.22f, { "Scroll Down",   "No Reason",    "No Stack",       "No XP Add up"      } }, // FIXME: outside cg_draw_hud
+	{ HUDF(xpgain),             CG_DrawPMItemsXPGain,             HUD_COMP_TYPE_FEED,      0.22f, { "Scroll Down",   "No Reason",     "No Stack",       "No XP Add up"      } }, // FIXME: outside cg_draw_hud
 	{ HUDF(scPlayerListAxis),   CG_DrawShoutcastPlayerListAxis,   HUD_COMP_TYPE_SPECIFIC,  0.16f, { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(scPlayerListAllies), CG_DrawShoutcastPlayerListAllies, HUD_COMP_TYPE_SPECIFIC,  0.16f, { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(scTeamNamesAxis),    CG_DrawShoutcastTeamNameAxis,     HUD_COMP_TYPE_SPECIFIC,  0.3f,  { "Show Score",    "Swap Score" } },// FIXME: outside cg_draw_hud
 	{ HUDF(scTeamNamesAllies),  CG_DrawShoutcastTeamNameAllies,   HUD_COMP_TYPE_SPECIFIC,  0.3f,  { "Show Score",    "Swap Score" } },// FIXME: outside cg_draw_hud
-	{ HUDF(compass),            CG_DrawNewCompass,                HUD_COMP_TYPE_SPECIFIC,  0.19f, { "Square",        "Draw Item",    "Draw Sec Obj",   "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw", "Point North", "Icons Inside", "Dynamic Ticks", "Dynamic Direction"} },
+	{ HUDF(compass),            CG_DrawNewCompass,                HUD_COMP_TYPE_SPECIFIC,  0.19f, { "Square",        "Draw Item",     "Draw Sec Obj",   "Draw Prim Obj", "Decor", "Direction", "Cardinal Pts", "Always Draw", "Point North", "Icons Inside", "Dynamic Ticks", "Dynamic Direction"} },
 	{ NULL,                     0,                                qfalse,                  NULL,  HUD_COMP_TYPE_MAX, 0.00f,{ 0 } },
 };
 
@@ -3210,82 +3210,6 @@ static qboolean CG_SpawnTimersText(char **s, char **rt, qboolean isDoubleDigits)
 }
 
 /**
- * @brief CG_GetReinforcementMaxValue
- * @details Returns the maximum reinforcement countdown value for the timer currently shown in the reinforcement HUD element.
- */
-static int CG_GetReinforcementMaxValue(void)
-{
-	team_t team;
-	int    deployMs;
-
-	if (cgs.gamestate != GS_PLAYING)
-	{
-		team = (cgs.clientinfo[cg.snap->ps.clientNum].team == TEAM_AXIS) ? TEAM_AXIS : TEAM_ALLIES;
-	}
-	else if (cgs.gametype != GT_WOLF_LMS)
-	{
-		if (cgs.clientinfo[cg.clientNum].shoutcaster)
-		{
-			// Reinforcement HUD shows allies time while shoutcasting.
-			team = TEAM_ALLIES;
-		}
-		else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR || (cg.snap->ps.pm_flags & PMF_FOLLOW))
-		{
-			team = cgs.clientinfo[cg.snap->ps.clientNum].team;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	else
-	{
-		return 0;
-	}
-
-	deployMs = (team == TEAM_AXIS) ? cg_redlimbotime.integer : cg_bluelimbotime.integer;
-	if (deployMs <= 0)
-	{
-		return 0;
-	}
-
-	// CG_CalculateReinfTime includes a +1 second offset while playing.
-	return (cgs.gamestate == GS_PLAYING) ? (deployMs / 1000) + 1 : (deployMs / 1000);
-}
-
-/**
- * @brief CG_ApplyReinforcementGradientColor
- * @details Applies a two-segment linear gradient: red (0) -> yellow (middle) -> green (highest).
- */
-static void CG_ApplyReinforcementGradientColor(vec4_t color, int countdownValue, int maxValue)
-{
-	float timeFactor;
-
-	if (maxValue <= 0)
-	{
-		return;
-	}
-
-	countdownValue = Com_Clamp(0, maxValue, countdownValue);
-	timeFactor     = (float)countdownValue / (float)maxValue;
-
-	if (timeFactor <= 0.5f)
-	{
-		// Red to yellow.
-		color[0] = 1.f;
-		color[1] = timeFactor * 2.f;
-		color[2] = 0.f;
-	}
-	else
-	{
-		// Yellow to green.
-		color[0] = 1.f - ((timeFactor - 0.5f) * 2.f);
-		color[1] = 1.f;
-		color[2] = 0.f;
-	}
-}
-
-/**
  * @brief CG_RoundTimerText
  * @return
  */
@@ -3366,24 +3290,29 @@ void CG_DrawRespawnTimer(hudComponent_t *comp)
 {
 	char     *s = NULL, *rt = NULL;
 	qboolean blink;
-	qboolean colorCountdown;
+	qboolean reinforceWarning;
 	vec4_t   drawColor;
+	int      reinfTime;
 
 	if (cg_paused.integer)
 	{
 		return;
 	}
 
-	blink          = CG_SpawnTimersText(&s, &rt, comp->style & REINFORCEMENT_TIMER_DOUBLE_DIGITS);
-	colorCountdown = (comp->style & REINFORCEMENT_TIMER_COLOR_GRADIENT) != 0;
+	blink            = CG_SpawnTimersText(&s, &rt, comp->style & REINFORCEMENT_TIMER_DOUBLE_DIGITS);
+	reinforceWarning = (comp->style & REINFORCEMENT_TIMER_REINFORCE_WARNING) != 0;
 
 	if (s)
 	{
 		Vector4Copy(comp->colorMain, drawColor);
 
-		if (colorCountdown && Q_isanumber(s))
+		if (reinforceWarning && cg_reinforceWarningTime.integer > 0 && Q_isanumber(s))
 		{
-			CG_ApplyReinforcementGradientColor(drawColor, atoi(s), CG_GetReinforcementMaxValue());
+			reinfTime = atoi(s);
+			if (reinfTime > 0 && reinfTime <= cg_reinforceWarningTime.integer)
+			{
+				Vector4Copy(colorYellow, drawColor);
+			}
 		}
 
 		CG_DrawCompText(comp, s, drawColor, blink ? ITEM_TEXTSTYLE_BLINK : comp->styleText, &cgs.media.limboFont1);
@@ -3409,7 +3338,7 @@ void CG_DrawSpawnTimer(hudComponent_t *comp)
 	//  spawntimer/reinforcement timer? but the function doesn't treat them as such...
 	blink = CG_SpawnTimersText(&s, &rt, comp->style & REINFORCEMENT_TIMER_DOUBLE_DIGITS);
 
-	if (s)
+	if (rt)
 	{
 		CG_DrawCompText(comp, rt, comp->colorMain, blink ? ITEM_TEXTSTYLE_BLINK : comp->styleText, &cgs.media.limboFont1);
 	}
@@ -3423,13 +3352,23 @@ void CG_DrawRoundTimer(hudComponent_t *comp)
 {
 	char     *s = NULL, *rt = NULL, *mt;
 	qboolean blink;
+	qboolean reinforceWarning;
+	qboolean sWarn = qfalse;
+	int      value;
 
 	if (cg_paused.integer)
 	{
 		return;
 	}
 
-	blink = CG_SpawnTimersText(&s, &rt, comp->style & 2);
+	blink            = CG_SpawnTimersText(&s, &rt, comp->style & 2);
+	reinforceWarning = (comp->style & BIT(2)) != 0;
+
+	if (reinforceWarning && cg_reinforceWarningTime.integer > 0 && s && Q_isanumber(s))
+	{
+		value = atoi(s);
+		sWarn = (value > 0 && value <= cg_reinforceWarningTime.integer);
+	}
 
 	mt = va("%s%s", "^*", CG_RoundTimerText());
 
@@ -3441,7 +3380,7 @@ void CG_DrawRoundTimer(hudComponent_t *comp)
 	{
 		if (s)
 		{
-			s = va("^$%s%s%s", s, " ", mt);
+			s = va("%s%s%s%s", sWarn ? "^3" : "^$", s, " ", mt);
 		}
 		else
 		{
