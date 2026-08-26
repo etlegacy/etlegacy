@@ -2311,8 +2311,9 @@ static ID_INLINE void CG_PlayAnnouncementReinforcementWarning()
 	// Optionally play a single warning sound a configurable number of seconds before the own team reinforcement wave.
 	if (cg_reinforceWarningAudio.integer
 	    && cg_reinforceWarningTime.integer > 0
-	    && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR
-	    && cgs.gamestate == GS_PLAYING)
+	    && cgs.gamestate == GS_PLAYING
+	    && !(cg.snap->ps.pm_flags & PMF_FOLLOW)
+	    && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR)
 	{
 		team_t ownTeam      = cgs.clientinfo[cg.clientNum].team;
 		int warningLeadMsec = 100;
@@ -2333,7 +2334,7 @@ static ID_INLINE void CG_PlayAnnouncementReinforcementWarning()
 	}
 	else
 	{
-		// Reset outside active non-spectator play state so warning can trigger again when re-entering play.
+		// Reset outside active play state so warning can trigger again when re-entering play.
 		cg.ownWaveWarningLastReinfTime = -1;
 	}
 }

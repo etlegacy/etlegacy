@@ -3306,7 +3306,10 @@ void CG_DrawRespawnTimer(hudComponent_t *comp)
 	{
 		Vector4Copy(comp->colorMain, drawColor);
 
-		if (reinforceWarning && cg_reinforceWarningTime.integer > 0 && Q_isanumber(s))
+		if (reinforceWarning && cg_reinforceWarningTime.integer > 0 && Q_isanumber(s)
+		    && cgs.gamestate == GS_PLAYING
+		    && !(cg.snap->ps.pm_flags & PMF_FOLLOW)
+		    && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR)
 		{
 			reinfTime = atoi(s);
 			if (reinfTime > 0 && reinfTime <= cg_reinforceWarningTime.integer)
@@ -3364,7 +3367,10 @@ void CG_DrawRoundTimer(hudComponent_t *comp)
 	blink            = CG_SpawnTimersText(&s, &rt, comp->style & 2);
 	reinforceWarning = (comp->style & BIT(2)) != 0;
 
-	if (reinforceWarning && cg_reinforceWarningTime.integer > 0 && s && Q_isanumber(s))
+	if (reinforceWarning && cg_reinforceWarningTime.integer > 0 && s && Q_isanumber(s)
+	    && cgs.gamestate == GS_PLAYING
+	    && !(cg.snap->ps.pm_flags & PMF_FOLLOW)
+	    && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR)
 	{
 		value = atoi(s);
 		sWarn = (value > 0 && value <= cg_reinforceWarningTime.integer);
