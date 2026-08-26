@@ -2308,8 +2308,9 @@ static void CG_DrawSpawnpoints(void)
 
 static ID_INLINE void CG_PlayAnnouncementReinforcementWarning()
 {
-	// Play a single warning sound a configurable number of seconds before the own team reinforcement wave.
-	if (cg_reinforceWarningTime.integer > 0
+	// Optionally play a single warning sound a configurable number of seconds before the own team reinforcement wave.
+	if (cg_reinforceWarningAudio.integer
+	    && cg_reinforceWarningTime.integer > 0
 	    && cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR
 	    && cgs.gamestate == GS_PLAYING)
 	{

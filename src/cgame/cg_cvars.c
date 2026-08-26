@@ -216,6 +216,7 @@ vmCvar_t cl_waveoffset;
 
 vmCvar_t cg_announcer;
 vmCvar_t cg_reinforceWarningTime;
+vmCvar_t cg_reinforceWarningAudio;
 vmCvar_t cg_hitSounds;
 vmCvar_t cg_locations;
 vmCvar_t cg_locationMaxChars;
@@ -540,6 +541,7 @@ static cvarTable_t cvarTable[] =
 
 	{ &cg_announcer,                          "cg_announcer",                          "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_reinforceWarningTime,               "cg_reinforceWarningTime",               "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_reinforceWarningAudio,              "cg_reinforceWarningAudio",              "0",           CVAR_ARCHIVE,                 0 },
 	{ &cg_hitSounds,                          "cg_hitSounds",                          "1",           CVAR_ARCHIVE,                 0 },
 	{ &cg_locations,                          "cg_locations",                          "3",           CVAR_ARCHIVE,                 0 },
 	{ &cg_locationMaxChars,                   "cg_locationMaxChars",                   "0",           CVAR_ARCHIVE,                 0 },
