@@ -100,7 +100,7 @@ void VK_DeleteImageTexture(struct image_s *image);
  * (as populated by RB_StretchPic/RB_Draw2dPolys/etc. into tess) using the
  * fixed UI pipeline, textured with the given image (tr.whiteImage if NULL).
  */
-void VK_Draw2D(struct shaderCommands_s *input, struct image_s *image);
+void VK_Draw2D(struct shaderCommands_s *input, struct image_s *image, unsigned long stateBits);
 
 /**
  * @brief captures the GL-convention projection matrix (see

@@ -1,14 +1,19 @@
 #version 450
 
-// simple 2D/UI vertex shader.
+// Simple 2D/UI vertex shader.
 // Transforms screen-space pixel coordinates directly into Vulkan NDC.
 // Vulkan NDC is already Y-down (matching screen space), so unlike the
 // legacy glOrtho(0, w, h, 0, 0, 1) path, no Y-flip is required here.
+//
+// alphaTest.x is forwarded unused to the fragment shader via the shared
+// push-constant block (see ui.frag.glsl) so both stages can use one
+// vkCmdPushConstants call per VK_Draw2D() batch.
 
 layout(push_constant) uniform PushConstants
 {
 	vec2 scale;  // 2.0 / vidWidth, 2.0 / vidHeight
 	vec2 offset; // -1.0, -1.0
+	vec4 alphaTest; // x: 0=off, 1=GT_0, 2=LT_80, 3=GE_80 (used by fragment stage only)
 } pc;
 
 layout(location = 0) in vec2 inPos;

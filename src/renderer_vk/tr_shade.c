@@ -559,13 +559,16 @@ void RB_StageIteratorGeneric(void)
 
 	if (backEnd.projection2D)
 	{
+		unsigned long stateBits = GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA;
+
 		image = NULL;
 		if (input->xstages && input->xstages[0])
 		{
-			image = input->xstages[0]->bundle[0].image[0];
+			image     = input->xstages[0]->bundle[0].image[0];
+			stateBits = input->xstages[0]->stateBits;
 		}
 
-		VK_Draw2D(input, image);
+		VK_Draw2D(input, image, stateBits);
 		return;
 	}
 

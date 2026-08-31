@@ -67,6 +67,17 @@ typedef struct
 	VkPipeline pipeline;
 } vkScenePipelineEntry_t;
 
+// One lazily-created pipeline variant for a given stateBits value used by
+// the 2D/UI pipeline (see VK_GetUIPipeline()). UI shader stages (e.g. the
+// automap circular-mask trick in cg_commandmap.c, which relies on
+// alphafunc + depthFunc equal) need their real stateBits honored instead
+// of always forcing the same fixed blend-only state.
+typedef struct
+{
+	unsigned long stateBits;
+	VkPipeline pipeline;
+} vkUIPipelineEntry_t;
+
 typedef struct
 {
 	VkInstance instance;
@@ -104,7 +115,8 @@ typedef struct
 	// UI/2D rendering pipeline.
 	VkDescriptorSetLayout uiDescriptorSetLayout;
 	VkPipelineLayout uiPipelineLayout;
-	VkPipeline uiPipeline;
+	vkUIPipelineEntry_t uiPipelines[VK_MAX_SCENE_PIPELINES];
+	int numUIPipelines;
 	VkDescriptorPool uiDescriptorPool;
 	VkSampler uiSamplerRepeat;
 	VkSampler uiSamplerClamp;
@@ -134,6 +146,9 @@ typedef struct
 	VkShaderModule sceneFragModule;
 	VkShaderModule sceneLMVertModule;
 	VkShaderModule sceneLMFragModule;
+
+	VkShaderModule uiVertModule;
+	VkShaderModule uiFragModule;
 
 	vkScenePipelineEntry_t scenePipelines[VK_MAX_SCENE_PIPELINES];
 	int numScenePipelines;
@@ -1018,33 +1033,58 @@ static VkShaderModule VK_CreateShaderModule(const unsigned char *code, unsigned 
 }
 
 /**
- * @brief Creates the fixed UI pipeline: one descriptor set
- * layout (single combined-image-sampler), a push-constant (scale/offset)
- * pipeline layout, and a graphics pipeline with dynamic viewport/scissor
- * and the engine's standard 2D alpha-blend state baked in (matching
- * RB_SetGL2D's hardcoded GL_State call, since every 2D draw uses it).
+ * @brief Maps the engine's GLS_SRCBLEND_* / GLS_DSTBLEND_* state bits to the
+ * matching VkBlendFactor, mirroring GL_State()'s switch in tr_backend.c.
+ */
+static VkBlendFactor VK_SrcBlendFactor(unsigned long stateBits)
+{
+	switch (stateBits & GLS_SRCBLEND_BITS)
+	{
+	case GLS_SRCBLEND_ZERO: return VK_BLEND_FACTOR_ZERO;
+	case GLS_SRCBLEND_ONE: return VK_BLEND_FACTOR_ONE;
+	case GLS_SRCBLEND_DST_COLOR: return VK_BLEND_FACTOR_DST_COLOR;
+	case GLS_SRCBLEND_ONE_MINUS_DST_COLOR: return VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
+	case GLS_SRCBLEND_SRC_ALPHA: return VK_BLEND_FACTOR_SRC_ALPHA;
+	case GLS_SRCBLEND_ONE_MINUS_SRC_ALPHA: return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	case GLS_SRCBLEND_DST_ALPHA: return VK_BLEND_FACTOR_DST_ALPHA;
+	case GLS_SRCBLEND_ONE_MINUS_DST_ALPHA: return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+	case GLS_SRCBLEND_ALPHA_SATURATE: return VK_BLEND_FACTOR_SRC_ALPHA_SATURATE;
+	default: return VK_BLEND_FACTOR_ONE;
+	}
+}
+
+static VkBlendFactor VK_DstBlendFactor(unsigned long stateBits)
+{
+	switch (stateBits & GLS_DSTBLEND_BITS)
+	{
+	case GLS_DSTBLEND_ZERO: return VK_BLEND_FACTOR_ZERO;
+	case GLS_DSTBLEND_ONE: return VK_BLEND_FACTOR_ONE;
+	case GLS_DSTBLEND_SRC_COLOR: return VK_BLEND_FACTOR_SRC_COLOR;
+	case GLS_DSTBLEND_ONE_MINUS_SRC_COLOR: return VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
+	case GLS_DSTBLEND_SRC_ALPHA: return VK_BLEND_FACTOR_SRC_ALPHA;
+	case GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA: return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	case GLS_DSTBLEND_DST_ALPHA: return VK_BLEND_FACTOR_DST_ALPHA;
+	case GLS_DSTBLEND_ONE_MINUS_DST_ALPHA: return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
+	default: return VK_BLEND_FACTOR_ZERO;
+	}
+}
+
+/**
+ * @brief Creates the descriptor set layout (single combined-image-sampler),
+ * push-constant (scale/offset + alphaTest) pipeline layout, and compiles
+ * the shader modules shared by every lazily-created UI pipeline variant
+ * (see VK_GetUIPipeline()). Variants now honor each
+ * shader stage's real stateBits (alpha test, depth test/func/write)
+ * instead of always forcing RB_SetGL2D's fixed blend-only state - this is
+ * required for tricks like the automap's circular-mask (alphafunc GE128 +
+ * depthFunc equal) in cg_commandmap.c to render correctly.
  */
 static qboolean VK_CreateUIPipeline(void)
 {
-	VkDescriptorSetLayoutBinding           binding;
-	VkDescriptorSetLayoutCreateInfo        layoutInfo;
-	VkPushConstantRange                    pushConstantRange;
-	VkPipelineLayoutCreateInfo             pipelineLayoutInfo;
-	VkShaderModule                         vertModule, fragModule;
-	VkPipelineShaderStageCreateInfo        stages[2];
-	VkVertexInputBindingDescription        vertexBinding;
-	VkVertexInputAttributeDescription      vertexAttributes[3];
-	VkPipelineVertexInputStateCreateInfo   vertexInputInfo;
-	VkPipelineInputAssemblyStateCreateInfo inputAssembly;
-	VkPipelineViewportStateCreateInfo      viewportState;
-	VkPipelineRasterizationStateCreateInfo rasterizer;
-	VkPipelineMultisampleStateCreateInfo   multisampling;
-	VkPipelineColorBlendAttachmentState    colorBlendAttachment;
-	VkPipelineColorBlendStateCreateInfo    colorBlending;
-	VkDynamicState                         dynamicStates[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
-	VkPipelineDynamicStateCreateInfo       dynamicState;
-	VkGraphicsPipelineCreateInfo           pipelineInfo;
-	qboolean                               ok = qtrue;
+	VkDescriptorSetLayoutBinding    binding;
+	VkDescriptorSetLayoutCreateInfo layoutInfo;
+	VkPushConstantRange             pushConstantRange;
+	VkPipelineLayoutCreateInfo      pipelineLayoutInfo;
 
 	Com_Memset(&binding, 0, sizeof(binding));
 	binding.binding         = 0;
@@ -1063,9 +1103,9 @@ static qboolean VK_CreateUIPipeline(void)
 	}
 
 	Com_Memset(&pushConstantRange, 0, sizeof(pushConstantRange));
-	pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+	pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 	pushConstantRange.offset     = 0;
-	pushConstantRange.size       = sizeof(float) * 4; // vec2 scale + vec2 offset
+	pushConstantRange.size       = sizeof(float) * 8; // vec2 scale + vec2 offset + vec4 alphaTest
 
 	Com_Memset(&pipelineLayoutInfo, 0, sizeof(pipelineLayoutInfo));
 	pipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -1079,30 +1119,48 @@ static qboolean VK_CreateUIPipeline(void)
 		return qfalse;
 	}
 
-	vertModule = VK_CreateShaderModule(ui_vert_spv, ui_vert_spv_SIZE);
-	fragModule = VK_CreateShaderModule(ui_frag_spv, ui_frag_spv_SIZE);
+	vk.uiVertModule = VK_CreateShaderModule(ui_vert_spv, ui_vert_spv_SIZE);
+	vk.uiFragModule = VK_CreateShaderModule(ui_frag_spv, ui_frag_spv_SIZE);
 
-	if (vertModule == VK_NULL_HANDLE || fragModule == VK_NULL_HANDLE)
+	if (vk.uiVertModule == VK_NULL_HANDLE || vk.uiFragModule == VK_NULL_HANDLE)
 	{
-		if (vertModule != VK_NULL_HANDLE)
-		{
-			vkDestroyShaderModule(vk.device, vertModule, NULL);
-		}
-		if (fragModule != VK_NULL_HANDLE)
-		{
-			vkDestroyShaderModule(vk.device, fragModule, NULL);
-		}
 		return qfalse;
 	}
+
+	return qtrue;
+}
+
+/**
+ * @brief Creates one 2D/UI pipeline variant for the given stateBits,
+ * honoring depth test/write/func and blend state exactly like the
+ * scene pipelines (see VK_CreateScenePipelineVariant()).
+ */
+static VkPipeline VK_CreateUIPipelineVariant(unsigned long stateBits)
+{
+	VkPipelineShaderStageCreateInfo        stages[2];
+	VkVertexInputBindingDescription        vertexBinding;
+	VkVertexInputAttributeDescription      vertexAttributes[3];
+	VkPipelineVertexInputStateCreateInfo   vertexInputInfo;
+	VkPipelineInputAssemblyStateCreateInfo inputAssembly;
+	VkPipelineViewportStateCreateInfo      viewportState;
+	VkPipelineRasterizationStateCreateInfo rasterizer;
+	VkPipelineMultisampleStateCreateInfo   multisampling;
+	VkPipelineDepthStencilStateCreateInfo  depthStencil;
+	VkPipelineColorBlendAttachmentState    colorBlendAttachment;
+	VkPipelineColorBlendStateCreateInfo    colorBlending;
+	VkDynamicState                         dynamicStates[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+	VkPipelineDynamicStateCreateInfo       dynamicState;
+	VkGraphicsPipelineCreateInfo           pipelineInfo;
+	VkPipeline                             pipeline = VK_NULL_HANDLE;
 
 	Com_Memset(stages, 0, sizeof(stages));
 	stages[0].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	stages[0].stage  = VK_SHADER_STAGE_VERTEX_BIT;
-	stages[0].module = vertModule;
+	stages[0].module = vk.uiVertModule;
 	stages[0].pName  = "main";
 	stages[1].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	stages[1].stage  = VK_SHADER_STAGE_FRAGMENT_BIT;
-	stages[1].module = fragModule;
+	stages[1].module = vk.uiFragModule;
 	stages[1].pName  = "main";
 
 	Com_Memset(&vertexBinding, 0, sizeof(vertexBinding));
@@ -1151,14 +1209,19 @@ static qboolean VK_CreateUIPipeline(void)
 	multisampling.sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
-	// RB_SetGL2D: GL_State(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA)
+	Com_Memset(&depthStencil, 0, sizeof(depthStencil));
+	depthStencil.sType            = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	depthStencil.depthTestEnable  = (stateBits & GLS_DEPTHTEST_DISABLE) ? VK_FALSE : VK_TRUE;
+	depthStencil.depthWriteEnable = (stateBits & GLS_DEPTHMASK_TRUE) ? VK_TRUE : VK_FALSE;
+	depthStencil.depthCompareOp   = (stateBits & GLS_DEPTHFUNC_EQUAL) ? VK_COMPARE_OP_EQUAL : VK_COMPARE_OP_LESS_OR_EQUAL;
+
 	Com_Memset(&colorBlendAttachment, 0, sizeof(colorBlendAttachment));
-	colorBlendAttachment.blendEnable         = VK_TRUE;
-	colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-	colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	colorBlendAttachment.blendEnable         = (stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) ? VK_TRUE : VK_FALSE;
+	colorBlendAttachment.srcColorBlendFactor = VK_SrcBlendFactor(stateBits);
+	colorBlendAttachment.dstColorBlendFactor = VK_DstBlendFactor(stateBits);
 	colorBlendAttachment.colorBlendOp        = VK_BLEND_OP_ADD;
-	colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-	colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	colorBlendAttachment.srcAlphaBlendFactor = VK_SrcBlendFactor(stateBits);
+	colorBlendAttachment.dstAlphaBlendFactor = VK_DstBlendFactor(stateBits);
 	colorBlendAttachment.alphaBlendOp        = VK_BLEND_OP_ADD;
 	colorBlendAttachment.colorWriteMask      = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
 	                                           VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
@@ -1182,21 +1245,56 @@ static qboolean VK_CreateUIPipeline(void)
 	pipelineInfo.pViewportState      = &viewportState;
 	pipelineInfo.pRasterizationState = &rasterizer;
 	pipelineInfo.pMultisampleState   = &multisampling;
+	pipelineInfo.pDepthStencilState  = &depthStencil;
 	pipelineInfo.pColorBlendState    = &colorBlending;
 	pipelineInfo.pDynamicState       = &dynamicState;
 	pipelineInfo.layout              = vk.uiPipelineLayout;
 	pipelineInfo.renderPass          = vk.renderPass;
 	pipelineInfo.subpass             = 0;
 
-	if (!VK_CheckResult(vkCreateGraphicsPipelines(vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &vk.uiPipeline), "vkCreateGraphicsPipelines(ui)"))
+	if (!VK_CheckResult(vkCreateGraphicsPipelines(vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &pipeline), "vkCreateGraphicsPipelines(ui)"))
 	{
-		ok = qfalse;
+		return VK_NULL_HANDLE;
 	}
 
-	vkDestroyShaderModule(vk.device, vertModule, NULL);
-	vkDestroyShaderModule(vk.device, fragModule, NULL);
+	return pipeline;
+}
 
-	return ok;
+/**
+ * @brief Returns the cached 2D/UI pipeline for this stateBits value,
+ * creating and caching it on first use. Returns VK_NULL_HANDLE if the
+ * cache is full or creation failed (caller should skip the draw).
+ */
+static VkPipeline VK_GetUIPipeline(unsigned long stateBits)
+{
+	int        i;
+	VkPipeline pipeline;
+
+	for (i = 0; i < vk.numUIPipelines; i++)
+	{
+		if (vk.uiPipelines[i].stateBits == stateBits)
+		{
+			return vk.uiPipelines[i].pipeline;
+		}
+	}
+
+	if (vk.numUIPipelines >= VK_MAX_SCENE_PIPELINES)
+	{
+		Ren_Print("Vulkan: UI pipeline cache full, dropping draw\n");
+		return VK_NULL_HANDLE;
+	}
+
+	pipeline = VK_CreateUIPipelineVariant(stateBits);
+	if (pipeline == VK_NULL_HANDLE)
+	{
+		return VK_NULL_HANDLE;
+	}
+
+	vk.uiPipelines[vk.numUIPipelines].stateBits = stateBits;
+	vk.uiPipelines[vk.numUIPipelines].pipeline  = pipeline;
+	vk.numUIPipelines++;
+
+	return pipeline;
 }
 
 /**
@@ -1313,43 +1411,6 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 	}
 
 	return qtrue;
-}
-
-/**
- * @brief Maps the engine's GLS_SRCBLEND_* / GLS_DSTBLEND_* state bits to the
- * matching VkBlendFactor, mirroring GL_State()'s switch in tr_backend.c.
- */
-static VkBlendFactor VK_SrcBlendFactor(unsigned long stateBits)
-{
-	switch (stateBits & GLS_SRCBLEND_BITS)
-	{
-	case GLS_SRCBLEND_ZERO: return VK_BLEND_FACTOR_ZERO;
-	case GLS_SRCBLEND_ONE: return VK_BLEND_FACTOR_ONE;
-	case GLS_SRCBLEND_DST_COLOR: return VK_BLEND_FACTOR_DST_COLOR;
-	case GLS_SRCBLEND_ONE_MINUS_DST_COLOR: return VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR;
-	case GLS_SRCBLEND_SRC_ALPHA: return VK_BLEND_FACTOR_SRC_ALPHA;
-	case GLS_SRCBLEND_ONE_MINUS_SRC_ALPHA: return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-	case GLS_SRCBLEND_DST_ALPHA: return VK_BLEND_FACTOR_DST_ALPHA;
-	case GLS_SRCBLEND_ONE_MINUS_DST_ALPHA: return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
-	case GLS_SRCBLEND_ALPHA_SATURATE: return VK_BLEND_FACTOR_SRC_ALPHA_SATURATE;
-	default: return VK_BLEND_FACTOR_ONE;
-	}
-}
-
-static VkBlendFactor VK_DstBlendFactor(unsigned long stateBits)
-{
-	switch (stateBits & GLS_DSTBLEND_BITS)
-	{
-	case GLS_DSTBLEND_ZERO: return VK_BLEND_FACTOR_ZERO;
-	case GLS_DSTBLEND_ONE: return VK_BLEND_FACTOR_ONE;
-	case GLS_DSTBLEND_SRC_COLOR: return VK_BLEND_FACTOR_SRC_COLOR;
-	case GLS_DSTBLEND_ONE_MINUS_SRC_COLOR: return VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR;
-	case GLS_DSTBLEND_SRC_ALPHA: return VK_BLEND_FACTOR_SRC_ALPHA;
-	case GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA: return VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-	case GLS_DSTBLEND_DST_ALPHA: return VK_BLEND_FACTOR_DST_ALPHA;
-	case GLS_DSTBLEND_ONE_MINUS_DST_ALPHA: return VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA;
-	default: return VK_BLEND_FACTOR_ZERO;
-	}
 }
 
 /**
@@ -1872,13 +1933,25 @@ void VK_Shutdown(void)
 		{
 			vkFreeMemory(vk.device, vk.indexArenaMemory, NULL);
 		}
-		if (vk.uiPipeline != VK_NULL_HANDLE)
 		{
-			vkDestroyPipeline(vk.device, vk.uiPipeline, NULL);
+			int pi;
+
+			for (pi = 0; pi < vk.numUIPipelines; pi++)
+			{
+				vkDestroyPipeline(vk.device, vk.uiPipelines[pi].pipeline, NULL);
+			}
 		}
 		if (vk.uiPipelineLayout != VK_NULL_HANDLE)
 		{
 			vkDestroyPipelineLayout(vk.device, vk.uiPipelineLayout, NULL);
+		}
+		if (vk.uiVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.uiVertModule, NULL);
+		}
+		if (vk.uiFragModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.uiFragModule, NULL);
 		}
 		if (vk.uiDescriptorSetLayout != VK_NULL_HANDLE)
 		{
@@ -2449,15 +2522,37 @@ void VK_DeleteImageTexture(struct image_s *image)
 }
 
 /**
- * @brief appends one shader batch's worth of already-tessellated
- * 2D/UI geometry (tess.xyz/texCoords[0]/vertexColors/indexes) into this
- * frame's vertex/index arenas and issues one vkCmdDrawIndexed with the
- * fixed UI pipeline bound to the given image's descriptor set.
+ * @brief Converts the engine's GLS_ATEST_* state bits into the alphaTest.x
+ * mode value consumed by tr3d.frag.glsl / ui.frag.glsl (0=off, 1=GT_0,
+ * 2=LT_80, 3=GE_80).
+ */
+static float VK_AlphaTestMode(unsigned long stateBits)
+{
+	switch (stateBits & GLS_ATEST_BITS)
+	{
+	case GLS_ATEST_GT_0: return 1.0f;
+	case GLS_ATEST_LT_80: return 2.0f;
+	case GLS_ATEST_GE_80: return 3.0f;
+	default: return 0.0f;
+	}
+}
+
+/**
+ * @brief Appends one shader batch's worth of already-tessellated 2D/UI
+ * geometry (tess.xyz/texCoords[0]/vertexColors/indexes) into this frame's
+ * vertex/index arenas and issues one vkCmdDrawIndexed with the UI pipeline
+ * variant matching `stateBits` bound to the given image's descriptor set.
+ * Honoring the real stateBits (rather than always forcing a fixed
+ * blend-only state) is required for UI tricks that rely on depth test/
+ * func/write or alpha test, e.g. the automap's circular-mask trick in
+ * cg_commandmap.c (alphafunc GE128 + depthFunc equal against the 3D
+ * scene's still-resident depth buffer, since 2D draws share the same
+ * render pass/depth attachment as the 3D scene).
  *
  * @note scope reductions: only bundle 0 / image frame 0 is
  * considered (no multitexture, no animated-image frame selection yet).
  */
-void VK_Draw2D(shaderCommands_t *input, struct image_s *image)
+void VK_Draw2D(shaderCommands_t *input, struct image_s *image, unsigned long stateBits)
 {
 	int             numVertexes, numIndexes, i;
 	VkDeviceSize    vertexBytes, indexBytes;
@@ -2465,10 +2560,12 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image)
 	uint32_t        *dstIndexes;
 	VkViewport      viewport;
 	VkRect2D        scissor;
-	float           pushConstants[4];
+	float           pushConstants[8];
 	VkDescriptorSet descriptorSet;
 	VkBuffer        vertexBuffers[1];
 	VkDeviceSize    offsets[1];
+	VkPipeline      pipeline;
+
 
 	if (!vk.initialized || !input || input->numVertexes == 0 || input->numIndexes == 0)
 	{
@@ -2524,10 +2621,16 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image)
 	dstIndexes = (uint32_t *)((byte *)vk.indexArenaMapped + vk.indexArenaOffset);
 	Com_Memcpy(dstIndexes, input->indexes, (size_t)indexBytes);
 
-	if (vk.lastBoundPipeline != vk.uiPipeline)
+	pipeline = VK_GetUIPipeline(stateBits);
+	if (pipeline == VK_NULL_HANDLE)
 	{
-		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.uiPipeline);
-		vk.lastBoundPipeline = vk.uiPipeline;
+		return;
+	}
+
+	if (vk.lastBoundPipeline != pipeline)
+	{
+		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+		vk.lastBoundPipeline = pipeline;
 	}
 
 	// Always set the full-window viewport/scissor for 2D/UI draws: viewport/
@@ -2552,7 +2655,11 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image)
 	pushConstants[1] = 2.0f / (float)glConfig.vidHeight;
 	pushConstants[2] = -1.0f;
 	pushConstants[3] = -1.0f;
-	vkCmdPushConstants(vk.commandBuffer, vk.uiPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstants), pushConstants);
+	pushConstants[4] = VK_AlphaTestMode(stateBits);
+	pushConstants[5] = 0.0f;
+	pushConstants[6] = 0.0f;
+	pushConstants[7] = 0.0f;
+	vkCmdPushConstants(vk.commandBuffer, vk.uiPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pushConstants), pushConstants);
 
 	descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
 	vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.uiPipelineLayout, 0, 1, &descriptorSet, 0, NULL);
@@ -2566,21 +2673,6 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image)
 
 	vk.vertexArenaOffset += vertexBytes;
 	vk.indexArenaOffset  += indexBytes;
-}
-
-/**
- * @brief Converts the engine's GLS_ATEST_* state bits into the alphaTest.x
- * mode value consumed by tr3d.frag.glsl (0=off, 1=GT_0, 2=LT_80, 3=GE_80).
- */
-static float VK_AlphaTestMode(unsigned long stateBits)
-{
-	switch (stateBits & GLS_ATEST_BITS)
-	{
-	case GLS_ATEST_GT_0: return 1.0f;
-	case GLS_ATEST_LT_80: return 2.0f;
-	case GLS_ATEST_GE_80: return 3.0f;
-	default: return 0.0f;
-	}
 }
 
 /**
