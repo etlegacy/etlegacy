@@ -1581,6 +1581,34 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
  * creating and caching it on first use. Returns VK_NULL_HANDLE if the
  * cache is full or creation failed (caller should skip the draw).
  */
+/**
+ * @brief Mirrors GL_Cull()'s backEnd.viewParms.isMirror front/back flip
+ * (tr_backend.c): mirrored views have inverted winding, so front/back
+ * culling must be swapped to match what the real GL renderer does via
+ * glCullFace(). Two-sided shaders are unaffected. Flipping cullType here
+ * (rather than baking isMirror into the pipeline cache key) keeps the
+ * cache correct automatically, since a flipped cullType is itself a
+ * distinct, correctly-cached pipeline variant.
+ */
+static int VK_MirrorCullType(int cullType)
+{
+	if (!backEnd.viewParms.isMirror)
+	{
+		return cullType;
+	}
+
+	if (cullType == CT_FRONT_SIDED)
+	{
+		return CT_BACK_SIDED;
+	}
+	if (cullType == CT_BACK_SIDED)
+	{
+		return CT_FRONT_SIDED;
+	}
+
+	return cullType;
+}
+
 static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qboolean lightmapped)
 {
 	vkScenePipelineEntry_t *entries = lightmapped ? vk.sceneLMPipelines : vk.scenePipelines;
@@ -2288,6 +2316,19 @@ void VK_EndFrame(void)
 	{
 		VK_DebugDumpSwapchainImage("/tmp/vk_capture.ppm");
 	}
+
+	// temporary on-demand debug capture: `touch /tmp/vk_capture_trigger`
+	// while the game is running to dump the next frame.
+	{
+		FILE *trigger = fopen("/tmp/vk_capture_trigger", "r");
+
+		if (trigger)
+		{
+			fclose(trigger);
+			remove("/tmp/vk_capture_trigger");
+			VK_DebugDumpSwapchainImage("/tmp/vk_capture_manual.ppm");
+		}
+	}
 }
 
 /**
@@ -2787,7 +2828,7 @@ void VK_Draw3D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 		return;
 	}
 
-	pipeline = VK_GetScenePipeline(stateBits, cullType, qfalse);
+	pipeline = VK_GetScenePipeline(stateBits, VK_MirrorCullType(cullType), qfalse);
 	if (pipeline == VK_NULL_HANDLE)
 	{
 		return;
@@ -2906,7 +2947,7 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 		return;
 	}
 
-	pipeline = VK_GetScenePipeline(stateBits, cullType, qtrue);
+	pipeline = VK_GetScenePipeline(stateBits, VK_MirrorCullType(cullType), qtrue);
 	if (pipeline == VK_NULL_HANDLE)
 	{
 		return;
