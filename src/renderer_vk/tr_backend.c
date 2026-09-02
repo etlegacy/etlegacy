@@ -614,6 +614,14 @@ void RB_BeginDrawingView(void)
 		glClear(clearBits);
 	}
 
+	// glClear() is a no-op; depth must still be reset per
+	// view so a portal/mirror subview's depth doesn't leak into the view
+	// drawn after it. Color clears stay covered by the per-frame loadOp.
+	if (clearBits & GL_DEPTH_BUFFER_BIT)
+	{
+		VK_ClearSceneDepth();
+	}
+
 	if ((backEnd.refdef.rdflags & RDF_HYPERSPACE))
 	{
 		RB_Hyperspace();
@@ -660,13 +668,15 @@ void RB_BeginDrawingView(void)
 		// which itself bakes in this same flip). s_flipMatrix is
 		// orthogonal, so its inverse-transpose equals itself; apply it
 		// directly to the normal (the distance term is unaffected by a
-		// pure rotation of the normal).
+		// pure rotation of the normal). s_flipMatrix maps view-space
+		// (x, y, z) to eye-space (-y, z, -x), so the plane's normal maps
+		// the same way: (a, b, c) -> (-b, c, -a).
 		{
 			float planeEqf[4];
 
-			planeEqf[0] = (float)-plane2[2];
-			planeEqf[1] = (float)-plane2[0];
-			planeEqf[2] = (float)plane2[1];
+			planeEqf[0] = (float)-plane2[1];
+			planeEqf[1] = (float)plane2[2];
+			planeEqf[2] = (float)-plane2[0];
 			planeEqf[3] = (float)plane2[3];
 			VK_SetPortalClip(planeEqf);
 		}

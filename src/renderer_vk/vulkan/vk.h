@@ -127,6 +127,12 @@ void VK_SetSceneViewport(int x, int y, int width, int height);
 void VK_SetSkyDepthRange(float minDepth, float maxDepth);
 
 /**
+ * @brief clears the depth buffer within the last scene
+ * viewport rect (renderer1's per-view glClear(GL_DEPTH_BUFFER_BIT)).
+ */
+void VK_ClearSceneDepth(void);
+
+/**
  * @brief captures the GL-convention modelview matrix (world
  * or per-entity, see tr_backend.c's RB_RenderDrawSurfList()) and
  * recomputes the cached MVP used by VK_Draw3D()/VK_Draw3DLightmapped().
