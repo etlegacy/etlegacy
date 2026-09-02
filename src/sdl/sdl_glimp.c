@@ -62,6 +62,7 @@ static SDL_GLContext SDL_glContext = NULL;
 static float         displayAspect = 0.f;
 
 cvar_t *r_sdlDriver;
+cvar_t *r_allowScreenSaver;
 cvar_t *r_allowSoftwareGL; // Don't abort out if a hardware visual can't be obtained
 cvar_t *r_allowResize; // make window resizable
 
@@ -391,6 +392,10 @@ static void GLimp_InitCvars(void)
 	r_sdlDriver = Cvar_Get("r_sdlDriver", "", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
 	Cvar_GetAndDescribe("r_sdlDriver", "", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE,
 	                    "Sets the video driver used by SDL, e.g. \"x11\" or \"wayland\". Restart required.");
+
+	r_allowScreenSaver = Cvar_Get("r_allowScreenSaver", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
+	Cvar_GetAndDescribe("r_allowScreenSaver", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE,
+	                    "Allow screen to sleep while the game is running. Restart required.");
 
 	r_allowSoftwareGL = Cvar_Get("r_allowSoftwareGL", "0", CVAR_LATCH);
 	r_allowResize     = Cvar_Get("r_allowResize", "0", CVAR_ARCHIVE);
@@ -1106,6 +1111,12 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 		if (r_sdlDriver->string)
 		{
 			SDL_setenv("SDL_VIDEODRIVER", r_sdlDriver->string, 0);
+		}
+
+		// must be set before window is created
+		if (r_allowScreenSaver->integer)
+		{
+			SDL_SetHint(SDL_HINT_VIDEO_ALLOW_SCREENSAVER, "1");
 		}
 
 #ifdef WIN32
