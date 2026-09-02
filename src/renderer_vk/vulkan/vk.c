@@ -2796,6 +2796,41 @@ void VK_SetSkyDepthRange(float minDepth, float maxDepth)
 }
 
 /**
+ * @brief clears depth to 1.0 inside the last scene viewport
+ * rect, replicating renderer1's per-view glClear(GL_DEPTH_BUFFER_BIT) in
+ * RB_BeginDrawingView(). The render pass's loadOp=CLEAR only runs once
+ * per frame, so without this a portal/mirror subview's depth survives
+ * into the main view: main-view surfaces behind the mirror quad (and
+ * elsewhere the subview drew nearer geometry) then depth-test against
+ * the subview's values instead of a fresh buffer.
+ */
+void VK_ClearSceneDepth(void)
+{
+	VkClearAttachment attachment;
+	VkClearRect       rect;
+
+	if (!vk.initialized || vk.lastViewportWidth <= 0 || vk.lastViewportHeight <= 0)
+	{
+		return;
+	}
+
+	Com_Memset(&attachment, 0, sizeof(attachment));
+	attachment.aspectMask                      = VK_IMAGE_ASPECT_DEPTH_BIT;
+	attachment.clearValue.depthStencil.depth   = 1.0f;
+	attachment.clearValue.depthStencil.stencil = 0;
+
+	Com_Memset(&rect, 0, sizeof(rect));
+	rect.rect.offset.x      = vk.lastViewportX;
+	rect.rect.offset.y      = vk.lastViewportFlippedY;
+	rect.rect.extent.width  = (uint32_t)vk.lastViewportWidth;
+	rect.rect.extent.height = (uint32_t)vk.lastViewportHeight;
+	rect.baseArrayLayer     = 0;
+	rect.layerCount         = 1;
+
+	vkCmdClearAttachments(vk.commandBuffer, 1, &attachment, 1, &rect);
+}
+
+/**
  * @brief submits one already-tessellated 3D shader stage
  * batch (single texture) using the lazily-created pipeline variant that
  * matches stateBits/cullType. Vertex data is read from input->xyz,
