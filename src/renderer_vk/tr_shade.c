@@ -75,6 +75,40 @@ void RB_BeginSurface(shader_t *shader, int fogNum)
 }
 
 /**
+ * @brief Vulkan equivalent of renderer1's R_BindAnimatedImage(): returns
+ * the image to sample for this bundle instead of binding it, so animMap
+ * stages (flames, explosions, etc.) cycle frames like they do in GL1.
+ * Video maps are not supported yet and fall back to image[0].
+ */
+static image_t *R_GetAnimatedImage(textureBundle_t *bundle)
+{
+	int64_t index;
+
+	if (bundle->isLightmap && (backEnd.refdef.rdflags & RDF_SNOOPERVIEW))
+	{
+		return tr.whiteImage;
+	}
+
+	if (bundle->isVideoMap || bundle->numImageAnimations <= 1)
+	{
+		return bundle->image[0];
+	}
+
+	// it is necessary to do this messy calc to make sure animations line up
+	// exactly with waveforms of the same frequency
+	index   = (int64_t)(tess.shaderTime * bundle->imageAnimationSpeed * FUNCTABLE_SIZE);
+	index >>= FUNCTABLE_SIZE2;
+
+	if (index < 0)
+	{
+		index = 0;  // may happen with shader time offsets
+	}
+	index %= bundle->numImageAnimations;
+
+	return bundle->image[index];
+}
+
+/**
  * @brief Chooses the current fog settings for debug fog state; kept so
  * fog cvars/state tracked by the reused frontend stay consistent even
  * though the Vulkan backend doesn't yet apply fog in a shader.
@@ -564,7 +598,7 @@ void RB_StageIteratorGeneric(void)
 		image = NULL;
 		if (input->xstages && input->xstages[0])
 		{
-			image     = input->xstages[0]->bundle[0].image[0];
+			image     = R_GetAnimatedImage(&input->xstages[0]->bundle[0]);
 			stateBits = input->xstages[0]->stateBits;
 		}
 
@@ -599,12 +633,45 @@ void RB_StageIteratorGeneric(void)
 
 			if (pStage->bundle[1].image[0] != 0)
 			{
-				VK_Draw3DLightmapped(input, pStage->bundle[0].image[0], pStage->bundle[1].image[0],
+				VK_Draw3DLightmapped(input, R_GetAnimatedImage(&pStage->bundle[0]), R_GetAnimatedImage(&pStage->bundle[1]),
 				                     pStage->stateBits, shader->cullType);
 			}
 			else
 			{
-				VK_Draw3D(input, pStage->bundle[0].image[0], pStage->stateBits, shader->cullType);
+				unsigned long stateBits = pStage->stateBits;
+				int           cullType  = shader->cullType;
+				int           fadeStart = backEnd.currentEntity->e.fadeStartTime;
+
+				// fading model stuff (renderer1's RB_IterateStagesGeneric):
+				// once the fade has started, force alpha blending without
+				// depth writes and scale the vertex colors down to zero.
+				if (fadeStart && fadeStart <= tr.refdef.time)
+				{
+					int   fadeEnd = backEnd.currentEntity->e.fadeEndTime;
+					float alphaval;
+					int   i;
+
+					if (fadeEnd < tr.refdef.time) // entity faded out completely
+					{
+						continue;
+					}
+
+					alphaval = (float)(fadeEnd - tr.refdef.time) / (float)(fadeEnd - fadeStart);
+
+					stateBits &= ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS | GLS_DEPTHMASK_TRUE);
+					stateBits |= (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
+					cullType   = CT_FRONT_SIDED;
+
+					for (i = 0; i < tess.numVertexes; i++)
+					{
+						tess.svars.colors[i][0] *= alphaval;
+						tess.svars.colors[i][1] *= alphaval;
+						tess.svars.colors[i][2] *= alphaval;
+						tess.svars.colors[i][3] *= alphaval;
+					}
+				}
+
+				VK_Draw3D(input, R_GetAnimatedImage(&pStage->bundle[0]), stateBits, cullType);
 			}
 		}
 	}
@@ -634,7 +701,7 @@ void RB_StageIteratorVertexLitTexture(void)
 		tess.svars.texcoords[0][i][1] = tess.texCoords[i][0][1];
 	}
 
-	VK_Draw3D(input, tess.xstages[0]->bundle[0].image[0], tess.xstages[0]->stateBits, shader->cullType);
+	VK_Draw3D(input, R_GetAnimatedImage(&tess.xstages[0]->bundle[0]), tess.xstages[0]->stateBits, shader->cullType);
 }
 
 /**
@@ -661,7 +728,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 		tess.svars.texcoords[1][i][1] = tess.texCoords[i][1][1];
 	}
 
-	VK_Draw3DLightmapped(input, tess.xstages[0]->bundle[0].image[0], tess.xstages[0]->bundle[1].image[0],
+	VK_Draw3DLightmapped(input, R_GetAnimatedImage(&tess.xstages[0]->bundle[0]), R_GetAnimatedImage(&tess.xstages[0]->bundle[1]),
 	                     GLS_DEFAULT, shader->cullType);
 }
 

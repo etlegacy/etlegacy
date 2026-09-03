@@ -58,12 +58,13 @@
 // pipelines are created lazily and cached for the life of the renderer.
 #define VK_MAX_SCENE_PIPELINES 128
 
-// One lazily-created pipeline variant for a given (stateBits, cullType)
-// pair used by the 3D scene pipelines.
+// One lazily-created pipeline variant for a given (stateBits, cullType,
+// polygonOffset) combination used by the 3D scene pipelines.
 typedef struct
 {
 	unsigned long stateBits;
 	int cullType;
+	qboolean polygonOffset;
 	VkPipeline pipeline;
 } vkScenePipelineEntry_t;
 
@@ -1418,7 +1419,7 @@ static qboolean VK_CreateScenePipelineLayouts(void)
  * cullType) pair. `lightmapped` selects the vertex format/shaders/pipeline
  * layout (vk3DVertex_t + tr3d.* vs. vk3DVertexLM_t + tr3d_lm.*).
  */
-static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cullType, qboolean lightmapped)
+static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cullType, qboolean lightmapped, qboolean polygonOffset)
 {
 	VkPipelineShaderStageCreateInfo        stages[2];
 	VkVertexInputBindingDescription        vertexBinding;
@@ -1521,6 +1522,17 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	rasterizer.frontFace   = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 	rasterizer.lineWidth   = 1.0f;
 
+	// shader->polygonOffset (decals, marks): renderer1 enables
+	// GL_POLYGON_OFFSET_FILL with glPolygonOffset(r_offsetFactor,
+	// r_offsetUnits). Baked into the pipeline; both cvars are CVAR_CHEAT
+	// and effectively never change at runtime.
+	if (polygonOffset)
+	{
+		rasterizer.depthBiasEnable         = VK_TRUE;
+		rasterizer.depthBiasSlopeFactor    = r_offsetFactor->value;
+		rasterizer.depthBiasConstantFactor = r_offsetUnits->value;
+	}
+
 	Com_Memset(&multisampling, 0, sizeof(multisampling));
 	multisampling.sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
@@ -1609,7 +1621,7 @@ static int VK_MirrorCullType(int cullType)
 	return cullType;
 }
 
-static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qboolean lightmapped)
+static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qboolean lightmapped, qboolean polygonOffset)
 {
 	vkScenePipelineEntry_t *entries = lightmapped ? vk.sceneLMPipelines : vk.scenePipelines;
 	int                    *count   = lightmapped ? &vk.numSceneLMPipelines : &vk.numScenePipelines;
@@ -1618,7 +1630,7 @@ static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qbo
 
 	for (i = 0; i < *count; i++)
 	{
-		if (entries[i].stateBits == stateBits && entries[i].cullType == cullType)
+		if (entries[i].stateBits == stateBits && entries[i].cullType == cullType && entries[i].polygonOffset == polygonOffset)
 		{
 			return entries[i].pipeline;
 		}
@@ -1630,15 +1642,16 @@ static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qbo
 		return VK_NULL_HANDLE;
 	}
 
-	pipeline = VK_CreateScenePipelineVariant(stateBits, cullType, lightmapped);
+	pipeline = VK_CreateScenePipelineVariant(stateBits, cullType, lightmapped, polygonOffset);
 	if (pipeline == VK_NULL_HANDLE)
 	{
 		return VK_NULL_HANDLE;
 	}
 
-	entries[*count].stateBits = stateBits;
-	entries[*count].cullType  = cullType;
-	entries[*count].pipeline  = pipeline;
+	entries[*count].stateBits     = stateBits;
+	entries[*count].cullType      = cullType;
+	entries[*count].polygonOffset = polygonOffset;
+	entries[*count].pipeline      = pipeline;
 	(*count)++;
 
 	return pipeline;
@@ -2831,6 +2844,37 @@ void VK_ClearSceneDepth(void)
 }
 
 /**
+ * @brief True when the batch's shader requests polygon offset (decals,
+ * marks); selects a depth-biased pipeline variant.
+ */
+static qboolean VK_ShaderPolygonOffset(const shaderCommands_t *input)
+{
+	return (input->shader && input->shader->polygonOffset) ? qtrue : qfalse;
+}
+
+/**
+ * @brief Maps the shader's collapsed-multitexture env (how texture unit 1
+ * combines with unit 0 in renderer1's DrawMultitextured()) to the mode
+ * index tr3d_lm.frag.glsl expects: 0=modulate, 1=add, 2=replace, 3=decal.
+ * r_lightMap forces GL_REPLACE there too, so the lightmap shows alone.
+ */
+static float VK_MultitextureEnvMode(const shaderCommands_t *input)
+{
+	if (r_lightMap->integer)
+	{
+		return 2.0f;
+	}
+
+	switch (input->shader ? input->shader->multitextureEnv : 0)
+	{
+	case GL_ADD: return 1.0f;
+	case GL_REPLACE: return 2.0f;
+	case GL_DECAL: return 3.0f;
+	default: return 0.0f;
+	}
+}
+
+/**
  * @brief submits one already-tessellated 3D shader stage
  * batch (single texture) using the lazily-created pipeline variant that
  * matches stateBits/cullType. Vertex data is read from input->xyz,
@@ -2863,7 +2907,7 @@ void VK_Draw3D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 		return;
 	}
 
-	pipeline = VK_GetScenePipeline(stateBits, VK_MirrorCullType(cullType), qfalse);
+	pipeline = VK_GetScenePipeline(stateBits, VK_MirrorCullType(cullType), qfalse, VK_ShaderPolygonOffset(input));
 	if (pipeline == VK_NULL_HANDLE)
 	{
 		return;
@@ -2982,7 +3026,7 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 		return;
 	}
 
-	pipeline = VK_GetScenePipeline(stateBits, VK_MirrorCullType(cullType), qtrue);
+	pipeline = VK_GetScenePipeline(stateBits, VK_MirrorCullType(cullType), qtrue, VK_ShaderPolygonOffset(input));
 	if (pipeline == VK_NULL_HANDLE)
 	{
 		return;
@@ -3034,8 +3078,8 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 
 	Com_Memcpy(pushConstants, vk.mvpMatrix, sizeof(vk.mvpMatrix));
 	Com_Memcpy(pushConstants + 16, vk.modelMatrix, sizeof(vk.modelMatrix));
-	pushConstants[32] = 0.0f;
-	pushConstants[33] = 0.0f;
+	pushConstants[32] = VK_AlphaTestMode(stateBits);
+	pushConstants[33] = VK_MultitextureEnvMode(input);
 	pushConstants[34] = 0.0f;
 	pushConstants[35] = 0.0f;
 	pushConstants[36] = vk.fogColor[0];
