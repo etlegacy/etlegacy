@@ -133,6 +133,19 @@ void VK_SetSkyDepthRange(float minDepth, float maxDepth);
 void VK_ClearSceneDepth(void);
 
 /**
+ * @brief stencil bits of the depth attachment (0 or 8).
+ */
+int VK_StencilBits(void);
+
+/**
+ * @brief stencil shadow volumes (renderer1's
+ * RB_ShadowTessEnd()/RB_ShadowFinish()). xyz is the engine's padded
+ * vec4 position array; cullType uses the CT_* convention.
+ */
+void VK_DrawShadowVolume(const float (*xyz)[4], int numVertexes, const unsigned int *indexes, int numIndexes, int cullType, qboolean increment);
+void VK_DrawShadowFinish(void);
+
+/**
  * @brief captures the GL-convention modelview matrix (world
  * or per-entity, see tr_backend.c's RB_RenderDrawSurfList()) and
  * recomputes the cached MVP used by VK_Draw3D()/VK_Draw3DLightmapped().
@@ -152,6 +165,7 @@ void VK_SetFog(const float *color, float start, float end);
  * R_FogOff() (tr_main.c) in place of the no-op'd glDisable(GL_FOG).
  */
 void VK_SetFogOff(void);
+void VK_SetFogOn(void);
 
 /**
  * @brief records an eye-space portal/mirror clip-plane
@@ -174,6 +188,12 @@ void VK_ClearPortalClip(void);
  * cullType, transformed by the current projection * modelview matrix.
  */
 void VK_Draw3D(struct shaderCommands_s *input, struct image_s *image, unsigned long stateBits, int cullType);
+
+/**
+ * @brief VK_Draw3D() restricted to a subset of indexes (all
+ * vertices still uploaded), used by the dynamic light pass.
+ */
+void VK_Draw3DIndexes(struct shaderCommands_s *input, const unsigned int *indexes, int numIndexes, struct image_s *image, unsigned long stateBits, int cullType);
 
 /**
  * @brief submits one already-tessellated 3D shader stage

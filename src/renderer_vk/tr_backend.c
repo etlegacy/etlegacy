@@ -488,12 +488,17 @@ void RB_BeginDrawingView(void)
 	// clear relevant buffers
 	clearBits = 0;
 
+	// renderer1 makes the stencil clear an alternative to the
+	// rest of this chain, so with r_shadows 2 depth is never cleared per
+	// view. Vulkan clears stencil together with depth (VK_ClearSceneDepth)
+	// whenever the attachment has stencil, so keep the depth logic intact.
 	if (r_measureOverdraw->integer || r_shadows->integer == 2)
 	{
 		clearBits |= GL_STENCIL_BUFFER_BIT;
 	}
+
 	// global q3 fog volume
-	else if (tr.world && tr.world->globalFog >= 0)
+	if (tr.world && tr.world->globalFog >= 0)
 	{
 		clearBits |= GL_DEPTH_BUFFER_BIT;
 		clearBits |= GL_COLOR_BUFFER_BIT;

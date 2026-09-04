@@ -33,6 +33,7 @@
  */
 
 #include "tr_local.h"
+#include "vulkan/vk.h"
 
 /*
   for a projection shadow:
@@ -76,8 +77,15 @@ void R_AddEdgeDef(int i1, int i2, int facing)
 	numEdgeDefs[i1]++;
 }
 
+// silhouette quads collected as a triangle list for
+// VK_DrawShadowVolume() (renderer1 drew each one as an immediate-mode
+// GL_TRIANGLE_STRIP).
+static glIndex_t shadowIndexes[SHADER_MAX_INDEXES];
+static int       numShadowIndexes;
+
 /**
- * @brief R_RenderShadowEdges
+ * @brief R_RenderShadowEdges - collects the silhouette edge quads into
+ * shadowIndexes/numShadowIndexes.
  */
 void R_RenderShadowEdges(void)
 {
@@ -92,6 +100,8 @@ void R_RenderShadowEdges(void)
 	// or if it has a reverse paired edge that also faces the light.
 	// A well behaved polyhedron would have exactly two faces for each edge,
 	// but lots of models have dangling edges or overfanned edges
+
+	numShadowIndexes = 0;
 
 	for (i = 0 ; i < tess.numVertexes ; i++)
 	{
@@ -120,12 +130,18 @@ void R_RenderShadowEdges(void)
 			// triangle, it is a sil edge
 			if (hit[1] == 0)
 			{
-				glBegin(GL_TRIANGLE_STRIP);
-				glVertex3fv(tess.xyz[i]);
-				glVertex3fv(tess.xyz[i + tess.numVertexes]);
-				glVertex3fv(tess.xyz[i2]);
-				glVertex3fv(tess.xyz[i2 + tess.numVertexes]);
-				glEnd();
+				// strip (i, i', i2, i2') as two triangles with the same
+				// winding GL_TRIANGLE_STRIP produces
+				if (numShadowIndexes + 6 > SHADER_MAX_INDEXES)
+				{
+					return;
+				}
+				shadowIndexes[numShadowIndexes++] = i;
+				shadowIndexes[numShadowIndexes++] = i + tess.numVertexes;
+				shadowIndexes[numShadowIndexes++] = i2;
+				shadowIndexes[numShadowIndexes++] = i2;
+				shadowIndexes[numShadowIndexes++] = i + tess.numVertexes;
+				shadowIndexes[numShadowIndexes++] = i2 + tess.numVertexes;
 				// c_edges++;
 			}
 			/*
@@ -222,40 +238,22 @@ void RB_ShadowTessEnd(void)
 	GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
 	glColor3f(0.2f, 0.2f, 0.2f);
 
-	// don't write to the color buffer
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-
-	glEnable(GL_STENCIL_TEST);
-	glStencilFunc(GL_ALWAYS, 1, 255);
+	// the color-masked, stencil INCR/DECR passes are encoded
+	// in VK_DrawShadowVolume()'s pipelines; GL_BACK/GL_FRONT culling maps
+	// to CT_BACK_SIDED/CT_FRONT_SIDED in the Vulkan pipeline convention.
+	R_RenderShadowEdges();
 
 	// mirrors have the culling order reversed
 	if (backEnd.viewParms.isMirror)
 	{
-		glCullFace(GL_FRONT);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-
-		R_RenderShadowEdges();
-
-		glCullFace(GL_BACK);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
-
-		R_RenderShadowEdges();
+		VK_DrawShadowVolume(tess.xyz, tess.numVertexes * 2, shadowIndexes, numShadowIndexes, CT_FRONT_SIDED, qtrue);
+		VK_DrawShadowVolume(tess.xyz, tess.numVertexes * 2, shadowIndexes, numShadowIndexes, CT_BACK_SIDED, qfalse);
 	}
 	else
 	{
-		glCullFace(GL_BACK);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-
-		R_RenderShadowEdges();
-
-		glCullFace(GL_FRONT);
-		glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
-
-		R_RenderShadowEdges();
+		VK_DrawShadowVolume(tess.xyz, tess.numVertexes * 2, shadowIndexes, numShadowIndexes, CT_BACK_SIDED, qtrue);
+		VK_DrawShadowVolume(tess.xyz, tess.numVertexes * 2, shadowIndexes, numShadowIndexes, CT_FRONT_SIDED, qfalse);
 	}
-
-	// reenable writing to the color buffer
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
 
 /**
@@ -275,28 +273,8 @@ void RB_ShadowFinish(void)
 	{
 		return;
 	}
-	glEnable(GL_STENCIL_TEST);
-	glStencilFunc(GL_NOTEQUAL, 0, 255);
-
-	glDisable(GL_CLIP_PLANE0);
-	glDisable(GL_CULL_FACE);
-
-	GL_Bind(tr.whiteImage);
-
-	glLoadIdentity();
-
-	glColor3f(0.6f, 0.6f, 0.6f);
-	GL_State(GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO);
-
-	glBegin(GL_QUADS);
-	glVertex3f(-100, 100, -10);
-	glVertex3f(100, 100, -10);
-	glVertex3f(100, -100, -10);
-	glVertex3f(-100, -100, -10);
-	glEnd();
-
-	glColor4f(1, 1, 1, 1);
-	glDisable(GL_STENCIL_TEST);
+	// stencil NOTEQUAL 0, multiply by 0.6 (see VK_DrawShadowFinish)
+	VK_DrawShadowFinish();
 }
 
 /**

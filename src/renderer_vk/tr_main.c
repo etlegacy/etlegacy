@@ -162,6 +162,7 @@ void R_FogOn(void)
 	}
 
 	glEnable(GL_FOG);
+	VK_SetFogOn();
 	fogIsOn = qtrue;
 }
 

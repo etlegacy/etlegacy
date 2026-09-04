@@ -71,6 +71,7 @@ void RE_InitOpenGl(void)
 	glConfig.driverType           = GLDRV_ICD;
 	glConfig.hardwareType         = GLHW_GENERIC;
 	glConfig.extensions_string[0] = '\0';
+	glConfig.stencilBits          = VK_StencilBits();
 }
 
 /**
