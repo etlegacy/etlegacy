@@ -58,6 +58,13 @@
 // pipelines are created lazily and cached for the life of the renderer.
 #define VK_MAX_SCENE_PIPELINES 128
 
+// non-GLS pipeline states used by stencil shadow volumes
+// (renderer1's RB_ShadowTessEnd()/RB_ShadowFinish()).
+#define VK_SPECIAL_NONE           0
+#define VK_SPECIAL_SHADOW_INCR    1 // volume faces: no color, stencil ALWAYS, pass -> increment
+#define VK_SPECIAL_SHADOW_DECR    2 // volume faces: no color, stencil ALWAYS, pass -> decrement
+#define VK_SPECIAL_SHADOW_DARKEN  3 // full-screen darken where stencil != 0
+
 // One lazily-created pipeline variant for a given (stateBits, cullType,
 // polygonOffset) combination used by the 3D scene pipelines.
 typedef struct
@@ -65,6 +72,7 @@ typedef struct
 	unsigned long stateBits;
 	int cullType;
 	qboolean polygonOffset;
+	int special; // VK_SPECIAL_* (stencil shadow pipelines), 0 = normal
 	VkPipeline pipeline;
 } vkScenePipelineEntry_t;
 
@@ -105,6 +113,7 @@ typedef struct
 
 	// depth buffer, recreated alongside the swapchain.
 	VkFormat depthFormat;
+	qboolean depthHasStencil;
 	VkImage depthImage;
 	VkDeviceMemory depthImageMemory;
 	VkImageView depthImageView;
@@ -177,6 +186,7 @@ typedef struct
 	// is the mode R_Fog() defaults to when a fog volume doesn't specify
 	// one, which covers the vast majority of ET fog usage).
 	qboolean fogEnabled;
+	qboolean fogParamsValid; // VK_SetFog() has run at least once
 	float fogColor[4];
 	float fogStart;
 	float fogEnd;
@@ -634,7 +644,28 @@ static qboolean VK_CreateDepthResources(void)
 	VkMemoryAllocateInfo  allocInfo;
 	VkImageViewCreateInfo viewInfo;
 
-	vk.depthFormat = VK_FORMAT_D32_SFLOAT;
+	// prefer a depth format with stencil (needed by stencil
+	// shadow volumes, r_shadows 2). Apple GPUs expose D32_SFLOAT_S8_UINT
+	// only; some others D24_UNORM_S8_UINT. Fall back to depth-only.
+	{
+		static const VkFormat candidates[] = { VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT };
+		VkFormatProperties    props;
+		int                   i;
+
+		vk.depthFormat     = VK_FORMAT_D32_SFLOAT;
+		vk.depthHasStencil = qfalse;
+
+		for (i = 0; i < (int)ARRAY_LEN(candidates); i++)
+		{
+			vkGetPhysicalDeviceFormatProperties(vk.physicalDevice, candidates[i], &props);
+			if (props.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT)
+			{
+				vk.depthFormat     = candidates[i];
+				vk.depthHasStencil = qtrue;
+				break;
+			}
+		}
+	}
 
 	Com_Memset(&imageInfo, 0, sizeof(imageInfo));
 	imageInfo.sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -675,7 +706,7 @@ static qboolean VK_CreateDepthResources(void)
 	viewInfo.image                       = vk.depthImage;
 	viewInfo.viewType                    = VK_IMAGE_VIEW_TYPE_2D;
 	viewInfo.format                      = vk.depthFormat;
-	viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+	viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | (vk.depthHasStencil ? VK_IMAGE_ASPECT_STENCIL_BIT : 0);
 	viewInfo.subresourceRange.levelCount = 1;
 	viewInfo.subresourceRange.layerCount = 1;
 
@@ -723,7 +754,7 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	depthAttachment.samples        = VK_SAMPLE_COUNT_1_BIT;
 	depthAttachment.loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	depthAttachment.storeOp        = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	depthAttachment.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	depthAttachment.stencilLoadOp  = vk.depthHasStencil ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 	depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 	depthAttachment.initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED;
 	depthAttachment.finalLayout    = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
@@ -1419,7 +1450,7 @@ static qboolean VK_CreateScenePipelineLayouts(void)
  * cullType) pair. `lightmapped` selects the vertex format/shaders/pipeline
  * layout (vk3DVertex_t + tr3d.* vs. vk3DVertexLM_t + tr3d_lm.*).
  */
-static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cullType, qboolean lightmapped, qboolean polygonOffset)
+static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cullType, qboolean lightmapped, qboolean polygonOffset, int special)
 {
 	VkPipelineShaderStageCreateInfo        stages[2];
 	VkVertexInputBindingDescription        vertexBinding;
@@ -1559,6 +1590,45 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	colorBlending.attachmentCount = 1;
 	colorBlending.pAttachments    = &colorBlendAttachment;
 
+	// stencil shadow volume states (see VK_SPECIAL_*).
+	if (special == VK_SPECIAL_SHADOW_INCR || special == VK_SPECIAL_SHADOW_DECR)
+	{
+		VkStencilOpState op;
+
+		Com_Memset(&op, 0, sizeof(op));
+		op.failOp      = VK_STENCIL_OP_KEEP;
+		op.depthFailOp = VK_STENCIL_OP_KEEP;
+		op.passOp      = (special == VK_SPECIAL_SHADOW_INCR) ? VK_STENCIL_OP_INCREMENT_AND_CLAMP : VK_STENCIL_OP_DECREMENT_AND_CLAMP;
+		op.compareOp   = VK_COMPARE_OP_ALWAYS;
+		op.compareMask = 255;
+		op.writeMask   = 255;
+		op.reference   = 1;
+
+		depthStencil.stencilTestEnable = VK_TRUE;
+		depthStencil.front             = op;
+		depthStencil.back              = op;
+
+		colorBlendAttachment.blendEnable    = VK_FALSE;
+		colorBlendAttachment.colorWriteMask = 0;
+	}
+	else if (special == VK_SPECIAL_SHADOW_DARKEN)
+	{
+		VkStencilOpState op;
+
+		Com_Memset(&op, 0, sizeof(op));
+		op.failOp      = VK_STENCIL_OP_KEEP;
+		op.depthFailOp = VK_STENCIL_OP_KEEP;
+		op.passOp      = VK_STENCIL_OP_KEEP;
+		op.compareOp   = VK_COMPARE_OP_NOT_EQUAL;
+		op.compareMask = 255;
+		op.writeMask   = 0;
+		op.reference   = 0;
+
+		depthStencil.stencilTestEnable = VK_TRUE;
+		depthStencil.front             = op;
+		depthStencil.back              = op;
+	}
+
 	Com_Memset(&dynamicState, 0, sizeof(dynamicState));
 	dynamicState.sType             = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 	dynamicState.dynamicStateCount = 2;
@@ -1621,7 +1691,7 @@ static int VK_MirrorCullType(int cullType)
 	return cullType;
 }
 
-static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qboolean lightmapped, qboolean polygonOffset)
+static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qboolean lightmapped, qboolean polygonOffset, int special)
 {
 	vkScenePipelineEntry_t *entries = lightmapped ? vk.sceneLMPipelines : vk.scenePipelines;
 	int                    *count   = lightmapped ? &vk.numSceneLMPipelines : &vk.numScenePipelines;
@@ -1630,7 +1700,8 @@ static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qbo
 
 	for (i = 0; i < *count; i++)
 	{
-		if (entries[i].stateBits == stateBits && entries[i].cullType == cullType && entries[i].polygonOffset == polygonOffset)
+		if (entries[i].stateBits == stateBits && entries[i].cullType == cullType && entries[i].polygonOffset == polygonOffset &&
+		    entries[i].special == special)
 		{
 			return entries[i].pipeline;
 		}
@@ -1642,7 +1713,7 @@ static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qbo
 		return VK_NULL_HANDLE;
 	}
 
-	pipeline = VK_CreateScenePipelineVariant(stateBits, cullType, lightmapped, polygonOffset);
+	pipeline = VK_CreateScenePipelineVariant(stateBits, cullType, lightmapped, polygonOffset, special);
 	if (pipeline == VK_NULL_HANDLE)
 	{
 		return VK_NULL_HANDLE;
@@ -1651,6 +1722,7 @@ static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qbo
 	entries[*count].stateBits     = stateBits;
 	entries[*count].cullType      = cullType;
 	entries[*count].polygonOffset = polygonOffset;
+	entries[*count].special       = special;
 	entries[*count].pipeline      = pipeline;
 	(*count)++;
 
@@ -1765,11 +1837,27 @@ void VK_SetFog(const float *color, float start, float end)
 	vk.fogColor[3] = color[3];
 	vk.fogStart    = start;
 	vk.fogEnd      = end;
+
+	vk.fogParamsValid = qtrue;
 }
 
 void VK_SetFogOff(void)
 {
 	vk.fogEnabled = qfalse;
+}
+
+/**
+ * @brief Re-enables fog with the parameters from the last VK_SetFog(),
+ * mirroring glEnable(GL_FOG) in R_FogOn() (renderer1 keeps the fog
+ * parameters across glDisable/glEnable, so R_FogOff()/R_FogOn() pairs,
+ * e.g. around dlight passes or per-stage noFog, must restore fog).
+ */
+void VK_SetFogOn(void)
+{
+	if (vk.fogParamsValid)
+	{
+		vk.fogEnabled = qtrue;
+	}
 }
 
 /**
@@ -2828,7 +2916,7 @@ void VK_ClearSceneDepth(void)
 	}
 
 	Com_Memset(&attachment, 0, sizeof(attachment));
-	attachment.aspectMask                      = VK_IMAGE_ASPECT_DEPTH_BIT;
+	attachment.aspectMask                      = VK_IMAGE_ASPECT_DEPTH_BIT | (vk.depthHasStencil ? VK_IMAGE_ASPECT_STENCIL_BIT : 0);
 	attachment.clearValue.depthStencil.depth   = 1.0f;
 	attachment.clearValue.depthStencil.stencil = 0;
 
@@ -2883,7 +2971,17 @@ static float VK_MultitextureEnvMode(const shaderCommands_t *input)
  */
 void VK_Draw3D(shaderCommands_t *input, struct image_s *image, unsigned long stateBits, int cullType)
 {
-	int             numVertexes, numIndexes, i;
+	VK_Draw3DIndexes(input, input->indexes, input->numIndexes, image, stateBits, cullType);
+}
+
+/**
+ * @brief VK_Draw3D() drawing only the given subset of indexes (e.g. the
+ * triangles a dynamic light actually touches) while still reading every
+ * vertex from input.
+ */
+void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int numIndexes, struct image_s *image, unsigned long stateBits, int cullType)
+{
+	int             numVertexes, i;
 	VkDeviceSize    vertexBytes, indexBytes;
 	vk3DVertex_t    *dstVerts;
 	uint32_t        *dstIndexes;
@@ -2893,7 +2991,7 @@ void VK_Draw3D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 	VkBuffer        vertexBuffers[1];
 	VkDeviceSize    offsets[1];
 
-	if (!vk.initialized || !input || input->numVertexes == 0 || input->numIndexes == 0)
+	if (!vk.initialized || !input || input->numVertexes == 0 || numIndexes == 0)
 	{
 		return;
 	}
@@ -2907,14 +3005,13 @@ void VK_Draw3D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 		return;
 	}
 
-	pipeline = VK_GetScenePipeline(stateBits, VK_MirrorCullType(cullType), qfalse, VK_ShaderPolygonOffset(input));
+	pipeline = VK_GetScenePipeline(stateBits, VK_MirrorCullType(cullType), qfalse, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE);
 	if (pipeline == VK_NULL_HANDLE)
 	{
 		return;
 	}
 
 	numVertexes = input->numVertexes;
-	numIndexes  = input->numIndexes;
 
 	vertexBytes = (VkDeviceSize)numVertexes * sizeof(vk3DVertex_t);
 	indexBytes  = (VkDeviceSize)numIndexes * sizeof(uint32_t);
@@ -2947,7 +3044,7 @@ void VK_Draw3D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 	}
 
 	dstIndexes = (uint32_t *)((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset);
-	Com_Memcpy(dstIndexes, input->indexes, (size_t)indexBytes);
+	Com_Memcpy(dstIndexes, indexes, (size_t)indexBytes);
 
 	if (vk.lastBoundPipeline != pipeline)
 	{
@@ -3026,7 +3123,7 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 		return;
 	}
 
-	pipeline = VK_GetScenePipeline(stateBits, VK_MirrorCullType(cullType), qtrue, VK_ShaderPolygonOffset(input));
+	pipeline = VK_GetScenePipeline(stateBits, VK_MirrorCullType(cullType), qtrue, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE);
 	if (pipeline == VK_NULL_HANDLE)
 	{
 		return;
@@ -3109,4 +3206,139 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 
 	vk.sceneVertexArenaOffset += vertexBytes;
 	vk.sceneIndexArenaOffset  += indexBytes;
+}
+
+/**
+ * @brief number of stencil bits of the depth attachment
+ * (reported as glConfig.stencilBits; renderer1 code gates stencil
+ * shadows on >= 4).
+ */
+int VK_StencilBits(void)
+{
+	return vk.depthHasStencil ? 8 : 0;
+}
+
+/**
+ * @brief uploads raw positions with one constant color and
+ * draws them with the given (special) scene pipeline, white texture.
+ */
+static void VK_DrawSceneRaw(VkPipeline pipeline, const vec4_t *xyz, int numVertexes, const byte *color,
+                            const glIndex_t *indexes, int numIndexes, const float *mvp, const float *modelView, qboolean useClip)
+{
+	VkDeviceSize    vertexBytes, indexBytes;
+	vk3DVertex_t    *dstVerts;
+	float           pushConstants[48];
+	VkDescriptorSet descriptorSet;
+	VkBuffer        vertexBuffers[1];
+	VkDeviceSize    offsets[1];
+	int             i;
+
+	if (pipeline == VK_NULL_HANDLE || numVertexes == 0 || numIndexes == 0 || !tr.whiteImage || !tr.whiteImage->vkDescriptorSet)
+	{
+		return;
+	}
+
+	vertexBytes = (VkDeviceSize)numVertexes * sizeof(vk3DVertex_t);
+	indexBytes  = (VkDeviceSize)numIndexes * sizeof(uint32_t);
+
+	if (vk.sceneVertexArenaOffset + vertexBytes > vk.sceneVertexArenaSize ||
+	    vk.sceneIndexArenaOffset + indexBytes > vk.sceneIndexArenaSize)
+	{
+		return;
+	}
+
+	dstVerts = (vk3DVertex_t *)((byte *)vk.sceneVertexArenaMapped + vk.sceneVertexArenaOffset);
+	for (i = 0; i < numVertexes; i++)
+	{
+		dstVerts[i].pos[0]   = xyz[i][0];
+		dstVerts[i].pos[1]   = xyz[i][1];
+		dstVerts[i].pos[2]   = xyz[i][2];
+		dstVerts[i].uv[0]    = 0.0f;
+		dstVerts[i].uv[1]    = 0.0f;
+		dstVerts[i].color[0] = color[0];
+		dstVerts[i].color[1] = color[1];
+		dstVerts[i].color[2] = color[2];
+		dstVerts[i].color[3] = color[3];
+	}
+	Com_Memcpy((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset, indexes, (size_t)indexBytes);
+
+	if (vk.lastBoundPipeline != pipeline)
+	{
+		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+		vk.lastBoundPipeline = pipeline;
+	}
+
+	Com_Memset(pushConstants, 0, sizeof(pushConstants));
+	Com_Memcpy(pushConstants, mvp, 16 * sizeof(float));
+	Com_Memcpy(pushConstants + 16, modelView, 16 * sizeof(float));
+	if (useClip && vk.clipPlaneEnabled)
+	{
+		pushConstants[43] = 1.0f;
+		pushConstants[44] = vk.clipPlane[0];
+		pushConstants[45] = vk.clipPlane[1];
+		pushConstants[46] = vk.clipPlane[2];
+		pushConstants[47] = vk.clipPlane[3];
+	}
+	vkCmdPushConstants(vk.commandBuffer, vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pushConstants), pushConstants);
+
+	descriptorSet = (VkDescriptorSet)tr.whiteImage->vkDescriptorSet;
+	vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.scenePipelineLayout, 0, 1, &descriptorSet, 0, NULL);
+
+	vertexBuffers[0] = vk.sceneVertexArenaBuffer;
+	offsets[0]       = vk.sceneVertexArenaOffset;
+	vkCmdBindVertexBuffers(vk.commandBuffer, 0, 1, vertexBuffers, offsets);
+	vkCmdBindIndexBuffer(vk.commandBuffer, vk.sceneIndexArenaBuffer, vk.sceneIndexArenaOffset, VK_INDEX_TYPE_UINT32);
+
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, 0, 0, 0);
+
+	vk.sceneVertexArenaOffset += vertexBytes;
+	vk.sceneIndexArenaOffset  += indexBytes;
+}
+
+/**
+ * @brief one stencil pass of a shadow volume (renderer1's
+ * R_RenderShadowEdges() under glStencilOp(KEEP, KEEP, INCR/DECR) with
+ * color writes off). cullType uses the engine's CT_* convention, already
+ * resolved for mirrors by the caller.
+ */
+void VK_DrawShadowVolume(const vec4_t *xyz, int numVertexes, const glIndex_t *indexes, int numIndexes, int cullType, qboolean increment)
+{
+	static const byte color[4] = { 51, 51, 51, 255 };
+	VkPipeline        pipeline;
+
+	if (!vk.initialized || !vk.depthHasStencil)
+	{
+		return;
+	}
+
+	pipeline = VK_GetScenePipeline(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO, cullType, qfalse, qfalse,
+	                               increment ? VK_SPECIAL_SHADOW_INCR : VK_SPECIAL_SHADOW_DECR);
+
+	VK_DrawSceneRaw(pipeline, xyz, numVertexes, color, indexes, numIndexes, vk.mvpMatrix, vk.modelMatrix, qtrue);
+}
+
+/**
+ * @brief renderer1's RB_ShadowFinish() darken pass: multiply
+ * the current view by 0.6 wherever the stencil is non-zero. Drawn as a
+ * clip-space quad covering the view (identity matrices) without depth
+ * test/write; renderer1 instead draws a near eye-space quad with depth
+ * writes on, which has the same visible result.
+ */
+void VK_DrawShadowFinish(void)
+{
+	static const byte      color[4]     = { 153, 153, 153, 255 };
+	static const vec4_t    quad[4]      = { { -1, -1, 0.5f, 1 }, { 1, -1, 0.5f, 1 }, { 1, 1, 0.5f, 1 }, { -1, 1, 0.5f, 1 } };
+	static const glIndex_t idx[6]       = { 0, 1, 2, 0, 2, 3 };
+	static const float     identity[16] = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
+	VkPipeline             pipeline;
+
+	if (!vk.initialized || !vk.depthHasStencil)
+	{
+		return;
+	}
+
+	pipeline = VK_GetScenePipeline(GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO, CT_TWO_SIDED, qfalse, qfalse,
+	                               VK_SPECIAL_SHADOW_DARKEN);
+
+	VK_DrawSceneRaw(pipeline, quad, 4, color, idx, 6, identity, identity, qfalse);
 }

@@ -577,6 +577,228 @@ static void ComputeTexCoords(shaderStage_t *pStage)
 
 
 /**
+ * @brief Adds the contribution of every dynamic light in lightBits to
+ * tess.svars.colors (renderer1's DynamicLightSinglePass/DynamicLightPass
+ * vertex loop), then collects the triangles with any lit vertex.
+ * @return number of indexes written to hitIndexes
+ */
+static int RB_ComputeDlightColors(int lightBits, glIndex_t *hitIndexes)
+{
+	int      i, l, a, b, c, color, *intColors;
+	vec3_t   origin;
+	byte     *colors;
+	int      numIndexes;
+	float    radius, radiusInverseCubed;
+	float    intensity, remainder, modulate;
+	vec3_t   floatColor, dir;
+	dlight_t *dl;
+
+	Com_Memset(tess.svars.colors, 0, tess.numVertexes * sizeof(tess.svars.colors[0]));
+
+	for (l = 0; l < backEnd.refdef.num_dlights; l++)
+	{
+		if (!(lightBits & (1 << l)))
+		{
+			continue;
+		}
+
+		dl = &backEnd.refdef.dlights[l];
+		VectorCopy(dl->transformed, origin);
+		radius             = dl->radius;
+		radiusInverseCubed = dl->radiusInverseCubed;
+		intensity          = dl->intensity;
+		floatColor[0]      = dl->color[0] * 255.0f;
+		floatColor[1]      = dl->color[1] * 255.0f;
+		floatColor[2]      = dl->color[2] * 255.0f;
+
+		// directional lights have max intensity and washout remainder intensity
+		if (dl->flags & REF_DIRECTED_DLIGHT)
+		{
+			remainder = intensity * 0.125f;
+		}
+		else
+		{
+			remainder = 0.0f;
+		}
+
+		colors = tess.svars.colors[0];
+		for (i = 0; i < tess.numVertexes; i++, colors += 4)
+		{
+			backEnd.pc.c_dlightVertexes++;
+
+			// directional dlight, origin is a directional normal
+			if (dl->flags & REF_DIRECTED_DLIGHT)
+			{
+				// twosided surfaces use absolute value of the calculated lighting
+				modulate = intensity * DotProduct(dl->origin, tess.normal[i]);
+				if (tess.shader->cullType == CT_TWO_SIDED)
+				{
+					modulate = Q_fabs(modulate);
+				}
+				modulate += remainder;
+			}
+			// ball dlight
+			else
+			{
+				dir[0] = radius - Q_fabs(origin[0] - tess.xyz[i][0]);
+				if (dir[0] <= 0.0f)
+				{
+					continue;
+				}
+				dir[1] = radius - Q_fabs(origin[1] - tess.xyz[i][1]);
+				if (dir[1] <= 0.0f)
+				{
+					continue;
+				}
+				dir[2] = radius - Q_fabs(origin[2] - tess.xyz[i][2]);
+				if (dir[2] <= 0.0f)
+				{
+					continue;
+				}
+
+				modulate = intensity * dir[0] * dir[1] * dir[2] * radiusInverseCubed;
+			}
+
+			if (modulate < (1.0f / 128.0f))
+			{
+				continue;
+			}
+			else if (modulate > 1.0f)
+			{
+				modulate = 1.0f;
+			}
+
+			color     = colors[0] + (int)(floatColor[0] * modulate);
+			colors[0] = color > 255 ? 255 : (byte)color;
+			color     = colors[1] + (int)(floatColor[1] * modulate);
+			colors[1] = color > 255 ? 255 : (byte)color;
+			color     = colors[2] + (int)(floatColor[2] * modulate);
+			colors[2] = color > 255 ? 255 : (byte)color;
+		}
+	}
+
+	// build a list of triangles that need light
+	intColors  = (int *) tess.svars.colors;
+	numIndexes = 0;
+	for (i = 0; i < tess.numIndexes; i += 3)
+	{
+		a = tess.indexes[i];
+		b = tess.indexes[i + 1];
+		c = tess.indexes[i + 2];
+		if (!(intColors[a] | intColors[b] | intColors[c]))
+		{
+			continue;
+		}
+		hitIndexes[numIndexes++] = a;
+		hitIndexes[numIndexes++] = b;
+		hitIndexes[numIndexes++] = c;
+	}
+
+	return numIndexes;
+}
+
+/**
+ * @brief Draws one additive dynamic light pass over the hit triangles:
+ * white texture * vertex light color, blended DST_COLOR/ONE with depth
+ * func equal so it only lands on the surface just drawn.
+ */
+static void RB_DrawDlightPass(const glIndex_t *hitIndexes, int numIndexes)
+{
+	if (numIndexes == 0)
+	{
+		return;
+	}
+
+	R_FogOff();
+	VK_Draw3DIndexes(&tess, hitIndexes, numIndexes, tr.whiteImage,
+	                 GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ONE | GLS_DEPTHFUNC_EQUAL, tess.shader->cullType);
+	backEnd.pc.c_totalIndexes  += numIndexes;
+	backEnd.pc.c_dlightIndexes += numIndexes;
+	R_FogOn();
+}
+
+/**
+ * @brief renderer1's dynamic light step, run after a
+ * surface's own stages. r_dynamicLight 2 draws one pass per light
+ * (DynamicLightPass), otherwise all lights are summed into one pass
+ * (DynamicLightSinglePass).
+ */
+static void RB_DynamicLights(void)
+{
+	static glIndex_t hitIndexes[SHADER_MAX_INDEXES];
+	int              l;
+
+	if (!tess.dlightBits || !tess.shader->fogPass ||
+	    (tess.shader->surfaceFlags & (SURF_NODLIGHT | SURF_SKY)))
+	{
+		return;
+	}
+
+	if (backEnd.refdef.num_dlights == 0)
+	{
+		return;
+	}
+
+	if (r_dynamicLight->integer == 2)
+	{
+		for (l = 0; l < backEnd.refdef.num_dlights; l++)
+		{
+			if (tess.dlightBits & (1 << l))
+			{
+				RB_DrawDlightPass(hitIndexes, RB_ComputeDlightColors(1 << l, hitIndexes));
+			}
+		}
+	}
+	else
+	{
+		RB_DrawDlightPass(hitIndexes, RB_ComputeDlightColors(tess.dlightBits, hitIndexes));
+	}
+}
+
+/**
+ * @brief renderer1's RB_FogPass - blends a Q3 fog volume
+ * (tr.world->fogs[tess.fogNum]) over the surface using tr.fogImage with
+ * per-vertex fog texcoords from RB_CalcFogTexCoords().
+ */
+static void RB_FogPass(void)
+{
+	fog_t *fog;
+	int   i;
+
+	if (!tess.fogNum || !tess.shader->fogPass)
+	{
+		return;
+	}
+
+	// no fog pass in snooper
+	if ((tr.refdef.rdflags & RDF_SNOOPERVIEW) || tess.shader->noFog || !r_wolfFog->integer)
+	{
+		return;
+	}
+
+	// no world, no fogging
+	if (backEnd.refdef.rdflags & RDF_NOWORLDMODEL)
+	{
+		return;
+	}
+
+	fog = tr.world->fogs + tess.fogNum;
+
+	for (i = 0; i < tess.numVertexes; i++)
+	{
+		*( int * )&tess.svars.colors[i] = fog->shader->fogParms.colorInt;
+	}
+
+	RB_CalcFogTexCoords(( float * ) tess.svars.texcoords[0]);
+
+	VK_Draw3D(&tess, tr.fogImage,
+	          (tess.shader->fogPass == FP_EQUAL)
+	          ? (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHFUNC_EQUAL)
+	          : (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA),
+	          tess.shader->cullType);
+}
+
+/**
  * @brief For 2D/UI draws (backEnd.projection2D), submits the tessellated
  * batch via the Vulkan UI pipeline. For 3D surfaces, computes
  * colors/texcoords per stage and submits via VK_Draw3D/VK_Draw3DLightmapped.
@@ -611,11 +833,9 @@ void RB_StageIteratorGeneric(void)
 
 	SetIteratorFog();
 
-	if (shader->numUnfoggedPasses == 0)
-	{
-		return;
-	}
-
+	// no early-out on numUnfoggedPasses == 0: fog volume surfaces have no
+	// stages of their own but still need RB_FogPass() below (renderer1
+	// simply iterates zero stages).
 	{
 		int stage;
 
@@ -630,6 +850,16 @@ void RB_StageIteratorGeneric(void)
 
 			ComputeColors(pStage);
 			ComputeTexCoords(pStage);
+
+			// per stage fogging (detail textures)
+			if (tess.shader->noFog && !pStage->isFogged)
+			{
+				R_FogOff();
+			}
+			else
+			{
+				R_FogOn();
+			}
 
 			if (pStage->bundle[1].image[0] != 0)
 			{
@@ -675,6 +905,9 @@ void RB_StageIteratorGeneric(void)
 			}
 		}
 	}
+
+	RB_DynamicLights();
+	RB_FogPass();
 }
 
 /**
@@ -702,6 +935,9 @@ void RB_StageIteratorVertexLitTexture(void)
 	}
 
 	VK_Draw3D(input, R_GetAnimatedImage(&tess.xstages[0]->bundle[0]), tess.xstages[0]->stateBits, shader->cullType);
+
+	RB_DynamicLights();
+	RB_FogPass();
 }
 
 /**
@@ -730,6 +966,9 @@ void RB_StageIteratorLightmappedMultitexture(void)
 
 	VK_Draw3DLightmapped(input, R_GetAnimatedImage(&tess.xstages[0]->bundle[0]), R_GetAnimatedImage(&tess.xstages[0]->bundle[1]),
 	                     GLS_DEFAULT, shader->cullType);
+
+	RB_DynamicLights();
+	RB_FogPass();
 }
 
 /**
@@ -751,6 +990,12 @@ void RB_EndSurface(void)
 	if (input->xyz[SHADER_MAX_VERTEXES - 1][0] != 0.f)
 	{
 		Ren_Drop("RB_EndSurface() - input->maxShaderVerts(%i) hit", SHADER_MAX_VERTEXES);
+	}
+
+	if (tess.shader == tr.shadowShader)
+	{
+		RB_ShadowTessEnd();
+		return;
 	}
 
 	// update performance counters
