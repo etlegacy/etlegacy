@@ -803,9 +803,11 @@ static void RB_FogPass(void)
  * batch via the Vulkan UI pipeline. For 3D surfaces, computes
  * colors/texcoords per stage and submits via VK_Draw3D/VK_Draw3DLightmapped.
  *
- * @note Deferred scope: dynamic lighting/dlights, in-shader fog, polygon
- * offset (decals), r_lightMap debug override, and true multi-pass combiner
- * blending beyond base+lightmap are not yet implemented.
+ * Followed by the dynamic light and fog volume passes (RB_DynamicLights,
+ * RB_FogPass), as in renderer1.
+ *
+ * @note Not yet implemented: r_showTris/r_showNormals debug draws and
+ * r_debugShaderSurfaceFlags.
  */
 void RB_StageIteratorGeneric(void)
 {
