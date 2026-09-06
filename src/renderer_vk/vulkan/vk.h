@@ -82,12 +82,24 @@ struct image_s;
 struct shaderCommands_s;
 
 /**
- * @brief uploads a 32-bit RGBA image (one mip level only) to
- * a new device-local Vulkan texture + descriptor set, stored on the given
+ * @brief uploads a 32-bit RGBA image (data
+ * holds mipLevels packed levels, see Upload32()) to a new device-local
+ * Vulkan texture + descriptor set, stored on the given
  * image_t. Returns qfalse on failure (caller should treat the image as
  * untextured / fall back to tr.whiteImage).
  */
-qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int width, int height, qboolean mipmap, int wrapClampMode);
+qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int width, int height, int mipLevels, qboolean mipmap, int wrapClampMode);
+
+/**
+ * @brief rebuilds the mipmapped-image samplers for a new
+ * GL-style min/mag filter and rebinds existing images (GL_TextureMode).
+ */
+void VK_SetTextureMode(int minFilter, int magFilter);
+
+/**
+ * @brief device max sampler anisotropy, 0 if unsupported.
+ */
+float VK_GetMaxAnisotropy(void);
 
 /**
  * @brief Destroys the Vulkan resources created by VK_CreateImageTexture

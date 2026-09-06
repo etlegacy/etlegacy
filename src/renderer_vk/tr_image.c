@@ -145,8 +145,7 @@ textureMode_t modes[] =
  */
 void GL_TextureMode(const char *string)
 {
-	int     i;
-	image_t *glt;
+	int i;
 
 	for (i = 0 ; i < 6 ; i++)
 	{
@@ -165,17 +164,9 @@ void GL_TextureMode(const char *string)
 	gl_filter_min = modes[i].minimize;
 	gl_filter_max = modes[i].maximize;
 
-	// change all the existing mipmap texture objects
-	for (i = 0 ; i < tr.numImages ; i++)
-	{
-		glt = tr.images[i];
-		if (glt->mipmap)
-		{
-			GL_Bind(glt);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter_min);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter_max);
-		}
-	}
+	// change all the existing mipmap texture objects (the
+	// sampler lives in each image's descriptor set, rebound in vk.c)
+	VK_SetTextureMode(gl_filter_min, gl_filter_max);
 }
 
 /**
@@ -561,9 +552,8 @@ byte mipBlendColors[16][4] =
  * below is now purely informational/debug bookkeeping (image->internalFormat)
  * - Vulkan always uploads as VK_FORMAT_R8G8B8A8_UNORM.
  *
- * @note scope reduction: real mipmap generation and the CPU
- * mip-chain loop used by the legacy GL path have been dropped; only a
- * single mip level is uploaded. Deferred for now.
+ * @note mipmapped images get renderer1's full CPU mip chain
+ * (R_MipMap, honoring r_simpleMipMaps/r_colorMipLevels).
  *
  * @param[in] image
  * @param[in,out] data
@@ -710,7 +700,55 @@ static void Upload32(image_t *image, unsigned *data,
 	image->uploadWidth    = scaled_width;
 	image->uploadHeight   = scaled_height;
 
-	if (!VK_CreateImageTexture(image, (const byte *)scaledBuffer, scaled_width, scaled_height, mipmap, wrapClampMode))
+	if (mipmap)
+	{
+		// renderer1's mip loop (R_MipMap per level, optional
+		// r_colorMipLevels tint), packed level after level into one buffer
+		// for VK_CreateImageTexture() instead of one glTexImage2D per level.
+		int    levelW = scaled_width, levelH = scaled_height;
+		int    mipLevels = 1;
+		size_t total     = (size_t)levelW * levelH * 4;
+		size_t offset;
+		byte   *chain;
+
+		while (levelW > 1 || levelH > 1)
+		{
+			levelW = (levelW > 1) ? levelW >> 1 : 1;
+			levelH = (levelH > 1) ? levelH >> 1 : 1;
+			total += (size_t)levelW * levelH * 4;
+			mipLevels++;
+		}
+
+		chain = ri.Hunk_AllocateTempMemory(total);
+
+		levelW = scaled_width;
+		levelH = scaled_height;
+		Com_Memcpy(chain, scaledBuffer, (size_t)levelW * levelH * 4);
+		offset = (size_t)levelW * levelH * 4;
+
+		for (c = 1; c < mipLevels; c++)
+		{
+			R_MipMap((byte *)scaledBuffer, levelW, levelH);
+			levelW = (levelW > 1) ? levelW >> 1 : 1;
+			levelH = (levelH > 1) ? levelH >> 1 : 1;
+
+			if (r_colorMipLevels->integer)
+			{
+				R_BlendOverTexture((byte *)scaledBuffer, levelW * levelH, mipBlendColors[c]);
+			}
+
+			Com_Memcpy(chain + offset, scaledBuffer, (size_t)levelW * levelH * 4);
+			offset += (size_t)levelW * levelH * 4;
+		}
+
+		if (!VK_CreateImageTexture(image, chain, scaled_width, scaled_height, mipLevels, qtrue, wrapClampMode))
+		{
+			Ren_Print("Upload32: Vulkan texture upload failed for '%s'\n", image->imgName);
+		}
+
+		ri.Hunk_FreeTempMemory(chain);
+	}
+	else if (!VK_CreateImageTexture(image, (const byte *)scaledBuffer, scaled_width, scaled_height, 1, qfalse, wrapClampMode))
 	{
 		Ren_Print("Upload32: Vulkan texture upload failed for '%s'\n", image->imgName);
 	}
@@ -838,7 +876,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 		image->uploadWidth    = image->width;
 		image->uploadHeight   = image->height;
 
-		if (!VK_CreateImageTexture(image, empty, image->width, image->height, mipmap, wrapClampMode))
+		if (!VK_CreateImageTexture(image, empty, image->width, image->height, 1, mipmap, wrapClampMode))
 		{
 			Ren_Print("R_CreateImage: Vulkan texture upload failed for '%s'\n", image->imgName);
 		}
