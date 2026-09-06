@@ -128,8 +128,16 @@ typedef struct
 	vkUIPipelineEntry_t uiPipelines[VK_MAX_SCENE_PIPELINES];
 	int numUIPipelines;
 	VkDescriptorPool uiDescriptorPool;
-	VkSampler uiSamplerRepeat;
+	VkSampler uiSamplerRepeat; // non-mipmapped images (UI, lightmaps, ...): linear, level 0 only
 	VkSampler uiSamplerClamp;
+
+	// samplers for mipmapped images, built from r_textureMode
+	// (GL_TextureMode) and r_ext_texture_filter_anisotropic.
+	VkSampler mipSamplerRepeat;
+	VkSampler mipSamplerClamp;
+	int texFilterMin;            // GL enum, e.g. GL_LINEAR_MIPMAP_NEAREST
+	int texFilterMag;            // GL enum, GL_NEAREST or GL_LINEAR
+	float maxSamplerAnisotropy;  // 0 when samplerAnisotropy is unsupported
 
 	// Single-frame-in-flight "arena" vertex/index buffers for 2D draws,
 	// persistently mapped and reset at the start of every frame. Safe
@@ -465,6 +473,22 @@ static qboolean VK_CreateLogicalDevice(void)
 	}
 
 	Com_Memset(&deviceFeatures, 0, sizeof(deviceFeatures));
+
+	// anisotropic filtering (r_ext_texture_filter_anisotropic)
+	{
+		VkPhysicalDeviceFeatures   supported;
+		VkPhysicalDeviceProperties props;
+
+		vkGetPhysicalDeviceFeatures(vk.physicalDevice, &supported);
+		vkGetPhysicalDeviceProperties(vk.physicalDevice, &props);
+
+		vk.maxSamplerAnisotropy = 0.0f;
+		if (supported.samplerAnisotropy)
+		{
+			deviceFeatures.samplerAnisotropy = VK_TRUE;
+			vk.maxSamplerAnisotropy          = props.limits.maxSamplerAnisotropy;
+		}
+	}
 
 	// MoltenVK-backed physical devices report VK_KHR_portability_subset as
 	// a supported device extension; the Vulkan spec requires enabling it
@@ -991,6 +1015,93 @@ static void VK_EndOneShotCommands(VkCommandBuffer commandBuffer)
  * wrap mode); shaders always sample with LINEAR filtering since real
  * mipmaps aren't generated yet.
  */
+/**
+ * @brief creates one sampler for mipmapped images from the
+ * current GL-style texture mode (renderer1's GL_TextureMode() /
+ * glTexParameter MIN/MAG filter + GL_TEXTURE_MAX_ANISOTROPY_EXT).
+ * Non-mipmap min filters (GL_NEAREST/GL_LINEAR) clamp to level 0 via
+ * maxLod = 0.25, the spec-recommended GL emulation.
+ */
+static VkSampler VK_CreateMipSampler(VkSamplerAddressMode addressMode)
+{
+	VkSamplerCreateInfo samplerInfo;
+	VkSampler           sampler = VK_NULL_HANDLE;
+	qboolean            useMips = qtrue;
+
+	Com_Memset(&samplerInfo, 0, sizeof(samplerInfo));
+	samplerInfo.sType        = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	samplerInfo.magFilter    = (vk.texFilterMag == GL_NEAREST) ? VK_FILTER_NEAREST : VK_FILTER_LINEAR;
+	samplerInfo.addressModeU = addressMode;
+	samplerInfo.addressModeV = addressMode;
+	samplerInfo.addressModeW = addressMode;
+	samplerInfo.borderColor  = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+
+	switch (vk.texFilterMin)
+	{
+	case GL_NEAREST:
+		samplerInfo.minFilter  = VK_FILTER_NEAREST;
+		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+		useMips                = qfalse;
+		break;
+	case GL_LINEAR:
+		samplerInfo.minFilter  = VK_FILTER_LINEAR;
+		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+		useMips                = qfalse;
+		break;
+	case GL_NEAREST_MIPMAP_NEAREST:
+		samplerInfo.minFilter  = VK_FILTER_NEAREST;
+		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+		break;
+	case GL_NEAREST_MIPMAP_LINEAR:
+		samplerInfo.minFilter  = VK_FILTER_NEAREST;
+		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+		break;
+	case GL_LINEAR_MIPMAP_LINEAR:
+		samplerInfo.minFilter  = VK_FILTER_LINEAR;
+		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+		break;
+	case GL_LINEAR_MIPMAP_NEAREST:
+	default:
+		samplerInfo.minFilter  = VK_FILTER_LINEAR;
+		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+		break;
+	}
+
+	samplerInfo.minLod = 0.0f;
+	samplerInfo.maxLod = useMips ? VK_LOD_CLAMP_NONE : 0.25f;
+
+	if (useMips && vk.maxSamplerAnisotropy > 1.0f && r_extTextureFilterAnisotropic->value > 1.0f)
+	{
+		samplerInfo.anisotropyEnable = VK_TRUE;
+		samplerInfo.maxAnisotropy    = Com_Clamp(1.0f, vk.maxSamplerAnisotropy, r_extTextureFilterAnisotropic->value);
+	}
+
+	if (!VK_CheckResult(vkCreateSampler(vk.device, &samplerInfo, NULL, &sampler), "vkCreateSampler(mip)"))
+	{
+		return VK_NULL_HANDLE;
+	}
+
+	return sampler;
+}
+
+static qboolean VK_CreateMipSamplers(void)
+{
+	vk.mipSamplerRepeat = VK_CreateMipSampler(VK_SAMPLER_ADDRESS_MODE_REPEAT);
+	vk.mipSamplerClamp  = VK_CreateMipSampler(VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
+
+	return (vk.mipSamplerRepeat != VK_NULL_HANDLE && vk.mipSamplerClamp != VK_NULL_HANDLE) ? qtrue : qfalse;
+}
+
+static VkSampler VK_SamplerForImage(qboolean mipmap, int wrapClampMode)
+{
+	if (mipmap)
+	{
+		return (wrapClampMode == GL_REPEAT) ? vk.mipSamplerRepeat : vk.mipSamplerClamp;
+	}
+
+	return (wrapClampMode == GL_REPEAT) ? vk.uiSamplerRepeat : vk.uiSamplerClamp;
+}
+
 static qboolean VK_CreateUISamplers(void)
 {
 	VkSamplerCreateInfo samplerInfo;
@@ -1996,8 +2107,15 @@ qboolean VK_Init(int width, int height)
 		return qfalse;
 	}
 
+	// mipmapped-image samplers follow the current texture
+	// mode (gl_filter_min/max persist across vid_restart, while
+	// GL_TextureMode() only reruns when r_textureMode is modified).
+	vk.texFilterMin = gl_filter_min;
+	vk.texFilterMag = gl_filter_max;
+
 	// UI/2D rendering pipeline + resources.
 	if (!VK_CreateUISamplers() ||
+	    !VK_CreateMipSamplers() ||
 	    !VK_CreateUIDescriptorPool() ||
 	    !VK_CreateUIPipeline() ||
 	    !VK_CreateUIArenaBuffers())
@@ -2093,6 +2211,14 @@ void VK_Shutdown(void)
 		if (vk.uiSamplerRepeat != VK_NULL_HANDLE)
 		{
 			vkDestroySampler(vk.device, vk.uiSamplerRepeat, NULL);
+		}
+		if (vk.mipSamplerRepeat != VK_NULL_HANDLE)
+		{
+			vkDestroySampler(vk.device, vk.mipSamplerRepeat, NULL);
+		}
+		if (vk.mipSamplerClamp != VK_NULL_HANDLE)
+		{
+			vkDestroySampler(vk.device, vk.mipSamplerClamp, NULL);
 		}
 		if (vk.uiSamplerClamp != VK_NULL_HANDLE)
 		{
@@ -2441,12 +2567,12 @@ void VK_EndFrame(void)
  *
  * @note scope reductions: always uploads as
  * VK_FORMAT_R8G8B8A8_UNORM regardless of the legacy GL internalFormat
- * selection, and only ever uploads one mip level (no runtime mipmap
- * generation yet).
+ * selection. Uploads the mipLevels packed levels in data
+ * (built CPU-side by Upload32()).
  */
-qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int width, int height, qboolean mipmap, int wrapClampMode)
+qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int width, int height, int mipLevels, qboolean mipmap, int wrapClampMode)
 {
-	VkDeviceSize                imageSize     = (VkDeviceSize)width * (VkDeviceSize)height * 4;
+	VkDeviceSize                imageSize     = 0;
 	VkBuffer                    stagingBuffer = VK_NULL_HANDLE;
 	VkDeviceMemory              stagingMemory = VK_NULL_HANDLE;
 	void                        *mapped;
@@ -2457,7 +2583,6 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 	VkDeviceMemory              vkImageMemory = VK_NULL_HANDLE;
 	VkCommandBuffer             cmd;
 	VkImageMemoryBarrier        barrier;
-	VkBufferImageCopy           region;
 	VkImageViewCreateInfo       viewInfo;
 	VkImageView                 vkImageView = VK_NULL_HANDLE;
 	VkDescriptorSetAllocateInfo dsAllocInfo;
@@ -2465,12 +2590,43 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 	VkDescriptorImageInfo       imageDescInfo;
 	VkWriteDescriptorSet        writeSet;
 	VkSampler                   sampler;
-
-	(void)mipmap; // real mipmap generation deferred
+	VkBufferImageCopy           regions[16];
+	int                         level, levelW, levelH;
 
 	if (!vk.initialized || !data || width <= 0 || height <= 0)
 	{
 		return qfalse;
+	}
+
+	// data holds mipLevels tightly packed RGBA levels, each
+	// half the size of the previous one (clamped to 1), as built by
+	// Upload32() with renderer1's R_MipMap().
+	if (mipLevels < 1)
+	{
+		mipLevels = 1;
+	}
+	if (mipLevels > (int)ARRAY_LEN(regions))
+	{
+		mipLevels = (int)ARRAY_LEN(regions);
+	}
+
+	Com_Memset(regions, 0, sizeof(regions));
+	levelW = width;
+	levelH = height;
+	for (level = 0; level < mipLevels; level++)
+	{
+		regions[level].bufferOffset                = imageSize;
+		regions[level].imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		regions[level].imageSubresource.mipLevel   = (uint32_t)level;
+		regions[level].imageSubresource.layerCount = 1;
+		regions[level].imageExtent.width           = (uint32_t)levelW;
+		regions[level].imageExtent.height          = (uint32_t)levelH;
+		regions[level].imageExtent.depth           = 1;
+
+		imageSize += (VkDeviceSize)levelW * (VkDeviceSize)levelH * 4;
+
+		levelW = (levelW > 1) ? levelW >> 1 : 1;
+		levelH = (levelH > 1) ? levelH >> 1 : 1;
 	}
 
 	if (!VK_CreateBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
@@ -2490,7 +2646,7 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 	imageInfo.extent.width  = (uint32_t)width;
 	imageInfo.extent.height = (uint32_t)height;
 	imageInfo.extent.depth  = 1;
-	imageInfo.mipLevels     = 1;
+	imageInfo.mipLevels     = (uint32_t)mipLevels;
 	imageInfo.arrayLayers   = 1;
 	imageInfo.format        = VK_FORMAT_R8G8B8A8_UNORM;
 	imageInfo.tiling        = VK_IMAGE_TILING_OPTIMAL;
@@ -2533,7 +2689,7 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 	barrier.dstQueueFamilyIndex         = VK_QUEUE_FAMILY_IGNORED;
 	barrier.image                       = vkImage;
 	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	barrier.subresourceRange.levelCount = 1;
+	barrier.subresourceRange.levelCount = (uint32_t)mipLevels;
 	barrier.subresourceRange.layerCount = 1;
 	barrier.srcAccessMask               = 0;
 	barrier.dstAccessMask               = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -2541,14 +2697,7 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 	vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
 	                     0, 0, NULL, 0, NULL, 1, &barrier);
 
-	Com_Memset(&region, 0, sizeof(region));
-	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	region.imageSubresource.layerCount = 1;
-	region.imageExtent.width           = (uint32_t)width;
-	region.imageExtent.height          = (uint32_t)height;
-	region.imageExtent.depth           = 1;
-
-	vkCmdCopyBufferToImage(cmd, stagingBuffer, vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+	vkCmdCopyBufferToImage(cmd, stagingBuffer, vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, (uint32_t)mipLevels, regions);
 
 	barrier.oldLayout     = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 	barrier.newLayout     = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -2569,7 +2718,7 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 	viewInfo.viewType                    = VK_IMAGE_VIEW_TYPE_2D;
 	viewInfo.format                      = VK_FORMAT_R8G8B8A8_UNORM;
 	viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	viewInfo.subresourceRange.levelCount = 1;
+	viewInfo.subresourceRange.levelCount = (uint32_t)mipLevels;
 	viewInfo.subresourceRange.layerCount = 1;
 
 	if (!VK_CheckResult(vkCreateImageView(vk.device, &viewInfo, NULL, &vkImageView), "vkCreateImageView"))
@@ -2579,7 +2728,7 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 		return qfalse;
 	}
 
-	sampler = (wrapClampMode == GL_REPEAT) ? vk.uiSamplerRepeat : vk.uiSamplerClamp;
+	sampler = VK_SamplerForImage(mipmap, wrapClampMode);
 
 	Com_Memset(&dsAllocInfo, 0, sizeof(dsAllocInfo));
 	dsAllocInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -2613,7 +2762,7 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 	image->vkImage         = (void *)vkImage;
 	image->vkImageMemory   = (void *)vkImageMemory;
 	image->vkImageView     = (void *)vkImageView;
-	image->vkSampler       = (void *)sampler; // not owned here: one of the two shared samplers
+	image->vkSampler       = (void *)sampler; // not owned here: one of the shared samplers
 	image->vkDescriptorSet = (void *)descriptorSet;
 
 	return qtrue;
@@ -3341,4 +3490,88 @@ void VK_DrawShadowFinish(void)
 	                               VK_SPECIAL_SHADOW_DARKEN);
 
 	VK_DrawSceneRaw(pipeline, quad, 4, color, idx, 6, identity, identity, qfalse);
+}
+
+/**
+ * @brief device anisotropy limit (0 if unsupported), reported
+ * through renderer1's textureFilterAnisotropic/maxAnisotropy globals.
+ */
+float VK_GetMaxAnisotropy(void)
+{
+	return vk.maxSamplerAnisotropy;
+}
+
+/**
+ * @brief Vulkan side of renderer1's GL_TextureMode(): rebuild
+ * the mipmapped-image samplers for the new min/mag filter and rebind every
+ * mipmapped image's descriptor to them (the sampler is baked into each
+ * combined-image-sampler descriptor). Runs from RE_BeginFrame between
+ * frames; waits for the GPU so no in-flight frame still uses the old ones.
+ */
+void VK_SetTextureMode(int minFilter, int magFilter)
+{
+	VkSampler oldRepeat, oldClamp;
+	int       i;
+
+	if (!vk.initialized || (minFilter == vk.texFilterMin && magFilter == vk.texFilterMag))
+	{
+		return;
+	}
+
+	vkDeviceWaitIdle(vk.device);
+
+	oldRepeat       = vk.mipSamplerRepeat;
+	oldClamp        = vk.mipSamplerClamp;
+	vk.texFilterMin = minFilter;
+	vk.texFilterMag = magFilter;
+
+	if (!VK_CreateMipSamplers())
+	{
+		Ren_Print("VK_SetTextureMode: sampler creation failed, keeping previous filter\n");
+		if (vk.mipSamplerRepeat != VK_NULL_HANDLE)
+		{
+			vkDestroySampler(vk.device, vk.mipSamplerRepeat, NULL);
+		}
+		if (vk.mipSamplerClamp != VK_NULL_HANDLE)
+		{
+			vkDestroySampler(vk.device, vk.mipSamplerClamp, NULL);
+		}
+		vk.mipSamplerRepeat = oldRepeat;
+		vk.mipSamplerClamp  = oldClamp;
+		return;
+	}
+
+	for (i = 0; i < tr.numImages; i++)
+	{
+		image_t               *image = tr.images[i];
+		VkDescriptorImageInfo imageDescInfo;
+		VkWriteDescriptorSet  writeSet;
+		VkSampler             sampler;
+
+		if (!image || !image->mipmap || !image->vkDescriptorSet || !image->vkImageView)
+		{
+			continue;
+		}
+
+		sampler = VK_SamplerForImage(qtrue, image->wrapClampMode);
+
+		Com_Memset(&imageDescInfo, 0, sizeof(imageDescInfo));
+		imageDescInfo.sampler     = sampler;
+		imageDescInfo.imageView   = (VkImageView)image->vkImageView;
+		imageDescInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+		Com_Memset(&writeSet, 0, sizeof(writeSet));
+		writeSet.sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		writeSet.dstSet          = (VkDescriptorSet)image->vkDescriptorSet;
+		writeSet.dstBinding      = 0;
+		writeSet.descriptorCount = 1;
+		writeSet.descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		writeSet.pImageInfo      = &imageDescInfo;
+
+		vkUpdateDescriptorSets(vk.device, 1, &writeSet, 0, NULL);
+		image->vkSampler = (void *)sampler;
+	}
+
+	vkDestroySampler(vk.device, oldRepeat, NULL);
+	vkDestroySampler(vk.device, oldClamp, NULL);
 }

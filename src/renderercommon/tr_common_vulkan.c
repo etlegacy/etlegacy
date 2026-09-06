@@ -72,6 +72,10 @@ void RE_InitOpenGl(void)
 	glConfig.hardwareType         = GLHW_GENERIC;
 	glConfig.extensions_string[0] = '\0';
 	glConfig.stencilBits          = VK_StencilBits();
+
+	// renderer1 reads GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT here
+	maxAnisotropy            = VK_GetMaxAnisotropy();
+	textureFilterAnisotropic = (maxAnisotropy > 1.0f) ? qtrue : qfalse;
 }
 
 /**
