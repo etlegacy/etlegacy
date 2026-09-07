@@ -51,6 +51,8 @@
 #include "tr3d.frag.glsl.h"
 #include "tr3d_lm.vert.glsl.h"
 #include "tr3d_lm.frag.glsl.h"
+#include "gamma.vert.glsl.h"
+#include "gamma.frag.glsl.h"
 
 #define VK_MAX_SWAPCHAIN_IMAGES 8
 
@@ -105,7 +107,24 @@ typedef struct
 	uint32_t swapchainImageCount;
 	VkImage swapchainImages[VK_MAX_SWAPCHAIN_IMAGES];
 	VkImageView swapchainImageViews[VK_MAX_SWAPCHAIN_IMAGES];
-	VkFramebuffer swapchainFramebuffers[VK_MAX_SWAPCHAIN_IMAGES];
+	VkFramebuffer swapchainFramebuffers[VK_MAX_SWAPCHAIN_IMAGES]; // presentRenderPass targets
+
+	// the main render pass (vk.renderPass) draws the whole
+	// frame into this offscreen color image; VK_EndFrame() then copies it
+	// to the swapchain through the gamma pass (renderer1's mainFbo +
+	// R_ScreenGamma()).
+	VkImage sceneColorImage;
+	VkDeviceMemory sceneColorMemory;
+	VkImageView sceneColorView;
+	VkFramebuffer sceneFramebuffer;
+	VkRenderPass presentRenderPass;
+	VkDescriptorSet sceneColorDescriptor;
+	VkShaderModule gammaVertModule;
+	VkShaderModule gammaFragModule;
+	VkPipelineLayout gammaPipelineLayout;
+	VkPipeline gammaPipeline;
+	float gammaValue;
+	float overbrightScale;
 
 	VkRenderPass renderPass;
 	VkCommandPool commandPool;
@@ -655,6 +674,7 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
  * property flags (host-visible, device-local, ...).
  */
 static uint32_t VK_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+static VkShaderModule VK_CreateShaderModule(const unsigned char *code, unsigned int size);
 
 /**
  * @brief creates the depth buffer (image + memory + view)
@@ -742,6 +762,65 @@ static qboolean VK_CreateDepthResources(void)
 	return qtrue;
 }
 
+/**
+ * @brief offscreen color image the main render pass draws
+ * into (same format/size as the swapchain so all existing pipelines stay
+ * render-pass compatible). Sampled by the gamma pass; TRANSFER_SRC for
+ * future screenshot readback.
+ */
+static qboolean VK_CreateSceneColorResources(void)
+{
+	VkImageCreateInfo     imageInfo;
+	VkMemoryRequirements  memRequirements;
+	VkMemoryAllocateInfo  allocInfo;
+	VkImageViewCreateInfo viewInfo;
+
+	Com_Memset(&imageInfo, 0, sizeof(imageInfo));
+	imageInfo.sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	imageInfo.imageType     = VK_IMAGE_TYPE_2D;
+	imageInfo.extent.width  = vk.swapchainExtent.width;
+	imageInfo.extent.height = vk.swapchainExtent.height;
+	imageInfo.extent.depth  = 1;
+	imageInfo.mipLevels     = 1;
+	imageInfo.arrayLayers   = 1;
+	imageInfo.format        = vk.swapchainFormat;
+	imageInfo.tiling        = VK_IMAGE_TILING_OPTIMAL;
+	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	imageInfo.usage         = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+	imageInfo.samples       = VK_SAMPLE_COUNT_1_BIT;
+	imageInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
+
+	if (!VK_CheckResult(vkCreateImage(vk.device, &imageInfo, NULL, &vk.sceneColorImage), "vkCreateImage(scene color)"))
+	{
+		return qfalse;
+	}
+
+	vkGetImageMemoryRequirements(vk.device, vk.sceneColorImage, &memRequirements);
+
+	Com_Memset(&allocInfo, 0, sizeof(allocInfo));
+	allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize  = memRequirements.size;
+	allocInfo.memoryTypeIndex = VK_FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+	if (!VK_CheckResult(vkAllocateMemory(vk.device, &allocInfo, NULL, &vk.sceneColorMemory), "vkAllocateMemory(scene color)"))
+	{
+		return qfalse;
+	}
+
+	vkBindImageMemory(vk.device, vk.sceneColorImage, vk.sceneColorMemory, 0);
+
+	Com_Memset(&viewInfo, 0, sizeof(viewInfo));
+	viewInfo.sType                       = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	viewInfo.image                       = vk.sceneColorImage;
+	viewInfo.viewType                    = VK_IMAGE_VIEW_TYPE_2D;
+	viewInfo.format                      = vk.swapchainFormat;
+	viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	viewInfo.subresourceRange.levelCount = 1;
+	viewInfo.subresourceRange.layerCount = 1;
+
+	return VK_CheckResult(vkCreateImageView(vk.device, &viewInfo, NULL, &vk.sceneColorView), "vkCreateImageView(scene color)");
+}
+
 static qboolean VK_CreateRenderPassAndFramebuffers(void)
 {
 	VkAttachmentDescription colorAttachment;
@@ -750,15 +829,18 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	VkAttachmentReference   depthAttachmentRef;
 	VkAttachmentDescription attachments[2];
 	VkSubpassDescription    subpass;
-	VkSubpassDependency     dependency;
+	VkSubpassDependency     dependencies[2];
 	VkRenderPassCreateInfo  renderPassInfo;
+	VkFramebufferCreateInfo framebufferInfo;
+	VkImageView             fbAttachments[2];
 	uint32_t                i;
 
-	if (!VK_CreateDepthResources())
+	if (!VK_CreateDepthResources() || !VK_CreateSceneColorResources())
 	{
 		return qfalse;
 	}
 
+	// --- main (scene) render pass: offscreen color + depth/stencil
 	Com_Memset(&colorAttachment, 0, sizeof(colorAttachment));
 	colorAttachment.format         = vk.swapchainFormat;
 	colorAttachment.samples        = VK_SAMPLE_COUNT_1_BIT;
@@ -767,7 +849,7 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	colorAttachment.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 	colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 	colorAttachment.initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED;
-	colorAttachment.finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+	colorAttachment.finalLayout    = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 	Com_Memset(&colorAttachmentRef, 0, sizeof(colorAttachmentRef));
 	colorAttachmentRef.attachment = 0;
@@ -796,13 +878,21 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	subpass.pColorAttachments       = &colorAttachmentRef;
 	subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
-	Com_Memset(&dependency, 0, sizeof(dependency));
-	dependency.srcSubpass    = VK_SUBPASS_EXTERNAL;
-	dependency.dstSubpass    = 0;
-	dependency.srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-	dependency.srcAccessMask = 0;
-	dependency.dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+	Com_Memset(dependencies, 0, sizeof(dependencies));
+	// previous frame's gamma pass read the scene image -> this frame writes it
+	dependencies[0].srcSubpass    = VK_SUBPASS_EXTERNAL;
+	dependencies[0].dstSubpass    = 0;
+	dependencies[0].srcStageMask  = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+	dependencies[0].srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+	dependencies[0].dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+	dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+	// scene color writes -> gamma pass samples it
+	dependencies[1].srcSubpass    = 0;
+	dependencies[1].dstSubpass    = VK_SUBPASS_EXTERNAL;
+	dependencies[1].srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependencies[1].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	dependencies[1].dstStageMask  = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+	dependencies[1].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
 	Com_Memset(&renderPassInfo, 0, sizeof(renderPassInfo));
 	renderPassInfo.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -810,36 +900,220 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	renderPassInfo.pAttachments    = attachments;
 	renderPassInfo.subpassCount    = 1;
 	renderPassInfo.pSubpasses      = &subpass;
-	renderPassInfo.dependencyCount = 1;
-	renderPassInfo.pDependencies   = &dependency;
+	renderPassInfo.dependencyCount = 2;
+	renderPassInfo.pDependencies   = dependencies;
 
 	if (!VK_CheckResult(vkCreateRenderPass(vk.device, &renderPassInfo, NULL, &vk.renderPass), "vkCreateRenderPass"))
 	{
 		return qfalse;
 	}
 
+	fbAttachments[0] = vk.sceneColorView;
+	fbAttachments[1] = vk.depthImageView;
+
+	Com_Memset(&framebufferInfo, 0, sizeof(framebufferInfo));
+	framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+	framebufferInfo.renderPass      = vk.renderPass;
+	framebufferInfo.attachmentCount = 2;
+	framebufferInfo.pAttachments    = fbAttachments;
+	framebufferInfo.width           = vk.swapchainExtent.width;
+	framebufferInfo.height          = vk.swapchainExtent.height;
+	framebufferInfo.layers          = 1;
+
+	if (!VK_CheckResult(vkCreateFramebuffer(vk.device, &framebufferInfo, NULL, &vk.sceneFramebuffer), "vkCreateFramebuffer(scene)"))
+	{
+		return qfalse;
+	}
+
+	// --- present render pass: swapchain color only, fully overwritten by
+	// the gamma pass
+	colorAttachment.loadOp        = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	colorAttachment.finalLayout   = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+	subpass.pDepthStencilAttachment = NULL;
+
+	Com_Memset(dependencies, 0, sizeof(dependencies));
+	dependencies[0].srcSubpass    = VK_SUBPASS_EXTERNAL;
+	dependencies[0].dstSubpass    = 0;
+	dependencies[0].srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependencies[0].srcAccessMask = 0;
+	dependencies[0].dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+	renderPassInfo.attachmentCount = 1;
+	renderPassInfo.pAttachments    = &colorAttachment;
+	renderPassInfo.dependencyCount = 1;
+
+	if (!VK_CheckResult(vkCreateRenderPass(vk.device, &renderPassInfo, NULL, &vk.presentRenderPass), "vkCreateRenderPass(present)"))
+	{
+		return qfalse;
+	}
+
 	for (i = 0; i < vk.swapchainImageCount; i++)
 	{
-		VkFramebufferCreateInfo framebufferInfo;
-		VkImageView             fbAttachments[2];
-
 		fbAttachments[0] = vk.swapchainImageViews[i];
-		fbAttachments[1] = vk.depthImageView;
 
-		Com_Memset(&framebufferInfo, 0, sizeof(framebufferInfo));
-		framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		framebufferInfo.renderPass      = vk.renderPass;
-		framebufferInfo.attachmentCount = 2;
+		framebufferInfo.renderPass      = vk.presentRenderPass;
+		framebufferInfo.attachmentCount = 1;
 		framebufferInfo.pAttachments    = fbAttachments;
-		framebufferInfo.width           = vk.swapchainExtent.width;
-		framebufferInfo.height          = vk.swapchainExtent.height;
-		framebufferInfo.layers          = 1;
 
 		if (!VK_CheckResult(vkCreateFramebuffer(vk.device, &framebufferInfo, NULL, &vk.swapchainFramebuffers[i]), "vkCreateFramebuffer"))
 		{
 			return qfalse;
 		}
 	}
+
+	return qtrue;
+}
+
+/**
+ * @brief gamma pass shader modules + pipeline layout (one
+ * combined image sampler, gamma/overbright push constants). Created once.
+ */
+static qboolean VK_CreateGammaPipelineLayout(void)
+{
+	VkPushConstantRange        pushRange;
+	VkPipelineLayoutCreateInfo layoutInfo;
+
+	vk.gammaVertModule = VK_CreateShaderModule(gamma_vert_spv, gamma_vert_spv_SIZE);
+	vk.gammaFragModule = VK_CreateShaderModule(gamma_frag_spv, gamma_frag_spv_SIZE);
+	if (vk.gammaVertModule == VK_NULL_HANDLE || vk.gammaFragModule == VK_NULL_HANDLE)
+	{
+		return qfalse;
+	}
+
+	Com_Memset(&pushRange, 0, sizeof(pushRange));
+	pushRange.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	pushRange.size       = 2 * sizeof(float);
+
+	Com_Memset(&layoutInfo, 0, sizeof(layoutInfo));
+	layoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	layoutInfo.setLayoutCount         = 1;
+	layoutInfo.pSetLayouts            = &vk.uiDescriptorSetLayout;
+	layoutInfo.pushConstantRangeCount = 1;
+	layoutInfo.pPushConstantRanges    = &pushRange;
+
+	vk.gammaValue      = 1.0f;
+	vk.overbrightScale = 1.0f;
+
+	return VK_CheckResult(vkCreatePipelineLayout(vk.device, &layoutInfo, NULL, &vk.gammaPipelineLayout), "vkCreatePipelineLayout(gamma)");
+}
+
+/**
+ * @brief per-swapchain present resources - the gamma pipeline
+ * (bound to presentRenderPass) and the descriptor set sampling the scene
+ * color image. Recreated with the swapchain.
+ */
+static qboolean VK_CreatePresentResources(void)
+{
+	VkPipelineShaderStageCreateInfo        stages[2];
+	VkPipelineVertexInputStateCreateInfo   vertexInputInfo;
+	VkPipelineInputAssemblyStateCreateInfo inputAssembly;
+	VkPipelineViewportStateCreateInfo      viewportState;
+	VkPipelineRasterizationStateCreateInfo rasterizer;
+	VkPipelineMultisampleStateCreateInfo   multisampling;
+	VkPipelineColorBlendAttachmentState    colorBlendAttachment;
+	VkPipelineColorBlendStateCreateInfo    colorBlending;
+	VkDynamicState                         dynamicStates[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+	VkPipelineDynamicStateCreateInfo       dynamicState;
+	VkGraphicsPipelineCreateInfo           pipelineInfo;
+	VkDescriptorSetAllocateInfo            dsAllocInfo;
+	VkDescriptorImageInfo                  imageDescInfo;
+	VkWriteDescriptorSet                   writeSet;
+
+	Com_Memset(stages, 0, sizeof(stages));
+	stages[0].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	stages[0].stage  = VK_SHADER_STAGE_VERTEX_BIT;
+	stages[0].module = vk.gammaVertModule;
+	stages[0].pName  = "main";
+	stages[1].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	stages[1].stage  = VK_SHADER_STAGE_FRAGMENT_BIT;
+	stages[1].module = vk.gammaFragModule;
+	stages[1].pName  = "main";
+
+	Com_Memset(&vertexInputInfo, 0, sizeof(vertexInputInfo));
+	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+
+	Com_Memset(&inputAssembly, 0, sizeof(inputAssembly));
+	inputAssembly.sType    = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
+	Com_Memset(&viewportState, 0, sizeof(viewportState));
+	viewportState.sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+	viewportState.viewportCount = 1;
+	viewportState.scissorCount  = 1;
+
+	Com_Memset(&rasterizer, 0, sizeof(rasterizer));
+	rasterizer.sType       = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+	rasterizer.cullMode    = VK_CULL_MODE_NONE;
+	rasterizer.frontFace   = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+	rasterizer.lineWidth   = 1.0f;
+
+	Com_Memset(&multisampling, 0, sizeof(multisampling));
+	multisampling.sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+	Com_Memset(&colorBlendAttachment, 0, sizeof(colorBlendAttachment));
+	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT |
+	                                      VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+
+	Com_Memset(&colorBlending, 0, sizeof(colorBlending));
+	colorBlending.sType           = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	colorBlending.attachmentCount = 1;
+	colorBlending.pAttachments    = &colorBlendAttachment;
+
+	Com_Memset(&dynamicState, 0, sizeof(dynamicState));
+	dynamicState.sType             = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	dynamicState.dynamicStateCount = 2;
+	dynamicState.pDynamicStates    = dynamicStates;
+
+	Com_Memset(&pipelineInfo, 0, sizeof(pipelineInfo));
+	pipelineInfo.sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+	pipelineInfo.stageCount          = 2;
+	pipelineInfo.pStages             = stages;
+	pipelineInfo.pVertexInputState   = &vertexInputInfo;
+	pipelineInfo.pInputAssemblyState = &inputAssembly;
+	pipelineInfo.pViewportState      = &viewportState;
+	pipelineInfo.pRasterizationState = &rasterizer;
+	pipelineInfo.pMultisampleState   = &multisampling;
+	pipelineInfo.pColorBlendState    = &colorBlending;
+	pipelineInfo.pDynamicState       = &dynamicState;
+	pipelineInfo.layout              = vk.gammaPipelineLayout;
+	pipelineInfo.renderPass          = vk.presentRenderPass;
+	pipelineInfo.subpass             = 0;
+
+	if (!VK_CheckResult(vkCreateGraphicsPipelines(vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &vk.gammaPipeline), "vkCreateGraphicsPipelines(gamma)"))
+	{
+		return qfalse;
+	}
+
+	Com_Memset(&dsAllocInfo, 0, sizeof(dsAllocInfo));
+	dsAllocInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	dsAllocInfo.descriptorPool     = vk.uiDescriptorPool;
+	dsAllocInfo.descriptorSetCount = 1;
+	dsAllocInfo.pSetLayouts        = &vk.uiDescriptorSetLayout;
+
+	if (!VK_CheckResult(vkAllocateDescriptorSets(vk.device, &dsAllocInfo, &vk.sceneColorDescriptor), "vkAllocateDescriptorSets(scene color)"))
+	{
+		return qfalse;
+	}
+
+	Com_Memset(&imageDescInfo, 0, sizeof(imageDescInfo));
+	imageDescInfo.sampler     = vk.uiSamplerClamp;
+	imageDescInfo.imageView   = vk.sceneColorView;
+	imageDescInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+	Com_Memset(&writeSet, 0, sizeof(writeSet));
+	writeSet.sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	writeSet.dstSet          = vk.sceneColorDescriptor;
+	writeSet.dstBinding      = 0;
+	writeSet.descriptorCount = 1;
+	writeSet.descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	writeSet.pImageInfo      = &imageDescInfo;
+
+	vkUpdateDescriptorSets(vk.device, 1, &writeSet, 0, NULL);
 
 	return qtrue;
 }
@@ -2025,6 +2299,43 @@ static void VK_DestroySwapchainObjects(void)
 		vk.renderPass = VK_NULL_HANDLE;
 	}
 
+	// offscreen scene target + present pass resources
+	if (vk.sceneColorDescriptor != VK_NULL_HANDLE)
+	{
+		vkFreeDescriptorSets(vk.device, vk.uiDescriptorPool, 1, &vk.sceneColorDescriptor);
+		vk.sceneColorDescriptor = VK_NULL_HANDLE;
+	}
+	if (vk.gammaPipeline != VK_NULL_HANDLE)
+	{
+		vkDestroyPipeline(vk.device, vk.gammaPipeline, NULL);
+		vk.gammaPipeline = VK_NULL_HANDLE;
+	}
+	if (vk.sceneFramebuffer != VK_NULL_HANDLE)
+	{
+		vkDestroyFramebuffer(vk.device, vk.sceneFramebuffer, NULL);
+		vk.sceneFramebuffer = VK_NULL_HANDLE;
+	}
+	if (vk.presentRenderPass != VK_NULL_HANDLE)
+	{
+		vkDestroyRenderPass(vk.device, vk.presentRenderPass, NULL);
+		vk.presentRenderPass = VK_NULL_HANDLE;
+	}
+	if (vk.sceneColorView != VK_NULL_HANDLE)
+	{
+		vkDestroyImageView(vk.device, vk.sceneColorView, NULL);
+		vk.sceneColorView = VK_NULL_HANDLE;
+	}
+	if (vk.sceneColorImage != VK_NULL_HANDLE)
+	{
+		vkDestroyImage(vk.device, vk.sceneColorImage, NULL);
+		vk.sceneColorImage = VK_NULL_HANDLE;
+	}
+	if (vk.sceneColorMemory != VK_NULL_HANDLE)
+	{
+		vkFreeMemory(vk.device, vk.sceneColorMemory, NULL);
+		vk.sceneColorMemory = VK_NULL_HANDLE;
+	}
+
 	if (vk.depthImageView != VK_NULL_HANDLE)
 	{
 		vkDestroyImageView(vk.device, vk.depthImageView, NULL);
@@ -2057,6 +2368,13 @@ qboolean VK_ResizeSwapchain(int width, int height)
 		return qfalse;
 	}
 	if (!VK_CreateRenderPassAndFramebuffers())
+	{
+		return qfalse;
+	}
+
+	// on first init this runs before the UI descriptor pool
+	// and gamma layout exist; VK_Init creates the present resources then.
+	if (vk.gammaPipelineLayout != VK_NULL_HANDLE && !VK_CreatePresentResources())
 	{
 		return qfalse;
 	}
@@ -2132,6 +2450,13 @@ qboolean VK_Init(int width, int height)
 		return qfalse;
 	}
 
+	// gamma/present pass
+	if (!VK_CreateGammaPipelineLayout() ||
+	    !VK_CreatePresentResources())
+	{
+		return qfalse;
+	}
+
 	vkGetPhysicalDeviceProperties(vk.physicalDevice, &props);
 	Q_strncpyz(glConfig.vendor_string, "Vulkan", sizeof(glConfig.vendor_string));
 	Q_strncpyz(glConfig.renderer_string, props.deviceName, sizeof(glConfig.renderer_string));
@@ -2187,6 +2512,18 @@ void VK_Shutdown(void)
 			{
 				vkDestroyPipeline(vk.device, vk.uiPipelines[pi].pipeline, NULL);
 			}
+		}
+		if (vk.gammaPipelineLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyPipelineLayout(vk.device, vk.gammaPipelineLayout, NULL);
+		}
+		if (vk.gammaVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.gammaVertModule, NULL);
+		}
+		if (vk.gammaFragModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.gammaFragModule, NULL);
 		}
 		if (vk.uiPipelineLayout != VK_NULL_HANDLE)
 		{
@@ -2365,7 +2702,7 @@ void VK_BeginFrame(void)
 	Com_Memset(&renderPassInfo, 0, sizeof(renderPassInfo));
 	renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	renderPassInfo.renderPass        = vk.renderPass;
-	renderPassInfo.framebuffer       = vk.swapchainFramebuffers[vk.currentImageIndex];
+	renderPassInfo.framebuffer       = vk.sceneFramebuffer; // offscreen scene target
 	renderPassInfo.renderArea.extent = vk.swapchainExtent;
 	renderPassInfo.clearValueCount   = 2;
 	renderPassInfo.pClearValues      = clearValues;
@@ -2514,6 +2851,46 @@ void VK_EndFrame(void)
 	}
 
 	vkCmdEndRenderPass(vk.commandBuffer);
+
+	// renderer1's R_ScreenGamma() - copy the offscreen scene
+	// to the swapchain image applying r_gamma and the overbright scale.
+	{
+		VkRenderPassBeginInfo presentInfoRP;
+		VkViewport            viewport;
+		VkRect2D              scissor;
+		float                 push[2];
+
+		Com_Memset(&presentInfoRP, 0, sizeof(presentInfoRP));
+		presentInfoRP.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		presentInfoRP.renderPass        = vk.presentRenderPass;
+		presentInfoRP.framebuffer       = vk.swapchainFramebuffers[vk.currentImageIndex];
+		presentInfoRP.renderArea.extent = vk.swapchainExtent;
+
+		vkCmdBeginRenderPass(vk.commandBuffer, &presentInfoRP, VK_SUBPASS_CONTENTS_INLINE);
+
+		Com_Memset(&viewport, 0, sizeof(viewport));
+		viewport.width    = (float)vk.swapchainExtent.width;
+		viewport.height   = (float)vk.swapchainExtent.height;
+		viewport.maxDepth = 1.0f;
+		vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
+
+		Com_Memset(&scissor, 0, sizeof(scissor));
+		scissor.extent = vk.swapchainExtent;
+		vkCmdSetScissor(vk.commandBuffer, 0, 1, &scissor);
+
+		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.gammaPipeline);
+		vk.lastBoundPipeline = vk.gammaPipeline;
+		vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.gammaPipelineLayout, 0, 1, &vk.sceneColorDescriptor, 0, NULL);
+
+		push[0] = vk.gammaValue;
+		push[1] = vk.overbrightScale;
+		vkCmdPushConstants(vk.commandBuffer, vk.gammaPipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(push), push);
+
+		vkCmdDraw(vk.commandBuffer, 3, 1, 0, 0);
+
+		vkCmdEndRenderPass(vk.commandBuffer);
+	}
+
 	vkEndCommandBuffer(vk.commandBuffer);
 
 	Com_Memset(&submitInfo, 0, sizeof(submitInfo));
@@ -3574,4 +3951,14 @@ void VK_SetTextureMode(int minFilter, int magFilter)
 
 	vkDestroySampler(vk.device, oldRepeat, NULL);
 	vkDestroySampler(vk.device, oldClamp, NULL);
+}
+
+/**
+ * @brief values for the final gamma pass (set every frame by
+ * R_ScreenGamma(); renderer1's u_gamma / u_overBrightBits uniforms).
+ */
+void VK_SetGammaParams(float gamma, float overbrightScale)
+{
+	vk.gammaValue      = (gamma > 0.0f) ? gamma : 1.0f;
+	vk.overbrightScale = overbrightScale;
 }
