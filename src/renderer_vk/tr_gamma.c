@@ -30,24 +30,54 @@
  */
 /**
  * @file renderer_vk/tr_gamma.c
- * @brief placeholder: screen gamma correction is applied via a
- * full-screen GLSL pass in renderer1 (a shader object loaded through
- * R_CreateShaderProgram). A real Vulkan implementation needs a graphics
- * pipeline + descriptor set doing the same tonemap and will replace this
- * stub later.
+ * @brief screen gamma. renderer1 runs a GLSL program over its
+ * main FBO; the Vulkan backend draws the frame into an offscreen image and
+ * VK_EndFrame() copies it to the swapchain applying the same
+ * pow(rgb, 1 / r_gamma) * (1 << overbrightBits). This file only feeds it.
  */
 
 #include "tr_local.h"
+#include "vulkan/vk.h"
 
+/**
+ * @brief R_ScreenGamma - per-frame gamma/overbright values for the final
+ * pass (called from RB_GammaScreen() before the swap).
+ */
 void R_ScreenGamma(void)
 {
+	if (tr.gammaProgramUsed)
+	{
+		VK_SetGammaParams(r_gamma->value, (float)(1 << tr.overbrightBits));
+	}
+	else
+	{
+		VK_SetGammaParams(1.0f, 1.0f);
+	}
 }
 
+/**
+ * @brief R_InitGamma - same gating as renderer1 (r_ignorehwgamma disables
+ * the gamma program). Must run before R_InitImages(), since
+ * R_SetColorMappings() keeps overbright in windowed mode only when
+ * tr.gammaProgramUsed is set.
+ */
 void R_InitGamma(void)
 {
 	tr.gammaProgramUsed = qfalse;
+
+	if (ri.Cvar_VariableIntegerValue("r_ignorehwgamma"))
+	{
+		Ren_Print("INFO: R_InitGamma() skipped - r_ignorehwgamma is set\n");
+		return;
+	}
+
+	tr.gammaProgramUsed = qtrue;
 }
 
+/**
+ * @brief R_ShutdownGamma
+ */
 void R_ShutdownGamma(void)
 {
+	tr.gammaProgramUsed = qfalse;
 }

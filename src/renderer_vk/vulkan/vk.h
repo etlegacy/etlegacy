@@ -145,6 +145,12 @@ void VK_SetSkyDepthRange(float minDepth, float maxDepth);
 void VK_ClearSceneDepth(void);
 
 /**
+ * @brief gamma and overbright multiplier applied by the final
+ * offscreen -> swapchain pass in VK_EndFrame().
+ */
+void VK_SetGammaParams(float gamma, float overbrightScale);
+
+/**
  * @brief stencil bits of the depth attachment (0 or 8).
  */
 int VK_StencilBits(void);

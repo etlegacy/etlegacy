@@ -337,6 +337,20 @@ void GfxInfo_f(void)
 	{
 		Ren_Print("N/A\n");
 	}
+
+	// same lines as renderer1's GfxInfo_f
+	if (glConfig.deviceSupportsGamma)
+	{
+		Ren_Print("GAMMA: hardware w/ %d overbright bits\n", tr.overbrightBits);
+	}
+	else
+	{
+		Ren_Print("GAMMA: software w/ %d overbright bits\n", tr.overbrightBits);
+	}
+
+	Ren_Print("texturemode: %s\n", r_textureMode->string);
+	Ren_Print("picmip: %d\n", r_picMip->integer);
+	Ren_Print("anisotropy: %.0f (max %.0f)\n", textureFilterAnisotropic ? r_extTextureFilterAnisotropic->value : 0.0f, maxAnisotropy);
 }
 
 /**
