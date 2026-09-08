@@ -175,7 +175,11 @@ typedef unsigned int GLhandleARB;
 #define glBlendFunc(...)    ((void)0)
 #define glCallList(...)     ((void)0)
 #define glCallLists(...)    ((void)0)
-#define glClearColor(...)   ((void)0)
+// glClearColor is a real capture point (stored by the Vulkan
+// backend and used by VK_ClearSceneColor()); glClear itself stays a no-op
+// and callers that need a color clear call VK_ClearSceneColor().
+void VK_SetClearColor(float r, float g, float b, float a);
+#define glClearColor(r, g, b, a) VK_SetClearColor((float)(r), (float)(g), (float)(b), (float)(a))
 #define glClearStencil(...) ((void)0)
 #define glColor3f(...)      ((void)0)
 #define glColor3fv(...)     ((void)0)

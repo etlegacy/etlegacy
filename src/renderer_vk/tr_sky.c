@@ -966,6 +966,7 @@ void RB_DrawSun(void)
 	float  dist;
 	vec3_t origin, vec1, vec2;
 	byte   color[4];
+	float  savedModelMatrix[16], sunModelMatrix[16];
 
 	if (!tr.sunShader)
 	{
@@ -984,6 +985,17 @@ void RB_DrawSun(void)
 	glLoadMatrixf(backEnd.viewParms.world.modelMatrix);
 	glTranslatef(backEnd.viewParms.orientation.origin[0], backEnd.viewParms.orientation.origin[1], backEnd.viewParms.orientation.origin[2]);
 
+	// real capture point (the GL matrix calls above are
+	// no-ops). World matrix * translate(viewOrigin) cancels the view
+	// translation, leaving rotation only - same as the skybox trick in
+	// RB_StageIteratorSky(): the sun quad is camera-relative.
+	VK_GetModelViewMatrix(savedModelMatrix);
+	Com_Memcpy(sunModelMatrix, backEnd.viewParms.world.modelMatrix, sizeof(sunModelMatrix));
+	sunModelMatrix[12] = 0.0f;
+	sunModelMatrix[13] = 0.0f;
+	sunModelMatrix[14] = 0.0f;
+	VK_SetModelViewMatrix(sunModelMatrix);
+
 	dist = backEnd.viewParms.zFar / 1.75f;       // div sqrt(3)
 
 	// shrunk the size of the sun
@@ -998,6 +1010,7 @@ void RB_DrawSun(void)
 
 	// farthest depth range
 	glDepthRange(1.0, 1.0);
+	VK_SetSkyDepthRange(1.0f, 1.0f);
 
 	color[0] = color[1] = color[2] = color[3] = 255;
 
@@ -1094,6 +1107,8 @@ void RB_DrawSun(void)
 	// back to normal depth range
 	glDepthRange(0.0, 1.0);
 	glPopMatrix();
+	VK_SetSkyDepthRange(0.0f, 1.0f);
+	VK_SetModelViewMatrix(savedModelMatrix);
 }
 
 /**

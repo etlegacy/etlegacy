@@ -214,6 +214,7 @@ typedef struct
 	// one, which covers the vast majority of ET fog usage).
 	qboolean fogEnabled;
 	qboolean fogParamsValid; // VK_SetFog() has run at least once
+	float clearColor[4];     // last glClearColor() value
 	float fogColor[4];
 	float fogStart;
 	float fogEnd;
@@ -3420,6 +3421,59 @@ void VK_SetSkyDepthRange(float minDepth, float maxDepth)
 	viewport.minDepth = minDepth;
 	viewport.maxDepth = maxDepth;
 	vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
+}
+
+/**
+ * @brief glClearColor() capture point (see vk_gl_compat.h).
+ */
+void VK_SetClearColor(float r, float g, float b, float a)
+{
+	vk.clearColor[0] = r;
+	vk.clearColor[1] = g;
+	vk.clearColor[2] = b;
+	vk.clearColor[3] = a;
+}
+
+/**
+ * @brief renderer1's glClear(GL_COLOR_BUFFER_BIT) with the
+ * last glClearColor(). Clears the last scene viewport rect (GL's scissor
+ * box during RB_BeginDrawingView/RB_Hyperspace), or the whole framebuffer
+ * when fullFramebuffer is set (RB_DrawBuffer's r_clear, before any view).
+ */
+void VK_ClearSceneColor(qboolean fullFramebuffer)
+{
+	VkClearAttachment attachment;
+	VkClearRect       rect;
+
+	if (!vk.initialized)
+	{
+		return;
+	}
+
+	Com_Memset(&attachment, 0, sizeof(attachment));
+	attachment.aspectMask                  = VK_IMAGE_ASPECT_COLOR_BIT;
+	attachment.colorAttachment             = 0;
+	attachment.clearValue.color.float32[0] = vk.clearColor[0];
+	attachment.clearValue.color.float32[1] = vk.clearColor[1];
+	attachment.clearValue.color.float32[2] = vk.clearColor[2];
+	attachment.clearValue.color.float32[3] = vk.clearColor[3];
+
+	Com_Memset(&rect, 0, sizeof(rect));
+	if (fullFramebuffer || vk.lastViewportWidth <= 0 || vk.lastViewportHeight <= 0)
+	{
+		rect.rect.extent = vk.swapchainExtent;
+	}
+	else
+	{
+		rect.rect.offset.x      = vk.lastViewportX;
+		rect.rect.offset.y      = vk.lastViewportFlippedY;
+		rect.rect.extent.width  = (uint32_t)vk.lastViewportWidth;
+		rect.rect.extent.height = (uint32_t)vk.lastViewportHeight;
+	}
+	rect.baseArrayLayer = 0;
+	rect.layerCount     = 1;
+
+	vkCmdClearAttachments(vk.commandBuffer, 1, &attachment, 1, &rect);
 }
 
 /**
