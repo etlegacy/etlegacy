@@ -145,6 +145,12 @@ void VK_SetSkyDepthRange(float minDepth, float maxDepth);
 void VK_ClearSceneDepth(void);
 
 /**
+ * @brief color clear with the last glClearColor() value, over
+ * the last scene viewport (or the whole framebuffer).
+ */
+void VK_ClearSceneColor(qboolean fullFramebuffer);
+
+/**
  * @brief gamma and overbright multiplier applied by the final
  * offscreen -> swapchain pass in VK_EndFrame().
  */

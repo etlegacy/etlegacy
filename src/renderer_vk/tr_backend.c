@@ -421,6 +421,7 @@ static void RB_Hyperspace(void)
 
 	glClearColor(c, c, c, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
+	VK_ClearSceneColor(qfalse);
 
 	backEnd.isHyperspace = qtrue;
 }
@@ -621,10 +622,17 @@ void RB_BeginDrawingView(void)
 
 	// glClear() is a no-op; depth must still be reset per
 	// view so a portal/mirror subview's depth doesn't leak into the view
-	// drawn after it. Color clears stay covered by the per-frame loadOp.
+	// drawn after it.
 	if (clearBits & GL_DEPTH_BUFFER_BIT)
 	{
 		VK_ClearSceneDepth();
+	}
+
+	// same for color (r_fastsky, fog clearscreen, portal sky
+	// fog, ...), using the color last given to glClearColor() above.
+	if (clearBits & GL_COLOR_BUFFER_BIT)
+	{
+		VK_ClearSceneColor(qfalse);
 	}
 
 	if ((backEnd.refdef.rdflags & RDF_HYPERSPACE))
@@ -1367,6 +1375,7 @@ const void *RB_DrawBuffer(const void *data)
 	{
 		glClearColor(1, 0, 0.5f, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		VK_ClearSceneColor(qtrue);
 	}
 
 	return ( const void * ) (cmd + 1);
