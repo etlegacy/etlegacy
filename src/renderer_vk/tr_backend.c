@@ -932,18 +932,49 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 		RB_SetGL2D();
 	}
 
-	glColor3f(tr.identityLight, tr.identityLight, tr.identityLight);
+	// renderer1 draws this quad in immediate mode; submit it
+	// through the Vulkan 2D path instead. Flush any batched 2D surface
+	// first so draw order is kept.
+	if (tess.numIndexes)
+	{
+		RB_EndSurface();
+	}
 
-	glBegin(GL_QUADS);
-	glTexCoord2f(0.5f / cols, 0.5f / rows);
-	glVertex2f(x, y);
-	glTexCoord2f((cols - 0.5f) / cols, 0.5f / rows);
-	glVertex2f(x + w, y);
-	glTexCoord2f((cols - 0.5f) / cols, (rows - 0.5f) / rows);
-	glVertex2f(x + w, y + h);
-	glTexCoord2f(0.5f / cols, (rows - 0.5f) / rows);
-	glVertex2f(x, y + h);
-	glEnd();
+	{
+		const float s0 = 0.5f / cols, s1 = (cols - 0.5f) / cols;
+		const float t0 = 0.5f / rows, t1 = (rows - 0.5f) / rows;
+		const byte  c = (byte)tr.identityLightByte;
+		int         i;
+
+		tess.numVertexes = 4;
+		tess.numIndexes  = 6;
+
+		VectorSet(tess.xyz[0], x, y, 0);
+		VectorSet(tess.xyz[1], x + w, y, 0);
+		VectorSet(tess.xyz[2], x + w, y + h, 0);
+		VectorSet(tess.xyz[3], x, y + h, 0);
+
+		tess.texCoords[0][0][0] = s0; tess.texCoords[0][0][1] = t0;
+		tess.texCoords[1][0][0] = s1; tess.texCoords[1][0][1] = t0;
+		tess.texCoords[2][0][0] = s1; tess.texCoords[2][0][1] = t1;
+		tess.texCoords[3][0][0] = s0; tess.texCoords[3][0][1] = t1;
+
+		for (i = 0; i < 4; i++)
+		{
+			tess.vertexColors[i][0] = c;
+			tess.vertexColors[i][1] = c;
+			tess.vertexColors[i][2] = c;
+			tess.vertexColors[i][3] = 255;
+		}
+
+		tess.indexes[0] = 0; tess.indexes[1] = 1; tess.indexes[2] = 2;
+		tess.indexes[3] = 0; tess.indexes[4] = 2; tess.indexes[5] = 3;
+
+		VK_Draw2D(&tess, tr.scratchImage[client], GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
+
+		tess.numVertexes = 0;
+		tess.numIndexes  = 0;
+	}
 
 	// Without binding a texture the cinematic will not be displayed correctly
 	GL_Bind(tr.defaultImage);
@@ -981,6 +1012,15 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 	{
 		tr.scratchImage[client] = R_CreateImage(va("*scratch%i", client), data, cols, rows, qfalse, qtrue, GL_CLAMP_TO_EDGE);
 		dirty                   = qfalse;
+	}
+
+	// real upload (the GL calls below are no-ops). Also covers
+	// the first frame: R_CreateImage() went through Upload32(), which may
+	// have resampled/picmipped, so recreate at the raw cinematic size.
+	if (tr.scratchImage[client] &&
+	    (dirty || tr.scratchImage[client]->uploadWidth != cols || tr.scratchImage[client]->uploadHeight != rows))
+	{
+		VK_UploadScratchImage(tr.scratchImage[client], data, cols, rows);
 	}
 
 	start = 0;
