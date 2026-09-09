@@ -78,7 +78,6 @@ void RB_BeginSurface(shader_t *shader, int fogNum)
  * @brief Vulkan equivalent of renderer1's R_BindAnimatedImage(): returns
  * the image to sample for this bundle instead of binding it, so animMap
  * stages (flames, explosions, etc.) cycle frames like they do in GL1.
- * Video maps are not supported yet and fall back to image[0].
  */
 static image_t *R_GetAnimatedImage(textureBundle_t *bundle)
 {
@@ -89,7 +88,22 @@ static image_t *R_GetAnimatedImage(textureBundle_t *bundle)
 		return tr.whiteImage;
 	}
 
-	if (bundle->isVideoMap || bundle->numImageAnimations <= 1)
+	// video maps advance and upload their cinematic (renderer1's
+	// R_BindAnimatedImage), then sample its scratch image
+	if (bundle->isVideoMap)
+	{
+		ri.CIN_RunCinematic(bundle->videoMapHandle);
+		ri.CIN_UploadCinematic(bundle->videoMapHandle);
+
+		if (bundle->videoMapHandle >= 0 && bundle->videoMapHandle < (int)ARRAY_LEN(tr.scratchImage) &&
+		    tr.scratchImage[bundle->videoMapHandle])
+		{
+			return tr.scratchImage[bundle->videoMapHandle];
+		}
+		return bundle->image[0];
+	}
+
+	if (bundle->numImageAnimations <= 1)
 	{
 		return bundle->image[0];
 	}

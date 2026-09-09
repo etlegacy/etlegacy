@@ -108,6 +108,12 @@ float VK_GetMaxAnisotropy(void);
 void VK_DeleteImageTexture(struct image_s *image);
 
 /**
+ * @brief updates (or recreates at a new size) a cinematic
+ * scratch image from raw RGBA data (RE_UploadCinematic).
+ */
+qboolean VK_UploadScratchImage(struct image_s *image, const byte *data, int cols, int rows);
+
+/**
  * @brief submits one already-tessellated 2D/UI shader batch
  * (as populated by RB_StretchPic/RB_Draw2dPolys/etc. into tess) using the
  * fixed UI pipeline, textured with the given image (tr.whiteImage if NULL).

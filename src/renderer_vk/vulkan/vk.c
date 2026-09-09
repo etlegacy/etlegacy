@@ -215,6 +215,18 @@ typedef struct
 	qboolean fogEnabled;
 	qboolean fogParamsValid; // VK_SetFog() has run at least once
 	float clearColor[4];     // last glClearColor() value
+
+	// image resources replaced while the current frame's
+	// command buffer may still reference them (cinematic scratch image
+	// resize); freed at the next VK_BeginFrame() after the fence wait.
+	struct
+	{
+		VkImage image;
+		VkDeviceMemory memory;
+		VkImageView view;
+		VkDescriptorSet descriptorSet;
+	} pendingFree[8];
+	int numPendingFree;
 	float fogColor[4];
 	float fogStart;
 	float fogEnd;
@@ -676,6 +688,7 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
  */
 static uint32_t VK_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 static VkShaderModule VK_CreateShaderModule(const unsigned char *code, unsigned int size);
+static void VK_FlushPendingFrees(void);
 
 /**
  * @brief creates the depth buffer (image + memory + view)
@@ -2475,6 +2488,12 @@ void VK_Shutdown(void)
 	if (vk.device != VK_NULL_HANDLE)
 	{
 		vkDeviceWaitIdle(vk.device);
+		VK_FlushPendingFrees();
+	}
+
+	if (vk.device != VK_NULL_HANDLE)
+	{
+		vkDeviceWaitIdle(vk.device);
 	}
 
 	VK_DestroySwapchainObjects();
@@ -2658,6 +2677,62 @@ void VK_Shutdown(void)
 	Com_Memset(&vk, 0, sizeof(vk));
 }
 
+/**
+ * @brief frees image resources queued by
+ * VK_QueueImageResourcesForFree().
+ */
+static void VK_FlushPendingFrees(void)
+{
+	int i;
+
+	for (i = 0; i < vk.numPendingFree; i++)
+	{
+		if (vk.pendingFree[i].descriptorSet != VK_NULL_HANDLE)
+		{
+			vkFreeDescriptorSets(vk.device, vk.uiDescriptorPool, 1, &vk.pendingFree[i].descriptorSet);
+		}
+		if (vk.pendingFree[i].view != VK_NULL_HANDLE)
+		{
+			vkDestroyImageView(vk.device, vk.pendingFree[i].view, NULL);
+		}
+		if (vk.pendingFree[i].image != VK_NULL_HANDLE)
+		{
+			vkDestroyImage(vk.device, vk.pendingFree[i].image, NULL);
+		}
+		if (vk.pendingFree[i].memory != VK_NULL_HANDLE)
+		{
+			vkFreeMemory(vk.device, vk.pendingFree[i].memory, NULL);
+		}
+	}
+	vk.numPendingFree = 0;
+}
+
+/**
+ * @brief detaches an image_t's Vulkan resources and frees
+ * them once the frame being recorded has finished (falls back to a
+ * synchronous delete if the queue is full).
+ */
+static void VK_QueueImageResourcesForFree(struct image_s *image)
+{
+	if (vk.numPendingFree >= (int)ARRAY_LEN(vk.pendingFree))
+	{
+		VK_DeleteImageTexture(image);
+		return;
+	}
+
+	vk.pendingFree[vk.numPendingFree].image         = (VkImage)image->vkImage;
+	vk.pendingFree[vk.numPendingFree].memory        = (VkDeviceMemory)image->vkImageMemory;
+	vk.pendingFree[vk.numPendingFree].view          = (VkImageView)image->vkImageView;
+	vk.pendingFree[vk.numPendingFree].descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
+	vk.numPendingFree++;
+
+	image->vkImage         = NULL;
+	image->vkImageMemory   = NULL;
+	image->vkImageView     = NULL;
+	image->vkDescriptorSet = NULL;
+	image->vkSampler       = NULL;
+}
+
 void VK_BeginFrame(void)
 {
 	VkCommandBufferBeginInfo beginInfo;
@@ -2682,6 +2757,10 @@ void VK_BeginFrame(void)
 	vk.lastBoundPipeline      = VK_NULL_HANDLE;
 
 	vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX);
+
+	// the previous frame is done, so resources it may still
+	// have referenced can go now
+	VK_FlushPendingFrees();
 	vkResetFences(vk.device, 1, &vk.inFlightFence);
 
 	vkAcquireNextImageKHR(vk.device, vk.swapchain, UINT64_MAX, vk.imageAvailableSemaphore, VK_NULL_HANDLE, &vk.currentImageIndex);
@@ -4015,4 +4094,91 @@ void VK_SetGammaParams(float gamma, float overbrightScale)
 {
 	vk.gammaValue      = (gamma > 0.0f) ? gamma : 1.0f;
 	vk.overbrightScale = overbrightScale;
+}
+
+/**
+ * @brief renderer1's RE_UploadCinematic texture update for a
+ * cinematic scratch image: sub-image update in place when the size is
+ * unchanged, otherwise a new single-level, clamped, linear image at the
+ * raw cinematic size (the old one is freed after the current frame).
+ */
+qboolean VK_UploadScratchImage(struct image_s *image, const byte *data, int cols, int rows)
+{
+	VkDeviceSize         size = (VkDeviceSize)cols * (VkDeviceSize)rows * 4;
+	VkBuffer             stagingBuffer;
+	VkDeviceMemory       stagingMemory;
+	void                 *mapped;
+	VkCommandBuffer      cmd;
+	VkImageMemoryBarrier barrier;
+	VkBufferImageCopy    region;
+
+	if (!vk.initialized || !image || !data || cols <= 0 || rows <= 0)
+	{
+		return qfalse;
+	}
+
+	if (!image->vkImage || image->uploadWidth != cols || image->uploadHeight != rows)
+	{
+		if (image->vkImage)
+		{
+			VK_QueueImageResourcesForFree(image);
+		}
+
+		image->mipmap        = qfalse;
+		image->wrapClampMode = GL_CLAMP_TO_EDGE;
+		image->uploadWidth   = cols;
+		image->uploadHeight  = rows;
+
+		return VK_CreateImageTexture(image, data, cols, rows, 1, qfalse, GL_CLAMP_TO_EDGE);
+	}
+
+	if (!VK_CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	                     &stagingBuffer, &stagingMemory))
+	{
+		return qfalse;
+	}
+
+	vkMapMemory(vk.device, stagingMemory, 0, size, 0, &mapped);
+	Com_Memcpy(mapped, data, (size_t)size);
+	vkUnmapMemory(vk.device, stagingMemory);
+
+	cmd = VK_BeginOneShotCommands();
+
+	Com_Memset(&barrier, 0, sizeof(barrier));
+	barrier.sType                       = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barrier.oldLayout                   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	barrier.newLayout                   = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	barrier.srcQueueFamilyIndex         = VK_QUEUE_FAMILY_IGNORED;
+	barrier.dstQueueFamilyIndex         = VK_QUEUE_FAMILY_IGNORED;
+	barrier.image                       = (VkImage)image->vkImage;
+	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	barrier.subresourceRange.levelCount = 1;
+	barrier.subresourceRange.layerCount = 1;
+	barrier.srcAccessMask               = VK_ACCESS_SHADER_READ_BIT;
+	barrier.dstAccessMask               = VK_ACCESS_TRANSFER_WRITE_BIT;
+	vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
+	                     0, 0, NULL, 0, NULL, 1, &barrier);
+
+	Com_Memset(&region, 0, sizeof(region));
+	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	region.imageSubresource.layerCount = 1;
+	region.imageExtent.width           = (uint32_t)cols;
+	region.imageExtent.height          = (uint32_t)rows;
+	region.imageExtent.depth           = 1;
+	vkCmdCopyBufferToImage(cmd, stagingBuffer, (VkImage)image->vkImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+	barrier.oldLayout     = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	barrier.newLayout     = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+	barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+	vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+	                     0, 0, NULL, 0, NULL, 1, &barrier);
+
+	VK_EndOneShotCommands(cmd);
+
+	vkDestroyBuffer(vk.device, stagingBuffer, NULL);
+	vkFreeMemory(vk.device, stagingMemory, NULL);
+
+	return qtrue;
 }
