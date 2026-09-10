@@ -38,6 +38,7 @@
  */
 
 #include "tr_local.h"
+#include "vulkan/vk.h"
 
 glconfig_t glConfig;
 qboolean   textureFilterAnisotropic = qfalse;
@@ -91,11 +92,345 @@ void GL_CheckErrors(void)
 {
 }
 
-/**
- * @brief RB_TakeScreenshotCmd
+/*
+ * screen capture.
  *
- * Pixel readback from the swapchain isn't implemented yet, so
- * this only advances the command buffer past the command's payload.
+ * renderer1 reads pixels back synchronously with glReadPixels wherever the
+ * screenshot / video-frame command sits in the command stream. In Vulkan
+ * the frame is still being recorded at that point, so the requests are
+ * queued here, VK_EndFrame() captures the final (post-gamma) image, and
+ * RB_FinishFrameCaptures() (called right after it) writes the files using
+ * renderer1's encoders, fed with the same bottom-up RGB layout
+ * glReadPixels returns.
+ */
+
+#define MAX_PENDING_SCREENSHOTS 4
+
+static struct
+{
+	int x, y, width, height;
+	char fileName[MAX_OSPATH];
+	ssFormat_t format;
+} pendingShots[MAX_PENDING_SCREENSHOTS];
+static int                 numPendingShots;
+static qboolean            pendingLevelShot;
+static qboolean            pendingVideoFrame;
+static videoFrameCommand_t pendingVideoCmd;
+
+/**
+ * @brief Vulkan counterpart of RB_ReadPixels: the captured frame as glReadPixels(GL_RGB)
+ * returns it (rows bottom-up, no row padding), at *offset bytes into a
+ * temp hunk allocation.
+ */
+static byte *RB_ReadCapturedPixels(int width, int height, size_t *offset, int *padlen)
+{
+	byte *buffer = ri.Hunk_AllocateTempMemory((size_t)width * height * 3 + *offset);
+
+	*padlen = 0;
+	VK_ReadCapturedFrameRGB(buffer + *offset, width, height, 0);
+
+	return buffer;
+}
+
+/**
+ * @brief RB_TakeScreenshotTGA
+ */
+static void RB_TakeScreenshotTGA(int width, int height, const char *fileName)
+{
+	byte   *allbuf, *buffer;
+	byte   *srcptr, *destptr;
+	byte   *endline, *endmem;
+	byte   temp;
+	int    linelen, padlen;
+	size_t offset = 18, memcount;
+
+	allbuf = RB_ReadCapturedPixels(width, height, &offset, &padlen);
+	buffer = allbuf + offset - 18;
+
+	Com_Memset(buffer, 0, 18);
+	buffer[2]  = 2;         // uncompressed type
+	buffer[12] = width & 255;
+	buffer[13] = width >> 8;
+	buffer[14] = height & 255;
+	buffer[15] = height >> 8;
+	buffer[16] = 24;        // pixel size
+
+	// swap rgb to bgr and remove padding from line endings
+	linelen = width * 3;
+
+	srcptr = destptr = allbuf + offset;
+	endmem = srcptr + (linelen + padlen) * height;
+
+	while (srcptr < endmem)
+	{
+		endline = srcptr + linelen;
+
+		while (srcptr < endline)
+		{
+			temp       = srcptr[0];
+			*destptr++ = srcptr[2];
+			*destptr++ = srcptr[1];
+			*destptr++ = temp;
+
+			srcptr += 3;
+		}
+
+		// Skip the pad
+		srcptr += padlen;
+	}
+
+	memcount = linelen * height;
+
+	// gamma correct
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
+	{
+		R_GammaCorrect(allbuf + offset, memcount);
+	}
+
+	ri.FS_WriteFile(fileName, buffer, memcount + 18);
+
+	ri.Hunk_FreeTempMemory(allbuf);
+}
+
+/**
+ * @brief RB_TakeScreenshotJPEG
+ */
+static void RB_TakeScreenshotJPEG(int width, int height, char *fileName)
+{
+	byte   *buffer;
+	size_t offset = 0, memcount;
+	int    padlen;
+
+	buffer   = RB_ReadCapturedPixels(width, height, &offset, &padlen);
+	memcount = (width * 3 + padlen) * height;
+
+	// gamma correct
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
+	{
+		R_GammaCorrect(buffer + offset, memcount);
+	}
+
+	RE_SaveJPG(fileName, r_screenshotJpegQuality->integer, width, height, buffer + offset, padlen);
+	ri.Hunk_FreeTempMemory(buffer);
+}
+
+#ifdef FEATURE_PNG
+/**
+ * @brief RB_TakeScreenshotPNG
+ */
+static void RB_TakeScreenshotPNG(int width, int height, char *fileName)
+{
+	byte   *buffer;
+	size_t offset = 0, memcount;
+	int    padlen;
+
+	buffer   = RB_ReadCapturedPixels(width, height, &offset, &padlen);
+	memcount = (width * 3 + padlen) * height;
+
+	// gamma correct
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
+	{
+		R_GammaCorrect(buffer + offset, memcount);
+	}
+
+	RE_SavePNG(fileName, width, height, buffer + offset, padlen);
+	ri.Hunk_FreeTempMemory(buffer);
+}
+#endif
+
+/**
+ * @brief Levelshots are specialized 128*128 thumbnails for
+ * the menu system, sampled down from full screen distorted images
+ */
+static void R_WriteLevelShot(int width, int height)
+{
+	char   checkname[MAX_OSPATH];
+	byte   *buffer;
+	byte   *source, *allsource;
+	byte   *src, *dst;
+	size_t offset = 0;
+	int    padlen;
+	int    x, y;
+	int    r, g, b;
+	float  xScale, yScale;
+	int    xx, yy;
+
+	if (!tr.world)
+	{
+		return;
+	}
+
+	Com_sprintf(checkname, sizeof(checkname), "levelshots/%s.tga", tr.world->baseName);
+
+	allsource = RB_ReadCapturedPixels(width, height, &offset, &padlen);
+	source    = allsource + offset;
+
+	buffer = ri.Hunk_AllocateTempMemory(128 * 128 * 3 + 18);
+	Com_Memset(buffer, 0, 18);
+	buffer[2]  = 2;         // uncompressed type
+	buffer[12] = 128;
+	buffer[14] = 128;
+	buffer[16] = 24;        // pixel size
+
+	// resample from source
+	xScale = width / 512.0f;
+	yScale = height / 384.0f;
+	for (y = 0 ; y < 128 ; y++)
+	{
+		for (x = 0 ; x < 128 ; x++)
+		{
+			r = g = b = 0;
+			for (yy = 0 ; yy < 3 ; yy++)
+			{
+				for (xx = 0 ; xx < 4 ; xx++)
+				{
+					src = source + (3 * width + padlen) * ( int ) ((y * 3 + yy) * yScale) +
+					      3 * ( int ) ((x * 4 + xx) * xScale);
+					r += src[0];
+					g += src[1];
+					b += src[2];
+				}
+			}
+			dst    = buffer + 18 + 3 * (y * 128 + x);
+			dst[0] = (byte)(b / 12);
+			dst[1] = (byte)(g / 12);
+			dst[2] = (byte)(r / 12);
+		}
+	}
+
+	// gamma correct
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
+	{
+		R_GammaCorrect(buffer + 18, 128 * 128 * 3);
+	}
+
+	ri.FS_WriteFile(checkname, buffer, 128 * 128 * 3 + 18);
+
+	ri.Hunk_FreeTempMemory(buffer);
+	ri.Hunk_FreeTempMemory(allsource);
+
+	Ren_Print("Wrote %s\n", checkname);
+}
+
+/**
+ * @brief renderer1's RB_TakeVideoFrameCmd body, fed from the captured frame
+ */
+static void RB_WriteVideoFrame(const videoFrameCommand_t *cmd)
+{
+	byte   *cBuf;
+	size_t memcount, linelen;
+	int    padwidth, avipadwidth, padlen, avipadlen;
+
+	linelen = cmd->width * 3;
+
+	// no glReadPixels pack alignment: rows are tightly packed
+	padwidth = (int)linelen;
+	padlen   = 0;
+	// AVI line padding
+	avipadwidth = PAD(linelen, AVI_LINE_PADDING);
+	avipadlen   = avipadwidth - linelen;
+
+	cBuf = cmd->captureBuffer;
+	VK_ReadCapturedFrameRGB(cBuf, cmd->width, cmd->height, 0);
+
+	memcount = padwidth * cmd->height;
+
+	// gamma correct
+	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
+	{
+		R_GammaCorrect(cBuf, memcount);
+	}
+
+	if (cmd->motionJpeg)
+	{
+		memcount = RE_SaveJPGToBuffer(cmd->encodeBuffer, linelen * cmd->height,
+		                              r_screenshotJpegQuality->integer,
+		                              cmd->width, cmd->height, cBuf, padlen);
+		ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, memcount);
+	}
+	else
+	{
+		byte *lineend, *memend;
+		byte *srcptr, *destptr;
+
+		srcptr  = cBuf;
+		destptr = cmd->encodeBuffer;
+		memend  = srcptr + memcount;
+
+		// swap R and B and remove line paddings
+		while (srcptr < memend)
+		{
+			lineend = srcptr + linelen;
+			while (srcptr < lineend)
+			{
+				*destptr++ = srcptr[2];
+				*destptr++ = srcptr[1];
+				*destptr++ = srcptr[0];
+				srcptr    += 3;
+			}
+
+			Com_Memset(destptr, '\0', avipadlen);
+			destptr += avipadlen;
+
+			srcptr += padlen;
+		}
+
+		ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, avipadwidth * cmd->height);
+	}
+}
+
+/**
+ * @brief writes everything queued for the frame VK_EndFrame()
+ * just captured (called from RB_SwapBuffers right after VK_EndFrame()).
+ */
+void RB_FinishFrameCaptures(void)
+{
+	int width, height, i;
+
+	if (!VK_GetCapturedFrameSize(&width, &height))
+	{
+		return;
+	}
+
+	for (i = 0; i < numPendingShots; i++)
+	{
+		switch (pendingShots[i].format)
+		{
+		case SSF_TGA:
+			RB_TakeScreenshotTGA(width, height, pendingShots[i].fileName);
+			break;
+		case SSF_JPEG:
+			RB_TakeScreenshotJPEG(width, height, pendingShots[i].fileName);
+			break;
+#ifdef FEATURE_PNG
+		case SSF_PNG:
+			RB_TakeScreenshotPNG(width, height, pendingShots[i].fileName);
+			break;
+#endif
+		default:
+			break;
+		}
+	}
+	numPendingShots = 0;
+
+	if (pendingLevelShot)
+	{
+		R_WriteLevelShot(width, height);
+		pendingLevelShot = qfalse;
+	}
+
+	if (pendingVideoFrame)
+	{
+		RB_WriteVideoFrame(&pendingVideoCmd);
+		pendingVideoFrame = qfalse;
+	}
+
+	VK_ReleaseCapturedFrame();
+}
+
+/**
+ * @brief RB_TakeScreenshotCmd - queues the screenshot for the end of the
+ * frame (see RB_FinishFrameCaptures).
  * @param[in] data
  * @return
  */
@@ -103,7 +438,21 @@ const void *RB_TakeScreenshotCmd(const void *data)
 {
 	const screenshotCommand_t *cmd = ( const screenshotCommand_t * ) data;
 
-	Ren_Print("RB_TakeScreenshotCmd: screenshots are not yet supported by the Vulkan renderer\n");
+	if (numPendingShots < MAX_PENDING_SCREENSHOTS)
+	{
+		pendingShots[numPendingShots].x      = cmd->x;
+		pendingShots[numPendingShots].y      = cmd->y;
+		pendingShots[numPendingShots].width  = cmd->width;
+		pendingShots[numPendingShots].height = cmd->height;
+		pendingShots[numPendingShots].format = cmd->format;
+		Q_strncpyz(pendingShots[numPendingShots].fileName, cmd->fileName, sizeof(pendingShots[numPendingShots].fileName));
+		numPendingShots++;
+		VK_RequestFrameCapture();
+	}
+	else
+	{
+		Ren_Print("RB_TakeScreenshotCmd: too many screenshots this frame, dropping %s\n", cmd->fileName);
+	}
 
 	return ( const void * ) (cmd + 1);
 }
@@ -166,10 +515,9 @@ void R_ScreenshotFilename(int lastNumber, char *fileName, char *ext)
 }
 
 /**
- * @brief RB_TakeVideoFrameCmd
- *
- * Swapchain readback isn't implemented yet, so this only
- * advances the command buffer past the command's payload.
+ * @brief RB_TakeVideoFrameCmd - queues an avi frame for the end of the
+ * frame (see RB_FinishFrameCaptures). The client's capture/encode buffers
+ * stay valid until its next frame.
  * @param[in] data
  * @return
  */
@@ -177,7 +525,15 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 {
 	const videoFrameCommand_t *cmd = (const videoFrameCommand_t *)data;
 
-	Ren_Print("RB_TakeVideoFrameCmd: video capture is not yet supported by the Vulkan renderer\n");
+	// finish any 2D drawing if needed
+	if (tess.numIndexes)
+	{
+		RB_EndSurface();
+	}
+
+	pendingVideoCmd   = *cmd;
+	pendingVideoFrame = qtrue;
+	VK_RequestFrameCapture();
 
 	return (const void *)(cmd + 1);
 }
@@ -191,8 +547,7 @@ const void *RB_TakeVideoFrameCmd(const void *data)
  * screenshot [silent]
  * screenshot [filename]
  *
- * @note "screenshot levelshot" and actual pixel capture are not yet
- * implemented for the Vulkan renderer (see RB_TakeScreenshotCmd).
+ * screenshot [levelshot]
  */
 void R_ScreenShot_f(void)
 {
@@ -223,6 +578,14 @@ void R_ScreenShot_f(void)
 		break;
 #endif
 	default:
+		return;
+	}
+
+	if (!strcmp(ri.Cmd_Argv(1), "levelshot"))
+	{
+		// written after the next captured frame (RB_FinishFrameCaptures)
+		pendingLevelShot = qtrue;
+		VK_RequestFrameCapture();
 		return;
 	}
 

@@ -108,6 +108,16 @@ float VK_GetMaxAnisotropy(void);
 void VK_DeleteImageTexture(struct image_s *image);
 
 /**
+ * @brief frame capture for screenshots, levelshots and avi
+ * frames. Request, then after VK_EndFrame() read the final (post-gamma)
+ * image laid out like glReadPixels(GL_RGB) and release it.
+ */
+void VK_RequestFrameCapture(void);
+qboolean VK_GetCapturedFrameSize(int *width, int *height);
+void VK_ReadCapturedFrameRGB(byte *dst, int width, int height, int padlen);
+void VK_ReleaseCapturedFrame(void);
+
+/**
  * @brief updates (or recreates at a new size) a cinematic
  * scratch image from raw RGBA data (RE_UploadCinematic).
  */
