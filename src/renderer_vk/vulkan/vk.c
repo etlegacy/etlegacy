@@ -227,6 +227,19 @@ typedef struct
 		VkDescriptorSet descriptorSet;
 	} pendingFree[8];
 	int numPendingFree;
+
+	// frame capture for screenshots / levelshots / avi
+	// frames. When requested, VK_EndFrame() copies the final (post-gamma)
+	// swapchain image into captureBuffer and waits for it.
+	VkBuffer captureBuffer;
+	VkDeviceMemory captureMemory;
+	VkDeviceSize captureSize;
+	void *captureMapped;
+	qboolean captureRequested;
+	qboolean captureReady;
+	uint32_t captureWidth;
+	uint32_t captureHeight;
+	VkFormat captureFormat;
 	float fogColor[4];
 	float fogStart;
 	float fogEnd;
@@ -624,6 +637,11 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 	createInfo.imageExtent      = extent;
 	createInfo.imageArrayLayers = 1;
 	createInfo.imageUsage       = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+	// frame capture copies from the swapchain image
+	if (caps.supportedUsageFlags & VK_IMAGE_USAGE_TRANSFER_SRC_BIT)
+	{
+		createInfo.imageUsage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+	}
 
 	queueFamilyIndices[0] = vk.graphicsQueueFamily;
 	queueFamilyIndices[1] = vk.presentQueueFamily;
@@ -2489,6 +2507,14 @@ void VK_Shutdown(void)
 	{
 		vkDeviceWaitIdle(vk.device);
 		VK_FlushPendingFrees();
+
+		if (vk.captureBuffer != VK_NULL_HANDLE)
+		{
+			vkUnmapMemory(vk.device, vk.captureMemory);
+			vkDestroyBuffer(vk.device, vk.captureBuffer, NULL);
+			vkFreeMemory(vk.device, vk.captureMemory, NULL);
+			vk.captureBuffer = VK_NULL_HANDLE;
+		}
 	}
 
 	if (vk.device != VK_NULL_HANDLE)
@@ -2918,12 +2944,123 @@ static void VK_DebugDumpSwapchainImage(const char *path)
 	vkFreeMemory(vk.device, readbackMemory, NULL);
 }
 
+/**
+ * @brief (re)creates the persistently mapped capture buffer
+ * for the current swapchain size.
+ */
+static qboolean VK_EnsureCaptureBuffer(void)
+{
+	VkDeviceSize size = (VkDeviceSize)vk.swapchainExtent.width * vk.swapchainExtent.height * 4;
+
+	if (vk.captureBuffer != VK_NULL_HANDLE && vk.captureSize == size)
+	{
+		return qtrue;
+	}
+
+	if (vk.captureBuffer != VK_NULL_HANDLE)
+	{
+		vkUnmapMemory(vk.device, vk.captureMemory);
+		vkDestroyBuffer(vk.device, vk.captureBuffer, NULL);
+		vkFreeMemory(vk.device, vk.captureMemory, NULL);
+		vk.captureBuffer = VK_NULL_HANDLE;
+		vk.captureMemory = VK_NULL_HANDLE;
+		vk.captureMapped = NULL;
+	}
+
+	if (!VK_CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	                     &vk.captureBuffer, &vk.captureMemory))
+	{
+		vk.captureBuffer = VK_NULL_HANDLE;
+		return qfalse;
+	}
+
+	vkMapMemory(vk.device, vk.captureMemory, 0, size, 0, &vk.captureMapped);
+	vk.captureSize = size;
+
+	return qtrue;
+}
+
+/**
+ * @brief asks VK_EndFrame() to capture the frame currently
+ * being recorded (or the next one, if called between frames).
+ */
+void VK_RequestFrameCapture(void)
+{
+	vk.captureRequested = qtrue;
+}
+
+/**
+ * @brief size of the last captured frame, or qfalse if none
+ * is pending.
+ */
+qboolean VK_GetCapturedFrameSize(int *width, int *height)
+{
+	if (!vk.captureReady || !vk.captureMapped)
+	{
+		return qfalse;
+	}
+
+	*width  = (int)vk.captureWidth;
+	*height = (int)vk.captureHeight;
+	return qtrue;
+}
+
+/**
+ * @brief copies the captured frame as glReadPixels(GL_RGB)
+ * would return it: rows bottom-up, 3 bytes per pixel, each row followed
+ * by padlen bytes. width/height may be smaller than the capture (crop).
+ */
+void VK_ReadCapturedFrameRGB(byte *dst, int width, int height, int padlen)
+{
+	const byte *src = (const byte *)vk.captureMapped;
+	qboolean   bgra = (vk.captureFormat == VK_FORMAT_B8G8R8A8_UNORM || vk.captureFormat == VK_FORMAT_B8G8R8A8_SRGB);
+	int        x, y;
+
+	if (!vk.captureReady || !src)
+	{
+		return;
+	}
+
+	if (width > (int)vk.captureWidth)
+	{
+		width = (int)vk.captureWidth;
+	}
+	if (height > (int)vk.captureHeight)
+	{
+		height = (int)vk.captureHeight;
+	}
+
+	for (y = 0; y < height; y++)
+	{
+		// GL row 0 is the bottom of the image, Vulkan row 0 the top
+		const byte *row = src + (size_t)(vk.captureHeight - 1 - y) * vk.captureWidth * 4;
+
+		for (x = 0; x < width; x++, row += 4)
+		{
+			*dst++ = bgra ? row[2] : row[0];
+			*dst++ = row[1];
+			*dst++ = bgra ? row[0] : row[2];
+		}
+		dst += padlen;
+	}
+}
+
+/**
+ * @brief marks the captured frame as consumed.
+ */
+void VK_ReleaseCapturedFrame(void)
+{
+	vk.captureReady = qfalse;
+}
+
 void VK_EndFrame(void)
 {
 	VkSubmitInfo         submitInfo;
 	VkPresentInfoKHR     presentInfo;
 	VkPipelineStageFlags waitStage       = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 	static int           debugFrameCount = 0;
+	qboolean             captureThisFrame;
 
 	if (!vk.initialized)
 	{
@@ -2971,6 +3108,47 @@ void VK_EndFrame(void)
 		vkCmdEndRenderPass(vk.commandBuffer);
 	}
 
+	// frame capture (renderer1's glReadPixels of the final
+	// image) - copy the swapchain image into the host-visible capture
+	// buffer before it's presented.
+	captureThisFrame = vk.captureRequested && VK_EnsureCaptureBuffer();
+	if (captureThisFrame)
+	{
+		VkImageMemoryBarrier barrier;
+		VkBufferImageCopy    region;
+
+		Com_Memset(&barrier, 0, sizeof(barrier));
+		barrier.sType                       = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		barrier.oldLayout                   = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		barrier.newLayout                   = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+		barrier.srcQueueFamilyIndex         = VK_QUEUE_FAMILY_IGNORED;
+		barrier.dstQueueFamilyIndex         = VK_QUEUE_FAMILY_IGNORED;
+		barrier.image                       = vk.swapchainImages[vk.currentImageIndex];
+		barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		barrier.subresourceRange.levelCount = 1;
+		barrier.subresourceRange.layerCount = 1;
+		barrier.srcAccessMask               = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		barrier.dstAccessMask               = VK_ACCESS_TRANSFER_READ_BIT;
+		vkCmdPipelineBarrier(vk.commandBuffer, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
+		                     0, 0, NULL, 0, NULL, 1, &barrier);
+
+		Com_Memset(&region, 0, sizeof(region));
+		region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		region.imageSubresource.layerCount = 1;
+		region.imageExtent.width           = vk.swapchainExtent.width;
+		region.imageExtent.height          = vk.swapchainExtent.height;
+		region.imageExtent.depth           = 1;
+		vkCmdCopyImageToBuffer(vk.commandBuffer, vk.swapchainImages[vk.currentImageIndex], VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+		                       vk.captureBuffer, 1, &region);
+
+		barrier.oldLayout     = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+		barrier.newLayout     = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+		barrier.dstAccessMask = 0;
+		vkCmdPipelineBarrier(vk.commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+		                     0, 0, NULL, 0, NULL, 1, &barrier);
+	}
+
 	vkEndCommandBuffer(vk.commandBuffer);
 
 	Com_Memset(&submitInfo, 0, sizeof(submitInfo));
@@ -2994,6 +3172,17 @@ void VK_EndFrame(void)
 	presentInfo.pImageIndices      = &vk.currentImageIndex;
 
 	vkQueuePresentKHR(vk.presentQueue, &presentInfo);
+
+	if (captureThisFrame)
+	{
+		// the fence stays signaled, so VK_BeginFrame()'s wait returns at once
+		vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX);
+		vk.captureWidth     = vk.swapchainExtent.width;
+		vk.captureHeight    = vk.swapchainExtent.height;
+		vk.captureFormat    = vk.swapchainFormat;
+		vk.captureReady     = qtrue;
+		vk.captureRequested = qfalse;
+	}
 
 	debugFrameCount++;
 	if (debugFrameCount == 200)

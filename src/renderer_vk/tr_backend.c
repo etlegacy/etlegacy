@@ -1611,6 +1611,10 @@ const void *RB_SwapBuffers(const void *data)
 	// of RE_BeginFrame()).
 	VK_EndFrame();
 
+	// screenshots / levelshot / avi frame of the frame just
+	// captured by VK_EndFrame()
+	RB_FinishFrameCaptures();
+
 	ri.GLimp_SwapFrame();
 
 	backEnd.projection2D = qfalse;

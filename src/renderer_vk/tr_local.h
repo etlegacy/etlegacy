@@ -1601,6 +1601,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 
 void R_SetColorMappings(void);
 void R_GammaCorrect(byte *buffer, int bufSize);
+void RB_FinishFrameCaptures(void);
 
 void R_ImageList_f(void);
 void R_SkinList_f(void);
