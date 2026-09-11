@@ -114,6 +114,14 @@ typedef struct
 	// to the swapchain through the gamma pass (renderer1's mainFbo +
 	// R_ScreenGamma()).
 	VkImage sceneColorImage;
+
+	// MSAA (r_ext_multisample). With sampleCount > 1 the main
+	// render pass draws into msColorImage + a multisampled depth buffer
+	// and resolves into sceneColorImage (renderer1's msMainFbo blit).
+	VkSampleCountFlagBits sampleCount;
+	VkImage msColorImage;
+	VkDeviceMemory msColorMemory;
+	VkImageView msColorView;
 	VkDeviceMemory sceneColorMemory;
 	VkImageView sceneColorView;
 	VkFramebuffer sceneFramebuffer;
@@ -533,6 +541,29 @@ static qboolean VK_CreateLogicalDevice(void)
 			deviceFeatures.samplerAnisotropy = VK_TRUE;
 			vk.maxSamplerAnisotropy          = props.limits.maxSamplerAnisotropy;
 		}
+
+		// highest supported sample count <= r_ext_multisample
+		{
+			VkSampleCountFlags counts = props.limits.framebufferColorSampleCounts &
+			                            props.limits.framebufferDepthSampleCounts &
+			                            props.limits.framebufferStencilSampleCounts;
+			int requested = r_ext_multisample ? r_ext_multisample->integer : 0;
+			int samples;
+
+			vk.sampleCount = VK_SAMPLE_COUNT_1_BIT;
+			for (samples = 64; samples > 1; samples >>= 1)
+			{
+				if (samples <= requested && (counts & (VkSampleCountFlags)samples))
+				{
+					vk.sampleCount = (VkSampleCountFlagBits)samples;
+					break;
+				}
+			}
+			if (requested > 1)
+			{
+				Ren_Print("Vulkan: MSAA %dx (r_ext_multisample %d)\n", (int)vk.sampleCount, requested);
+			}
+		}
 	}
 
 	// MoltenVK-backed physical devices report VK_KHR_portability_subset as
@@ -755,7 +786,7 @@ static qboolean VK_CreateDepthResources(void)
 	imageInfo.tiling        = VK_IMAGE_TILING_OPTIMAL;
 	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	imageInfo.usage         = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-	imageInfo.samples       = VK_SAMPLE_COUNT_1_BIT;
+	imageInfo.samples       = vk.sampleCount;
 	imageInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
 
 	if (!VK_CheckResult(vkCreateImage(vk.device, &imageInfo, NULL, &vk.depthImage), "vkCreateImage(depth)"))
@@ -850,7 +881,40 @@ static qboolean VK_CreateSceneColorResources(void)
 	viewInfo.subresourceRange.levelCount = 1;
 	viewInfo.subresourceRange.layerCount = 1;
 
-	return VK_CheckResult(vkCreateImageView(vk.device, &viewInfo, NULL, &vk.sceneColorView), "vkCreateImageView(scene color)");
+	if (!VK_CheckResult(vkCreateImageView(vk.device, &viewInfo, NULL, &vk.sceneColorView), "vkCreateImageView(scene color)"))
+	{
+		return qfalse;
+	}
+
+	// multisampled color target, resolved into sceneColorImage
+	if (vk.sampleCount != VK_SAMPLE_COUNT_1_BIT)
+	{
+		imageInfo.usage   = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT;
+		imageInfo.samples = vk.sampleCount;
+
+		if (!VK_CheckResult(vkCreateImage(vk.device, &imageInfo, NULL, &vk.msColorImage), "vkCreateImage(msaa color)"))
+		{
+			return qfalse;
+		}
+
+		vkGetImageMemoryRequirements(vk.device, vk.msColorImage, &memRequirements);
+		allocInfo.allocationSize  = memRequirements.size;
+		allocInfo.memoryTypeIndex = VK_FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+		if (!VK_CheckResult(vkAllocateMemory(vk.device, &allocInfo, NULL, &vk.msColorMemory), "vkAllocateMemory(msaa color)"))
+		{
+			return qfalse;
+		}
+		vkBindImageMemory(vk.device, vk.msColorImage, vk.msColorMemory, 0);
+
+		viewInfo.image = vk.msColorImage;
+		if (!VK_CheckResult(vkCreateImageView(vk.device, &viewInfo, NULL, &vk.msColorView), "vkCreateImageView(msaa color)"))
+		{
+			return qfalse;
+		}
+	}
+
+	return qtrue;
 }
 
 static qboolean VK_CreateRenderPassAndFramebuffers(void)
@@ -859,13 +923,15 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	VkAttachmentReference   colorAttachmentRef;
 	VkAttachmentDescription depthAttachment;
 	VkAttachmentReference   depthAttachmentRef;
-	VkAttachmentDescription attachments[2];
+	VkAttachmentDescription attachments[3];
+	VkAttachmentReference   resolveAttachmentRef;
 	VkSubpassDescription    subpass;
 	VkSubpassDependency     dependencies[2];
 	VkRenderPassCreateInfo  renderPassInfo;
 	VkFramebufferCreateInfo framebufferInfo;
-	VkImageView             fbAttachments[2];
+	VkImageView             fbAttachments[3];
 	uint32_t                i;
+	qboolean                msaa = (vk.sampleCount != VK_SAMPLE_COUNT_1_BIT) ? qtrue : qfalse;
 
 	if (!VK_CreateDepthResources() || !VK_CreateSceneColorResources())
 	{
@@ -889,7 +955,7 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 
 	Com_Memset(&depthAttachment, 0, sizeof(depthAttachment));
 	depthAttachment.format         = vk.depthFormat;
-	depthAttachment.samples        = VK_SAMPLE_COUNT_1_BIT;
+	depthAttachment.samples        = vk.sampleCount;
 	depthAttachment.loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	depthAttachment.storeOp        = VK_ATTACHMENT_STORE_OP_DONT_CARE;
 	depthAttachment.stencilLoadOp  = vk.depthHasStencil ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -910,6 +976,27 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	subpass.pColorAttachments       = &colorAttachmentRef;
 	subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
+	// with MSAA, attachment 0 is the multisampled color
+	// target (discarded after the pass) and attachment 2 the single-sample
+	// scene image it resolves into.
+	if (msaa)
+	{
+		attachments[0].samples     = vk.sampleCount;
+		attachments[0].storeOp     = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		attachments[0].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+		attachments[2]               = colorAttachment;
+		attachments[2].loadOp        = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		attachments[2].storeOp       = VK_ATTACHMENT_STORE_OP_STORE;
+		attachments[2].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		attachments[2].finalLayout   = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+		Com_Memset(&resolveAttachmentRef, 0, sizeof(resolveAttachmentRef));
+		resolveAttachmentRef.attachment = 2;
+		resolveAttachmentRef.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		subpass.pResolveAttachments     = &resolveAttachmentRef;
+	}
+
 	Com_Memset(dependencies, 0, sizeof(dependencies));
 	// previous frame's gamma pass read the scene image -> this frame writes it
 	dependencies[0].srcSubpass    = VK_SUBPASS_EXTERNAL;
@@ -928,7 +1015,7 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 
 	Com_Memset(&renderPassInfo, 0, sizeof(renderPassInfo));
 	renderPassInfo.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	renderPassInfo.attachmentCount = 2;
+	renderPassInfo.attachmentCount = msaa ? 3 : 2;
 	renderPassInfo.pAttachments    = attachments;
 	renderPassInfo.subpassCount    = 1;
 	renderPassInfo.pSubpasses      = &subpass;
@@ -940,13 +1027,14 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 		return qfalse;
 	}
 
-	fbAttachments[0] = vk.sceneColorView;
+	fbAttachments[0] = msaa ? vk.msColorView : vk.sceneColorView;
 	fbAttachments[1] = vk.depthImageView;
+	fbAttachments[2] = vk.sceneColorView;
 
 	Com_Memset(&framebufferInfo, 0, sizeof(framebufferInfo));
 	framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 	framebufferInfo.renderPass      = vk.renderPass;
-	framebufferInfo.attachmentCount = 2;
+	framebufferInfo.attachmentCount = msaa ? 3 : 2;
 	framebufferInfo.pAttachments    = fbAttachments;
 	framebufferInfo.width           = vk.swapchainExtent.width;
 	framebufferInfo.height          = vk.swapchainExtent.height;
@@ -964,6 +1052,8 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	colorAttachment.finalLayout   = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 	subpass.pDepthStencilAttachment = NULL;
+	subpass.pResolveAttachments     = NULL;
+	colorAttachment.samples         = VK_SAMPLE_COUNT_1_BIT;
 
 	Com_Memset(dependencies, 0, sizeof(dependencies));
 	dependencies[0].srcSubpass    = VK_SUBPASS_EXTERNAL;
@@ -1656,7 +1746,7 @@ static VkPipeline VK_CreateUIPipelineVariant(unsigned long stateBits)
 
 	Com_Memset(&multisampling, 0, sizeof(multisampling));
 	multisampling.sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+	multisampling.rasterizationSamples = vk.sampleCount; // MSAA
 
 	Com_Memset(&depthStencil, 0, sizeof(depthStencil));
 	depthStencil.sType            = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
@@ -1983,7 +2073,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 
 	Com_Memset(&multisampling, 0, sizeof(multisampling));
 	multisampling.sType                = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+	multisampling.rasterizationSamples = vk.sampleCount; // MSAA
 
 	Com_Memset(&depthStencil, 0, sizeof(depthStencil));
 	depthStencil.sType            = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
@@ -2366,6 +2456,21 @@ static void VK_DestroySwapchainObjects(void)
 	{
 		vkFreeMemory(vk.device, vk.sceneColorMemory, NULL);
 		vk.sceneColorMemory = VK_NULL_HANDLE;
+	}
+	if (vk.msColorView != VK_NULL_HANDLE)
+	{
+		vkDestroyImageView(vk.device, vk.msColorView, NULL);
+		vk.msColorView = VK_NULL_HANDLE;
+	}
+	if (vk.msColorImage != VK_NULL_HANDLE)
+	{
+		vkDestroyImage(vk.device, vk.msColorImage, NULL);
+		vk.msColorImage = VK_NULL_HANDLE;
+	}
+	if (vk.msColorMemory != VK_NULL_HANDLE)
+	{
+		vkFreeMemory(vk.device, vk.msColorMemory, NULL);
+		vk.msColorMemory = VK_NULL_HANDLE;
 	}
 
 	if (vk.depthImageView != VK_NULL_HANDLE)
@@ -4370,4 +4475,12 @@ qboolean VK_UploadScratchImage(struct image_s *image, const byte *data, int cols
 	vkFreeMemory(vk.device, stagingMemory, NULL);
 
 	return qtrue;
+}
+
+/**
+ * @brief active MSAA sample count (1 = off).
+ */
+int VK_GetSampleCount(void)
+{
+	return (int)vk.sampleCount;
 }

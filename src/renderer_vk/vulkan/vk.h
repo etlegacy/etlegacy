@@ -118,6 +118,11 @@ void VK_ReadCapturedFrameRGB(byte *dst, int width, int height, int padlen);
 void VK_ReleaseCapturedFrame(void);
 
 /**
+ * @brief active MSAA sample count (1 = off).
+ */
+int VK_GetSampleCount(void);
+
+/**
  * @brief updates (or recreates at a new size) a cinematic
  * scratch image from raw RGBA data (RE_UploadCinematic).
  */
