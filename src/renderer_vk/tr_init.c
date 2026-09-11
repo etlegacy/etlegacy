@@ -713,6 +713,7 @@ void GfxInfo_f(void)
 
 	Ren_Print("texturemode: %s\n", r_textureMode->string);
 	Ren_Print("picmip: %d\n", r_picMip->integer);
+	Ren_Print("MSAA: %dx (r_ext_multisample %d)\n", VK_GetSampleCount(), r_ext_multisample->integer);
 	Ren_Print("anisotropy: %.0f (max %.0f)\n", textureFilterAnisotropic ? r_extTextureFilterAnisotropic->value : 0.0f, maxAnisotropy);
 }
 
