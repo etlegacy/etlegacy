@@ -1328,6 +1328,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(sess.kills,                        FIELD_INT,                 0),
 	_et_gclient_addfield(sess.deaths,                       FIELD_INT,                 0),
 	_et_gclient_addfield(sess.gibs,                         FIELD_INT,                 0),
+	_et_gclient_addfield(sess.kill_assists,                 FIELD_INT,                 0),
 	_et_gclient_addfield(sess.self_kills,                   FIELD_INT,                 0),
 	_et_gclient_addfield(sess.team_kills,                   FIELD_INT,                 0),
 	_et_gclient_addfield(sess.team_gibs,                    FIELD_INT,                 0),
