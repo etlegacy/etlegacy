@@ -243,7 +243,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->ping               = CG_getComponent(SCREEN_WIDTH - 60, 200, 57, 14, qfalse, 1, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawPing);
 	hud->speed              = CG_getComponent(SCREEN_WIDTH - 60, 275, 57, 14, qfalse, 2, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawSpeed);
 	hud->lagometer          = CG_getComponent(SCREEN_WIDTH - 60, 216, 57, 57, qfalse, 0, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawLagometer);
-	hud->disconnect         = CG_getComponent(SCREEN_WIDTH - 60, 216, 57, 57, qtrue, 0, 0, 100.f, colorWhite, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.35f, 0, 0, 0, CG_DrawDisconnect);
+	hud->disconnect         = CG_getComponent(SCREEN_WIDTH - 60, 216, 57, 57, qtrue, 0, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.35f, 0, 0, 0, CG_DrawDisconnect);
 	hud->chat               = CG_getComponent(165, 406, 364, 72, qtrue, 0, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.20f, 0, 0, 0, CG_DrawTeamInfo);
 	hud->spectatorstatus    = CG_getComponent(SCREEN_WIDTH * .5f - 70, 421, 140, 24, qtrue, 0, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.35f, 0, 0, 0, CG_DrawSpectator);
 	hud->pmitemsbig         = CG_getComponent(347, 292, 290, 57, qtrue, 0, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, 2500, 2000, 2500, CG_DrawPMItemsBig);
@@ -3762,12 +3762,6 @@ void CG_DrawLagometer(hudComponent_t *comp)
 	    )
 	{
 		CG_Text_Paint_Ext(ax, ay, scale * 1.75, scale * 1.75, colorWhite, "snc", 0, 0, comp->styleText, &cgs.media.limboFont2);
-	}
-
-	// don't draw if a demo and we're running at a different timescale
-	if (!cg.demoPlayback)
-	{
-		CG_DrawDisconnect(&hudData.active->disconnect);
 	}
 
 	// add snapshots/s in top-right corner of meter
