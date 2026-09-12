@@ -3155,6 +3155,17 @@ char *CG_SpawnTimerText(qboolean isDoubleDigits)
 }
 
 /**
+ * @brief Whether we are in the "WARMUP" half of the warmup blink cycle
+ * @return qtrue for "WARMUP", qfalse for the limbo times
+ *
+ * @note Swaps in sync with the ITEM_TEXTSTYLE_BLINK fade.
+ */
+static qboolean CG_IsWarmupBlinkPhase(void)
+{
+	return sinf(cg.time / (float)BLINK_DIVISOR) >= 0.f;
+}
+
+/**
  * @brief CG_SpawnTimersText
  * @param[out] respawn
  * @param[out] spawntimer
@@ -3179,8 +3190,18 @@ static qboolean CG_SpawnTimersText(char **s, char **rt, qboolean isDoubleDigits)
 			limbotimeEnemy = cg_redlimbotime.integer;
 		}
 
-		*rt = va(isDoubleDigits ? "%02i" : "%0i", limbotimeEnemy / 1000);
-		*s  = (cgs.gametype == GT_WOLF_LMS && !cgs.clientinfo[cg.clientNum].shoutcaster) ? va("%s", CG_TranslateString("WARMUP")) : va(isDoubleDigits ? "%02i" : "%0i", limbotimeOwn / 1000);
+		// alternate the limbo times with the round timer "WARMUP" display, in sync
+		// with the blink fade; the standalone timers stay blank while "WARMUP" shows
+		if (CG_IsWarmupBlinkPhase())
+		{
+			*rt = NULL;
+			*s  = NULL;
+		}
+		else
+		{
+			*rt = va(isDoubleDigits ? "%02i" : "%0i", limbotimeEnemy / 1000);
+			*s  = (cgs.gametype == GT_WOLF_LMS && !cgs.clientinfo[cg.clientNum].shoutcaster) ? NULL : va(isDoubleDigits ? "%02i" : "%0i", limbotimeOwn / 1000);
+		}
 
 		// We are not playing and the timer is set so reset/disable it
 		// this happens for example when map is restarted or changed
@@ -3217,9 +3238,9 @@ static char *CG_RoundTimerText()
 {
 	qtime_t qt;
 
-	if (cgs.gamestate != GS_PLAYING)
+	if (cgs.gamestate != GS_PLAYING && CG_IsWarmupBlinkPhase())
 	{
-		return "WARMUP";
+		return va("%s", CG_TranslateString("WARMUP"));
 	}
 
 	if (cgs.timelimit <= 0.0f)
@@ -3378,15 +3399,17 @@ void CG_DrawRoundTimer(hudComponent_t *comp)
 
 	mt = va("%s%s", "^*", CG_RoundTimerText());
 
-	if (comp->style & 1)
+	// single value style, or the "WARMUP" half of the warmup blink cycle
+	if ((comp->style & 1) || (cgs.gamestate != GS_PLAYING && CG_IsWarmupBlinkPhase()))
 	{
 		s = mt;
 	}
 	else
 	{
+		// display order: "own roundtime enemy"
 		if (s)
 		{
-			s = va("%s%s%s%s", sWarn ? "^3" : "^$", s, " ", mt);
+			s = va("%s%s %s", sWarn ? "^3" : "^$", s, mt);
 		}
 		else
 		{
@@ -3395,7 +3418,7 @@ void CG_DrawRoundTimer(hudComponent_t *comp)
 
 		if (rt)
 		{
-			s = va("^1%s%s%s", rt, " ", s);
+			s = va("%s ^1%s", s, rt);
 		}
 	}
 
