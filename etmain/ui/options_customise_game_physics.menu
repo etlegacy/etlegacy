@@ -44,7 +44,7 @@ menuDef {
 
 	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "PHYSICS")
 
-	YESNO(OPTION_ITEM_POS(1), _("Auto Pickup:"), .2, 8, "cg_autoactive", _("Toggle auto pickup for items and weapons"))
+	YESNO(OPTION_ITEM_POS(1), _("Auto Pickup:"), .2, 8, "cg_autoactivate", _("Toggle auto pickup for items and weapons"))
 	YESNO(OPTION_ITEM_POS(2), _("Instant Tapout:"), .2, 8, "cg_instanttapout", _("Toggle instant tap out on respawn"))
 	YESNO(OPTION_ITEM_POS(3), _("Optimize Prediction:"), .2, 8, "cg_optimizePrediction", _("Toggle prediction optimization for a smooth game experience"))
 
