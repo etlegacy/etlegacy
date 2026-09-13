@@ -31,17 +31,16 @@ menuDef {
 
 	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
 
-#define NUM_SUBMENUS 8
+#define NUM_SUBMENUS 7
 #define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
 
 	SIDEBUTTON(1, "PLAYER", close MENU_NAME; open options_customise_game_player)
 	SIDEBUTTON(2, "PHYSICS", close MENU_NAME; open options_customise_game_physics)
-	SIDEBUTTON(3, "MOVEMENT", close MENU_NAME; open options_customise_game_movement)
-	SIDEBUTTON(4, "WEAPONS", close MENU_NAME; open options_customise_game_weapons)
-	SIDEBUTTON(5, "SCOPE", close MENU_NAME; open options_customise_game_scope)
-	SIDEBUTTON(6, "CHAT", close MENU_NAME; open options_customise_game_chat)
-	SIDEBUTTON(7, "SOUND", close MENU_NAME; open options_customise_game_sounds)
-	SIDEBUTTON(8, "MISCELLANEOUS", close MENU_NAME; open options_customise_game_miscellaneous)
+	SIDEBUTTON(3, "WEAPONS", close MENU_NAME; open options_customise_game_weapons)
+	SIDEBUTTON(4, "SCOPE", close MENU_NAME; open options_customise_game_scope)
+	SIDEBUTTON(5, "CHAT", close MENU_NAME; open options_customise_game_chat)
+	SIDEBUTTON(6, "SOUND", close MENU_NAME; open options_customise_game_sounds)
+	SIDEBUTTON(7, "MISCELLANEOUS", close MENU_NAME; open options_customise_game_miscellaneous)
 
 	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "<== Select a menu on left to show related options")
 
