@@ -40,7 +40,7 @@ menuDef {
     SIDEBUTTON(4, "CUSTOM CROSSHAIR", close MENU_NAME; open options_customise_hud_custom_crosshair)
     SIDEBUTTON(5, "FIRETEAM", close MENU_NAME; open options_customise_hud_fireteam)
     SIDEBUTTON(6, "GEOLOCATION", close MENU_NAME; open options_customise_hud_geolocation)
-    SIDEBUTTON(7, "HINT", close MENU_NAME; open options_customise_hud_hint)
+    SIDEBUTTON(7, "CURSOR HINTS", close MENU_NAME; open options_customise_hud_hint)
 	SIDEBUTTON(8, "HUD DISPLAY", close MENU_NAME; open options_customise_hud_display)
 	SIDEBUTTON(9, "IN-GAME DISPLAY", close MENU_NAME; open options_customise_hud_ingame_display)
 	SIDEBUTTON_ACTIVE(10, "ITEMS", close MENU_NAME; open options_customise_hud_items)
