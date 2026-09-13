@@ -40,7 +40,7 @@ menuDef {
     SIDEBUTTON(4, "CUSTOM CROSSHAIR", close MENU_NAME; open options_customise_hud_custom_crosshair)
     SIDEBUTTON(5, "FIRETEAM", close MENU_NAME; open options_customise_hud_fireteam)
     SIDEBUTTON(6, "GEOLOCATION", close MENU_NAME; open options_customise_hud_geolocation)
-    SIDEBUTTON(7, "HINT", close MENU_NAME; open options_customise_hud_hint)
+    SIDEBUTTON(7, "CURSOR HINTS", close MENU_NAME; open options_customise_hud_hint)
 	SIDEBUTTON(8, "HUD DISPLAY", close MENU_NAME; open options_customise_hud_display)
 	SIDEBUTTON(9, "IN-GAME DISPLAY", close MENU_NAME; open options_customise_hud_ingame_display)
 	SIDEBUTTON(10, "ITEMS", close MENU_NAME; open options_customise_hud_items)
@@ -54,12 +54,12 @@ menuDef {
 	YESNO(OPTION_ITEM_POS(2), _("Gibs:"), .2, 8, "cg_gibs", _("Draw gibs out from the bodies when shattered"))
     MULTI(OPTION_ITEM_POS(3), _("Blood Flash:"), .2, 8, "cg_bloodFlash", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Set blood flash scale when receiving damage"))
     CVARFLOATLABEL(OPTION_ITEM_POS(4), "cg_bloodFlashTime", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
-	SLIDER(OPTION_ITEM_POS(4), _("Blood Flash Time:"), .2, 8, "cg_bloodFlashTime" 1500 0 5000, _("Set the duration the blood flash on damage receiving draw (s)"))
+	SLIDER(OPTION_ITEM_POS(4), _("Blood Flash Time:"), .2, 8, "cg_bloodFlashTime" 1500 0 5000, _("Set the duration the blood flash on damage receiving draw (ms)"))
 	MULTI(OPTION_ITEM_POS(5), _("Blood Splatter:"), .2, 8, "cg_bloodDamageBlend", cvarFloatList { "None" 0.0 "Light" 0.25 "Medium" 0.5 "Heavy" 0.75 "Full" 1.0 }, _("Set blood splatter transparency when taking damage from other players"))
 	YESNO(OPTION_ITEM_POS(6), _("Blood Puff:"), .2, 8, "cg_bloodPuff", _("Toggle showing blood puff effect when players are shot"))
 	YESNO(OPTION_ITEM_POS(7), _("No Blood Puffs:"), .2, 8, "cg_bloodForcePuffsForDamage", _("Toggle showing puff instead of blood effect when players are shot"))
 	CVARFLOATLABEL(OPTION_ITEM_POS(8), "cg_bloodTime", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
-	SLIDER(OPTION_ITEM_POS(8), _("Blood Time:"), .2, 8, "cg_bloodTime" 120 0 2000, _("Set the duration the blood splat draw (s)"))
+	SLIDER(OPTION_ITEM_POS(8), _("Blood Time:"), .2, 8, "cg_bloodTime" 120 0 2000, _("Set the duration the blood splat draw (in seconds)"))
 
 #ifdef FUI
 	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)

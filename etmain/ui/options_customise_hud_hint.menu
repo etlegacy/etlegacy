@@ -40,7 +40,7 @@ menuDef {
     SIDEBUTTON(4, "CUSTOM CROSSHAIR", close MENU_NAME; open options_customise_hud_custom_crosshair)
     SIDEBUTTON(5, "FIRETEAM", close MENU_NAME; open options_customise_hud_fireteam)
     SIDEBUTTON(6, "GEOLOCATION", close MENU_NAME; open options_customise_hud_geolocation)
-    SIDEBUTTON_ACTIVE(7, "HINT", close MENU_NAME; open options_customise_hud_hint)
+    SIDEBUTTON_ACTIVE(7, "CURSOR HINTS", close MENU_NAME; open options_customise_hud_hint)
 	SIDEBUTTON(8, "HUD DISPLAY", close MENU_NAME; open options_customise_hud_display)
 	SIDEBUTTON(9, "IN-GAME DISPLAY", close MENU_NAME; open options_customise_hud_ingame_display)
 	SIDEBUTTON(10, "ITEMS", close MENU_NAME; open options_customise_hud_items)
@@ -48,7 +48,7 @@ menuDef {
 	SIDEBUTTON(12, "SHOUTCAST", close MENU_NAME; open options_customise_hud_shoutcast)
 	SIDEBUTTON(13, "WEAPONS DISPLAY", close MENU_NAME; open options_customise_hud_weapons)
 
-	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "HINT")
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "CURSOR HINTS")
 	
 	CVARFLOATLABEL(OPTION_ITEM_POS(1), "cg_cursorHintsLinger", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
 	SLIDER(OPTION_ITEM_POS(1), _("Hint Icon Fade:"), .2, 8, "cg_cursorHintsLinger" 250 0 3000, _("Set the display duration of hint icon before fading out"))
