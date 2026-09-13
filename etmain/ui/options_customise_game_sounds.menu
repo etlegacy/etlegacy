@@ -49,7 +49,8 @@ menuDef {
 	YESNO(OPTION_ITEM_POS(2), _("Voice chat:"), .2, 8, "cg_voiceChats", _("Play voice chat in-game"))
 	YESNO(OPTION_ITEM_POS(3), _("Team Voice chat:"), .2, 8, "cg_teamVoiceChatsOnly", _("Play only voice team chat in-game"))
 	MULTI(OPTION_ITEM_POS(4), _("Hitsounds:"), .2, 8, "cg_hitsounds", cvarFloatList { "None" 0 "All" 1 "No Body Hit Sound" 3 "No Head Hit Sound" 5 "No Team Hit Sound" 9 }, _("Set hit sounds"))
-	YESNO(OPTION_ITEM_POS(5), _("Reinforcement TickTock:"), .2, 8, "cg_reinforceTickTock", _("Play alternate tick/tock sounds prior to reinforcement"))
+	MULTI(OPTION_ITEM_POS(5), _("Reinforce Warning Time:"), .2, 8, "cg_reinforceWarningTime", cvarFloatList { "None" 0 "1 sec" 1 "2 sec" 2 "3 sec" 3 }, _("Color the timer yellow this many seconds before reinforcement"))
+	YESNO(OPTION_ITEM_POS(6), _("Reinforce Warning Sound:"), .2, 8, "cg_reinforceWarningAudio", _("Play a warning sound before your team's reinforcement wave"))
 
 #ifdef FUI
 	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
