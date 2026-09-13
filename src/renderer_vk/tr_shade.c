@@ -591,6 +591,207 @@ static void ComputeTexCoords(shaderStage_t *pStage)
 
 
 /**
+ * @brief renderer1's DrawTris (r_showTris, r_trisColor).
+ * GL draws the triangles with glPolygonMode(GL_LINE); here each triangle
+ * edge becomes a line. r_showTris 2 draws on top (depth range 0,0) like
+ * GL1; mode 1's line polygon offset is approximated by pulling the depth
+ * range in very slightly (Vulkan depth bias doesn't apply to lines).
+ */
+static void DrawTris(shaderCommands_t *input)
+{
+	static unsigned int lineIndexes[SHADER_MAX_INDEXES * 2];
+	static byte         colors[SHADER_MAX_VERTEXES][4];
+	char                *s        = r_trisColor->string;
+	vec4_t              trisColor = { 1, 1, 1, 1 };
+	unsigned int        stateBits = 0;
+	int                 i, numLineIndexes = 0;
+
+	// exclude 2d from drawing tris
+	if (backEnd.projection2D == qtrue)
+	{
+		return;
+	}
+
+	if (*s == '0' && (*(s + 1) == 'x' || *(s + 1) == 'X'))
+	{
+		s += 2;
+		if (Q_IsHexColorString(s))
+		{
+			trisColor[0] = ((float)(gethex(*(s)) * 16 + gethex(*(s + 1)))) / 255.00f;
+			trisColor[1] = ((float)(gethex(*(s + 2)) * 16 + gethex(*(s + 3)))) / 255.00f;
+			trisColor[2] = ((float)(gethex(*(s + 4)) * 16 + gethex(*(s + 5)))) / 255.00f;
+
+			if (Q_HexColorStringHasAlpha(s))
+			{
+				trisColor[3] = ((float)(gethex(*(s + 6)) * 16 + gethex(*(s + 7)))) / 255.00f;
+			}
+		}
+	}
+	else
+	{
+		char *token;
+
+		for (i = 0 ; i < 4 ; i++)
+		{
+			token = COM_Parse(&s);
+			if (token[0])
+			{
+				trisColor[i] = Q_atof(token);
+			}
+			else
+			{
+				trisColor[i] = 1.f;
+			}
+		}
+
+		if (trisColor[3] == 0.f)
+		{
+			trisColor[3] = 1.f;
+		}
+	}
+
+	if (trisColor[3] < 1.f)
+	{
+		stateBits |= (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
+	}
+
+	if (r_showTris->integer == 2)
+	{
+		stateBits |= GLS_DEPTHMASK_TRUE;
+		glDepthRange(0, 0);
+	}
+	else
+	{
+		glDepthRange(0, 0.99995f);
+	}
+
+	for (i = 0; i < input->numVertexes; i++)
+	{
+		colors[i][0] = (byte)(trisColor[0] * 255.0f);
+		colors[i][1] = (byte)(trisColor[1] * 255.0f);
+		colors[i][2] = (byte)(trisColor[2] * 255.0f);
+		colors[i][3] = (byte)(trisColor[3] * 255.0f);
+	}
+
+	for (i = 0; i + 2 < input->numIndexes; i += 3)
+	{
+		lineIndexes[numLineIndexes++] = input->indexes[i];
+		lineIndexes[numLineIndexes++] = input->indexes[i + 1];
+		lineIndexes[numLineIndexes++] = input->indexes[i + 1];
+		lineIndexes[numLineIndexes++] = input->indexes[i + 2];
+		lineIndexes[numLineIndexes++] = input->indexes[i + 2];
+		lineIndexes[numLineIndexes++] = input->indexes[i];
+	}
+
+	VK_DrawImmediate3D((const float (*)[4]) input->xyz, (const byte(*)[4]) colors, NULL, input->numVertexes,
+	                   lineIndexes, numLineIndexes, qtrue, tr.whiteImage, stateBits);
+
+	glDepthRange(0, 1);
+}
+
+/**
+ * @brief renderer1's DrawNormals (r_showNormals), unchanged:
+ * it uses immediate mode, which is emulated (vk_gl_compat.h).
+ */
+static void DrawNormals(shaderCommands_t *input)
+{
+	vec3_t temp;
+
+	GL_Bind(tr.whiteImage);
+	glColor3f(1, 1, 1);
+	glDepthRange(0, 0);    // never occluded
+	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
+
+	// light direction
+	if (r_showNormals->integer == 2)
+	{
+		trRefEntity_t *ent = backEnd.currentEntity;
+		vec3_t        temp2;
+
+		if (ent->e.renderfx & RF_LIGHTING_ORIGIN)
+		{
+			VectorSubtract(ent->e.lightingOrigin, backEnd.orientation.origin, temp2);
+		}
+		else
+		{
+			VectorClear(temp2);
+		}
+		temp[0] = DotProduct(temp2, backEnd.orientation.axis[0]);
+		temp[1] = DotProduct(temp2, backEnd.orientation.axis[1]);
+		temp[2] = DotProduct(temp2, backEnd.orientation.axis[2]);
+
+		glColor3f(ent->ambientLight[0] / 255, ent->ambientLight[1] / 255, ent->ambientLight[2] / 255);
+		glPointSize(5);
+		glBegin(GL_POINTS);
+		glVertex3fv(temp);
+		glEnd();
+		glPointSize(1);
+
+		if (Q_fabs(VectorLengthSquared(ent->lightDir) - 1.0f) > 0.2f)
+		{
+			glColor3f(1, 0, 0);
+		}
+		else
+		{
+			glColor3f(ent->directedLight[0] / 255, ent->directedLight[1] / 255, ent->directedLight[2] / 255);
+		}
+		glLineWidth(3);
+		glBegin(GL_LINES);
+		glVertex3fv(temp);
+		VectorMA(temp, 32, ent->lightDir, temp);
+		glVertex3fv(temp);
+		glEnd();
+		glLineWidth(1);
+	}
+	// normals drawing
+	else
+	{
+		int i;
+
+		glBegin(GL_LINES);
+		for (i = 0 ; i < input->numVertexes ; i++)
+		{
+			glVertex3fv(input->xyz[i]);
+			VectorMA(input->xyz[i], r_normalLength->value, input->normal[i], temp);
+			glVertex3fv(temp);
+		}
+		glEnd();
+	}
+
+	glDepthRange(0, 1);
+}
+
+/**
+ * @brief renderer1's DebugShaderSurfaceFlags
+ * (r_debugShaderSurfaceFlags) - paints surfaces whose BSP shader has the
+ * given surface flags green and skips their remaining stages.
+ */
+static qboolean DebugShaderSurfaceFlags(shaderCommands_t *input)
+{
+	// Debug draw shaders with a given Surface Flag
+	if (r_debugShaderSurfaceFlags->integer)
+	{
+		dshader_t *dsh;
+
+		dsh = R_FindBspShaderByName(input->shader->name);
+		if (dsh != NULL && dsh->surfaceFlags & strtoul(r_debugShaderSurfaceFlags->string, NULL, 0) /* XXX : needs to be parsed as unsigned */)
+		{
+			int j;
+			for (j = 0; j < input->numVertexes; j++)
+			{
+				input->svars.colors[j][0] = 0;
+				input->svars.colors[j][1] = 255;
+				input->svars.colors[j][2] = 0;
+				input->svars.colors[j][3] = 255;
+			}
+			return qtrue;
+		}
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief Adds the contribution of every dynamic light in lightBits to
  * tess.svars.colors (renderer1's DynamicLightSinglePass/DynamicLightPass
  * vertex loop), then collects the triangles with any lit vertex.
@@ -820,8 +1021,9 @@ static void RB_FogPass(void)
  * Followed by the dynamic light and fog volume passes (RB_DynamicLights,
  * RB_FogPass), as in renderer1.
  *
- * @note Not yet implemented: r_showTris/r_showNormals debug draws and
- * r_debugShaderSurfaceFlags.
+ * Debug views (r_showTris, r_showNormals) run from RB_EndSurface, and
+ * r_debugShaderSurfaceFlags / r_lightMap are handled per stage, as in
+ * renderer1.
  */
 void RB_StageIteratorGeneric(void)
 {
@@ -864,8 +1066,13 @@ void RB_StageIteratorGeneric(void)
 				break;
 			}
 
+			qboolean skipRemainingStages;
+
 			ComputeColors(pStage);
 			ComputeTexCoords(pStage);
+
+			// renderer1's r_debugShaderSurfaceFlags
+			skipRemainingStages = DebugShaderSurfaceFlags(input);
 
 			// per stage fogging (detail textures)
 			if (tess.shader->noFog && !pStage->isFogged)
@@ -885,8 +1092,14 @@ void RB_StageIteratorGeneric(void)
 			else
 			{
 				unsigned long stateBits = pStage->stateBits;
-				int           cullType  = shader->cullType;
-				int           fadeStart = backEnd.currentEntity->e.fadeStartTime;
+
+				// lightmap stages should be GL_ONE GL_ZERO so they can be seen (r_lightMap)
+				if (r_lightMap->integer && pStage->bundle[0].isLightmap)
+				{
+					stateBits = (stateBits & ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) | (GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
+				}
+				int cullType  = shader->cullType;
+				int fadeStart = backEnd.currentEntity->e.fadeStartTime;
 
 				// fading model stuff (renderer1's RB_IterateStagesGeneric):
 				// once the fade has started, force alpha blending without
@@ -919,6 +1132,17 @@ void RB_StageIteratorGeneric(void)
 
 				VK_Draw3D(input, R_GetAnimatedImage(&pStage->bundle[0]), stateBits, cullType);
 			}
+
+			// allow skipping out to show just lightmaps during development
+			if (r_lightMap->integer && (pStage->bundle[0].isLightmap || pStage->bundle[1].isLightmap))
+			{
+				break;
+			}
+
+			if (skipRemainingStages)
+			{
+				break;
+			}
 		}
 	}
 
@@ -941,6 +1165,12 @@ void RB_StageIteratorVertexLitTexture(void)
 	RB_CalcDiffuseColor(( unsigned char * ) tess.svars.colors);
 
 	SetIteratorFog();
+
+	// renderer1's r_debugShaderSurfaceFlags hook
+	if (r_debugShaderSurfaceFlags->integer)
+	{
+		DebugShaderSurfaceFlags(input);
+	}
 
 	// bundle[0].tcGen is guaranteed TCGEN_TEXTURE for this fast path, so
 	// texcoords can be copied directly without going through ComputeTexCoords.
@@ -971,6 +1201,12 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	SetIteratorFog();
 
 	Com_Memcpy(tess.svars.colors, tess.constantColor255, tess.numVertexes * sizeof(tess.constantColor255[0]));
+
+	// renderer1's r_debugShaderSurfaceFlags hook
+	if (r_debugShaderSurfaceFlags->integer)
+	{
+		DebugShaderSurfaceFlags(input);
+	}
 
 	for (i = 0; i < tess.numVertexes; i++)
 	{
@@ -1020,8 +1256,18 @@ void RB_EndSurface(void)
 	backEnd.pc.c_indexes      += tess.numIndexes;
 	backEnd.pc.c_totalIndexes += tess.numIndexes * tess.numPasses;
 
-	// call off to shader specific tess end function (currently a no-op)
+	// call off to shader specific tess end function
 	tess.currentStageIteratorFunc();
+
+	// draw debugging stuff
+	if (r_showTris->integer)
+	{
+		DrawTris(input);
+	}
+	if (r_showNormals->integer)
+	{
+		DrawNormals(input);
+	}
 
 	// clear shader so we can tell we don't have any unclosed surfaces
 	tess.numIndexes  = 0;
