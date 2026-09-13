@@ -31,24 +31,23 @@ menuDef {
 
 	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
 
-#define NUM_SUBMENUS 7
+#define NUM_SUBMENUS 6
 #define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
 
 	SIDEBUTTON(1, "PLAYER", close MENU_NAME; open options_customise_game_player)
-	SIDEBUTTON(2, "PHYSICS", close MENU_NAME; open options_customise_game_physics)
-	SIDEBUTTON(3, "WEAPONS", close MENU_NAME; open options_customise_game_weapons)
-	SIDEBUTTON(4, "SCOPE", close MENU_NAME; open options_customise_game_scope)
-	SIDEBUTTON(5, "CHAT", close MENU_NAME; open options_customise_game_chat)
-	SIDEBUTTON(6, "SOUND", close MENU_NAME; open options_customise_game_sounds)
-	SIDEBUTTON_ACTIVE(7, "MISCELLANEOUS", close MENU_NAME; open options_customise_game_miscellaneous)
+	SIDEBUTTON(2, "WEAPONS", close MENU_NAME; open options_customise_game_weapons)
+	SIDEBUTTON(3, "SCOPE", close MENU_NAME; open options_customise_game_scope)
+	SIDEBUTTON(4, "CHAT", close MENU_NAME; open options_customise_game_chat)
+	SIDEBUTTON(5, "SOUND", close MENU_NAME; open options_customise_game_sounds)
+	SIDEBUTTON_ACTIVE(6, "MISCELLANEOUS", close MENU_NAME; open options_customise_game_miscellaneous)
 
 	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "MISCELLANEOUS")
 
     YESNO(OPTION_ITEM_POS(1), _("Log Important Messages:"), .2, 8, "cg_printObjectiveInfo", _("Print important game messages to the console"))
 	YESNO(OPTION_ITEM_POS(2), _("Show Tool Tips:"), .2, 8, "ui_showtooltips", _("Display Tool Tips in the UI"))
 	EDITFIELD(OPTION_EF_POS(3), _("Chat Log:"), .2, 8, "cg_logFile", 15, 13, _("Set the name of the chat log file (if empty logging is disabled)"))
-	EDITFIELD(OPTION_EF_POS(4), _("Sharetimer Custom Text:"), .2, 8, "cg_sharetimerText", 64, 32, _("Specify a custom text to announce the next enemy spawn.\nUse ${nextspawn} and ${enemylimbotime} as variables."))
-	YESNO(OPTION_ITEM_POS(5), _("Limbo Class Click:"), .2, 8, "cg_limboClassClickConfirm", _("Toggle to stop Class Limbo Selection take effect immediately after selection"))
+	EDITFIELD(OPTION_EF_POS(4), _("Sharetimer Custom Text:"), .2, 8, "cg_sharetimerText", 64, 32, _("Specify a custom text to announce the next enemy spawn.\nUse ${nextspawn} and ${enemylimbotime} as variables"))
+	YESNO(OPTION_ITEM_POS(5), _("Limbo Class Click:"), .2, 8, "cg_limboClassClickConfirm", _("Toggle to stop Class Limbo Selection\ntake effect immediately after selection"))
 	YESNO(OPTION_ITEM_POS(6), _("Draw Notify Text:"), .2, 8, "cg_drawNotifyText", _("Print message starting by [cgnotify] to client"))
 	EDITFIELD(OPTION_EF_POS(7), _("Auto Command:"), .2, 8, "cg_autoCmd", 15, 13, _("Set a command to be executed on map start / restart"))
 

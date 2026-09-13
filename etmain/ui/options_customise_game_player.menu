@@ -31,22 +31,24 @@ menuDef {
 
 	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
 
-#define NUM_SUBMENUS 7
+#define NUM_SUBMENUS 6
 #define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
 
 	SIDEBUTTON_ACTIVE(1, "PLAYER", close MENU_NAME; open options_customise_game_player)
-	SIDEBUTTON(2, "PHYSICS", close MENU_NAME; open options_customise_game_physics)
-	SIDEBUTTON(3, "WEAPONS", close MENU_NAME; open options_customise_game_weapons)
-	SIDEBUTTON(4, "SCOPE", close MENU_NAME; open options_customise_game_scope)
-	SIDEBUTTON(5, "CHAT", close MENU_NAME; open options_customise_game_chat)
-	SIDEBUTTON(6, "SOUND", close MENU_NAME; open options_customise_game_sounds)
-	SIDEBUTTON(7, "MISCELLANEOUS", close MENU_NAME; open options_customise_game_miscellaneous)
+	SIDEBUTTON(2, "WEAPONS", close MENU_NAME; open options_customise_game_weapons)
+	SIDEBUTTON(3, "SCOPE", close MENU_NAME; open options_customise_game_scope)
+	SIDEBUTTON(4, "CHAT", close MENU_NAME; open options_customise_game_chat)
+	SIDEBUTTON(5, "SOUND", close MENU_NAME; open options_customise_game_sounds)
+	SIDEBUTTON(6, "MISCELLANEOUS", close MENU_NAME; open options_customise_game_miscellaneous)
 
 	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "PLAYER")
 
     EDITFIELD(OPTION_EF_POS(1), _("Player Alias:"), .2, 8, "name", 36, 18, _("Enter the name that you wish to be known by to others on servers"))
     YESNO(OPTION_ITEM_POS(2), _("Always Run:"), .2, 8, "cl_run", _("Toggle walk/run"))
 	MULTI(OPTION_ITEM_POS(3), _("Double-Tap Prone:"), .2, 8, "cl_doubletapdelay", cvarFloatList { "Yes" 350 "No" 0 }, _("Set the delay time between keypresses required to be a double-tap"))
+	YESNO(OPTION_ITEM_POS(4), _("Auto Pickup:"), .2, 8, "cg_autoactivate", _("Toggle auto pickup for items and weapons"))
+	YESNO(OPTION_ITEM_POS(5), _("Instant Tapout:"), .2, 8, "cg_instanttapout", _("Toggle instant tap out on respawn"))
+	YESNO(OPTION_ITEM_POS(6), _("Optimize Prediction:"), .2, 8, "cg_optimizePrediction", _("Toggle prediction optimization for a smooth game experience"))
 
 #ifdef FUI
 	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
