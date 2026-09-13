@@ -55,9 +55,12 @@ menuDef {
 	MULTI(OPTION_ITEM_POS(3), _("Weapon Animations:"), .2, 8, "cg_weapAnims", cvarFloatList { "None" 0 "Move" 1 "Firing" 2 "Reload" 4 "Switch" 8 "Move + Firing" 3 "Move + Reload" 5 "Move + Switch" 9 "Move + Firing + Reload" 7 "Move + Firing + Switch" 11 "Move + Reload + Switch" 13 "Firing + Reload" 6 "Firing + Switch" 10 "Firing + Reload + Switch" 14 "Reload + Switch" 12 "All" 15 }, _("Set which weapon animations to play"))
 	YESNO(OPTION_ITEM_POS(4), _("Weapon Revive Raising:"), .2, 8, "cg_gunReviveFadeIn", _("Toggle weapon animation raising in while being revived"))
 	NUMERICFIELD(OPTION_EF_POS(5), _("Gun Fov Offset:"), .2, 8, "cg_gunFovOffset", 3, _("Set the gun fov offset"))
-	NUMERICFIELD(OPTION_EF_POS(6), _("Weapon X Offset:"), .2, 8, "cg_gunX", 3, _("Set the weapon position offset on X axis"))
-	NUMERICFIELD(OPTION_EF_POS(7), _("Weapon Y Offset:"), .2, 8, "cg_gunY", 3, _("Set the weapon position offset on Y axis"))
-	NUMERICFIELD(OPTION_EF_POS(8), _("Weapon Z Offset:"), .2, 8, "cg_gunZ", 3, _("Set the weapon position offset on Z axis"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(6), "cg_gunX", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(6), _("Weapon X Offset:"), .2, 8, "cg_gunX" 1 -32 32, _("Set the weapon position offset on X axis"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(7), "cg_gunY", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(7), _("Weapon Y Offset:"), .2, 8, "cg_gunY" 1 -32 32, _("Set the weapon position offset on Y axis"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(8), "cg_gunZ", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(8), _("Weapon Z Offset:"), .2, 8, "cg_gunZ" 1 -32 32, _("Set the weapon position offset on Z axis"))
 
 #ifdef FUI
 	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
