@@ -123,6 +123,18 @@ void VK_ReleaseCapturedFrame(void);
 int VK_GetSampleCount(void);
 
 /**
+ * @brief glDepthRange() capture point.
+ */
+void VK_SetDepthRange(float minDepth, float maxDepth);
+
+/**
+ * @brief immediate-mode style 3D draw (triangle or line
+ * list, per-vertex color/texcoord, GL state bits, two-sided).
+ */
+void VK_DrawImmediate3D(const float (*xyz)[4], const byte (*colors)[4], const float (*st)[2], int numVertexes,
+                        const unsigned int *indexes, int numIndexes, qboolean lines, struct image_s *image, unsigned long stateBits);
+
+/**
  * @brief updates (or recreates at a new size) a cinematic
  * scratch image from raw RGBA data (RE_UploadCinematic).
  */

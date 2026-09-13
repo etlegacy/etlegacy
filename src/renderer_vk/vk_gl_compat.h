@@ -171,7 +171,6 @@ typedef unsigned int GLhandleARB;
 // every gl* entry point referenced by the shared frontend files is reduced
 // to a no-op; arguments are intentionally ignored (variadic macro keeps this
 // correct regardless of each call's arity).
-#define glBegin(...)        ((void)0)
 #define glBlendFunc(...)    ((void)0)
 #define glCallList(...)     ((void)0)
 #define glCallLists(...)    ((void)0)
@@ -179,17 +178,53 @@ typedef unsigned int GLhandleARB;
 // backend and used by VK_ClearSceneColor()); glClear itself stays a no-op
 // and callers that need a color clear call VK_ClearSceneColor().
 void VK_SetClearColor(float r, float g, float b, float a);
+
+// immediate mode (glBegin/glVertex/glColor/glTexCoord/glEnd)
+// is emulated by tr_backend.c (VKimm_*), so renderer1's debug drawing
+// (bone/bounds/axis/debug polygons, r_showImages, r_showNormals) and
+// RB_SurfaceBeam work unchanged. glDepthRange is a real capture point
+// (RF_DEPTHHACK, "never occluded" debug draws, sky/sun).
+void VKimm_Begin(int mode);
+void VKimm_End(void);
+void VKimm_Vertex3f(float x, float y, float z);
+void VKimm_Color4f(float r, float g, float b, float a);
+void VKimm_TexCoord2f(float s, float t);
+void VKimm_PointSize(float size);
+void VK_SetDepthRange(float minDepth, float maxDepth);
+#define glBegin(mode)            VKimm_Begin((int)(mode))
+#define glEnd()                  VKimm_End()
+#define glVertex2f(x, y)         VKimm_Vertex3f((float)(x), (float)(y), 0.0f)
+#define glVertex3f(x, y, z)      VKimm_Vertex3f((float)(x), (float)(y), (float)(z))
+#define glVertex3fv(v)           VKimm_Vertex3f((float)(v)[0], (float)(v)[1], (float)(v)[2])
+#define glColor3f(r, g, b)       VKimm_Color4f((float)(r), (float)(g), (float)(b), 1.0f)
+#define glColor3fv(v)            VKimm_Color4f((float)(v)[0], (float)(v)[1], (float)(v)[2], 1.0f)
+#define glColor4f(r, g, b, a)    VKimm_Color4f((float)(r), (float)(g), (float)(b), (float)(a))
+#define glColor4fv(v)            VKimm_Color4f((float)(v)[0], (float)(v)[1], (float)(v)[2], (float)(v)[3])
+#define glTexCoord2f(s, t)       VKimm_TexCoord2f((float)(s), (float)(t))
+#define glTexCoord2fv(v)         VKimm_TexCoord2f((float)(v)[0], (float)(v)[1])
+#define glPointSize(size)        VKimm_PointSize((float)(size))
+#define glDepthRange(n, f)       VK_SetDepthRange((float)(n), (float)(f))
+#ifndef GL_LINE_LOOP
+#define GL_LINE_LOOP             0x0002
+#endif
+#ifndef GL_LINE_STRIP
+#define GL_LINE_STRIP            0x0003
+#endif
+#ifndef GL_TRIANGLES
+#define GL_TRIANGLES             0x0004
+#endif
+#ifndef GL_TRIANGLE_FAN
+#define GL_TRIANGLE_FAN          0x0006
+#endif
+#ifndef GL_QUAD_STRIP
+#define GL_QUAD_STRIP            0x0008
+#endif
 #define glClearColor(r, g, b, a) VK_SetClearColor((float)(r), (float)(g), (float)(b), (float)(a))
 #define glClearStencil(...) ((void)0)
-#define glColor3f(...)      ((void)0)
-#define glColor3fv(...)     ((void)0)
-#define glColor4f(...)      ((void)0)
 #define glColorMask(...)    ((void)0)
 #define glCullFace(...)     ((void)0)
-#define glDepthRange(...)   ((void)0)
 #define glDisable(...)      ((void)0)
 #define glEnable(...)       ((void)0)
-#define glEnd(...)          ((void)0)
 #define glFinish(...)       ((void)0)
 #define glFogf(...)         ((void)0)
 #define glFogfv(...)        ((void)0)
@@ -201,7 +236,6 @@ void VK_SetClearColor(float r, float g, float b, float a);
 #define glLoadMatrixf(...)  ((void)0)
 #define glMatrixMode(...)   ((void)0)
 #define glOrtho(...)        ((void)0)
-#define glPointSize(...)    ((void)0)
 #define glPopAttrib(...)    ((void)0)
 #define glPopMatrix(...)    ((void)0)
 #define glPushAttrib(...)   ((void)0)
@@ -211,10 +245,7 @@ void VK_SetClearColor(float r, float g, float b, float a);
 #define glStencilFunc(...)  ((void)0)
 #define glStencilMask(...)  ((void)0)
 #define glStencilOp(...)    ((void)0)
-#define glTexCoord2fv(...)  ((void)0)
 #define glTranslatef(...)   ((void)0)
-#define glVertex3f(...)     ((void)0)
-#define glVertex3fv(...)    ((void)0)
 
 // tr_backend.c / tr_image.c: all state-setting/texture-upload entry points
 // used there are void and only consume arguments (no out-params read back
@@ -249,14 +280,12 @@ static inline void glClientActiveTextureARB(GLenum texture)
 #define glGenTextures(...)           ((void)0)
 #define glPolygonMode(...)           ((void)0)
 #define glScissor(...)               ((void)0)
-#define glTexCoord2f(...)            ((void)0)
 #define glTexEnvf(...)               ((void)0)
 #define glTexImage2D(...)            ((void)0)
 #define glTexParameterf(...)         ((void)0)
 #define glTexParameterfv(...)        ((void)0)
 #define glTexParameteri(...)         ((void)0)
 #define glTexSubImage2D(...)         ((void)0)
-#define glVertex2f(...)              ((void)0)
 #define glViewport(...)              ((void)0)
 
 #endif // VK_GL_COMPAT_H

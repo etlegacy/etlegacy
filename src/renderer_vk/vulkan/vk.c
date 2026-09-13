@@ -66,6 +66,9 @@
 #define VK_SPECIAL_SHADOW_INCR    1 // volume faces: no color, stencil ALWAYS, pass -> increment
 #define VK_SPECIAL_SHADOW_DECR    2 // volume faces: no color, stencil ALWAYS, pass -> decrement
 #define VK_SPECIAL_SHADOW_DARKEN  3 // full-screen darken where stencil != 0
+// line-list topology for debug drawing (immediate-mode
+// GL_LINES emulation, r_showTris, r_showNormals, bone/bounds debug)
+#define VK_SPECIAL_LINES          4
 
 // One lazily-created pipeline variant for a given (stateBits, cullType,
 // polygonOffset) combination used by the 3D scene pipelines.
@@ -2040,7 +2043,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 
 	Com_Memset(&inputAssembly, 0, sizeof(inputAssembly));
 	inputAssembly.sType    = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+	inputAssembly.topology = (special == VK_SPECIAL_LINES) ? VK_PRIMITIVE_TOPOLOGY_LINE_LIST : VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 
 	Com_Memset(&viewportState, 0, sizeof(viewportState));
 	viewportState.sType         = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -4483,4 +4486,114 @@ qboolean VK_UploadScratchImage(struct image_s *image, const byte *data, int cols
 int VK_GetSampleCount(void)
 {
 	return (int)vk.sampleCount;
+}
+
+/**
+ * @brief glDepthRange() capture point (vk_gl_compat.h) -
+ * renderer1's RF_DEPTHHACK range (0, 0.3), debug "never occluded" draws
+ * (0, 0), sky/sun (1, 1). Reissues the current scene viewport.
+ */
+void VK_SetDepthRange(float minDepth, float maxDepth)
+{
+	VK_SetSkyDepthRange(minDepth, maxDepth);
+}
+
+/**
+ * @brief draws immediate-mode style geometry (positions,
+ * per-vertex colors and texcoords) as a triangle or line list with the
+ * given GL state bits, two-sided, using the current 3D matrices.
+ */
+void VK_DrawImmediate3D(const float (*xyz)[4], const byte (*colors)[4], const float (*st)[2], int numVertexes,
+                        const unsigned int *indexes, int numIndexes, qboolean lines, struct image_s *image, unsigned long stateBits)
+{
+	VkDeviceSize    vertexBytes, indexBytes;
+	vk3DVertex_t    *dstVerts;
+	float           pushConstants[48];
+	VkDescriptorSet descriptorSet;
+	VkBuffer        vertexBuffers[1];
+	VkDeviceSize    offsets[1];
+	VkPipeline      pipeline;
+	int             i;
+
+	if (!vk.initialized || numVertexes <= 0 || numIndexes <= 0)
+	{
+		return;
+	}
+	if (!image || !image->vkDescriptorSet)
+	{
+		image = tr.whiteImage;
+	}
+	if (!image || !image->vkDescriptorSet)
+	{
+		return;
+	}
+
+	pipeline = VK_GetScenePipeline(stateBits & ~GLS_POLYMODE_LINE, CT_TWO_SIDED, qfalse, qfalse,
+	                               lines ? VK_SPECIAL_LINES : VK_SPECIAL_NONE);
+	if (pipeline == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	vertexBytes = (VkDeviceSize)numVertexes * sizeof(vk3DVertex_t);
+	indexBytes  = (VkDeviceSize)numIndexes * sizeof(uint32_t);
+	if (vk.sceneVertexArenaOffset + vertexBytes > vk.sceneVertexArenaSize ||
+	    vk.sceneIndexArenaOffset + indexBytes > vk.sceneIndexArenaSize)
+	{
+		return;
+	}
+
+	dstVerts = (vk3DVertex_t *)((byte *)vk.sceneVertexArenaMapped + vk.sceneVertexArenaOffset);
+	for (i = 0; i < numVertexes; i++)
+	{
+		dstVerts[i].pos[0]   = xyz[i][0];
+		dstVerts[i].pos[1]   = xyz[i][1];
+		dstVerts[i].pos[2]   = xyz[i][2];
+		dstVerts[i].uv[0]    = st ? st[i][0] : 0.0f;
+		dstVerts[i].uv[1]    = st ? st[i][1] : 0.0f;
+		dstVerts[i].color[0] = colors[i][0];
+		dstVerts[i].color[1] = colors[i][1];
+		dstVerts[i].color[2] = colors[i][2];
+		dstVerts[i].color[3] = colors[i][3];
+	}
+	Com_Memcpy((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset, indexes, (size_t)indexBytes);
+
+	if (vk.lastBoundPipeline != pipeline)
+	{
+		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+		vk.lastBoundPipeline = pipeline;
+	}
+
+	Com_Memcpy(pushConstants, vk.mvpMatrix, sizeof(vk.mvpMatrix));
+	Com_Memcpy(pushConstants + 16, vk.modelMatrix, sizeof(vk.modelMatrix));
+	pushConstants[32] = VK_AlphaTestMode(stateBits);
+	pushConstants[33] = 0.0f;
+	pushConstants[34] = 0.0f;
+	pushConstants[35] = 0.0f;
+	pushConstants[36] = vk.fogColor[0];
+	pushConstants[37] = vk.fogColor[1];
+	pushConstants[38] = vk.fogColor[2];
+	pushConstants[39] = vk.fogColor[3];
+	pushConstants[40] = vk.fogEnabled ? 1.0f : 0.0f;
+	pushConstants[41] = vk.fogStart;
+	pushConstants[42] = vk.fogEnd;
+	pushConstants[43] = vk.clipPlaneEnabled ? 1.0f : 0.0f;
+	pushConstants[44] = vk.clipPlane[0];
+	pushConstants[45] = vk.clipPlane[1];
+	pushConstants[46] = vk.clipPlane[2];
+	pushConstants[47] = vk.clipPlane[3];
+	vkCmdPushConstants(vk.commandBuffer, vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pushConstants), pushConstants);
+
+	descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
+	vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.scenePipelineLayout, 0, 1, &descriptorSet, 0, NULL);
+
+	vertexBuffers[0] = vk.sceneVertexArenaBuffer;
+	offsets[0]       = vk.sceneVertexArenaOffset;
+	vkCmdBindVertexBuffers(vk.commandBuffer, 0, 1, vertexBuffers, offsets);
+	vkCmdBindIndexBuffer(vk.commandBuffer, vk.sceneIndexArenaBuffer, vk.sceneIndexArenaOffset, VK_INDEX_TYPE_UINT32);
+
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, 0, 0, 0);
+
+	vk.sceneVertexArenaOffset += vertexBytes;
+	vk.sceneIndexArenaOffset  += indexBytes;
 }

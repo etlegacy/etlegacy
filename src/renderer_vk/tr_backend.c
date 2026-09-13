@@ -55,9 +55,15 @@ static float s_flipMatrix[16] =
  * @brief GL_Bind
  * @param[in,out] image
  */
+/// last image given to GL_Bind(), used by the immediate-mode
+/// emulation below (renderer1 debug code binds then draws with glBegin)
+static image_t *vkImmBoundImage;
+
 void GL_Bind(image_t *image)
 {
 	int texnum;
+
+	vkImmBoundImage = image;
 
 	if (!image)
 	{
@@ -1450,6 +1456,7 @@ void RB_ShowImages(void)
 	}
 
 	glClear(GL_COLOR_BUFFER_BIT);
+	VK_ClearSceneColor(qtrue);
 
 	glFinish();
 
@@ -1718,4 +1725,249 @@ void RB_ExecuteRenderCommands(const void *data)
 			return;
 		}
 	}
+}
+
+/*
+ * immediate-mode emulation (see vk_gl_compat.h).
+ *
+ * Vertices are collected with the current color/texcoord between glBegin
+ * and glEnd; glEnd converts the GL primitive into a triangle or line list
+ * and draws it with the current GL_State() bits and GL_Bind() image -
+ * through VK_Draw2D() in 2D mode, VK_DrawImmediate3D() otherwise.
+ * GL_POINTS become small crosses (Vulkan point size needs shader support).
+ */
+
+#define VKIMM_MAX_VERTS   4096
+#define VKIMM_MAX_INDEXES (VKIMM_MAX_VERTS * 6)
+
+static struct
+{
+	int mode;
+	qboolean active;
+	int numVerts;
+	vec4_t xyz[VKIMM_MAX_VERTS];
+	float st[VKIMM_MAX_VERTS][2];
+	byte color[VKIMM_MAX_VERTS][4];
+	float curColor[4];
+	float curST[2];
+	float pointSize;
+	unsigned int indexes[VKIMM_MAX_INDEXES];
+} vkImm = { 0, qfalse, 0, { { 0 } }, { { 0 } }, { { 0 } }, { 1, 1, 1, 1 }, { 0, 0 }, 1.0f, { 0 } };
+
+void VKimm_Color4f(float r, float g, float b, float a)
+{
+	vkImm.curColor[0] = r;
+	vkImm.curColor[1] = g;
+	vkImm.curColor[2] = b;
+	vkImm.curColor[3] = a;
+}
+
+void VKimm_TexCoord2f(float s, float t)
+{
+	vkImm.curST[0] = s;
+	vkImm.curST[1] = t;
+}
+
+void VKimm_PointSize(float size)
+{
+	vkImm.pointSize = size;
+}
+
+void VKimm_Begin(int mode)
+{
+	vkImm.mode     = mode;
+	vkImm.active   = qtrue;
+	vkImm.numVerts = 0;
+}
+
+static void VKimm_AddVertex(const float *xyz, const float *st, const float *color)
+{
+	int i = vkImm.numVerts;
+
+	if (i >= VKIMM_MAX_VERTS)
+	{
+		return;
+	}
+
+	VectorCopy(xyz, vkImm.xyz[i]);
+	vkImm.xyz[i][3]   = 1.0f;
+	vkImm.st[i][0]    = st[0];
+	vkImm.st[i][1]    = st[1];
+	vkImm.color[i][0] = (byte)(Com_Clamp(0.0f, 1.0f, color[0]) * 255.0f);
+	vkImm.color[i][1] = (byte)(Com_Clamp(0.0f, 1.0f, color[1]) * 255.0f);
+	vkImm.color[i][2] = (byte)(Com_Clamp(0.0f, 1.0f, color[2]) * 255.0f);
+	vkImm.color[i][3] = (byte)(Com_Clamp(0.0f, 1.0f, color[3]) * 255.0f);
+	vkImm.numVerts++;
+}
+
+void VKimm_Vertex3f(float x, float y, float z)
+{
+	vec3_t v;
+
+	if (!vkImm.active)
+	{
+		return;
+	}
+
+	VectorSet(v, x, y, z);
+	VKimm_AddVertex(v, vkImm.curST, vkImm.curColor);
+}
+
+void VKimm_End(void)
+{
+	int      n = vkImm.numVerts, numIndexes = 0, i;
+	qboolean lines;
+
+	if (!vkImm.active)
+	{
+		return;
+	}
+	vkImm.active = qfalse;
+
+	switch (vkImm.mode)
+	{
+	case GL_POINTS:
+	{
+		// each point -> a 3-axis cross (6 extra vertices)
+		float half = vkImm.pointSize * 0.5f;
+		int   base = n;
+
+		for (i = 0; i < base && vkImm.numVerts + 6 <= VKIMM_MAX_VERTS; i++)
+		{
+			int   axis;
+			float color[4];
+
+			color[0] = vkImm.color[i][0] / 255.0f;
+			color[1] = vkImm.color[i][1] / 255.0f;
+			color[2] = vkImm.color[i][2] / 255.0f;
+			color[3] = vkImm.color[i][3] / 255.0f;
+
+			for (axis = 0; axis < 3; axis++)
+			{
+				vec3_t a, b;
+
+				VectorCopy(vkImm.xyz[i], a);
+				VectorCopy(vkImm.xyz[i], b);
+				a[axis]                    -= half;
+				b[axis]                    += half;
+				vkImm.indexes[numIndexes++] = vkImm.numVerts;
+				VKimm_AddVertex(a, vkImm.st[i], color);
+				vkImm.indexes[numIndexes++] = vkImm.numVerts;
+				VKimm_AddVertex(b, vkImm.st[i], color);
+			}
+		}
+		lines = qtrue;
+		break;
+	}
+	case GL_LINES:
+		for (i = 0; i + 1 < n; i += 2)
+		{
+			vkImm.indexes[numIndexes++] = i;
+			vkImm.indexes[numIndexes++] = i + 1;
+		}
+		lines = qtrue;
+		break;
+	case GL_LINE_STRIP:
+	case GL_LINE_LOOP:
+		for (i = 0; i + 1 < n; i++)
+		{
+			vkImm.indexes[numIndexes++] = i;
+			vkImm.indexes[numIndexes++] = i + 1;
+		}
+		if (vkImm.mode == GL_LINE_LOOP && n > 2)
+		{
+			vkImm.indexes[numIndexes++] = n - 1;
+			vkImm.indexes[numIndexes++] = 0;
+		}
+		lines = qtrue;
+		break;
+	case GL_TRIANGLES:
+		for (i = 0; i + 2 < n; i += 3)
+		{
+			vkImm.indexes[numIndexes++] = i;
+			vkImm.indexes[numIndexes++] = i + 1;
+			vkImm.indexes[numIndexes++] = i + 2;
+		}
+		lines = qfalse;
+		break;
+	case GL_TRIANGLE_STRIP:
+	case GL_QUAD_STRIP:
+		for (i = 0; i + 2 < n; i++)
+		{
+			// keep GL's alternating winding
+			vkImm.indexes[numIndexes++] = (i & 1) ? i + 1 : i;
+			vkImm.indexes[numIndexes++] = (i & 1) ? i : i + 1;
+			vkImm.indexes[numIndexes++] = i + 2;
+		}
+		lines = qfalse;
+		break;
+	case GL_QUADS:
+		for (i = 0; i + 3 < n; i += 4)
+		{
+			vkImm.indexes[numIndexes++] = i;
+			vkImm.indexes[numIndexes++] = i + 1;
+			vkImm.indexes[numIndexes++] = i + 2;
+			vkImm.indexes[numIndexes++] = i;
+			vkImm.indexes[numIndexes++] = i + 2;
+			vkImm.indexes[numIndexes++] = i + 3;
+		}
+		lines = qfalse;
+		break;
+	case GL_TRIANGLE_FAN:
+	case GL_POLYGON:
+	default:
+		for (i = 1; i + 1 < n; i++)
+		{
+			vkImm.indexes[numIndexes++] = 0;
+			vkImm.indexes[numIndexes++] = i;
+			vkImm.indexes[numIndexes++] = i + 1;
+		}
+		lines = qfalse;
+		break;
+	}
+
+	if (numIndexes == 0)
+	{
+		return;
+	}
+
+	if (backEnd.projection2D)
+	{
+		// 2D (e.g. r_showImages): triangles only, through the UI path
+		if (lines)
+		{
+			return;
+		}
+
+		if (tess.numIndexes)
+		{
+			RB_EndSurface();
+		}
+
+		for (i = 0; i < vkImm.numVerts; i++)
+		{
+			VectorCopy(vkImm.xyz[i], tess.xyz[i]);
+			tess.texCoords[i][0][0] = vkImm.st[i][0];
+			tess.texCoords[i][0][1] = vkImm.st[i][1];
+			tess.vertexColors[i][0] = vkImm.color[i][0];
+			tess.vertexColors[i][1] = vkImm.color[i][1];
+			tess.vertexColors[i][2] = vkImm.color[i][2];
+			tess.vertexColors[i][3] = vkImm.color[i][3];
+		}
+		for (i = 0; i < numIndexes; i++)
+		{
+			tess.indexes[i] = vkImm.indexes[i];
+		}
+		tess.numVertexes = vkImm.numVerts;
+		tess.numIndexes  = numIndexes;
+
+		VK_Draw2D(&tess, vkImmBoundImage, glState.glStateBits);
+
+		tess.numVertexes = 0;
+		tess.numIndexes  = 0;
+		return;
+	}
+
+	VK_DrawImmediate3D((const float (*)[4]) vkImm.xyz, (const byte(*)[4]) vkImm.color, (const float (*)[2]) vkImm.st, vkImm.numVerts,
+	                   vkImm.indexes, numIndexes, lines, vkImmBoundImage, glState.glStateBits);
 }
