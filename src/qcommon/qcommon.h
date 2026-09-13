@@ -416,7 +416,7 @@ extern int demo_protocols[];
  * Broadcast scan this many ports after PORT_SERVER
  * so a single machine can run multiple servers
  */
-#define NUM_SERVER_PORTS    4
+#define NUM_SERVER_PORTS    8
 
 // the svc_strings[] array in cl_parse.c should mirror this
 
