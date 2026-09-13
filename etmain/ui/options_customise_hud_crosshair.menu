@@ -100,7 +100,7 @@ menuDef {
 #else
 	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open ingame_main)
 #endif
-	LOWERBUTTON(2, _("MSGID_MENU_OPTION_OPEN_HOME"), close MENU_NAME ; uiScript open_homepath)
+	LOWERBUTTON(2, _("MSGID_MENU_OPTION_OPEN_HOME"), close MENU_NAME ; open options_homepath)
 
 #ifdef FUI
 	LOWERBUTTON(3, _("MSGID_MENU_OPTION_HUD_EDITOR"), clearfocus; open options_hudeditor_fui)
