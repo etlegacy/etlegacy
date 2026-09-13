@@ -46,7 +46,7 @@ menuDef {
 	SIDEBUTTON(9, "SHOUTCASTER", close MENU_NAME; open options_controls_shoutcaster)
 	SIDEBUTTON_ACTIVE(10, "SELECTION MENUS", close MENU_NAME; open options_controls_selection_menus)
 
-	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "CHAT")
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, "SELECTION MENUS")
 	
     BIND(OPTION_ITEM_POS(1), _("Team selection:"), .2, 8, "teammenu", "Open team selection menu")
 	BIND(OPTION_ITEM_POS(2), _("Class selection:"), .2, 8, "classmenu", "Open class selection menu")
