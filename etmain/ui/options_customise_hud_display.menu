@@ -67,7 +67,7 @@ menuDef {
 	SLIDER(OPTION_ITEM_POS(11), _("Banner Time:"), .2, 8, "cg_bannerTime" 2500 0 10000, _("Set the time the banner stays visible"))
 	CVARFLOATLABEL(OPTION_ITEM_POS(12), "cg_centerTime", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
 	SLIDER(OPTION_ITEM_POS(12), _("Center Print Time:"), .2, 8, "cg_centerTime" 5 0 30, _("Set the time the center print stays visible"))
-	MULTI(OPTION_ITEM_POS(13), _("Scoreboard Tab:"), .2, 8, "cg_scoreboard", cvarFloatList { "XP" 0 "SkillRating" 1 "Prestige" 2 }, _("Select the scoreboard to be displyed by default"))
+	MULTI(OPTION_ITEM_POS(13), _("Scoreboard Tab:"), .2, 8, "cg_scoreboard", cvarFloatList { "XP" 0 "SkillRating" 1 }, _("Select the scoreboard to be displyed by default"))
 	CVARFLOATLABEL(OPTION_ITEM_POS(14), "cg_commandMapTime", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
 	SLIDER(OPTION_ITEM_POS(14), _("Command Map Time:"), .2, 8, "cg_commandMapTime" 5 0 30, _("Set the delay to fully fade in/out commad map"))
 
