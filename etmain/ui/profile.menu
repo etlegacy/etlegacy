@@ -2,15 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define WINDOW_X		16
-#define WINDOW_Y		16
-#define WINDOW_WIDTH	608
-#define WINDOW_HEIGHT	448
-#define GROUP_NAME		"grpProfile"
+#define MENU_NAME	"profile"
+#define GROUP_NAME	"grpProfile"
 
 // Profile Menu //
 menuDef {
-	name		"profile"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
@@ -21,7 +18,7 @@ menuDef {
 	}
 
 	onESC {
-		close profile;
+		close MENU_NAME;
 		open main
 	}
 
@@ -53,8 +50,8 @@ menuDef {
 			conditionalscript ui_profile 1
 			// Load the cached servers before the vid_restart (which saves the cached servers),
 			// ui_profile is set so servers will be loaded from profile directory
-			( "close profile ; uiScript clearPID ; uiScript applyProfile ; execwolfconfig 1 ; uiScript loadCachedServers ; exec vid_restart" )
-			( "open profile" )
+			( "close MENU_NAME ; uiScript clearPID ; uiScript applyProfile ; execwolfconfig 1 ; uiScript loadCachedServers ; exec vid_restart" )
+			( "open MENU_NAME" )
 		}
 	}
 
@@ -68,13 +65,13 @@ menuDef {
 	BUTTON( 484, 86, WINDOW_WIDTH-484-6, 14, _("SET AS DEFAULT"), .24, 11,
 		conditionalscript ui_profile 1
 		( "uiScript setDefaultProfile" )
-		( "open profile" ) )
+		( "open MENU_NAME" ) )
 
-	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("MSGID_MENU_BACK"), .3, 14, close profile ; open main )
+	BUTTON( 6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open main )
 	BUTTON( 6+.5*(WINDOW_WIDTH-18)+6, WINDOW_HEIGHT-24, .5*(WINDOW_WIDTH-18), 18, _("MSGID_MENU_PROFILE_SELECT"), .3, 14,
 		conditionalscript ui_profile 1
 		// Load the cached servers before the vid_restart (which saves the cached servers),
 		// ui_profile is set so servers will be loaded from profile directory
-		( "close profile ; uiScript clearPID ; uiScript applyProfile ; execwolfconfig 1; uiScript loadCachedServers ; exec vid_restart" )
-		( "open profile" ) )
+		( "close MENU_NAME ; uiScript clearPID ; uiScript applyProfile ; execwolfconfig 1; uiScript loadCachedServers ; exec vid_restart" )
+		( "open MENU_NAME" ) )
 }
