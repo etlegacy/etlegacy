@@ -1217,6 +1217,7 @@ void SV_PacketEvent(const netadr_t *from, msg_t *msg)
 	int      i;
 	client_t *cl;
 	int      qport;
+	int      sequence;
 
 #ifdef DEDICATED
 	if (NET_CompareAdr(from, &svclc.serverAddress))
@@ -1241,8 +1242,8 @@ void SV_PacketEvent(const netadr_t *from, msg_t *msg)
 	// read the qport out of the message so we can fix up
 	// stupid address translating routers
 	MSG_BeginReadingOOB(msg);
-	MSG_ReadLong(msg);                  // sequence number
-	qport = MSG_ReadShort(msg) & 0xffff;
+	sequence = MSG_ReadLong(msg) & 0x7fffffff; // sequence number, without FRAGMENT_BIT
+	qport    = MSG_ReadShort(msg) & 0xffff;
 
 	// find which client the message is from
 	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
@@ -1277,6 +1278,69 @@ void SV_PacketEvent(const netadr_t *from, msg_t *msg)
 			// zombie clients still need to do the Netchan_Process
 			// to make sure they don't need to retransmit the final
 			// reliable message, but they don't do any other processing
+			if (cl->state != CS_ZOMBIE)
+			{
+				cl->lastPacketTime = svs.time;  // don't timeout
+				SV_ExecuteClientMessage(cl, msg);
+			}
+		}
+
+		return;
+	}
+
+	// No client matched on address. A client whose source IP changed mid-session
+	// (CGNAT rebinding, mobile handover, VPN drop) is otherwise ignored from here
+	// on: the server keeps sending to the stale address, never gets another ack,
+	// and the unacknowledged reliable command backlog grows until it exceeds
+	// MAX_MSGLEN and the client is dropped with "Msg overflowed".
+	// Try to re-associate the session by qport instead.
+	//
+	// NOTE: this is not authentication. A spoofer needs a matching qport and a
+	// sequence ahead of the client's current one, both of which are in the clear.
+	// It extends the trust already granted to port changes above so that it also
+	// covers address changes; the rate limit below bounds the damage.
+	if (!sv_allowClientIpChange->integer)
+	{
+		return;
+	}
+
+	for (i = 0, cl = svs.clients ; i < sv_maxclients->integer ; i++, cl++)
+	{
+		char oldAdr[NET_ADDRSTRMAXLEN_EXT];
+
+		if (cl->state < CS_CONNECTED || cl->netchan.qport != qport)
+		{
+			continue;
+		}
+
+		// bots and democlients have no real connection to move
+		if (cl->demoClient || (cl->gentity && (cl->gentity->r.svFlags & SVF_BOT)))
+		{
+			continue;
+		}
+
+		// only accept a packet that would pass the netchan ordering check anyway
+		if (sequence <= cl->netchan.incomingSequence)
+		{
+			continue;
+		}
+
+		// at most one address change per client per interval
+		if (cl->lastAddressChangeTime != 0 &&
+		    svs.time - cl->lastAddressChangeTime < SV_ADDRESS_CHANGE_INTERVAL)
+		{
+			continue;
+		}
+
+		Q_strncpyz(oldAdr, NET_AdrToString(&cl->netchan.remoteAddress), sizeof(oldAdr));
+		Com_Printf("SV_PacketEvent: client %s changed address from %s to %s\n",
+		           rc(cl->name), oldAdr, NET_AdrToString(from));
+
+		cl->netchan.remoteAddress = *from;
+		cl->lastAddressChangeTime = svs.time;
+
+		if (SV_Netchan_Process(cl, msg))
+		{
 			if (cl->state != CS_ZOMBIE)
 			{
 				cl->lastPacketTime = svs.time;  // don't timeout
