@@ -653,15 +653,15 @@ static void SV_ClearServer(void)
 		}
 	}
 
-	if (!sv_serverTimeReset->integer)
+	if (sv_serverTimeReset->integer || sv.time > 0x70000000)
+	{
+		Com_Memset(&sv, 0, sizeof(sv));
+	}
+	else
 	{
 		i = sv.time;
 		Com_Memset(&sv, 0, sizeof(sv));
 		sv.time = i;
-	}
-	else
-	{
-		Com_Memset(&sv, 0, sizeof(sv));
 	}
 }
 
