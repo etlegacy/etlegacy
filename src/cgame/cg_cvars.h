@@ -125,6 +125,7 @@ extern vmCvar_t cg_teamVoiceChatsOnly;
 extern vmCvar_t cg_voiceChats;
 extern vmCvar_t cg_voiceText;
 extern vmCvar_t cg_autoactivate;
+extern vmCvar_t in_osCursor;
 extern vmCvar_t pmove_fixed;
 extern vmCvar_t pmove_msec;
 
