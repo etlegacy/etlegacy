@@ -1654,31 +1654,28 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 				bonePtr = &bones[*boneRefs];
 
 				GL_Bind(tr.whiteImage);
-				glLineWidth(1);
-				glBegin(GL_LINES);
+				VKimm_Begin(GL_LINES);
 				for (j = 0; j < 3; j++)
 				{
 					VectorClear(vec);
 					vec[j] = 1;
-					glColor3fv(vec);
-					glVertex3fv(bonePtr->translation);
+					VKimm_Color3fv(vec);
+					VKimm_Vertex3fv(bonePtr->translation);
 					VectorMA(bonePtr->translation, 5, bonePtr->matrix[j], vec);
-					glVertex3fv(vec);
+					VKimm_Vertex3fv(vec);
 				}
-				glEnd();
+				VKimm_End();
 
 				// connect to our parent if it's valid
 				if (validBones[boneInfo[*boneRefs].parent])
 				{
-					glLineWidth(2);
-					glBegin(GL_LINES);
-					glColor3f(.6f, .6f, .6f);
-					glVertex3fv(bonePtr->translation);
-					glVertex3fv(bones[boneInfo[*boneRefs].parent].translation);
-					glEnd();
+					VKimm_Begin(GL_LINES);
+					VKimm_Color3f(.6f, .6f, .6f);
+					VKimm_Vertex3fv(bonePtr->translation);
+					VKimm_Vertex3fv(bones[boneInfo[*boneRefs].parent].translation);
+					VKimm_End();
 				}
 
-				glLineWidth(1);
 			}
 		}
 
@@ -1691,24 +1688,23 @@ void RB_SurfaceAnim(mdsSurface_t *surface)
 			tempNormal = ( float * )(tess.normal + baseVertex);
 
 			GL_Bind(tr.whiteImage);
-			glLineWidth(1);
-			glBegin(GL_LINES);
-			glColor3f(.0f, .0f, .8f);
+			VKimm_Begin(GL_LINES);
+			VKimm_Color3f(.0f, .0f, .8f);
 
 			pIndexes = &tess.indexes[oldIndexes];
 			for (j = 0; j < render_indexes / 3; j++, pIndexes += 3)
 			{
-				glVertex3fv(tempVert + 4 * pIndexes[0]);
-				glVertex3fv(tempVert + 4 * pIndexes[1]);
+				VKimm_Vertex3fv(tempVert + 4 * pIndexes[0]);
+				VKimm_Vertex3fv(tempVert + 4 * pIndexes[1]);
 
-				glVertex3fv(tempVert + 4 * pIndexes[1]);
-				glVertex3fv(tempVert + 4 * pIndexes[2]);
+				VKimm_Vertex3fv(tempVert + 4 * pIndexes[1]);
+				VKimm_Vertex3fv(tempVert + 4 * pIndexes[2]);
 
-				glVertex3fv(tempVert + 4 * pIndexes[2]);
-				glVertex3fv(tempVert + 4 * pIndexes[0]);
+				VKimm_Vertex3fv(tempVert + 4 * pIndexes[2]);
+				VKimm_Vertex3fv(tempVert + 4 * pIndexes[0]);
 			}
 
-			glEnd();
+			VKimm_End();
 
 			// track debug stats
 			if (r_bonesDebug->integer == 4)
@@ -1823,19 +1819,17 @@ int R_GetBoneTag(orientation_t *outTag, mdsHeader_t *mds, int startTagIndex, con
         int j;
         // DEBUG: show the tag position/axis
         GL_Bind( tr.whiteImage );
-        glLineWidth( 2 );
-        glBegin( GL_LINES );
+        VKimm_Begin( GL_LINES );
         for (j=0; j<3; j++) {
             VectorClear(vec);
             vec[j] = 1;
-            glColor3fv( vec );
-            glVertex3fv( outTag->origin );
+            VKimm_Color3fv( vec );
+            VKimm_Vertex3fv( outTag->origin );
             VectorMA( outTag->origin, 8, outTag->axis[j], vec );
-            glVertex3fv( vec );
+            VKimm_Vertex3fv( vec );
         }
-        glEnd();
+        VKimm_End();
 
-        glLineWidth( 1 );
     }
 */
 

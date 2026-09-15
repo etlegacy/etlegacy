@@ -624,15 +624,15 @@ void RB_SurfaceBeam(void)
 
 	GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
-	glColor3f(1, 0, 0);
+	VKimm_Color3f(1, 0, 0);
 
-	glBegin(GL_TRIANGLE_STRIP);
+	VKimm_Begin(GL_TRIANGLE_STRIP);
 	for (i = 0; i <= NUM_BEAM_SEGS; i++)
 	{
-		glVertex3fv(start_points[i % NUM_BEAM_SEGS]);
-		glVertex3fv(end_points[i % NUM_BEAM_SEGS]);
+		VKimm_Vertex3fv(start_points[i % NUM_BEAM_SEGS]);
+		VKimm_Vertex3fv(end_points[i % NUM_BEAM_SEGS]);
 	}
-	glEnd();
+	VKimm_End();
 }
 
 //================================================================================
@@ -1731,19 +1731,17 @@ void RB_SurfaceAxis(void)
 {
 	GL_Bind(tr.whiteImage);
 	GL_State(GLS_DEFAULT);
-	glLineWidth(3);
-	glBegin(GL_LINES);
-	glColor3f(1, 0, 0);
-	glVertex3f(0, 0, 0);
-	glVertex3f(16, 0, 0);
-	glColor3f(0, 1, 0);
-	glVertex3f(0, 0, 0);
-	glVertex3f(0, 16, 0);
-	glColor3f(0, 0, 1);
-	glVertex3f(0, 0, 0);
-	glVertex3f(0, 0, 16);
-	glEnd();
-	glLineWidth(1);
+	VKimm_Begin(GL_LINES);
+	VKimm_Color3f(1, 0, 0);
+	VKimm_Vertex3f(0, 0, 0);
+	VKimm_Vertex3f(16, 0, 0);
+	VKimm_Color3f(0, 1, 0);
+	VKimm_Vertex3f(0, 0, 0);
+	VKimm_Vertex3f(0, 16, 0);
+	VKimm_Color3f(0, 0, 1);
+	VKimm_Vertex3f(0, 0, 0);
+	VKimm_Vertex3f(0, 0, 16);
+	VKimm_End();
 }
 
 //===========================================================================
@@ -1873,7 +1871,6 @@ void RB_SurfaceDisplayList(srfDisplayList_t *surf)
 	// all apropriate state must be set in RB_BeginSurface
 	// this isn't implemented yet...
 #ifndef __EMSCRIPTEN__
-	glCallList(surf->listNum);
 #endif
 }
 

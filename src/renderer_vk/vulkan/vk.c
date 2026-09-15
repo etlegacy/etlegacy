@@ -211,7 +211,7 @@ typedef struct
 	VkPipeline lastBoundPipeline;
 
 	// GL-convention (column-major) projection/modelview matrices captured
-	// from the no-op'd glLoadMatrixf() call sites in tr_backend.c (see
+	// where renderer1 calls glLoadMatrixf() in tr_backend.c (see
 	// VK_SetProjectionMatrix/VK_SetModelViewMatrix). projMatrix already has
 	// the GL->Vulkan clip-space correction (Y-flip + depth 0..1) baked in.
 	float projMatrix[16];
@@ -220,7 +220,7 @@ typedef struct
 
 	// current fog state, mirroring renderer1's glfogsettings
 	// (R_Fog()/R_FogOff() in tr_main.c call VK_SetFog()/VK_SetFogOff()
-	// instead of the no-op'd glFog*() calls). Linear fog only (GL_LINEAR
+	// where renderer1 calls glFog*()). Linear fog only (GL_LINEAR
 	// is the mode R_Fog() defaults to when a fog volume doesn't specify
 	// one, which covers the vast majority of ET fog usage).
 	qboolean fogEnabled;
@@ -256,7 +256,7 @@ typedef struct
 	float fogEnd;
 
 	// last scene viewport rect (post Y-flip), stashed so
-	// VK_SetSkyDepthRange() can reissue vkCmdSetViewport with the same
+	// VK_SetDepthRange() can reissue vkCmdSetViewport with the same
 	// rect but a different depth range (sky is drawn pinned to the far
 	// depth plane, same as renderer1's glDepthRange(1,1) trick).
 	int lastViewportX;
@@ -266,7 +266,7 @@ typedef struct
 
 	// portal/mirror eye-space clip plane, mirroring
 	// renderer1's glClipPlane(GL_CLIP_PLANE0, ...)/glEnable(GL_CLIP_PLANE0)
-	// (RB_BeginDrawingView in tr_backend.c, no-op'd here). Vulkan has no
+	// (RB_BeginDrawingView in tr_backend.c). Vulkan has no
 	// fixed-function clip-plane equivalent that's portable without extra
 	// device features, so this is applied as a per-fragment discard in
 	// the scene shaders instead (see tr3d*.frag.glsl).
@@ -2264,8 +2264,8 @@ static void VK_Mat4Mul(float *out, const float *a, const float *b)
 
 /**
  * @brief Captures the engine's GL-convention projection matrix (called
- * from the no-op'd glLoadMatrixf(backEnd.viewParms.projectionMatrix) call
- * site in SetViewportAndScissor()) and bakes in the GL -> Vulkan
+ * from SetViewportAndScissor(), where renderer1 calls
+ * glLoadMatrixf(backEnd.viewParms.projectionMatrix)) and bakes in the GL -> Vulkan
  * clip-space correction: negate the Y row (Vulkan NDC Y maps to the
  * viewport opposite of GL's, so this keeps the final image right-side up)
  * and remap Z from GL's [-1,1] range to Vulkan's [0,1] range.
@@ -2310,9 +2310,9 @@ void VK_SetRawProjectionMatrix(const float *m)
 
 /**
  * @brief Captures the engine's GL-convention modelview matrix (called from
- * the no-op'd glLoadMatrixf(backEnd.orientation.modelMatrix)/
- * glLoadMatrixf(backEnd.viewParms.world.modelMatrix) call sites in
- * tr_backend.c) and recomputes the cached MVP used by VK_Draw3D*().
+ * tr_backend.c where renderer1 calls
+ * glLoadMatrixf(backEnd.orientation.modelMatrix) /
+ * glLoadMatrixf(backEnd.viewParms.world.modelMatrix)) and recomputes the cached MVP used by VK_Draw3D*().
  */
 void VK_SetModelViewMatrix(const float *m)
 {
@@ -2334,7 +2334,7 @@ void VK_GetModelViewMatrix(float *m)
 
 /**
  * @brief records the current linear-fog parameters, called
- * from R_Fog() (tr_main.c) in place of the no-op'd glFog*() calls.
+ * from R_Fog() (tr_main.c) where renderer1 calls glFog*().
  * Picked up per-draw by VK_Draw3D()/VK_Draw3DLightmapped() and applied in
  * the fragment shader based on each vertex's eye-space depth.
  */
@@ -2374,8 +2374,8 @@ void VK_SetFogOn(void)
  * @brief records an eye-space portal/mirror clip-plane
  * equation (ax+by+cz+dw, same convention as GL_CLIP_PLANE0: fragments
  * with dot(eyePos, plane.xyz) + plane.w < 0 are clipped), called from
- * RB_BeginDrawingView() (tr_backend.c) in place of the no-op'd
- * glClipPlane()/glEnable(GL_CLIP_PLANE0) calls. Applied as a per-fragment
+ * RB_BeginDrawingView() (tr_backend.c) where renderer1 calls
+ * glClipPlane()/glEnable(GL_CLIP_PLANE0). Applied as a per-fragment
  * discard in the scene shaders since Vulkan has no portable
  * fixed-function clip-plane equivalent.
  */
@@ -3749,7 +3749,7 @@ void VK_SetSceneViewport(int x, int y, int width, int height)
 	// up in the wrong place and silently clips the view's geometry away.
 	flippedY = (int)vk.swapchainExtent.height - (y + height);
 
-	// stashed so VK_SetSkyDepthRange() can reissue the viewport with the
+	// stashed so VK_SetDepthRange() can reissue the viewport with the
 	// same rect but a different depth range.
 	vk.lastViewportX        = x;
 	vk.lastViewportFlippedY = flippedY;
@@ -3780,7 +3780,7 @@ void VK_SetSceneViewport(int x, int y, int width, int height)
  * first at maximum depth lets normally-depth-tested opaque surfaces
  * drawn afterwards cover it everywhere they're present).
  */
-void VK_SetSkyDepthRange(float minDepth, float maxDepth)
+void VK_SetDepthRange(float minDepth, float maxDepth)
 {
 	VkViewport viewport;
 
@@ -4486,16 +4486,6 @@ qboolean VK_UploadScratchImage(struct image_s *image, const byte *data, int cols
 int VK_GetSampleCount(void)
 {
 	return (int)vk.sampleCount;
-}
-
-/**
- * @brief glDepthRange() capture point (vk_gl_compat.h) -
- * renderer1's RF_DEPTHHACK range (0, 0.3), debug "never occluded" draws
- * (0, 0), sky/sun (1, 1). Reissues the current scene viewport.
- */
-void VK_SetDepthRange(float minDepth, float maxDepth)
-{
-	VK_SetSkyDepthRange(minDepth, maxDepth);
 }
 
 /**

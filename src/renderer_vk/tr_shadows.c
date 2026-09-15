@@ -234,9 +234,8 @@ void RB_ShadowTessEnd(void)
 	// draw the silhouette edges
 
 	GL_Bind(tr.whiteImage);
-	glEnable(GL_CULL_FACE);
 	GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
-	glColor3f(0.2f, 0.2f, 0.2f);
+	VKimm_Color3f(0.2f, 0.2f, 0.2f);
 
 	// the color-masked, stencil INCR/DECR passes are encoded
 	// in VK_DrawShadowVolume()'s pipelines; GL_BACK/GL_FRONT culling maps

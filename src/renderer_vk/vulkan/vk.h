@@ -123,11 +123,6 @@ void VK_ReleaseCapturedFrame(void);
 int VK_GetSampleCount(void);
 
 /**
- * @brief glDepthRange() capture point.
- */
-void VK_SetDepthRange(float minDepth, float maxDepth);
-
-/**
  * @brief immediate-mode style 3D draw (triangle or line
  * list, per-vertex color/texcoord, GL state bits, two-sided).
  */
@@ -169,7 +164,7 @@ void VK_SetSceneViewport(int x, int y, int width, int height);
  * depth range (used by sky rendering to pin geometry to the far depth
  * plane, matching renderer1's glDepthRange(1,1) trick).
  */
-void VK_SetSkyDepthRange(float minDepth, float maxDepth);
+void VK_SetDepthRange(float minDepth, float maxDepth);
 
 /**
  * @brief clears the depth buffer within the last scene
@@ -182,6 +177,12 @@ void VK_ClearSceneDepth(void);
  * the last scene viewport (or the whole framebuffer).
  */
 void VK_ClearSceneColor(qboolean fullFramebuffer);
+
+/**
+ * @brief clear color used by VK_ClearSceneColor() (renderer1's
+ * glClearColor).
+ */
+void VK_SetClearColor(float r, float g, float b, float a);
 
 /**
  * @brief gamma and overbright multiplier applied by the final

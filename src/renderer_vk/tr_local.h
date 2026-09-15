@@ -1529,13 +1529,9 @@ GL wrapper/helper functions
 */
 void GL_Bind(image_t *image);
 void GL_SetDefaultState(void);
-void GL_SelectTexture(int unit);
 void GL_TextureMode(const char *string);
 void GL_CheckErrors(void);
 void GL_State(unsigned long stateBits);
-void GL_FullscreenQuad(void);
-void GL_TexEnv(int env);
-void GL_Cull(int cullType);
 
 #define GLS_SRCBLEND_ZERO                       0x00000001
 #define GLS_SRCBLEND_ONE                        0x00000002
@@ -2345,5 +2341,25 @@ qboolean R_inPVS(const vec3_t p1, const vec3_t p2);
 void GfxInfo_f(void);
 
 void R_Register(void);
+
+// Immediate-mode emulation (tr_backend.c): renderer1's glBegin/glVertex/
+// glColor/glTexCoord/glEnd debug drawing, drawn with the current
+// GL_State() bits and GL_Bind() image.
+void VKimm_Begin(int mode);
+void VKimm_End(void);
+void VKimm_Vertex3f(float x, float y, float z);
+void VKimm_Color4f(float r, float g, float b, float a);
+void VKimm_TexCoord2f(float s, float t);
+void VKimm_PointSize(float size);
+
+// argument-form variants (renderer1's glVertex2f/glVertex3fv/glColor3f/...)
+#define VKimm_Vertex2f(x, y)       VKimm_Vertex3f((x), (y), 0.0f)
+#define VKimm_Vertex3fv(v)         VKimm_Vertex3f((v)[0], (v)[1], (v)[2])
+#define VKimm_Color3f(r, g, b)     VKimm_Color4f((r), (g), (b), 1.0f)
+#define VKimm_Color3fv(v)          VKimm_Color4f((v)[0], (v)[1], (v)[2], 1.0f)
+#define VKimm_Color4fv(v)          VKimm_Color4f((v)[0], (v)[1], (v)[2], (v)[3])
+#define VKimm_TexCoord2fv(v)       VKimm_TexCoord2f((v)[0], (v)[1])
+
+#include "vulkan/vk.h"
 
 #endif //TR_LOCAL_H

@@ -658,11 +658,11 @@ static void DrawTris(shaderCommands_t *input)
 	if (r_showTris->integer == 2)
 	{
 		stateBits |= GLS_DEPTHMASK_TRUE;
-		glDepthRange(0, 0);
+		VK_SetDepthRange(0, 0);
 	}
 	else
 	{
-		glDepthRange(0, 0.99995f);
+		VK_SetDepthRange(0, 0.99995f);
 	}
 
 	for (i = 0; i < input->numVertexes; i++)
@@ -686,7 +686,7 @@ static void DrawTris(shaderCommands_t *input)
 	VK_DrawImmediate3D((const float (*)[4]) input->xyz, (const byte(*)[4]) colors, NULL, input->numVertexes,
 	                   lineIndexes, numLineIndexes, qtrue, tr.whiteImage, stateBits);
 
-	glDepthRange(0, 1);
+	VK_SetDepthRange(0, 1);
 }
 
 /**
@@ -698,8 +698,8 @@ static void DrawNormals(shaderCommands_t *input)
 	vec3_t temp;
 
 	GL_Bind(tr.whiteImage);
-	glColor3f(1, 1, 1);
-	glDepthRange(0, 0);    // never occluded
+	VKimm_Color3f(1, 1, 1);
+	VK_SetDepthRange(0, 0);    // never occluded
 	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE);
 
 	// light direction
@@ -720,45 +720,43 @@ static void DrawNormals(shaderCommands_t *input)
 		temp[1] = DotProduct(temp2, backEnd.orientation.axis[1]);
 		temp[2] = DotProduct(temp2, backEnd.orientation.axis[2]);
 
-		glColor3f(ent->ambientLight[0] / 255, ent->ambientLight[1] / 255, ent->ambientLight[2] / 255);
-		glPointSize(5);
-		glBegin(GL_POINTS);
-		glVertex3fv(temp);
-		glEnd();
-		glPointSize(1);
+		VKimm_Color3f(ent->ambientLight[0] / 255, ent->ambientLight[1] / 255, ent->ambientLight[2] / 255);
+		VKimm_PointSize(5);
+		VKimm_Begin(GL_POINTS);
+		VKimm_Vertex3fv(temp);
+		VKimm_End();
+		VKimm_PointSize(1);
 
 		if (Q_fabs(VectorLengthSquared(ent->lightDir) - 1.0f) > 0.2f)
 		{
-			glColor3f(1, 0, 0);
+			VKimm_Color3f(1, 0, 0);
 		}
 		else
 		{
-			glColor3f(ent->directedLight[0] / 255, ent->directedLight[1] / 255, ent->directedLight[2] / 255);
+			VKimm_Color3f(ent->directedLight[0] / 255, ent->directedLight[1] / 255, ent->directedLight[2] / 255);
 		}
-		glLineWidth(3);
-		glBegin(GL_LINES);
-		glVertex3fv(temp);
+		VKimm_Begin(GL_LINES);
+		VKimm_Vertex3fv(temp);
 		VectorMA(temp, 32, ent->lightDir, temp);
-		glVertex3fv(temp);
-		glEnd();
-		glLineWidth(1);
+		VKimm_Vertex3fv(temp);
+		VKimm_End();
 	}
 	// normals drawing
 	else
 	{
 		int i;
 
-		glBegin(GL_LINES);
+		VKimm_Begin(GL_LINES);
 		for (i = 0 ; i < input->numVertexes ; i++)
 		{
-			glVertex3fv(input->xyz[i]);
+			VKimm_Vertex3fv(input->xyz[i]);
 			VectorMA(input->xyz[i], r_normalLength->value, input->normal[i], temp);
-			glVertex3fv(temp);
+			VKimm_Vertex3fv(temp);
 		}
-		glEnd();
+		VKimm_End();
 	}
 
-	glDepthRange(0, 1);
+	VK_SetDepthRange(0, 1);
 }
 
 /**
