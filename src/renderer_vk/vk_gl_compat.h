@@ -60,11 +60,6 @@ typedef unsigned int GLhandleARB;
 #define GL_FALSE 0
 #define GL_TRUE  1
 
-// Vulkan has no notion of power-of-two texture restrictions; always report
-// NPOT as supported so renderer1's non-power-of-two fallback path (image
-// padding) is never exercised.
-#define GLEW_ARB_texture_non_power_of_two 1
-
 #define GL_ALWAYS               0x0207
 #define GL_BACK                 0x0405
 #define GL_BLEND                0x0BE2
@@ -168,42 +163,7 @@ typedef unsigned int GLhandleARB;
 #define GL_UNSIGNED_INT           0x1405
 #define GL_UNSIGNED_SHORT         0x1403
 
-// every gl* entry point referenced by the shared frontend files is reduced
-// to a no-op; arguments are intentionally ignored (variadic macro keeps this
-// correct regardless of each call's arity).
-#define glBlendFunc(...)    ((void)0)
-#define glCallList(...)     ((void)0)
-#define glCallLists(...)    ((void)0)
-// glClearColor is a real capture point (stored by the Vulkan
-// backend and used by VK_ClearSceneColor()); glClear itself stays a no-op
-// and callers that need a color clear call VK_ClearSceneColor().
-void VK_SetClearColor(float r, float g, float b, float a);
-
-// immediate mode (glBegin/glVertex/glColor/glTexCoord/glEnd)
-// is emulated by tr_backend.c (VKimm_*), so renderer1's debug drawing
-// (bone/bounds/axis/debug polygons, r_showImages, r_showNormals) and
-// RB_SurfaceBeam work unchanged. glDepthRange is a real capture point
-// (RF_DEPTHHACK, "never occluded" debug draws, sky/sun).
-void VKimm_Begin(int mode);
-void VKimm_End(void);
-void VKimm_Vertex3f(float x, float y, float z);
-void VKimm_Color4f(float r, float g, float b, float a);
-void VKimm_TexCoord2f(float s, float t);
-void VKimm_PointSize(float size);
-void VK_SetDepthRange(float minDepth, float maxDepth);
-#define glBegin(mode)            VKimm_Begin((int)(mode))
-#define glEnd()                  VKimm_End()
-#define glVertex2f(x, y)         VKimm_Vertex3f((float)(x), (float)(y), 0.0f)
-#define glVertex3f(x, y, z)      VKimm_Vertex3f((float)(x), (float)(y), (float)(z))
-#define glVertex3fv(v)           VKimm_Vertex3f((float)(v)[0], (float)(v)[1], (float)(v)[2])
-#define glColor3f(r, g, b)       VKimm_Color4f((float)(r), (float)(g), (float)(b), 1.0f)
-#define glColor3fv(v)            VKimm_Color4f((float)(v)[0], (float)(v)[1], (float)(v)[2], 1.0f)
-#define glColor4f(r, g, b, a)    VKimm_Color4f((float)(r), (float)(g), (float)(b), (float)(a))
-#define glColor4fv(v)            VKimm_Color4f((float)(v)[0], (float)(v)[1], (float)(v)[2], (float)(v)[3])
-#define glTexCoord2f(s, t)       VKimm_TexCoord2f((float)(s), (float)(t))
-#define glTexCoord2fv(v)         VKimm_TexCoord2f((float)(v)[0], (float)(v)[1])
-#define glPointSize(size)        VKimm_PointSize((float)(size))
-#define glDepthRange(n, f)       VK_SetDepthRange((float)(n), (float)(f))
+// Primitive modes used by the immediate-mode emulation (VKimm_*, tr_backend.c)
 #ifndef GL_LINE_LOOP
 #define GL_LINE_LOOP             0x0002
 #endif
@@ -219,73 +179,10 @@ void VK_SetDepthRange(float minDepth, float maxDepth);
 #ifndef GL_QUAD_STRIP
 #define GL_QUAD_STRIP            0x0008
 #endif
-#define glClearColor(r, g, b, a) VK_SetClearColor((float)(r), (float)(g), (float)(b), (float)(a))
-#define glClearStencil(...) ((void)0)
-#define glColorMask(...)    ((void)0)
-#define glCullFace(...)     ((void)0)
-#define glDisable(...)      ((void)0)
-#define glEnable(...)       ((void)0)
-#define glFinish(...)       ((void)0)
-#define glFogf(...)         ((void)0)
-#define glFogfv(...)        ((void)0)
-#define glFogi(...)         ((void)0)
-#define glHint(...)         ((void)0)
-#define glLineWidth(...)    ((void)0)
-#define glListBase(...)     ((void)0)
-#define glLoadIdentity(...) ((void)0)
-#define glLoadMatrixf(...)  ((void)0)
-#define glMatrixMode(...)   ((void)0)
-#define glOrtho(...)        ((void)0)
-#define glPopAttrib(...)    ((void)0)
-#define glPopMatrix(...)    ((void)0)
-#define glPushAttrib(...)   ((void)0)
-#define glPushMatrix(...)   ((void)0)
-#define glRasterPos3fv(...) ((void)0)
-#define glReadPixels(...)   ((void)0)
-#define glStencilFunc(...)  ((void)0)
-#define glStencilMask(...)  ((void)0)
-#define glStencilOp(...)    ((void)0)
-#define glTranslatef(...)   ((void)0)
 
-// tr_backend.c / tr_image.c: all state-setting/texture-upload entry points
-// used there are void and only consume arguments (no out-params read back
-// by those files), so a no-op macro is behaviorally equivalent to "this
-// renderer doesn't use OpenGL textures/state" for now.
-//
-// glActiveTextureARB/glClientActiveTextureARB are real (not macro) no-op
-// functions, unlike the rest of this header: renderer1 treats their address
-// as a GLEW-resolved extension-availability flag (`if (glActiveTextureARB)`
-// in tr_shader.c's CollapseMultitexture), which requires an addressable
-// symbol rather than a function-like macro.
-static inline void glActiveTextureARB(GLenum texture)
-{
-	(void) texture;
-}
-
-static inline void glClientActiveTextureARB(GLenum texture)
-{
-	(void) texture;
-}
-
-#define glAlphaFunc(...)             ((void)0)
-#define glBindTexture(...)           ((void)0)
-#define glClear(...)                 ((void)0)
-#define glClipPlane(...)             ((void)0)
-#define glCopyTexImage2D(...)        ((void)0)
-#define glCopyTexSubImage2D(...)     ((void)0)
-#define glDeleteTextures(...)        ((void)0)
-#define glDepthFunc(...)             ((void)0)
-#define glDepthMask(...)             ((void)0)
-#define glDrawBuffer(...)            ((void)0)
-#define glGenTextures(...)           ((void)0)
-#define glPolygonMode(...)           ((void)0)
-#define glScissor(...)               ((void)0)
-#define glTexEnvf(...)               ((void)0)
-#define glTexImage2D(...)            ((void)0)
-#define glTexParameterf(...)         ((void)0)
-#define glTexParameterfv(...)        ((void)0)
-#define glTexParameteri(...)         ((void)0)
-#define glTexSubImage2D(...)         ((void)0)
-#define glViewport(...)              ((void)0)
+// No gl* functions are declared here: the Vulkan renderer calls its own
+// backend directly (vulkan/vk.h, VKimm_* in tr_backend.c). Only the GL
+// enums/types still used as plain values by the shared tr_*.c code
+// (wrap modes, fog modes, blend/texture-env enums, ...) remain above.
 
 #endif // VK_GL_COMPAT_H

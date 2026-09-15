@@ -98,24 +98,17 @@ void R_Fog(glfog_t *curfog)
 
 	R_FogOn();
 
-	glFogi(GL_FOG_MODE, curfog->mode);
 
-	glFogfv(GL_FOG_COLOR, curfog->color);
 
-	glFogf(GL_FOG_DENSITY, curfog->density);
 
-	glHint(GL_FOG_HINT, curfog->hint);
 
-	glFogf(GL_FOG_START, curfog->start);
 
 	// allow override for helping level designers test fog distances
 	fogEnd = (r_zFar->value != 0.f) ? r_zFar->value : curfog->end;
-	glFogf(GL_FOG_END, fogEnd);
 
-	glClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
+	VK_SetClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
 
-	// glFog*() above are no-ops (no real GL context); this is
-	// the real capture point for the Vulkan backend's linear-fog state.
+	// Vulkan backend linear-fog state (renderer1's glFog*)
 	VK_SetFog(curfog->color, curfog->start, fogEnd);
 }
 
@@ -130,7 +123,6 @@ void R_FogOff(void)
 	{
 		return;
 	}
-	glDisable(GL_FOG);
 	fogIsOn = qfalse;
 }
 
@@ -161,7 +153,6 @@ void R_FogOn(void)
 		return;
 	}
 
-	glEnable(GL_FOG);
 	VK_SetFogOn();
 	fogIsOn = qtrue;
 }
@@ -1785,25 +1776,25 @@ void R_DebugPolygon(int color, int numPoints, float *points)
 	GL_State(GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
 
 	// draw solid shade
-	glColor3f(color & 1, (color >> 1) & 1, (color >> 2) & 1);
-	glBegin(GL_POLYGON);
+	VKimm_Color3f(color & 1, (color >> 1) & 1, (color >> 2) & 1);
+	VKimm_Begin(GL_POLYGON);
 	for (i = 0 ; i < numPoints ; i++)
 	{
-		glVertex3fv(points + i * 3);
+		VKimm_Vertex3fv(points + i * 3);
 	}
-	glEnd();
+	VKimm_End();
 
 	// draw wireframe outline
 	GL_State(GLS_POLYMODE_LINE | GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE);
-	glDepthRange(0, 0);
-	glColor3f(1, 1, 1);
-	glBegin(GL_POLYGON);
+	VK_SetDepthRange(0, 0);
+	VKimm_Color3f(1, 1, 1);
+	VKimm_Begin(GL_POLYGON);
 	for (i = 0 ; i < numPoints ; i++)
 	{
-		glVertex3fv(points + i * 3);
+		VKimm_Vertex3fv(points + i * 3);
 	}
-	glEnd();
-	glDepthRange(0, 1);
+	VKimm_End();
+	VK_SetDepthRange(0, 1);
 }
 
 /**
@@ -1822,19 +1813,13 @@ void R_DebugText(const vec3_t org, float r, float g, float b, const char *text, 
 	Ren_Print("TODO: R_DebugText Unimplemented!\n");
 	/*
 	if ( neverOcclude ) {
-	    glDepthRange( 0, 0 );  // never occluded
+	    VK_SetDepthRange( 0, 0 );  // never occluded
 
 	}
-	glColor3f( r, g, b );
-	glRasterPos3fv( org );
-	glPushAttrib( GL_LIST_BIT );
-	glListBase( gl_NormalFontBase );
-	glCallLists( strlen( text ), GL_UNSIGNED_BYTE, text );
-	glListBase( 0 );
-	glPopAttrib();
+	VKimm_Color3f( r, g, b );
 
 	if ( neverOcclude ) {
-	    glDepthRange( 0, 1 );
+	    VK_SetDepthRange( 0, 1 );
 	}
 	*/
 }
@@ -1855,7 +1840,6 @@ static void R_DebugGraphics(void)
 	R_IssuePendingRenderCommands();
 
 	GL_Bind(tr.whiteImage);
-	GL_Cull(CT_FRONT_SIDED);
 	ri.CM_DrawDebugSurface(R_DebugPolygon);
 }
 

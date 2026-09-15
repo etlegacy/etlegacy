@@ -433,7 +433,7 @@ static float  s_skyTexCoords[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1][2];
 /**
  * @brief builds one skybox face's (mins..maxs) point/texcoord
  * grid into tess as a triangle list and submits it via VK_Draw3D(), since
- * Vulkan has no equivalent of the original glBegin(GL_TRIANGLE_STRIP)
+ * Vulkan has no equivalent of the original VKimm_Begin(GL_TRIANGLE_STRIP)
  * immediate-mode submission. Two-sided (no culling) since winding of the
  * generated quads isn't guaranteed to match a single GL convention.
  */
@@ -981,14 +981,11 @@ void RB_DrawSun(void)
 	{
 		return;
 	}
-	glPushMatrix();
-	glLoadMatrixf(backEnd.viewParms.world.modelMatrix);
-	glTranslatef(backEnd.viewParms.orientation.origin[0], backEnd.viewParms.orientation.origin[1], backEnd.viewParms.orientation.origin[2]);
 
-	// real capture point (the GL matrix calls above are
-	// no-ops). World matrix * translate(viewOrigin) cancels the view
-	// translation, leaving rotation only - same as the skybox trick in
-	// RB_StageIteratorSky(): the sun quad is camera-relative.
+	// renderer1 loads the world matrix and translates by the
+	// view origin, which cancels the view translation and leaves rotation
+	// only - same as the skybox trick in RB_StageIteratorSky(): the sun
+	// quad is camera-relative.
 	VK_GetModelViewMatrix(savedModelMatrix);
 	Com_Memcpy(sunModelMatrix, backEnd.viewParms.world.modelMatrix, sizeof(sunModelMatrix));
 	sunModelMatrix[12] = 0.0f;
@@ -1009,8 +1006,7 @@ void RB_DrawSun(void)
 	VectorScale(vec2, size, vec2);
 
 	// farthest depth range
-	glDepthRange(1.0, 1.0);
-	VK_SetSkyDepthRange(1.0f, 1.0f);
+	VK_SetDepthRange(1.0f, 1.0f);
 
 	color[0] = color[1] = color[2] = color[3] = 255;
 
@@ -1105,9 +1101,7 @@ void RB_DrawSun(void)
 	}
 
 	// back to normal depth range
-	glDepthRange(0.0, 1.0);
-	glPopMatrix();
-	VK_SetSkyDepthRange(0.0f, 1.0f);
+	VK_SetDepthRange(0.0f, 1.0f);
 	VK_SetModelViewMatrix(savedModelMatrix);
 }
 
@@ -1160,11 +1154,11 @@ void RB_StageIteratorSky(void)
 	// much sky is getting sucked in
 	if (r_showSky->integer)
 	{
-		VK_SetSkyDepthRange(0.0f, 0.0f);
+		VK_SetDepthRange(0.0f, 0.0f);
 	}
 	else
 	{
-		VK_SetSkyDepthRange(1.0f, 1.0f);
+		VK_SetDepthRange(1.0f, 1.0f);
 	}
 
 	// draw the outer skybox
@@ -1211,7 +1205,7 @@ void RB_StageIteratorSky(void)
 	}
 
 	// back to normal depth range
-	VK_SetSkyDepthRange(0.0f, 1.0f);
+	VK_SetDepthRange(0.0f, 1.0f);
 
 	backEnd.refdef.rdflags &= ~RDF_DRAWINGSKY;
 

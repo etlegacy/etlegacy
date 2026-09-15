@@ -535,13 +535,15 @@ void RB_RenderFlares(void)
 		return;
 	}
 
+	// renderer1 disables the portal clip plane for flares: they are drawn
+	// with a window-space ortho matrix, where the eye-space plane is
+	// meaningless
 	if (backEnd.viewParms.isPortal)
 	{
-		glDisable(GL_CLIP_PLANE0);
+		VK_ClearPortalClip();
 	}
 
-	// glPushMatrix/glOrtho/glPopMatrix are no-ops here — build
-	// the equivalent GL-convention ortho matrix (RB_RenderFlare() writes
+	// build the equivalent GL-convention ortho matrix (RB_RenderFlare() writes
 	// raw window-space pixel coordinates into tess.xyz, same as the
 	// original immediate-mode code expected) and feed it through the real
 	// capture points, saving/restoring the current (3D world) proj +

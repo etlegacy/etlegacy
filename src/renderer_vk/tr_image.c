@@ -823,7 +823,6 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 	image = tr.images[tr.numImages] = R_CacheImageAlloc(sizeof(image_t));
 
 	// ok, let's try the recommended way
-	glGenTextures(1, &image->texnum);
 
 	tr.numImages++;
 
@@ -837,19 +836,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 	image->wrapClampMode = wrapClampMode;
 
 	// lightmaps are always allocated on TMU 1
-	if (glActiveTextureARB && isLightmap)
-	{
-		image->TMU = 1;
-	}
-	else
-	{
-		image->TMU = 0;
-	}
-
-	if (glActiveTextureARB)
-	{
-		GL_SelectTexture(image->TMU);
-	}
+	image->TMU = isLightmap ? 1 : 0;
 
 	GL_Bind(image);
 
@@ -882,16 +869,6 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 		}
 
 		ri.Hunk_FreeTempMemory(empty);
-	}
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapClampMode);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapClampMode);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	if (image->TMU == 1)
-	{
-		GL_SelectTexture(0);
 	}
 
 	hash            = generateHashValue(name);
@@ -1062,12 +1039,6 @@ image_t *R_FindImageFile(const char *name, qboolean mipmap, qboolean allowPicmip
 		tr.allowCompress = -1;
 	}
 
-	if (!GLEW_ARB_texture_non_power_of_two && (!Com_PowerOf2(width) || !Com_PowerOf2(height)))
-	{
-		Ren_Developer("WARNING: Image not power of 2 scaled: %s (%i:%i)\n", name, width, height);
-		return NULL;
-	}
-
 	image = R_CreateImage(name, pic, width, height, mipmap, allowPicmip, glWrapClampMode);
 
 	// no texture compression
@@ -1177,7 +1148,6 @@ static void R_CreateFogImage(void)
 	borderColor[3] = 1;
 
 #ifndef __EMSCRIPTEN__
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 #endif
 }
 
@@ -1375,25 +1345,12 @@ void R_DeleteTextures(void)
 
 	for (i = 0; i < tr.numImages ; i++)
 	{
-		glDeleteTextures(1, &tr.images[i]->texnum);
 		VK_DeleteImageTexture(tr.images[i]);
 	}
 
 	Com_Memset(tr.images, 0, sizeof(tr.images));
 	tr.numImages = 0;
 
-	Com_Memset(glState.currenttextures, 0, sizeof(glState.currenttextures));
-	if (glActiveTextureARB)
-	{
-		GL_SelectTexture(1);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		GL_SelectTexture(0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-	else
-	{
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
 
 	R_CacheImageFreeAll();
 }
@@ -1987,23 +1944,10 @@ qboolean R_TouchImage(image_t *inImage)
  */
 void R_PurgeImage(image_t *image)
 {
-	glDeleteTextures(1, &image->texnum);
 	VK_DeleteImageTexture(image);
 
 	R_CacheImageFree(image);
 
-	Com_Memset(glState.currenttextures, 0, sizeof(glState.currenttextures));
-	if (glActiveTextureARB)
-	{
-		GL_SelectTexture(1);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		GL_SelectTexture(0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-	else
-	{
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
 }
 
 /**
@@ -2074,18 +2018,6 @@ void R_BackupImages(void)
 	numBackupImages = tr.numImages;
 	tr.numImages    = 0;
 
-	Com_Memset(glState.currenttextures, 0, sizeof(glState.currenttextures));
-	if (glActiveTextureARB)
-	{
-		GL_SelectTexture(1);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		GL_SelectTexture(0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-	else
-	{
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
 }
 
 /**

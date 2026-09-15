@@ -51,371 +51,42 @@ static float s_flipMatrix[16] =
 	0,  0, 0,  1
 };
 
-/**
- * @brief GL_Bind
- * @param[in,out] image
- */
-/// last image given to GL_Bind(), used by the immediate-mode
-/// emulation below (renderer1 debug code binds then draws with glBegin)
+/// last image given to GL_Bind(), used by the immediate-mode emulation
+/// below (renderer1 debug code binds, then draws with glBegin/glEnd)
 static image_t *vkImmBoundImage;
 
+/**
+ * @brief GL_Bind - Vulkan draws take their image explicitly; this only
+ * marks the image as used this frame and remembers it for the
+ * immediate-mode emulation.
+ * @param[in] image
+ */
 void GL_Bind(image_t *image)
 {
-	int texnum;
-
-	vkImmBoundImage = image;
-
 	if (!image)
 	{
 		Ren_Warning("GL_Bind: NULL image\n");
-		texnum = tr.defaultImage->texnum;
-	}
-	else
-	{
-		texnum = image->texnum;
+		image = tr.defaultImage;
 	}
 
 	if (r_noBind->integer && tr.dlightImage)            // performance evaluation option
 	{
-		texnum = tr.dlightImage->texnum;
+		image = tr.dlightImage;
 	}
 
-	if (glState.currenttextures[glState.currenttmu] != texnum)
-	{
-		if (image)
-		{
-			image->frameUsed = tr.frameCount;
-		}
-
-		glState.currenttextures[glState.currenttmu] = texnum;
-		glBindTexture(GL_TEXTURE_2D, texnum);
-	}
+	image->frameUsed = tr.frameCount;
+	vkImmBoundImage  = image;
 }
 
 /**
- * @brief GL_SelectTexture
- * @param[in] unit
- */
-void GL_SelectTexture(int unit)
-{
-	if (glState.currenttmu == unit)
-	{
-		return;
-	}
-
-	if (unit == 0)
-	{
-		glActiveTextureARB(GL_TEXTURE0_ARB);
-		Ren_LogComment("glActiveTextureARB( GL_TEXTURE0_ARB )\n");
-		glClientActiveTextureARB(GL_TEXTURE0_ARB);
-		Ren_LogComment("glClientActiveTextureARB( GL_TEXTURE0_ARB )\n");
-	}
-	else if (unit == 1)
-	{
-		glActiveTextureARB(GL_TEXTURE1_ARB);
-		Ren_LogComment("glActiveTextureARB( GL_TEXTURE1_ARB )\n");
-		glClientActiveTextureARB(GL_TEXTURE1_ARB);
-		Ren_LogComment("glClientActiveTextureARB( GL_TEXTURE1_ARB )\n");
-	}
-	else
-	{
-		Ren_Drop("GL_SelectTexture: unit = %i", unit);
-	}
-
-	glState.currenttmu = unit;
-}
-
-/*
- * @brief GL_BindMultitexture
- * @param image0
- * @param env0 - unused
- * @param image1
- * @param env1 - unused
- *
- * @note Unused
-void GL_BindMultitexture(image_t *image0, GLuint env0, image_t *image1, GLuint env1)
-{
-    int texnum0 = image0->texnum;
-    int texnum1 = image1->texnum;
-
-    if (r_nobind->integer && tr.dlightImage)            // performance evaluation option
-    {
-        texnum0 = texnum1 = tr.dlightImage->texnum;
-    }
-
-    if (glState.currenttextures[1] != texnum1)
-    {
-        GL_SelectTexture(1);
-        image1->frameUsed          = tr.frameCount;
-        glState.currenttextures[1] = texnum1;
-        glBindTexture(GL_TEXTURE_2D, texnum1);
-    }
-    if (glState.currenttextures[0] != texnum0)
-    {
-        GL_SelectTexture(0);
-        image0->frameUsed          = tr.frameCount;
-        glState.currenttextures[0] = texnum0;
-        glBindTexture(GL_TEXTURE_2D, texnum0);
-    }
-}
-*/
-
-/**
- * @brief GL_Cull
- * @param[in] cullType
- */
-void GL_Cull(int cullType)
-{
-	if (glState.faceCulling == cullType)
-	{
-		return;
-	}
-
-	glState.faceCulling = cullType;
-
-	if (cullType == CT_TWO_SIDED)
-	{
-		glDisable(GL_CULL_FACE);
-	}
-	else
-	{
-		qboolean cullFront;
-		glEnable(GL_CULL_FACE);
-
-		cullFront = (cullType == CT_FRONT_SIDED);
-		if (backEnd.viewParms.isMirror)
-		{
-			cullFront = !cullFront;
-		}
-
-		glCullFace(cullFront ? GL_FRONT : GL_BACK);
-	}
-}
-
-/**
- * @brief GL_TexEnv
- * @param[in] env
- */
-void GL_TexEnv(int env)
-{
-	if (env == glState.texEnv[glState.currenttmu])
-	{
-		return;
-	}
-
-	glState.texEnv[glState.currenttmu] = env;
-
-
-	switch (env)
-	{
-	case GL_MODULATE:
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		break;
-	case GL_REPLACE:
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-		break;
-	case GL_DECAL:
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
-		break;
-	case GL_ADD:
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_ADD);
-		break;
-	default:
-		Ren_Drop("GL_TexEnv: invalid env '%d' passed\n", env);
-	}
-}
-
-/**
- * @brief This routine is responsible for setting the most commonly changed state in Q3.
+ * @brief GL_State - records the renderer1 state bits. Vulkan pipelines are
+ * selected per draw from explicit state bits; the recorded value is used
+ * by the immediate-mode emulation below.
  * @param[in] stateBits
  */
 void GL_State(unsigned long stateBits)
 {
-	unsigned long diff = stateBits ^ glState.glStateBits;
-
-	if (!diff)
-	{
-		return;
-	}
-
-	// check depthFunc bits
-	if (diff & GLS_DEPTHFUNC_EQUAL)
-	{
-		if (stateBits & GLS_DEPTHFUNC_EQUAL)
-		{
-			glDepthFunc(GL_EQUAL);
-		}
-		else
-		{
-			glDepthFunc(GL_LEQUAL);
-		}
-	}
-
-	// check blend bits
-	if (diff & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS))
-	{
-		GLenum srcFactor, dstFactor;
-
-		if (stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS))
-		{
-			switch (stateBits & GLS_SRCBLEND_BITS)
-			{
-			case GLS_SRCBLEND_ZERO:
-				srcFactor = GL_ZERO;
-				break;
-			case GLS_SRCBLEND_ONE:
-				srcFactor = GL_ONE;
-				break;
-			case GLS_SRCBLEND_DST_COLOR:
-				srcFactor = GL_DST_COLOR;
-				break;
-			case GLS_SRCBLEND_ONE_MINUS_DST_COLOR:
-				srcFactor = GL_ONE_MINUS_DST_COLOR;
-				break;
-			case GLS_SRCBLEND_SRC_ALPHA:
-				srcFactor = GL_SRC_ALPHA;
-				break;
-			case GLS_SRCBLEND_ONE_MINUS_SRC_ALPHA:
-				srcFactor = GL_ONE_MINUS_SRC_ALPHA;
-				break;
-			case GLS_SRCBLEND_DST_ALPHA:
-				srcFactor = GL_DST_ALPHA;
-				break;
-			case GLS_SRCBLEND_ONE_MINUS_DST_ALPHA:
-				srcFactor = GL_ONE_MINUS_DST_ALPHA;
-				break;
-			case GLS_SRCBLEND_ALPHA_SATURATE:
-				srcFactor = GL_SRC_ALPHA_SATURATE;
-				break;
-			default:
-				srcFactor = GL_ONE;     // to get warning to shut up
-				Ren_Drop("GL_State: invalid src blend state bits\n");
-			}
-
-			switch (stateBits & GLS_DSTBLEND_BITS)
-			{
-			case GLS_DSTBLEND_ZERO:
-				dstFactor = GL_ZERO;
-				break;
-			case GLS_DSTBLEND_ONE:
-				dstFactor = GL_ONE;
-				break;
-			case GLS_DSTBLEND_SRC_COLOR:
-				dstFactor = GL_SRC_COLOR;
-				break;
-			case GLS_DSTBLEND_ONE_MINUS_SRC_COLOR:
-				dstFactor = GL_ONE_MINUS_SRC_COLOR;
-				break;
-			case GLS_DSTBLEND_SRC_ALPHA:
-				dstFactor = GL_SRC_ALPHA;
-				break;
-			case GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA:
-				dstFactor = GL_ONE_MINUS_SRC_ALPHA;
-				break;
-			case GLS_DSTBLEND_DST_ALPHA:
-				dstFactor = GL_DST_ALPHA;
-				break;
-			case GLS_DSTBLEND_ONE_MINUS_DST_ALPHA:
-				dstFactor = GL_ONE_MINUS_DST_ALPHA;
-				break;
-			default:
-				dstFactor = GL_ONE;     // to get warning to shut up
-				Ren_Drop("GL_State: invalid dst blend state bits\n");
-			}
-
-			glEnable(GL_BLEND);
-			glBlendFunc(srcFactor, dstFactor);
-		}
-		else
-		{
-			glDisable(GL_BLEND);
-		}
-	}
-
-	// check depthmask
-	if (diff & GLS_DEPTHMASK_TRUE)
-	{
-		if (stateBits & GLS_DEPTHMASK_TRUE)
-		{
-			glDepthMask(GL_TRUE);
-		}
-		else
-		{
-			glDepthMask(GL_FALSE);
-		}
-	}
-
-	// fill/line mode
-	if (diff & GLS_POLYMODE_LINE)
-	{
-		if (stateBits & GLS_POLYMODE_LINE)
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		}
-		else
-		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		}
-	}
-
-	// depthtest
-	if (diff & GLS_DEPTHTEST_DISABLE)
-	{
-		if (stateBits & GLS_DEPTHTEST_DISABLE)
-		{
-			glDisable(GL_DEPTH_TEST);
-		}
-		else
-		{
-			glEnable(GL_DEPTH_TEST);
-		}
-	}
-
-	// alpha test
-	if (diff & GLS_ATEST_BITS)
-	{
-		switch (stateBits & GLS_ATEST_BITS)
-		{
-		case 0:
-			glDisable(GL_ALPHA_TEST);
-			break;
-		case GLS_ATEST_GT_0:
-			glEnable(GL_ALPHA_TEST);
-			glAlphaFunc(GL_GREATER, 0.0f);
-			break;
-		case GLS_ATEST_LT_80:
-			glEnable(GL_ALPHA_TEST);
-			glAlphaFunc(GL_LESS, 0.5f);
-			break;
-		case GLS_ATEST_GE_80:
-			glEnable(GL_ALPHA_TEST);
-			glAlphaFunc(GL_GEQUAL, 0.5f);
-			break;
-		default:
-			etl_assert(0);
-			break;
-		}
-	}
-
 	glState.glStateBits = stateBits;
-}
-
-void GL_FullscreenQuad(void)
-{
-	// Draw a simple quad, We could have done this in the GLSL code directly but that is version 130 upwards,
-	// and we want to be sure that R1 runs even with a toaster.
-	glBegin(GL_QUADS);
-	{
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex3f(-1.0f, -1.0f, 0.0f);
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex3f(1.0f, -1.0f, 0.0f);
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex3f(1.0f, 1.0f, 0.0f);
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex3f(-1.0f, 1.0f, 0.0f);
-	}
-	glEnd();
 }
 
 /**
@@ -425,8 +96,7 @@ static void RB_Hyperspace(void)
 {
 	float c = (backEnd.refdef.time & 255) / 255.0f;
 
-	glClearColor(c, c, c, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
+	VK_SetClearColor(c, c, c, 1);
 	VK_ClearSceneColor(qfalse);
 
 	backEnd.isHyperspace = qtrue;
@@ -437,21 +107,11 @@ static void RB_Hyperspace(void)
  */
 static void SetViewportAndScissor(void)
 {
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(backEnd.viewParms.projectionMatrix);
-	glMatrixMode(GL_MODELVIEW);
 
-	// glLoadMatrixf() is a no-op (no real GL context), so this
-	// is the real capture point for the 3D projection matrix.
 	VK_SetProjectionMatrix(backEnd.viewParms.projectionMatrix);
 
 	// set the window clipping
-	glViewport(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY,
-	           backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
-	glScissor(backEnd.viewParms.viewportX, backEnd.viewParms.viewportY,
-	          backEnd.viewParms.viewportWidth, backEnd.viewParms.viewportHeight);
 
-	// real capture point (glViewport/glScissor are no-ops here).
 	// Must be set per-view, not cached per-frame: a frame may contain
 	// multiple 3D views with different viewport rects (e.g. the limbo
 	// menu's small player-model preview alongside the main world view).
@@ -470,7 +130,6 @@ void RB_BeginDrawingView(void)
 	// sync with gl if needed
 	if (r_finish->integer == 1 && !glState.finishCalled)
 	{
-		glFinish();
 		glState.finishCalled = qtrue;
 	}
 	if (r_finish->integer == 0)
@@ -510,9 +169,9 @@ void RB_BeginDrawingView(void)
 		clearBits |= GL_DEPTH_BUFFER_BIT;
 		clearBits |= GL_COLOR_BUFFER_BIT;
 		//
-		glClearColor(tr.world->fogs[tr.world->globalFog].shader->fogParms.color[0] * tr.identityLight,
-		             tr.world->fogs[tr.world->globalFog].shader->fogParms.color[1] * tr.identityLight,
-		             tr.world->fogs[tr.world->globalFog].shader->fogParms.color[2] * tr.identityLight, 1.0);
+		VK_SetClearColor(tr.world->fogs[tr.world->globalFog].shader->fogParms.color[0] * tr.identityLight,
+		                 tr.world->fogs[tr.world->globalFog].shader->fogParms.color[1] * tr.identityLight,
+		                 tr.world->fogs[tr.world->globalFog].shader->fogParms.color[2] * tr.identityLight, 1.0);
 	}
 	else if (skyboxportal)
 	{
@@ -525,22 +184,22 @@ void RB_BeginDrawingView(void)
 				clearBits |= GL_COLOR_BUFFER_BIT;
 				if (glfogsettings[FOG_PORTALVIEW].registered)
 				{
-					glClearColor(glfogsettings[FOG_PORTALVIEW].color[0], glfogsettings[FOG_PORTALVIEW].color[1], glfogsettings[FOG_PORTALVIEW].color[2], glfogsettings[FOG_PORTALVIEW].color[3]);
+					VK_SetClearColor(glfogsettings[FOG_PORTALVIEW].color[0], glfogsettings[FOG_PORTALVIEW].color[1], glfogsettings[FOG_PORTALVIEW].color[2], glfogsettings[FOG_PORTALVIEW].color[3]);
 				}
 				else if (glfogNum > FOG_NONE && glfogsettings[FOG_CURRENT].registered)
 				{
-					glClearColor(glfogsettings[FOG_CURRENT].color[0], glfogsettings[FOG_CURRENT].color[1], glfogsettings[FOG_CURRENT].color[2], glfogsettings[FOG_CURRENT].color[3]);
+					VK_SetClearColor(glfogsettings[FOG_CURRENT].color[0], glfogsettings[FOG_CURRENT].color[1], glfogsettings[FOG_CURRENT].color[2], glfogsettings[FOG_CURRENT].color[3]);
 				}
 				else
 				{
-					glClearColor(0.5, 0.5, 0.5, 1.0);
+					VK_SetClearColor(0.5, 0.5, 0.5, 1.0);
 				}
 			}
 			else                                                        // rendered sky (either clear color or draw quake sky)
 			{
 				if (glfogsettings[FOG_PORTALVIEW].registered)
 				{
-					glClearColor(glfogsettings[FOG_PORTALVIEW].color[0], glfogsettings[FOG_PORTALVIEW].color[1], glfogsettings[FOG_PORTALVIEW].color[2], glfogsettings[FOG_PORTALVIEW].color[3]);
+					VK_SetClearColor(glfogsettings[FOG_PORTALVIEW].color[0], glfogsettings[FOG_PORTALVIEW].color[1], glfogsettings[FOG_PORTALVIEW].color[2], glfogsettings[FOG_PORTALVIEW].color[3]);
 
 					if (glfogsettings[FOG_PORTALVIEW].clearscreen)        // portal fog requests a screen clear (distance fog rather than quake sky)
 					{
@@ -569,12 +228,12 @@ void RB_BeginDrawingView(void)
 					clearBits |= GL_COLOR_BUFFER_BIT;
 				}
 
-				glClearColor(glfogsettings[FOG_CURRENT].color[0], glfogsettings[FOG_CURRENT].color[1], glfogsettings[FOG_CURRENT].color[2], glfogsettings[FOG_CURRENT].color[3]);
+				VK_SetClearColor(glfogsettings[FOG_CURRENT].color[0], glfogsettings[FOG_CURRENT].color[1], glfogsettings[FOG_CURRENT].color[2], glfogsettings[FOG_CURRENT].color[3]);
 			}
 			else if (!(r_portalSky->integer)) // portal skies have been manually turned off, clear bg color
 			{
 				clearBits |= GL_COLOR_BUFFER_BIT;
-				glClearColor(0.5, 0.5, 0.5, 1.0);
+				VK_SetClearColor(0.5, 0.5, 0.5, 1.0);
 			}
 		}
 	}
@@ -594,18 +253,18 @@ void RB_BeginDrawingView(void)
 
 			if (glfogsettings[FOG_CURRENT].registered)     // try to clear fastsky with current fog color
 			{
-				glClearColor(glfogsettings[FOG_CURRENT].color[0], glfogsettings[FOG_CURRENT].color[1], glfogsettings[FOG_CURRENT].color[2], glfogsettings[FOG_CURRENT].color[3]);
+				VK_SetClearColor(glfogsettings[FOG_CURRENT].color[0], glfogsettings[FOG_CURRENT].color[1], glfogsettings[FOG_CURRENT].color[2], glfogsettings[FOG_CURRENT].color[3]);
 			}
 			else
 			{
-				glClearColor(0.05f, 0.05f, 0.05f, 1.0f);    // JPW NERVE changed per id req was 0.5s
+				VK_SetClearColor(0.05f, 0.05f, 0.05f, 1.0f);    // JPW NERVE changed per id req was 0.5s
 			}
 		}
 		else  // world scene, no portal sky, not fastsky, clear color if fog says to, otherwise, just set the clearcolor
 		{
 			if (glfogsettings[FOG_CURRENT].registered)     // try to clear fastsky with current fog color
 			{
-				glClearColor(glfogsettings[FOG_CURRENT].color[0], glfogsettings[FOG_CURRENT].color[1], glfogsettings[FOG_CURRENT].color[2], glfogsettings[FOG_CURRENT].color[3]);
+				VK_SetClearColor(glfogsettings[FOG_CURRENT].color[0], glfogsettings[FOG_CURRENT].color[1], glfogsettings[FOG_CURRENT].color[2], glfogsettings[FOG_CURRENT].color[3]);
 
 				if (glfogsettings[FOG_CURRENT].clearscreen)       // world fog requests a screen clear (distance fog rather than quake sky)
 				{
@@ -621,21 +280,15 @@ void RB_BeginDrawingView(void)
 		clearBits &= ~GL_COLOR_BUFFER_BIT;
 	}
 
-	if (clearBits)
-	{
-		glClear(clearBits);
-	}
-
-	// glClear() is a no-op; depth must still be reset per
-	// view so a portal/mirror subview's depth doesn't leak into the view
-	// drawn after it.
+	// depth is reset per view so a portal/mirror subview's depth doesn't
+	// leak into the view drawn after it
 	if (clearBits & GL_DEPTH_BUFFER_BIT)
 	{
 		VK_ClearSceneDepth();
 	}
 
-	// same for color (r_fastsky, fog clearscreen, portal sky
-	// fog, ...), using the color last given to glClearColor() above.
+	// color clears (r_fastsky, fog clearscreen, portal sky fog, ...) use
+	// the color last given to VK_SetClearColor() above
 	if (clearBits & GL_COLOR_BUFFER_BIT)
 	{
 		VK_ClearSceneColor(qfalse);
@@ -651,7 +304,6 @@ void RB_BeginDrawingView(void)
 		backEnd.isHyperspace = qfalse;
 	}
 
-	glState.faceCulling = -1; // force face culling to set next time
 
 	// we will only draw a sun if there was sky rendered in this view
 	backEnd.skyRenderedThisView = qfalse;
@@ -672,12 +324,9 @@ void RB_BeginDrawingView(void)
 		plane2[2] = DotProduct(backEnd.viewParms.orientation.axis[2], plane);
 		plane2[3] = DotProduct(plane, backEnd.viewParms.orientation.origin) - plane[3];
 
-		glLoadMatrixf(s_flipMatrix);
-		glClipPlane(GL_CLIP_PLANE0, plane2);
-		glEnable(GL_CLIP_PLANE0);
 
-		// real capture point (glClipPlane/glEnable are
-		// no-ops here). Real GL's glClipPlane transforms the given plane
+		// renderer1 hands plane2 to glClipPlane with
+		// s_flipMatrix loaded. Real GL's glClipPlane transforms the given plane
 		// by the *current* modelview's inverse-transpose at call time -
 		// which is s_flipMatrix here (just loaded), not the full world
 		// modelview - converting plane2 from the engine's native
@@ -702,7 +351,6 @@ void RB_BeginDrawingView(void)
 	}
 	else
 	{
-		glDisable(GL_CLIP_PLANE0);
 		VK_ClearPortalClip();
 	}
 }
@@ -811,9 +459,7 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 				R_TransformDlights(backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd.orientation);
 			}
 
-			glLoadMatrixf(backEnd.orientation.modelMatrix);
 
-			// real capture point (glLoadMatrixf is a no-op here).
 			VK_SetModelViewMatrix(backEnd.orientation.modelMatrix);
 
 			// change depthrange if needed
@@ -821,11 +467,11 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 			{
 				if (depthRange)
 				{
-					glDepthRange(0, 0.3);
+					VK_SetDepthRange(0, 0.3);
 				}
 				else
 				{
-					glDepthRange(0, 1);
+					VK_SetDepthRange(0, 1);
 				}
 				oldDepthRange = depthRange;
 			}
@@ -849,14 +495,12 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 	backEnd.orientation      = backEnd.viewParms.world;
 	R_TransformDlights(backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd.orientation);
 
-	glLoadMatrixf(backEnd.viewParms.world.modelMatrix);
 
-	// real capture point (glLoadMatrixf is a no-op here).
 	VK_SetModelViewMatrix(backEnd.viewParms.world.modelMatrix);
 
 	if (depthRange)
 	{
-		glDepthRange(0, 1);
+		VK_SetDepthRange(0, 1);
 	}
 
 	// draw sun
@@ -884,20 +528,11 @@ void RB_SetGL2D(void)
 	R_BindHudFBO();
 
 	// set 2D virtual screen size
-	glViewport(0, 0, glConfig.vidWidth, glConfig.vidHeight);
-	glScissor(0, 0, glConfig.vidWidth, glConfig.vidHeight);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, glConfig.vidWidth, glConfig.vidHeight, 0, 0, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 
 	GL_State(GLS_DEPTHTEST_DISABLE |
 	         GLS_SRCBLEND_SRC_ALPHA |
 	         GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA);
 
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_CLIP_PLANE0);
 
 	// set time for 2D shaders
 	backEnd.refdef.time      = ri.Milliseconds();
@@ -929,7 +564,6 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 	R_IssuePendingRenderCommands();
 
 	// we definitely want to sync every frame for the cinematics
-	glFinish();
 
 	RE_UploadCinematic(0, 0, cols, rows, data, client, dirty);
 
@@ -1007,21 +641,13 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 		Ren_Drop("RE_UploadCinematic: image offset out of range");
 	}
 
-#ifdef GL_ARB_texture_non_power_of_two
-	if (!GLEW_ARB_texture_non_power_of_two && (!Com_PowerOf2(cols) || !Com_PowerOf2(rows)))
-	{
-		Ren_Drop("Draw_StretchRaw: size not a power of 2: %i by %i", cols, rows);
-	}
-#endif
-
 	if (!tr.scratchImage[client])
 	{
 		tr.scratchImage[client] = R_CreateImage(va("*scratch%i", client), data, cols, rows, qfalse, qtrue, GL_CLAMP_TO_EDGE);
 		dirty                   = qfalse;
 	}
 
-	// real upload (the GL calls below are no-ops). Also covers
-	// the first frame: R_CreateImage() went through Upload32(), which may
+	// also covers the first frame: R_CreateImage() went through Upload32(), which may
 	// have resampled/picmipped, so recreate at the raw cinematic size.
 	if (tr.scratchImage[client] &&
 	    (dirty || tr.scratchImage[client]->uploadWidth != cols || tr.scratchImage[client]->uploadHeight != rows))
@@ -1044,17 +670,11 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 	{
 		image->width  = image->uploadWidth = cols;
 		image->height = image->uploadHeight = rows;
-		glTexImage2D(GL_TEXTURE_2D, 0, image->internalFormat, cols, rows, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	}
 	else if (dirty)
 	{
 		// otherwise, just subimage upload it so that drivers can tell we are going to be changing
 		// it and don't try and do a texture compression
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, cols, rows, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	}
 
 	if (r_speeds->integer)
@@ -1414,13 +1034,11 @@ const void *RB_DrawBuffer(const void *data)
 		return ( const void * ) (cmd + 1);
 	}
 
-	glDrawBuffer(cmd->buffer);
 
 	// clear screen for debugging
 	if (r_clear->integer)
 	{
-		glClearColor(1, 0, 0.5f, 1);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		VK_SetClearColor(1, 0, 0.5f, 1);
 		VK_ClearSceneColor(qtrue);
 	}
 
@@ -1455,10 +1073,8 @@ void RB_ShowImages(void)
 		RB_SetGL2D();
 	}
 
-	glClear(GL_COLOR_BUFFER_BIT);
 	VK_ClearSceneColor(qtrue);
 
-	glFinish();
 
 	start = ri.Milliseconds();
 
@@ -1480,19 +1096,18 @@ void RB_ShowImages(void)
 		}
 
 		GL_Bind(image);
-		glBegin(GL_QUADS);
-		glTexCoord2f(0, 0);
-		glVertex2f(x, y);
-		glTexCoord2f(1, 0);
-		glVertex2f(x + w, y);
-		glTexCoord2f(1, 1);
-		glVertex2f(x + w, y + h);
-		glTexCoord2f(0, 1);
-		glVertex2f(x, y + h);
-		glEnd();
+		VKimm_Begin(GL_QUADS);
+		VKimm_TexCoord2f(0, 0);
+		VKimm_Vertex2f(x, y);
+		VKimm_TexCoord2f(1, 0);
+		VKimm_Vertex2f(x + w, y);
+		VKimm_TexCoord2f(1, 1);
+		VKimm_Vertex2f(x + w, y + h);
+		VKimm_TexCoord2f(0, 1);
+		VKimm_Vertex2f(x, y + h);
+		VKimm_End();
 	}
 
-	glFinish();
 
 	end = ri.Milliseconds();
 	Ren_Print("%i msec to draw all images\n", end - start);
@@ -1512,39 +1127,39 @@ void RB_DrawBounds(vec3_t mins, vec3_t maxs)
     GL_State(GLS_POLYMODE_LINE);
 
     // box corners
-    glBegin(GL_LINES);
-    glColor3f(1, 1, 1);
+    VKimm_Begin(GL_LINES);
+    VKimm_Color3f(1, 1, 1);
 
-    glVertex3f(mins[0], mins[1], mins[2]);
-    glVertex3f(maxs[0], mins[1], mins[2]);
-    glVertex3f(mins[0], mins[1], mins[2]);
-    glVertex3f(mins[0], maxs[1], mins[2]);
-    glVertex3f(mins[0], mins[1], mins[2]);
-    glVertex3f(mins[0], mins[1], maxs[2]);
+    VKimm_Vertex3f(mins[0], mins[1], mins[2]);
+    VKimm_Vertex3f(maxs[0], mins[1], mins[2]);
+    VKimm_Vertex3f(mins[0], mins[1], mins[2]);
+    VKimm_Vertex3f(mins[0], maxs[1], mins[2]);
+    VKimm_Vertex3f(mins[0], mins[1], mins[2]);
+    VKimm_Vertex3f(mins[0], mins[1], maxs[2]);
 
-    glVertex3f(maxs[0], maxs[1], maxs[2]);
-    glVertex3f(mins[0], maxs[1], maxs[2]);
-    glVertex3f(maxs[0], maxs[1], maxs[2]);
-    glVertex3f(maxs[0], mins[1], maxs[2]);
-    glVertex3f(maxs[0], maxs[1], maxs[2]);
-    glVertex3f(maxs[0], maxs[1], mins[2]);
-    glEnd();
+    VKimm_Vertex3f(maxs[0], maxs[1], maxs[2]);
+    VKimm_Vertex3f(mins[0], maxs[1], maxs[2]);
+    VKimm_Vertex3f(maxs[0], maxs[1], maxs[2]);
+    VKimm_Vertex3f(maxs[0], mins[1], maxs[2]);
+    VKimm_Vertex3f(maxs[0], maxs[1], maxs[2]);
+    VKimm_Vertex3f(maxs[0], maxs[1], mins[2]);
+    VKimm_End();
 
     center[0] = (mins[0] + maxs[0]) * 0.5f;
     center[1] = (mins[1] + maxs[1]) * 0.5f;
     center[2] = (mins[2] + maxs[2]) * 0.5f;
 
     // center axis
-    glBegin(GL_LINES);
-    glColor3f(1, 0.85f, 0);
+    VKimm_Begin(GL_LINES);
+    VKimm_Color3f(1, 0.85f, 0);
 
-    glVertex3f(mins[0], center[1], center[2]);
-    glVertex3f(maxs[0], center[1], center[2]);
-    glVertex3f(center[0], mins[1], center[2]);
-    glVertex3f(center[0], maxs[1], center[2]);
-    glVertex3f(center[0], center[1], mins[2]);
-    glVertex3f(center[0], center[1], maxs[2]);
-    glEnd();
+    VKimm_Vertex3f(mins[0], center[1], center[2]);
+    VKimm_Vertex3f(maxs[0], center[1], center[2]);
+    VKimm_Vertex3f(center[0], mins[1], center[2]);
+    VKimm_Vertex3f(center[0], maxs[1], center[2]);
+    VKimm_Vertex3f(center[0], center[1], mins[2]);
+    VKimm_Vertex3f(center[0], center[1], maxs[2]);
+    VKimm_End();
 }
 */
 
@@ -1586,31 +1201,6 @@ const void *RB_SwapBuffers(const void *data)
 
 	cmd = ( const swapBuffersCommand_t * ) data;
 
-	// we measure overdraw by reading back the stencil buffer and
-	// counting up the number of increments that have happened
-	if (r_measureOverdraw->integer)
-	{
-		int           i;
-		long          sum = 0;
-		unsigned char *stencilReadback;
-
-		stencilReadback = ri.Hunk_AllocateTempMemory(glConfig.vidWidth * glConfig.vidHeight);
-		glReadPixels(0, 0, glConfig.vidWidth, glConfig.vidHeight, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, stencilReadback);
-
-		for (i = 0; i < glConfig.vidWidth * glConfig.vidHeight; i++)
-		{
-			sum += stencilReadback[i];
-		}
-
-		backEnd.pc.c_overDraw += sum;
-		ri.Hunk_FreeTempMemory(stencilReadback);
-	}
-
-	if (!glState.finishCalled)
-	{
-		glFinish();
-	}
-
 	Ren_LogComment("***************** RB_SwapBuffers *****************\n\n\n");
 
 	// End the render pass, submit the recorded command buffer and present
@@ -1641,10 +1231,6 @@ const void *RB_RenderToTexture(const void *data)
 	//ri.Printf( PRINT_ALL, "RB_RenderToTexture\n" );
 
 	GL_Bind(cmd->image);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
-	glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, cmd->x, cmd->y, cmd->w, cmd->h, 0);
 	//glCopyTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, cmd->x, cmd->y, cmd->w, cmd->h );
 
 	return ( const void * ) (cmd + 1);
@@ -1661,7 +1247,6 @@ const void *RB_Finish(const void *data)
 
 	//ri.Printf( PRINT_ALL, "RB_Finish\n" );
 
-	glFinish();
 
 	return ( const void * ) (cmd + 1);
 }
@@ -1728,7 +1313,7 @@ void RB_ExecuteRenderCommands(const void *data)
 }
 
 /*
- * immediate-mode emulation (see vk_gl_compat.h).
+ * immediate-mode emulation (declared in tr_local.h).
  *
  * Vertices are collected with the current color/texcoord between glBegin
  * and glEnd; glEnd converts the GL primitive into a triangle or line list
