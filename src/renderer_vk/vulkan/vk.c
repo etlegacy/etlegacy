@@ -220,10 +220,11 @@ typedef struct
 
 	// current fog state, mirroring renderer1's glfogsettings
 	// (R_Fog()/R_FogOff() in tr_main.c call VK_SetFog()/VK_SetFogOff()
-	// where renderer1 calls glFog*()). Linear fog only (GL_LINEAR
-	// is the mode R_Fog() defaults to when a fog volume doesn't specify
-	// one, which covers the vast majority of ET fog usage).
+	// where renderer1 calls glFog*()). Linear (start/end) or exponential
+	// (GL_EXP, density) fog.
 	qboolean fogEnabled;
+	qboolean fogExp;         // GL_EXP density fog instead of GL_LINEAR
+	float fogDensity;        // GL_FOG_DENSITY for fogExp
 	qboolean fogParamsValid; // VK_SetFog() has run at least once
 	float clearColor[4];     // last glClearColor() value
 
@@ -2333,12 +2334,13 @@ void VK_GetModelViewMatrix(float *m)
 }
 
 /**
- * @brief records the current linear-fog parameters, called
- * from R_Fog() (tr_main.c) where renderer1 calls glFog*().
- * Picked up per-draw by VK_Draw3D()/VK_Draw3DLightmapped() and applied in
- * the fragment shader based on each vertex's eye-space depth.
+ * @brief records the current fog parameters, called from
+ * R_Fog() (tr_main.c) where renderer1 calls glFog*(). Linear fog uses
+ * start/end; exponential (GL_EXP, density fog) uses density. Picked up
+ * per-draw by the 3D draw paths and applied in the fragment shaders from
+ * each fragment's eye-space depth.
  */
-void VK_SetFog(const float *color, float start, float end)
+void VK_SetFog(const float *color, float start, float end, qboolean exponential, float density)
 {
 	vk.fogEnabled  = qtrue;
 	vk.fogColor[0] = color[0];
@@ -2347,6 +2349,8 @@ void VK_SetFog(const float *color, float start, float end)
 	vk.fogColor[3] = color[3];
 	vk.fogStart    = start;
 	vk.fogEnd      = end;
+	vk.fogExp      = exponential;
+	vk.fogDensity  = density;
 
 	vk.fogParamsValid = qtrue;
 }
@@ -4012,8 +4016,8 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 	Com_Memcpy(pushConstants + 16, vk.modelMatrix, sizeof(vk.modelMatrix));
 	pushConstants[32] = VK_AlphaTestMode(stateBits);
 	pushConstants[33] = 0.0f;
-	pushConstants[34] = 0.0f;
-	pushConstants[35] = 0.0f;
+	pushConstants[34] = vk.fogExp ? 1.0f : 0.0f;
+	pushConstants[35] = vk.fogDensity;
 	pushConstants[36] = vk.fogColor[0];
 	pushConstants[37] = vk.fogColor[1];
 	pushConstants[38] = vk.fogColor[2];
@@ -4133,8 +4137,8 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 	Com_Memcpy(pushConstants + 16, vk.modelMatrix, sizeof(vk.modelMatrix));
 	pushConstants[32] = VK_AlphaTestMode(stateBits);
 	pushConstants[33] = VK_MultitextureEnvMode(input);
-	pushConstants[34] = 0.0f;
-	pushConstants[35] = 0.0f;
+	pushConstants[34] = vk.fogExp ? 1.0f : 0.0f;
+	pushConstants[35] = vk.fogDensity;
 	pushConstants[36] = vk.fogColor[0];
 	pushConstants[37] = vk.fogColor[1];
 	pushConstants[38] = vk.fogColor[2];
@@ -4558,8 +4562,8 @@ void VK_DrawImmediate3D(const float (*xyz)[4], const byte (*colors)[4], const fl
 	Com_Memcpy(pushConstants + 16, vk.modelMatrix, sizeof(vk.modelMatrix));
 	pushConstants[32] = VK_AlphaTestMode(stateBits);
 	pushConstants[33] = 0.0f;
-	pushConstants[34] = 0.0f;
-	pushConstants[35] = 0.0f;
+	pushConstants[34] = vk.fogExp ? 1.0f : 0.0f;
+	pushConstants[35] = vk.fogDensity;
 	pushConstants[36] = vk.fogColor[0];
 	pushConstants[37] = vk.fogColor[1];
 	pushConstants[38] = vk.fogColor[2];

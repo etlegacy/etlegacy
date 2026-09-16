@@ -108,8 +108,8 @@ void R_Fog(glfog_t *curfog)
 
 	VK_SetClearColor(curfog->color[0], curfog->color[1], curfog->color[2], curfog->color[3]);
 
-	// Vulkan backend linear-fog state (renderer1's glFog*)
-	VK_SetFog(curfog->color, curfog->start, fogEnd);
+	// Vulkan backend fog state (renderer1's glFog* mode/color/density/start/end)
+	VK_SetFog(curfog->color, curfog->start, fogEnd, curfog->mode == GL_EXP, curfog->density);
 }
 
 /**
