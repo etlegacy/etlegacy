@@ -3659,12 +3659,12 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 	{
 		dstVerts[i].pos[0]   = input->xyz[i][0];
 		dstVerts[i].pos[1]   = input->xyz[i][1];
-		dstVerts[i].uv[0]    = input->texCoords[i][0][0];
-		dstVerts[i].uv[1]    = input->texCoords[i][0][1];
-		dstVerts[i].color[0] = input->vertexColors[i][0];
-		dstVerts[i].color[1] = input->vertexColors[i][1];
-		dstVerts[i].color[2] = input->vertexColors[i][2];
-		dstVerts[i].color[3] = input->vertexColors[i][3];
+		dstVerts[i].uv[0]    = input->svars.texcoords[0][i][0];
+		dstVerts[i].uv[1]    = input->svars.texcoords[0][i][1];
+		dstVerts[i].color[0] = input->svars.colors[i][0];
+		dstVerts[i].color[1] = input->svars.colors[i][1];
+		dstVerts[i].color[2] = input->svars.colors[i][2];
+		dstVerts[i].color[3] = input->svars.colors[i][3];
 	}
 
 	dstIndexes = (uint32_t *)((byte *)vk.indexArenaMapped + vk.indexArenaOffset);
