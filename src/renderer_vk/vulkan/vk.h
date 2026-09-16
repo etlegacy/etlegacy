@@ -212,11 +212,12 @@ void VK_SetModelViewMatrix(const float *m);
 void VK_GetModelViewMatrix(float *m);
 
 /**
- * @brief records linear-fog parameters (color + start/end
- * distance) applied in the 3D fragment shaders based on eye-space depth.
- * Called from R_Fog() (tr_main.c) in place of the no-op'd glFog*() calls.
+ * @brief records fog parameters applied in the 3D fragment
+ * shaders based on eye-space depth: linear (start/end) or exponential
+ * (GL_EXP: f = exp(-density * depth)). Called from R_Fog() (tr_main.c)
+ * where renderer1 calls glFog*().
  */
-void VK_SetFog(const float *color, float start, float end);
+void VK_SetFog(const float *color, float start, float end, qboolean exponential, float density);
 
 /**
  * @brief disables fog for subsequent 3D draws. Called from

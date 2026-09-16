@@ -11,6 +11,7 @@ layout(push_constant) uniform PushConstants
 	mat4 mvp;
 	mat4 modelView;
 	vec4 alphaTest; // x: 0=off, 1=GT_0, 2=LT_80, 3=GE_80
+	                // z: fog mode 0=linear, 1=exp (GL_EXP); w: fog density (exp)
 	vec4 fogColor;
 	vec4 fogParams; // x: fog enabled, y: start, z: end, w: clip plane enabled
 	vec4 clipPlane; // portal/mirror eye-space clip plane (xyz=normal, w=dist)
@@ -59,7 +60,18 @@ void main()
 
 	if (pc.fogParams.x > 0.5)
 	{
-		float fogFactor = clamp((pc.fogParams.z - fragFogDepth) / max(pc.fogParams.z - pc.fogParams.y, 0.001), 0.0, 1.0);
+		float fogFactor;
+
+		if (pc.alphaTest.z > 0.5)
+		{
+			// GL_EXP: f = e^(-density * z)
+			fogFactor = clamp(exp(-pc.alphaTest.w * fragFogDepth), 0.0, 1.0);
+		}
+		else
+		{
+			// GL_LINEAR: f = (end - z) / (end - start)
+			fogFactor = clamp((pc.fogParams.z - fragFogDepth) / max(pc.fogParams.z - pc.fogParams.y, 0.001), 0.0, 1.0);
+		}
 
 		color.rgb = mix(pc.fogColor.rgb, color.rgb, fogFactor);
 	}
