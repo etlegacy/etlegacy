@@ -1012,9 +1012,61 @@ static void RB_FogPass(void)
 }
 
 /**
- * @brief For 2D/UI draws (backEnd.projection2D), submits the tessellated
- * batch via the Vulkan UI pipeline. For 3D surfaces, computes
- * colors/texcoords per stage and submits via VK_Draw3D/VK_Draw3DLightmapped.
+ * @brief 2D/UI part of renderer1's RB_StageIteratorGeneric: deforms, then
+ * per stage ComputeColors/ComputeTexCoords and a draw through the Vulkan
+ * UI pipeline with that stage's image and state bits. The UI pipeline
+ * samples one texture, so a collapsed multitexture stage is drawn as the
+ * two passes it was collapsed from (CollapseMultitexture only merges an
+ * opaque stage with a modulating one, or two additive stages): bundle 1
+ * goes on top with GL_DST_COLOR/GL_ZERO for GL_MODULATE or GL_ONE/GL_ONE
+ * for GL_ADD.
+ */
+static void RB_IterateStages2D(shaderCommands_t *input)
+{
+	int stage, i;
+
+	RB_DeformTessGeometry();
+
+	for (stage = 0; stage < MAX_SHADER_STAGES; stage++)
+	{
+		shaderStage_t *pStage = tess.xstages[stage];
+
+		if (!pStage)
+		{
+			break;
+		}
+
+		ComputeColors(pStage);
+		ComputeTexCoords(pStage);
+
+		VK_Draw2D(input, R_GetAnimatedImage(&pStage->bundle[0]), pStage->stateBits);
+
+		if (pStage->bundle[1].image[0] != 0)
+		{
+			unsigned long blend = (input->shader->multitextureEnv == GL_ADD)
+			                      ? (GLS_SRCBLEND_ONE | GLS_DSTBLEND_ONE)
+			                      : (GLS_SRCBLEND_DST_COLOR | GLS_DSTBLEND_ZERO);
+
+			for (i = 0; i < input->numVertexes; i++)
+			{
+				input->svars.texcoords[0][i][0] = input->svars.texcoords[1][i][0];
+				input->svars.texcoords[0][i][1] = input->svars.texcoords[1][i][1];
+				input->svars.colors[i][0]       = 255;
+				input->svars.colors[i][1]       = 255;
+				input->svars.colors[i][2]       = 255;
+				input->svars.colors[i][3]       = 255;
+			}
+
+			VK_Draw2D(input, R_GetAnimatedImage(&pStage->bundle[1]),
+			          (pStage->stateBits & ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) | blend);
+		}
+	}
+}
+
+/**
+ * @brief renderer1's RB_StageIteratorGeneric: computes colors/texcoords per
+ * stage and submits via VK_Draw3D/VK_Draw3DLightmapped, or through the UI
+ * pipeline for 2D draws (RB_IterateStages2D).
  *
  * Followed by the dynamic light and fog volume passes (RB_DynamicLights,
  * RB_FogPass), as in renderer1.
@@ -1027,20 +1079,10 @@ void RB_StageIteratorGeneric(void)
 {
 	shaderCommands_t *input  = &tess;
 	shader_t         *shader = input->shader;
-	image_t          *image;
 
 	if (backEnd.projection2D)
 	{
-		unsigned long stateBits = GLS_DEPTHTEST_DISABLE | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA;
-
-		image = NULL;
-		if (input->xstages && input->xstages[0])
-		{
-			image     = R_GetAnimatedImage(&input->xstages[0]->bundle[0]);
-			stateBits = input->xstages[0]->stateBits;
-		}
-
-		VK_Draw2D(input, image, stateBits);
+		RB_IterateStages2D(input);
 		return;
 	}
 
@@ -1160,6 +1202,15 @@ void RB_StageIteratorVertexLitTexture(void)
 	shader_t         *shader = input->shader;
 	int              i;
 
+	// 2D draws always take the full per-stage path (renderer1 draws them
+	// with the 2D GL state in any iterator; here only the generic iterator
+	// knows the 2D pipeline)
+	if (backEnd.projection2D)
+	{
+		RB_StageIteratorGeneric();
+		return;
+	}
+
 	RB_CalcDiffuseColor(( unsigned char * ) tess.svars.colors);
 
 	SetIteratorFog();
@@ -1195,6 +1246,12 @@ void RB_StageIteratorLightmappedMultitexture(void)
 	shaderCommands_t *input  = &tess;
 	shader_t         *shader = input->shader;
 	int              i;
+
+	if (backEnd.projection2D)
+	{
+		RB_StageIteratorGeneric();
+		return;
+	}
 
 	SetIteratorFog();
 
@@ -1245,6 +1302,12 @@ void RB_EndSurface(void)
 	if (tess.shader == tr.shadowShader)
 	{
 		RB_ShadowTessEnd();
+		return;
+	}
+
+	// for debugging of sort order issues, stop rendering after a given sort value
+	if (r_debugSort->integer && r_debugSort->integer < tess.shader->sort)
+	{
 		return;
 	}
 

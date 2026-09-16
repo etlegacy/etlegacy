@@ -594,17 +594,17 @@ void RE_StretchRaw(int x, int y, int w, int h, int cols, int rows, const byte *d
 		VectorSet(tess.xyz[2], x + w, y + h, 0);
 		VectorSet(tess.xyz[3], x, y + h, 0);
 
-		tess.texCoords[0][0][0] = s0; tess.texCoords[0][0][1] = t0;
-		tess.texCoords[1][0][0] = s1; tess.texCoords[1][0][1] = t0;
-		tess.texCoords[2][0][0] = s1; tess.texCoords[2][0][1] = t1;
-		tess.texCoords[3][0][0] = s0; tess.texCoords[3][0][1] = t1;
+		tess.svars.texcoords[0][0][0] = s0; tess.svars.texcoords[0][0][1] = t0;
+		tess.svars.texcoords[0][1][0] = s1; tess.svars.texcoords[0][1][1] = t0;
+		tess.svars.texcoords[0][2][0] = s1; tess.svars.texcoords[0][2][1] = t1;
+		tess.svars.texcoords[0][3][0] = s0; tess.svars.texcoords[0][3][1] = t1;
 
 		for (i = 0; i < 4; i++)
 		{
-			tess.vertexColors[i][0] = c;
-			tess.vertexColors[i][1] = c;
-			tess.vertexColors[i][2] = c;
-			tess.vertexColors[i][3] = 255;
+			tess.svars.colors[i][0] = c;
+			tess.svars.colors[i][1] = c;
+			tess.svars.colors[i][2] = c;
+			tess.svars.colors[i][3] = 255;
 		}
 
 		tess.indexes[0] = 0; tess.indexes[1] = 1; tess.indexes[2] = 2;
@@ -1532,12 +1532,12 @@ void VKimm_End(void)
 		for (i = 0; i < vkImm.numVerts; i++)
 		{
 			VectorCopy(vkImm.xyz[i], tess.xyz[i]);
-			tess.texCoords[i][0][0] = vkImm.st[i][0];
-			tess.texCoords[i][0][1] = vkImm.st[i][1];
-			tess.vertexColors[i][0] = vkImm.color[i][0];
-			tess.vertexColors[i][1] = vkImm.color[i][1];
-			tess.vertexColors[i][2] = vkImm.color[i][2];
-			tess.vertexColors[i][3] = vkImm.color[i][3];
+			tess.svars.texcoords[0][i][0] = vkImm.st[i][0];
+			tess.svars.texcoords[0][i][1] = vkImm.st[i][1];
+			tess.svars.colors[i][0]       = vkImm.color[i][0];
+			tess.svars.colors[i][1]       = vkImm.color[i][1];
+			tess.svars.colors[i][2]       = vkImm.color[i][2];
+			tess.svars.colors[i][3]       = vkImm.color[i][3];
 		}
 		for (i = 0; i < numIndexes; i++)
 		{
