@@ -125,6 +125,9 @@ typedef struct
 	VkImage msColorImage;
 	VkDeviceMemory msColorMemory;
 	VkImageView msColorView;
+	// the persistent color target(s) were just (re)created and hold no
+	// defined contents yet: VK_BeginFrame() clears them once
+	qboolean sceneColorNeedsInit;
 	VkDeviceMemory sceneColorMemory;
 	VkImageView sceneColorView;
 	VkFramebuffer sceneFramebuffer;
@@ -853,9 +856,10 @@ static qboolean VK_CreateSceneColorResources(void)
 	imageInfo.format        = vk.swapchainFormat;
 	imageInfo.tiling        = VK_IMAGE_TILING_OPTIMAL;
 	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	imageInfo.usage         = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-	imageInfo.samples       = VK_SAMPLE_COUNT_1_BIT;
-	imageInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
+	imageInfo.usage         = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
+	                          VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+	imageInfo.samples     = VK_SAMPLE_COUNT_1_BIT;
+	imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
 	if (!VK_CheckResult(vkCreateImage(vk.device, &imageInfo, NULL, &vk.sceneColorImage), "vkCreateImage(scene color)"))
 	{
@@ -893,7 +897,9 @@ static qboolean VK_CreateSceneColorResources(void)
 	// multisampled color target, resolved into sceneColorImage
 	if (vk.sampleCount != VK_SAMPLE_COUNT_1_BIT)
 	{
-		imageInfo.usage   = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT;
+		// persistent like the scene image (no TRANSIENT): its contents
+		// carry over between frames
+		imageInfo.usage   = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 		imageInfo.samples = vk.sampleCount;
 
 		if (!VK_CheckResult(vkCreateImage(vk.device, &imageInfo, NULL, &vk.msColorImage), "vkCreateImage(msaa color)"))
@@ -917,6 +923,8 @@ static qboolean VK_CreateSceneColorResources(void)
 			return qfalse;
 		}
 	}
+
+	vk.sceneColorNeedsInit = qtrue;
 
 	return qtrue;
 }
@@ -942,15 +950,20 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 		return qfalse;
 	}
 
-	// --- main (scene) render pass: offscreen color + depth/stencil
+	// --- main (scene) render pass: offscreen color + depth/stencil.
+	// The color target keeps its contents between frames (loadOp LOAD),
+	// like renderer1's main framebuffer: the frame is never cleared as a
+	// whole, only on request (VK_ClearSceneColor - r_clear, r_fastsky,
+	// fog clearscreen, ...). Loading screens rely on this: cgame redraws
+	// only part of the screen per update and expects the rest to remain.
 	Com_Memset(&colorAttachment, 0, sizeof(colorAttachment));
 	colorAttachment.format         = vk.swapchainFormat;
 	colorAttachment.samples        = VK_SAMPLE_COUNT_1_BIT;
-	colorAttachment.loadOp         = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	colorAttachment.loadOp         = VK_ATTACHMENT_LOAD_OP_LOAD;
 	colorAttachment.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
 	colorAttachment.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 	colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	colorAttachment.initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED;
+	colorAttachment.initialLayout  = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL; // left there by the previous frame
 	colorAttachment.finalLayout    = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 	Com_Memset(&colorAttachmentRef, 0, sizeof(colorAttachmentRef));
@@ -981,13 +994,15 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
 	// with MSAA, attachment 0 is the multisampled color
-	// target (discarded after the pass) and attachment 2 the single-sample
-	// scene image it resolves into.
+	// target (persistent: loaded and stored, it is what carries the frame
+	// over) and attachment 2 the single-sample scene image it resolves
+	// into every frame.
 	if (msaa)
 	{
-		attachments[0].samples     = vk.sampleCount;
-		attachments[0].storeOp     = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		attachments[0].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		attachments[0].samples       = vk.sampleCount;
+		attachments[0].storeOp       = VK_ATTACHMENT_STORE_OP_STORE;
+		attachments[0].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		attachments[0].finalLayout   = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
 		attachments[2]               = colorAttachment;
 		attachments[2].loadOp        = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -1006,9 +1021,10 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	dependencies[0].srcSubpass    = VK_SUBPASS_EXTERNAL;
 	dependencies[0].dstSubpass    = 0;
 	dependencies[0].srcStageMask  = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-	dependencies[0].srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+	dependencies[0].srcAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 	dependencies[0].dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-	dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+	dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT |
+	                                VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 	// scene color writes -> gamma pass samples it
 	dependencies[1].srcSubpass    = 0;
 	dependencies[1].dstSubpass    = VK_SUBPASS_EXTERNAL;
@@ -2871,6 +2887,47 @@ static void VK_QueueImageResourcesForFree(struct image_s *image)
 	image->vkSampler       = NULL;
 }
 
+/**
+ * @brief Clears a freshly created persistent color target to black and
+ * transitions it to finalLayout, recorded into the frame command buffer
+ * before the main render pass (which loads it).
+ */
+static void VK_InitSceneColorImage(VkImage image, VkImageLayout finalLayout, VkAccessFlags dstAccess, VkPipelineStageFlags dstStage)
+{
+	VkImageMemoryBarrier    barrier;
+	VkClearColorValue       black;
+	VkImageSubresourceRange range;
+
+	Com_Memset(&range, 0, sizeof(range));
+	range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	range.levelCount = 1;
+	range.layerCount = 1;
+
+	Com_Memset(&barrier, 0, sizeof(barrier));
+	barrier.sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barrier.oldLayout           = VK_IMAGE_LAYOUT_UNDEFINED;
+	barrier.newLayout           = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	barrier.image               = image;
+	barrier.subresourceRange    = range;
+	barrier.srcAccessMask       = 0;
+	barrier.dstAccessMask       = VK_ACCESS_TRANSFER_WRITE_BIT;
+	vkCmdPipelineBarrier(vk.commandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
+	                     0, 0, NULL, 0, NULL, 1, &barrier);
+
+	Com_Memset(&black, 0, sizeof(black));
+	black.float32[3] = 1.0f;
+	vkCmdClearColorImage(vk.commandBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &black, 1, &range);
+
+	barrier.oldLayout     = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	barrier.newLayout     = finalLayout;
+	barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+	barrier.dstAccessMask = dstAccess;
+	vkCmdPipelineBarrier(vk.commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, dstStage,
+	                     0, 0, NULL, 0, NULL, 1, &barrier);
+}
+
 void VK_BeginFrame(void)
 {
 	VkCommandBufferBeginInfo beginInfo;
@@ -2908,6 +2965,21 @@ void VK_BeginFrame(void)
 	Com_Memset(&beginInfo, 0, sizeof(beginInfo));
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	vkBeginCommandBuffer(vk.commandBuffer, &beginInfo);
+
+	// the persistent color target(s) start out undefined: clear to black
+	// once and move them into the layout the main render pass loads from
+	if (vk.sceneColorNeedsInit)
+	{
+		VK_InitSceneColorImage(vk.sceneColorImage, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		                       VK_ACCESS_SHADER_READ_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+		if (vk.msColorImage != VK_NULL_HANDLE)
+		{
+			VK_InitSceneColorImage(vk.msColorImage, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+			                       VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+			                       VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+		}
+		vk.sceneColorNeedsInit = qfalse;
+	}
 
 	Com_Memset(clearValues, 0, sizeof(clearValues));
 	clearValues[0].color.float32[0]     = 0.0f;
