@@ -1136,6 +1136,10 @@ static void S_AL_NewLoopMaster(src_t *rmSource, qboolean iskilled)
 				else
 				{
 					curSource = &srcList[firstInactive];
+
+					// hand over master status to the source that now holds
+					// the saved loop position so it can resume in range
+					curSfx->masterLoopSrc = firstInactive;
 				}
 
 				if (rmSource->isPlaying)
