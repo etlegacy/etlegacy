@@ -1,23 +1,63 @@
+^dServer
+
+* Fixed ^8sv_serverTimeReset^9 0 breaking time wrap time reset
+
+^dClient
+
+* Increased scan ports tp display more LAN server list from ^84^9 to ^88^9
+* Added ^8r_allowScreenSaver^9 cvar to allow DPMS while game is running
+
 ^dMod
+
+^fGeneral
 
 * Fixed hud_vX files were not listed properly when connection to pure server
 * Decoupled ranks from skill rating. This restore rank progression to the existing XP
   system so that ranks reflect in-game progression again and are no longer dependent
   on stale empirical data
 * Improved shuffle by SR algorithm with greedy SR draft that
-  - Prioritizes balanced team player counts.
+  - Prioritizes balanced team player counts
   - Assigns the highest remaining rated player to the team with the lowest combined
-    skill rating.
-  - Handles map bias as a tri-state:
-  - mapProb > 0.5f: Axis advantage, favor Allies.
-  - mapProb < 0.5f: Allies advantage, favor Axis.
-  - mapProb == 0.5f: No bias, use a random 50/50 choice.
+    skill rating
+  - Handles map bias to assign any remaining rated player to the side with the map
+    disadvantage
 * Changed rank accuracy-based awards by a sample-size-aware score
 * Fixed SR data recorded without GUID by using connect-time guid for SR/XP db access
   to ensure valid user ID are stored into DB
 * Fixed bot taking over player name and SR, resetting player SR
-* Made map bias more dynamic
-* Skipped skill rating updates when no players participated
+* Made SR map bias more dynamic
+* Skipped SR updates when no players participated
 * Fixed SR update leaks current match into prior map bias
+* Reworked XP save functionality from the ground up
+  - Removed ^8g_xpSaver^9 cvar and ^8g_xpSaverMaxAge^9 cvars
+  - Removed broken ^8g_resetXPMapCount^9 and mapvote XP reset display
+  - Scoped XP save to Objective and Mapvote via new ^8g_xpSave^9 cvar
+  - Added configurable XP save reset policy for Objective/Mapvote with
+    ^8g_xpSaveResetMode^9 and ^8g_xpSaveResetThreshold^9 cvars
+  - Added maps-based, time-based and time decay XP save reset modes
+  - Added Reset XP button on intermission screen
+  - Added ^8reset_xpsave^9 server command
+  - Allowed bots to use XP save.
+* Fixed artillery shot counter decremented on dead bodies
+* Fixed shot count when primed grenade is dropped on death
+* Replaced tick-tock cadence with configurable reinforcement warning
+* Renamed ^8cg_reinforceTickTock^9 cvar to ^8cg_reinforceWarningTime^9
+* Fixed assist stats alignment in game stats
+* Added missing kill assist field to Lua API
+
+^fUI
+
+* Added confirmation dialog on option homepath and main discord buttons
+* Replaced ^8Color Gradient^9 style with ^8Reinforce Warning^9 option style from
+  ^8reinforcement^9 component
+* Added ^8Reinforce Warning^9 style to ^8roundtimer^9 component
+* Decoupled ^8disconnect^9 component from ^8lagometer^9
+* Added alternate warmup spawn timers with WARMUP text, so both fit nicely into
+  component bound
+
+^fAudio
+
+* Added ^8cg_reinforceWarningAudio^9 cvar to toggle reinforcement warning sound
+* Restricted reinforcement warning to active players
 
 ***
