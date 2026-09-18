@@ -175,6 +175,47 @@ static ID_INLINE void CG_ColorObituaryEntName(clientInfo_t *ci, vec4_t color, ch
 }
 
 /**
+ * @brief CG_CheckPopupMessageObituaryFilter
+ * @param[in] ca attacker
+ * @param[in] ci target
+ * @param[in] style popupmessage style option
+ * @return true if the filter is on and reach condition, otherwise false
+ */
+static qboolean CG_CheckPopupMessageObituaryFilter(clientInfo_t *ca, clientInfo_t *ci, int style)
+{
+	if (!ca)
+	{
+		return qfalse;
+	}
+
+	// discard all enemy obituaries (kill, team kill, selfkill)
+	if (style & POPUP_FILTER_ENEMY && ca->team != cg.snap->ps.teamNum)
+	{
+		return qtrue;
+	}
+
+	// discard all team obituaries but self (kill, team kill, selfkill)
+	if (style & POPUP_FILTER_OWN_TEAM && ca->team == cg.snap->ps.teamNum && ca->clientNum != cg.snap->ps.clientNum)
+	{
+		return qtrue;
+	}
+
+	// discard all self obituaries, (kill, kill by, team kill, selfkill)
+	if (style & POPUP_FILTER_SELF && (ca->clientNum == cg.snap->ps.clientNum || ci->clientNum == cg.snap->ps.clientNum))
+	{
+		return qtrue;
+	}
+
+	// discard all self kill message (from enemy / own team / self)
+	if (style & POPUP_FILTER_SUICIDE && ca->clientNum == ci->clientNum)
+	{
+		return qtrue;
+	}
+
+	return qfalse;
+}
+
+/**
  * @brief CG_Obituary
  * @param[in] ent
  * @todo FIXME: ... some MODs are not caught - check all!
@@ -289,7 +330,13 @@ static void CG_Obituary(entityState_t *ent)
 	{
 		hudComponent_t *pmComp = CG_GetPopupMessageComponent(CG_GetActiveHUD(), i);
 
+		// comp not available, skip it
 		if (!pmComp || !pmComp->visible)
+		{
+			continue;
+		}
+
+		if (CG_CheckPopupMessageObituaryFilter(ca, ci, pmComp->style))
 		{
 			continue;
 		}
