@@ -840,6 +840,11 @@ static ID_INLINE void CL_MouseEventScale(int dx, int dy, float *mdx, float *mdy)
  * @param[in] dy
  * @param time - unused
  */
+// Set by the SDL input layer when OS cursor mode is active so we can avoid extra scaling.
+// Alternative: always scale here and let UI/CGAME undo, but that adds conversion drift.
+extern qboolean in_uiMouseInternal;
+extern qboolean in_cgMouseInternal;
+
 void CL_MouseEvent(int dx, int dy, int time)
 {
 	float mdx, mdy;
@@ -851,6 +856,12 @@ void CL_MouseEvent(int dx, int dy, int time)
 		{
 			cl.mouseDx[cl.mouseIndex] += dx;
 			cl.mouseDy[cl.mouseIndex] += dy;
+		}
+		else if (in_uiMouseInternal)
+		{
+			// UI is already receiving virtual-space deltas; pass through as-is.
+			// Alternative: always scale and adjust in UI code.
+			VM_Call(uivm, UI_MOUSE_EVENT, dx, dy);
 		}
 		else
 		{
@@ -864,6 +875,12 @@ void CL_MouseEvent(int dx, int dy, int time)
 		{
 			cl.mouseDx[cl.mouseIndex] += dx;
 			cl.mouseDy[cl.mouseIndex] += dy;
+		}
+		else if (in_cgMouseInternal)
+		{
+			// CGAME is already receiving virtual-space deltas; pass through as-is.
+			// Alternative: always scale and adjust in CGAME code.
+			VM_Call(cgvm, CG_MOUSE_EVENT, dx, dy);
 		}
 		else
 		{
