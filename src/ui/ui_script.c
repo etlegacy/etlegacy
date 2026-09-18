@@ -1600,7 +1600,7 @@ void Item_RunScript(itemDef_t *item, qboolean *bAbort, const char *s)
 			{
 				if (Q_stricmp(command, commandList[i].name) == 0)
 				{
-					(commandList[i].handler(item, &b_localAbort, &p));
+					commandList[i].handler(item, &b_localAbort, &p);
 					bRan = qtrue;
 
 					if (b_localAbort)
@@ -1609,6 +1609,8 @@ void Item_RunScript(itemDef_t *item, qboolean *bAbort, const char *s)
 						{
 							*bAbort = b_localAbort;
 						}
+
+						Com_Printf(S_COLOR_YELLOW "WARNING: %s aborted !\n", commandList[i].name);
 
 						return;
 					}

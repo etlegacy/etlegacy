@@ -92,7 +92,7 @@
 #ifdef CGAME
 #define STRING_POOL_SIZE    (256 * 1024)
 #else
-#define STRING_POOL_SIZE    (516 * 1024)
+#define STRING_POOL_SIZE    (1024 * 1024)
 #endif
 
 #define MAX_EDITFIELD       256
@@ -125,7 +125,7 @@
 #define ASSET_REPLAY_UP        "ui/assets/up.tga"
 
 #define SCROLLBAR_SIZE      16.0f
-#define SLIDER_WIDTH        96.0f
+#define SLIDER_WIDTH        156.0f   ///< 96.0f
 #define SLIDER_HEIGHT       10.0f    ///< 16.0
 #define SLIDER_THUMB_WIDTH  12.0f
 #define SLIDER_THUMB_HEIGHT 12.0f    ///< 20.0
