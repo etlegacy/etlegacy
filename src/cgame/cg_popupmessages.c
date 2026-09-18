@@ -911,12 +911,12 @@ static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, flo
  */
 void CG_DrawPM(hudComponent_t *comp)
 {
-	pmListItem_t *listItem;
-	float        lineHeight;
-	float        size;
-	float        y;
-	qboolean     isScapeAvailable;
-	int          pmNum;
+	pmListItem_t  *listItem;
+	float         lineHeight;
+	float         size;
+	float         y;
+	qboolean      isScapeAvailable;
+	int           pmNum;
 	hudStucture_t *hud = CG_GetActiveHUD();
 
 	pmNum = comp - hud->popupmessages;

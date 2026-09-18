@@ -285,7 +285,7 @@ static void CG_Obituary(entityState_t *ent)
 		CG_Hud_IconFeed_Add(CG_HUD_ICONFEED_KILL_SELF);
 	}
 
-	for (i = 0; i < 3; ++i)
+	for (i = 0; i < NUM_PM_STACK; ++i)
 	{
 		hudComponent_t *pmComp = CG_GetPopupMessageComponent(CG_GetActiveHUD(), i);
 
