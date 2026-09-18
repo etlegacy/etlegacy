@@ -287,9 +287,9 @@ static void CG_Obituary(entityState_t *ent)
 
 	for (i = 0; i < 3; ++i)
 	{
-		hudComponent_t *pmComp = (hudComponent_t *)((byte *)&CG_GetActiveHUD()->popupmessages + i * sizeof(hudComponent_t));
+		hudComponent_t *pmComp = CG_GetPopupMessageComponent(CG_GetActiveHUD(), i);
 
-		if (!pmComp->visible)
+		if (!pmComp || !pmComp->visible)
 		{
 			continue;
 		}
