@@ -80,6 +80,45 @@ const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1] =
 	{ "Improved use of Scoped Weapon Ammunition", "Improved use of Sabotage and Misdirection", "Breath Control",                        "Assassin"                 } // scoped weapons & military intelligence
 };
 
+const char *cg_skillRewardsDetails[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1] =
+{
+	{ "Gives you a pair of Binoculars for all class Only Covert Ops can use Binoculars to spot Land Mines",
+	  "Stamina bar to recharge at 160% of the normal rate",
+	  "Increases the maximum Health by 15 points",
+	  "Sense enemy Land Mines without the aid of Binoculars Any mines within a certain range will appear as translucent outlines"
+	}, // battle sense
+	{ "+4 extra Rifle Grenade rounds and +4 extra Hand Grenades",
+	  "Arm and defuse Land Mines and Dynamite 50% faster",
+	  "Constructing, repairing, Arming and Defusing with Pliers uses 33% less Stamina",
+	  "Give a Flak Jackets which provides 50% damage deflection from explosive weapons"
+	}, // explosives & construction
+	{ "Extra ammunition clip and grenade as Medic",
+	  "+2 syringes and +2 extra max ammo plus Medic pack only takes 15% Stamina instead of 25%",
+	  "Syringes now return fallen team-mates to full health",
+	  "Give Adrenaline which decrease damage by 50% and prevent sprint bar to drain while spriting for 10 seconds"
+	}, // first aid
+	{ "Ammo Pack contain +1 extra magazine clip Issuing the Ammo Pack deplete stamina by 15% instead of 25%",
+	  "Artillery or Air Strike takes 66% Stamina instead of 100%",
+	  "Air Strike now has two aircraft incoming and each Artillery Strike lasts twice as long",
+	  "Aiming over an enemy disguised will result in a Disguised Enemy prompt and their location will be highlighted on team’s Command Map"
+	},                // signals
+	{ "+1 extra clip of ammunition for all light weapons",
+	  "Reload light weapons 35% faster",
+	  "SMG spread is reduced by 35% while Pistol recoil is halved",
+	  "Single-handed weapon slot now has the option of dual-wield akimbo pistols"
+	}, // light weapons
+	{ "Firing a Panzerfaust or Mortar will now take 33% less Stamina",
+	  "Emplaced, Nested, Tank or Mobile MG will cool 50% faster",
+	  "Decreased speed penalty while holding heavy weapon When firing the Flamethrower the penality still apply",
+	  "Handle a SMG in one handed slot"
+	}, // heavy weapons
+	{ "Ammo Pack get includes +1 extra clip of ammunition for Scoped Weapon",
+	  "Satchel Charges and Smoke Grenades stamina usage is reduced by 33%",
+	  "50% reduction in both recoil jump and weapon sway with Scoped Weapons",
+	  "Instant kill with any backstab with knife"
+	} // scoped weapons & military intelligence
+};
+
 void CG_PMItemBigSound(pmListItem_t *item);
 
 /**
