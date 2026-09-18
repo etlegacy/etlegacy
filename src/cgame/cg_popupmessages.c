@@ -34,7 +34,6 @@
 
 #include "cg_local.h"
 
-#define NUM_PM_STACK           4
 #define NUM_PM_STACK_ITEMS     32
 #define NUM_PM_STACK_ITEMS_BIG 3 // we shouldn't need many of these
 #define NUM_PM_STACK_ITEMS_XP  32
@@ -140,6 +139,22 @@ void CG_InitPM(void)
 	Com_Memset(&cg_pmStackXP, 0, sizeof(cg_pmStackXP));
 	cg_pmOldListXP     = NULL;
 	cg_pmWaitingListXP = NULL;
+}
+
+/**
+ * @brief CG_GetPopupMessageComponent
+ * @param[in] hud
+ * @param[in] stackNum
+ * @return
+ */
+hudComponent_t *CG_GetPopupMessageComponent(hudStucture_t *hud, int stackNum)
+{
+	if (!hud || stackNum < 0 || stackNum >= NUM_PM_STACK)
+	{
+		return NULL;
+	}
+
+	return &hud->popupmessages[stackNum];
 }
 
 /**
@@ -267,7 +282,7 @@ void CG_UpdatePMLists(void)
 
 	for (i = 0; i < NUM_PM_STACK; ++i)
 	{
-		hudComponent_t *pmComp = (hudComponent_t *)((byte *)&hud->popupmessages + i * sizeof(hudComponent_t));
+		hudComponent_t *pmComp = CG_GetPopupMessageComponent(hud, i);
 
 		CG_UpdatePMList(&cg_pmWaitingList[i], &cg_pmOldList[i], pmComp->feedTime, pmComp->feedStayTime, pmComp->feedFadeTime);
 	}
@@ -376,7 +391,7 @@ void CG_AddPMItemEx(popupMessageType_t type, const char *message, const char *me
 {
 	pmListItem_t   *listItem;
 	char           *end;
-	hudComponent_t *pmComp = (hudComponent_t *)((byte *)&CG_GetActiveHUD()->popupmessages + stackNum * sizeof(hudComponent_t));
+	hudComponent_t *pmComp = CG_GetPopupMessageComponent(CG_GetActiveHUD(), stackNum);
 
 	if (!message || !*message)
 	{
@@ -389,7 +404,7 @@ void CG_AddPMItemEx(popupMessageType_t type, const char *message, const char *me
 		return;
 	}
 
-	if (!pmComp->visible || CG_CheckPMItemFilter(type, pmComp->style))
+	if (!pmComp || !pmComp->visible || CG_CheckPMItemFilter(type, pmComp->style))
 	{
 		return;
 	}
@@ -896,12 +911,20 @@ static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, flo
  */
 void CG_DrawPM(hudComponent_t *comp)
 {
-	pmListItem_t *listItem;
-	float        lineHeight;
-	float        size;
-	float        y;
-	qboolean     isScapeAvailable;
-	int          pmNum = comp - &CG_GetActiveHUD()->popupmessages;
+	pmListItem_t  *listItem;
+	float         lineHeight;
+	float         size;
+	float         y;
+	qboolean      isScapeAvailable;
+	int           pmNum;
+	hudStucture_t *hud = CG_GetActiveHUD();
+
+	pmNum = comp - hud->popupmessages;
+
+	if (pmNum < 0 || pmNum >= NUM_PM_STACK)
+	{
+		return;
+	}
 
 	if (!cg_pmWaitingList[pmNum])
 	{

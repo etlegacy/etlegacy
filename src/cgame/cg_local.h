@@ -4161,6 +4161,8 @@ typedef struct
  */
 #define HUD_COMPONENTS_NUM 63
 
+#define NUM_PM_STACK 4 ///< Number of popup message stacks, drives the popupmessages[] array size
+
 typedef struct hudComponent_s
 {
 	rectDef_t location; ///< This used runtime to actually draw the component
@@ -4225,10 +4227,7 @@ typedef struct hudStructure_s
 	hudComponent_t weaponicon;
 	hudComponent_t weaponammo;
 	hudComponent_t fireteam;
-	hudComponent_t popupmessages;
-	hudComponent_t popupmessages2;
-	hudComponent_t popupmessages3;
-	hudComponent_t popupmessages4;
+	hudComponent_t popupmessages[NUM_PM_STACK];
 	hudComponent_t powerups;
 	// 20
 	hudComponent_t objectives;
@@ -4328,6 +4327,9 @@ hudStucture_t *CG_ReadSingleHudJsonFile(const char *filename);
 qboolean CG_WriteHudsToFile();
 qboolean CG_TryReadHudFromFile(const char *filename, qboolean isEditable);
 void CG_ReadHudsFromFile(void);
+
+// cg_popupmessages.c
+hudComponent_t *CG_GetPopupMessageComponent(hudStucture_t *hud, int stackNum);
 
 // cg_customcrosshair.c
 void CG_DrawCustomCrosshair(qboolean withSpread);
@@ -4431,8 +4433,14 @@ extern const hudComponentMembersFields_t hudComponentMembersFields[];
  * @brief Using the stringizing operator to save typing...
  */
 #define HUDF(x) # x, offsetof(hudStucture_t, x), qfalse
-extern const hudComponentFields_t hudComponentFields[];
 
+/**
+ * @brief Using the stringizing operator to save typing
+ * with array field. The index start at 1 to use proper
+ * numbering for user but is still minus 1 for index array
+ */
+#define HUDF_ARR(x, i) #x#i, offsetof(hudStucture_t, x[i - 1]), qfalse
+extern const hudComponentFields_t hudComponentFields[];
 
 void CG_DrawCompText(hudComponent_t *comp, const char *str, vec4_t color, int fontStyle, fontHelper_t *font);
 void CG_DrawCompMultilineText(hudComponent_t *comp, const char *str, vec4_t color, int align, int fontStyle, fontHelper_t *font);

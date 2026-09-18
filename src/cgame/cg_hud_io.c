@@ -1965,13 +1965,18 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		// only 3 popupmessages were available
 		for (numPopUp = 0; numPopUp < 3; ++numPopUp)
 		{
-			hudComponent_t *comp = (hudComponent_t *)((byte *)&tmpHud->popupmessages + numPopUp * sizeof(hudComponent_t));
+			hudComponent_t *comp = CG_GetPopupMessageComponent(tmpHud, numPopUp);
 			int            j;
+
+			if (!comp)
+			{
+				continue;
+			}
 
 			// don't update style if inherit from parent which already upgrade it
 			if (parentHud)
 			{
-				hudComponent_t *compParent = (hudComponent_t *)((byte *)&parentHud->popupmessages + numPopUp * sizeof(hudComponent_t));
+				hudComponent_t *compParent = CG_GetPopupMessageComponent(parentHud, numPopUp);
 
 				if (comp->style == compParent->style)
 				{
