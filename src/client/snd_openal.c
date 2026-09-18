@@ -743,6 +743,9 @@ typedef struct sentity_s
 	alSrcPriority_t loopPriority;
 	sfxHandle_t loopSfx;
 	qboolean startLoopingSound;
+
+	float lastTimePos;    // Last known playback position of this loop (survives source kills)
+	int lastSampleTime;   // Time when this position was recorded
 } sentity_t;
 
 static vec3_t    entityPositions[MAX_GENTITIES];
@@ -881,6 +884,13 @@ static qboolean S_AL_SrcInit(void)
 	Com_Memset(srcList, 0, sizeof(srcList));
 	srcCount     = 0;
 	srcActiveCnt = 0;
+
+	// Loop positions are unknown until first saved
+	for (i = 0; i < MAX_LOOP_SOUNDS; i++)
+	{
+		loopSounds[i].lastTimePos    = -1.0;
+		loopSounds[i].lastSampleTime = 0;
+	}
 
 	// Cap s_alSources to MAX_SRC
 	limit = s_alSources->integer;
@@ -1029,6 +1039,22 @@ static void S_AL_SrcSetup(srcHandle_t src, sfxHandle_t sfx, alSrcPriority_t prio
 }
 
 /**
+ * @brief Compute the buffer offset (in seconds) at which a loop would be playing right now
+ *        if it had been running seamlessly since map start.
+ *
+ * The SDL mixing backend resumes loops at `soundTime % soundLength` which is exactly this
+ * wall-clock phase; using it as a fallback keeps OpenAL loops continuous even when the
+ * previously saved loop position was lost (e.g. when the entity's slot was reused while
+ * the loop was not in the frame).
+ * @param curSfx
+ * @return Offset in seconds
+ */
+static float S_AL_WallClockPhase(alSfx_t *curSfx)
+{
+	return fmodf(Sys_Milliseconds() / 1000.0f, (float)curSfx->info.samples / curSfx->info.rate);
+}
+
+/**
  * @brief Remove given source as loop master if it is the master and hand off master status to another source in this case.
  * @param dest
  * @param alSource
@@ -1055,6 +1081,13 @@ static void S_AL_SaveLoopPos(src_t *dest, ALuint alSource)
 	else
 	{
 		dest->lastSampleTime = Sys_Milliseconds();
+	}
+
+	if (dest->entity >= 0 && dest->entity < MAX_LOOP_SOUNDS)
+	{
+		// Keep the position in the loop slot as well so it survives a source kill
+		loopSounds[dest->entity].lastTimePos    = dest->lastTimePos;
+		loopSounds[dest->entity].lastSampleTime = dest->lastSampleTime;
 	}
 }
 
@@ -1182,6 +1215,13 @@ static void S_AL_SrcKill(srcHandle_t src)
 	if (curSource->isLooping)
 	{
 		curSource->isLooping = qfalse;
+
+		// Remember the playback position so the loop can be resumed if the
+		// source is recycled while it was still playing
+		if (curSource->isPlaying)
+		{
+			S_AL_SaveLoopPos(curSource, curSource->alSource);
+		}
 
 		if (curSource->entity != -1)
 		{
@@ -1577,6 +1617,13 @@ static void S_AL_SrcLoop(alSrcPriority_t priority, sfxHandle_t sfx,
 	}
 	sent = &loopSounds[numLoopingSounds++];
 
+	// If a different loop sound is (re)using this slot, discard any saved playback position
+	if (sent->loopSfx != sfx)
+	{
+		sent->lastTimePos    = -1.0;
+		sent->lastSampleTime = 0;
+	}
+
 	// Do we need to allocate a new source for this entity
 	if (!sent->srcAllocated)
 	{
@@ -1593,8 +1640,10 @@ static void S_AL_SrcLoop(alSrcPriority_t priority, sfxHandle_t sfx,
 
 		sent->startLoopingSound = qtrue;
 
-		curSource->lastTimePos    = -1.0;
-		curSource->lastSampleTime = Sys_Milliseconds();
+		// Restore the last known playback position of this loop (if any) so it
+		// survives a source kill/reallocation while the loop was out of range
+		curSource->lastTimePos    = sent->lastTimePos;
+		curSource->lastSampleTime = sent->lastTimePos >= 0.0f ? sent->lastSampleTime : Sys_Milliseconds();
 	}
 	else
 	{
@@ -1734,7 +1783,12 @@ static void S_AL_SrcUpdate(void)
 					curSource->isPlaying = qfalse;
 					qalSourceStop(curSource->alSource);
 					qalSourcei(curSource->alSource, AL_BUFFER, 0);
-					sent->startLoopingSound = qtrue;
+
+					// The saved position belongs to the previous sound; discard it so the
+					// resume logic does not seek the new loop to a stale offset.
+					curSource->lastTimePos    = -1.0f;
+					curSource->lastSampleTime = 0;
+					sent->startLoopingSound   = qtrue;
 				}
 
 				// The sound hasn't been started yet
@@ -1754,18 +1808,10 @@ static void S_AL_SrcUpdate(void)
 
 				if (curSource->scaleGain == 0.f)
 				{
-					if (curSource->isPlaying)
-					{
-						// Sound is mute, stop playback until we are in range again
-						S_AL_NewLoopMaster(curSource, qfalse);
-						qalSourceStop(curSource->alSource);
-						curSource->isPlaying = qfalse;
-					}
-					else if (!curSfx->loopActiveCnt && curSfx->masterLoopSrc < 0)
-					{
-						curSfx->masterLoopSrc = i;
-					}
-
+					// Sound is mute (out of range).
+					// Keep it playing silently at 0 gain instead of stopping it, so that when
+					// the player comes back into range the loop continues seamlessly -- this
+					// mirrors the SDL mixing backend which never stops inaudible loops.
 					continue;
 				}
 
@@ -1815,23 +1861,63 @@ static void S_AL_SrcUpdate(void)
 
 								qalSourcef(curSource->alSource, AL_SEC_OFFSET, secofs);
 							}
+							else
+							{
+								// No saved position (slot was reused while the loop was inaudible); resume
+								// phase-locked to the wall clock so the loop keeps its continuity. The SDL
+								// backend behaves the same way via startSample = soundTime % soundLength.
+								secofs = S_AL_WallClockPhase(curSfx);
+
+								qalSourcef(curSource->alSource, AL_SEC_OFFSET, secofs);
+							}
 
 							// I be the master now
 							curSfx->masterLoopSrc = i;
 						}
 						else
 						{
+							// No master is left (its source was recycled while the loop was inaudible);
+							// resume at the last known position instead of the start of the buffer
+							if (curSource->lastTimePos >= 0)
+							{
+								float secofs;
+
+								secofs = curSource->lastTimePos + (Sys_Milliseconds() - curSource->lastSampleTime) / 1000.0f;
+								secofs = fmodf(secofs, (float) curSfx->info.samples / curSfx->info.rate);
+
+								qalSourcef(curSource->alSource, AL_SEC_OFFSET, secofs);
+							}
+							else
+							{
+								// No saved position (slot was reused or source freshly allocated); resume
+								// phase-locked to the wall clock so the loop keeps its continuity.
+								float secofs = S_AL_WallClockPhase(curSfx);
+
+								qalSourcef(curSource->alSource, AL_SEC_OFFSET, secofs);
+							}
+
+							// I be the master now
 							curSfx->masterLoopSrc = i;
 						}
 					}
-					else if (curSource->lastTimePos >= 0)
+					else
 					{
 						float secofs;
 
 						// For unsynced loops (SRCPRI_ENTITY) just carry on playing as if the sound was never stopped
 
-						secofs = curSource->lastTimePos + (Sys_Milliseconds() - curSource->lastSampleTime) / 1000.0f;
-						secofs = fmodf(secofs, (float) curSfx->info.samples / curSfx->info.rate);
+						if (curSource->lastTimePos >= 0)
+						{
+							secofs = curSource->lastTimePos + (Sys_Milliseconds() - curSource->lastSampleTime) / 1000.0f;
+							secofs = fmodf(secofs, (float) curSfx->info.samples / curSfx->info.rate);
+						}
+						else
+						{
+							// No saved position (slot was reused or source freshly allocated); resume
+							// phase-locked to the wall clock so the loop keeps its continuity.
+							secofs = S_AL_WallClockPhase(curSfx);
+						}
+
 						qalSourcef(curSource->alSource, AL_SEC_OFFSET, secofs);
 					}
 
