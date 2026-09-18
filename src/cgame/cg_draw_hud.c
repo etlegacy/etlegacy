@@ -42,11 +42,12 @@ hudComponent_t *showOnlyHudComponent = NULL;
 static lagometer_t lagometer;
 static int         fps;
 
-#define POPUPMESSAGE_STYLE { "No Connect", "No TeamJoin", \
-							 "No Mission", "No Pickup", "No Death", \
-							 "No Echo", "Weapon Icon", "Alt Weap Icons", \
-							 "Swap V<->K", "Force Colors", "Scroll Down" }
-
+#define POPUPMESSAGE_STYLE { "No Connect", "No TeamJoin", "No Mission", \
+							 "No Pickup", "No Death", "No Echo", \
+							 "Weapon Icon", "Alt Weap Icons", \
+							 "Swap V<->K", "Force Colors", "Scroll Down", \
+							 "No Announce", "No Enemy Team", "No Own Team", \
+							 "No Self", "No Suicide" }
 /**
 * @var hudComponentFields
 * @brief for accessing hudStucture_t's fields in a loop

@@ -361,8 +361,9 @@ qboolean CG_CheckPMItemFilter(popupMessageType_t type, int filter)
 	case PM_MINES:
 	case PM_OBJECTIVE:
 	case PM_DESTRUCTION:
-	case PM_ANNOUNCE:
 		return filter & POPUP_FILTER_MISSION;
+	case PM_ANNOUNCE:
+		return filter & POPUP_FILTER_ANNOUNCE;
 	case PM_AMMOPICKUP:
 	case PM_HEALTHPICKUP:
 	case PM_WEAPONPICKUP:
