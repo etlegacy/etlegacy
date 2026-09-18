@@ -621,13 +621,33 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 	VkSurfaceCapabilitiesKHR caps;
 	VkSurfaceFormatKHR       formats[32];
 	uint32_t                 formatCount = 32;
-	VkPresentModeKHR         presentMode = VK_PRESENT_MODE_FIFO_KHR; // always supported, vsynced
+	VkPresentModeKHR         presentMode = VK_PRESENT_MODE_FIFO_KHR; // vsynced, always supported
 	VkExtent2D               extent;
 	VkSwapchainCreateInfoKHR createInfo;
 	uint32_t                 i;
 	uint32_t                 queueFamilyIndices[2];
 
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vk.physicalDevice, vk.surface, &caps);
+
+	// r_swapInterval (renderer1: SDL_GL_SetSwapInterval): 0 = don't wait
+	// for vblank - prefer IMMEDIATE, then MAILBOX; otherwise (or if
+	// neither is available) FIFO, which is vsynced and always supported.
+	if (ri.Cvar_VariableIntegerValue("r_swapInterval") == 0)
+	{
+		VkPresentModeKHR modes[16];
+		uint32_t         modeCount = 16, m;
+		qboolean         haveImmediate = qfalse, haveMailbox = qfalse;
+
+		vkGetPhysicalDeviceSurfacePresentModesKHR(vk.physicalDevice, vk.surface, &modeCount, modes);
+		for (m = 0; m < modeCount; m++)
+		{
+			haveImmediate |= (modes[m] == VK_PRESENT_MODE_IMMEDIATE_KHR);
+			haveMailbox   |= (modes[m] == VK_PRESENT_MODE_MAILBOX_KHR);
+		}
+		presentMode = haveImmediate ? VK_PRESENT_MODE_IMMEDIATE_KHR : (haveMailbox ? VK_PRESENT_MODE_MAILBOX_KHR : VK_PRESENT_MODE_FIFO_KHR);
+	}
+	Ren_Developer("Vulkan: present mode %s\n", presentMode == VK_PRESENT_MODE_IMMEDIATE_KHR ? "IMMEDIATE" :
+	              presentMode == VK_PRESENT_MODE_MAILBOX_KHR ? "MAILBOX" : "FIFO (vsync)");
 	vkGetPhysicalDeviceSurfaceFormatsKHR(vk.physicalDevice, vk.surface, &formatCount, formats);
 	if (formatCount == 0)
 	{
