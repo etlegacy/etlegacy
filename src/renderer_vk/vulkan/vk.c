@@ -56,6 +56,11 @@
 
 #define VK_MAX_SWAPCHAIN_IMAGES 8
 
+// Frames the CPU may record ahead of the GPU. Each frame slot has its own
+// command buffer, fence, acquire semaphore, deferred-free list and region
+// of every vertex/index arena (the VK_*_ARENA_SIZE values are per frame).
+#define VK_FRAMES_IN_FLIGHT 2
+
 // A world can have many distinct shader stateBits/cullType combinations;
 // pipelines are created lazily and cached for the life of the renderer.
 #define VK_MAX_SCENE_PIPELINES 128
@@ -142,7 +147,9 @@ typedef struct
 
 	VkRenderPass renderPass;
 	VkCommandPool commandPool;
-	VkCommandBuffer commandBuffer;
+	VkCommandBuffer commandBuffer;                         // current frame slot's (alias)
+	VkCommandBuffer commandBuffers[VK_FRAMES_IN_FLIGHT];
+	int frameIndex;                                        // current frame slot
 
 	// depth buffer, recreated alongside the swapchain.
 	VkFormat depthFormat;
@@ -151,9 +158,12 @@ typedef struct
 	VkDeviceMemory depthImageMemory;
 	VkImageView depthImageView;
 
-	VkSemaphore imageAvailableSemaphore;
+	VkSemaphore imageAvailableSemaphore;                   // current aliases, set in VK_BeginFrame()
 	VkSemaphore renderFinishedSemaphore;
 	VkFence inFlightFence;
+	VkSemaphore imageAvailableSemaphores[VK_FRAMES_IN_FLIGHT];
+	VkSemaphore renderFinishedSemaphores[VK_MAX_SWAPCHAIN_IMAGES]; // per swapchain image
+	VkFence inFlightFences[VK_FRAMES_IN_FLIGHT];
 
 	// UI/2D rendering pipeline.
 	VkDescriptorSetLayout uiDescriptorSetLayout;
@@ -213,6 +223,21 @@ typedef struct
 	// limbo menu's 2D background/buttons around its small 3D model preview).
 	VkPipeline lastBoundPipeline;
 
+	// Per-command-buffer bind caches (reset in VK_BeginFrame): skip
+	// redundant descriptor-set binds, push only changed push-constant
+	// ranges, keep the arena buffers bound (draws address them with
+	// firstIndex/vertexOffset), and set the 2D viewport only when a 3D
+	// view or depth-range change touched it.
+	VkPipelineLayout boundSetLayout;
+	VkDescriptorSet boundSets[2];
+	uint32_t boundSetCount;
+	VkPipelineLayout pushLayout;
+	float pushData[48];
+	uint32_t pushBytes;
+	VkBuffer boundVertexBuffer;
+	VkBuffer boundIndexBuffer;
+	qboolean viewport2DSet;
+
 	// GL-convention (column-major) projection/modelview matrices captured
 	// where renderer1 calls glLoadMatrixf() in tr_backend.c (see
 	// VK_SetProjectionMatrix/VK_SetModelViewMatrix). projMatrix already has
@@ -240,8 +265,8 @@ typedef struct
 		VkDeviceMemory memory;
 		VkImageView view;
 		VkDescriptorSet descriptorSet;
-	} pendingFree[8];
-	int numPendingFree;
+	} pendingFree[VK_FRAMES_IN_FLIGHT][8];                 // per frame slot
+	int numPendingFree[VK_FRAMES_IN_FLIGHT];
 
 	// frame capture for screenshots / levelshots / avi
 	// frames. When requested, VK_EndFrame() copies the final (post-gamma)
@@ -1038,10 +1063,13 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 
 	Com_Memset(dependencies, 0, sizeof(dependencies));
 	// previous frame's gamma pass read the scene image -> this frame writes it
-	dependencies[0].srcSubpass    = VK_SUBPASS_EXTERNAL;
-	dependencies[0].dstSubpass    = 0;
-	dependencies[0].srcStageMask  = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-	dependencies[0].srcAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	dependencies[0].srcSubpass   = VK_SUBPASS_EXTERNAL;
+	dependencies[0].dstSubpass   = 0;
+	dependencies[0].srcStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+	// previous frame (possibly still executing - VK_FRAMES_IN_FLIGHT > 1):
+	// its gamma-pass read and color/depth writes must complete first
+	dependencies[0].srcAccessMask = VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT |
+	                                VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 	dependencies[0].dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
 	dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT |
 	                                VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
@@ -1286,6 +1314,7 @@ static qboolean VK_CreateCommandObjects(void)
 	VkCommandBufferAllocateInfo allocInfo;
 	VkSemaphoreCreateInfo       semaphoreInfo;
 	VkFenceCreateInfo           fenceInfo;
+	int                         i;
 
 	Com_Memset(&poolInfo, 0, sizeof(poolInfo));
 	poolInfo.sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -1301,12 +1330,14 @@ static qboolean VK_CreateCommandObjects(void)
 	allocInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	allocInfo.commandPool        = vk.commandPool;
 	allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	allocInfo.commandBufferCount = 1;
+	allocInfo.commandBufferCount = VK_FRAMES_IN_FLIGHT;
 
-	if (!VK_CheckResult(vkAllocateCommandBuffers(vk.device, &allocInfo, &vk.commandBuffer), "vkAllocateCommandBuffers"))
+	if (!VK_CheckResult(vkAllocateCommandBuffers(vk.device, &allocInfo, vk.commandBuffers), "vkAllocateCommandBuffers"))
 	{
 		return qfalse;
 	}
+	vk.commandBuffer = vk.commandBuffers[0];
+	vk.frameIndex    = VK_FRAMES_IN_FLIGHT - 1; // VK_BeginFrame() advances to slot 0 first
 
 	Com_Memset(&semaphoreInfo, 0, sizeof(semaphoreInfo));
 	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -1315,18 +1346,24 @@ static qboolean VK_CreateCommandObjects(void)
 	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-	if (!VK_CheckResult(vkCreateSemaphore(vk.device, &semaphoreInfo, NULL, &vk.imageAvailableSemaphore), "vkCreateSemaphore(imageAvailable)"))
+	for (i = 0; i < VK_FRAMES_IN_FLIGHT; i++)
 	{
-		return qfalse;
+		if (!VK_CheckResult(vkCreateSemaphore(vk.device, &semaphoreInfo, NULL, &vk.imageAvailableSemaphores[i]), "vkCreateSemaphore(imageAvailable)") ||
+		    !VK_CheckResult(vkCreateFence(vk.device, &fenceInfo, NULL, &vk.inFlightFences[i]), "vkCreateFence"))
+		{
+			return qfalse;
+		}
 	}
-	if (!VK_CheckResult(vkCreateSemaphore(vk.device, &semaphoreInfo, NULL, &vk.renderFinishedSemaphore), "vkCreateSemaphore(renderFinished)"))
+	for (i = 0; i < VK_MAX_SWAPCHAIN_IMAGES; i++)
 	{
-		return qfalse;
+		if (!VK_CheckResult(vkCreateSemaphore(vk.device, &semaphoreInfo, NULL, &vk.renderFinishedSemaphores[i]), "vkCreateSemaphore(renderFinished)"))
+		{
+			return qfalse;
+		}
 	}
-	if (!VK_CheckResult(vkCreateFence(vk.device, &fenceInfo, NULL, &vk.inFlightFence), "vkCreateFence"))
-	{
-		return qfalse;
-	}
+	vk.imageAvailableSemaphore = vk.imageAvailableSemaphores[0];
+	vk.renderFinishedSemaphore = vk.renderFinishedSemaphores[0];
+	vk.inFlightFence           = vk.inFlightFences[0];
 
 	return qtrue;
 }
@@ -1882,8 +1919,10 @@ static VkPipeline VK_GetUIPipeline(unsigned long stateBits)
  */
 static qboolean VK_CreateUIArenaBuffers(void)
 {
-	vk.vertexArenaSize = VK_UI_VERTEX_ARENA_SIZE;
-	vk.indexArenaSize  = VK_UI_INDEX_ARENA_SIZE;
+	// one per-frame region per frame slot; VK_BeginFrame() narrows
+	// offset/size to the current slot's region
+	vk.vertexArenaSize = (VkDeviceSize)VK_UI_VERTEX_ARENA_SIZE * VK_FRAMES_IN_FLIGHT;
+	vk.indexArenaSize  = (VkDeviceSize)VK_UI_INDEX_ARENA_SIZE * VK_FRAMES_IN_FLIGHT;
 
 	if (!VK_CreateBuffer(vk.vertexArenaSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
@@ -1911,8 +1950,8 @@ static qboolean VK_CreateUIArenaBuffers(void)
  */
 static qboolean VK_CreateSceneArenaBuffers(void)
 {
-	vk.sceneVertexArenaSize = VK_SCENE_VERTEX_ARENA_SIZE;
-	vk.sceneIndexArenaSize  = VK_SCENE_INDEX_ARENA_SIZE;
+	vk.sceneVertexArenaSize = (VkDeviceSize)VK_SCENE_VERTEX_ARENA_SIZE * VK_FRAMES_IN_FLIGHT;
+	vk.sceneIndexArenaSize  = (VkDeviceSize)VK_SCENE_INDEX_ARENA_SIZE * VK_FRAMES_IN_FLIGHT;
 
 	if (!VK_CreateBuffer(vk.sceneVertexArenaSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
 	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
@@ -2819,17 +2858,27 @@ void VK_Shutdown(void)
 		}
 	}
 
-	if (vk.imageAvailableSemaphore != VK_NULL_HANDLE)
 	{
-		vkDestroySemaphore(vk.device, vk.imageAvailableSemaphore, NULL);
-	}
-	if (vk.renderFinishedSemaphore != VK_NULL_HANDLE)
-	{
-		vkDestroySemaphore(vk.device, vk.renderFinishedSemaphore, NULL);
-	}
-	if (vk.inFlightFence != VK_NULL_HANDLE)
-	{
-		vkDestroyFence(vk.device, vk.inFlightFence, NULL);
+		int i;
+
+		for (i = 0; i < VK_FRAMES_IN_FLIGHT; i++)
+		{
+			if (vk.imageAvailableSemaphores[i] != VK_NULL_HANDLE)
+			{
+				vkDestroySemaphore(vk.device, vk.imageAvailableSemaphores[i], NULL);
+			}
+			if (vk.inFlightFences[i] != VK_NULL_HANDLE)
+			{
+				vkDestroyFence(vk.device, vk.inFlightFences[i], NULL);
+			}
+		}
+		for (i = 0; i < VK_MAX_SWAPCHAIN_IMAGES; i++)
+		{
+			if (vk.renderFinishedSemaphores[i] != VK_NULL_HANDLE)
+			{
+				vkDestroySemaphore(vk.device, vk.renderFinishedSemaphores[i], NULL);
+			}
+		}
 	}
 	if (vk.commandPool != VK_NULL_HANDLE)
 	{
@@ -2852,33 +2901,158 @@ void VK_Shutdown(void)
 }
 
 /**
+ * @brief Forgets all cached command-buffer binding state (new command
+ * buffer, or after a render pass that used its own pipeline/layout).
+ */
+static void VK_ResetBindCache(void)
+{
+	vk.lastBoundPipeline = VK_NULL_HANDLE;
+	vk.boundSetLayout    = VK_NULL_HANDLE;
+	vk.boundSetCount     = 0;
+	vk.pushLayout        = VK_NULL_HANDLE;
+	vk.pushBytes         = 0;
+	vk.boundVertexBuffer = VK_NULL_HANDLE;
+	vk.boundIndexBuffer  = VK_NULL_HANDLE;
+	vk.viewport2DSet     = qfalse;
+}
+
+static void VK_BindPipelineCached(VkPipeline pipeline)
+{
+	if (vk.lastBoundPipeline != pipeline)
+	{
+		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+		vk.lastBoundPipeline = pipeline;
+	}
+}
+
+/**
+ * @brief Binds descriptor sets 0..count-1 unless exactly these sets are
+ * already bound for this pipeline layout.
+ */
+static void VK_BindDescriptorSetsCached(VkPipelineLayout layout, uint32_t count, const VkDescriptorSet *sets)
+{
+	uint32_t i;
+
+	if (vk.boundSetLayout == layout && vk.boundSetCount == count)
+	{
+		for (i = 0; i < count; i++)
+		{
+			if (vk.boundSets[i] != sets[i])
+			{
+				break;
+			}
+		}
+		if (i == count)
+		{
+			return;
+		}
+	}
+
+	vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, count, sets, 0, NULL);
+	vk.boundSetLayout = layout;
+	vk.boundSetCount  = count;
+	for (i = 0; i < count && i < ARRAY_LEN(vk.boundSets); i++)
+	{
+		vk.boundSets[i] = sets[i];
+	}
+}
+
+/**
+ * @brief Push constants, sending only the range of floats that changed
+ * since the last push with the same layout (push constant values persist
+ * across draws and same-layout pipeline binds).
+ */
+static void VK_PushConstantsCached(VkPipelineLayout layout, VkShaderStageFlags stages, const float *data, uint32_t bytes)
+{
+	uint32_t n = bytes / sizeof(float), first, last;
+
+	if (vk.pushLayout != layout || vk.pushBytes != bytes)
+	{
+		vkCmdPushConstants(vk.commandBuffer, layout, stages, 0, bytes, data);
+		vk.pushLayout = layout;
+		vk.pushBytes  = bytes;
+		Com_Memcpy(vk.pushData, data, bytes);
+		return;
+	}
+
+	for (first = 0; first < n && vk.pushData[first] == data[first]; first++)
+	{
+	}
+	if (first == n)
+	{
+		return;
+	}
+	for (last = n - 1; last > first && vk.pushData[last] == data[last]; last--)
+	{
+	}
+
+	vkCmdPushConstants(vk.commandBuffer, layout, stages, first * sizeof(float), (last - first + 1) * sizeof(float), data + first);
+	Com_Memcpy(vk.pushData + first, data + first, (last - first + 1) * sizeof(float));
+}
+
+/**
+ * @brief Keeps the vertex/index arena buffers bound at offset 0; draws
+ * address their data with firstIndex/vertexOffset.
+ */
+static void VK_BindArenaBuffers(VkBuffer vertexBuffer, VkBuffer indexBuffer)
+{
+	if (vk.boundVertexBuffer != vertexBuffer)
+	{
+		VkDeviceSize zero = 0;
+
+		vkCmdBindVertexBuffers(vk.commandBuffer, 0, 1, &vertexBuffer, &zero);
+		vk.boundVertexBuffer = vertexBuffer;
+	}
+	if (vk.boundIndexBuffer != indexBuffer)
+	{
+		vkCmdBindIndexBuffer(vk.commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		vk.boundIndexBuffer = indexBuffer;
+	}
+}
+
+#define VK_ALIGN_UP(x, a) ((((x) + (a) - 1) / (a)) * (a))
+
+/**
  * @brief frees image resources queued by
  * VK_QueueImageResourcesForFree().
  */
-static void VK_FlushPendingFrees(void)
+static void VK_FlushPendingFramesSlot(int slot)
 {
 	int i;
 
-	for (i = 0; i < vk.numPendingFree; i++)
+	for (i = 0; i < vk.numPendingFree[slot]; i++)
 	{
-		if (vk.pendingFree[i].descriptorSet != VK_NULL_HANDLE)
+		if (vk.pendingFree[slot][i].descriptorSet != VK_NULL_HANDLE)
 		{
-			vkFreeDescriptorSets(vk.device, vk.uiDescriptorPool, 1, &vk.pendingFree[i].descriptorSet);
+			vkFreeDescriptorSets(vk.device, vk.uiDescriptorPool, 1, &vk.pendingFree[slot][i].descriptorSet);
 		}
-		if (vk.pendingFree[i].view != VK_NULL_HANDLE)
+		if (vk.pendingFree[slot][i].view != VK_NULL_HANDLE)
 		{
-			vkDestroyImageView(vk.device, vk.pendingFree[i].view, NULL);
+			vkDestroyImageView(vk.device, vk.pendingFree[slot][i].view, NULL);
 		}
-		if (vk.pendingFree[i].image != VK_NULL_HANDLE)
+		if (vk.pendingFree[slot][i].image != VK_NULL_HANDLE)
 		{
-			vkDestroyImage(vk.device, vk.pendingFree[i].image, NULL);
+			vkDestroyImage(vk.device, vk.pendingFree[slot][i].image, NULL);
 		}
-		if (vk.pendingFree[i].memory != VK_NULL_HANDLE)
+		if (vk.pendingFree[slot][i].memory != VK_NULL_HANDLE)
 		{
-			vkFreeMemory(vk.device, vk.pendingFree[i].memory, NULL);
+			vkFreeMemory(vk.device, vk.pendingFree[slot][i].memory, NULL);
 		}
 	}
-	vk.numPendingFree = 0;
+	vk.numPendingFree[slot] = 0;
+}
+
+/**
+ * @brief Frees everything queued in all frame slots (device must be idle).
+ */
+static void VK_FlushPendingFrees(void)
+{
+	int slot;
+
+	for (slot = 0; slot < VK_FRAMES_IN_FLIGHT; slot++)
+	{
+		VK_FlushPendingFramesSlot(slot);
+	}
 }
 
 /**
@@ -2888,17 +3062,19 @@ static void VK_FlushPendingFrees(void)
  */
 static void VK_QueueImageResourcesForFree(struct image_s *image)
 {
-	if (vk.numPendingFree >= (int)ARRAY_LEN(vk.pendingFree))
+	int slot = vk.frameIndex;
+
+	if (vk.numPendingFree[slot] >= (int)ARRAY_LEN(vk.pendingFree[slot]))
 	{
 		VK_DeleteImageTexture(image);
 		return;
 	}
 
-	vk.pendingFree[vk.numPendingFree].image         = (VkImage)image->vkImage;
-	vk.pendingFree[vk.numPendingFree].memory        = (VkDeviceMemory)image->vkImageMemory;
-	vk.pendingFree[vk.numPendingFree].view          = (VkImageView)image->vkImageView;
-	vk.pendingFree[vk.numPendingFree].descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
-	vk.numPendingFree++;
+	vk.pendingFree[slot][vk.numPendingFree[slot]].image         = (VkImage)image->vkImage;
+	vk.pendingFree[slot][vk.numPendingFree[slot]].memory        = (VkDeviceMemory)image->vkImageMemory;
+	vk.pendingFree[slot][vk.numPendingFree[slot]].view          = (VkImageView)image->vkImageView;
+	vk.pendingFree[slot][vk.numPendingFree[slot]].descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
+	vk.numPendingFree[slot]++;
 
 	image->vkImage         = NULL;
 	image->vkImageMemory   = NULL;
@@ -2959,26 +3135,38 @@ void VK_BeginFrame(void)
 		return;
 	}
 
-	// reset the per-frame vertex/index arenas.
-	vk.vertexArenaOffset = 0;
-	vk.indexArenaOffset  = 0;
+	// advance to the next frame slot and wait until the GPU is done with the
+	// frame that last used it (VK_FRAMES_IN_FLIGHT frames ago)
+	vk.frameIndex              = (vk.frameIndex + 1) % VK_FRAMES_IN_FLIGHT;
+	vk.commandBuffer           = vk.commandBuffers[vk.frameIndex];
+	vk.inFlightFence           = vk.inFlightFences[vk.frameIndex];
+	vk.imageAvailableSemaphore = vk.imageAvailableSemaphores[vk.frameIndex];
+
+	// reset the per-frame vertex/index arenas (this slot's region).
+	vk.vertexArenaOffset = (VkDeviceSize)VK_UI_VERTEX_ARENA_SIZE * vk.frameIndex;
+	vk.indexArenaOffset  = (VkDeviceSize)VK_UI_INDEX_ARENA_SIZE * vk.frameIndex;
+	vk.vertexArenaSize   = vk.vertexArenaOffset + VK_UI_VERTEX_ARENA_SIZE; // end of region
+	vk.indexArenaSize    = vk.indexArenaOffset + VK_UI_INDEX_ARENA_SIZE;
 
 	// same for the 3D scene arenas. lastBoundPipeline is shared
 	// across UI and scene draws (viewport/scissor are set per-view, not
 	// cached per-frame - see VK_SetSceneViewport(), called from
 	// tr_backend.c's SetViewportAndScissor()).
-	vk.sceneVertexArenaOffset = 0;
-	vk.sceneIndexArenaOffset  = 0;
-	vk.lastBoundPipeline      = VK_NULL_HANDLE;
+	vk.sceneVertexArenaOffset = (VkDeviceSize)VK_SCENE_VERTEX_ARENA_SIZE * vk.frameIndex;
+	vk.sceneIndexArenaOffset  = (VkDeviceSize)VK_SCENE_INDEX_ARENA_SIZE * vk.frameIndex;
+	vk.sceneVertexArenaSize   = vk.sceneVertexArenaOffset + VK_SCENE_VERTEX_ARENA_SIZE; // end of region
+	vk.sceneIndexArenaSize    = vk.sceneIndexArenaOffset + VK_SCENE_INDEX_ARENA_SIZE;
+	VK_ResetBindCache();
 
 	vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX);
 
-	// the previous frame is done, so resources it may still
-	// have referenced can go now
-	VK_FlushPendingFrees();
+	// that frame is done, so resources queued while recording
+	// it can go now
+	VK_FlushPendingFramesSlot(vk.frameIndex);
 	vkResetFences(vk.device, 1, &vk.inFlightFence);
 
 	vkAcquireNextImageKHR(vk.device, vk.swapchain, UINT64_MAX, vk.imageAvailableSemaphore, VK_NULL_HANDLE, &vk.currentImageIndex);
+	vk.renderFinishedSemaphore = vk.renderFinishedSemaphores[vk.currentImageIndex];
 
 	vkResetCommandBuffer(vk.commandBuffer, 0);
 
@@ -3703,8 +3891,6 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 	VkRect2D        scissor;
 	float           pushConstants[8];
 	VkDescriptorSet descriptorSet;
-	VkBuffer        vertexBuffers[1];
-	VkDeviceSize    offsets[1];
 	VkPipeline      pipeline;
 
 
@@ -3727,8 +3913,11 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 	numVertexes = input->numVertexes;
 	numIndexes  = input->numIndexes;
 
-	vertexBytes = (VkDeviceSize)numVertexes * sizeof(vkUIVertex_t);
-	indexBytes  = (VkDeviceSize)numIndexes * sizeof(uint32_t);
+	// draws address the arena with vertexOffset (in vertices): keep the
+	// byte offset a multiple of this vertex type's stride
+	vk.vertexArenaOffset = VK_ALIGN_UP(vk.vertexArenaOffset, sizeof(vkUIVertex_t));
+	vertexBytes          = (VkDeviceSize)numVertexes * sizeof(vkUIVertex_t);
+	indexBytes           = (VkDeviceSize)numIndexes * sizeof(uint32_t);
 
 	if (vk.vertexArenaOffset + vertexBytes > vk.vertexArenaSize ||
 	    vk.indexArenaOffset + indexBytes > vk.indexArenaSize)
@@ -3768,11 +3957,7 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 		return;
 	}
 
-	if (vk.lastBoundPipeline != pipeline)
-	{
-		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-		vk.lastBoundPipeline = pipeline;
-	}
+	VK_BindPipelineCached(pipeline);
 
 	// Always set the full-window viewport/scissor for 2D/UI draws: viewport/
 	// scissor are dynamic command-buffer state that persists across pipeline
@@ -3780,17 +3965,22 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 	// preview) sets a smaller viewport earlier in this same frame, caching
 	// "set once per frame" here would leave later UI draws incorrectly
 	// clipped to that stale, smaller rect.
-	Com_Memset(&viewport, 0, sizeof(viewport));
-	viewport.width    = (float)glConfig.vidWidth;
-	viewport.height   = (float)glConfig.vidHeight;
-	viewport.minDepth = 0.0f;
-	viewport.maxDepth = 1.0f;
-	vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
+	if (!vk.viewport2DSet)
+	{
+		Com_Memset(&viewport, 0, sizeof(viewport));
+		viewport.width    = (float)glConfig.vidWidth;
+		viewport.height   = (float)glConfig.vidHeight;
+		viewport.minDepth = 0.0f;
+		viewport.maxDepth = 1.0f;
+		vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
 
-	Com_Memset(&scissor, 0, sizeof(scissor));
-	scissor.extent.width  = (uint32_t)glConfig.vidWidth;
-	scissor.extent.height = (uint32_t)glConfig.vidHeight;
-	vkCmdSetScissor(vk.commandBuffer, 0, 1, &scissor);
+		Com_Memset(&scissor, 0, sizeof(scissor));
+		scissor.extent.width  = (uint32_t)glConfig.vidWidth;
+		scissor.extent.height = (uint32_t)glConfig.vidHeight;
+		vkCmdSetScissor(vk.commandBuffer, 0, 1, &scissor);
+
+		vk.viewport2DSet = qtrue;
+	}
 
 	pushConstants[0] = 2.0f / (float)glConfig.vidWidth;
 	pushConstants[1] = 2.0f / (float)glConfig.vidHeight;
@@ -3800,17 +3990,13 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 	pushConstants[5] = 0.0f;
 	pushConstants[6] = 0.0f;
 	pushConstants[7] = 0.0f;
-	vkCmdPushConstants(vk.commandBuffer, vk.uiPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pushConstants), pushConstants);
+	VK_PushConstantsCached(vk.uiPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
 
 	descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
-	vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.uiPipelineLayout, 0, 1, &descriptorSet, 0, NULL);
+	VK_BindDescriptorSetsCached(vk.uiPipelineLayout, 1, &descriptorSet);
 
-	vertexBuffers[0] = vk.vertexArenaBuffer;
-	offsets[0]       = vk.vertexArenaOffset;
-	vkCmdBindVertexBuffers(vk.commandBuffer, 0, 1, vertexBuffers, offsets);
-	vkCmdBindIndexBuffer(vk.commandBuffer, vk.indexArenaBuffer, vk.indexArenaOffset, VK_INDEX_TYPE_UINT32);
-
-	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, 0, 0, 0);
+	VK_BindArenaBuffers(vk.vertexArenaBuffer, vk.indexArenaBuffer);
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, (uint32_t)(vk.indexArenaOffset / sizeof(uint32_t)), (int32_t)(vk.vertexArenaOffset / sizeof(vkUIVertex_t)), 0);
 
 	vk.vertexArenaOffset += vertexBytes;
 	vk.indexArenaOffset  += indexBytes;
@@ -3860,6 +4046,7 @@ void VK_SetSceneViewport(int x, int y, int width, int height)
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
 	vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
+	vk.viewport2DSet = qfalse;
 
 	Com_Memset(&scissor, 0, sizeof(scissor));
 	scissor.offset.x      = x;
@@ -3893,6 +4080,7 @@ void VK_SetDepthRange(float minDepth, float maxDepth)
 	viewport.minDepth = minDepth;
 	viewport.maxDepth = maxDepth;
 	vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
+	vk.viewport2DSet = qfalse;
 }
 
 /**
@@ -4040,8 +4228,6 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 	float           pushConstants[48];
 	VkPipeline      pipeline;
 	VkDescriptorSet descriptorSet;
-	VkBuffer        vertexBuffers[1];
-	VkDeviceSize    offsets[1];
 
 	if (!vk.initialized || !input || input->numVertexes == 0 || numIndexes == 0)
 	{
@@ -4065,8 +4251,11 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 
 	numVertexes = input->numVertexes;
 
-	vertexBytes = (VkDeviceSize)numVertexes * sizeof(vk3DVertex_t);
-	indexBytes  = (VkDeviceSize)numIndexes * sizeof(uint32_t);
+	// draws address the arena with vertexOffset (in vertices): keep the
+	// byte offset a multiple of this vertex type's stride
+	vk.sceneVertexArenaOffset = VK_ALIGN_UP(vk.sceneVertexArenaOffset, sizeof(vk3DVertex_t));
+	vertexBytes               = (VkDeviceSize)numVertexes * sizeof(vk3DVertex_t);
+	indexBytes                = (VkDeviceSize)numIndexes * sizeof(uint32_t);
 
 	if (vk.sceneVertexArenaOffset + vertexBytes > vk.sceneVertexArenaSize ||
 	    vk.sceneIndexArenaOffset + indexBytes > vk.sceneIndexArenaSize)
@@ -4098,11 +4287,7 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 	dstIndexes = (uint32_t *)((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset);
 	Com_Memcpy(dstIndexes, indexes, (size_t)indexBytes);
 
-	if (vk.lastBoundPipeline != pipeline)
-	{
-		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-		vk.lastBoundPipeline = pipeline;
-	}
+	VK_BindPipelineCached(pipeline);
 
 	Com_Memcpy(pushConstants, vk.mvpMatrix, sizeof(vk.mvpMatrix));
 	Com_Memcpy(pushConstants + 16, vk.modelMatrix, sizeof(vk.modelMatrix));
@@ -4122,17 +4307,13 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 	pushConstants[45] = vk.clipPlane[1];
 	pushConstants[46] = vk.clipPlane[2];
 	pushConstants[47] = vk.clipPlane[3];
-	vkCmdPushConstants(vk.commandBuffer, vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pushConstants), pushConstants);
+	VK_PushConstantsCached(vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
 
 	descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
-	vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.scenePipelineLayout, 0, 1, &descriptorSet, 0, NULL);
+	VK_BindDescriptorSetsCached(vk.scenePipelineLayout, 1, &descriptorSet);
 
-	vertexBuffers[0] = vk.sceneVertexArenaBuffer;
-	offsets[0]       = vk.sceneVertexArenaOffset;
-	vkCmdBindVertexBuffers(vk.commandBuffer, 0, 1, vertexBuffers, offsets);
-	vkCmdBindIndexBuffer(vk.commandBuffer, vk.sceneIndexArenaBuffer, vk.sceneIndexArenaOffset, VK_INDEX_TYPE_UINT32);
-
-	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, 0, 0, 0);
+	VK_BindArenaBuffers(vk.sceneVertexArenaBuffer, vk.sceneIndexArenaBuffer);
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, (uint32_t)(vk.sceneIndexArenaOffset / sizeof(uint32_t)), (int32_t)(vk.sceneVertexArenaOffset / sizeof(vk3DVertex_t)), 0);
 
 	vk.sceneVertexArenaOffset += vertexBytes;
 	vk.sceneIndexArenaOffset  += indexBytes;
@@ -4154,8 +4335,6 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 	float           pushConstants[48];
 	VkPipeline      pipeline;
 	VkDescriptorSet descriptorSets[2];
-	VkBuffer        vertexBuffers[1];
-	VkDeviceSize    offsets[1];
 
 	if (!vk.initialized || !input || input->numVertexes == 0 || input->numIndexes == 0)
 	{
@@ -4184,8 +4363,11 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 	numVertexes = input->numVertexes;
 	numIndexes  = input->numIndexes;
 
-	vertexBytes = (VkDeviceSize)numVertexes * sizeof(vk3DVertexLM_t);
-	indexBytes  = (VkDeviceSize)numIndexes * sizeof(uint32_t);
+	// draws address the arena with vertexOffset (in vertices): keep the
+	// byte offset a multiple of this vertex type's stride
+	vk.sceneVertexArenaOffset = VK_ALIGN_UP(vk.sceneVertexArenaOffset, sizeof(vk3DVertexLM_t));
+	vertexBytes               = (VkDeviceSize)numVertexes * sizeof(vk3DVertexLM_t);
+	indexBytes                = (VkDeviceSize)numIndexes * sizeof(uint32_t);
 
 	if (vk.sceneVertexArenaOffset + vertexBytes > vk.sceneVertexArenaSize ||
 	    vk.sceneIndexArenaOffset + indexBytes > vk.sceneIndexArenaSize)
@@ -4219,11 +4401,7 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 	dstIndexes = (uint32_t *)((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset);
 	Com_Memcpy(dstIndexes, input->indexes, (size_t)indexBytes);
 
-	if (vk.lastBoundPipeline != pipeline)
-	{
-		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-		vk.lastBoundPipeline = pipeline;
-	}
+	VK_BindPipelineCached(pipeline);
 
 	Com_Memcpy(pushConstants, vk.mvpMatrix, sizeof(vk.mvpMatrix));
 	Com_Memcpy(pushConstants + 16, vk.modelMatrix, sizeof(vk.modelMatrix));
@@ -4243,18 +4421,14 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 	pushConstants[45] = vk.clipPlane[1];
 	pushConstants[46] = vk.clipPlane[2];
 	pushConstants[47] = vk.clipPlane[3];
-	vkCmdPushConstants(vk.commandBuffer, vk.sceneLMPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pushConstants), pushConstants);
+	VK_PushConstantsCached(vk.sceneLMPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
 
 	descriptorSets[0] = (VkDescriptorSet)base->vkDescriptorSet;
 	descriptorSets[1] = (VkDescriptorSet)lightmap->vkDescriptorSet;
-	vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.sceneLMPipelineLayout, 0, 2, descriptorSets, 0, NULL);
+	VK_BindDescriptorSetsCached(vk.sceneLMPipelineLayout, 2, descriptorSets);
 
-	vertexBuffers[0] = vk.sceneVertexArenaBuffer;
-	offsets[0]       = vk.sceneVertexArenaOffset;
-	vkCmdBindVertexBuffers(vk.commandBuffer, 0, 1, vertexBuffers, offsets);
-	vkCmdBindIndexBuffer(vk.commandBuffer, vk.sceneIndexArenaBuffer, vk.sceneIndexArenaOffset, VK_INDEX_TYPE_UINT32);
-
-	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, 0, 0, 0);
+	VK_BindArenaBuffers(vk.sceneVertexArenaBuffer, vk.sceneIndexArenaBuffer);
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, (uint32_t)(vk.sceneIndexArenaOffset / sizeof(uint32_t)), (int32_t)(vk.sceneVertexArenaOffset / sizeof(vk3DVertexLM_t)), 0);
 
 	vk.sceneVertexArenaOffset += vertexBytes;
 	vk.sceneIndexArenaOffset  += indexBytes;
@@ -4281,8 +4455,6 @@ static void VK_DrawSceneRaw(VkPipeline pipeline, const vec4_t *xyz, int numVerte
 	vk3DVertex_t    *dstVerts;
 	float           pushConstants[48];
 	VkDescriptorSet descriptorSet;
-	VkBuffer        vertexBuffers[1];
-	VkDeviceSize    offsets[1];
 	int             i;
 
 	if (pipeline == VK_NULL_HANDLE || numVertexes == 0 || numIndexes == 0 || !tr.whiteImage || !tr.whiteImage->vkDescriptorSet)
@@ -4290,8 +4462,11 @@ static void VK_DrawSceneRaw(VkPipeline pipeline, const vec4_t *xyz, int numVerte
 		return;
 	}
 
-	vertexBytes = (VkDeviceSize)numVertexes * sizeof(vk3DVertex_t);
-	indexBytes  = (VkDeviceSize)numIndexes * sizeof(uint32_t);
+	// draws address the arena with vertexOffset (in vertices): keep the
+	// byte offset a multiple of this vertex type's stride
+	vk.sceneVertexArenaOffset = VK_ALIGN_UP(vk.sceneVertexArenaOffset, sizeof(vk3DVertex_t));
+	vertexBytes               = (VkDeviceSize)numVertexes * sizeof(vk3DVertex_t);
+	indexBytes                = (VkDeviceSize)numIndexes * sizeof(uint32_t);
 
 	if (vk.sceneVertexArenaOffset + vertexBytes > vk.sceneVertexArenaSize ||
 	    vk.sceneIndexArenaOffset + indexBytes > vk.sceneIndexArenaSize)
@@ -4314,11 +4489,7 @@ static void VK_DrawSceneRaw(VkPipeline pipeline, const vec4_t *xyz, int numVerte
 	}
 	Com_Memcpy((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset, indexes, (size_t)indexBytes);
 
-	if (vk.lastBoundPipeline != pipeline)
-	{
-		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-		vk.lastBoundPipeline = pipeline;
-	}
+	VK_BindPipelineCached(pipeline);
 
 	Com_Memset(pushConstants, 0, sizeof(pushConstants));
 	Com_Memcpy(pushConstants, mvp, 16 * sizeof(float));
@@ -4331,17 +4502,13 @@ static void VK_DrawSceneRaw(VkPipeline pipeline, const vec4_t *xyz, int numVerte
 		pushConstants[46] = vk.clipPlane[2];
 		pushConstants[47] = vk.clipPlane[3];
 	}
-	vkCmdPushConstants(vk.commandBuffer, vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pushConstants), pushConstants);
+	VK_PushConstantsCached(vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
 
 	descriptorSet = (VkDescriptorSet)tr.whiteImage->vkDescriptorSet;
-	vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.scenePipelineLayout, 0, 1, &descriptorSet, 0, NULL);
+	VK_BindDescriptorSetsCached(vk.scenePipelineLayout, 1, &descriptorSet);
 
-	vertexBuffers[0] = vk.sceneVertexArenaBuffer;
-	offsets[0]       = vk.sceneVertexArenaOffset;
-	vkCmdBindVertexBuffers(vk.commandBuffer, 0, 1, vertexBuffers, offsets);
-	vkCmdBindIndexBuffer(vk.commandBuffer, vk.sceneIndexArenaBuffer, vk.sceneIndexArenaOffset, VK_INDEX_TYPE_UINT32);
-
-	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, 0, 0, 0);
+	VK_BindArenaBuffers(vk.sceneVertexArenaBuffer, vk.sceneIndexArenaBuffer);
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, (uint32_t)(vk.sceneIndexArenaOffset / sizeof(uint32_t)), (int32_t)(vk.sceneVertexArenaOffset / sizeof(vk3DVertex_t)), 0);
 
 	vk.sceneVertexArenaOffset += vertexBytes;
 	vk.sceneIndexArenaOffset  += indexBytes;
@@ -4596,8 +4763,6 @@ void VK_DrawImmediate3D(const float (*xyz)[4], const byte (*colors)[4], const fl
 	vk3DVertex_t    *dstVerts;
 	float           pushConstants[48];
 	VkDescriptorSet descriptorSet;
-	VkBuffer        vertexBuffers[1];
-	VkDeviceSize    offsets[1];
 	VkPipeline      pipeline;
 	int             i;
 
@@ -4621,8 +4786,11 @@ void VK_DrawImmediate3D(const float (*xyz)[4], const byte (*colors)[4], const fl
 		return;
 	}
 
-	vertexBytes = (VkDeviceSize)numVertexes * sizeof(vk3DVertex_t);
-	indexBytes  = (VkDeviceSize)numIndexes * sizeof(uint32_t);
+	// draws address the arena with vertexOffset (in vertices): keep the
+	// byte offset a multiple of this vertex type's stride
+	vk.sceneVertexArenaOffset = VK_ALIGN_UP(vk.sceneVertexArenaOffset, sizeof(vk3DVertex_t));
+	vertexBytes               = (VkDeviceSize)numVertexes * sizeof(vk3DVertex_t);
+	indexBytes                = (VkDeviceSize)numIndexes * sizeof(uint32_t);
 	if (vk.sceneVertexArenaOffset + vertexBytes > vk.sceneVertexArenaSize ||
 	    vk.sceneIndexArenaOffset + indexBytes > vk.sceneIndexArenaSize)
 	{
@@ -4644,11 +4812,7 @@ void VK_DrawImmediate3D(const float (*xyz)[4], const byte (*colors)[4], const fl
 	}
 	Com_Memcpy((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset, indexes, (size_t)indexBytes);
 
-	if (vk.lastBoundPipeline != pipeline)
-	{
-		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
-		vk.lastBoundPipeline = pipeline;
-	}
+	VK_BindPipelineCached(pipeline);
 
 	Com_Memcpy(pushConstants, vk.mvpMatrix, sizeof(vk.mvpMatrix));
 	Com_Memcpy(pushConstants + 16, vk.modelMatrix, sizeof(vk.modelMatrix));
@@ -4668,17 +4832,13 @@ void VK_DrawImmediate3D(const float (*xyz)[4], const byte (*colors)[4], const fl
 	pushConstants[45] = vk.clipPlane[1];
 	pushConstants[46] = vk.clipPlane[2];
 	pushConstants[47] = vk.clipPlane[3];
-	vkCmdPushConstants(vk.commandBuffer, vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(pushConstants), pushConstants);
+	VK_PushConstantsCached(vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
 
 	descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
-	vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.scenePipelineLayout, 0, 1, &descriptorSet, 0, NULL);
+	VK_BindDescriptorSetsCached(vk.scenePipelineLayout, 1, &descriptorSet);
 
-	vertexBuffers[0] = vk.sceneVertexArenaBuffer;
-	offsets[0]       = vk.sceneVertexArenaOffset;
-	vkCmdBindVertexBuffers(vk.commandBuffer, 0, 1, vertexBuffers, offsets);
-	vkCmdBindIndexBuffer(vk.commandBuffer, vk.sceneIndexArenaBuffer, vk.sceneIndexArenaOffset, VK_INDEX_TYPE_UINT32);
-
-	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, 0, 0, 0);
+	VK_BindArenaBuffers(vk.sceneVertexArenaBuffer, vk.sceneIndexArenaBuffer);
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, (uint32_t)(vk.sceneIndexArenaOffset / sizeof(uint32_t)), (int32_t)(vk.sceneVertexArenaOffset / sizeof(vk3DVertex_t)), 0);
 
 	vk.sceneVertexArenaOffset += vertexBytes;
 	vk.sceneIndexArenaOffset  += indexBytes;
