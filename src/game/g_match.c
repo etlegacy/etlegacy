@@ -550,6 +550,9 @@ char *G_createStats(gentity_t *ent)
 		return NULL;
 	}
 
+	// refresh derived accuracy and efficiency values for this payload
+	G_CalcClientAccuracies();
+
 	// Add weapon stats as necessary
 	// The client also expects stats when kills are above 0
 	for (i = WS_KNIFE; i < WS_MAX; i++)
@@ -569,7 +572,7 @@ char *G_createStats(gentity_t *ent)
 	// Only send these when there are some weaponstats. This is what the client expects.
 	if (dwWeaponMask != 0)
 	{
-		Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d %d %d %d %d %d %d %d %d %.1f",
+		Q_strcat(strWeapInfo, sizeof(strWeapInfo), va(" %d %d %d %d %d %d %d %d %d %.1f %.1f",
 		                                              ent->client->sess.damage_given,
 		                                              ent->client->sess.damage_received,
 		                                              ent->client->sess.team_damage_given,
@@ -579,6 +582,7 @@ char *G_createStats(gentity_t *ent)
 		                                              ent->client->sess.self_kills,
 		                                              ent->client->sess.team_kills,
 		                                              ent->client->sess.team_gibs,
+		                                              ent->client->splasheff,
 		                                              (ent->client->sess.time_axis + ent->client->sess.time_allies) == 0 ? 0 : 100.0 * ent->client->sess.time_played / (ent->client->sess.time_axis + ent->client->sess.time_allies)
 		                                              ));
 	}
