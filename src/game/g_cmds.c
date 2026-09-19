@@ -5039,17 +5039,28 @@ void G_CalcClientAccuracies(void)
 {
 	int i, j;
 	int shots, hits, headshots;
+	int splashDamage, splashPotential;
 
 	for (i = 0; i < g_maxclients.integer; i++)
 	{
-		shots     = 0;
-		hits      = 0;
-		headshots = 0;
+		shots           = 0;
+		hits            = 0;
+		headshots       = 0;
+		splashDamage    = 0;
+		splashPotential = 0;
 
 		if (g_entities[i].inuse)
 		{
 			for (j = 0; j < WS_MAX; j++)
 			{
+				// splash damage weapons count towards splash efficiency
+				if (aWeaponInfo[j].fHasSplashDamage)
+				{
+					splashDamage    += level.clients[i].sess.aWeaponStats[j].damage;
+					splashPotential += level.clients[i].sess.aWeaponStats[j].atts * BG_SplashDamageCeilingForWeaponStat(j);
+					continue;
+				}
+
 				// don't take into account weapon that can't do headshot
 				if (!aWeaponInfo[j].fHasHeadShots)
 				{
@@ -5061,17 +5072,19 @@ void G_CalcClientAccuracies(void)
 				headshots += level.clients[i].sess.aWeaponStats[j].headshots;
 			}
 
-			level.clients[i].acc      = shots ? 100 * hits / (float)shots : 0.f;
-			level.clients[i].hspct    = hits ? 100 * headshots / (float)hits : 0.f;
-			level.clients[i].accscore = G_AccuracyScore(hits, shots);
-			level.clients[i].hsscore  = G_AccuracyScore(headshots, hits);
+			level.clients[i].acc       = shots ? 100 * hits / (float)shots : 0.f;
+			level.clients[i].hspct     = hits ? 100 * headshots / (float)hits : 0.f;
+			level.clients[i].accscore  = G_AccuracyScore(hits, shots);
+			level.clients[i].hsscore   = G_AccuracyScore(headshots, hits);
+			level.clients[i].splasheff = splashPotential ? 100 * splashDamage / (float)splashPotential : 0.f;
 		}
 		else
 		{
-			level.clients[i].acc      = 0.f;
-			level.clients[i].hspct    = 0.f;
-			level.clients[i].accscore = 0.f;
-			level.clients[i].hsscore  = 0.f;
+			level.clients[i].acc       = 0.f;
+			level.clients[i].hspct     = 0.f;
+			level.clients[i].accscore  = 0.f;
+			level.clients[i].hsscore   = 0.f;
+			level.clients[i].splasheff = 0.f;
 		}
 	}
 }

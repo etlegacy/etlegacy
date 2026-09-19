@@ -4598,38 +4598,68 @@ int numVotesAvailable = sizeof(voteToggles) / sizeof(voteType_t);
 // consts to offset random reinforcement seeds
 const int aReinfSeeds[MAX_REINFSEEDS] = { 11, 3, 13, 7, 2, 5, 1, 17 };
 
-// Weapon full names + headshot capability
+// Weapon full names + headshot and splash damage capability
 const weap_ws_t aWeaponInfo[WS_MAX] =
 {
-	{ qfalse, "KNIF", "Knife"      },  // 0  WS_KNIFE
-	{ qfalse, "KNKB", "Ka-Bar"     },  // 1  WS_KNIFE_KBAR
-	{ qtrue,  "LUGR", "Luger"      },  // 2  WS_LUGER
-	{ qtrue,  "COLT", "Colt"       },  // 3  WS_COLT
-	{ qtrue,  "MP40", "MP 40"      },  // 4  WS_MP40
-	{ qtrue,  "TMPS", "Thompson"   },  // 5  WS_THOMPSON
-	{ qtrue,  "STEN", "Sten"       },  // 6  WS_STEN
-	{ qtrue,  "FG42", "FG 42"      },  // 7  WS_FG42
-	{ qfalse, "PNZR", "Panzer"     },  // 8  WS_PANZERFAUST
-	{ qfalse, "BZKA", "Bazooka"    },  // 9  WS_BAZOOKA
-	{ qfalse, "FLAM", "F.Thrower"  },  // 10 WS_FLAMETHROWER
-	{ qfalse, "GRND", "Grenade"    },  // 11 WS_GRENADE
-	{ qfalse, "MRTR", "Mortar"     },  // 12 WS_MORTAR
-	{ qfalse, "GRWF", "Granatwerf" },  // 13 WS_MORTAR2
-	{ qfalse, "DYNA", "Dynamite"   },  // 14 WS_DYNAMITE
-	{ qfalse, "ARST", "Airstrike"  },  // 15 WS_AIRSTRIKE
-	{ qfalse, "ARTY", "Artillery"  },  // 16 WS_ARTILLERY
-	{ qfalse, "STCH", "Satchel"    },  // 17 WS_SATCHEL
-	{ qfalse, "GRLN", "G.Launchr"  },  // 18 WS_GRENADELAUNCHER
-	{ qfalse, "LNMN", "Landmine"   },  // 19 WS_LANDMINE
-	{ qfalse, "MG42", "MG 42 Gun"  },  // 20 WS_MG42
-	{ qfalse, "BRNG", "Browning"   },  // 21 WS_BROWNING
-	{ qtrue,  "GARN", "Garand"     },  // 22 WS_CARBINE
-	{ qtrue,  "K-43", "K43 Rifle"  },  // 23 WS_KAR98
-	{ qtrue,  "SGRN", "Scp.Garand" },  // 24 WS_GARAND
-	{ qtrue,  "SK43", "Scp.K43"    },  // 25 WS_K43
-	{ qtrue,  "MP34", "MP 34"      },  // 26 WS_MP34
-	{ qfalse, "SRNG", "Syringe"    }   // 27 WS_SYRINGE
+	{ qfalse, qfalse, "KNIF", "Knife"      },  // 0  WS_KNIFE
+	{ qfalse, qfalse, "KNKB", "Ka-Bar"     },  // 1  WS_KNIFE_KBAR
+	{ qtrue,  qfalse, "LUGR", "Luger"      },  // 2  WS_LUGER
+	{ qtrue,  qfalse, "COLT", "Colt"       },  // 3  WS_COLT
+	{ qtrue,  qfalse, "MP40", "MP 40"      },  // 4  WS_MP40
+	{ qtrue,  qfalse, "TMPS", "Thompson"   },  // 5  WS_THOMPSON
+	{ qtrue,  qfalse, "STEN", "Sten"       },  // 6  WS_STEN
+	{ qtrue,  qfalse, "FG42", "FG 42"      },  // 7  WS_FG42
+	{ qfalse, qtrue,  "PNZR", "Panzer"     },  // 8  WS_PANZERFAUST
+	{ qfalse, qtrue,  "BZKA", "Bazooka"    },  // 9  WS_BAZOOKA
+	{ qfalse, qfalse, "FLAM", "F.Thrower"  },  // 10 WS_FLAMETHROWER
+	{ qfalse, qtrue,  "GRND", "Grenade"    },  // 11 WS_GRENADE
+	{ qfalse, qtrue,  "MRTR", "Mortar"     },  // 12 WS_MORTAR
+	{ qfalse, qtrue,  "GRWF", "Granatwerf" },  // 13 WS_MORTAR2
+	{ qfalse, qtrue,  "DYNA", "Dynamite"   },  // 14 WS_DYNAMITE
+	{ qfalse, qfalse, "ARST", "Airstrike"  },  // 15 WS_AIRSTRIKE
+	{ qfalse, qfalse, "ARTY", "Artillery"  },  // 16 WS_ARTILLERY
+	{ qfalse, qtrue,  "STCH", "Satchel"    },  // 17 WS_SATCHEL
+	{ qfalse, qtrue,  "GRLN", "G.Launchr"  },  // 18 WS_GRENADELAUNCHER
+	{ qfalse, qtrue,  "LNMN", "Landmine"   },  // 19 WS_LANDMINE
+	{ qfalse, qfalse, "MG42", "MG 42 Gun"  },  // 20 WS_MG42
+	{ qfalse, qfalse, "BRNG", "Browning"   },  // 21 WS_BROWNING
+	{ qtrue,  qfalse, "GARN", "Garand"     },  // 22 WS_CARBINE
+	{ qtrue,  qfalse, "K-43", "K43 Rifle"  },  // 23 WS_KAR98
+	{ qtrue,  qfalse, "SGRN", "Scp.Garand" },  // 24 WS_GARAND
+	{ qtrue,  qfalse, "SK43", "Scp.K43"    },  // 25 WS_K43
+	{ qtrue,  qfalse, "MP34", "MP 34"      },  // 26 WS_MP34
+	{ qfalse, qfalse, "SRNG", "Syringe"    }   // 27 WS_SYRINGE
 };
+
+/**
+ * @brief Splash damage ceiling of a weapon stat bin: direct + splash damage of
+ * the strongest weapon feeding the stat. The max resolves fireable/unfireable
+ * state pairs (e.g. carried vs deployed mortar), as the unfireable state deals
+ * no damage; genuinely different weapons sharing a bin agree on their damage
+ * values. Reads the weapon table columns directly, so it stays in sync with
+ * weapon balance.
+ * @param[in] weaponStat weapon stat bin (extWeaponStats_t)
+ * @return ceiling damage per shot, 0 if no weapon feeds the stat
+ */
+int BG_SplashDamageCeilingForWeaponStat(int weaponStat)
+{
+	int w, ceiling = 0;
+
+	for (w = WP_NONE + 1; w < WP_NUM_WEAPONS; w++)
+	{
+		if (GetWeaponTableData(w)->indexWeaponStat == (unsigned int)weaponStat)
+		{
+			int candidate = GetWeaponTableData(w)->damage + GetWeaponTableData(w)->splashDamage;
+
+			if (candidate > ceiling)
+			{
+				ceiling = candidate;
+			}
+		}
+	}
+
+	return ceiling;
+}
 
 /**
  * @brief Multiview: Convert weaponstate to simpler format

@@ -1869,11 +1869,14 @@ typedef enum extWeaponStats_e
 typedef struct
 {
 	qboolean fHasHeadShots;
+	qboolean fHasSplashDamage;
 	const char *pszCode;
 	const char *pszName;
 } weap_ws_t;
 
 extern const weap_ws_t aWeaponInfo[WS_MAX];
+
+int BG_SplashDamageCeilingForWeaponStat(int weaponStat);
 
 //---------------------------------------------------------
 

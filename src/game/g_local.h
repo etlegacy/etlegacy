@@ -1062,6 +1062,7 @@ struct gclient_s
 	float hspct;
 	float accscore;
 	float hsscore;
+	float splasheff;
 
 	int flametime;                          ///< flamethrower exploit fix
 
