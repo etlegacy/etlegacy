@@ -34,6 +34,9 @@
 
 #include "cg_local.h"
 
+extern const char *cg_skillRewards[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1];
+extern const char *cg_skillRewardsDetails[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1];
+
 #define SOUNDEVENT(sound) trap_S_StartLocalSound(sound, CHAN_LOCAL_SOUND)
 
 #define SOUND_SELECT    SOUNDEVENT(cgs.media.sndLimboSelect)
@@ -1093,9 +1096,6 @@ static panel_button_t *limboPanelButtons[] =
 	&mapTimeCounter,          &mapTimeCounter2,           &mapTimeCounterText,
 	&spawnPointText,          &spawnPointButton,
 
-	&playerSkillCounter0,     &playerSkillCounter1,       &playerSkillCounter2,
-	&playerSkillIcon0,        &playerSkillIcon1,          &playerSkillIcon2,
-
 	&objectivePanel,          &objectivePanelTitle,       &objectivePanelText,
 	&objectivePanelButtonUp,  &objectivePanelButtonDown,
 
@@ -1109,6 +1109,9 @@ static panel_button_t *limboPanelButtons[] =
 	&cancelButton,            &cancelButtonText,
 
 	&nameEdit,
+
+	&playerSkillIcon0,        &playerSkillIcon1,          &playerSkillIcon2,
+	&playerSkillCounter0,     &playerSkillCounter1,       &playerSkillCounter2,
 
 	&weaponLight1,            &weaponLight2,
 	&weaponLight1Text,        &weaponLight2Text,
@@ -3129,6 +3132,28 @@ void CG_LimboPanelRenderText_SkillsText(panel_button_t *button)
 	BG_PanelButtonsRender_Text(button);
 }
 
+static void CG_LimboPanel_DrawToolTips(rectDef_t *rect, panel_button_text_t *font, vec4_t color, char *text)
+{
+	float  h;
+	float  w;
+	int    lineNumber  = 1;
+	vec4_t clrBdr      = { 0.5f, 0.5f, 0.5f, 0.5f };
+	vec4_t clrBck      = { 0.0f, 0.0f, 0.0f, 0.8f };
+	char   buffer[256] = { 0 };
+
+	h = CG_Text_Height_Ext_Float("A", font->scalex, 0, font->font);
+	w = 256;
+
+	CG_WordWrapString(text, CG_MaxCharsForWidth(text, font->scalex, &cgs.media.limboFont2, w), buffer, sizeof(buffer), &lineNumber);
+
+	CG_FillRect(rect->x - w - 4, rect->y - h * 2, w + 8, h * (lineNumber + 2.5) * 2, clrBck);
+	CG_DrawRect_FixedBorder(rect->x - w - 4, rect->y - h * 2, w + 8, h * (lineNumber + 2.5) * 2, 1, clrBdr);
+
+	CG_DrawMultilineText(rect->x - w, rect->y, w - 8, font->scalex, font->scaley, color,
+	                     CG_TranslateString(buffer),
+	                     2 * h, 0, 0, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, font->font);
+}
+
 #define MAX_ROLLERS 8
 #define COUNTER_ROLLTOTAL (cg.time - button->data[4])
 static const vec4_t clrSkillCounterDisable = { 1.f, 0.f, 0.f, 1.f };
@@ -3139,14 +3164,18 @@ static const vec4_t clrSkillCounterDisable = { 1.f, 0.f, 0.f, 1.f };
  */
 void CG_LimboPanel_RenderCounter(panel_button_t *button)
 {
-	float     x, w;
-	float     count[MAX_ROLLERS];
-	int       i, j;
-	qhandle_t shaderBack;
-	qhandle_t shaderRoll;
-	int       numimages;
-	float     counter_rolltime;
-	int       num, value;
+	static rectDef_t   toolTipRect       = { 0, 0, 0, 0 };
+	static skillType_t toolTipSkill      = SK_NUM_SKILLS;
+	static int         toolTipSkillNum   = -1;
+	static int         toolTipSkillLevel = -1;
+	float              x, w;
+	float              count[MAX_ROLLERS];
+	int                i, j;
+	qhandle_t          shaderBack;
+	qhandle_t          shaderRoll;
+	int                numimages;
+	float              counter_rolltime;
+	int                num, value;
 
 	value            = CG_LimboPanel_RenderCounter_ValueForButton(button);
 	counter_rolltime = CG_LimboPanel_RenderCounter_RollTimeForButton(button, value);
@@ -3259,8 +3288,19 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 
 		skill = CG_LimboPanel_ClassSkillForPosition(button->data[1]);
 
+		// First skill counter iteration, reset tool
+		if (button->data[1] == 0)
+		{
+			memset(&toolTipRect, 0, sizeof(toolTipRect));
+			toolTipSkill      = SK_NUM_SKILLS;
+			toolTipSkillNum   = -1;
+			toolTipSkillLevel = -1;
+		}
+
 		for (i = 0; i < num; i++)
 		{
+			rectDef_t rect = { x, button->rect.y, w, button->rect.h };
+
 			if (GetSkillTableData(skill)->skillLevels[i + 1] < 0)
 			{
 				trap_R_SetColor(clrSkillCounterDisable);
@@ -3271,7 +3311,15 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 				trap_R_SetColor(NULL);
 			}
 
-			CG_LimboPanel_RenderCounterNumber(x, button->rect.y, w, button->rect.h, count[i], shaderBack, shaderRoll, numimages);
+			CG_LimboPanel_RenderCounterNumber(rect.x, rect.y, rect.w, rect.h, count[i], shaderBack, shaderRoll, numimages);
+
+			if (BG_CursorInRect(&rect))
+			{
+				Com_Memcpy(&toolTipRect, &rect, sizeof(toolTipRect));
+				toolTipSkill      = skill;
+				toolTipSkillNum   = i + 1;
+				toolTipSkillLevel = i;
+			}
 
 			x += w + button->data[6];
 		}
@@ -3288,9 +3336,24 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 
 	trap_R_SetColor(NULL);
 
+	// class count / team count
 	if (button->data[0] == 0 || button->data[0] == 1)
 	{
 		CG_DrawPic(button->rect.x - 2, button->rect.y - 2, button->rect.w * 1.4f, button->rect.h + 7, cgs.media.limboCounterBorder);
+	}
+	else if (button->data[0] == 4)  // skill count
+	{
+		if (toolTipSkill != SK_NUM_SKILLS)
+		{
+			qboolean isSkillAvailable = GetSkillTableData(toolTipSkill)->skillLevels[toolTipSkillNum] >= 0;
+			qboolean isSkillUnlocked  = isSkillAvailable && cgs.clientinfo[cg.clientNum].skill[toolTipSkill] >= toolTipSkillNum;
+
+			CG_LimboPanel_DrawToolTips(&toolTipRect, &objectivePanelTxt, colorWhite,
+			                           va("%s%s\n%sLevel %i: %s\n^*%s", GetSkillTableData(toolTipSkill)->skillNames, isSkillAvailable ? "" : " ^1[SKILL DISABLED]",
+			                              isSkillUnlocked ? "^2" : "^9", toolTipSkillLevel + 1,
+			                              CG_TranslateString(cg_skillRewards[toolTipSkill][toolTipSkillLevel]),
+			                              CG_TranslateString(cg_skillRewardsDetails[toolTipSkill][toolTipSkillLevel])));
+		}
 	}
 }
 
