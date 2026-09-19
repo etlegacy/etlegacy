@@ -616,10 +616,12 @@ typedef struct
 typedef struct
 {
 	unsigned int atts;
+	unsigned int damage;
 	unsigned int deaths;
 	unsigned int headshots;
 	unsigned int hits;
 	unsigned int kills;
+	unsigned int teamDamage;
 } weapon_stat_t;
 
 /**

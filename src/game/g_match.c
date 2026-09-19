@@ -364,6 +364,8 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t
 		attacker->client->sess.team_damage_given += damage;
 		targ->client->sess.team_damage_received  += damage;
 
+		attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].teamDamage += damage;
+
 		if (targ->health <= 0)
 		{
 			attacker->client->sess.team_kills++;
@@ -378,6 +380,8 @@ void G_addStats(gentity_t *targ, gentity_t *attacker, int damage, meansOfDeath_t
 	{
 		attacker->client->sess.damage_given += damage;
 		targ->client->sess.damage_received  += damage;
+
+		attacker->client->sess.aWeaponStats[GetMODTableData(mod)->indexWeaponStat].damage += damage;
 
 		if (targ->health <= 0)
 		{
@@ -469,6 +473,8 @@ void G_createStatsJson(gentity_t *ent, void *target)
 			cJSON_AddNumberToObject(tmp2, "kills", ent->client->sess.aWeaponStats[i].kills);
 			cJSON_AddNumberToObject(tmp2, "deaths", ent->client->sess.aWeaponStats[i].deaths);
 			cJSON_AddNumberToObject(tmp2, "headshots", ent->client->sess.aWeaponStats[i].headshots);
+			cJSON_AddNumberToObject(tmp2, "damage", ent->client->sess.aWeaponStats[i].damage);
+			cJSON_AddNumberToObject(tmp2, "teamDamage", ent->client->sess.aWeaponStats[i].teamDamage);
 		}
 	}
 
@@ -716,12 +722,14 @@ void G_parseStatsJson(void *object)
 
 		if (tmp)
 		{
-			weaponsFound                       = qtrue;
-			cl->sess.aWeaponStats[i].hits      = Q_ReadIntValueJson(tmp, "hits");
-			cl->sess.aWeaponStats[i].atts      = Q_ReadIntValueJson(tmp, "atts");
-			cl->sess.aWeaponStats[i].kills     = Q_ReadIntValueJson(tmp, "kills");
-			cl->sess.aWeaponStats[i].deaths    = Q_ReadIntValueJson(tmp, "deaths");
-			cl->sess.aWeaponStats[i].headshots = Q_ReadIntValueJson(tmp, "headshots");
+			weaponsFound                        = qtrue;
+			cl->sess.aWeaponStats[i].hits       = Q_ReadIntValueJson(tmp, "hits");
+			cl->sess.aWeaponStats[i].atts       = Q_ReadIntValueJson(tmp, "atts");
+			cl->sess.aWeaponStats[i].kills      = Q_ReadIntValueJson(tmp, "kills");
+			cl->sess.aWeaponStats[i].deaths     = Q_ReadIntValueJson(tmp, "deaths");
+			cl->sess.aWeaponStats[i].headshots  = Q_ReadIntValueJson(tmp, "headshots");
+			cl->sess.aWeaponStats[i].damage     = Q_ReadIntValueJson(tmp, "damage");
+			cl->sess.aWeaponStats[i].teamDamage = Q_ReadIntValueJson(tmp, "teamDamage");
 		}
 	}
 
