@@ -3166,6 +3166,7 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 {
 	static rectDef_t   toolTipRect       = { 0, 0, 0, 0 };
 	static skillType_t toolTipSkill      = SK_NUM_SKILLS;
+	static int         toolTipSkillNum   = -1;
 	static int         toolTipSkillLevel = -1;
 	float              x, w;
 	float              count[MAX_ROLLERS];
@@ -3292,6 +3293,7 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 		{
 			memset(&toolTipRect, 0, sizeof(toolTipRect));
 			toolTipSkill      = SK_NUM_SKILLS;
+			toolTipSkillNum   = -1;
 			toolTipSkillLevel = -1;
 		}
 
@@ -3315,6 +3317,7 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 			{
 				Com_Memcpy(&toolTipRect, &rect, sizeof(toolTipRect));
 				toolTipSkill      = skill;
+				toolTipSkillNum   = i + 1;
 				toolTipSkillLevel = i;
 			}
 
@@ -3338,12 +3341,16 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 	{
 		CG_DrawPic(button->rect.x - 2, button->rect.y - 2, button->rect.w * 1.4f, button->rect.h + 7, cgs.media.limboCounterBorder);
 	}
-	else if (button->data[0] == 4)	// skill count
+	else if (button->data[0] == 4)  // skill count
 	{
 		if (toolTipSkill != SK_NUM_SKILLS)
 		{
+			qboolean isSkillAvailable = GetSkillTableData(toolTipSkill)->skillLevels[toolTipSkillNum] >= 0;
+			qboolean isSkillUnlocked  = isSkillAvailable && cgs.clientinfo[cg.clientNum].skill[toolTipSkill] >= toolTipSkillNum;
+
 			CG_LimboPanel_DrawToolTips(&toolTipRect, &objectivePanelTxt, colorWhite,
-			                           va("%s\nLevel %i: %s\n%s", GetSkillTableData(toolTipSkill)->skillNames, toolTipSkillLevel + 1,
+			                           va("%s%s\n%sLevel %i: %s\n^*%s", GetSkillTableData(toolTipSkill)->skillNames, isSkillAvailable ? "" : " ^1[SKILL DISABLED]",
+			                              isSkillUnlocked ? "^2" : "^9", toolTipSkillLevel + 1,
 			                              CG_TranslateString(cg_skillRewards[toolTipSkill][toolTipSkillLevel]),
 			                              CG_TranslateString(cg_skillRewardsDetails[toolTipSkill][toolTipSkillLevel])));
 		}
