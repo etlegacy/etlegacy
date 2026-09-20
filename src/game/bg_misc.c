@@ -4632,14 +4632,16 @@ const weap_ws_t aWeaponInfo[WS_MAX] =
 };
 
 /**
- * @brief Splash damage ceiling of a weapon stat bin: direct + splash damage of
- * the strongest weapon feeding the stat. The max resolves fireable/unfireable
- * state pairs (e.g. carried vs deployed mortar), as the unfireable state deals
- * no damage; genuinely different weapons sharing a bin agree on their damage
- * values. Reads the weapon table columns directly, so it stays in sync with
- * weapon balance.
+ * @brief Splash damage ceiling of a weapon stat bin: the splash damage of the
+ * strongest weapon feeding the stat. Direct-hit damage is deliberately not
+ * part of the reference: the ceiling measures realized *area* damage
+ * potential, and a direct hit's direct damage shows up as bonus value above
+ * 100 percent. The max resolves fireable/unfireable state pairs (e.g. carried
+ * vs deployed mortar), as the unfireable state deals no damage; genuinely
+ * different weapons sharing a bin agree on their splash damage. Reads the
+ * weapon table column directly, so it stays in sync with weapon balance.
  * @param[in] weaponStat weapon stat bin (extWeaponStats_t)
- * @return ceiling damage per shot, 0 if no weapon feeds the stat
+ * @return splash damage ceiling per shot, 0 if no weapon feeds the stat
  */
 int BG_SplashDamageCeilingForWeaponStat(int weaponStat)
 {
@@ -4649,7 +4651,7 @@ int BG_SplashDamageCeilingForWeaponStat(int weaponStat)
 	{
 		if (GetWeaponTableData(w)->indexWeaponStat == (unsigned int)weaponStat)
 		{
-			int candidate = GetWeaponTableData(w)->damage + GetWeaponTableData(w)->splashDamage;
+			int candidate = GetWeaponTableData(w)->splashDamage;
 
 			if (candidate > ceiling)
 			{
