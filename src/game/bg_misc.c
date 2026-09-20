@@ -4616,8 +4616,8 @@ const weap_ws_t aWeaponInfo[WS_MAX] =
 	{ qfalse, qtrue,  "MRTR", "Mortar"     },  // 12 WS_MORTAR
 	{ qfalse, qtrue,  "GRWF", "Granatwerf" },  // 13 WS_MORTAR2
 	{ qfalse, qtrue,  "DYNA", "Dynamite"   },  // 14 WS_DYNAMITE
-	{ qfalse, qfalse, "ARST", "Airstrike"  },  // 15 WS_AIRSTRIKE
-	{ qfalse, qfalse, "ARTY", "Artillery"  },  // 16 WS_ARTILLERY
+	{ qfalse, qtrue,  "ARST", "Airstrike"  },  // 15 WS_AIRSTRIKE
+	{ qfalse, qtrue,  "ARTY", "Artillery"  },  // 16 WS_ARTILLERY
 	{ qfalse, qtrue,  "STCH", "Satchel"    },  // 17 WS_SATCHEL
 	{ qfalse, qtrue,  "GRLN", "G.Launchr"  },  // 18 WS_GRENADELAUNCHER
 	{ qfalse, qtrue,  "LNMN", "Landmine"   },  // 19 WS_LANDMINE

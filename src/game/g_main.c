@@ -3693,6 +3693,7 @@ void CheckWolfMP(void)
 					for (i = 0; i < level.numConnectedClients; i++)
 					{
 						Com_Memset(&level.clients[level.sortedClients[i]].sess.aWeaponStats, 0, sizeof(level.clients[level.sortedClients[i]].sess.aWeaponStats));
+						level.clients[level.sortedClients[i]].barragePotential = 0;
 					}
 				}
 				trap_SendConsoleCommand(EXEC_APPEND, "map_restart 0\n");

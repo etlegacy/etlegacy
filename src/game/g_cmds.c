@@ -5056,8 +5056,13 @@ void G_CalcClientAccuracies(void)
 				// splash damage weapons count towards splash efficiency
 				if (aWeaponInfo[j].fHasSplashDamage)
 				{
-					splashDamage    += level.clients[i].sess.aWeaponStats[j].damage;
-					splashPotential += level.clients[i].sess.aWeaponStats[j].atts * BG_SplashDamageCeilingForWeaponStat(j);
+					splashDamage += level.clients[i].sess.aWeaponStats[j].damage;
+
+					// airstrike and artillery are barrages: potential is accumulated per dropped shell
+					if (j != WS_AIRSTRIKE && j != WS_ARTILLERY)
+					{
+						splashPotential += level.clients[i].sess.aWeaponStats[j].atts * BG_SplashDamageCeilingForWeaponStat(j);
+					}
 					continue;
 				}
 
@@ -5071,6 +5076,9 @@ void G_CalcClientAccuracies(void)
 				hits      += level.clients[i].sess.aWeaponStats[j].hits;
 				headshots += level.clients[i].sess.aWeaponStats[j].headshots;
 			}
+
+			// airstrike/artillery potential is tracked at shell drop time
+			splashPotential += level.clients[i].barragePotential;
 
 			level.clients[i].acc       = shots ? 100 * hits / (float)shots : 0.f;
 			level.clients[i].hspct     = hits ? 100 * headshots / (float)hits : 0.f;

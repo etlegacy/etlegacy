@@ -691,6 +691,7 @@ void G_deleteStats(int nClient)
 	      !(g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer == GS_WARMUP))
 	{
 		Com_Memset(&cl->sess.aWeaponStats, 0, sizeof(cl->sess.aWeaponStats));
+		cl->barragePotential = 0;
 	}
 	trap_Cvar_Set(va("wstats%i", nClient), va("%d", nClient));
 }

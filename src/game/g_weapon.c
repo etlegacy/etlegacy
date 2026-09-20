@@ -2847,6 +2847,11 @@ void G_AirStrikeThink(gentity_t *ent)
 			bomb = fire_missile((ent->parent && ent->parent->client) ? ent->parent : ent, tr.endpos,
 			                    tv(0, 0, (ground - tr.endpos[2]) * (1.f / 0.75f)), ent->s.weapon);
 
+			if (ent->parent && ent->parent->client)
+			{
+				ent->parent->client->barragePotential += bomb->splashDamage;
+			}
+
 			// overwrite
 			bomb->s.pos.trTime = (int)(level.time + crandom() * 50);
 
@@ -2925,6 +2930,12 @@ void weapon_callAirStrike(gentity_t *ent)
 	// turn off smoke grenade
 	ent->think     = G_ExplodeMissile;
 	ent->nextthink = (int)(level.time + 950 + ((ent->count - 1) * 2000) + NUMBOMBS * 100 + crandom() * 50);     // 950 offset is for aircraft flyby + plane count
+
+	// the marker itself always explodes, account its splash as potential
+	if (ent->parent->client)
+	{
+		ent->parent->client->barragePotential += ent->splashDamage;
+	}
 
 	VectorCopy(ent->s.pos.trBase, end);
 	end[2] += MAX_TRACE;
@@ -3188,6 +3199,12 @@ void artillerySpotterThink(gentity_t *ent)
 
 	// overwrite
 	bomb->nextthink = level.time + FRAMETIME;
+
+	if (ent->parent && ent->parent->client)
+	{
+		// splashDamage is the overwritten spotter round value on the first shell
+		ent->parent->client->barragePotential += bomb->splashDamage;
+	}
 
 	// no more bomb to drop
 	if (ent->count <= 0)

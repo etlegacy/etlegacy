@@ -1063,6 +1063,7 @@ struct gclient_s
 	float accscore;
 	float hsscore;
 	float splasheff;
+	int barragePotential;                   ///< accumulated splash damage potential of airstrike/artillery shells dropped for this client
 
 	int flametime;                          ///< flamethrower exploit fix
 
