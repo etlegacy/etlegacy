@@ -2217,7 +2217,7 @@ static void CG_Camera_f(void)
 	}
 
 	// FIXME: maybe allow playback for shoutcasters? -- Enabled when actually ready..
-	if (!cgs.sv_cheats)
+	if (!cgs.sv_cheats && !cg.demoPlayback)
 	{
 		CG_Printf("^1camera is cheat protected\n");
 		return;
