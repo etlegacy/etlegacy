@@ -37,6 +37,9 @@ weaponDef
 
 		missileModel		"models/ammo/rocket/rocket.md3"
 		missileSound		"sound/weapons/rocket/rocket_fly.wav"
+		missileBouncingSound {
+			default 4 "sound/weapons/bounce/hw_bounce"
+		}
 		missileTrailFunc	"RocketTrail"						// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		missileDlight		200
 		missileDlightColor	0.75 0.3 0.0
