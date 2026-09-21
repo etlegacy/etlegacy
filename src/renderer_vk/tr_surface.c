@@ -53,6 +53,11 @@
  */
 void RB_CheckOverflow(int verts, int indexes)
 {
+	if (tess.vkStatic)
+	{
+		RB_EndStaticBatch();
+	}
+
 	if (tess.numVertexes + verts < SHADER_MAX_VERTEXES && tess.numIndexes + indexes < SHADER_MAX_INDEXES)
 	{
 		return;
@@ -355,6 +360,75 @@ void RB_SurfacePolychain(srfPoly_t *p)
 }
 
 /**
+ * @brief Vulkan: flushes a static world batch so tessellated surfaces
+ * (which need tess vertex data) start a batch of their own.
+ */
+void RB_EndStaticBatch(void)
+{
+	RB_EndSurface();
+	RB_BeginSurface(tess.shader, tess.fogNum);
+}
+
+/**
+ * @brief Vulkan: true when this triangle surface can be drawn from the
+ * static world buffer in the current batch: the shader's stages are static
+ * (shader_t::vkStatic) and nothing needs the tessellated vertices - no fog
+ * volume or dlight pass, no fading entity, no debug view.
+ */
+static qboolean RB_SurfaceCanBeStatic(const srfTriangles_t *srf)
+{
+	return (srf->vkFirstVertex >= 0 && !srf->dlightBits && tess.shader->vkStatic && !tess.fogNum &&
+	        r_vkStaticWorld->integer && !backEnd.projection2D && !backEnd.currentEntity->e.fadeStartTime &&
+	        !r_showTris->integer && !r_showNormals->integer && !r_debugShaderSurfaceFlags->integer) ? qtrue : qfalse;
+}
+
+/**
+ * @brief Vulkan: adds a triangle surface to a static world batch by
+ * emitting only its indexes, offset to its vertices in the static world
+ * buffer (tess vertex data is left empty). The first surface of a batch
+ * decides its mode; a surface that needs the other mode starts a new
+ * batch.
+ * @return qfalse if the surface must be tessellated
+ */
+static qboolean RB_SurfaceTrianglesStatic(srfTriangles_t *srf)
+{
+	qboolean  canBeStatic = RB_SurfaceCanBeStatic(srf);
+	glIndex_t *dst;
+	int       i, base;
+
+	if (tess.numIndexes == 0 && tess.numVertexes == 0)
+	{
+		tess.vkStatic = canBeStatic;
+	}
+	else if (tess.vkStatic != canBeStatic)
+	{
+		RB_EndStaticBatch();
+		tess.vkStatic = canBeStatic;
+	}
+
+	if (!canBeStatic)
+	{
+		return qfalse;
+	}
+
+	if (tess.numIndexes + srf->numIndexes >= SHADER_MAX_INDEXES)
+	{
+		RB_EndStaticBatch();
+		tess.vkStatic = qtrue;
+	}
+
+	dst  = tess.indexes + tess.numIndexes;
+	base = srf->vkFirstVertex;
+	for (i = 0; i < srf->numIndexes; i++)
+	{
+		dst[i] = base + srf->indexes[i];
+	}
+	tess.numIndexes += srf->numIndexes;
+
+	return qtrue;
+}
+
+/**
  * @brief RB_SurfaceTriangles
  * @param[in] srf
  */
@@ -366,6 +440,11 @@ void RB_SurfaceTriangles(srfTriangles_t *srf)
 	byte       *color;
 	int        dlightBits;
 	qboolean   needsNormal;
+
+	if (RB_SurfaceTrianglesStatic(srf))
+	{
+		return;
+	}
 
 	// moved before overflow so dlights work properly
 	RB_CHECKOVERFLOW(srf->numVerts, srf->numIndexes);
@@ -1576,6 +1655,12 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 	int           numVertexes;
 	int           dlightBits = cv->dlightBits;
 	qboolean      needsNormal;
+
+	// patches share shaders with the static world surfaces around them
+	if (tess.vkStatic)
+	{
+		RB_EndStaticBatch();
+	}
 
 	tess.dlightBits |= dlightBits;
 

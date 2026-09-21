@@ -51,6 +51,8 @@
 #include "tr3d.frag.glsl.h"
 #include "tr3d_lm.vert.glsl.h"
 #include "tr3d_lm.frag.glsl.h"
+#include "tr3d_static.vert.glsl.h"
+#include "tr3d_lm_static.vert.glsl.h"
 #include "gamma.vert.glsl.h"
 #include "gamma.frag.glsl.h"
 
@@ -75,6 +77,19 @@
 // GL_LINES emulation, r_showTris, r_showNormals, bone/bounds debug)
 #define VK_SPECIAL_LINES          4
 
+// Where a scene pipeline reads its vertices from: the per-frame arena
+// (vk3DVertex_t / vk3DVertexLM_t written per draw) or the per-map static
+// world buffer (vk3DVertexLM_t), whose single-texture pipelines bind either
+// the texture or the lightmap coords as their UV.
+#define VK_VERTS_ARENA            0
+#define VK_VERTS_STATIC           1 // static buffer; uv = texture coords (lightmapped: uv0 texture, uv1 lightmap)
+#define VK_VERTS_STATIC_LIGHTMAP  2 // static buffer, single texture; uv = lightmap coords
+
+// Scene push constants: mat4 mvp, mat4 modelView, vec4 alphaTest, vec4
+// fogColor, vec4 fogParams, vec4 clipPlane (48 floats, every scene draw),
+// then vec4 colorMul, vec4 colorAdd (static world draws only).
+#define VK_SCENE_PUSH_FLOATS      56
+
 // One lazily-created pipeline variant for a given (stateBits, cullType,
 // polygonOffset) combination used by the 3D scene pipelines.
 typedef struct
@@ -83,6 +98,7 @@ typedef struct
 	int cullType;
 	qboolean polygonOffset;
 	int special; // VK_SPECIAL_* (stencil shadow pipelines), 0 = normal
+	int vertexSource; // VK_VERTS_*
 	VkPipeline pipeline;
 } vkScenePipelineEntry_t;
 
@@ -207,6 +223,8 @@ typedef struct
 	VkShaderModule sceneFragModule;
 	VkShaderModule sceneLMVertModule;
 	VkShaderModule sceneLMFragModule;
+	VkShaderModule sceneStaticVertModule;   // static world buffer variants (color = vertex * mul + add)
+	VkShaderModule sceneLMStaticVertModule;
 
 	VkShaderModule uiVertModule;
 	VkShaderModule uiFragModule;
@@ -232,7 +250,7 @@ typedef struct
 	VkDescriptorSet boundSets[2];
 	uint32_t boundSetCount;
 	VkPipelineLayout pushLayout;
-	float pushData[48];
+	float pushData[VK_SCENE_PUSH_FLOATS];
 	uint32_t pushBytes;
 	VkBuffer boundVertexBuffer;
 	VkBuffer boundIndexBuffer;
@@ -313,6 +331,13 @@ typedef struct
 	void *sceneIndexArenaMapped;
 	VkDeviceSize sceneIndexArenaSize;
 	VkDeviceSize sceneIndexArenaOffset;
+
+	// per-map static world vertex buffer (vk3DVertexLM_t: xyz, texture
+	// coords, lightmap coords, raw BSP vertex color), see R_LoadStaticWorldVertices()
+	VkBuffer staticWorldBuffer;
+	VkDeviceMemory staticWorldMemory;
+	void *staticWorldMapped;
+	int staticWorldNumVertexes;
 
 	qboolean initialized;
 	uint32_t currentImageIndex;
@@ -1973,6 +1998,97 @@ static qboolean VK_CreateSceneArenaBuffers(void)
 }
 
 /**
+ * @brief Destroys the static world vertex buffer (waits for the GPU, only
+ * called at map load and shutdown).
+ */
+static void VK_DestroyStaticWorldBuffer(void)
+{
+	if (vk.staticWorldBuffer == VK_NULL_HANDLE && vk.staticWorldMemory == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	vkDeviceWaitIdle(vk.device);
+
+	if (vk.staticWorldMapped)
+	{
+		vkUnmapMemory(vk.device, vk.staticWorldMemory);
+	}
+	if (vk.staticWorldBuffer != VK_NULL_HANDLE)
+	{
+		vkDestroyBuffer(vk.device, vk.staticWorldBuffer, NULL);
+	}
+	if (vk.staticWorldMemory != VK_NULL_HANDLE)
+	{
+		vkFreeMemory(vk.device, vk.staticWorldMemory, NULL);
+	}
+	vk.staticWorldBuffer      = VK_NULL_HANDLE;
+	vk.staticWorldMemory      = VK_NULL_HANDLE;
+	vk.staticWorldMapped      = NULL;
+	vk.staticWorldNumVertexes = 0;
+}
+
+/**
+ * @brief Replaces the static world vertex buffer with one for numVertexes
+ * vertices, filled with VK_WriteStaticWorldVertices(). Host-visible and
+ * persistently mapped like the arenas (unified memory on Apple GPUs).
+ */
+qboolean VK_CreateStaticWorldBuffer(int numVertexes)
+{
+	if (!vk.initialized)
+	{
+		return qfalse;
+	}
+
+	VK_DestroyStaticWorldBuffer();
+
+	if (numVertexes <= 0)
+	{
+		return qfalse;
+	}
+
+	if (!VK_CreateBuffer((VkDeviceSize)numVertexes * sizeof(vk3DVertexLM_t), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	                     &vk.staticWorldBuffer, &vk.staticWorldMemory) ||
+	    !VK_CheckResult(vkMapMemory(vk.device, vk.staticWorldMemory, 0, VK_WHOLE_SIZE, 0, &vk.staticWorldMapped), "vkMapMemory(static world)"))
+	{
+		VK_DestroyStaticWorldBuffer();
+		return qfalse;
+	}
+
+	vk.staticWorldNumVertexes = numVertexes;
+	return qtrue;
+}
+
+/**
+ * @brief Copies BSP vertices (xyz, texture and lightmap coords, color) into
+ * the static world buffer starting at vertex `first`.
+ */
+void VK_WriteStaticWorldVertices(int first, const drawVert_t *verts, int count)
+{
+	vk3DVertexLM_t *dst;
+	int            i;
+
+	if (!vk.staticWorldMapped || first < 0 || first + count > vk.staticWorldNumVertexes)
+	{
+		return;
+	}
+
+	dst = (vk3DVertexLM_t *)vk.staticWorldMapped + first;
+	for (i = 0; i < count; i++, dst++, verts++)
+	{
+		dst->pos[0] = verts->xyz[0];
+		dst->pos[1] = verts->xyz[1];
+		dst->pos[2] = verts->xyz[2];
+		dst->uv0[0] = verts->st[0];
+		dst->uv0[1] = verts->st[1];
+		dst->uv1[0] = verts->lightmap[0];
+		dst->uv1[1] = verts->lightmap[1];
+		Com_Memcpy(dst->color, verts->color, 4);
+	}
+}
+
+/**
  * @brief creates the two pipeline layouts used by static 3D
  * geometry draws - one with a single descriptor set (base texture only,
  * used by RB_StageIteratorGeneric/VertexLitTexture) and one with two
@@ -1992,7 +2108,7 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 	Com_Memset(&pushConstantRange, 0, sizeof(pushConstantRange));
 	pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 	pushConstantRange.offset     = 0;
-	pushConstantRange.size       = sizeof(float) * 48; // mat4 mvp + mat4 modelView + vec4 alphaTest + vec4 fogColor + vec4 fogParams + vec4 clipPlane
+	pushConstantRange.size       = sizeof(float) * VK_SCENE_PUSH_FLOATS;
 
 	Com_Memset(&layoutInfo, 0, sizeof(layoutInfo));
 	layoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -2022,8 +2138,12 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 	vk.sceneLMVertModule = VK_CreateShaderModule(tr3d_lm_vert_spv, tr3d_lm_vert_spv_SIZE);
 	vk.sceneLMFragModule = VK_CreateShaderModule(tr3d_lm_frag_spv, tr3d_lm_frag_spv_SIZE);
 
+	vk.sceneStaticVertModule   = VK_CreateShaderModule(tr3d_static_vert_spv, tr3d_static_vert_spv_SIZE);
+	vk.sceneLMStaticVertModule = VK_CreateShaderModule(tr3d_lm_static_vert_spv, tr3d_lm_static_vert_spv_SIZE);
+
 	if (vk.sceneVertModule == VK_NULL_HANDLE || vk.sceneFragModule == VK_NULL_HANDLE ||
-	    vk.sceneLMVertModule == VK_NULL_HANDLE || vk.sceneLMFragModule == VK_NULL_HANDLE)
+	    vk.sceneLMVertModule == VK_NULL_HANDLE || vk.sceneLMFragModule == VK_NULL_HANDLE ||
+	    vk.sceneStaticVertModule == VK_NULL_HANDLE || vk.sceneLMStaticVertModule == VK_NULL_HANDLE)
 	{
 		return qfalse;
 	}
@@ -2036,7 +2156,7 @@ static qboolean VK_CreateScenePipelineLayouts(void)
  * cullType) pair. `lightmapped` selects the vertex format/shaders/pipeline
  * layout (vk3DVertex_t + tr3d.* vs. vk3DVertexLM_t + tr3d_lm.*).
  */
-static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cullType, qboolean lightmapped, qboolean polygonOffset, int special)
+static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cullType, qboolean lightmapped, qboolean polygonOffset, int special, int vertexSource)
 {
 	VkPipelineShaderStageCreateInfo        stages[2];
 	VkVertexInputBindingDescription        vertexBinding;
@@ -2058,9 +2178,16 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	uint32_t                               ai;
 
 	Com_Memset(stages, 0, sizeof(stages));
-	stages[0].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-	stages[0].stage  = VK_SHADER_STAGE_VERTEX_BIT;
-	stages[0].module = lightmapped ? vk.sceneLMVertModule : vk.sceneVertModule;
+	stages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	stages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
+	if (vertexSource != VK_VERTS_ARENA)
+	{
+		stages[0].module = lightmapped ? vk.sceneLMStaticVertModule : vk.sceneStaticVertModule;
+	}
+	else
+	{
+		stages[0].module = lightmapped ? vk.sceneLMVertModule : vk.sceneVertModule;
+	}
 	stages[0].pName  = "main";
 	stages[1].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	stages[1].stage  = VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -2072,7 +2199,23 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	vertexBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 	Com_Memset(vertexAttributes, 0, sizeof(vertexAttributes));
-	if (lightmapped)
+	if (vertexSource != VK_VERTS_ARENA && !lightmapped)
+	{
+		// static world buffer read as single-texture vertices
+		vertexBinding.stride = sizeof(vk3DVertexLM_t);
+
+		vertexAttributes[0].location = 0;
+		vertexAttributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
+		vertexAttributes[0].offset   = offsetof(vk3DVertexLM_t, pos);
+		vertexAttributes[1].location = 1;
+		vertexAttributes[1].format   = VK_FORMAT_R32G32_SFLOAT;
+		vertexAttributes[1].offset   = (vertexSource == VK_VERTS_STATIC_LIGHTMAP) ? offsetof(vk3DVertexLM_t, uv1) : offsetof(vk3DVertexLM_t, uv0);
+		vertexAttributes[2].location = 2;
+		vertexAttributes[2].format   = VK_FORMAT_R8G8B8A8_UNORM;
+		vertexAttributes[2].offset   = offsetof(vk3DVertexLM_t, color);
+		attributeCount               = 3;
+	}
+	else if (lightmapped)
 	{
 		vertexBinding.stride = sizeof(vk3DVertexLM_t);
 
@@ -2277,7 +2420,7 @@ static int VK_MirrorCullType(int cullType)
 	return cullType;
 }
 
-static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qboolean lightmapped, qboolean polygonOffset, int special)
+static VkPipeline VK_GetScenePipelineEx(unsigned long stateBits, int cullType, qboolean lightmapped, qboolean polygonOffset, int special, int vertexSource)
 {
 	vkScenePipelineEntry_t *entries = lightmapped ? vk.sceneLMPipelines : vk.scenePipelines;
 	int                    *count   = lightmapped ? &vk.numSceneLMPipelines : &vk.numScenePipelines;
@@ -2287,7 +2430,7 @@ static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qbo
 	for (i = 0; i < *count; i++)
 	{
 		if (entries[i].stateBits == stateBits && entries[i].cullType == cullType && entries[i].polygonOffset == polygonOffset &&
-		    entries[i].special == special)
+		    entries[i].special == special && entries[i].vertexSource == vertexSource)
 		{
 			return entries[i].pipeline;
 		}
@@ -2299,7 +2442,7 @@ static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qbo
 		return VK_NULL_HANDLE;
 	}
 
-	pipeline = VK_CreateScenePipelineVariant(stateBits, cullType, lightmapped, polygonOffset, special);
+	pipeline = VK_CreateScenePipelineVariant(stateBits, cullType, lightmapped, polygonOffset, special, vertexSource);
 	if (pipeline == VK_NULL_HANDLE)
 	{
 		return VK_NULL_HANDLE;
@@ -2309,10 +2452,16 @@ static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qbo
 	entries[*count].cullType      = cullType;
 	entries[*count].polygonOffset = polygonOffset;
 	entries[*count].special       = special;
+	entries[*count].vertexSource  = vertexSource;
 	entries[*count].pipeline      = pipeline;
 	(*count)++;
 
 	return pipeline;
+}
+
+static VkPipeline VK_GetScenePipeline(unsigned long stateBits, int cullType, qboolean lightmapped, qboolean polygonOffset, int special)
+{
+	return VK_GetScenePipelineEx(stateBits, cullType, lightmapped, polygonOffset, special, VK_VERTS_ARENA);
 }
 
 /**
@@ -2856,6 +3005,16 @@ void VK_Shutdown(void)
 		{
 			vkDestroyShaderModule(vk.device, vk.sceneLMFragModule, NULL);
 		}
+		if (vk.sceneStaticVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneStaticVertModule, NULL);
+		}
+		if (vk.sceneLMStaticVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneLMStaticVertModule, NULL);
+		}
+
+		VK_DestroyStaticWorldBuffer();
 	}
 
 	{
@@ -2965,29 +3124,25 @@ static void VK_BindDescriptorSetsCached(VkPipelineLayout layout, uint32_t count,
 static void VK_PushConstantsCached(VkPipelineLayout layout, VkShaderStageFlags stages, const float *data, uint32_t bytes)
 {
 	uint32_t n = bytes / sizeof(float), first, last;
+	// floats already pushed with this layout (draws may push a prefix of
+	// the range: arena draws omit the static-only color terms)
+	uint32_t known = (vk.pushLayout == layout) ? vk.pushBytes / sizeof(float) : 0;
 
-	if (vk.pushLayout != layout || vk.pushBytes != bytes)
-	{
-		vkCmdPushConstants(vk.commandBuffer, layout, stages, 0, bytes, data);
-		vk.pushLayout = layout;
-		vk.pushBytes  = bytes;
-		Com_Memcpy(vk.pushData, data, bytes);
-		return;
-	}
-
-	for (first = 0; first < n && vk.pushData[first] == data[first]; first++)
+	for (first = 0; first < n && first < known && vk.pushData[first] == data[first]; first++)
 	{
 	}
 	if (first == n)
 	{
 		return;
 	}
-	for (last = n - 1; last > first && vk.pushData[last] == data[last]; last--)
+	for (last = n - 1; last > first && last < known && vk.pushData[last] == data[last]; last--)
 	{
 	}
 
 	vkCmdPushConstants(vk.commandBuffer, layout, stages, first * sizeof(float), (last - first + 1) * sizeof(float), data + first);
 	Com_Memcpy(vk.pushData + first, data + first, (last - first + 1) * sizeof(float));
+	vk.pushLayout = layout;
+	vk.pushBytes  = MAX(known, n) * sizeof(float);
 }
 
 /**
@@ -4203,6 +4358,172 @@ static float VK_MultitextureEnvMode(const shaderCommands_t *input)
 }
 
 /**
+ * @brief Fills the 48 push-constant floats shared by every scene draw
+ * (matrices, alpha test, texenv mode, fog, clip plane).
+ */
+static void VK_FillScenePushConstants(float *pushConstants, unsigned long stateBits, float texEnvMode)
+{
+	Com_Memcpy(pushConstants, vk.mvpMatrix, sizeof(vk.mvpMatrix));
+	Com_Memcpy(pushConstants + 16, vk.modelMatrix, sizeof(vk.modelMatrix));
+	pushConstants[32] = VK_AlphaTestMode(stateBits);
+	pushConstants[33] = texEnvMode;
+	pushConstants[34] = vk.fogExp ? 1.0f : 0.0f;
+	pushConstants[35] = vk.fogDensity;
+	pushConstants[36] = vk.fogColor[0];
+	pushConstants[37] = vk.fogColor[1];
+	pushConstants[38] = vk.fogColor[2];
+	pushConstants[39] = vk.fogColor[3];
+	pushConstants[40] = vk.fogEnabled ? 1.0f : 0.0f;
+	pushConstants[41] = vk.fogStart;
+	pushConstants[42] = vk.fogEnd;
+	pushConstants[43] = vk.clipPlaneEnabled ? 1.0f : 0.0f;
+	pushConstants[44] = vk.clipPlane[0];
+	pushConstants[45] = vk.clipPlane[1];
+	pushConstants[46] = vk.clipPlane[2];
+	pushConstants[47] = vk.clipPlane[3];
+}
+
+/**
+ * @brief Static world draws: expresses ComputeColors()' result for a stage
+ * as color = vertexColor * mul + add (0..1 floats), for the rgbGen/alphaGen
+ * modes ComputeVkStatic() accepts. A NULL stage is the constant white of
+ * RB_StageIteratorLightmappedMultitexture.
+ */
+static void VK_StaticStageColor(const shaderStage_t *stage, float *mul, float *add)
+{
+	float alphaMul = 0.0f, alphaAdd = 1.0f;
+
+	mul[0] = mul[1] = mul[2] = 0.0f;
+	add[0] = add[1] = add[2] = 1.0f;
+
+	if (!stage)
+	{
+		mul[3] = 0.0f;
+		add[3] = 1.0f;
+		return;
+	}
+
+	// rgbGen (also sets the alpha that AGEN_SKIP keeps)
+	switch (stage->rgbGen)
+	{
+	case CGEN_IDENTITY:
+		break;
+	case CGEN_EXACT_VERTEX:
+		mul[0]   = mul[1] = mul[2] = 1.0f;
+		add[0]   = add[1] = add[2] = 0.0f;
+		alphaMul = 1.0f;
+		alphaAdd = 0.0f;
+		break;
+	case CGEN_VERTEX:
+		mul[0]   = mul[1] = mul[2] = tr.identityLight;
+		add[0]   = add[1] = add[2] = 0.0f;
+		alphaMul = 1.0f;
+		alphaAdd = 0.0f;
+		break;
+	case CGEN_CONST:
+		add[0]   = stage->constantColor[0] / 255.0f;
+		add[1]   = stage->constantColor[1] / 255.0f;
+		add[2]   = stage->constantColor[2] / 255.0f;
+		alphaAdd = stage->constantColor[3] / 255.0f;
+		break;
+	case CGEN_IDENTITY_LIGHTING:
+	default:
+		add[0]   = add[1] = add[2] = tr.identityLightByte / 255.0f;
+		alphaAdd = tr.identityLightByte / 255.0f;
+		break;
+	}
+
+	switch (stage->alphaGen)
+	{
+	case AGEN_IDENTITY:
+		// ComputeColors() keeps the vertex alpha for rgbGen vertex at identityLight 1
+		if (stage->rgbGen != CGEN_IDENTITY && !(stage->rgbGen == CGEN_VERTEX && tr.identityLight == 1.0f))
+		{
+			alphaMul = 0.0f;
+			alphaAdd = 1.0f;
+		}
+		break;
+	case AGEN_CONST:
+		alphaMul = 0.0f;
+		alphaAdd = stage->constantColor[3] / 255.0f;
+		break;
+	case AGEN_VERTEX:
+		alphaMul = 1.0f;
+		alphaAdd = 0.0f;
+		break;
+	case AGEN_SKIP:
+	default:
+		break;
+	}
+
+	mul[3] = alphaMul;
+	add[3] = alphaAdd;
+}
+
+/**
+ * @brief Static world batch (tess.vkStatic): the indexes already point into
+ * the static world buffer, so only they are copied to the arena; colors and
+ * texcoords come from the static vertex shaders (see VK_StaticStageColor()).
+ */
+static void VK_Draw3DStatic(shaderCommands_t *input, const glIndex_t *indexes, int numIndexes, VkDescriptorSet *sets, int numSets,
+                            unsigned long stateBits, int cullType)
+{
+	qboolean     lightmapped = (numSets == 2) ? qtrue : qfalse;
+	int          vertexSource;
+	VkDeviceSize indexBytes;
+	float        pushConstants[VK_SCENE_PUSH_FLOATS];
+	VkPipeline   pipeline;
+
+	if (vk.staticWorldBuffer == VK_NULL_HANDLE || numIndexes == 0)
+	{
+		return;
+	}
+
+	if (!lightmapped && input->vkStage && input->vkStage->bundle[0].tcGen == TCGEN_LIGHTMAP)
+	{
+		vertexSource = VK_VERTS_STATIC_LIGHTMAP;
+	}
+	else
+	{
+		vertexSource = VK_VERTS_STATIC;
+	}
+
+	pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), lightmapped, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE, vertexSource);
+	if (pipeline == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	indexBytes = (VkDeviceSize)numIndexes * sizeof(uint32_t);
+	if (vk.sceneIndexArenaOffset + indexBytes > vk.sceneIndexArenaSize)
+	{
+		static int lastWarnFrame = -1;
+
+		if (backEnd.refdef.time != lastWarnFrame)
+		{
+			Ren_Print("Vulkan: VK_Draw3DStatic - scene index arena exhausted this frame, dropping remaining 3D draws\n");
+			lastWarnFrame = backEnd.refdef.time;
+		}
+		return;
+	}
+	Com_Memcpy((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset, indexes, (size_t)indexBytes);
+
+	VK_BindPipelineCached(pipeline);
+
+	VK_FillScenePushConstants(pushConstants, stateBits, lightmapped ? VK_MultitextureEnvMode(input) : 0.0f);
+	VK_StaticStageColor(input->vkStage, pushConstants + 48, pushConstants + 52);
+	VK_PushConstantsCached(lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+	                       pushConstants, sizeof(pushConstants));
+
+	VK_BindDescriptorSetsCached(lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout, numSets, sets);
+
+	VK_BindArenaBuffers(vk.staticWorldBuffer, vk.sceneIndexArenaBuffer);
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, (uint32_t)(vk.sceneIndexArenaOffset / sizeof(uint32_t)), 0, 0);
+
+	vk.sceneIndexArenaOffset += indexBytes;
+}
+
+/**
  * @brief submits one already-tessellated 3D shader stage
  * batch (single texture) using the lazily-created pipeline variant that
  * matches stateBits/cullType. Vertex data is read from input->xyz,
@@ -4229,7 +4550,7 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 	VkPipeline      pipeline;
 	VkDescriptorSet descriptorSet;
 
-	if (!vk.initialized || !input || input->numVertexes == 0 || numIndexes == 0)
+	if (!vk.initialized || !input || (input->numVertexes == 0 && !input->vkStatic) || numIndexes == 0)
 	{
 		return;
 	}
@@ -4240,6 +4561,13 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 	}
 	if (!image || !image->vkDescriptorSet)
 	{
+		return;
+	}
+
+	if (input->vkStatic)
+	{
+		descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
+		VK_Draw3DStatic(input, indexes, numIndexes, &descriptorSet, 1, stateBits, cullType);
 		return;
 	}
 
@@ -4289,24 +4617,7 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 
 	VK_BindPipelineCached(pipeline);
 
-	Com_Memcpy(pushConstants, vk.mvpMatrix, sizeof(vk.mvpMatrix));
-	Com_Memcpy(pushConstants + 16, vk.modelMatrix, sizeof(vk.modelMatrix));
-	pushConstants[32] = VK_AlphaTestMode(stateBits);
-	pushConstants[33] = 0.0f;
-	pushConstants[34] = vk.fogExp ? 1.0f : 0.0f;
-	pushConstants[35] = vk.fogDensity;
-	pushConstants[36] = vk.fogColor[0];
-	pushConstants[37] = vk.fogColor[1];
-	pushConstants[38] = vk.fogColor[2];
-	pushConstants[39] = vk.fogColor[3];
-	pushConstants[40] = vk.fogEnabled ? 1.0f : 0.0f;
-	pushConstants[41] = vk.fogStart;
-	pushConstants[42] = vk.fogEnd;
-	pushConstants[43] = vk.clipPlaneEnabled ? 1.0f : 0.0f;
-	pushConstants[44] = vk.clipPlane[0];
-	pushConstants[45] = vk.clipPlane[1];
-	pushConstants[46] = vk.clipPlane[2];
-	pushConstants[47] = vk.clipPlane[3];
+	VK_FillScenePushConstants(pushConstants, stateBits, 0.0f);
 	VK_PushConstantsCached(vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
 
 	descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
@@ -4336,7 +4647,7 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 	VkPipeline      pipeline;
 	VkDescriptorSet descriptorSets[2];
 
-	if (!vk.initialized || !input || input->numVertexes == 0 || input->numIndexes == 0)
+	if (!vk.initialized || !input || (input->numVertexes == 0 && !input->vkStatic) || input->numIndexes == 0)
 	{
 		return;
 	}
@@ -4351,6 +4662,14 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 	}
 	if (!base->vkDescriptorSet || !lightmap->vkDescriptorSet)
 	{
+		return;
+	}
+
+	if (input->vkStatic)
+	{
+		descriptorSets[0] = (VkDescriptorSet)base->vkDescriptorSet;
+		descriptorSets[1] = (VkDescriptorSet)lightmap->vkDescriptorSet;
+		VK_Draw3DStatic(input, input->indexes, input->numIndexes, descriptorSets, 2, stateBits, cullType);
 		return;
 	}
 
@@ -4403,24 +4722,7 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 
 	VK_BindPipelineCached(pipeline);
 
-	Com_Memcpy(pushConstants, vk.mvpMatrix, sizeof(vk.mvpMatrix));
-	Com_Memcpy(pushConstants + 16, vk.modelMatrix, sizeof(vk.modelMatrix));
-	pushConstants[32] = VK_AlphaTestMode(stateBits);
-	pushConstants[33] = VK_MultitextureEnvMode(input);
-	pushConstants[34] = vk.fogExp ? 1.0f : 0.0f;
-	pushConstants[35] = vk.fogDensity;
-	pushConstants[36] = vk.fogColor[0];
-	pushConstants[37] = vk.fogColor[1];
-	pushConstants[38] = vk.fogColor[2];
-	pushConstants[39] = vk.fogColor[3];
-	pushConstants[40] = vk.fogEnabled ? 1.0f : 0.0f;
-	pushConstants[41] = vk.fogStart;
-	pushConstants[42] = vk.fogEnd;
-	pushConstants[43] = vk.clipPlaneEnabled ? 1.0f : 0.0f;
-	pushConstants[44] = vk.clipPlane[0];
-	pushConstants[45] = vk.clipPlane[1];
-	pushConstants[46] = vk.clipPlane[2];
-	pushConstants[47] = vk.clipPlane[3];
+	VK_FillScenePushConstants(pushConstants, stateBits, VK_MultitextureEnvMode(input));
 	VK_PushConstantsCached(vk.sceneLMPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
 
 	descriptorSets[0] = (VkDescriptorSet)base->vkDescriptorSet;

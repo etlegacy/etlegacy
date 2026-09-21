@@ -2240,6 +2240,74 @@ static void ComputeStageIteratorFunc(void)
 	}
 }
 
+/**
+ * @brief Vulkan: decides whether world surfaces using this shader can be
+ * drawn straight from the static world vertex buffer (vk.c). Every stage
+ * must produce colors/texcoords that depend only on the BSP vertex data:
+ * no deforms, texture/lightmap texcoords without tcMods, and rgbGen/
+ * alphaGen modes the static vertex shaders reproduce from the vertex color
+ * (see VK_StaticStageColor()). Batches that need fog volumes, dlights or
+ * debug views fall back to tessellation at draw time.
+ */
+static void ComputeVkStatic(void)
+{
+	int i;
+
+	shader.vkStatic = qfalse;
+
+	// portal surfaces are also tessellated by the front end's SurfIsOffscreen(),
+	// which reads the tess vertices
+	if (shader.isSky || shader.numDeforms || shader.entityMergable || !stages[0].active || shader.sort == SS_PORTAL ||
+	    shader.optimalStageIteratorFunc == RB_StageIteratorVertexLitTexture)
+	{
+		return;
+	}
+
+	for (i = 0; i < MAX_SHADER_STAGES && stages[i].active; i++)
+	{
+		shaderStage_t *pStage = &stages[i];
+
+		switch (pStage->rgbGen)
+		{
+		case CGEN_IDENTITY:
+		case CGEN_IDENTITY_LIGHTING:
+		case CGEN_EXACT_VERTEX:
+		case CGEN_VERTEX:
+		case CGEN_CONST:
+			break;
+		default:
+			return;
+		}
+
+		switch (pStage->alphaGen)
+		{
+		case AGEN_SKIP:
+		case AGEN_IDENTITY:
+		case AGEN_CONST:
+		case AGEN_VERTEX:
+			break;
+		default:
+			return;
+		}
+
+		if (pStage->bundle[0].numTexMods ||
+		    (pStage->bundle[0].tcGen != TCGEN_TEXTURE && pStage->bundle[0].tcGen != TCGEN_LIGHTMAP))
+		{
+			return;
+		}
+
+		// collapsed multitexture: the static lightmapped pipeline reads
+		// the texture coords for unit 0 and the lightmap coords for unit 1
+		if (pStage->bundle[1].image[0] &&
+		    (pStage->bundle[1].numTexMods || pStage->bundle[0].tcGen != TCGEN_TEXTURE || pStage->bundle[1].tcGen != TCGEN_LIGHTMAP))
+		{
+			return;
+		}
+	}
+
+	shader.vkStatic = qtrue;
+}
+
 typedef struct
 {
 	int blendA;
@@ -2954,6 +3022,8 @@ static shader_t *FinishShader(void)
 
 	// determine which stage iterator function is appropriate
 	ComputeStageIteratorFunc();
+
+	ComputeVkStatic();
 
 	// default back to no compression for next shader
 	if (r_extCompressedTextures->integer == 2)

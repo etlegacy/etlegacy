@@ -160,6 +160,8 @@ cvar_t *r_gfxInfo;
 
 cvar_t *r_scale;
 
+cvar_t *r_vkStaticWorld;
+
 /**
  * @brief R_Register
  */
@@ -346,6 +348,10 @@ void R_Register(void)
 	r_gfxInfo = ri.Cvar_Get("r_gfxinfo", "0", 0); // less spammy gfx output at start - enable to print full GL_EXTENSION string
 
 	r_scale = ri.Cvar_Get("r_scale", "1", CVAR_ARCHIVE | CVAR_LATCH);
+
+	// draw static world surfaces from a per-map GPU vertex buffer instead of
+	// re-tessellating them every frame (0 = always tessellate, for comparisons)
+	r_vkStaticWorld = ri.Cvar_Get("r_vkStaticWorld", "1", 0);
 
 	// make sure all the commands added here are also
 	// removed in R_Shutdown

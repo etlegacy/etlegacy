@@ -495,6 +495,8 @@ typedef struct shader_s
 
 	qboolean entityMergable;            ///< merge across entites optimizable (smoke, blood)
 
+	qboolean vkStatic;                  ///< world surfaces can be drawn from the static world buffer (see ComputeVkStatic)
+
 	qboolean isSky;
 	skyParms_t sky;
 	fogParms_t fogParms;
@@ -959,6 +961,8 @@ typedef struct srfTriangles_s
 
 	int numVerts;
 	drawVert_t *verts;
+
+	int vkFirstVertex;      ///< first vertex in the Vulkan static world buffer, -1 if not uploaded
 } srfTriangles_t;
 
 /**
@@ -1685,6 +1689,12 @@ typedef struct shaderCommands_s
 	int numPasses;
 	void (*currentStageIteratorFunc)(void);
 	shaderStage_t **xstages;
+
+	/// static world batch: indexes point into the Vulkan static world buffer
+	/// and no vertex data was tessellated (numVertexes == 0), see RB_SurfaceTriangles
+	qboolean vkStatic;
+	/// stage being drawn (colors for static batches), NULL = constant white
+	shaderStage_t *vkStage;
 } shaderCommands_t;
 
 extern shaderCommands_t tess;
@@ -1692,7 +1702,13 @@ extern shaderCommands_t tess;
 void RB_BeginSurface(shader_t *shader, int fogNum);
 void RB_EndSurface(void);
 void RB_CheckOverflow(int verts, int indexes);
-#define RB_CHECKOVERFLOW(v, i) if (tess.numVertexes + (v) >= SHADER_MAX_VERTEXES || tess.numIndexes + (i) >= SHADER_MAX_INDEXES) { RB_CheckOverflow(v, i); }
+void RB_EndStaticBatch(void);
+
+// Vulkan static world geometry (vulkan/vk.c): per-map vertex buffer that
+// static batches (tess.vkStatic) index into, filled by R_LoadStaticWorldVertices()
+qboolean VK_CreateStaticWorldBuffer(int numVertexes);
+void VK_WriteStaticWorldVertices(int first, const drawVert_t *verts, int count);
+#define RB_CHECKOVERFLOW(v, i) if (tess.vkStatic) { RB_EndStaticBatch(); } if (tess.numVertexes + (v) >= SHADER_MAX_VERTEXES || tess.numIndexes + (i) >= SHADER_MAX_INDEXES) { RB_CheckOverflow(v, i); }
 
 void RB_StageIteratorGeneric(void);
 void RB_StageIteratorSky(void);
