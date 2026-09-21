@@ -3536,7 +3536,7 @@ void CG_AltWeapon_f(void)
 
 			if (cg_quickchat.integer == 2)
 			{
-				cmd = va("vsay_buddy -1 %s", CG_BuildSelectedFirteamString());
+				cmd = va("vsay_buddy -1 %s", CG_BuildSelectedFireteamString());
 			}
 			else
 			{
