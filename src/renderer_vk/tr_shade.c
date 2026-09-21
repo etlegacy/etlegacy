@@ -63,6 +63,8 @@ void RB_BeginSurface(shader_t *shader, int fogNum)
 	tess.shader                   = state;
 	tess.fogNum                   = fogNum;
 	tess.dlightBits               = 0; // will be OR'd in by surface functions
+	tess.vkStatic                 = qfalse; // decided by the first surface (RB_SurfaceTriangles)
+	tess.vkStage                  = NULL;
 	tess.xstages                  = state->stages;
 	tess.numPasses                = state->numUnfoggedPasses;
 	tess.currentStageIteratorFunc = state->optimalStageIteratorFunc;
@@ -1124,6 +1126,8 @@ void RB_StageIteratorGeneric(void)
 				R_FogOn();
 			}
 
+			input->vkStage = pStage;
+
 			if (pStage->bundle[1].image[0] != 0)
 			{
 				VK_Draw3DLightmapped(input, R_GetAnimatedImage(&pStage->bundle[0]), R_GetAnimatedImage(&pStage->bundle[1]),
@@ -1271,6 +1275,7 @@ void RB_StageIteratorLightmappedMultitexture(void)
 		tess.svars.texcoords[1][i][1] = tess.texCoords[i][1][1];
 	}
 
+	input->vkStage = NULL; // constant white (constantColor255)
 	VK_Draw3DLightmapped(input, R_GetAnimatedImage(&tess.xstages[0]->bundle[0]), R_GetAnimatedImage(&tess.xstages[0]->bundle[1]),
 	                     GLS_DEFAULT, shader->cullType);
 
@@ -1333,4 +1338,5 @@ void RB_EndSurface(void)
 	// clear shader so we can tell we don't have any unclosed surfaces
 	tess.numIndexes  = 0;
 	tess.numVertexes = 0;
+	tess.vkStatic    = qfalse;
 }

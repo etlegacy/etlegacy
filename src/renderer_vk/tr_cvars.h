@@ -76,6 +76,8 @@ extern cvar_t *r_gfxInfo;
 
 extern cvar_t *r_scale;
 
+extern cvar_t *r_vkStaticWorld;
+
 extern cvar_t *r_screenshotFormat;
 extern cvar_t *r_screenshotJpegQuality;
 

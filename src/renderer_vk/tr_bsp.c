@@ -545,11 +545,12 @@ static void ParseTriSurf(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	tri = R_GetSurfMemory(sizeof(*tri) + numVerts * sizeof(tri->verts[0])
 	                      + numIndexes * sizeof(tri->indexes[0]));
 
-	tri->surfaceType = SF_TRIANGLES;
-	tri->numVerts    = numVerts;
-	tri->numIndexes  = numIndexes;
-	tri->verts       = ( drawVert_t * )(tri + 1);
-	tri->indexes     = ( int * )(tri->verts + tri->numVerts);
+	tri->surfaceType   = SF_TRIANGLES;
+	tri->numVerts      = numVerts;
+	tri->numIndexes    = numIndexes;
+	tri->verts         = ( drawVert_t * )(tri + 1);
+	tri->indexes       = ( int * )(tri->verts + tri->numVerts);
+	tri->vkFirstVertex = -1;
 
 	surf->data = (surfaceType_t *)tri;
 
@@ -1972,6 +1973,45 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 }
 
 /**
+ * @brief Vulkan: copies the vertices of every triangle surface (planar faces
+ * and triangle soups, world and brush models) into one static GPU vertex
+ * buffer, so RB_SurfaceTriangles() only has to emit indexes for them.
+ */
+static void R_LoadStaticWorldVertices(void)
+{
+	msurface_t     *surf;
+	srfTriangles_t *tri;
+	int            i, numVertexes = 0;
+
+	for (i = 0, surf = s_worldData.surfaces; i < s_worldData.numsurfaces; i++, surf++)
+	{
+		if (surf->data && *surf->data == SF_TRIANGLES)
+		{
+			numVertexes += ((srfTriangles_t *)surf->data)->numVerts;
+		}
+	}
+
+	if (!VK_CreateStaticWorldBuffer(numVertexes))
+	{
+		return;
+	}
+
+	numVertexes = 0;
+	for (i = 0, surf = s_worldData.surfaces; i < s_worldData.numsurfaces; i++, surf++)
+	{
+		if (surf->data && *surf->data == SF_TRIANGLES)
+		{
+			tri = (srfTriangles_t *)surf->data;
+			VK_WriteStaticWorldVertices(numVertexes, tri->verts, tri->numVerts);
+			tri->vkFirstVertex = numVertexes;
+			numVertexes       += tri->numVerts;
+		}
+	}
+
+	Ren_Developer("...static world buffer: %i vertexes\n", numVertexes);
+}
+
+/**
  * @brief R_LoadSubmodels
  * @param[in] l
  */
@@ -2687,6 +2727,7 @@ void RE_LoadWorldMap(const char *name)
 	//% R_LoadFogs( &header->lumps[LUMP_FOGS], &header->lumps[LUMP_BRUSHES], &header->lumps[LUMP_BRUSHSIDES] );
 	//% Ren_UpdateScreen();
 	R_LoadSurfaces(&header->lumps[LUMP_SURFACES], &header->lumps[LUMP_DRAWVERTS], &header->lumps[LUMP_DRAWINDEXES]);
+	R_LoadStaticWorldVertices();
 	Ren_UpdateScreen();
 	R_LoadMarksurfaces(&header->lumps[LUMP_LEAFSURFACES]);
 	Ren_UpdateScreen();
