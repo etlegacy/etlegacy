@@ -21,6 +21,10 @@ endif()
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.31")
 	cmake_policy(SET CMP0177 NEW)
 endif()
+if(POLICY CMP0218)
+	# Use CMake's unified diagnostic controls for deprecation messages.
+	cmake_policy(SET CMP0218 NEW)
+endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 include(CMakeDependentOption)
