@@ -59,6 +59,7 @@ qboolean GLimp_SplashImage(qboolean (*LoadSplashImage)(const char *name, byte *d
 #ifdef FEATURE_RENDERER_VULKAN
 qboolean VKimp_GetInstanceExtensions(unsigned int *count, const char **names);
 qboolean VKimp_CreateSurface(void *instance, void **surface);
+void *VKimp_GetInstanceProcAddr(void);
 #endif
 
 // Console

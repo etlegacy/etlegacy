@@ -40,6 +40,7 @@
 #include <stdlib.h>
 
 #include "vk.h"
+#include "vk_funcs.h"
 #include "../../renderercommon/tr_common.h"
 #include "../tr_local.h"
 
@@ -381,6 +382,87 @@ typedef struct
 #define VK_SCENE_INDEX_ARENA_SIZE  (8 * 1024 * 1024)
 #define VK_UI_MAX_DESCRIPTOR_SETS 2048
 
+#ifdef VK_NO_PROTOTYPES
+/*
+ * Runtime-loaded Vulkan entry points (Linux/Windows). The renderer only uses
+ * the Vulkan headers; every function is fetched from the system loader
+ * (libvulkan.so.1 / vulkan-1.dll, opened by SDL) so no Vulkan SDK or import
+ * library is needed. The pointers are named like the prototypes they
+ * replace, so the rest of this file calls them unchanged.
+ */
+static PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
+
+#define VK_DEFINE_FUNC(name) static PFN_ ## name name;
+VK_GLOBAL_FUNCS(VK_DEFINE_FUNC)
+VK_INSTANCE_FUNCS(VK_DEFINE_FUNC)
+VK_DEVICE_FUNCS(VK_DEFINE_FUNC)
+#undef VK_DEFINE_FUNC
+
+/**
+ * @brief Resolves the loader-level functions from the vkGetInstanceProcAddr
+ * the engine got from the system Vulkan loader.
+ */
+static qboolean VK_LoadGlobalFunctions(void)
+{
+	vkGetInstanceProcAddr = (PFN_vkGetInstanceProcAddr)ri.VKimp_GetInstanceProcAddr();
+	if (!vkGetInstanceProcAddr)
+	{
+		Ren_Print("Vulkan: could not load the Vulkan library (no vkGetInstanceProcAddr)\n");
+		return qfalse;
+	}
+
+#define VK_LOAD_FUNC(name) \
+		name = (PFN_ ## name)vkGetInstanceProcAddr(NULL, #name); \
+		if (!name) { Ren_Print("Vulkan: failed to load %s\n", #name); return qfalse; }
+	VK_GLOBAL_FUNCS(VK_LOAD_FUNC)
+#undef VK_LOAD_FUNC
+
+	return qtrue;
+}
+
+static qboolean VK_LoadInstanceFunctions(void)
+{
+#define VK_LOAD_FUNC(name) \
+		name = (PFN_ ## name)vkGetInstanceProcAddr(vk.instance, #name); \
+		if (!name) { Ren_Print("Vulkan: failed to load %s\n", #name); return qfalse; }
+	VK_INSTANCE_FUNCS(VK_LOAD_FUNC)
+#undef VK_LOAD_FUNC
+
+	return qtrue;
+}
+
+/**
+ * @brief Device functions are fetched with vkGetDeviceProcAddr, which
+ * returns the driver's entry points directly (no loader dispatch).
+ */
+static qboolean VK_LoadDeviceFunctions(void)
+{
+#define VK_LOAD_FUNC(name) \
+		name = (PFN_ ## name)vkGetDeviceProcAddr(vk.device, #name); \
+		if (!name) { Ren_Print("Vulkan: failed to load %s\n", #name); return qfalse; }
+	VK_DEVICE_FUNCS(VK_LOAD_FUNC)
+#undef VK_LOAD_FUNC
+
+	return qtrue;
+}
+
+static void VK_ClearFunctions(void)
+{
+#define VK_CLEAR_FUNC(name) name = NULL;
+	VK_GLOBAL_FUNCS(VK_CLEAR_FUNC)
+	VK_INSTANCE_FUNCS(VK_CLEAR_FUNC)
+	VK_DEVICE_FUNCS(VK_CLEAR_FUNC)
+#undef VK_CLEAR_FUNC
+	vkGetInstanceProcAddr = NULL;
+}
+#else
+// macOS: linked against the Vulkan SDK loader, prototypes are real functions
+#define VK_LoadGlobalFunctions()   qtrue
+#define VK_LoadInstanceFunctions() qtrue
+#define VK_LoadDeviceFunctions()   qtrue
+#define VK_ClearFunctions()
+#endif
+
 /**
  * @brief Minimal error helper: prints the VkResult and returns qfalse so
  * callers can bail out cleanly instead of crashing on an invalid handle.
@@ -655,7 +737,8 @@ static qboolean VK_CreateLogicalDevice(void)
 	createInfo.enabledExtensionCount   = deviceExtensionCount;
 	createInfo.ppEnabledExtensionNames = deviceExtensions;
 
-	if (!VK_CheckResult(vkCreateDevice(vk.physicalDevice, &createInfo, NULL, &vk.device), "vkCreateDevice"))
+	if (!VK_CheckResult(vkCreateDevice(vk.physicalDevice, &createInfo, NULL, &vk.device), "vkCreateDevice") ||
+	    !VK_LoadDeviceFunctions())
 	{
 		return qfalse;
 	}
@@ -2756,13 +2839,18 @@ qboolean VK_Init(int width, int height)
 
 	Com_Memset(&vk, 0, sizeof(vk));
 
-	if (!ri.VKimp_GetInstanceExtensions || !ri.VKimp_CreateSurface)
+	if (!ri.VKimp_GetInstanceExtensions || !ri.VKimp_CreateSurface || !ri.VKimp_GetInstanceProcAddr)
 	{
 		Ren_Print("Vulkan: engine does not expose VKimp_* window-system hooks\n");
 		return qfalse;
 	}
 
-	if (!VK_CreateInstance())
+	if (!VK_LoadGlobalFunctions())
+	{
+		return qfalse;
+	}
+
+	if (!VK_CreateInstance() || !VK_LoadInstanceFunctions())
 	{
 		return qfalse;
 	}
@@ -3057,6 +3145,7 @@ void VK_Shutdown(void)
 	}
 
 	Com_Memset(&vk, 0, sizeof(vk));
+	VK_ClearFunctions();
 }
 
 /**

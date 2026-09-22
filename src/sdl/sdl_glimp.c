@@ -1149,7 +1149,10 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 #ifdef FEATURE_RENDERER_VULKAN
 		if (Q_stricmp(Info_ValueForKey(glConfigString, "type"), "vulkan") == 0)
 		{
-			SDL_Vulkan_LoadLibrary(NULL);
+			if (SDL_Vulkan_LoadLibrary(NULL) != 0)
+			{
+				Com_Printf("SDL_Vulkan_LoadLibrary failed: %s\n", SDL_GetError());
+			}
 		}
 #endif
 
@@ -1307,6 +1310,24 @@ qboolean VKimp_CreateSurface(void *instance, void **surface)
 	}
 
 	return qtrue;
+}
+
+/**
+ * @brief Returns vkGetInstanceProcAddr from the Vulkan loader library that
+ * SDL opened (libvulkan.so.1 / vulkan-1.dll / the macOS loader).
+ * @return the function pointer as void* (to avoid a vulkan.h include here),
+ * or NULL if no Vulkan library could be loaded
+ */
+void *VKimp_GetInstanceProcAddr(void)
+{
+	void *proc = SDL_Vulkan_GetVkGetInstanceProcAddr();
+
+	if (!proc)
+	{
+		Com_Printf("SDL_Vulkan_GetVkGetInstanceProcAddr failed: %s\n", SDL_GetError());
+	}
+
+	return proc;
 }
 #endif
 
