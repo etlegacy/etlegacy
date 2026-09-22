@@ -208,9 +208,20 @@ if(FEATURE_RENDERER_VULKAN)
 		set(VK_SHADER_SPV "${VK_SHADER_GEN_DIR}/${VK_SHADER_SRC_NAME}.spv")
 		set(VK_SHADER_HDR "${VK_SHADER_GEN_DIR}/${VK_SHADER_SRC_NAME}.h")
 
+		get_filename_component(VK_GLSL_COMPILER_NAME "${VK_GLSL_COMPILER}" NAME_WE)
+		if(VK_GLSL_COMPILER_NAME STREQUAL "glslangValidator")
+			if(VK_SHADER_STAGE STREQUAL "vertex")
+				set(VK_GLSL_ARGS -V -S vert)
+			else()
+				set(VK_GLSL_ARGS -V -S frag)
+			endif()
+		else()
+			set(VK_GLSL_ARGS -fshader-stage=${VK_SHADER_STAGE})
+		endif()
+
 		add_custom_command(
 			OUTPUT ${VK_SHADER_SPV}
-			COMMAND Vulkan::glslc -fshader-stage=${VK_SHADER_STAGE} ${VK_SHADER_SRC} -o ${VK_SHADER_SPV}
+			COMMAND ${VK_GLSL_COMPILER} ${VK_GLSL_ARGS} ${VK_SHADER_SRC} -o ${VK_SHADER_SPV}
 			DEPENDS ${VK_SHADER_SRC}
 			COMMENT "Compiling Vulkan shader ${VK_SHADER_SRC_NAME}"
 			VERBATIM

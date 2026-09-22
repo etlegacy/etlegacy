@@ -77,9 +77,37 @@ if(BUILD_CLIENT)
 	endif()
 
 	if(FEATURE_RENDERER_VULKAN)
-		# FIXME: use the vulkan sdk for now, swap to headers only at some point
-		find_package(Vulkan REQUIRED COMPONENTS glslc)
-		target_link_libraries(renderer_vulkan_libraries INTERFACE Vulkan::Vulkan)
+		if(APPLE)
+			# macOS links the Vulkan SDK loader (MoltenVK) directly
+			find_package(Vulkan REQUIRED COMPONENTS glslc)
+			target_link_libraries(renderer_vulkan_libraries INTERFACE Vulkan::Vulkan)
+			set(VK_GLSL_COMPILER Vulkan::glslc)
+		else()
+			# Linux/Windows: Vulkan API headers only. The renderer never links a
+			# Vulkan library, all entry points are loaded at runtime from the
+			# driver's loader (libvulkan.so.1 / vulkan-1.dll) - see vk_funcs.h.
+			find_path(VULKAN_INCLUDE_DIR
+				NAMES vulkan/vulkan.h
+				HINTS "$ENV{VULKAN_SDK}/include" "$ENV{VULKAN_SDK}/Include"
+				DOC "Directory containing the Vulkan API headers (vulkan/vulkan.h)"
+			)
+			if(NOT VULKAN_INCLUDE_DIR)
+				message(FATAL_ERROR "Vulkan headers (vulkan/vulkan.h) not found - install the Vulkan-Headers package or set VULKAN_INCLUDE_DIR")
+			endif()
+			target_include_directories(renderer_vulkan_libraries INTERFACE "${VULKAN_INCLUDE_DIR}")
+			target_compile_definitions(renderer_vulkan_libraries INTERFACE VK_NO_PROTOTYPES)
+
+			# shader compiler: glslc (shaderc) preferred, glslangValidator works too
+			find_program(VK_GLSL_COMPILER
+				NAMES glslc glslangValidator
+				HINTS "$ENV{VULKAN_SDK}/bin" "$ENV{VULKAN_SDK}/Bin"
+				DOC "GLSL to SPIR-V compiler (glslc or glslangValidator)"
+			)
+			if(NOT VK_GLSL_COMPILER)
+				message(FATAL_ERROR "No GLSL compiler found - install glslc (shaderc) or glslangValidator (glslang), or set VK_GLSL_COMPILER")
+			endif()
+		endif()
+		message(STATUS "Vulkan GLSL compiler: ${VK_GLSL_COMPILER}")
 	endif()
 
 	if(NOT BUNDLED_SDL)

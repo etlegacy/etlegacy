@@ -271,6 +271,9 @@ typedef struct
 	/// all renderers when built with RENDERER_DYNAMIC)
 	qboolean (*VKimp_GetInstanceExtensions)(unsigned int *count, const char **names);
 	qboolean (*VKimp_CreateSurface)(void *instance, void **surface);
+	/// vkGetInstanceProcAddr of the system Vulkan loader (NULL if it could
+	/// not be loaded); the renderer resolves every other entry point from it
+	void *(*VKimp_GetInstanceProcAddr)(void);
 
 } refimport_t;
 

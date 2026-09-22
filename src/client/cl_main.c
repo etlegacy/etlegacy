@@ -3111,9 +3111,11 @@ void CL_InitRef(void)
 #ifdef FEATURE_RENDERER_VULKAN
 	ri.VKimp_GetInstanceExtensions = VKimp_GetInstanceExtensions;
 	ri.VKimp_CreateSurface         = VKimp_CreateSurface;
+	ri.VKimp_GetInstanceProcAddr   = VKimp_GetInstanceProcAddr;
 #else
 	ri.VKimp_GetInstanceExtensions = NULL;
 	ri.VKimp_CreateSurface         = NULL;
+	ri.VKimp_GetInstanceProcAddr   = NULL;
 #endif
 
 	//ri.ftol = Q_ftol;
