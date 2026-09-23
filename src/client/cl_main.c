@@ -2573,6 +2573,10 @@ void CL_Frame(int msec)
 
 	Con_RunConsole();
 
+#ifdef FEATURE_DISCORD
+	CL_DiscordFrame();
+#endif
+
 	cls.framecount++;
 
 	// make sure we have a valid timedemo frame before storing the frametime,
@@ -3152,6 +3156,10 @@ void CL_Init(void)
 
 	CL_InitCvars();
 
+#ifdef FEATURE_DISCORD
+	CL_DiscordInit();
+#endif
+
 	#ifdef ETLEGACY_VERSION_ID
 	Cvar_Get("etl_bUUID", ETLEGACY_VERSION_ID, CVAR_USERINFO | CVAR_ROM | CVAR_NOTABCOMPLETE);
 	#endif
@@ -3348,6 +3356,10 @@ void CL_Shutdown(void)
 	Cvar_Set("cl_running", "0");
 
 	recursive = qfalse;
+
+#ifdef FEATURE_DISCORD
+	CL_DiscordShutdown();
+#endif
 
 	Com_Memset(&cls, 0, sizeof(cls));
 	//Key_SetCatcher( 0 );
