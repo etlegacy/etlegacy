@@ -393,6 +393,9 @@ Copyright (C) 2011 Dusan Jocic
 XreaL GPL Source Code (renderer2)
 Copyright (C) 2010-2011 Robert Beckebans
 
+Quake3e GPL Source Code
+Copyright (C) 2016 Eugene
+
 ET: Legacy
 Copyright (C) 2012-2024 ET:Legacy Team <mail@etlegacy.com>
 
