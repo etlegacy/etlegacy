@@ -4,6 +4,7 @@ import io
 import json
 import os
 import re
+import subprocess
 import sys
 
 from dataclasses import dataclass, field
@@ -52,6 +53,8 @@ et = {}
 
 """
 )
+
+TIMESTAMP_LINE_RE = re.compile(r"^--        Timestamp : .*$", re.MULTILINE)
 
 
 class DefinitionType(Enum):
@@ -275,14 +278,29 @@ def print_debug(s):
     print(s)
 
 
+def has_non_timestamp_changes(existing_content, generated_content):
+    # Normalize one timestamp in each version so timestamp-only updates do not
+    # rewrite the generated file.
+    existing_comparable, existing_timestamps = TIMESTAMP_LINE_RE.subn(
+        "--        Timestamp : <ignored>", existing_content
+    )
+    generated_comparable, generated_timestamps = TIMESTAMP_LINE_RE.subn(
+        "--        Timestamp : <ignored>", generated_content
+    )
+
+    return (
+        existing_timestamps != 1
+        or generated_timestamps != 1
+        or existing_comparable != generated_comparable
+    )
+
+
 def regenerate():
     global output_lines
     global definitions
 
-    with open(
-        script_parent_dir.joinpath("luals-definitions", "generated.lua"),
-        "w",
-    ) as f:
+    generated_file = script_parent_dir.joinpath("luals-definitions", "generated.lua")
+    with io.StringIO() as f:
         f.write(TEMPLATE_STANZA)
         f.writelines(output_lines)
 
@@ -308,6 +326,15 @@ def regenerate():
                 f.write("\n")
                 f.write("\n")
             f.write(f"-- }}}}}} {k}\n")
+
+        generated_content = f.getvalue()
+
+    if generated_file.is_file():
+        existing_content = generated_file.read_text(encoding="utf-8")
+        if not has_non_timestamp_changes(existing_content, generated_content):
+            return
+
+    generated_file.write_text(generated_content, encoding="utf-8")
 
 
 def load_compile_commands(file_path, ccjson_path="compile_commands.json"):
@@ -427,6 +454,12 @@ def main(args):
         print("File does not exist:", path)
         sys.exit(1)
 
+    # Ask the matching Clang driver for its builtin header location instead of
+    # relying on a specific Pixi environment path.
+    clang_resource_dir = subprocess.check_output(
+        ["clang", "-print-resource-dir"], text=True
+    ).strip()
+
     index = cindex.Index.create()
     tu = index.parse(
         path,
@@ -436,11 +469,12 @@ def main(args):
             # assume some features
             "-DFEATURE_LUA",
             "-DFEATURE_MULTIVIEW",
-            # for 'stddef.h'
+            # for Clang builtin headers such as 'stddef.h'
+            "-resource-dir",
+            clang_resource_dir,
+            # for headers supplied by the active Pixi environment
             "-isystem",
-            "./.pixi/envs/clang/lib/clang/20/include",
-            "-isystem",
-            "./.pixi/envs/clang/include/",
+            str(Path(sys.prefix).joinpath("include")),
             # for build-generated version header
             "-I",
             "./etmain/ui/",
@@ -497,6 +531,23 @@ def cli(argv):
             )
 
         def run_tests():
+            old_timestamp = "--        Timestamp : 2025-01-01T00:00:00+00:00"
+            new_timestamp = "--        Timestamp : 2026-01-01T00:00:00+00:00"
+            assert not has_non_timestamp_changes(
+                old_timestamp + "\ncontent\n", new_timestamp + "\ncontent\n"
+            ), "A timestamp-only update must not count as a generated change"
+            assert has_non_timestamp_changes(
+                old_timestamp + "\nold content\n",
+                new_timestamp + "\nnew content\n",
+            ), "Generated content changes must be detected"
+            assert has_non_timestamp_changes(
+                "content\n", new_timestamp + "\ncontent\n"
+            ), "A missing timestamp must be detected"
+            assert has_non_timestamp_changes(
+                old_timestamp + "\n" + old_timestamp + "\ncontent\n",
+                new_timestamp + "\ncontent\n",
+            ), "Duplicate timestamps must be detected"
+
             ex_func = LuaDefinition(
                 c_name="_et_G_Damage",
                 c_comment="""/**
