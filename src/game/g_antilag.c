@@ -225,10 +225,12 @@ static qboolean G_AdjustSingleClientPosition(gentity_t *ent, int time)
 	}
 	while (i != ent->client->topMarker);
 
-	if (i == j)     // oops, no valid stored markers
-	{
-		return qfalse;
-	}
+	// if the requested time is newer than our newest marker, the loop above
+	// breaks immediately with i == j == topMarker - this is the normal case
+	// for low-ping shooters, whose command time is newer than the last stored
+	// frame. Don't bail out here: clamp to the newest marker instead of not
+	// rewinding at all. The copy branch below (i == topMarker) applies the
+	// newest stored position.
 
 	// save current position to backup if we have not already done so ( no need to re-save )
 	if (ent->client->backupMarker.time != level.time)
@@ -766,7 +768,7 @@ void G_HistoricalTrace(gentity_t *ent, trace_t *results, const vec3_t start, con
 		return;
 	}
 
-	G_AdjustClientPositions(ent, ent->client->pers.cmd.serverTime, qtrue);
+	G_AdjustClientPositions(ent, ent->client->realCmdServerTime, qtrue);
 
 	G_Trace(ent, results, start, mins, maxs, end, passEntityNum, contentmask);
 
@@ -784,7 +786,7 @@ void G_HistoricalTraceBegin(gentity_t *ent)
 	{
 		return;
 	}
-	G_AdjustClientPositions(ent, ent->client->pers.cmd.serverTime, qtrue);
+	G_AdjustClientPositions(ent, ent->client->realCmdServerTime, qtrue);
 }
 
 /**
