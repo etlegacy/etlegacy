@@ -32,9 +32,9 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - uses: prefix-dev/setup-pixi@v0.8.3
+      - uses: prefix-dev/setup-pixi@v0.10.2
         with:
-          pixi-version: v0.41.4
+          pixi-version: v0.81.0
           cache: true
 
       - name: Check changes
@@ -298,9 +298,9 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - uses: prefix-dev/setup-pixi@v0.8.3
+      - uses: prefix-dev/setup-pixi@v0.10.2
         with:
-          pixi-version: v0.41.4
+          pixi-version: v0.81.0
           cache: true
 
       - name: Collect and Check GitHub Build Logs
