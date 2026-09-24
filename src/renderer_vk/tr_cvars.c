@@ -161,6 +161,7 @@ cvar_t *r_gfxInfo;
 cvar_t *r_scale;
 
 cvar_t *r_vkStaticWorld;
+cvar_t *r_vkCaptureFrame200;
 
 /**
  * @brief R_Register
@@ -352,6 +353,10 @@ void R_Register(void)
 	// draw static world surfaces from a per-map GPU vertex buffer instead of
 	// re-tessellating them every frame (0 = always tessellate, for comparisons)
 	r_vkStaticWorld = ri.Cvar_Get("r_vkStaticWorld", "1", 0);
+
+	// debug: dump the 200th frame after renderer start to /tmp/vk_capture.ppm
+	// (stalls that frame for the readback, keep it off when benchmarking)
+	r_vkCaptureFrame200 = ri.Cvar_Get("r_vkCaptureFrame200", "0", 0);
 
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
