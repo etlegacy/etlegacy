@@ -1102,13 +1102,12 @@ void RB_StageIteratorGeneric(void)
 		for (stage = 0; stage < MAX_SHADER_STAGES; stage++)
 		{
 			shaderStage_t *pStage = tess.xstages[stage];
+			qboolean      skipRemainingStages;
 
 			if (!pStage)
 			{
 				break;
 			}
-
-			qboolean skipRemainingStages;
 
 			ComputeColors(pStage);
 			ComputeTexCoords(pStage);
@@ -1136,14 +1135,14 @@ void RB_StageIteratorGeneric(void)
 			else
 			{
 				unsigned long stateBits = pStage->stateBits;
+				int           cullType  = shader->cullType;
+				int           fadeStart = backEnd.currentEntity->e.fadeStartTime;
 
 				// lightmap stages should be GL_ONE GL_ZERO so they can be seen (r_lightMap)
 				if (r_lightMap->integer && pStage->bundle[0].isLightmap)
 				{
 					stateBits = (stateBits & ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) | (GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
 				}
-				int cullType  = shader->cullType;
-				int fadeStart = backEnd.currentEntity->e.fadeStartTime;
 
 				// fading model stuff (renderer1's RB_IterateStagesGeneric):
 				// once the fade has started, force alpha blending without

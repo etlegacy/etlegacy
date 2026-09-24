@@ -38,18 +38,6 @@
 backEndData_t  *backEndData;
 backEndState_t backEnd;
 
-/**
- * @var s_flipMatrix
- * @brief Convert from our coordinate system (looking down X)
- * to OpenGL's coordinate system (looking down -Z)
- */
-static float s_flipMatrix[16] =
-{
-	0,  0, -1, 0,
-	-1, 0, 0,  0,
-	0,  1, 0,  0,
-	0,  0, 0,  1
-};
 
 /// last image given to GL_Bind(), used by the immediate-mode emulation
 /// below (renderer1 debug code binds, then draws with glBegin/glEnd)
@@ -326,7 +314,7 @@ void RB_BeginDrawingView(void)
 
 
 		// renderer1 hands plane2 to glClipPlane with
-		// s_flipMatrix loaded. Real GL's glClipPlane transforms the given plane
+		// s_flipMatrix (see tr_main.c) loaded. Real GL's glClipPlane transforms the given plane
 		// by the *current* modelview's inverse-transpose at call time -
 		// which is s_flipMatrix here (just loaded), not the full world
 		// modelview - converting plane2 from the engine's native

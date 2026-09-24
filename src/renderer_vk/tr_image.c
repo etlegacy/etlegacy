@@ -1094,9 +1094,8 @@ static void R_CreateDlightImage(void)
  */
 static void R_CreateFogImage(void)
 {
-	int   x, y, alpha;
-	byte  *data;
-	float borderColor[4];
+	int  x, y, alpha;
+	byte *data;
 
 	// allocate table for image
 	data = ri.Hunk_AllocateTempMemory(FOG_S * FOG_T * 4);
@@ -1140,15 +1139,6 @@ static void R_CreateFogImage(void)
 	// what we want.
 	tr.fogImage = R_CreateImage("*fog", (byte *)data, FOG_S, FOG_T, qfalse, qfalse, GL_CLAMP_TO_EDGE);
 	ri.Hunk_FreeTempMemory(data);
-
-	// FIXME: the following lines are unecessary for new GL_CLAMP_TO_EDGE fog (?)
-	borderColor[0] = 1.0;
-	borderColor[1] = 1.0;
-	borderColor[2] = 1.0;
-	borderColor[3] = 1;
-
-#ifndef __EMSCRIPTEN__
-#endif
 }
 
 #define DEFAULT_SIZE    16

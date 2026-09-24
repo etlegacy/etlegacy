@@ -3453,131 +3453,53 @@ void VK_BeginFrame(void)
 }
 
 /**
- * @brief TEMP DEBUG: dumps the current swapchain image to a PPM file for
- * offline visual inspection (reads our own rendered image data directly
- * from the GPU, not the user's display).
+ * @brief Debug capture: writes the frame VK_EndFrame() just copied into the
+ * capture buffer to a PPM file for offline visual inspection (our own
+ * rendered image, not the user's display).
  */
-static void VK_DebugDumpSwapchainImage(const char *path)
+static void VK_DebugWriteCapturePPM(const char *path)
 {
-	VkCommandBufferAllocateInfo allocCmdInfo;
-	VkCommandBuffer             cmd;
-	VkCommandBufferBeginInfo    beginInfo;
-	VkImageMemoryBarrier        barrier;
-	VkBufferCreateInfo          bufInfo;
-	VkBuffer                    readbackBuffer;
-	VkMemoryRequirements        memReq;
-	VkMemoryAllocateInfo        memAllocInfo;
-	VkDeviceMemory              readbackMemory;
-	VkBufferImageCopy           region;
-	VkSubmitInfo                submitInfo;
-	VkDeviceSize                bufSize = (VkDeviceSize)vk.swapchainExtent.width * vk.swapchainExtent.height * 4;
-	void                        *mapped;
-	FILE                        *f;
-	uint32_t                    x, y;
+	const byte *src = (const byte *)vk.captureMapped;
+	qboolean   bgra = (vk.captureFormat == VK_FORMAT_B8G8R8A8_UNORM || vk.captureFormat == VK_FORMAT_B8G8R8A8_SRGB);
+	byte       *row;
+	FILE       *f;
+	uint32_t   x, y;
 
-	vkDeviceWaitIdle(vk.device);
-
-	Com_Memset(&bufInfo, 0, sizeof(bufInfo));
-	bufInfo.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-	bufInfo.size        = bufSize;
-	bufInfo.usage       = VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-	bufInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-	vkCreateBuffer(vk.device, &bufInfo, NULL, &readbackBuffer);
-
-	vkGetBufferMemoryRequirements(vk.device, readbackBuffer, &memReq);
-	Com_Memset(&memAllocInfo, 0, sizeof(memAllocInfo));
-	memAllocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	memAllocInfo.allocationSize  = memReq.size;
-	memAllocInfo.memoryTypeIndex = VK_FindMemoryType(memReq.memoryTypeBits,
-	                                                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-	vkAllocateMemory(vk.device, &memAllocInfo, NULL, &readbackMemory);
-	vkBindBufferMemory(vk.device, readbackBuffer, readbackMemory, 0);
-
-	Com_Memset(&allocCmdInfo, 0, sizeof(allocCmdInfo));
-	allocCmdInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	allocCmdInfo.commandPool        = vk.commandPool;
-	allocCmdInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	allocCmdInfo.commandBufferCount = 1;
-	vkAllocateCommandBuffers(vk.device, &allocCmdInfo, &cmd);
-
-	Com_Memset(&beginInfo, 0, sizeof(beginInfo));
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	vkBeginCommandBuffer(cmd, &beginInfo);
-
-	Com_Memset(&barrier, 0, sizeof(barrier));
-	barrier.sType                       = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	barrier.oldLayout                   = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-	barrier.newLayout                   = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-	barrier.srcQueueFamilyIndex         = VK_QUEUE_FAMILY_IGNORED;
-	barrier.dstQueueFamilyIndex         = VK_QUEUE_FAMILY_IGNORED;
-	barrier.image                       = vk.swapchainImages[vk.currentImageIndex];
-	barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	barrier.subresourceRange.levelCount = 1;
-	barrier.subresourceRange.layerCount = 1;
-	barrier.srcAccessMask               = VK_ACCESS_MEMORY_READ_BIT;
-	barrier.dstAccessMask               = VK_ACCESS_TRANSFER_READ_BIT;
-	vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, NULL, 0, NULL, 1, &barrier);
-
-	Com_Memset(&region, 0, sizeof(region));
-	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	region.imageSubresource.layerCount = 1;
-	region.imageExtent.width           = vk.swapchainExtent.width;
-	region.imageExtent.height          = vk.swapchainExtent.height;
-	region.imageExtent.depth           = 1;
-	vkCmdCopyImageToBuffer(cmd, vk.swapchainImages[vk.currentImageIndex], VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, readbackBuffer, 1, &region);
-
-	barrier.oldLayout     = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-	barrier.newLayout     = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-	barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
-	barrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-	vkCmdPipelineBarrier(cmd, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, NULL, 0, NULL, 1, &barrier);
-
-	vkEndCommandBuffer(cmd);
-
-	Com_Memset(&submitInfo, 0, sizeof(submitInfo));
-	submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers    = &cmd;
-	vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-	vkQueueWaitIdle(vk.graphicsQueue);
-
-	vkMapMemory(vk.device, readbackMemory, 0, bufSize, 0, &mapped);
-
-	f = fopen(path, "wb");
-	if (f)
+	if (!src)
 	{
-		byte *px = (byte *)mapped;
-
-		fprintf(f, "P6\n%u %u\n255\n", vk.swapchainExtent.width, vk.swapchainExtent.height);
-		for (y = 0; y < vk.swapchainExtent.height; y++)
-		{
-			for (x = 0; x < vk.swapchainExtent.width; x++)
-			{
-				byte *p = px + (y * vk.swapchainExtent.width + x) * 4;
-
-				if (vk.swapchainFormat == VK_FORMAT_B8G8R8A8_UNORM)
-				{
-					fputc(p[2], f);
-					fputc(p[1], f);
-					fputc(p[0], f);
-				}
-				else
-				{
-					fputc(p[0], f);
-					fputc(p[1], f);
-					fputc(p[2], f);
-				}
-			}
-		}
-		fclose(f);
-		Ren_Print("VK_DebugDumpSwapchainImage: wrote %s\n", path);
+		return;
 	}
 
-	vkUnmapMemory(vk.device, readbackMemory);
-	vkFreeCommandBuffers(vk.device, vk.commandPool, 1, &cmd);
-	vkDestroyBuffer(vk.device, readbackBuffer, NULL);
-	vkFreeMemory(vk.device, readbackMemory, NULL);
+	row = malloc((size_t)vk.captureWidth * 3);
+	f   = fopen(path, "wb");
+	if (!row || !f)
+	{
+		free(row);
+		if (f)
+		{
+			fclose(f);
+		}
+		Ren_Print("VK_DebugWriteCapturePPM: could not write %s\n", path);
+		return;
+	}
+
+	fprintf(f, "P6\n%u %u\n255\n", vk.captureWidth, vk.captureHeight);
+	for (y = 0; y < vk.captureHeight; y++)
+	{
+		const byte *p = src + (size_t)y * vk.captureWidth * 4;
+
+		for (x = 0; x < vk.captureWidth; x++, p += 4)
+		{
+			row[x * 3 + 0] = bgra ? p[2] : p[0];
+			row[x * 3 + 1] = p[1];
+			row[x * 3 + 2] = bgra ? p[0] : p[2];
+		}
+		fwrite(row, 3, vk.captureWidth, f);
+	}
+	fclose(f);
+	free(row);
+
+	Ren_Print("VK_DebugWriteCapturePPM: wrote %s\n", path);
 }
 
 /**
@@ -3694,8 +3616,9 @@ void VK_EndFrame(void)
 {
 	VkSubmitInfo         submitInfo;
 	VkPresentInfoKHR     presentInfo;
-	VkPipelineStageFlags waitStage       = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	static int           debugFrameCount = 0;
+	VkPipelineStageFlags waitStage         = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	static int           debugFrameCount   = 0;
+	const char           *debugCapturePath = NULL;
 	qboolean             captureThisFrame;
 
 	if (!vk.initialized)
@@ -3744,10 +3667,19 @@ void VK_EndFrame(void)
 		vkCmdEndRenderPass(vk.commandBuffer);
 	}
 
+	// debug capture of frame 200 (r_vkCaptureFrame200). It shares the
+	// screenshot capture below and is skipped while a captured screenshot
+	// frame is still unread.
+	debugFrameCount++;
+	if (debugFrameCount == 200 && r_vkCaptureFrame200->integer && !vk.captureReady)
+	{
+		debugCapturePath = "/tmp/vk_capture.ppm";
+	}
+
 	// frame capture (renderer1's glReadPixels of the final
 	// image) - copy the swapchain image into the host-visible capture
 	// buffer before it's presented.
-	captureThisFrame = vk.captureRequested && VK_EnsureCaptureBuffer();
+	captureThisFrame = (vk.captureRequested || debugCapturePath) && VK_EnsureCaptureBuffer();
 	if (captureThisFrame)
 	{
 		VkImageMemoryBarrier barrier;
@@ -3813,29 +3745,20 @@ void VK_EndFrame(void)
 	{
 		// the fence stays signaled, so VK_BeginFrame()'s wait returns at once
 		vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX);
-		vk.captureWidth     = vk.swapchainExtent.width;
-		vk.captureHeight    = vk.swapchainExtent.height;
-		vk.captureFormat    = vk.swapchainFormat;
-		vk.captureReady     = qtrue;
-		vk.captureRequested = qfalse;
-	}
+		vk.captureWidth  = vk.swapchainExtent.width;
+		vk.captureHeight = vk.swapchainExtent.height;
+		vk.captureFormat = vk.swapchainFormat;
 
-	debugFrameCount++;
-	if (debugFrameCount == 200)
-	{
-		VK_DebugDumpSwapchainImage("/tmp/vk_capture.ppm");
-	}
-
-	// temporary on-demand debug capture: `touch /tmp/vk_capture_trigger`
-	// while the game is running to dump the next frame.
-	{
-		FILE *trigger = fopen("/tmp/vk_capture_trigger", "r");
-
-		if (trigger)
+		if (debugCapturePath)
 		{
-			fclose(trigger);
-			remove("/tmp/vk_capture_trigger");
-			VK_DebugDumpSwapchainImage("/tmp/vk_capture_manual.ppm");
+			VK_DebugWriteCapturePPM(debugCapturePath);
+		}
+
+		// a debug-only capture must not hand a frame to a later screenshot
+		if (vk.captureRequested)
+		{
+			vk.captureReady     = qtrue;
+			vk.captureRequested = qfalse;
 		}
 	}
 }
