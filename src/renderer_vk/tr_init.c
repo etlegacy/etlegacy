@@ -31,8 +31,7 @@
 /**
  * @file renderer_vk/tr_init.c
  * @brief Functions that are not called every frame: subsystem init/shutdown,
- * REF API export, and an initial (non-capturing) screenshot/video-frame
- * command implementation. Modeled on renderer1's tr_init.c, but with all
+ * REF API export, and the screenshot/video-frame commands. Modeled on renderer1's tr_init.c, but with all
  * genuinely OpenGL-specific pieces (context creation, default GL state,
  * pixel readback) replaced or stubbed for the Vulkan backend.
  */
@@ -93,7 +92,7 @@ void GL_CheckErrors(void)
 }
 
 /*
- * screen capture.
+ * Screen capture.
  *
  * renderer1 reads pixels back synchronously with glReadPixels wherever the
  * screenshot / video-frame command sits in the command stream. In Vulkan
@@ -380,7 +379,7 @@ static void RB_WriteVideoFrame(const videoFrameCommand_t *cmd)
 }
 
 /**
- * @brief writes everything queued for the frame VK_EndFrame()
+ * @brief Writes everything queued for the frame VK_EndFrame()
  * just captured (called from RB_SwapBuffers right after VK_EndFrame()).
  */
 void RB_FinishFrameCaptures(void)

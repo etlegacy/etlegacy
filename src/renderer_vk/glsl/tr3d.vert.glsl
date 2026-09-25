@@ -1,6 +1,6 @@
 #version 450
 
-// static 3D geometry vertex shader (single texture).
+// Static 3D geometry vertex shader (single texture).
 // pc.mvp already has the GL->Vulkan clip-space correction baked in
 // (Y-flip + depth range 0..1), computed CPU-side in VK_SetProjectionMatrix.
 

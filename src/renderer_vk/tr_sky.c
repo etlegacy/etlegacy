@@ -431,7 +431,7 @@ static vec3_t s_skyPoints[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1];
 static float  s_skyTexCoords[SKY_SUBDIVISIONS + 1][SKY_SUBDIVISIONS + 1][2];
 
 /**
- * @brief builds one skybox face's (mins..maxs) point/texcoord
+ * @brief Builds one skybox face's (mins..maxs) point/texcoord
  * grid into tess as a triangle list and submits it via VK_Draw3D(), since
  * Vulkan has no equivalent of the original VKimm_Begin(GL_TRIANGLE_STRIP)
  * immediate-mode submission. Two-sided (no culling) since winding of the
@@ -1164,7 +1164,7 @@ void RB_StageIteratorSky(void)
 	// draw the outer skybox
 	if (tess.shader->sky.outerbox[0] && tess.shader->sky.outerbox[0] != tr.defaultImage)
 	{
-		// the classic "infinite skybox" trick — zero the
+		// The classic "infinite skybox" trick — zero the
 		// translation component of the current modelview matrix so the
 		// skybox (modeled around the origin) always stays centered on
 		// the camera and only rotates with view direction, matching

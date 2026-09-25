@@ -635,7 +635,7 @@ void RE_UploadCinematic(int w, int h, int cols, int rows, const byte *data, int 
 		dirty                   = qfalse;
 	}
 
-	// also covers the first frame: R_CreateImage() went through Upload32(), which may
+	// Also covers the first frame: R_CreateImage() went through Upload32(), which may
 	// have resampled/picmipped, so recreate at the raw cinematic size.
 	if (tr.scratchImage[client] &&
 	    (dirty || tr.scratchImage[client]->uploadWidth != cols || tr.scratchImage[client]->uploadHeight != rows))
@@ -1196,7 +1196,7 @@ const void *RB_SwapBuffers(const void *data)
 	// of RE_BeginFrame()).
 	VK_EndFrame();
 
-	// screenshots / levelshot / avi frame of the frame just
+	// Screenshots / levelshot / avi frame of the frame just
 	// captured by VK_EndFrame()
 	RB_FinishFrameCaptures();
 
@@ -1301,7 +1301,7 @@ void RB_ExecuteRenderCommands(const void *data)
 }
 
 /*
- * immediate-mode emulation (declared in tr_local.h).
+ * Immediate-mode emulation (declared in tr_local.h).
  *
  * Vertices are collected with the current color/texcoord between glBegin
  * and glEnd; glEnd converts the GL primitive into a triangle or line list

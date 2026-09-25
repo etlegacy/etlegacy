@@ -90,7 +90,7 @@ static image_t *R_GetAnimatedImage(textureBundle_t *bundle)
 		return tr.whiteImage;
 	}
 
-	// video maps advance and upload their cinematic (renderer1's
+	// Video maps advance and upload their cinematic (renderer1's
 	// R_BindAnimatedImage), then sample its scratch image
 	if (bundle->isVideoMap)
 	{
@@ -1088,7 +1088,7 @@ void RB_StageIteratorGeneric(void)
 		return;
 	}
 
-	// static opaque 3D geometry.
+	// Static opaque 3D geometry.
 	RB_DeformTessGeometry();
 
 	SetIteratorFog();
@@ -1138,7 +1138,7 @@ void RB_StageIteratorGeneric(void)
 				int           cullType  = shader->cullType;
 				int           fadeStart = backEnd.currentEntity->e.fadeStartTime;
 
-				// lightmap stages should be GL_ONE GL_ZERO so they can be seen (r_lightMap)
+				// Lightmap stages should be GL_ONE GL_ZERO so they can be seen (r_lightMap)
 				if (r_lightMap->integer && pStage->bundle[0].isLightmap)
 				{
 					stateBits = (stateBits & ~(GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) | (GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
@@ -1194,7 +1194,7 @@ void RB_StageIteratorGeneric(void)
 }
 
 /**
- * @brief fast-path iterator for single-texture,
+ * @brief Fast-path iterator for single-texture,
  * per-vertex-lit-diffuse-color surfaces (models with CGEN_LIGHTING_DIFFUSE,
  * no tcMods). Ported from renderer1's RB_StageIteratorVertexLitTexture,
  * minus the GL immediate-mode array plumbing.
@@ -1239,7 +1239,7 @@ void RB_StageIteratorVertexLitTexture(void)
 }
 
 /**
- * @brief fast-path iterator for base+lightmap 2-stage
+ * @brief Fast-path iterator for base+lightmap 2-stage
  * surfaces (most world/BSP geometry). Ported from renderer1's
  * RB_StageIteratorLightmappedMultitexture, minus the GL immediate-mode
  * array/multitexture plumbing.
