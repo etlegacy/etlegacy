@@ -30,9 +30,9 @@
  */
 /**
  * @file vulkan/vk.c
- * @brief Vulkan implementation: instance/device/surface/
- * swapchain/render pass/framebuffers/command buffers/sync objects and a
- * clear+present frame loop. No geometry is submitted yet.
+ * @brief Vulkan backend implementation: instance/device/surface/
+ * swapchain, render passes, pipelines, buffers, descriptor sets, the
+ * frame loop and the 2D/3D draw submission used by the tr_*.c code.
  */
 
 #include <vulkan/vulkan.h>
@@ -68,13 +68,13 @@
 // pipelines are created lazily and cached for the life of the renderer.
 #define VK_MAX_SCENE_PIPELINES 128
 
-// non-GLS pipeline states used by stencil shadow volumes
+// Non-GLS pipeline states used by stencil shadow volumes
 // (renderer1's RB_ShadowTessEnd()/RB_ShadowFinish()).
 #define VK_SPECIAL_NONE           0
 #define VK_SPECIAL_SHADOW_INCR    1 // volume faces: no color, stencil ALWAYS, pass -> increment
 #define VK_SPECIAL_SHADOW_DECR    2 // volume faces: no color, stencil ALWAYS, pass -> decrement
 #define VK_SPECIAL_SHADOW_DARKEN  3 // full-screen darken where stencil != 0
-// line-list topology for debug drawing (immediate-mode
+// Line-list topology for debug drawing (immediate-mode
 // GL_LINES emulation, r_showTris, r_showNormals, bone/bounds debug)
 #define VK_SPECIAL_LINES          4
 
@@ -134,7 +134,7 @@ typedef struct
 	VkImageView swapchainImageViews[VK_MAX_SWAPCHAIN_IMAGES];
 	VkFramebuffer swapchainFramebuffers[VK_MAX_SWAPCHAIN_IMAGES]; // presentRenderPass targets
 
-	// the main render pass (vk.renderPass) draws the whole
+	// The main render pass (vk.renderPass) draws the whole
 	// frame into this offscreen color image; VK_EndFrame() then copies it
 	// to the swapchain through the gamma pass (renderer1's mainFbo +
 	// R_ScreenGamma()).
@@ -168,7 +168,7 @@ typedef struct
 	VkCommandBuffer commandBuffers[VK_FRAMES_IN_FLIGHT];
 	int frameIndex;                                        // current frame slot
 
-	// depth buffer, recreated alongside the swapchain.
+	// Depth buffer, recreated alongside the swapchain.
 	VkFormat depthFormat;
 	qboolean depthHasStencil;
 	VkImage depthImage;
@@ -191,7 +191,7 @@ typedef struct
 	VkSampler uiSamplerRepeat; // non-mipmapped images (UI, lightmaps, ...): linear, level 0 only
 	VkSampler uiSamplerClamp;
 
-	// samplers for mipmapped images, built from r_textureMode
+	// Samplers for mipmapped images, built from r_textureMode
 	// (GL_TextureMode) and r_ext_texture_filter_anisotropic.
 	VkSampler mipSamplerRepeat;
 	VkSampler mipSamplerClamp;
@@ -216,7 +216,7 @@ typedef struct
 	VkDeviceSize indexArenaSize;
 	VkDeviceSize indexArenaOffset;
 
-	// static 3D geometry pipelines + resources.
+	// Static 3D geometry pipelines + resources.
 	VkPipelineLayout scenePipelineLayout;   // 1 descriptor set (base texture)
 	VkPipelineLayout sceneLMPipelineLayout; // 2 descriptor sets (base + lightmap)
 
@@ -265,7 +265,7 @@ typedef struct
 	float modelMatrix[16];
 	float mvpMatrix[16];
 
-	// current fog state, mirroring renderer1's glfogsettings
+	// Current fog state, mirroring renderer1's glfogsettings
 	// (R_Fog()/R_FogOff() in tr_main.c call VK_SetFog()/VK_SetFogOff()
 	// where renderer1 calls glFog*()). Linear (start/end) or exponential
 	// (GL_EXP, density) fog.
@@ -273,9 +273,9 @@ typedef struct
 	qboolean fogExp;         // GL_EXP density fog instead of GL_LINEAR
 	float fogDensity;        // GL_FOG_DENSITY for fogExp
 	qboolean fogParamsValid; // VK_SetFog() has run at least once
-	float clearColor[4];     // last glClearColor() value
+	float clearColor[4];     // Last glClearColor() value
 
-	// image resources replaced while the current frame's
+	// Image resources replaced while the current frame's
 	// command buffer may still reference them (cinematic scratch image
 	// resize); freed at the next VK_BeginFrame() after the fence wait.
 	struct
@@ -287,7 +287,7 @@ typedef struct
 	} pendingFree[VK_FRAMES_IN_FLIGHT][8];                 // per frame slot
 	int numPendingFree[VK_FRAMES_IN_FLIGHT];
 
-	// frame capture for screenshots / levelshots / avi
+	// Frame capture for screenshots / levelshots / avi
 	// frames. When requested, VK_EndFrame() copies the final (post-gamma)
 	// swapchain image into captureBuffer and waits for it.
 	VkBuffer captureBuffer;
@@ -303,7 +303,7 @@ typedef struct
 	float fogStart;
 	float fogEnd;
 
-	// last scene viewport rect (post Y-flip), stashed so
+	// Last scene viewport rect (post Y-flip), stashed so
 	// VK_SetDepthRange() can reissue vkCmdSetViewport with the same
 	// rect but a different depth range (sky is drawn pinned to the far
 	// depth plane, same as renderer1's glDepthRange(1,1) trick).
@@ -312,7 +312,7 @@ typedef struct
 	int lastViewportWidth;
 	int lastViewportHeight;
 
-	// portal/mirror eye-space clip plane, mirroring
+	// Portal/mirror eye-space clip plane, mirroring
 	// renderer1's glClipPlane(GL_CLIP_PLANE0, ...)/glEnable(GL_CLIP_PLANE0)
 	// (RB_BeginDrawingView in tr_backend.c). Vulkan has no
 	// fixed-function clip-plane equivalent that's portable without extra
@@ -346,7 +346,7 @@ typedef struct
 
 static vkContext_t vk;
 
-// vertex format fed into the UI pipeline: screen-space pixel
+// Vertex format fed into the UI pipeline: screen-space pixel
 // position, texture UV, and final (already colorGen/alphaGen-baked) RGBA8
 // vertex color.
 typedef struct
@@ -362,7 +362,7 @@ typedef struct
 #define VK_UI_VERTEX_ARENA_SIZE (16 * 1024 * 1024)
 #define VK_UI_INDEX_ARENA_SIZE  (4 * 1024 * 1024)
 
-// vertex formats fed into the 3D scene pipelines.
+// Vertex formats fed into the 3D scene pipelines.
 typedef struct
 {
 	float pos[3];
@@ -666,7 +666,7 @@ static qboolean VK_CreateLogicalDevice(void)
 
 	Com_Memset(&deviceFeatures, 0, sizeof(deviceFeatures));
 
-	// anisotropic filtering (r_ext_texture_filter_anisotropic)
+	// Anisotropic filtering (r_ext_texture_filter_anisotropic)
 	{
 		VkPhysicalDeviceFeatures   supported;
 		VkPhysicalDeviceProperties props;
@@ -681,7 +681,7 @@ static qboolean VK_CreateLogicalDevice(void)
 			vk.maxSamplerAnisotropy          = props.limits.maxSamplerAnisotropy;
 		}
 
-		// highest supported sample count <= r_ext_multisample
+		// Highest supported sample count <= r_ext_multisample
 		{
 			VkSampleCountFlags counts = props.limits.framebufferColorSampleCounts &
 			                            props.limits.framebufferDepthSampleCounts &
@@ -828,7 +828,7 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 	createInfo.imageExtent      = extent;
 	createInfo.imageArrayLayers = 1;
 	createInfo.imageUsage       = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-	// frame capture copies from the swapchain image
+	// Frame capture copies from the swapchain image
 	if (caps.supportedUsageFlags & VK_IMAGE_USAGE_TRANSFER_SRC_BIT)
 	{
 		createInfo.imageUsage |= VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
@@ -900,7 +900,7 @@ static VkShaderModule VK_CreateShaderModule(const unsigned char *code, unsigned 
 static void VK_FlushPendingFrees(void);
 
 /**
- * @brief creates the depth buffer (image + memory + view)
+ * @brief Creates the depth buffer (image + memory + view)
  * sized to match the current swapchain extent. Recreated alongside the
  * swapchain on resize (see VK_ResizeSwapchain).
  */
@@ -911,7 +911,7 @@ static qboolean VK_CreateDepthResources(void)
 	VkMemoryAllocateInfo  allocInfo;
 	VkImageViewCreateInfo viewInfo;
 
-	// prefer a depth format with stencil (needed by stencil
+	// Prefer a depth format with stencil (needed by stencil
 	// shadow volumes, r_shadows 2). Apple GPUs expose D32_SFLOAT_S8_UINT
 	// only; some others D24_UNORM_S8_UINT. Fall back to depth-only.
 	{
@@ -986,7 +986,7 @@ static qboolean VK_CreateDepthResources(void)
 }
 
 /**
- * @brief offscreen color image the main render pass draws
+ * @brief Offscreen color image the main render pass draws
  * into (same format/size as the swapchain so all existing pipelines stay
  * render-pass compatible). Sampled by the gamma pass; TRANSFER_SRC for
  * future screenshot readback.
@@ -1047,7 +1047,7 @@ static qboolean VK_CreateSceneColorResources(void)
 		return qfalse;
 	}
 
-	// multisampled color target, resolved into sceneColorImage
+	// Multisampled color target, resolved into sceneColorImage
 	if (vk.sampleCount != VK_SAMPLE_COUNT_1_BIT)
 	{
 		// persistent like the scene image (no TRANSIENT): its contents
@@ -1146,7 +1146,7 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	subpass.pColorAttachments       = &colorAttachmentRef;
 	subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
-	// with MSAA, attachment 0 is the multisampled color
+	// With MSAA, attachment 0 is the multisampled color
 	// target (persistent: loaded and stored, it is what carries the frame
 	// over) and attachment 2 the single-sample scene image it resolves
 	// into every frame.
@@ -1266,7 +1266,7 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 }
 
 /**
- * @brief gamma pass shader modules + pipeline layout (one
+ * @brief Gamma pass shader modules + pipeline layout (one
  * combined image sampler, gamma/overbright push constants). Created once.
  */
 static qboolean VK_CreateGammaPipelineLayout(void)
@@ -1299,7 +1299,7 @@ static qboolean VK_CreateGammaPipelineLayout(void)
 }
 
 /**
- * @brief per-swapchain present resources - the gamma pipeline
+ * @brief Per-swapchain present resources - the gamma pipeline
  * (bound to presentRenderPass) and the descriptor set sampling the scene
  * color image. Recreated with the swapchain.
  */
@@ -1592,12 +1592,7 @@ static void VK_EndOneShotCommands(VkCommandBuffer commandBuffer)
 }
 
 /**
- * @brief Creates the two samplers used by UI textures (one per
- * wrap mode); shaders always sample with LINEAR filtering since real
- * mipmaps aren't generated yet.
- */
-/**
- * @brief creates one sampler for mipmapped images from the
+ * @brief Creates one sampler for mipmapped images from the
  * current GL-style texture mode (renderer1's GL_TextureMode() /
  * glTexParameter MIN/MAG filter + GL_TEXTURE_MAX_ANISOTROPY_EXT).
  * Non-mipmap min filters (GL_NEAREST/GL_LINEAR) clamp to level 0 via
@@ -1683,6 +1678,10 @@ static VkSampler VK_SamplerForImage(qboolean mipmap, int wrapClampMode)
 	return (wrapClampMode == GL_REPEAT) ? vk.uiSamplerRepeat : vk.uiSamplerClamp;
 }
 
+/**
+ * @brief Creates the two samplers used by non-mipmapped images (one per
+ * wrap mode), always LINEAR filtered and clamped to level 0.
+ */
 static qboolean VK_CreateUISamplers(void)
 {
 	VkSamplerCreateInfo samplerInfo;
@@ -1797,7 +1796,7 @@ static VkBlendFactor VK_DstBlendFactor(unsigned long stateBits)
  * @brief Creates the descriptor set layout (single combined-image-sampler),
  * push-constant (scale/offset + alphaTest) pipeline layout, and compiles
  * the shader modules shared by every lazily-created UI pipeline variant
- * (see VK_GetUIPipeline()). Variants now honor each
+ * (see VK_GetUIPipeline()). Variants honor each
  * shader stage's real stateBits (alpha test, depth test/func/write)
  * instead of always forcing RB_SetGL2D's fixed blend-only state - this is
  * required for tricks like the automap's circular-mask (alphafunc GE128 +
@@ -2052,7 +2051,7 @@ static qboolean VK_CreateUIArenaBuffers(void)
 }
 
 /**
- * @brief persistently-mapped vertex/index arena buffers for
+ * @brief Persistently-mapped vertex/index arena buffers for
  * 3D scene draws, analogous to the UI arena buffers but with their own
  * (larger) backing storage and vertex formats.
  */
@@ -2172,7 +2171,7 @@ void VK_WriteStaticWorldVertices(int first, const drawVert_t *verts, int count)
 }
 
 /**
- * @brief creates the two pipeline layouts used by static 3D
+ * @brief Creates the two pipeline layouts used by static 3D
  * geometry draws - one with a single descriptor set (base texture only,
  * used by RB_StageIteratorGeneric/VertexLitTexture) and one with two
  * descriptor sets (base + lightmap, used by RB_StageIteratorLightmappedMultitexture
@@ -2402,7 +2401,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	colorBlending.attachmentCount = 1;
 	colorBlending.pAttachments    = &colorBlendAttachment;
 
-	// stencil shadow volume states (see VK_SPECIAL_*).
+	// Stencil shadow volume states (see VK_SPECIAL_*).
 	if (special == VK_SPECIAL_SHADOW_INCR || special == VK_SPECIAL_SHADOW_DECR)
 	{
 		VkStencilOpState op;
@@ -2594,7 +2593,7 @@ void VK_SetProjectionMatrix(const float *m)
 }
 
 /**
- * @brief copies out the already-Vulkan-converted projection
+ * @brief Copies out the already-Vulkan-converted projection
  * matrix (used by flare rendering to save/restore the world projection
  * around its own screen-space ortho projection, mirroring renderer1's
  * glPushMatrix/glPopMatrix around glOrtho()).
@@ -2605,7 +2604,7 @@ void VK_GetProjectionMatrix(float *m)
 }
 
 /**
- * @brief sets the Vulkan-space projection matrix directly,
+ * @brief Sets the Vulkan-space projection matrix directly,
  * bypassing the GL->Vulkan conversion VK_SetProjectionMatrix() applies.
  * Used to restore a matrix previously captured with
  * VK_GetProjectionMatrix(), which is already in Vulkan convention.
@@ -2629,7 +2628,7 @@ void VK_SetModelViewMatrix(const float *m)
 }
 
 /**
- * @brief copies out the currently-set modelview matrix, so sky
+ * @brief Copies out the currently-set modelview matrix, so sky
  * rendering can temporarily zero its translation component (the classic
  * "infinite skybox stays centered on the camera" trick, matching
  * renderer1's glTranslatef(viewerOrigin) applied on top of an
@@ -2641,7 +2640,7 @@ void VK_GetModelViewMatrix(float *m)
 }
 
 /**
- * @brief records the current fog parameters, called from
+ * @brief Records the current fog parameters, called from
  * R_Fog() (tr_main.c) where renderer1 calls glFog*(). Linear fog uses
  * start/end; exponential (GL_EXP, density fog) uses density. Picked up
  * per-draw by the 3D draw paths and applied in the fragment shaders from
@@ -2682,7 +2681,7 @@ void VK_SetFogOn(void)
 }
 
 /**
- * @brief records an eye-space portal/mirror clip-plane
+ * @brief Records an eye-space portal/mirror clip-plane
  * equation (ax+by+cz+dw, same convention as GL_CLIP_PLANE0: fragments
  * with dot(eyePos, plane.xyz) + plane.w < 0 are clipped), called from
  * RB_BeginDrawingView() (tr_backend.c) where renderer1 calls
@@ -2735,7 +2734,7 @@ static void VK_DestroySwapchainObjects(void)
 		vk.renderPass = VK_NULL_HANDLE;
 	}
 
-	// offscreen scene target + present pass resources
+	// Offscreen scene target + present pass resources
 	if (vk.sceneColorDescriptor != VK_NULL_HANDLE)
 	{
 		vkFreeDescriptorSets(vk.device, vk.uiDescriptorPool, 1, &vk.sceneColorDescriptor);
@@ -2823,7 +2822,7 @@ qboolean VK_ResizeSwapchain(int width, int height)
 		return qfalse;
 	}
 
-	// on first init this runs before the UI descriptor pool
+	// On first init this runs before the UI descriptor pool
 	// and gamma layout exist; VK_Init creates the present resources then.
 	if (vk.gammaPipelineLayout != VK_NULL_HANDLE && !VK_CreatePresentResources())
 	{
@@ -2881,7 +2880,7 @@ qboolean VK_Init(int width, int height)
 		return qfalse;
 	}
 
-	// mipmapped-image samplers follow the current texture
+	// Mipmapped-image samplers follow the current texture
 	// mode (gl_filter_min/max persist across vid_restart, while
 	// GL_TextureMode() only reruns when r_textureMode is modified).
 	vk.texFilterMin = gl_filter_min;
@@ -2897,7 +2896,7 @@ qboolean VK_Init(int width, int height)
 		return qfalse;
 	}
 
-	// static 3D geometry pipeline layouts + arena buffers.
+	// Static 3D geometry pipeline layouts + arena buffers.
 	// Actual pipelines are created lazily per (stateBits, cullType) the
 	// first time they're needed (see VK_GetScenePipeline/VK_GetSceneLMPipeline).
 	if (!VK_CreateScenePipelineLayouts() ||
@@ -2906,7 +2905,7 @@ qboolean VK_Init(int width, int height)
 		return qfalse;
 	}
 
-	// gamma/present pass
+	// Gamma/present pass
 	if (!VK_CreateGammaPipelineLayout() ||
 	    !VK_CreatePresentResources())
 	{
@@ -3032,7 +3031,7 @@ void VK_Shutdown(void)
 			vkDestroySampler(vk.device, vk.uiSamplerClamp, NULL);
 		}
 
-		// static 3D geometry resources.
+		// Static 3D geometry resources.
 		if (vk.sceneVertexArenaMapped)
 		{
 			vkUnmapMemory(vk.device, vk.sceneVertexArenaMemory);
@@ -3257,7 +3256,7 @@ static void VK_BindArenaBuffers(VkBuffer vertexBuffer, VkBuffer indexBuffer)
 #define VK_ALIGN_UP(x, a) ((((x) + (a) - 1) / (a)) * (a))
 
 /**
- * @brief frees image resources queued by
+ * @brief Frees image resources queued by
  * VK_QueueImageResourcesForFree().
  */
 static void VK_FlushPendingFramesSlot(int slot)
@@ -3300,7 +3299,7 @@ static void VK_FlushPendingFrees(void)
 }
 
 /**
- * @brief detaches an image_t's Vulkan resources and frees
+ * @brief Detaches an image_t's Vulkan resources and frees
  * them once the frame being recorded has finished (falls back to a
  * synchronous delete if the queue is full).
  */
@@ -3386,13 +3385,13 @@ void VK_BeginFrame(void)
 	vk.inFlightFence           = vk.inFlightFences[vk.frameIndex];
 	vk.imageAvailableSemaphore = vk.imageAvailableSemaphores[vk.frameIndex];
 
-	// reset the per-frame vertex/index arenas (this slot's region).
+	// Reset the per-frame vertex/index arenas (this slot's region).
 	vk.vertexArenaOffset = (VkDeviceSize)VK_UI_VERTEX_ARENA_SIZE * vk.frameIndex;
 	vk.indexArenaOffset  = (VkDeviceSize)VK_UI_INDEX_ARENA_SIZE * vk.frameIndex;
 	vk.vertexArenaSize   = vk.vertexArenaOffset + VK_UI_VERTEX_ARENA_SIZE; // end of region
 	vk.indexArenaSize    = vk.indexArenaOffset + VK_UI_INDEX_ARENA_SIZE;
 
-	// same for the 3D scene arenas. lastBoundPipeline is shared
+	// Same for the 3D scene arenas. lastBoundPipeline is shared
 	// across UI and scene draws (viewport/scissor are set per-view, not
 	// cached per-frame - see VK_SetSceneViewport(), called from
 	// tr_backend.c's SetViewportAndScissor()).
@@ -3404,7 +3403,7 @@ void VK_BeginFrame(void)
 
 	vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX);
 
-	// that frame is done, so resources queued while recording
+	// That frame is done, so resources queued while recording
 	// it can go now
 	VK_FlushPendingFramesSlot(vk.frameIndex);
 	vkResetFences(vk.device, 1, &vk.inFlightFence);
@@ -3444,7 +3443,7 @@ void VK_BeginFrame(void)
 	Com_Memset(&renderPassInfo, 0, sizeof(renderPassInfo));
 	renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	renderPassInfo.renderPass        = vk.renderPass;
-	renderPassInfo.framebuffer       = vk.sceneFramebuffer; // offscreen scene target
+	renderPassInfo.framebuffer       = vk.sceneFramebuffer; // Offscreen scene target
 	renderPassInfo.renderArea.extent = vk.swapchainExtent;
 	renderPassInfo.clearValueCount   = 2;
 	renderPassInfo.pClearValues      = clearValues;
@@ -3540,7 +3539,7 @@ static qboolean VK_EnsureCaptureBuffer(void)
 }
 
 /**
- * @brief asks VK_EndFrame() to capture the frame currently
+ * @brief Asks VK_EndFrame() to capture the frame currently
  * being recorded (or the next one, if called between frames).
  */
 void VK_RequestFrameCapture(void)
@@ -3549,7 +3548,7 @@ void VK_RequestFrameCapture(void)
 }
 
 /**
- * @brief size of the last captured frame, or qfalse if none
+ * @brief Size of the last captured frame, or qfalse if none
  * is pending.
  */
 qboolean VK_GetCapturedFrameSize(int *width, int *height)
@@ -3565,7 +3564,7 @@ qboolean VK_GetCapturedFrameSize(int *width, int *height)
 }
 
 /**
- * @brief copies the captured frame as glReadPixels(GL_RGB)
+ * @brief Copies the captured frame as glReadPixels(GL_RGB)
  * would return it: rows bottom-up, 3 bytes per pixel, each row followed
  * by padlen bytes. width/height may be smaller than the capture (crop).
  */
@@ -3605,7 +3604,7 @@ void VK_ReadCapturedFrameRGB(byte *dst, int width, int height, int padlen)
 }
 
 /**
- * @brief marks the captured frame as consumed.
+ * @brief Marks the captured frame as consumed.
  */
 void VK_ReleaseCapturedFrame(void)
 {
@@ -3676,7 +3675,7 @@ void VK_EndFrame(void)
 		debugCapturePath = "/tmp/vk_capture.ppm";
 	}
 
-	// frame capture (renderer1's glReadPixels of the final
+	// Frame capture (renderer1's glReadPixels of the final
 	// image) - copy the swapchain image into the host-visible capture
 	// buffer before it's presented.
 	captureThisFrame = (vk.captureRequested || debugCapturePath) && VK_EnsureCaptureBuffer();
@@ -3764,16 +3763,15 @@ void VK_EndFrame(void)
 }
 
 /**
- * @brief uploads a 32-bit RGBA image to a new device-local
- * VkImage (single mip level) via a host-visible staging buffer and a
- * synchronous one-shot transfer command buffer, then creates its view
- * and descriptor set (sampler picked by wrapClampMode). Stores the new
- * handles on the image_t itself.
+ * @brief Uploads a 32-bit RGBA image to a new device-local
+ * VkImage via a host-visible staging buffer and a synchronous one-shot
+ * transfer command buffer, then creates its view and descriptor set
+ * (sampler picked by mipmap/wrapClampMode). Stores the new handles on the
+ * image_t itself.
  *
- * @note scope reductions: always uploads as
- * VK_FORMAT_R8G8B8A8_UNORM regardless of the legacy GL internalFormat
- * selection. Uploads the mipLevels packed levels in data
- * (built CPU-side by Upload32()).
+ * @note Always uploads as VK_FORMAT_R8G8B8A8_UNORM regardless of the
+ * legacy GL internalFormat selection. Uploads the mipLevels packed levels
+ * in data (built CPU-side by Upload32()).
  */
 qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int width, int height, int mipLevels, qboolean mipmap, int wrapClampMode)
 {
@@ -3803,7 +3801,7 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 		return qfalse;
 	}
 
-	// data holds mipLevels tightly packed RGBA levels, each
+	// Data holds mipLevels tightly packed RGBA levels, each
 	// half the size of the previous one (clamped to 1), as built by
 	// Upload32() with renderer1's R_MipMap().
 	if (mipLevels < 1)
@@ -4045,8 +4043,8 @@ static float VK_AlphaTestMode(unsigned long stateBits)
  * scene's still-resident depth buffer, since 2D draws share the same
  * render pass/depth attachment as the 3D scene).
  *
- * @note scope reductions: only bundle 0 / image frame 0 is
- * considered (no multitexture, no animated-image frame selection yet).
+ * @note Draws a single texture bundle; the caller (RB_IterateStages2D())
+ * picks the animated image frame and issues one call per bundle.
  */
 void VK_Draw2D(shaderCommands_t *input, struct image_s *image, unsigned long stateBits)
 {
@@ -4224,7 +4222,7 @@ void VK_SetSceneViewport(int x, int y, int width, int height)
 }
 
 /**
- * @brief reissues the last scene viewport with a different
+ * @brief Reissues the last scene viewport with a different
  * depth range, pinning sky geometry to the far depth plane (mirroring
  * renderer1's RB_StageIteratorSky glDepthRange(1,1) trick: drawing sky
  * first at maximum depth lets normally-depth-tested opaque surfaces
@@ -4304,7 +4302,7 @@ void VK_ClearSceneColor(qboolean fullFramebuffer)
 }
 
 /**
- * @brief clears depth to 1.0 inside the last scene viewport
+ * @brief Clears depth to 1.0 inside the last scene viewport
  * rect, replicating renderer1's per-view glClear(GL_DEPTH_BUFFER_BIT) in
  * RB_BeginDrawingView(). The render pass's loadOp=CLEAR only runs once
  * per frame, so without this a portal/mirror subview's depth survives
@@ -4536,7 +4534,7 @@ static void VK_Draw3DStatic(shaderCommands_t *input, const glIndex_t *indexes, i
 }
 
 /**
- * @brief submits one already-tessellated 3D shader stage
+ * @brief Submits one already-tessellated 3D shader stage
  * batch (single texture) using the lazily-created pipeline variant that
  * matches stateBits/cullType. Vertex data is read from input->xyz,
  * input->svars.texcoords[0] and input->svars.colors (populated by
@@ -4643,7 +4641,7 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 }
 
 /**
- * @brief submits one already-tessellated 3D shader stage
+ * @brief Submits one already-tessellated 3D shader stage
  * batch modulating two textures (base * lightmap), used by
  * RB_StageIteratorLightmappedMultitexture and 2-stage (base+lightmap)
  * shaders handled by RB_StageIteratorGeneric's 3D path. UVs are read from
@@ -4749,7 +4747,7 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 }
 
 /**
- * @brief number of stencil bits of the depth attachment
+ * @brief Number of stencil bits of the depth attachment
  * (reported as glConfig.stencilBits; renderer1 code gates stencil
  * shadows on >= 4).
  */
@@ -4759,7 +4757,7 @@ int VK_StencilBits(void)
 }
 
 /**
- * @brief uploads raw positions with one constant color and
+ * @brief Uploads raw positions with one constant color and
  * draws them with the given (special) scene pipeline, white texture.
  */
 static void VK_DrawSceneRaw(VkPipeline pipeline, const vec4_t *xyz, int numVertexes, const byte *color,
@@ -4829,7 +4827,7 @@ static void VK_DrawSceneRaw(VkPipeline pipeline, const vec4_t *xyz, int numVerte
 }
 
 /**
- * @brief one stencil pass of a shadow volume (renderer1's
+ * @brief One stencil pass of a shadow volume (renderer1's
  * R_RenderShadowEdges() under glStencilOp(KEEP, KEEP, INCR/DECR) with
  * color writes off). cullType uses the engine's CT_* convention, already
  * resolved for mirrors by the caller.
@@ -4877,7 +4875,7 @@ void VK_DrawShadowFinish(void)
 }
 
 /**
- * @brief device anisotropy limit (0 if unsupported), reported
+ * @brief Device anisotropy limit (0 if unsupported), reported
  * through renderer1's textureFilterAnisotropic/maxAnisotropy globals.
  */
 float VK_GetMaxAnisotropy(void)
@@ -4961,7 +4959,7 @@ void VK_SetTextureMode(int minFilter, int magFilter)
 }
 
 /**
- * @brief values for the final gamma pass (set every frame by
+ * @brief Values for the final gamma pass (set every frame by
  * R_ScreenGamma(); renderer1's u_gamma / u_overBrightBits uniforms).
  */
 void VK_SetGammaParams(float gamma, float overbrightScale)
@@ -5058,7 +5056,7 @@ qboolean VK_UploadScratchImage(struct image_s *image, const byte *data, int cols
 }
 
 /**
- * @brief active MSAA sample count (1 = off).
+ * @brief Active MSAA sample count (1 = off).
  */
 int VK_GetSampleCount(void)
 {
@@ -5066,7 +5064,7 @@ int VK_GetSampleCount(void)
 }
 
 /**
- * @brief draws immediate-mode style geometry (positions,
+ * @brief Draws immediate-mode style geometry (positions,
  * per-vertex colors and texcoords) as a triangle or line list with the
  * given GL state bits, two-sided, using the current 3D matrices.
  */

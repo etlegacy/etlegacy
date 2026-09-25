@@ -1,6 +1,6 @@
 #version 450
 
-// static 3D geometry fragment shader (single texture).
+// Static 3D geometry fragment shader (single texture).
 // Samples the bound texture and modulates it by the per-vertex color
 // (rgbGen/alphaGen already baked in by ComputeColors()); optionally
 // discards fragments to emulate the legacy GL_ALPHA_TEST modes, since
@@ -30,7 +30,7 @@ void main()
 {
 	vec4 color = texture(uTexture, fragUV) * fragColor;
 
-	// portal/mirror clip plane — replicates
+	// Portal/mirror clip plane — replicates
 	// GL_CLIP_PLANE0's semantics (discard fragments on the plane's
 	// negative side) since Vulkan has no portable fixed-function
 	// equivalent.

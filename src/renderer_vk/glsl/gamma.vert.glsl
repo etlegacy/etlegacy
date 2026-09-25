@@ -1,6 +1,6 @@
 #version 450
 
-// full-screen triangle for the final gamma pass (no vertex
+// Full-screen triangle for the final gamma pass (no vertex
 // buffer; positions/UVs derived from gl_VertexIndex 0..2). UV (0,0) is the
 // top-left of the offscreen scene image, matching Vulkan's top-left
 // framebuffer origin, so no flip is needed.

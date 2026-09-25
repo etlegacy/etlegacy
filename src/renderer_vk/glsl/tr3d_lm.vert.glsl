@@ -1,6 +1,6 @@
 #version 450
 
-// lightmapped (base * lightmap) static 3D geometry vertex
+// Lightmapped (base * lightmap) static 3D geometry vertex
 // shader, used by RB_StageIteratorLightmappedMultitexture (and the
 // equivalent 2-stage case in RB_StageIteratorGeneric).
 

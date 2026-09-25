@@ -30,11 +30,11 @@
  */
 /**
  * @file renderer_vk/tr_shader_program.c
- * @brief placeholder: renderer1's GLSL program objects have no
+ * @brief Placeholder: renderer1's GLSL program objects have no
  * Vulkan equivalent (SPIR-V modules + pipeline objects do). Reports no
  * shader programs available so callers (R_InitGamma, etc.) take their
- * "unavailable" fallback path; a real implementation arrives alongside the
- * Vulkan pipeline work.
+ * "unavailable" fallback path; the Vulkan backend's own shaders live in
+ * glsl/ and vulkan/vk.c.
  */
 
 #include "tr_local.h"

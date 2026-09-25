@@ -1,6 +1,6 @@
 #version 450
 
-// lightmapped (base * lightmap) static 3D geometry fragment
+// Lightmapped (base * lightmap) static 3D geometry fragment
 // shader. uBase is bound in descriptor set 0, uLightmap in descriptor set
 // 1 - both reuse the same per-image single-combined-sampler descriptor
 // set layout/pool as the base texture path (vk.uiDescriptorSetLayout).
@@ -52,7 +52,7 @@ void main()
 		color = vec4(mix(prev.rgb, tex1.rgb, tex1.a), prev.a);
 	}
 
-	// portal/mirror clip plane (see tr3d.frag.glsl for details).
+	// Portal/mirror clip plane (see tr3d.frag.glsl for details).
 	if (pc.fogParams.w > 0.5)
 	{
 		if (dot(fragEyePos, pc.clipPlane.xyz) + pc.clipPlane.w < 0.0)

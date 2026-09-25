@@ -30,11 +30,10 @@
  */
 /**
  * @file renderer_vk/tr_fbo.c
- * @brief placeholder: offscreen render targets (multisample
- * resolve, HDR/bloom passes, HUD compositing, ...) are deferred. tr.useFBO
+ * @brief Placeholder: renderer1's FBO render targets are not used. tr.useFBO
  * stays false, so the reused frontend/backend code paths that gate on it
- * never touch these FBOs; a proper Vulkan render-target implementation
- * will replace this file later.
+ * never touch these FBOs. Offscreen targets (scene color, MSAA resolve)
+ * are handled directly by the Vulkan backend in vulkan/vk.c.
  */
 
 #include "tr_local.h"

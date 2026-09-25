@@ -543,7 +543,7 @@ void RB_RenderFlares(void)
 		VK_ClearPortalClip();
 	}
 
-	// build the equivalent GL-convention ortho matrix (RB_RenderFlare() writes
+	// Build the equivalent GL-convention ortho matrix (RB_RenderFlare() writes
 	// raw window-space pixel coordinates into tess.xyz, same as the
 	// original immediate-mode code expected) and feed it through the real
 	// capture points, saving/restoring the current (3D world) proj +

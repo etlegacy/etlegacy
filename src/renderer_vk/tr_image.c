@@ -164,8 +164,8 @@ void GL_TextureMode(const char *string)
 	gl_filter_min = modes[i].minimize;
 	gl_filter_max = modes[i].maximize;
 
-	// change all the existing mipmap texture objects (the
-	// sampler lives in each image's descriptor set, rebound in vk.c)
+	// change all the existing mipmap texture objects (the sampler lives
+	// in each image's descriptor set, rebound in vk.c)
 	VK_SetTextureMode(gl_filter_min, gl_filter_max);
 }
 
@@ -552,7 +552,7 @@ byte mipBlendColors[16][4] =
  * below is now purely informational/debug bookkeeping (image->internalFormat)
  * - Vulkan always uploads as VK_FORMAT_R8G8B8A8_UNORM.
  *
- * @note mipmapped images get renderer1's full CPU mip chain
+ * @note Mipmapped images get renderer1's full CPU mip chain
  * (R_MipMap, honoring r_simpleMipMaps/r_colorMipLevels).
  *
  * @param[in] image

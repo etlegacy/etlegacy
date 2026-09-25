@@ -77,7 +77,7 @@ void R_AddEdgeDef(int i1, int i2, int facing)
 	numEdgeDefs[i1]++;
 }
 
-// silhouette quads collected as a triangle list for
+// Silhouette quads collected as a triangle list for
 // VK_DrawShadowVolume() (renderer1 drew each one as an immediate-mode
 // GL_TRIANGLE_STRIP).
 static glIndex_t shadowIndexes[SHADER_MAX_INDEXES];
@@ -237,7 +237,7 @@ void RB_ShadowTessEnd(void)
 	GL_State(GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO);
 	VKimm_Color3f(0.2f, 0.2f, 0.2f);
 
-	// the color-masked, stencil INCR/DECR passes are encoded
+	// The color-masked, stencil INCR/DECR passes are encoded
 	// in VK_DrawShadowVolume()'s pipelines; GL_BACK/GL_FRONT culling maps
 	// to CT_BACK_SIDED/CT_FRONT_SIDED in the Vulkan pipeline convention.
 	R_RenderShadowEdges();
@@ -272,7 +272,7 @@ void RB_ShadowFinish(void)
 	{
 		return;
 	}
-	// stencil NOTEQUAL 0, multiply by 0.6 (see VK_DrawShadowFinish)
+	// Stencil NOTEQUAL 0, multiply by 0.6 (see VK_DrawShadowFinish)
 	VK_DrawShadowFinish();
 }
 

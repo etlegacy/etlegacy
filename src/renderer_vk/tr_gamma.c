@@ -30,7 +30,7 @@
  */
 /**
  * @file renderer_vk/tr_gamma.c
- * @brief screen gamma. renderer1 runs a GLSL program over its
+ * @brief Screen gamma. renderer1 runs a GLSL program over its
  * main FBO; the Vulkan backend draws the frame into an offscreen image and
  * VK_EndFrame() copies it to the swapchain applying the same
  * pow(rgb, 1 / r_gamma) * (1 << overbrightBits). This file only feeds it.
