@@ -453,7 +453,7 @@
 					"visible":	true,
 					"showBackGround":	false,
 					"showBorder":	false,
-					"textAlign":	0,
+					"textAlign":	2,
 					"anchor":	4,
 					"parent":	{
 						"anchor":	4,
@@ -470,7 +470,7 @@
 					"visible":	true,
 					"showBackGround":	false,
 					"showBorder":	false,
-					"textAlign":	2,
+					"textAlign":	0,
 					"anchor":	4,
 					"parent":	{
 						"anchor":	4,

@@ -3412,7 +3412,7 @@ void CG_DrawRoundTimer(hudComponent_t *comp)
 	}
 	else
 	{
-		// display order: "own roundtime enemy"
+		// display order: "enemy own roundtime"
 		if (s)
 		{
 			s = va("%s%s %s", sWarn ? "^3" : "^$", s, mt);
@@ -3424,7 +3424,7 @@ void CG_DrawRoundTimer(hudComponent_t *comp)
 
 		if (rt)
 		{
-			s = va("%s ^1%s", s, rt);
+			s = va("^1%s %s", rt, s);
 		}
 	}
 
