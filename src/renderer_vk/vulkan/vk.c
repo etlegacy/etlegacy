@@ -3672,7 +3672,7 @@ void VK_EndFrame(void)
 	debugFrameCount++;
 	if (debugFrameCount == 200 && r_vkCaptureFrame200->integer && !vk.captureReady)
 	{
-		debugCapturePath = "/tmp/vk_capture.ppm";
+		debugCapturePath = r_vkCapturePath->string;
 	}
 
 	// Frame capture (renderer1's glReadPixels of the final

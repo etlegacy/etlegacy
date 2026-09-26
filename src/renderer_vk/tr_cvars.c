@@ -162,6 +162,7 @@ cvar_t *r_scale;
 
 cvar_t *r_vkStaticWorld;
 cvar_t *r_vkCaptureFrame200;
+cvar_t *r_vkCapturePath;
 
 /**
  * @brief R_Register
@@ -354,9 +355,11 @@ void R_Register(void)
 	// re-tessellating them every frame (0 = always tessellate, for comparisons)
 	r_vkStaticWorld = ri.Cvar_Get("r_vkStaticWorld", "1", 0);
 
-	// debug: dump the 200th frame after renderer start to /tmp/vk_capture.ppm
+	// debug: dump the 200th frame after renderer start to r_vkCapturePath
 	// (stalls that frame for the readback, keep it off when benchmarking)
 	r_vkCaptureFrame200 = ri.Cvar_Get("r_vkCaptureFrame200", "0", 0);
+	// PPM file it writes, relative to the working directory unless absolute
+	r_vkCapturePath = ri.Cvar_Get("r_vkCapturePath", "vk_capture.ppm", 0);
 
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
