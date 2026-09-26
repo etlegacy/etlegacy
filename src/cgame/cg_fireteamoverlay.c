@@ -1467,54 +1467,6 @@ const char *CG_FireteamGetBoxText(void)
 */
 
 /**
- * @brief CG_FireteamHasClass
- * @param[in] classnum
- * @param[in] selectedonly
- * @return
- */
-qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly)
-{
-	fireteamData_t *ft;
-	int            i;
-
-	if (!(ft = CG_IsOnFireteam(cg.clientNum)))
-	{
-		return qfalse;
-	}
-
-	for (i = 0; i < MAX_CLIENTS; i++)
-	{
-		/*      if( i == cgs.clientinfo ) {
-					continue;
-				}*/
-
-		if (!cgs.clientinfo[i].infoValid)
-		{
-			continue;
-		}
-
-		if (ft != CG_IsOnFireteam(i))
-		{
-			continue;
-		}
-
-		if (cgs.clientinfo[i].cls != classnum)
-		{
-			continue;
-		}
-
-		if (selectedonly && !cgs.clientinfo[i].selected)
-		{
-			continue;
-		}
-
-		return qtrue;
-	}
-
-	return qfalse;
-}
-
-/**
  * @brief CG_BuildSelectedFireteamString
  * @return
  */
