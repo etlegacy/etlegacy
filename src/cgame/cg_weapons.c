@@ -2719,7 +2719,7 @@ void CG_AddViewWeapon(playerState_t *ps)
 	}
 
 	// stationary heavy weapon (e.g. misc_mg42, misc_aagun)
-	if (cg.snap->ps.persistant[PERS_HWEAPON_USE])
+	if (ps->persistant[PERS_HWEAPON_USE])
 	{
 		return;
 	}
@@ -5978,6 +5978,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 		if (cent->currentState.eType != ET_PLAYER)
 		{
 			if (cent == &cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent]
+				&& cg.snap->ps.eFlags & EF_MOUNTEDTANK
 			    && !cg.renderingThirdPerson)
 			{
 				VectorCopy(cg.tankflashorg, muzzle);
