@@ -217,6 +217,7 @@ void Weapon_Medic_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t vel
 	}
 
 	ent2            = LaunchItem(BG_GetItem(ITEM_HEALTH), tosspos, velocity, ent->s.number);
+	ent2->s.weapon  = WP_MEDKIT;
 	ent2->think     = G_MagicSink;
 	ent2->nextthink = level.time + 30000;
 
@@ -295,6 +296,7 @@ void Weapon_MagicAmmo_Ext(gentity_t *ent, vec3_t viewpos, vec3_t tosspos, vec3_t
 	}
 
 	ent2            = LaunchItem(BG_GetItem(BG_IsSkillAvailable(ent->client->sess.skill, SK_SIGNALS, SK_FIELDOPS_RESOURCES) ? ITEM_WEAPON_MAGICAMMO2 : ITEM_WEAPON_MAGICAMMO), tosspos, velocity, ent->s.number);
+	ent2->s.weapon  = WP_AMMO;
 	ent2->think     = G_MagicSink;
 	ent2->nextthink = level.time + 30000;
 
