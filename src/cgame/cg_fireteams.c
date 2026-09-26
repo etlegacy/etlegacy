@@ -336,10 +336,6 @@ const char **ftMenuStringsMsg[] =
 	ftMenuCovertOpsStringsMsg,
 };
 
-/**
- * @brief CG_Fireteams_MenuTitleText_Draw
- * @param[in] button
- */
 void CG_Fireteams_MenuTitleText_Draw(panel_button_t *button)
 {
 	switch (cgs.ftMenuMode)
@@ -513,8 +509,7 @@ void CG_DrawFireteamsByTeam(panel_button_t *button, team_t t)
  */
 int CG_CountPlayersSF(void)
 {
-	int cnt = 0;
-	int i;
+	int i, cnt = 0;
 
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
@@ -550,8 +545,7 @@ int CG_CountPlayersSF(void)
  */
 int CG_CountPlayersNF(void)
 {
-	int cnt = 0;
-	int i;
+	int i, cnt = 0;
 
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
@@ -708,54 +702,6 @@ int CG_PlayerNFFromPos(int pos, int *pageofs)
 }
 
 /**
- * @brief CG_FireteamHasClass
- * @param[in] classnum
- * @param[in] selectedonly
- * @return
- */
-qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly)
-{
-	fireteamData_t *ft;
-	int            i;
-
-	if (!(ft = CG_IsOnFireteam(cg.clientNum)))
-	{
-		return qfalse;
-	}
-
-	for (i = 0; i < MAX_CLIENTS; i++)
-	{
-		/*      if( i == cgs.clientinfo ) {
-					continue;
-				}*/
-
-		if (!cgs.clientinfo[i].infoValid)
-		{
-			continue;
-		}
-
-		if (ft != CG_IsOnFireteam(i))
-		{
-			continue;
-		}
-
-		if (cgs.clientinfo[i].cls != classnum)
-		{
-			continue;
-		}
-
-		if (selectedonly && !cgs.clientinfo[i].selected)
-		{
-			continue;
-		}
-
-		return qtrue;
-	}
-
-	return qfalse;
-}
-
-/**
  * @brief CG_DrawPlayerSF
  * @param[in] button
  * @param[in] pageofs
@@ -909,8 +855,7 @@ void CG_Fireteams_MenuText_Draw(panel_button_t *button)
 
 				if (i < 5)
 				{
-					// FIXME: Don't count ownself
-					if (!CG_FireteamHasClass(i, qfalse))
+					if (!CG_FireteamHasClass(i, qtrue))
 					{
 						continue;
 					}
@@ -1166,8 +1111,7 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 
 					if (i < 5)
 					{
-						// FIXME: Don't count ownself
-						if (!CG_FireteamHasClass(i, qfalse))
+						if (!CG_FireteamHasClass(i, qtrue))
 						{
 							return qfalse;
 						}
@@ -1210,8 +1154,7 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 						{
 							if (i < 5)
 							{
-								// FIXME: Don't count ownself
-								if (!CG_FireteamHasClass(i, qfalse))
+								if (!CG_FireteamHasClass(i, qtrue))
 								{
 									return qfalse;
 								}
@@ -1625,7 +1568,6 @@ qboolean CG_FireteamCheckExecKey(int key, qboolean doaction)
 					return qtrue;
 				}
 			}
-
 			x = CG_PlayerNFFromPos(i, &cgs.ftMenuModeEx);
 
 			if (x != -1)
