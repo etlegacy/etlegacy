@@ -3776,7 +3776,7 @@ void CG_SortClientFireteam(void);
 
 clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos);
 qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly);
-const char *CG_BuildSelectedFirteamString(void);
+const char *CG_BuildSelectedFireteamString(void);
 
 #define Pri(x) CG_Printf("[cgnotify]%s", CG_LocalizeServerCommand(x))
 #define CPri(x) CG_CenterPrint(CG_LocalizeServerCommand(x))
