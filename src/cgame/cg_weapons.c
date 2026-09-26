@@ -2718,6 +2718,12 @@ void CG_AddViewWeapon(playerState_t *ps)
 		return;
 	}
 
+	// stationary heavy weapon (e.g. misc_mg42, misc_aagun)
+	if (cg.snap->ps.persistant[PERS_HWEAPON_USE])
+	{
+		return;
+	}
+
 	// no gun if in third person view
 	if (cg.renderingThirdPerson)
 	{
@@ -5811,6 +5817,55 @@ void CG_Tracer(const vec3_t source, const vec3_t dest, int sparks)
 }
 
 /**
+ * @brief CG_FindAttachedMountedWeapon
+ * @param[in] cent the player we want to find the mg is attached to
+ * @return return the mg entity, otherwise NULL
+ */
+centity_t *CG_FindAttachedMountedWeapon(centity_t *cent)
+{
+	if (cent->currentState.eFlags & EF_MG42_ACTIVE)
+	{
+		centity_t *mg42;
+		int       num;
+
+		// find the mg42 we're attached to
+		for (num = 0 ; num < cg.snap->numEntities ; num++)
+		{
+			mg42 = &cg_entities[cg.snap->entities[num].number];
+
+			if (mg42->currentState.eType == ET_MG42_BARREL &&
+			    mg42->currentState.otherEntityNum == cent->currentState.number)
+			{
+				return mg42;
+			}
+		}
+	}
+	else if (cent->currentState.eFlags & EF_AAGUN_ACTIVE)
+	{
+		centity_t *aagun = NULL;
+		int       num;
+
+		// find the aagun we're attached to
+		for (num = 0; num < cg.snap->numEntities; num++)
+		{
+			aagun = &cg_entities[cg.snap->entities[num].number];
+
+			if (aagun->currentState.eType == ET_AAGUN
+			    && aagun->currentState.otherEntityNum == cent->currentState.number)
+			{
+				return aagun;
+			}
+		}
+	}
+	else if (cent->currentState.eFlags & EF_MOUNTEDTANK)
+	{
+		return &cg_entities[cent->tagParent];
+	}
+
+	return NULL;
+}
+
+/**
  * @brief CG_CalcMuzzlePoint
  * @param[in] entityNum
  * @param[out] muzzle
@@ -5900,54 +5955,67 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 
 	if (cent->currentState.eFlags & EF_MG42_ACTIVE)
 	{
-		centity_t *mg42;
-		int       num;
+		vec3_t forward;
 
-		// find the mg42 we're attached to
-		for (num = 0 ; num < cg.snap->numEntities ; num++)
+		if (cent->currentState.eType != ET_MG42_BARREL)
 		{
-			mg42 = &cg_entities[cg.snap->entities[num].number];
+			cent = CG_FindAttachedMountedWeapon(cent);
 
-			if (mg42->currentState.eType == ET_MG42_BARREL &&
-			    mg42->currentState.otherEntityNum == cent->currentState.number)
+			if (!cent)
 			{
-				vec3_t forward;
-
-				VectorCopy(mg42->currentState.pos.trBase, muzzle);
-				AngleVectors(cent->lerpAngles, forward, NULL, NULL);
-				VectorMA(muzzle, 40, forward, muzzle);
-				muzzle[2] += DEFAULT_VIEWHEIGHT;
-				break;
+				return qtrue;
 			}
 		}
+
+		VectorCopy(cent->currentState.pos.trBase, muzzle);
+		AngleVectors(cent->lerpAngles, forward, NULL, NULL);
+		VectorMA(muzzle, 40, forward, muzzle);
+		muzzle[2] += DEFAULT_VIEWHEIGHT;
 	}
 	else if (cent->currentState.eFlags & EF_MOUNTEDTANK)
 	{
-		centity_t *tank = &cg_entities[cent->tagParent];
+		// we are the tank
+		if (cent->currentState.eType != ET_PLAYER)
+		{
+			if (cent == &cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent]
+			    && !cg.renderingThirdPerson)
+			{
+				VectorCopy(cg.tankflashorg, muzzle);
+			}
+			else
+			{
+				VectorCopy(cent->mountedMG42Flash.origin, muzzle);
+			}
+		}
+		else
+		{
+			centity_t *tank = &cg_entities[cent->tagParent];
 
-		VectorCopy(tank->mountedMG42Flash.origin, muzzle);
+			VectorCopy(tank->mountedMG42Flash.origin, muzzle);
+		}
 	}
 	else if (cent->currentState.eFlags & EF_AAGUN_ACTIVE)
 	{
-		centity_t *aagun = NULL;
-		int       num;
+		centity_t *aagun;
+		vec3_t    forward, right, up;
 
-		// find the aagun we're attached to
-		for (num = 0; num < cg.snap->numEntities; num++)
+		if (cent->currentState.eType == ET_AAGUN)
 		{
-			aagun = &cg_entities[cg.snap->entities[num].number];
+			aagun = cent;
+		}
+		else
+		{
+			aagun = CG_FindAttachedMountedWeapon(cent);
 
-			if (aagun->currentState.eType == ET_AAGUN
-			    && aagun->currentState.otherEntityNum == cent->currentState.number)
+			if (!cent)
 			{
-				// found it
-				vec3_t forward, right, up;
-
-				AngleVectors(cg.snap->ps.viewangles, forward, right, up);
-				VectorCopy(aagun->lerpOrigin, muzzle);                      // modelindex2 will already have been incremented on the server, so work out what it WAS then
-				BG_AdjustAAGunMuzzleForBarrel(muzzle, forward, right, up, (aagun->currentState.modelindex2 + 3) % 4);
+				return qtrue;
 			}
 		}
+
+		AngleVectors(cg.snap->ps.viewangles, forward, right, up);
+		VectorCopy(aagun->lerpOrigin, muzzle);                      // modelindex2 will already have been incremented on the server, so work out what it WAS then
+		BG_AdjustAAGunMuzzleForBarrel(muzzle, forward, right, up, (aagun->currentState.modelindex2 + 3) % 4);
 	}
 	else
 	{

@@ -2740,31 +2740,7 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 
 		if (!cg.showGameView && !cgs.dbShowing)
 		{
-			// stationary heavy weapon (e.g. misc_mg42, misc_aagun)
-			if (!cg.snap->ps.persistant[PERS_HWEAPON_USE])
-			{
-				CG_AddViewWeapon(&cg.predictedPlayerState);
-			}
-			else
-			{
-				if (cg.time - cg.predictedPlayerEntity.overheatTime < 3000)
-				{
-					vec3_t muzzle;
-
-					if (CG_CalcMuzzlePoint(cg.snap->ps.clientNum, muzzle))
-					{
-						muzzle[2] -= 32;
-					}
-
-					if (!(rand() % 3))
-					{
-						float alpha = 1.0f - ((cg.time - cg.predictedPlayerEntity.overheatTime) / 3000.0f);
-
-						alpha *= 0.25f;     // .25 max alpha
-						CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, muzzle, 1000, 8, 20, 30, alpha, 8.f);
-					}
-				}
-			}
+			CG_AddViewWeapon(&cg.predictedPlayerState);
 		}
 
 		// play buffered voice chats
