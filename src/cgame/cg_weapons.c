@@ -5978,7 +5978,7 @@ qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle)
 		if (cent->currentState.eType != ET_PLAYER)
 		{
 			if (cent == &cg_entities[cg_entities[cg.snap->ps.clientNum].tagParent]
-				&& cg.snap->ps.eFlags & EF_MOUNTEDTANK
+			    && cg.snap->ps.eFlags & EF_MOUNTEDTANK
 			    && !cg.renderingThirdPerson)
 			{
 				VectorCopy(cg.tankflashorg, muzzle);

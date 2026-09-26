@@ -3053,7 +3053,7 @@ qboolean PM_WeaponClipEmpty(weapon_t wp)
 void PM_CoolWeapons(void)
 {
 	weapon_t wp;
-	
+
 	pm->pmext->weapHeat[WP_DUMMY_MG42] = (float)pm->ps->ammo[WP_DUMMY_MG42] + fmodf(pm->pmext->weapHeat[WP_DUMMY_MG42], 1);
 
 	for (wp = WP_KNIFE; wp < WP_NUM_WEAPONS; wp++)
