@@ -293,33 +293,8 @@ static void CG_EntityEffects(centity_t *cent)
 		trap_S_AddLoopingSound(cent->lerpOrigin, vec3_origin, cgs.media.flameSound, (int)(0.3 * DEFAULT_SPEAKER_VOLUME * (pow((double)cent->fireRiseDir[2], 2))), 0);
 	}
 
-	// overheating is a special effect
-	if ((cent->currentState.eFlags & EF_OVERHEATING) == EF_OVERHEATING)
-	{
-		if (cent->overheatTime < (cg.time - 3000))
-		{
-			cent->overheatTime = cg.time;
-		}
-		if (!(rand() % 3))
-		{
-			float  alpha;
-			vec3_t muzzle;
-
-			if (CG_CalcMuzzlePoint((cent - cg_entities), muzzle))
-			{
-				muzzle[2] -= DEFAULT_VIEWHEIGHT;
-			}
-			else
-			{
-				VectorCopy(cent->lerpOrigin, muzzle);
-			}
-			alpha  = 1.0f - ((float) (cg.time - cent->overheatTime) / 3000.0f);
-			alpha *= 0.25f;
-			CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, muzzle, 1000, 8, 20, 30, alpha, 8.f);
-		}
-	}
 	// If EF_SMOKING is set, emit smoke
-	else if (cent->currentState.eFlags & EF_SMOKING)
+	if (cent->currentState.eFlags & EF_SMOKING)
 	{
 		if (cent->lastTrailTime < cg.time)
 		{
@@ -564,6 +539,27 @@ static void CG_General(centity_t *cent)
 	if (cent->currentState.powerups == STATE_UNDERCONSTRUCTION)
 	{
 		ent.customShader = cgs.media.genericConstructionShader;
+	}
+
+	if (cent->overheatTime + 3000 >= cg.time)
+	{
+		float  alpha;
+		vec3_t muzzle;
+
+		if (CG_CalcMuzzlePoint((cent->currentState.number), muzzle))
+		{
+			if (!(cent->currentState.eFlags & EF_MOUNTEDTANK))
+			{
+				muzzle[2] -= DEFAULT_VIEWHEIGHT;
+			}
+		}
+		else
+		{
+			VectorCopy(cent->lerpOrigin, muzzle);
+		}
+		alpha  = 1.0f - ((float) (cg.time - cent->overheatTime) / 3000.0f);
+		alpha *= 0.25f;
+		CG_ParticleImpactSmokePuffExtended(cgs.media.smokeParticleShader, muzzle, 1000, 8, 20, 30, alpha, 8.f);
 	}
 
 	// add to refresh list

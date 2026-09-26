@@ -3186,6 +3186,7 @@ void CG_MG42EFX(centity_t *cent);
 void CG_MortarEFX(centity_t *cent);
 
 void CG_MissileHitPlayer(int entityNum, int weapon, vec3_t origin, vec3_t dir, int fleshEntityNum);
+centity_t *CG_FindAttachedMountedWeapon(centity_t *cent);
 qboolean CG_CalcMuzzlePoint(int entityNum, vec3_t muzzle);
 void CG_Bullet(int weapon, vec3_t end, int sourceEntityNum, int targetEntityNum);
 

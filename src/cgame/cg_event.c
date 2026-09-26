@@ -2320,24 +2320,36 @@ void CG_EntityEvent(centity_t *cent, vec3_t position)
 		if (es->number == cg.snap->ps.clientNum)
 		{
 			cg.predictedPlayerState.weapAnim = ((cg.predictedPlayerState.weapAnim & ANIM_TOGGLEBIT) ^ ANIM_TOGGLEBIT) | PM_IdleAnimForWeapon(es->weapon);
-			cent->overheatTime               = cg.time;     // used to make the barrels smoke when overheated
 		}
 
 		if (BG_PlayerMounted(es->eFlags))
 		{
+			centity_t *ent = CG_FindAttachedMountedWeapon(&cg_entities[es->number]);
+
+			// cannot find mounted entity, use player one
+			if (!ent)
+			{
+				ent = cent;
+			}
+
 			if ((es->eFlags & EF_MOUNTEDTANK) && IS_MOUNTED_TANK_BROWNING(es->number))
 			{
-				trap_S_StartSoundVControl(NULL, es->number, CHAN_AUTO, cgs.media.hWeaponHeatSnd_2, 255);
+				trap_S_StartSoundVControl(NULL, ent - cg_entities, CHAN_AUTO, cgs.media.hWeaponHeatSnd_2, 255);
 			}
 			else
 			{
-				trap_S_StartSoundVControl(NULL, es->number, CHAN_AUTO, cgs.media.hWeaponHeatSnd, 255);
+				trap_S_StartSoundVControl(NULL, ent - cg_entities, CHAN_AUTO, cgs.media.hWeaponHeatSnd, 255);
 			}
+
+			ent->overheatTime = cg.time;   // used to make the barrels smoke when overheated
 		}
 		else if (cg_weapons[es->weapon].overheatSound)
 		{
 			trap_S_StartSound(NULL, es->number, CHAN_AUTO, cg_weapons[es->weapon].overheatSound);
+
+			cent->overheatTime = cg.time;   // used to make the barrels smoke when overheated
 		}
+
 		break;
 	case EV_SPINUP:
 		trap_S_StartSound(NULL, es->number, CHAN_AUTO, cg_weapons[es->weapon].spinupSound);

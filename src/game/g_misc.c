@@ -1530,29 +1530,6 @@ void mg42_think(gentity_t *self)
 		self->mg42weapHeat = owner->client->pmext.weapHeat[WP_DUMMY_MG42];
 	}
 
-	// overheated mg42 smokes
-	if (self->mg42weapHeat >= GetWeaponTableData(WP_DUMMY_MG42)->maxHeat)
-	{
-		self->s.eFlags |= EF_OVERHEATING;
-		if (self->flameQuotaTime < level.time)
-		{
-			// try to get smoke time from client
-			if (owner->client)
-			{
-				self->flameQuotaTime = level.time + owner->client->ps.weaponTime;
-			}
-			else
-			{
-				self->flameQuotaTime = level.time + 2000;
-			}
-		}
-	}
-	else if (self->flameQuotaTime < level.time && (self->s.eFlags & EF_OVERHEATING) == EF_OVERHEATING)
-	{
-		self->s.eFlags      &= ~EF_OVERHEATING;
-		self->flameQuotaTime = 0;
-	}
-
 	if (owner->client)
 	{
 		if (VectorDistance(self->r.currentOrigin, owner->r.currentOrigin) < USEDIST && owner->active && owner->health > 0)
@@ -1565,8 +1542,6 @@ void mg42_think(gentity_t *self)
 			mg42_track(self, owner);
 			self->nextthink = level.time + 50;
 			self->timestamp = level.time + 1000;
-
-			//owner->client->ps.weapHeat[WP_DUMMY_MG42] = self->mg42weapHeat;
 
 			clamp_playerbehindgun(self, owner, vec3_origin);
 
@@ -1588,7 +1563,7 @@ void mg42_think(gentity_t *self)
 
 	if (self->mg42weapHeat)
 	{
-		self->mg42weapHeat -= (300.f * FRAMETIME * 0.001f);    //%   -= (300.f * 50 * 0.001);
+		self->mg42weapHeat -= (GetWeaponTableData(WP_DUMMY_MG42)->coolRate * FRAMETIME * 0.001f);    //%   -= (300.f * 50 * 0.001);
 
 		if (self->mg42weapHeat < 0)
 		{

@@ -60,11 +60,11 @@ static void CG_ResetEntity(centity_t *cent)
 	if (cent->currentState.eType == ET_PLAYER)
 	{
 		CG_ResetPlayerEntity(cent);
+		cent->overheatTime = 0;
 	}
 
 	// reset a bunch of extra stuff
-	cent->firedTime    = 0;
-	cent->overheatTime = 0;
+	cent->firedTime = 0;
 
 	cent->miscTime  = 0;
 	cent->soundTime = 0;
