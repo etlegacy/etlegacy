@@ -75,6 +75,14 @@ static void InitVulkan(void)
 			glConfig.vidWidth  *= scale;
 			glConfig.vidHeight *= scale;
 		}
+
+		// renderer1 sizes its main FBO from the scaled vidWidth/vidHeight
+		// (R_InitFBO) and blits it to the window
+		if (!VK_SetSceneSize(glConfig.vidWidth, glConfig.vidHeight))
+		{
+			Ren_Fatal("InitVulkan: could not create %dx%d render targets (r_scale %g)\n",
+			          glConfig.vidWidth, glConfig.vidHeight, r_scale->value);
+		}
 	}
 
 	// print info

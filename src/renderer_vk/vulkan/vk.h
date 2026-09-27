@@ -64,6 +64,14 @@ void VK_Shutdown(void);
 qboolean VK_ResizeSwapchain(int width, int height);
 
 /**
+ * @brief Sets the render resolution of the offscreen scene targets
+ * (r_scale: glConfig.vidWidth/vidHeight after scaling) and recreates them
+ * if it changed. The gamma pass scales the scene to the window.
+ * @return qfalse if the targets could not be recreated
+ */
+qboolean VK_SetSceneSize(int width, int height);
+
+/**
  * @brief Acquires the next swapchain image and begins recording the
  * primary command buffer for this frame, starting the render pass with a
  * clear-to-black (or r_clear colored) attachment load.

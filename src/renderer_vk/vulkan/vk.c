@@ -140,6 +140,13 @@ typedef struct
 	// R_ScreenGamma()).
 	VkImage sceneColorImage;
 
+	// Render resolution of the scene targets (color, MSAA, depth) - the
+	// window size times r_scale (glConfig.vidWidth/vidHeight). The gamma
+	// pass scales the scene image to the swapchain (renderer1's mainFbo
+	// blit to the window). sceneSize is the requested size, 0 = swapchain.
+	VkExtent2D sceneExtent;
+	VkExtent2D sceneSize;
+
 	// MSAA (r_ext_multisample). With sampleCount > 1 the main
 	// render pass draws into msColorImage + a multisampled depth buffer
 	// and resolves into sceneColorImage (renderer1's msMainFbo blit).
@@ -901,8 +908,8 @@ static void VK_FlushPendingFrees(void);
 
 /**
  * @brief Creates the depth buffer (image + memory + view)
- * sized to match the current swapchain extent. Recreated alongside the
- * swapchain on resize (see VK_ResizeSwapchain).
+ * sized to match the scene targets (vk.sceneExtent). Recreated alongside
+ * the swapchain on resize (see VK_ResizeSwapchain).
  */
 static qboolean VK_CreateDepthResources(void)
 {
@@ -937,8 +944,8 @@ static qboolean VK_CreateDepthResources(void)
 	Com_Memset(&imageInfo, 0, sizeof(imageInfo));
 	imageInfo.sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageInfo.imageType     = VK_IMAGE_TYPE_2D;
-	imageInfo.extent.width  = vk.swapchainExtent.width;
-	imageInfo.extent.height = vk.swapchainExtent.height;
+	imageInfo.extent.width  = vk.sceneExtent.width;
+	imageInfo.extent.height = vk.sceneExtent.height;
 	imageInfo.extent.depth  = 1;
 	imageInfo.mipLevels     = 1;
 	imageInfo.arrayLayers   = 1;
@@ -987,9 +994,9 @@ static qboolean VK_CreateDepthResources(void)
 
 /**
  * @brief Offscreen color image the main render pass draws
- * into (same format/size as the swapchain so all existing pipelines stay
- * render-pass compatible). Sampled by the gamma pass; TRANSFER_SRC for
- * future screenshot readback.
+ * into (same format as the swapchain so all existing pipelines stay
+ * render-pass compatible; render resolution vk.sceneExtent). Sampled by
+ * the gamma pass; TRANSFER_SRC for future screenshot readback.
  */
 static qboolean VK_CreateSceneColorResources(void)
 {
@@ -1001,8 +1008,8 @@ static qboolean VK_CreateSceneColorResources(void)
 	Com_Memset(&imageInfo, 0, sizeof(imageInfo));
 	imageInfo.sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageInfo.imageType     = VK_IMAGE_TYPE_2D;
-	imageInfo.extent.width  = vk.swapchainExtent.width;
-	imageInfo.extent.height = vk.swapchainExtent.height;
+	imageInfo.extent.width  = vk.sceneExtent.width;
+	imageInfo.extent.height = vk.sceneExtent.height;
 	imageInfo.extent.depth  = 1;
 	imageInfo.mipLevels     = 1;
 	imageInfo.arrayLayers   = 1;
@@ -1097,6 +1104,8 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	VkImageView             fbAttachments[3];
 	uint32_t                i;
 	qboolean                msaa = (vk.sampleCount != VK_SAMPLE_COUNT_1_BIT) ? qtrue : qfalse;
+
+	vk.sceneExtent = vk.sceneSize.width ? vk.sceneSize : vk.swapchainExtent;
 
 	if (!VK_CreateDepthResources() || !VK_CreateSceneColorResources())
 	{
@@ -1212,8 +1221,8 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	framebufferInfo.renderPass      = vk.renderPass;
 	framebufferInfo.attachmentCount = msaa ? 3 : 2;
 	framebufferInfo.pAttachments    = fbAttachments;
-	framebufferInfo.width           = vk.swapchainExtent.width;
-	framebufferInfo.height          = vk.swapchainExtent.height;
+	framebufferInfo.width           = vk.sceneExtent.width;
+	framebufferInfo.height          = vk.sceneExtent.height;
 	framebufferInfo.layers          = 1;
 
 	if (!VK_CheckResult(vkCreateFramebuffer(vk.device, &framebufferInfo, NULL, &vk.sceneFramebuffer), "vkCreateFramebuffer(scene)"))
@@ -1255,6 +1264,8 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 		framebufferInfo.renderPass      = vk.presentRenderPass;
 		framebufferInfo.attachmentCount = 1;
 		framebufferInfo.pAttachments    = fbAttachments;
+		framebufferInfo.width           = vk.swapchainExtent.width;
+		framebufferInfo.height          = vk.swapchainExtent.height;
 
 		if (!VK_CheckResult(vkCreateFramebuffer(vk.device, &framebufferInfo, NULL, &vk.swapchainFramebuffers[i]), "vkCreateFramebuffer"))
 		{
@@ -2703,14 +2714,14 @@ void VK_ClearPortalClip(void)
 	vk.clipPlaneEnabled = qfalse;
 }
 
-static void VK_DestroySwapchainObjects(void)
+/**
+ * @brief Destroys everything VK_CreateRenderPassAndFramebuffers() and
+ * VK_CreatePresentResources() created (render passes, framebuffers, scene
+ * color/MSAA/depth targets, gamma pipeline), keeping the swapchain.
+ */
+static void VK_DestroySceneTargets(void)
 {
 	uint32_t i;
-
-	if (vk.device == VK_NULL_HANDLE)
-	{
-		return;
-	}
 
 	vkDeviceWaitIdle(vk.device);
 
@@ -2720,11 +2731,6 @@ static void VK_DestroySwapchainObjects(void)
 		{
 			vkDestroyFramebuffer(vk.device, vk.swapchainFramebuffers[i], NULL);
 			vk.swapchainFramebuffers[i] = VK_NULL_HANDLE;
-		}
-		if (vk.swapchainImageViews[i] != VK_NULL_HANDLE)
-		{
-			vkDestroyImageView(vk.device, vk.swapchainImageViews[i], NULL);
-			vk.swapchainImageViews[i] = VK_NULL_HANDLE;
 		}
 	}
 
@@ -2801,6 +2807,27 @@ static void VK_DestroySwapchainObjects(void)
 		vkFreeMemory(vk.device, vk.depthImageMemory, NULL);
 		vk.depthImageMemory = VK_NULL_HANDLE;
 	}
+}
+
+static void VK_DestroySwapchainObjects(void)
+{
+	uint32_t i;
+
+	if (vk.device == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	VK_DestroySceneTargets();
+
+	for (i = 0; i < vk.swapchainImageCount; i++)
+	{
+		if (vk.swapchainImageViews[i] != VK_NULL_HANDLE)
+		{
+			vkDestroyImageView(vk.device, vk.swapchainImageViews[i], NULL);
+			vk.swapchainImageViews[i] = VK_NULL_HANDLE;
+		}
+	}
 
 	if (vk.swapchain != VK_NULL_HANDLE)
 	{
@@ -2828,6 +2855,41 @@ qboolean VK_ResizeSwapchain(int width, int height)
 	{
 		return qfalse;
 	}
+
+	return qtrue;
+}
+
+qboolean VK_SetSceneSize(int width, int height)
+{
+	if (!vk.initialized)
+	{
+		return qfalse;
+	}
+
+	if (width <= 0 || height <= 0 ||
+	    ((uint32_t)width == vk.swapchainExtent.width && (uint32_t)height == vk.swapchainExtent.height))
+	{
+		width  = 0;
+		height = 0;
+	}
+
+	if ((uint32_t)width == vk.sceneSize.width && (uint32_t)height == vk.sceneSize.height)
+	{
+		return qtrue;
+	}
+
+	vk.sceneSize.width  = (uint32_t)width;
+	vk.sceneSize.height = (uint32_t)height;
+
+	VK_DestroySceneTargets();
+
+	if (!VK_CreateRenderPassAndFramebuffers() || !VK_CreatePresentResources())
+	{
+		return qfalse;
+	}
+
+	Ren_Print("Vulkan: render resolution %ux%u, window %ux%u\n", vk.sceneExtent.width, vk.sceneExtent.height,
+	          vk.swapchainExtent.width, vk.swapchainExtent.height);
 
 	return qtrue;
 }
@@ -3444,7 +3506,7 @@ void VK_BeginFrame(void)
 	renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	renderPassInfo.renderPass        = vk.renderPass;
 	renderPassInfo.framebuffer       = vk.sceneFramebuffer; // Offscreen scene target
-	renderPassInfo.renderArea.extent = vk.swapchainExtent;
+	renderPassInfo.renderArea.extent = vk.sceneExtent;
 	renderPassInfo.clearValueCount   = 2;
 	renderPassInfo.pClearValues      = clearValues;
 
@@ -4194,7 +4256,7 @@ void VK_SetSceneViewport(int x, int y, int width, int height)
 	// converted explicitly for partial-height views such as the limbo
 	// menu's small player-model preview, otherwise the scissor rect ends
 	// up in the wrong place and silently clips the view's geometry away.
-	flippedY = (int)vk.swapchainExtent.height - (y + height);
+	flippedY = (int)vk.sceneExtent.height - (y + height);
 
 	// stashed so VK_SetDepthRange() can reissue the viewport with the
 	// same rect but a different depth range.
@@ -4286,7 +4348,7 @@ void VK_ClearSceneColor(qboolean fullFramebuffer)
 	Com_Memset(&rect, 0, sizeof(rect));
 	if (fullFramebuffer || vk.lastViewportWidth <= 0 || vk.lastViewportHeight <= 0)
 	{
-		rect.rect.extent = vk.swapchainExtent;
+		rect.rect.extent = vk.sceneExtent;
 	}
 	else
 	{
