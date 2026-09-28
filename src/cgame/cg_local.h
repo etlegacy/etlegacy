@@ -150,8 +150,6 @@
 #define MV_SELECTED         0x0100  ///< MultiView selected window flag is the 9th bit
 #endif
 
-#define ISVALIDCLIENTNUM(clientNum) ((clientNum) >= 0 && (clientNum) < MAX_CLIENTS)
-
 // 1 game unit == 1 inch system from RTCW and ET
 #define UNIT_TO_FEET 0.0833333f
 #define UNIT_TO_METER 0.0254f
