@@ -4533,18 +4533,51 @@ static void VK_StaticStageColor(const shaderStage_t *stage, float *mul, float *a
 }
 
 /**
- * @brief Static world batch (tess.vkStatic): the indexes already point into
- * the static world buffer, so only they are copied to the arena; colors and
- * texcoords come from the static vertex shaders (see VK_StaticStageColor()).
+ * @brief Reserves count indexes in this frame's scene index arena for a
+ * static world batch to write into directly (RB_SurfaceTrianglesStatic).
+ * Consecutive calls return consecutive ranges until another draw uses the
+ * arena.
+ * @param[out] firstIndex position of the range, for vkCmdDrawIndexed
+ * @return write pointer, or NULL if the arena is exhausted this frame
  */
-static void VK_Draw3DStatic(shaderCommands_t *input, const glIndex_t *indexes, int numIndexes, VkDescriptorSet *sets, int numSets,
+glIndex_t *VK_AllocSceneIndexes(int count, int *firstIndex)
+{
+	VkDeviceSize indexBytes = (VkDeviceSize)count * sizeof(uint32_t);
+	glIndex_t    *dst;
+
+	if (!vk.initialized || vk.sceneIndexArenaOffset + indexBytes > vk.sceneIndexArenaSize)
+	{
+		static int lastWarnFrame = -1;
+
+		if (vk.initialized && backEnd.refdef.time != lastWarnFrame)
+		{
+			Ren_Print("Vulkan: VK_AllocSceneIndexes - scene index arena exhausted this frame, dropping static world surfaces\n");
+			lastWarnFrame = backEnd.refdef.time;
+		}
+		return NULL;
+	}
+
+	dst                       = (glIndex_t *)((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset);
+	*firstIndex               = (int)(vk.sceneIndexArenaOffset / sizeof(uint32_t));
+	vk.sceneIndexArenaOffset += indexBytes;
+
+	return dst;
+}
+
+/**
+ * @brief Static world batch (tess.vkStatic): its indexes already point into
+ * the static world buffer and were written to the scene index arena while
+ * the batch was built (input->vkStaticFirstIndex), so every stage draws that
+ * range without copying; colors and texcoords come from the static vertex
+ * shaders (see VK_StaticStageColor()).
+ */
+static void VK_Draw3DStatic(shaderCommands_t *input, int numIndexes, VkDescriptorSet *sets, int numSets,
                             unsigned long stateBits, int cullType)
 {
-	qboolean     lightmapped = (numSets == 2) ? qtrue : qfalse;
-	int          vertexSource;
-	VkDeviceSize indexBytes;
-	float        pushConstants[VK_SCENE_PUSH_FLOATS];
-	VkPipeline   pipeline;
+	qboolean   lightmapped = (numSets == 2) ? qtrue : qfalse;
+	int        vertexSource;
+	float      pushConstants[VK_SCENE_PUSH_FLOATS];
+	VkPipeline pipeline;
 
 	if (vk.staticWorldBuffer == VK_NULL_HANDLE || numIndexes == 0)
 	{
@@ -4566,20 +4599,6 @@ static void VK_Draw3DStatic(shaderCommands_t *input, const glIndex_t *indexes, i
 		return;
 	}
 
-	indexBytes = (VkDeviceSize)numIndexes * sizeof(uint32_t);
-	if (vk.sceneIndexArenaOffset + indexBytes > vk.sceneIndexArenaSize)
-	{
-		static int lastWarnFrame = -1;
-
-		if (backEnd.refdef.time != lastWarnFrame)
-		{
-			Ren_Print("Vulkan: VK_Draw3DStatic - scene index arena exhausted this frame, dropping remaining 3D draws\n");
-			lastWarnFrame = backEnd.refdef.time;
-		}
-		return;
-	}
-	Com_Memcpy((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset, indexes, (size_t)indexBytes);
-
 	VK_BindPipelineCached(pipeline);
 
 	VK_FillScenePushConstants(pushConstants, stateBits, lightmapped ? VK_MultitextureEnvMode(input) : 0.0f);
@@ -4590,9 +4609,7 @@ static void VK_Draw3DStatic(shaderCommands_t *input, const glIndex_t *indexes, i
 	VK_BindDescriptorSetsCached(lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout, numSets, sets);
 
 	VK_BindArenaBuffers(vk.staticWorldBuffer, vk.sceneIndexArenaBuffer);
-	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, (uint32_t)(vk.sceneIndexArenaOffset / sizeof(uint32_t)), 0, 0);
-
-	vk.sceneIndexArenaOffset += indexBytes;
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, (uint32_t)input->vkStaticFirstIndex, 0, 0);
 }
 
 /**
@@ -4638,8 +4655,9 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 
 	if (input->vkStatic)
 	{
+		// always the whole batch: dlit surfaces are never static
 		descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
-		VK_Draw3DStatic(input, indexes, numIndexes, &descriptorSet, 1, stateBits, cullType);
+		VK_Draw3DStatic(input, input->numIndexes, &descriptorSet, 1, stateBits, cullType);
 		return;
 	}
 
@@ -4741,7 +4759,7 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 	{
 		descriptorSets[0] = (VkDescriptorSet)base->vkDescriptorSet;
 		descriptorSets[1] = (VkDescriptorSet)lightmap->vkDescriptorSet;
-		VK_Draw3DStatic(input, input->indexes, input->numIndexes, descriptorSets, 2, stateBits, cullType);
+		VK_Draw3DStatic(input, input->numIndexes, descriptorSets, 2, stateBits, cullType);
 		return;
 	}
 
