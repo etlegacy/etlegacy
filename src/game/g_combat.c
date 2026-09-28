@@ -1877,7 +1877,9 @@ void G_DamageExt(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec
 		{
 			targ->client->ps.persistant[PERS_ATTACKER] = attacker->s.number;
 
-			if (attacker->client)
+			// only record damage dealt to a live target, so corpse/gib hits
+			// can't feed kill assists or team bleed complaints of a later death
+			if (attacker->client && take > 0 && wasAlive)
 			{
 				targ->client->dmgReceivedSts[attacker->s.number].damageReceived += take;
 				targ->client->dmgReceivedSts[attacker->s.number].mods            = mod;
