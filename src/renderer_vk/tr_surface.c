@@ -387,14 +387,16 @@ static qboolean RB_SurfaceCanBeStatic(const srfTriangles_t *srf)
  * emitting only its indexes, offset to its vertices in the static world
  * buffer (tess vertex data is left empty). The first surface of a batch
  * decides its mode; a surface that needs the other mode starts a new
- * batch.
+ * batch. The indexes go straight into the frame's scene index arena
+ * (not tess.indexes), so every stage of the batch draws the same range
+ * without copying it again.
  * @return qfalse if the surface must be tessellated
  */
 static qboolean RB_SurfaceTrianglesStatic(srfTriangles_t *srf)
 {
 	qboolean  canBeStatic = RB_SurfaceCanBeStatic(srf);
 	glIndex_t *dst;
-	int       i, base;
+	int       i, base, first;
 
 	if (tess.numIndexes == 0 && tess.numVertexes == 0)
 	{
@@ -417,7 +419,23 @@ static qboolean RB_SurfaceTrianglesStatic(srfTriangles_t *srf)
 		tess.vkStatic = qtrue;
 	}
 
-	dst  = tess.indexes + tess.numIndexes;
+	dst = VK_AllocSceneIndexes(srf->numIndexes, &first);
+	if (!dst)
+	{
+		return qtrue; // arena full this frame (reported there): drop the surface
+	}
+
+	// a batch's indexes must stay one contiguous range
+	if (tess.numIndexes && first != tess.vkStaticFirstIndex + tess.numIndexes)
+	{
+		RB_EndStaticBatch();
+		tess.vkStatic = qtrue;
+	}
+	if (tess.numIndexes == 0)
+	{
+		tess.vkStaticFirstIndex = first;
+	}
+
 	base = srf->vkFirstVertex;
 	for (i = 0; i < srf->numIndexes; i++)
 	{

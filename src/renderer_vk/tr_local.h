@@ -1693,6 +1693,10 @@ typedef struct shaderCommands_s
 	/// static world batch: indexes point into the Vulkan static world buffer
 	/// and no vertex data was tessellated (numVertexes == 0), see RB_SurfaceTriangles
 	qboolean vkStatic;
+	/// static world batch: its numIndexes indexes are not in indexes[] but
+	/// written once into the frame's scene index arena, starting at this
+	/// index (VK_AllocSceneIndexes); every stage's draw uses that range
+	int vkStaticFirstIndex;
 	/// stage being drawn (colors for static batches), NULL = constant white
 	shaderStage_t *vkStage;
 } shaderCommands_t;
@@ -1708,6 +1712,7 @@ void RB_EndStaticBatch(void);
 // static batches (tess.vkStatic) index into, filled by R_LoadStaticWorldVertices()
 qboolean VK_CreateStaticWorldBuffer(int numVertexes);
 void VK_WriteStaticWorldVertices(int first, const drawVert_t *verts, int count);
+glIndex_t *VK_AllocSceneIndexes(int count, int *firstIndex);
 #define RB_CHECKOVERFLOW(v, i) if (tess.vkStatic) { RB_EndStaticBatch(); } if (tess.numVertexes + (v) >= SHADER_MAX_VERTEXES || tess.numIndexes + (i) >= SHADER_MAX_INDEXES) { RB_CheckOverflow(v, i); }
 
 void RB_StageIteratorGeneric(void);
