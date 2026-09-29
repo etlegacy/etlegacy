@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ET: Legacy (Emscripten)</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #238636;
+      --accent-hover: #2ea043;
+      --danger: #da3633;
+      --info: #1f6feb;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      background-image: url('shot0056.png');
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-attachment: fixed;
+      background-size: cover;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      max-width: 520px;
+      line-height: 1.45;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 100%;
+      max-width: 520px;
+      margin-bottom: 1.5rem;
+    }
+    .panel h2 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .file-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      padding: 0.75rem;
+      background: var(--bg);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .file-row:last-child { margin-bottom: 0; }
+    .file-label {
+      flex: 1;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.95rem;
+    }
+    .status {
+      font-size: 0.8rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .status.missing { background: #3d1f1f; color: #f85149; }
+    .status.ready   { background: #1a3d2a; color: #3fb950; }
+    .status.loading { background: #1f2d4d; color: #58a6ff; }
+    button, label.btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1rem;
+      border-radius: 6px;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+      text-decoration: none;
+      color: white;
+    }
+    button:disabled, label.btn.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .btn-select {
+      background: var(--info);
+    }
+    .btn-select:hover:not(:disabled) { background: #388bfd; }
+    .btn-primary {
+      background: var(--accent);
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+    .btn-secondary {
+      background: #21262d;
+      border: 1px solid var(--border);
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.75rem;
+    }
+    .btn-secondary:hover:not(:disabled) { background: #30363d; }
+    .btn-danger {
+      background: var(--danger);
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.75rem;
+    }
+    .btn-danger:hover:not(:disabled) { background: #f85149; }
+    input[type="file"] { display: none; }
+    .path, .url-box {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      background: var(--bg);
+      padding: 0.6rem 0.8rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      word-break: break-all;
+    }
+    .url-input, .text-input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 0.55rem 0.7rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.85rem;
+    }
+    .url-input:focus, .text-input:focus {
+      outline: none;
+      border-color: var(--info);
+    }
+    .progress-wrap {
+      margin-top: 0.75rem;
+      display: none;
+    }
+    .progress-bar {
+      height: 8px;
+      background: var(--bg);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.15s;
+    }
+    .progress-text {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .log {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.75rem;
+      max-height: 200px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      color: var(--muted);
+    }
+    .log .ok   { color: #3fb950; }
+    .log .err  { color: #f85149; }
+    .log .info { color: #58a6ff; }
+
+    /* Modal Popup Setup */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 17, 23, 0.85);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-content {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+    .modal-content h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .modal-actions button {
+      flex: 1;
+    }
+
+    /* Game / Emscripten */
+    #ui-shell {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #game-container {
+      display: none;
+      width: 100%;
+      height: 100%;
+      position: fixed;
+      inset: 0;
+      margin: 0;
+      padding: 0;
+      z-index: 10;
+      background: #000;
+    }
+    #canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      border: none;
+      border-radius: 0;
+    }
+    body.game-running {
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: hidden !important;
+    }
+    body.game-running #ui-shell {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    body.game-running #loading-overlay {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+    body.game-running #game-container {
+      display: block !important;
+      z-index: 9999 !important;
+    }
+    #loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(13, 17, 23, 0.92);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      gap: 1rem;
+    }
+    #loading-overlay.visible {
+      display: flex;
+    }
+    #loading-text {
+      color: var(--text);
+      font-size: 1rem;
+    }
+    #loading-bar {
+      width: min(320px, 80vw);
+      height: 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    #loading-bar-inner {
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.2s;
+    }
+  </style>
+</head>
+<body>
+  <!-- WebSocket Proxy Interceptor -->
+  <script type="text/javascript">
+    (function() {
+     function getOrGenerateUserId() {
+      // 1. Try to read existing userId from cookies
+      const match = document.cookie.match(/(?:^|; )userId=([^;]*)/);
+      if (match && match[1]) {
+        return decodeURIComponent(match[1]);
+      }
+
+      // 2. Generate a new userId if none exists (using crypto.randomUUID or fallback)
+      const newUserId = (typeof crypto !== 'undefined' && crypto.randomUUID) 
+        ? crypto.randomUUID() 
+        : 'user_' + Math.random().toString(36).substring(2, 11);
+
+      // 3. Save the cookie for 365 days across the domain
+      const maxAge = 365 * 24 * 60 * 60;
+      document.cookie = `userId=${encodeURIComponent(newUserId)}; path=/; max-age=${maxAge}; SameSite=Lax`;
+
+      return newUserId;
+    }
+
+      const NativeWebSocket = window.WebSocket;
+      //const PROXY_URL = `wss://${window.location.hostname}:8082`;
+	    const PROXY_URL = `wss://etl-ws-master.onrender.com`;
+	    //const PROXY_URL = `wss://etl-ws-master.vercel.app`;
+      window.WebSocket = function(url, protocols) {
+        try {
+          const parsed = new URL(url);
+          // Default to Quake 3 / ET port 27960 if none is explicit
+          const defaultPort = parsed.port ? parsed.port : '27960';
+          const target = `${parsed.hostname}:${defaultPort}`;
+		  const userId = getOrGenerateUserId();
+          const proxiedUrl = `${PROXY_URL}/?target=${target}&userId=${userId}`;
+          console.log(`[WS Interceptor] Redirecting ${url} ---> ${proxiedUrl}`);
+          return new NativeWebSocket(proxiedUrl, protocols);
+        } catch (e) {
+          console.error('[WS Interceptor Error] Falling back to standard WebSocket:', e);
+          return new NativeWebSocket(url, protocols);
+        }
+              };
+      // Copy static attributes (like OPEN, CLOSED, etc.)
+      for (let prop in NativeWebSocket) {
+        if (NativeWebSocket.hasOwnProperty(prop)) {
+          window.WebSocket[prop] = NativeWebSocket[prop];
+        }
+      }
+      window.WebSocket.prototype = NativeWebSocket.prototype;
+    })();
+  </script>
+
+  <div id="ui-shell">
+    <h1>Enemy Territory Legacy</h1>
+    <p class="subtitle">
+      Download or select <code>pak0.pk3</code>, <code>pak1.pk3</code>, <code>pak2.pk3</code>
+      to load them into the game data cache.
+    </p>
+
+    <div class="panel">
+      <h2>Main Menu</h2>
+      <button class="btn-primary" id="btn-download-server">
+        Download pak0 + pak1 + pak2
+      </button>
+      <label class="btn btn-select" for="file-local" style="width:100%;padding:0.75rem;margin-top:0.75rem;">
+        Browse local files…
+      </label>
+      <input type="file" id="file-local" accept=".pk3" multiple />
+      
+      <!-- Button triggering the popup modal -->
+      <button class="btn-secondary" id="btn-open-profile-modal">
+        Create Profile
+      </button>
+
+      <button class="btn-danger" id="btn-clear" style="margin-top:0.75rem;">
+        Clear cache
+      </button>
+      <button class="btn-primary" id="btn-start" disabled style="margin-top:0.75rem;background:#8957e5;">
+        Start game
+      </button>
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="progress-text" id="progress-text">0%</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Log</h2>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+  <!-- Profile Creation Popup Modal -->
+  <div class="modal-overlay" id="profile-modal">
+    <div class="modal-content">
+      <h3>Create New Profile</h3>
+      <input type="text" id="profile-name" class="text-input" placeholder="Enter profile name (e.g. Player)" style="margin-top: 0.5rem;" />
+      <div class="modal-actions">
+        <button class="btn-primary" id="btn-create-profile">Save</button>
+        <button class="btn-secondary" id="btn-close-profile-modal" style="margin-top:0;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game canvas (shown when module starts) -->
+  <div id="game-container">
+    <canvas id="canvas" tabindex="-1"></canvas>
+  </div>
+
+  <!-- Loading overlay for Emscripten module -->
+  <div id="loading-overlay">
+    <div id="loading-text">Loading…</div>
+    <div id="loading-bar"><div id="loading-bar-inner"></div></div>
+  </div>
+
+  <!-- Pak loader FS (namespaced to avoid colliding with Emscripten MEMFS/IDBFS) -->
+  <script>
+    var PakMEMFS = (function () {
+      var root = { type: 'dir', children: {} };
+      function mkdirp(path) {
+        var parts = path.replace(/^\/+/, '').split('/').filter(Boolean);
+        var node = root;
+        for (var i = 0; i < parts.length; i++) {
+          var p = parts[i];
+          if (!node.children[p]) node.children[p] = { type: 'dir', children: {} };
+          node = node.children[p];
+          if (node.type !== 'dir') throw new Error(path + ' is not a directory');
+        }
+        return node;
+      }
+      function writeFile(path, data) {
+        var parts = path.replace(/^\/+/, '').split('/').filter(Boolean);
+        var name = parts.pop();
+        var dir = mkdirp('/' + parts.join('/'));
+        dir.children[name] = {
+          type: 'file',
+          data: data instanceof Uint8Array ? data : new Uint8Array(data)
+        };
+      }
+      function readFile(path) {
+        var parts = path.replace(/^\/+/, '').split('/').filter(Boolean);
+        var node = root;
+        for (var i = 0; i < parts.length; i++) {
+          node = node.children[parts[i]];
+          if (!node) throw new Error('No such file: ' + path);
+        }
+        if (node.type !== 'file') throw new Error(path + ' is a directory');
+        return node.data;
+      }
+      function exists(path) {
+        try { readFile(path); return true; } catch (e) { return false; }
+      }
+      function unlink(path) {
+        var parts = path.replace(/^\/+/, '').split('/').filter(Boolean);
+        var name = parts.pop();
+        var node = root;
+        for (var i = 0; i < parts.length; i++) {
+          node = node.children[parts[i]];
+          if (!node) return;
+        }
+        delete node.children[name];
+      }
+      return { mkdirp: mkdirp, writeFile: writeFile, readFile: readFile, exists: exists, unlink: unlink, _root: root };
+    })();
+
+    var PakIDBFS = {
+      dbName: 'emscripten_idbfs_et',
+      storeName: 'FILE_DATA',
+      open: function () {
+        var self = this;
+        return new Promise(function (resolve, reject) {
+          var req = indexedDB.open(self.dbName, 1);
+          req.onupgradeneeded = function () { req.result.createObjectStore(self.storeName); };
+          req.onsuccess = function () { resolve(req.result); };
+          req.onerror = function () { reject(req.error); };
+        });
+      },
+      syncfs: function (populate) {
+        var self = this;
+        return this.open().then(function (db) {
+          if (populate) {
+            return new Promise(function (resolve, reject) {
+              var tx = db.transaction(self.storeName, 'readonly');
+              var store = tx.objectStore(self.storeName);
+              var req = store.get('tree');
+              req.onsuccess = function () {
+                if (req.result) {
+                  function restore(node, path) {
+                    var children = node.children || {};
+                    Object.keys(children).forEach(function (name) {
+                      var child = children[name];
+                      var p = path + '/' + name;
+                      if (child.type === 'dir') {
+                        PakMEMFS.mkdirp(p);
+                        restore(child, p);
+                      } else {
+                        PakMEMFS.writeFile(p, new Uint8Array(child.data));
+                      }
+                    });
+                  }
+                  restore(req.result, '');
+                }
+                resolve();
+              };
+              req.onerror = function () { reject(req.error); };
+            });
+          }
+          return new Promise(function (resolve, reject) {
+            var tx = db.transaction(self.storeName, 'readwrite');
+            var store = tx.objectStore(self.storeName);
+            function serialize(node) {
+              if (node.type === 'file') {
+                return {
+                  type: 'file',
+                  data: node.data.buffer.slice(
+                    node.data.byteOffset,
+                    node.data.byteOffset + node.data.byteLength
+                  )
+                };
+              }
+              var children = {};
+              Object.keys(node.children).forEach(function (k) {
+                children[k] = serialize(node.children[k]);
+              });
+              return { type: 'dir', children: children };
+            }
+            var req = store.put(serialize(PakMEMFS._root), 'tree');
+            req.onsuccess = function () { resolve(); };
+            req.onerror = function () { reject(req.error); };
+          });
+        });
+      },
+      clear: function () {
+        var self = this;
+        return this.open().then(function (db) {
+          return new Promise(function (resolve, reject) {
+            var tx = db.transaction(self.storeName, 'readwrite');
+            var req = tx.objectStore(self.storeName).clear();
+            req.onsuccess = function () { resolve(); };
+            req.onerror = function () { reject(req.error); };
+          });
+        });
+      }
+    };
+
+    // Separate from Emscripten Module.FS — used only by the pak loader UI
+    window.PakFS = {
+      mkdir: function (p) { return PakMEMFS.mkdirp(p); },
+      writeFile: function (p, d) { return PakMEMFS.writeFile(p, d); },
+      readFile: function (p) { return PakMEMFS.readFile(p); },
+      analyzePath: function (p) { return { exists: PakMEMFS.exists(p) }; },
+      unlink: function (p) { return PakMEMFS.unlink(p); },
+      syncfs: function (populate, cb) {
+        PakIDBFS.syncfs(populate).then(function () { cb(null); }).catch(function (err) { cb(err); });
+      },
+      _clearMemory: function () { PakMEMFS._root.children = {}; }
+    };
+  
+    function syncRuntimeToPakFS() {
+        var fs = (typeof FS !== 'undefined' && FS) ? FS : (window.Module && window.Module.FS ? window.Module.FS : null);
+        if (!fs) return;
+
+        // We want to persist everything under /home/web_user/.etlegacy and /etmain
+        var pathsToBackup = ['/etmain', '/home/web_user/.etlegacy'];
+
+        function recursiveExport(currentPath) {
+            try {
+                var entries = fs.readdir(currentPath);
+                entries.forEach(function(entry) {
+                    if (entry === '.' || entry === '..') return;
+                    var fullPath = currentPath === '/' ? '/' + entry : currentPath + '/' + entry;
+                    
+                    try {
+                        var stats = fs.stat(fullPath);
+                        if (fs.isDir(stats.mode)) {
+                            PakFS.mkdir(fullPath);
+                            recursiveExport(fullPath);
+                        } else if (fs.isFile(stats.mode)) {
+                            var fileData = fs.readFile(fullPath);
+                            PakFS.writeFile(fullPath, fileData);
+                        }
+                    } catch (e) {
+                        // Skip unreadable files/symlinks
+                    }
+                });
+            } catch (e) {
+                // Directory might not exist yet in runtime FS
+            }
+        }
+
+        pathsToBackup.forEach(function(p) {
+            recursiveExport(p);
+        });
+
+        // Save permanently to IndexedDB via PakIDBFS
+        PakFS.syncfs(false, function(err) {
+            if (err) console.error("Auto-sync to IndexedDB failed:", err);
+            else console.log("Runtime files successfully persisted to IDBFS!");
+        });
+    }
+
+    // Expose this globally so C can call it
+    window.syncFiles = function() {
+        console.log("Triggering sync...");
+        if (typeof syncRuntimeToPakFS === 'function') {
+            syncRuntimeToPakFS();
+        }
+    };
+  </script>
+
+  <!-- Emscripten Module Setup (must run before the injected game script) -->
+  <script type="text/javascript">
+    var loadingOverlay = document.getElementById('loading-overlay');
+    var loadingText = document.getElementById('loading-text');
+    var loadingBarInner = document.getElementById('loading-bar-inner');
+    var Module = typeof Module !== 'undefined' ? Module : {};
+    Module.canvas = document.getElementById('canvas');
+    // Delay main() until user presses Start (paks must be ready first)
+    Module.noInitialRun = true;
+    Module.setStatus = function (text) {
+      if (!text) {
+        if (loadingOverlay) {
+          loadingOverlay.classList.remove('visible');
+        }
+        return;
+      }
+      if (loadingText) {
+        loadingText.textContent = text;
+      }
+    };
+    Module.monitorRunDependencies = function (left) {
+      Module.totalDependencies = Math.max(Module.totalDependencies || 0, left);
+      var done = Module.totalDependencies - left;
+      var pct = Module.totalDependencies > 0 ? Math.round((done / Module.totalDependencies) * 100) : 0;
+      if (loadingBarInner) {
+        loadingBarInner.style.width = pct + '%';
+      }
+      if (left === 0 && loadingOverlay) {
+        setTimeout(function () {
+          loadingOverlay.classList.remove('visible');
+        }, 300);
+      }
+    };
+    Module.preRun = Module.preRun || [];
+    Module.preRun.push(function () {
+      // Copy paks & profile files from PakFS into real Emscripten FS once FS is available
+      try {
+        var fs = (typeof FS !== 'undefined' && FS) ? FS : (Module.FS || null);
+        if (!fs) {
+          console.warn('preRun: FS not available yet');
+          return;
+        }
+        
+        function ensureDir(p) {
+          if (fs.mkdirTree) {
+            try { fs.mkdirTree(p); } catch (e) {}
+            return;
+          }
+          var parts = p.replace(/^\/+/, '').split('/');
+          var path = '';
+          for (var i = 0; i < parts.length; i++) {
+            path += '/' + parts[i];
+            try { fs.mkdir(path); } catch (e) {}
+          }
+        }
+        
+        function syncNodeToFS(node, currentPath) {
+          if (!node || !node.children) return;
+          Object.keys(node.children).forEach(function (name) {
+            var child = node.children[name];
+            var p = currentPath + '/' + name;
+            if (child.type === 'dir') {
+              ensureDir(p);
+              syncNodeToFS(child, p);
+            } else if (child.type === 'file') {
+              try {
+                fs.writeFile(p, child.data);
+              } catch (e) {
+                console.warn('copy failed', p, e);
+              }
+            }
+          });
+        }
+
+        if (window.PakFS && typeof PakMEMFS !== 'undefined' && PakMEMFS._root) {
+          syncNodeToFS(PakMEMFS._root, '');
+        }
+      } catch (e) {
+        console.warn('preRun pak/profile copy:', e);
+      }
+    });
+    window.Module = Module;
+  </script>
+
+  <script>
+    // Paths
+    const TARGET_DIR = '/etmain';
+    const PROFILES_DIR = '/home/web_user/.etlegacy/legacy/profiles';
+    const PAKS = ['pak0.pk3', 'pak1.pk3', 'pak2.pk3'];
+    const localFiles = { 'pak0.pk3': null, 'pak1.pk3': null, 'pak2.pk3': null };
+    let moduleStarted = false;
+
+    const logEl = document.getElementById('log');
+    function log(msg, cls = '') {
+      const line = document.createElement('div');
+      if (cls) line.className = cls;
+      line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+      logEl.appendChild(line);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function setStartEnabled(enabled) {
+      const btn = document.getElementById('btn-start');
+      if (btn) btn.disabled = !enabled;
+    }
+
+    function checkPaksReady() {
+      let found = 0;
+      for (const pak of PAKS) {
+        const path = TARGET_DIR + '/' + pak;
+        if (PakFS.analyzePath(path).exists) found++;
+      }
+      const ready = found === PAKS.length;
+      setStartEnabled(ready && !moduleStarted);
+      return ready;
+    }
+
+    var Module = {
+      // Set noInitialRun to true if you want to delay execution until a Start button click
+      noInitialRun: true,
+
+      onRuntimeInitialized: function() {
+      log('Module runtime initialized and ready.', 'ok');
+      // Set a flag or enable your "Start" button here
+	  if (checkPaksReady())
+        setStartEnabled(true);
+      }
+      };
+
+    function startModule() {
+      if (moduleStarted) return;
+      if (!checkPaksReady()) {
+        log('Base pak files are not ready yet.', 'err');
+        return;
+      }
+
+      moduleStarted = true;
+      setStartEnabled(false);
+      log('Starting module…', 'info');
+
+      // Hide loader UI completely; show fullscreen canvas
+      var shell = document.getElementById('ui-shell');
+      if (shell) {
+        shell.style.display = 'none';
+        shell.style.visibility = 'hidden';
+        shell.setAttribute('hidden', '');
+      }
+      var game = document.getElementById('game-container');
+      if (game) {
+        game.style.display = 'block';
+        game.style.visibility = 'visible';
+        game.style.zIndex = '9999';
+      }
+      document.body.classList.add('game-running');
+      if (loadingOverlay) {
+        loadingOverlay.classList.remove('visible');
+        loadingOverlay.style.display = 'none';
+      }
+
+      Module.canvas = document.getElementById('canvas');
+      try { Module.canvas.focus(); } catch (e) {}
+
+      // Copy paks & profile files into real Emscripten FS now
+      try {
+        var fs = (typeof FS !== 'undefined' && FS) ? FS : (Module.FS || null);
+        if (!fs) throw new Error('Emscripten FS not available');
+        
+        function ensureDir(p) {
+          if (fs.mkdirTree) { try { fs.mkdirTree(p); } catch (e) {} return; }
+          var parts = p.replace(/^\/+/, '').split('/');
+          var path = '';
+          for (var i = 0; i < parts.length; i++) {
+            path += '/' + parts[i];
+            try { fs.mkdir(path); } catch (e) {}
+          }
+        }
+        
+        function syncTree(node, path) {
+          if (!node || !node.children) return;
+          Object.keys(node.children).forEach(function (name) {
+            var child = node.children[name];
+            var p = path + '/' + name;
+            if (child.type === 'dir') {
+              ensureDir(p);
+              syncTree(child, p);
+            } else if (child.type === 'file') {
+              try {
+                fs.writeFile(p, child.data);
+              } catch (e) {}
+            }
+          });
+        }
+
+        if (typeof PakMEMFS !== 'undefined' && PakMEMFS._root) {
+          syncTree(PakMEMFS._root, '');
+        }
+        log('Files synced to runtime FS.', 'ok');
+      } catch (copyErr) {
+        log('FS copy failed: ' + copyErr, 'err');
+      }
+
+      // Game JS is loaded by the shell SCRIPT tag; noInitialRun delays main until here
+      try {
+        var gameArgs = [
+          '+set', 's_volume', '0',
+          '+set', 's_musicVolume', '0',
+          '+set', 'sv_pure', '0'
+        ];
+        if (typeof Module.callMain === 'function') {
+          Module.callMain(gameArgs);
+          log('Module.callMain() invoked.', 'ok');
+        } /*else if (typeof Module.run === 'function') {
+          Module.run();
+          log('Module.run() invoked.', 'ok');
+        } else if (typeof Module._main === 'function') {
+          Module._main();
+          log('Module._main() invoked.', 'ok');
+        } else {
+          log('Runtime not ready yet (callMain missing). Wait for the game script to finish loading, then try Start again.', 'err');
+          moduleStarted = false;
+          checkPaksReady();
+          document.body.classList.remove('game-running');
+          document.getElementById('ui-shell').style.display = '';
+          document.getElementById('game-container').style.display = 'none';
+        }*/
+        if (loadingOverlay) loadingOverlay.classList.remove('visible');
+      } catch (err) {
+        var msg = (err && err.message) ? err.message
+          : (err && err.status !== undefined) ? ('exit status ' + err.status)
+          : String(err);
+        var isUnwind = (msg === 'unwind' || (err && err === 'unwind'));
+        var isExit = err && (err.name === 'ExitStatus' || err.status !== undefined);
+        if (isUnwind || isExit) {
+          log('Module started (engine control flow: ' + msg + ').', 'ok');
+          if (loadingOverlay) {
+            loadingOverlay.classList.remove('visible');
+            loadingOverlay.style.display = 'none';
+          }
+          var shellOk = document.getElementById('ui-shell');
+          if (shellOk) {
+            shellOk.style.display = 'none';
+            shellOk.style.visibility = 'hidden';
+          }
+          var gameOk = document.getElementById('game-container');
+          if (gameOk) {
+            gameOk.style.display = 'block';
+            gameOk.style.zIndex = '9999';
+          }
+          document.body.classList.add('game-running');
+          return;
+        }
+        log('Start failed: ' + msg, 'err');
+        if (loadingOverlay) loadingOverlay.classList.remove('visible');
+        moduleStarted = false;
+        checkPaksReady();
+        document.body.classList.remove('game-running');
+        var shellFail = document.getElementById('ui-shell');
+        if (shellFail) {
+          shellFail.style.display = '';
+          shellFail.style.visibility = '';
+          shellFail.removeAttribute('hidden');
+        }
+        var gameFail = document.getElementById('game-container');
+        if (gameFail) gameFail.style.display = 'none';
+      }
+    }
+
+    function setStatus(name, state) {
+      const el = document.getElementById('status-' + name.replace('.pk3', ''));
+      if (!el) return;
+      el.className = 'status ' + state;
+      el.textContent = state;
+    }
+
+    function ensureDirs(targetPath = TARGET_DIR) {
+      const parts = targetPath.replace(/^\/+/, '').split('/');
+      let path = '';
+      for (const p of parts) {
+        path += '/' + p;
+        try { PakFS.mkdir(path); } catch (_) {}
+      }
+    }
+
+    // ---------- Modal Controls & Profile Generator ----------
+    const profileModal = document.getElementById('profile-modal');
+    const profileInput = document.getElementById('profile-name');
+
+    document.getElementById('btn-open-profile-modal').addEventListener('click', () => {
+      profileModal.classList.add('active');
+      profileInput.focus();
+    });
+
+    document.getElementById('btn-close-profile-modal').addEventListener('click', () => {
+      profileModal.classList.remove('active');
+    });
+
+    document.getElementById('btn-create-profile').addEventListener('click', async () => {
+      const profileName = profileInput.value.trim();
+
+      if (!profileName) {
+        log('Please enter a profile name first.', 'err');
+        return;
+      }
+
+      const profileDir = `${PROFILES_DIR}/${profileName}`;
+      const profileDatPath = `${profileDir}/profile.dat`;
+      const defaultProfileDatPath = `${PROFILES_DIR}/defaultprofile.dat`;
+
+      const encoder = new TextEncoder();
+      const fileData = encoder.encode(profileName);
+
+      try {
+        ensureDirs(profileDir);
+
+        // Write files to PakFS
+        PakFS.writeFile(profileDatPath, fileData);
+        PakFS.writeFile(defaultProfileDatPath, fileData);
+
+        // Also push directly to Emscripten FS if initialized
+        var fs = (typeof FS !== 'undefined' && FS) ? FS : (Module.FS || null);
+        if (fs) {
+          function ensureFsDir(p) {
+            if (fs.mkdirTree) { try { fs.mkdirTree(p); } catch (e) {} return; }
+            var parts = p.replace(/^\/+/, '').split('/');
+            var path = '';
+            for (var i = 0; i < parts.length; i++) {
+              path += '/' + parts[i];
+              try { fs.mkdir(path); } catch (e) {}
+            }
+          }
+          ensureFsDir(profileDir);
+          fs.writeFile(profileDatPath, fileData);
+          fs.writeFile(defaultProfileDatPath, fileData);
+        }
+
+        log(`Profile files created for "${profileName}". Syncing cache...`, 'info');
+
+        await new Promise((resolve, reject) => {
+          PakFS.syncfs(false, (err) => err ? reject(err) : resolve());
+        });
+
+        log(`Profile "${profileName}" saved to ${profileDir}`, 'ok');
+        
+        // Reset input and close modal
+        profileInput.value = '';
+        profileModal.classList.remove('active');
+      } catch (err) {
+        log(`Failed to create profile: ${err.message || err}`, 'err');
+      }
+    });
+
+    // ---------- Local file selection: load any .pk3 + write + sync automatically ----------
+    document.getElementById('file-local').addEventListener('change', async (e) => {
+      const selected = Array.from(e.target.files || []);
+      if (selected.length === 0) return;
+
+      ensureDirs();
+      let wroteAny = false;
+
+      for (const file of selected) {
+        const name = file.name;
+        if (!name.toLowerCase().endsWith('.pk3')) {
+          log(`Ignored (not .pk3): ${name}`, 'info');
+          continue;
+        }
+        try {
+          const buf = await file.arrayBuffer();
+          const data = new Uint8Array(buf);
+          if (PAKS.includes(name.toLowerCase()) || PAKS.includes(name)) {
+            localFiles[name] = data;
+          }
+          PakFS.writeFile(TARGET_DIR + '/' + name, data);
+          wroteAny = true;
+          log(`${name} loaded (${(buf.byteLength / 1024 / 1024).toFixed(2)} MB)`, 'ok');
+        } catch (err) {
+          log(`Failed to load ${name}: ${err}`, 'err');
+        }
+      }
+
+      if (wroteAny) {
+        log('Syncing…', 'info');
+        PakFS.syncfs(false, (err) => {
+          if (err) log('Sync failed: ' + err, 'err');
+          else {
+            log('Cached.', 'ok');
+            checkPaksReady();
+          }
+        });
+      }
+    });
+
+    // ---------- Download from external server ----------
+    async function fetchWithProgress(url, onProgress) {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+      const total = Number(res.headers.get('content-length')) || 0;
+      const reader = res.body.getReader();
+      const chunks = [];
+      let received = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        received += value.length;
+        if (onProgress) onProgress(received, total);
+      }
+      const out = new Uint8Array(received);
+      let offset = 0;
+      for (const c of chunks) {
+        out.set(c, offset);
+        offset += c.length;
+      }
+      return out;
+    }
+
+    document.getElementById('btn-download-server').addEventListener('click', async () => {
+      const base = 'https://mirror.etlegacy.com/etmain/';
+
+      const btn = document.getElementById('btn-download-server');
+      const progressWrap = document.getElementById('progress-wrap');
+      const progressFill = document.getElementById('progress-fill');
+      const progressText = document.getElementById('progress-text');
+
+      btn.disabled = true;
+      progressWrap.style.display = 'block';
+      progressFill.style.width = '0%';
+      progressText.textContent = 'Starting…';
+
+      ensureDirs();
+
+      const totals = {};
+      const received = {};
+      let overallTotal = 0;
+      let overallReceived = 0;
+
+      try {
+        for (let i = 0; i < PAKS.length; i++) {
+          const pak = PAKS[i];
+          const url = base + pak;
+          setStatus(pak, 'loading');
+          log(`Downloading ${pak} …`, 'info');
+
+          const data = await fetchWithProgress(url, (rec, tot) => {
+            received[pak] = rec;
+            totals[pak] = tot;
+            overallReceived = Object.values(received).reduce((a, b) => a + b, 0);
+            overallTotal = Object.values(totals).reduce((a, b) => a + b, 0);
+            const pct = overallTotal ? Math.round((overallReceived / overallTotal) * 100) : 0;
+            progressFill.style.width = pct + '%';
+            progressText.textContent =
+              `${pak}: ${(rec / 1024 / 1024).toFixed(1)} / ${(tot / 1024 / 1024 || 0).toFixed(1)} MB  •  total ${pct}%`;
+          });
+
+          const path = TARGET_DIR + '/' + pak;
+          PakFS.writeFile(path, data);
+          setStatus(pak, 'ready');
+          log(`${pak} ready (${(data.byteLength / 1024 / 1024).toFixed(2)} MB)`, 'ok');
+        }
+
+        log('All paks downloaded. Syncing…', 'info');
+        await new Promise((resolve, reject) => {
+          PakFS.syncfs(false, err => err ? reject(err) : resolve());
+        });
+        log('Sync complete – files cached.', 'ok');
+        progressFill.style.width = '100%';
+        progressText.textContent = 'Done';
+        checkPaksReady();
+      } catch (err) {
+        log('Download failed: ' + err.message, 'err');
+        progressText.textContent = 'Failed';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    // ---------- Clear cache ----------
+    document.getElementById('btn-clear').addEventListener('click', async () => {
+      if (!confirm('Clear all cached pak files and profiles?')) return;
+      try {
+        for (const pak of PAKS) localFiles[pak] = null;
+        PakFS._clearMemory();
+        await PakIDBFS.clear();
+        moduleStarted = false;
+        setStartEnabled(false);
+        log('Cache cleared.', 'ok');
+      } catch (err) {
+        log('Clear failed: ' + err, 'err');
+      }
+    });
+
+    // ---------- Start button ----------
+    document.getElementById('btn-start').addEventListener('click', () => {
+      startModule();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      const isAltEnter = e.altKey && (e.key === 'Enter' || e.code === 'Enter');
+
+      if (isAltEnter) {
+        e.preventDefault();
+
+        // Emscripten's default canvas ID is usually 'canvas', or fallback to Module.canvas
+        const canvas = document.getElementById('canvas') || Module.canvas;
+
+        if (!document.fullscreenElement) {
+          canvas.requestFullscreen().catch((err) => {
+            console.error("Error attempting to enable fullscreen:", err);
+          });
+        } else {
+          document.exitFullscreen();
+        }
+      }
+    });
+
+    // ---------- On load: restore from cache ----------
+    (async () => {
+      log('Checking cache…', 'info');
+      ensureDirs();
+      PakFS.syncfs(true, (err) => {
+        if (err) {
+          log('Could not load previous cache: ' + err, 'err');
+          return;
+        }
+        let found = 0;
+        for (const pak of PAKS) {
+          const path = TARGET_DIR + '/' + pak;
+          if (PakFS.analyzePath(path).exists) {
+            setStatus(pak, 'ready');
+            found++;
+            log(`Found cached ${pak}`, 'ok');
+          }
+        }
+        if (found === PAKS.length) {
+          log('All three pak files are already in the browser cache.', 'ok');
+        } else if (found > 0) {
+          log(`Partial cache: ${found}/3 files present.`, 'info');
+        } else {
+          log('No cached files. Click Download, or select local files.', 'info');
+        }
+      });
+    })();
+  </script>
+
+  {{{ SCRIPT }}}
+</body>
+</html>
