@@ -37,6 +37,9 @@
 extern displayContextDef_t *DC;
 
 qboolean  bg_loadscreeninited = qfalse;
+#ifdef __EMSCRIPTEN__
+static qboolean bg_loadPanelOffsetApplied = qfalse;
+#endif
 qhandle_t bg_axispin;
 qhandle_t bg_alliedpin;
 qhandle_t bg_neutralpin;
@@ -285,6 +288,12 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 	static qboolean inside = qfalse;
 	char            buffer[1024];
 
+#ifdef __EMSCRIPTEN__
+	// FIXME: Hudchars shader is rendererd instead camp_side we need to find a better way to fix it
+	// should put around if bg_loadPanelOffsetApplied
+	cgs.media.menucharsetShader = trap_R_RegisterShader("gfx/loading/camp_side");
+#endif
+
 	if (!DC)
 	{
 		return;
@@ -297,7 +306,11 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 
 	inside = qtrue;
 
+#ifdef __EMSCRIPTEN__
+	if (!bg_loadscreeninited || (!cgs.media.bg_loadscreenfont1.GetGlyph || !cgs.media.bg_loadscreenfont2.GetGlyph))
+#else
 	if (!bg_loadscreeninited)
+#endif
 	{
 		trap_Cvar_Set("ui_connecting", "0");
 
@@ -318,7 +331,15 @@ void CG_DrawConnectScreen(qboolean interactive, qboolean forcerefresh)
 		bg_mappic = 0;
 
 		BG_PanelButtonsSetup(loadpanelButtons);
+#ifdef __EMSCRIPTEN__
+		if (!bg_loadPanelOffsetApplied)
+		{
+			C_PanelButtonsSetup(loadpanelButtons, cgs.wideXoffset);
+			bg_loadPanelOffsetApplied = qtrue;
+		}
+#else
 		C_PanelButtonsSetup(loadpanelButtons, cgs.wideXoffset);
+#endif
 
 		bg_loadscreeninited = qtrue;
 	}
