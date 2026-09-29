@@ -40,15 +40,17 @@
  *
  * This will also allow mirrors on both sides of a model without recursion.
  *
- * @param[in] surface
+ * Reads the surface's copy of its culling information
+ * (msurface_t::cull*, see R_LoadSurfaceCullData()) instead of the surface
+ * data itself.
+ *
+ * @param[in] surf
  * @param[in] shader
  * @param[out] frontFace
  * @return
  */
-static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *frontFace)
+static qboolean R_CullSurface(msurface_t *surf, shader_t *shader, int *frontFace)
 {
-	srfGeneric_t *gen;
-
 	// force to non-front facing
 	*frontFace = 0;
 
@@ -59,7 +61,7 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 	}
 
 	// made surface culling generic, inline with q3map2 surface classification
-	switch (*surface)
+	switch (surf->cullSurfaceType)
 	{
 	case SF_FACE:
 	case SF_TRIANGLES:
@@ -81,13 +83,10 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 		return qtrue;
 	}
 
-	// get generic surface
-	gen = (srfGeneric_t *) surface;
-
 	// plane cull
-	if (gen->plane.type != PLANE_NON_PLANAR && r_facePlaneCull->integer)
+	if (surf->cullPlaneType != PLANE_NON_PLANAR && r_facePlaneCull->integer)
 	{
-		float d = DotProduct(tr.orientation.viewOrigin, gen->plane.normal) - gen->plane.dist;
+		float d = DotProduct(tr.orientation.viewOrigin, surf->cullNormal) - surf->cullDist;
 
 		if (d > 0.0f)
 		{
@@ -123,11 +122,11 @@ static qboolean R_CullSurface(surfaceType_t *surface, shader_t *shader, int *fro
 		// try sphere cull
 		if (tr.currentEntityNum != ENTITYNUM_WORLD)
 		{
-			cull = R_CullLocalPointAndRadius(gen->origin, gen->radius);
+			cull = R_CullLocalPointAndRadius(surf->cullOrigin, surf->cullRadius);
 		}
 		else
 		{
-			cull = R_CullPointAndRadius(gen->origin, gen->radius);
+			cull = R_CullPointAndRadius(surf->cullOrigin, surf->cullRadius);
 		}
 
 		if (cull == CULL_OUT)
@@ -254,7 +253,7 @@ static void R_AddWorldSurface(msurface_t *surf, shader_t *shader, int dlightMap,
 	// FIXME: bmodel fog?
 
 	// try to cull before dlighting or adding
-	if (R_CullSurface(surf->data, shader, &frontFace))
+	if (R_CullSurface(surf, shader, &frontFace))
 	{
 		return;
 	}

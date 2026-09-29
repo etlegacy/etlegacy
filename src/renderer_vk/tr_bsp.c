@@ -1973,6 +1973,42 @@ static void R_LoadSurfaces(lump_t *surfs, lump_t *verts, lump_t *indexLump)
 }
 
 /**
+ * @brief Copies every surface's type and culling information (srfGeneric_t:
+ * bounding sphere, plane) into its msurface_t, where R_CullSurface() reads
+ * it. Runs after R_LoadSurfaces(), once patch stitching has replaced the
+ * grid surfaces' data for good.
+ */
+static void R_LoadSurfaceCullData(void)
+{
+	msurface_t   *surf;
+	srfGeneric_t *gen;
+	int          i;
+
+	for (i = 0, surf = s_worldData.surfaces; i < s_worldData.numsurfaces; i++, surf++)
+	{
+		surf->cullSurfaceType = surf->data ? *surf->data : SF_BAD;
+		surf->cullPlaneType   = PLANE_NON_PLANAR;
+
+		switch (surf->cullSurfaceType)
+		{
+		case SF_FACE:
+		case SF_TRIANGLES:
+		case SF_GRID:
+		case SF_FOLIAGE:
+			gen = (srfGeneric_t *)surf->data;
+			VectorCopy(gen->origin, surf->cullOrigin);
+			surf->cullRadius = gen->radius;
+			VectorCopy(gen->plane.normal, surf->cullNormal);
+			surf->cullDist      = gen->plane.dist;
+			surf->cullPlaneType = gen->plane.type;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+/**
  * @brief Vulkan: copies the vertices of every triangle surface (planar faces
  * and triangle soups, world and brush models) into one static GPU vertex
  * buffer, so RB_SurfaceTriangles() only has to emit indexes for them.
@@ -2727,6 +2763,7 @@ void RE_LoadWorldMap(const char *name)
 	//% R_LoadFogs( &header->lumps[LUMP_FOGS], &header->lumps[LUMP_BRUSHES], &header->lumps[LUMP_BRUSHSIDES] );
 	//% Ren_UpdateScreen();
 	R_LoadSurfaces(&header->lumps[LUMP_SURFACES], &header->lumps[LUMP_DRAWVERTS], &header->lumps[LUMP_DRAWINDEXES]);
+	R_LoadSurfaceCullData();
 	R_LoadStaticWorldVertices();
 	Ren_UpdateScreen();
 	R_LoadMarksurfaces(&header->lumps[LUMP_LEAFSURFACES]);

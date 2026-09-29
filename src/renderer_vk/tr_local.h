@@ -1063,10 +1063,21 @@ BRUSH MODELS
 typedef struct msurface_s
 {
 	int viewCount;                  ///< if == tr.viewCount, already added
-	shader_t *shader;
 	int fogIndex;
+	shader_t *shader;
 
 	surfaceType_t *data;            ///< any of srf*_t
+
+	/// Copy of data's surface type and culling information (srfGeneric_t),
+	/// read by R_CullSurface() next to viewCount, so that culling doesn't
+	/// touch the scattered surface data (a cache miss per surface). Set by
+	/// R_LoadSurfaceCullData() after the surfaces are loaded.
+	surfaceType_t cullSurfaceType;
+	float cullRadius;
+	vec3_t cullOrigin;
+	vec3_t cullNormal;
+	float cullDist;
+	byte cullPlaneType;
 } msurface_t;
 
 /**
