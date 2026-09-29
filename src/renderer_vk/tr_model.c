@@ -1539,6 +1539,73 @@ static qboolean R_LoadMDS(model_t *mod, void *buffer, const char *name)
 }
 
 /**
+ * @brief Vulkan: uploads every surface of a loaded MDM model to the skin
+ * buffer for GPU skinning (vkSkinVertex_t: up to 4 weights, bone indices
+ * remapped to the surface's bone references) and records each surface's
+ * first vertex in mod->vkSkinFirstVertex. Surfaces with a vertex of more
+ * than 4 weights (or that don't fit) stay CPU-skinned (-1).
+ * @param[in,out] mod
+ */
+static void R_LoadMDMSkinVertices(model_t *mod)
+{
+	mdmHeader_t    *mdm  = mod->model.mdm;
+	mdmSurface_t   *surf = (mdmSurface_t *)((byte *)mdm + mdm->ofsSurfaces);
+	vkSkinVertex_t *out;
+	int            i, j, k, b;
+
+	mod->vkSkinFirstVertex = ri.Hunk_Alloc(sizeof(int) * MAX(mdm->numSurfaces, 1), h_low);
+
+	for (i = 0; i < mdm->numSurfaces; i++, surf = (mdmSurface_t *)((byte *)surf + surf->ofsEnd))
+	{
+		mdmVertex_t *v       = (mdmVertex_t *)((byte *)surf + surf->ofsVerts);
+		int         *boneRef = (int *)((byte *)surf + surf->ofsBoneReferences);
+		qboolean    ok       = (surf->numBoneReferences <= 256) ? qtrue : qfalse;
+
+		mod->vkSkinFirstVertex[i] = -1;
+
+		out = ri.Hunk_AllocateTempMemory(sizeof(*out) * MAX(surf->numVerts, 1));
+		Com_Memset(out, 0, sizeof(*out) * MAX(surf->numVerts, 1));
+
+		for (j = 0; j < surf->numVerts && ok; j++)
+		{
+			if (v->numWeights < 1 || v->numWeights > 4)
+			{
+				ok = qfalse;
+				break;
+			}
+
+			out[j].uv[0] = v->texCoords[0];
+			out[j].uv[1] = v->texCoords[1];
+			VectorCopy(v->normal, out[j].normal);
+
+			for (k = 0; k < v->numWeights; k++)
+			{
+				for (b = 0; b < surf->numBoneReferences && boneRef[b] != v->weights[k].boneIndex; b++)
+				{
+				}
+				if (b == surf->numBoneReferences)
+				{
+					ok = qfalse;
+					break;
+				}
+				out[j].bones[k]   = (byte)b;
+				out[j].weights[k] = v->weights[k].boneWeight;
+				VectorCopy(v->weights[k].offset, out[j].offsets[k]);
+			}
+
+			v = (mdmVertex_t *)&v->weights[v->numWeights];
+		}
+
+		if (ok && surf->numVerts > 0)
+		{
+			mod->vkSkinFirstVertex[i] = VK_WriteSkinVertices(out, surf->numVerts);
+		}
+
+		ri.Hunk_FreeTempMemory(out);
+	}
+}
+
+/**
  * @brief R_LoadMDM
  * @param[in,out] mod
  * @param[in,out] buffer
@@ -1754,6 +1821,8 @@ static qboolean R_LoadMDM(model_t *mod, void *buffer, const char *name)
 		surf = ( mdmSurface_t * )((byte *)surf + surf->ofsEnd);
 	}
 
+	R_LoadMDMSkinVertices(mod);
+
 	return qtrue;
 }
 
@@ -1874,6 +1943,9 @@ void RE_BeginRegistration(glconfig_t *glconfigOut)
 void R_ModelInit(void)
 {
 	model_t *mod;
+
+	// the models (and their GPU skin vertices) are loaded again
+	VK_ResetSkinBuffer();
 
 	// leave a space for NULL model
 	tr.numModels = 0;
