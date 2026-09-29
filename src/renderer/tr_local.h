@@ -51,8 +51,8 @@
 #define glActiveTextureARB glActiveTexture
 #define glClientActiveTextureARB glClientActiveTexture
 /* ARB shader functions already handled by glext.h */
-#define glLockArraysEXT ((void (*)(GLint, GLsizei))0)
-#define glUnlockArraysEXT ((void (*)(void))0)
+#define glLockArraysEXT ((void (*)(GLint, GLsizei)) 0)
+#define glUnlockArraysEXT ((void (*)(void)) 0)
 
 #define glCreateProgramObjectARB() glCreateProgram()
 #define glCreateShaderObjectARB(type) glCreateShader(type)
@@ -98,8 +98,8 @@ static inline void etl_glGetInfoLogARB(GLuint obj, GLsizei maxlength, GLsizei *l
 #define glDeleteRenderbuffersEXT glDeleteRenderbuffers
 #define glBindRenderbufferEXT glBindRenderbuffer
 #define glRenderbufferStorageEXT glRenderbufferStorage
-#define glRenderbufferStorageMultisampleEXT(a,b,c,d,e) (void)0
-#define glBlitFramebuffer(a,b,c,d,e,f,g,h,i,j) (void)0
+#define glRenderbufferStorageMultisampleEXT(a, b, c, d, e) (void)0
+#define glBlitFramebuffer(a, b, c, d, e, f, g, h, i, j) (void)0
 #define glCheckFramebufferStatusEXT glCheckFramebufferStatus
 #define GL_READ_FRAMEBUFFER_EXT GL_READ_FRAMEBUFFER
 #define GL_DRAW_FRAMEBUFFER_EXT GL_DRAW_FRAMEBUFFER
@@ -111,7 +111,7 @@ static inline void etl_glGetInfoLogARB(GLuint obj, GLsizei maxlength, GLsizei *l
 #define GL_RENDERBUFFER_EXT GL_RENDERBUFFER
 #define GL_DEPTH_STENCIL_EXT GL_DEPTH_STENCIL
 #define glDrawBuffer(x) (void)(x)
-#define glDrawBuffersEXT(a,b) (void)(a)
+#define glDrawBuffersEXT(a, b) (void)(a)
 #endif
 
 #include "tr_cvars.h"
