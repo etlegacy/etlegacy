@@ -2241,6 +2241,60 @@ static void ComputeStageIteratorFunc(void)
 }
 
 /**
+ * @brief Vulkan: marks shaders whose MDM surfaces can be skinned in the
+ * vertex shader (shader_t::vkSkinnable, RB_MDM_SurfaceAnimGPU). The skinned
+ * vertices exist only on the GPU, so every stage must be computable there:
+ * texture coords as stored (tcGen texture, no tcMod), rgb lightingDiffuse
+ * or constant for the draw, constant alpha, no deforms, single texture.
+ */
+static void ComputeVkSkinnable(void)
+{
+	int i;
+
+	shader.vkSkinnable = qfalse;
+
+	if (shader.isSky || shader.numDeforms || shader.entityMergable || !stages[0].active || shader.sort == SS_PORTAL)
+	{
+		return;
+	}
+
+	for (i = 0; i < MAX_SHADER_STAGES && stages[i].active; i++)
+	{
+		shaderStage_t *pStage = &stages[i];
+
+		switch (pStage->rgbGen)
+		{
+		case CGEN_LIGHTING_DIFFUSE:
+		case CGEN_IDENTITY:
+		case CGEN_IDENTITY_LIGHTING:
+		case CGEN_CONST:
+		case CGEN_ENTITY:
+			break;
+		default:
+			return;
+		}
+
+		switch (pStage->alphaGen)
+		{
+		case AGEN_SKIP:
+		case AGEN_IDENTITY:
+		case AGEN_CONST:
+		case AGEN_ENTITY:
+			break;
+		default:
+			return;
+		}
+
+		if (pStage->bundle[0].numTexMods || pStage->bundle[0].tcGen != TCGEN_TEXTURE || pStage->bundle[1].image[0])
+		{
+			return;
+		}
+	}
+
+	shader.vkSkinnable = qtrue;
+}
+
+/**
  * @brief Vulkan: decides whether world surfaces using this shader can be
  * drawn straight from the static world vertex buffer (vk.c). Every stage
  * must produce colors/texcoords that depend only on the BSP vertex data:
@@ -3024,6 +3078,7 @@ static shader_t *FinishShader(void)
 	ComputeStageIteratorFunc();
 
 	ComputeVkStatic();
+	ComputeVkSkinnable();
 
 	// default back to no compression for next shader
 	if (r_extCompressedTextures->integer == 2)

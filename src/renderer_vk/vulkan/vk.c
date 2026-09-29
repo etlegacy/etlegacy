@@ -53,6 +53,8 @@
 #include "tr3d_lm.vert.glsl.h"
 #include "tr3d_lm.frag.glsl.h"
 #include "tr3d_static.vert.glsl.h"
+#include "tr3d_diffuse.vert.glsl.h"
+#include "tr3d_skin.vert.glsl.h"
 #include "tr3d_lm_static.vert.glsl.h"
 #include "gamma.vert.glsl.h"
 #include "gamma.frag.glsl.h"
@@ -66,7 +68,7 @@
 
 // A world can have many distinct shader stateBits/cullType combinations;
 // pipelines are created lazily and cached for the life of the renderer.
-#define VK_MAX_SCENE_PIPELINES 128
+#define VK_MAX_SCENE_PIPELINES 256
 
 // Non-GLS pipeline states used by stencil shadow volumes
 // (renderer1's RB_ShadowTessEnd()/RB_ShadowFinish()).
@@ -85,11 +87,22 @@
 #define VK_VERTS_ARENA            0
 #define VK_VERTS_STATIC           1 // static buffer; uv = texture coords (lightmapped: uv0 texture, uv1 lightmap)
 #define VK_VERTS_STATIC_LIGHTMAP  2 // static buffer, single texture; uv = lightmap coords
+#define VK_VERTS_DIFFUSE          3 // arena, single texture, vk3DVertexN_t: rgb from entity lighting (tr3d_diffuse.vert)
+#define VK_VERTS_SKIN             4 // skin buffer (vkSkinVertex_t), MDM skinned in tr3d_skin.vert, bones in set 1
+
+// GPU skinning (VK_VERTS_SKIN): the skin vertex buffer holds every loaded MDM
+// surface (reset with the models), the bone arena one surface's bones per
+// GPU-skinned batch (3 vec4 rows each, read as a dynamic uniform buffer)
+#define VK_SKIN_BUFFER_SIZE       (16 * 1024 * 1024)
+#define VK_SKIN_MAX_BONES         256
+#define VK_SKIN_BONE_BYTES        (3 * 4 * sizeof(float))
+#define VK_SKIN_BONE_ARENA_SIZE   (2 * 1024 * 1024)
 
 // Scene push constants: mat4 mvp, mat4 modelView, vec4 alphaTest, vec4
 // fogColor, vec4 fogParams, vec4 clipPlane (48 floats, every scene draw),
-// then vec4 colorMul, vec4 colorAdd (static world draws only).
-#define VK_SCENE_PUSH_FLOATS      56
+// then vec4 colorMul, vec4 colorAdd (static world draws) or vec4 lightDir,
+// vec4 ambient, vec4 directed (VK_VERTS_DIFFUSE draws).
+#define VK_SCENE_PUSH_FLOATS      60
 
 // One lazily-created pipeline variant for a given (stateBits, cullType,
 // polygonOffset) combination used by the 3D scene pipelines.
@@ -232,6 +245,7 @@ typedef struct
 	VkShaderModule sceneLMVertModule;
 	VkShaderModule sceneLMFragModule;
 	VkShaderModule sceneStaticVertModule;   // static world buffer variants (color = vertex * mul + add)
+	VkShaderModule sceneDiffuseVertModule;  // rgbGen lightingDiffuse variants (VK_VERTS_DIFFUSE)
 	VkShaderModule sceneLMStaticVertModule;
 
 	VkShaderModule uiVertModule;
@@ -347,6 +361,24 @@ typedef struct
 	void *staticWorldMapped;
 	int staticWorldNumVertexes;
 
+	// GPU skinning (VK_VERTS_SKIN), see VK_WriteSkinVertices/VK_AllocSkinBones
+	VkBuffer skinBuffer;
+	VkDeviceMemory skinMemory;
+	void *skinMapped;
+	int skinNumVertexes;
+	int skinMaxVertexes;
+	VkBuffer boneArenaBuffer;
+	VkDeviceMemory boneArenaMemory;
+	void *boneArenaMapped;
+	VkDeviceSize boneArenaOffset;
+	VkDeviceSize boneArenaSize;                            // end of this frame slot's region
+	VkDeviceSize uboAlignment;                             // minUniformBufferOffsetAlignment
+	VkDescriptorSetLayout boneSetLayout;
+	VkDescriptorPool bonePool;
+	VkDescriptorSet boneSet;
+	VkPipelineLayout skinPipelineLayout;                   // set 0 texture, set 1 bones
+	VkShaderModule sceneSkinVertModule;
+
 	qboolean initialized;
 	uint32_t currentImageIndex;
 } vkContext_t;
@@ -384,6 +416,16 @@ typedef struct
 	float uv1[2];
 	byte color[4];
 } vk3DVertexLM_t;
+
+// VK_VERTS_DIFFUSE: vk3DVertex_t plus the model-space normal the vertex
+// shader lights with (color only supplies alpha)
+typedef struct
+{
+	float pos[3];
+	float uv[2];
+	byte color[4];
+	float normal[3];
+} vk3DVertexN_t;
 
 #define VK_SCENE_VERTEX_ARENA_SIZE (32 * 1024 * 1024)
 #define VK_SCENE_INDEX_ARENA_SIZE  (8 * 1024 * 1024)
@@ -2066,6 +2108,158 @@ static qboolean VK_CreateUIArenaBuffers(void)
  * 3D scene draws, analogous to the UI arena buffers but with their own
  * (larger) backing storage and vertex formats.
  */
+/**
+ * @brief GPU skinning resources: the skin vertex buffer (VK_WriteSkinVertices),
+ * the per-frame bone arena (VK_AllocSkinBones) and the descriptor set that
+ * reads it as a dynamic uniform buffer of VK_SKIN_MAX_BONES bones. Needs
+ * vk.boneSetLayout (VK_CreateScenePipelineLayouts).
+ */
+static qboolean VK_CreateSkinResources(void)
+{
+	VkPhysicalDeviceProperties  props;
+	VkDescriptorPoolSize        poolSize;
+	VkDescriptorPoolCreateInfo  poolInfo;
+	VkDescriptorSetAllocateInfo allocInfo;
+	VkDescriptorBufferInfo      bufferInfo;
+	VkWriteDescriptorSet        write;
+	VkDeviceSize                range = (VkDeviceSize)VK_SKIN_MAX_BONES * VK_SKIN_BONE_BYTES;
+
+	vkGetPhysicalDeviceProperties(vk.physicalDevice, &props);
+	vk.uboAlignment = MAX(props.limits.minUniformBufferOffsetAlignment, 16);
+
+	vk.skinMaxVertexes = VK_SKIN_BUFFER_SIZE / sizeof(vkSkinVertex_t);
+	if (!VK_CreateBuffer((VkDeviceSize)vk.skinMaxVertexes * sizeof(vkSkinVertex_t), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	                     &vk.skinBuffer, &vk.skinMemory) ||
+	    !VK_CheckResult(vkMapMemory(vk.device, vk.skinMemory, 0, VK_WHOLE_SIZE, 0, &vk.skinMapped), "vkMapMemory(skin)"))
+	{
+		return qfalse;
+	}
+	vk.skinNumVertexes = 0;
+
+	// a full bone range must fit after the last frame slot's region
+	if (!VK_CreateBuffer((VkDeviceSize)VK_SKIN_BONE_ARENA_SIZE * VK_FRAMES_IN_FLIGHT + range, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	                     &vk.boneArenaBuffer, &vk.boneArenaMemory) ||
+	    !VK_CheckResult(vkMapMemory(vk.device, vk.boneArenaMemory, 0, VK_WHOLE_SIZE, 0, &vk.boneArenaMapped), "vkMapMemory(bones)"))
+	{
+		return qfalse;
+	}
+
+	Com_Memset(&poolSize, 0, sizeof(poolSize));
+	poolSize.type            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+	poolSize.descriptorCount = 1;
+
+	Com_Memset(&poolInfo, 0, sizeof(poolInfo));
+	poolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	poolInfo.poolSizeCount = 1;
+	poolInfo.pPoolSizes    = &poolSize;
+	poolInfo.maxSets       = 1;
+
+	if (!VK_CheckResult(vkCreateDescriptorPool(vk.device, &poolInfo, NULL, &vk.bonePool), "vkCreateDescriptorPool(bones)"))
+	{
+		return qfalse;
+	}
+
+	Com_Memset(&allocInfo, 0, sizeof(allocInfo));
+	allocInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool     = vk.bonePool;
+	allocInfo.descriptorSetCount = 1;
+	allocInfo.pSetLayouts        = &vk.boneSetLayout;
+
+	if (!VK_CheckResult(vkAllocateDescriptorSets(vk.device, &allocInfo, &vk.boneSet), "vkAllocateDescriptorSets(bones)"))
+	{
+		return qfalse;
+	}
+
+	Com_Memset(&bufferInfo, 0, sizeof(bufferInfo));
+	bufferInfo.buffer = vk.boneArenaBuffer;
+	bufferInfo.offset = 0;
+	bufferInfo.range  = range;
+
+	Com_Memset(&write, 0, sizeof(write));
+	write.sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	write.dstSet          = vk.boneSet;
+	write.dstBinding      = 0;
+	write.descriptorCount = 1;
+	write.descriptorType  = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+	write.pBufferInfo     = &bufferInfo;
+	vkUpdateDescriptorSets(vk.device, 1, &write, 0, NULL);
+
+	return qtrue;
+}
+
+/**
+ * @brief Forgets all skin vertices (R_ModelInit: the models are loaded
+ * again). Waits for the GPU, which may still draw the old ones.
+ */
+void VK_ResetSkinBuffer(void)
+{
+	if (!vk.initialized || !vk.skinNumVertexes)
+	{
+		return;
+	}
+
+	vkDeviceWaitIdle(vk.device);
+	vk.skinNumVertexes = 0;
+}
+
+/**
+ * @brief Appends count skin vertices (one MDM surface, R_LoadMDMSkinVertices).
+ * @return the first vertex's index, or -1 if they don't fit (the surface is
+ * then skinned on the CPU)
+ */
+int VK_WriteSkinVertices(const vkSkinVertex_t *verts, int count)
+{
+	int first;
+
+	if (!vk.initialized || !vk.skinMapped || count <= 0)
+	{
+		return -1;
+	}
+
+	if (vk.skinNumVertexes + count > vk.skinMaxVertexes)
+	{
+		Ren_Developer("Vulkan: skin buffer full, MDM surface skinned on the CPU\n");
+		return -1;
+	}
+
+	first = vk.skinNumVertexes;
+	Com_Memcpy((vkSkinVertex_t *)vk.skinMapped + first, verts, sizeof(*verts) * count);
+	vk.skinNumVertexes += count;
+
+	return first;
+}
+
+/**
+ * @brief Reserves numBones bones (12 floats each: 3 rows of matrix +
+ * translation) in this frame's bone arena for one GPU-skinned batch.
+ * @param[out] offset dynamic offset of the block (bytes)
+ * @return write pointer, or NULL if the arena is exhausted this frame
+ */
+float *VK_AllocSkinBones(int numBones, unsigned int *offset)
+{
+	VkDeviceSize start = ((vk.boneArenaOffset + vk.uboAlignment - 1) / vk.uboAlignment) * vk.uboAlignment;
+	VkDeviceSize bytes = (VkDeviceSize)numBones * VK_SKIN_BONE_BYTES;
+
+	if (!vk.initialized || numBones > VK_SKIN_MAX_BONES || start + bytes > vk.boneArenaSize)
+	{
+		static int lastWarnFrame = -1;
+
+		if (vk.initialized && backEnd.refdef.time != lastWarnFrame)
+		{
+			Ren_Print("Vulkan: VK_AllocSkinBones - bone arena exhausted this frame, dropping GPU-skinned surfaces\n");
+			lastWarnFrame = backEnd.refdef.time;
+		}
+		return NULL;
+	}
+
+	*offset            = (unsigned int)start;
+	vk.boneArenaOffset = start + bytes;
+
+	return (float *)((byte *)vk.boneArenaMapped + start);
+}
+
 static qboolean VK_CreateSceneArenaBuffers(void)
 {
 	vk.sceneVertexArenaSize = (VkDeviceSize)VK_SCENE_VERTEX_ARENA_SIZE * VK_FRAMES_IN_FLIGHT;
@@ -2087,7 +2281,7 @@ static qboolean VK_CreateSceneArenaBuffers(void)
 	vkMapMemory(vk.device, vk.sceneVertexArenaMemory, 0, vk.sceneVertexArenaSize, 0, &vk.sceneVertexArenaMapped);
 	vkMapMemory(vk.device, vk.sceneIndexArenaMemory, 0, vk.sceneIndexArenaSize, 0, &vk.sceneIndexArenaMapped);
 
-	return qtrue;
+	return VK_CreateSkinResources();
 }
 
 /**
@@ -2233,12 +2427,45 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 
 	vk.sceneStaticVertModule   = VK_CreateShaderModule(tr3d_static_vert_spv, tr3d_static_vert_spv_SIZE);
 	vk.sceneLMStaticVertModule = VK_CreateShaderModule(tr3d_lm_static_vert_spv, tr3d_lm_static_vert_spv_SIZE);
+	vk.sceneDiffuseVertModule  = VK_CreateShaderModule(tr3d_diffuse_vert_spv, tr3d_diffuse_vert_spv_SIZE);
+	vk.sceneSkinVertModule     = VK_CreateShaderModule(tr3d_skin_vert_spv, tr3d_skin_vert_spv_SIZE);
 
 	if (vk.sceneVertModule == VK_NULL_HANDLE || vk.sceneFragModule == VK_NULL_HANDLE ||
 	    vk.sceneLMVertModule == VK_NULL_HANDLE || vk.sceneLMFragModule == VK_NULL_HANDLE ||
-	    vk.sceneStaticVertModule == VK_NULL_HANDLE || vk.sceneLMStaticVertModule == VK_NULL_HANDLE)
+	    vk.sceneStaticVertModule == VK_NULL_HANDLE || vk.sceneLMStaticVertModule == VK_NULL_HANDLE ||
+	    vk.sceneDiffuseVertModule == VK_NULL_HANDLE || vk.sceneSkinVertModule == VK_NULL_HANDLE)
 	{
 		return qfalse;
+	}
+
+	// GPU skinning: set 1 = the bone arena as a dynamic uniform buffer
+	{
+		VkDescriptorSetLayoutBinding    binding;
+		VkDescriptorSetLayoutCreateInfo setLayoutInfo;
+
+		Com_Memset(&binding, 0, sizeof(binding));
+		binding.binding         = 0;
+		binding.descriptorType  = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+		binding.descriptorCount = 1;
+		binding.stageFlags      = VK_SHADER_STAGE_VERTEX_BIT;
+
+		Com_Memset(&setLayoutInfo, 0, sizeof(setLayoutInfo));
+		setLayoutInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		setLayoutInfo.bindingCount = 1;
+		setLayoutInfo.pBindings    = &binding;
+
+		if (!VK_CheckResult(vkCreateDescriptorSetLayout(vk.device, &setLayoutInfo, NULL, &vk.boneSetLayout), "vkCreateDescriptorSetLayout(bones)"))
+		{
+			return qfalse;
+		}
+
+		twoSetLayouts[0] = vk.uiDescriptorSetLayout;
+		twoSetLayouts[1] = vk.boneSetLayout;
+
+		if (!VK_CheckResult(vkCreatePipelineLayout(vk.device, &layoutInfo, NULL, &vk.skinPipelineLayout), "vkCreatePipelineLayout(skin)"))
+		{
+			return qfalse;
+		}
 	}
 
 	return qtrue;
@@ -2253,7 +2480,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 {
 	VkPipelineShaderStageCreateInfo        stages[2];
 	VkVertexInputBindingDescription        vertexBinding;
-	VkVertexInputAttributeDescription      vertexAttributes[4];
+	VkVertexInputAttributeDescription      vertexAttributes[8];
 	uint32_t                               attributeCount;
 	VkPipelineVertexInputStateCreateInfo   vertexInputInfo;
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly;
@@ -2273,7 +2500,15 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	Com_Memset(stages, 0, sizeof(stages));
 	stages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	stages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-	if (vertexSource != VK_VERTS_ARENA)
+	if (vertexSource == VK_VERTS_DIFFUSE)
+	{
+		stages[0].module = vk.sceneDiffuseVertModule;
+	}
+	else if (vertexSource == VK_VERTS_SKIN)
+	{
+		stages[0].module = vk.sceneSkinVertModule;
+	}
+	else if (vertexSource != VK_VERTS_ARENA)
 	{
 		stages[0].module = lightmapped ? vk.sceneLMStaticVertModule : vk.sceneStaticVertModule;
 	}
@@ -2292,7 +2527,49 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	vertexBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 	Com_Memset(vertexAttributes, 0, sizeof(vertexAttributes));
-	if (vertexSource != VK_VERTS_ARENA && !lightmapped)
+	if (vertexSource == VK_VERTS_SKIN)
+	{
+		vertexBinding.stride = sizeof(vkSkinVertex_t);
+
+		vertexAttributes[0].location = 0;
+		vertexAttributes[0].format   = VK_FORMAT_R32G32_SFLOAT;
+		vertexAttributes[0].offset   = offsetof(vkSkinVertex_t, uv);
+		vertexAttributes[1].location = 1;
+		vertexAttributes[1].format   = VK_FORMAT_R32G32B32_SFLOAT;
+		vertexAttributes[1].offset   = offsetof(vkSkinVertex_t, normal);
+		vertexAttributes[2].location = 2;
+		vertexAttributes[2].format   = VK_FORMAT_R8G8B8A8_UINT;
+		vertexAttributes[2].offset   = offsetof(vkSkinVertex_t, bones);
+		vertexAttributes[3].location = 3;
+		vertexAttributes[3].format   = VK_FORMAT_R32G32B32A32_SFLOAT;
+		vertexAttributes[3].offset   = offsetof(vkSkinVertex_t, weights);
+		for (ai = 0; ai < 4; ai++)
+		{
+			vertexAttributes[4 + ai].location = 4 + ai;
+			vertexAttributes[4 + ai].format   = VK_FORMAT_R32G32B32_SFLOAT;
+			vertexAttributes[4 + ai].offset   = offsetof(vkSkinVertex_t, offsets) + ai * 3 * sizeof(float);
+		}
+		attributeCount = 8;
+	}
+	else if (vertexSource == VK_VERTS_DIFFUSE)
+	{
+		vertexBinding.stride = sizeof(vk3DVertexN_t);
+
+		vertexAttributes[0].location = 0;
+		vertexAttributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
+		vertexAttributes[0].offset   = offsetof(vk3DVertexN_t, pos);
+		vertexAttributes[1].location = 1;
+		vertexAttributes[1].format   = VK_FORMAT_R32G32_SFLOAT;
+		vertexAttributes[1].offset   = offsetof(vk3DVertexN_t, uv);
+		vertexAttributes[2].location = 2;
+		vertexAttributes[2].format   = VK_FORMAT_R8G8B8A8_UNORM;
+		vertexAttributes[2].offset   = offsetof(vk3DVertexN_t, color);
+		vertexAttributes[3].location = 3;
+		vertexAttributes[3].format   = VK_FORMAT_R32G32B32_SFLOAT;
+		vertexAttributes[3].offset   = offsetof(vk3DVertexN_t, normal);
+		attributeCount               = 4;
+	}
+	else if (vertexSource != VK_VERTS_ARENA && !lightmapped)
 	{
 		// static world buffer read as single-texture vertices
 		vertexBinding.stride = sizeof(vk3DVertexLM_t);
@@ -2468,9 +2745,10 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	pipelineInfo.pDepthStencilState  = &depthStencil;
 	pipelineInfo.pColorBlendState    = &colorBlending;
 	pipelineInfo.pDynamicState       = &dynamicState;
-	pipelineInfo.layout              = lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout;
-	pipelineInfo.renderPass          = vk.renderPass;
-	pipelineInfo.subpass             = 0;
+	pipelineInfo.layout              = (vertexSource == VK_VERTS_SKIN) ? vk.skinPipelineLayout :
+	                                   (lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout);
+	pipelineInfo.renderPass = vk.renderPass;
+	pipelineInfo.subpass    = 0;
 
 	if (!VK_CheckResult(vkCreateGraphicsPipelines(vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &pipeline), "vkCreateGraphicsPipelines(scene)"))
 	{
@@ -3162,6 +3440,52 @@ void VK_Shutdown(void)
 		{
 			vkDestroyShaderModule(vk.device, vk.sceneLMStaticVertModule, NULL);
 		}
+		if (vk.sceneDiffuseVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneDiffuseVertModule, NULL);
+		}
+		if (vk.sceneSkinVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneSkinVertModule, NULL);
+		}
+
+		// GPU skinning
+		if (vk.skinMapped)
+		{
+			vkUnmapMemory(vk.device, vk.skinMemory);
+		}
+		if (vk.skinBuffer != VK_NULL_HANDLE)
+		{
+			vkDestroyBuffer(vk.device, vk.skinBuffer, NULL);
+		}
+		if (vk.skinMemory != VK_NULL_HANDLE)
+		{
+			vkFreeMemory(vk.device, vk.skinMemory, NULL);
+		}
+		if (vk.boneArenaMapped)
+		{
+			vkUnmapMemory(vk.device, vk.boneArenaMemory);
+		}
+		if (vk.boneArenaBuffer != VK_NULL_HANDLE)
+		{
+			vkDestroyBuffer(vk.device, vk.boneArenaBuffer, NULL);
+		}
+		if (vk.boneArenaMemory != VK_NULL_HANDLE)
+		{
+			vkFreeMemory(vk.device, vk.boneArenaMemory, NULL);
+		}
+		if (vk.bonePool != VK_NULL_HANDLE)
+		{
+			vkDestroyDescriptorPool(vk.device, vk.bonePool, NULL); // frees vk.boneSet
+		}
+		if (vk.skinPipelineLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyPipelineLayout(vk.device, vk.skinPipelineLayout, NULL);
+		}
+		if (vk.boneSetLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyDescriptorSetLayout(vk.device, vk.boneSetLayout, NULL);
+		}
 
 		VK_DestroyStaticWorldBuffer();
 	}
@@ -3461,6 +3785,8 @@ void VK_BeginFrame(void)
 	vk.sceneIndexArenaOffset  = (VkDeviceSize)VK_SCENE_INDEX_ARENA_SIZE * vk.frameIndex;
 	vk.sceneVertexArenaSize   = vk.sceneVertexArenaOffset + VK_SCENE_VERTEX_ARENA_SIZE; // end of region
 	vk.sceneIndexArenaSize    = vk.sceneIndexArenaOffset + VK_SCENE_INDEX_ARENA_SIZE;
+	vk.boneArenaOffset        = (VkDeviceSize)VK_SKIN_BONE_ARENA_SIZE * vk.frameIndex;
+	vk.boneArenaSize          = vk.boneArenaOffset + VK_SKIN_BONE_ARENA_SIZE;
 	VK_ResetBindCache();
 
 	vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX);
@@ -4576,7 +4902,7 @@ static void VK_Draw3DStatic(shaderCommands_t *input, int numIndexes, VkDescripto
 {
 	qboolean   lightmapped = (numSets == 2) ? qtrue : qfalse;
 	int        vertexSource;
-	float      pushConstants[VK_SCENE_PUSH_FLOATS];
+	float      pushConstants[56]; // 48 + colorMul + colorAdd
 	VkPipeline pipeline;
 
 	if (vk.staticWorldBuffer == VK_NULL_HANDLE || numIndexes == 0)
@@ -4613,6 +4939,195 @@ static void VK_Draw3DStatic(shaderCommands_t *input, int numIndexes, VkDescripto
 }
 
 /**
+ * @brief GPU-skinned MDM batch (tess.vkSkin, RB_MDM_SurfaceAnimGPU): the
+ * stage's color for tr3d_skin.vert, in the diffuse lighting slots (48-59)
+ * - rgbGen lightingDiffuse: the entity's lightDir/ambientLight/directedLight,
+ *   as tr3d_diffuse.vert;
+ * - constant rgb (identity, identityLighting, const, entity): lightDir 0,
+ *   so the shader's table lookup yields floor(ambient) = that color.
+ * lightDir.w is the stage's constant alpha, as ComputeColors() would set it
+ * (shader_t::vkSkinnable limits the stages to these cases).
+ */
+static void VK_SkinStageColor(const shaderStage_t *stage, float *pushConstants)
+{
+	const trRefEntity_t *ent    = backEnd.currentEntity;
+	byte                rgba[4] = { 255, 255, 255, 255 };
+	qboolean            diffuse = qfalse;
+	int                 i;
+
+	if (stage)
+	{
+		switch (stage->rgbGen)
+		{
+		case CGEN_LIGHTING_DIFFUSE:
+			diffuse = qtrue; // the light table's alpha is 0xff
+			break;
+		case CGEN_IDENTITY:
+			break;
+		case CGEN_CONST:
+			Com_Memcpy(rgba, stage->constantColor, 4);
+			break;
+		case CGEN_ENTITY:
+			Com_Memcpy(rgba, ent->e.shaderRGBA, 4);
+			break;
+		case CGEN_IDENTITY_LIGHTING:
+		default:
+			rgba[0] = rgba[1] = rgba[2] = rgba[3] = tr.identityLightByte;
+			break;
+		}
+
+		switch (stage->alphaGen)
+		{
+		case AGEN_IDENTITY:
+			rgba[3] = 255;
+			break;
+		case AGEN_CONST:
+			rgba[3] = stage->constantColor[3];
+			break;
+		case AGEN_ENTITY:
+			rgba[3] = ent->e.shaderRGBA[3];
+			break;
+		case AGEN_SKIP:
+		default:
+			break;
+		}
+	}
+
+	for (i = 0; i < 3; i++)
+	{
+		pushConstants[48 + i] = diffuse ? ent->lightDir[i] : 0.0f;
+		pushConstants[52 + i] = diffuse ? ent->ambientLight[i] : (float)rgba[i];
+		pushConstants[56 + i] = diffuse ? ent->directedLight[i] : 0.0f;
+	}
+	pushConstants[51] = rgba[3] / 255.0f;
+	pushConstants[55] = 0.0f;
+	pushConstants[59] = 0.0f;
+}
+
+/**
+ * @brief Draws a GPU-skinned MDM batch (tess.vkSkin): vertices from the skin
+ * buffer, indexes already in the scene index arena, the surface's bones as
+ * set 1 at its dynamic offset in the bone arena.
+ */
+static void VK_Draw3DSkinned(shaderCommands_t *input, VkDescriptorSet descriptorSet, unsigned long stateBits, int cullType)
+{
+	float           pushConstants[VK_SCENE_PUSH_FLOATS];
+	VkPipeline      pipeline;
+	VkDescriptorSet sets[2];
+	uint32_t        boneOffset = input->vkSkinBoneOffset;
+
+	if (vk.skinBuffer == VK_NULL_HANDLE || input->numIndexes == 0)
+	{
+		return;
+	}
+
+	pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), qfalse, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE, VK_VERTS_SKIN);
+	if (pipeline == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	VK_BindPipelineCached(pipeline);
+
+	VK_FillScenePushConstants(pushConstants, stateBits, 0.0f);
+	VK_SkinStageColor(input->vkStage, pushConstants);
+	VK_PushConstantsCached(vk.skinPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
+
+	// set 1 has a dynamic offset: bind both sets directly and make the
+	// next cached bind rebind
+	sets[0] = descriptorSet;
+	sets[1] = vk.boneSet;
+	vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.skinPipelineLayout, 0, 2, sets, 1, &boneOffset);
+	vk.boundSetLayout = VK_NULL_HANDLE;
+	vk.boundSetCount  = 0;
+
+	VK_BindArenaBuffers(vk.skinBuffer, vk.sceneIndexArenaBuffer);
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)input->numIndexes, 1, (uint32_t)input->vkSkinFirstIndex, 0, 0);
+}
+
+/**
+ * @brief rgbGen lightingDiffuse stage (tess.vkDiffuse): like the arena path
+ * of VK_Draw3DIndexes(), but the vertices carry the model-space normal and
+ * tr3d_diffuse.vert computes renderer1's RB_CalcDiffuseColor() from the
+ * current entity's lightDir/ambientLight/directedLight. svars.colors only
+ * supplies alpha (ComputeColors() skipped the rgb).
+ */
+static void VK_Draw3DDiffuse(shaderCommands_t *input, const glIndex_t *indexes, int numIndexes, VkDescriptorSet descriptorSet,
+                             unsigned long stateBits, int cullType)
+{
+	const trRefEntity_t *ent = backEnd.currentEntity;
+	int                 numVertexes = input->numVertexes, i;
+	VkDeviceSize        vertexBytes, indexBytes;
+	vk3DVertexN_t       *dstVerts;
+	float               pushConstants[VK_SCENE_PUSH_FLOATS];
+	VkPipeline          pipeline;
+
+	pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), qfalse, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE, VK_VERTS_DIFFUSE);
+	if (pipeline == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	vk.sceneVertexArenaOffset = VK_ALIGN_UP(vk.sceneVertexArenaOffset, sizeof(vk3DVertexN_t));
+	vertexBytes               = (VkDeviceSize)numVertexes * sizeof(vk3DVertexN_t);
+	indexBytes                = (VkDeviceSize)numIndexes * sizeof(uint32_t);
+
+	if (vk.sceneVertexArenaOffset + vertexBytes > vk.sceneVertexArenaSize ||
+	    vk.sceneIndexArenaOffset + indexBytes > vk.sceneIndexArenaSize)
+	{
+		static int lastWarnFrame = -1;
+
+		if (backEnd.refdef.time != lastWarnFrame)
+		{
+			Ren_Print("Vulkan: VK_Draw3DDiffuse - scene vertex/index arena exhausted this frame, dropping remaining 3D draws\n");
+			lastWarnFrame = backEnd.refdef.time;
+		}
+		return;
+	}
+
+	dstVerts = (vk3DVertexN_t *)((byte *)vk.sceneVertexArenaMapped + vk.sceneVertexArenaOffset);
+	for (i = 0; i < numVertexes; i++)
+	{
+		dstVerts[i].pos[0]    = input->xyz[i][0];
+		dstVerts[i].pos[1]    = input->xyz[i][1];
+		dstVerts[i].pos[2]    = input->xyz[i][2];
+		dstVerts[i].uv[0]     = input->svars.texcoords[0][i][0];
+		dstVerts[i].uv[1]     = input->svars.texcoords[0][i][1];
+		dstVerts[i].color[3]  = input->svars.colors[i][3];
+		dstVerts[i].normal[0] = input->normal[i][0];
+		dstVerts[i].normal[1] = input->normal[i][1];
+		dstVerts[i].normal[2] = input->normal[i][2];
+	}
+
+	Com_Memcpy((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset, indexes, (size_t)indexBytes);
+
+	VK_BindPipelineCached(pipeline);
+
+	VK_FillScenePushConstants(pushConstants, stateBits, 0.0f);
+	pushConstants[48] = ent->lightDir[0];
+	pushConstants[49] = ent->lightDir[1];
+	pushConstants[50] = ent->lightDir[2];
+	pushConstants[51] = 0.0f;
+	pushConstants[52] = ent->ambientLight[0];
+	pushConstants[53] = ent->ambientLight[1];
+	pushConstants[54] = ent->ambientLight[2];
+	pushConstants[55] = 0.0f;
+	pushConstants[56] = ent->directedLight[0];
+	pushConstants[57] = ent->directedLight[1];
+	pushConstants[58] = ent->directedLight[2];
+	pushConstants[59] = 0.0f;
+	VK_PushConstantsCached(vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
+
+	VK_BindDescriptorSetsCached(vk.scenePipelineLayout, 1, &descriptorSet);
+
+	VK_BindArenaBuffers(vk.sceneVertexArenaBuffer, vk.sceneIndexArenaBuffer);
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, (uint32_t)(vk.sceneIndexArenaOffset / sizeof(uint32_t)), (int32_t)(vk.sceneVertexArenaOffset / sizeof(vk3DVertexN_t)), 0);
+
+	vk.sceneVertexArenaOffset += vertexBytes;
+	vk.sceneIndexArenaOffset  += indexBytes;
+}
+
+/**
  * @brief Submits one already-tessellated 3D shader stage
  * batch (single texture) using the lazily-created pipeline variant that
  * matches stateBits/cullType. Vertex data is read from input->xyz,
@@ -4639,7 +5154,7 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 	VkPipeline      pipeline;
 	VkDescriptorSet descriptorSet;
 
-	if (!vk.initialized || !input || (input->numVertexes == 0 && !input->vkStatic) || numIndexes == 0)
+	if (!vk.initialized || !input || (input->numVertexes == 0 && !input->vkStatic && !input->vkSkin) || numIndexes == 0)
 	{
 		return;
 	}
@@ -4653,11 +5168,23 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 		return;
 	}
 
+	if (input->vkSkin)
+	{
+		VK_Draw3DSkinned(input, (VkDescriptorSet)image->vkDescriptorSet, stateBits, cullType);
+		return;
+	}
+
 	if (input->vkStatic)
 	{
 		// always the whole batch: dlit surfaces are never static
 		descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
 		VK_Draw3DStatic(input, input->numIndexes, &descriptorSet, 1, stateBits, cullType);
+		return;
+	}
+
+	if (input->vkDiffuse)
+	{
+		VK_Draw3DDiffuse(input, indexes, numIndexes, (VkDescriptorSet)image->vkDescriptorSet, stateBits, cullType);
 		return;
 	}
 

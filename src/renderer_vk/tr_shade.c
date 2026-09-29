@@ -64,6 +64,8 @@ void RB_BeginSurface(shader_t *shader, int fogNum)
 	tess.fogNum                   = fogNum;
 	tess.dlightBits               = 0; // will be OR'd in by surface functions
 	tess.vkStatic                 = qfalse; // decided by the first surface (RB_SurfaceTriangles)
+	tess.vkDiffuse                = qfalse;
+	tess.vkSkin                   = qfalse;
 	tess.vkStage                  = NULL;
 	tess.xstages                  = state->stages;
 	tess.numPasses                = state->numUnfoggedPasses;
@@ -176,6 +178,25 @@ void SetIteratorFog(void)
 }
 
 /**
+ * @brief Vulkan: true when this rgbGen lightingDiffuse stage's rgb can be
+ * computed in the vertex shader (VK_Draw3DDiffuse) instead of by
+ * RB_CalcDiffuseColor(): a single-texture 3D stage whose rgb nothing on the
+ * CPU changes afterwards - no entity fade, no fog color modulation, no
+ * r_debugShaderSurfaceFlags. alphaGen still runs on the CPU.
+ */
+static qboolean RB_StageGpuDiffuse(const shaderStage_t *pStage)
+{
+	int fadeStart = backEnd.currentEntity->e.fadeStartTime;
+
+	return (r_vkGpuVertex->integer && pStage->rgbGen == CGEN_LIGHTING_DIFFUSE && !pStage->bundle[1].image[0] &&
+	        tess.numVertexes > 0 && !tess.vkStatic && !backEnd.projection2D &&
+	        !(fadeStart && fadeStart <= tr.refdef.time) &&
+	        !(tess.fogNum && !tess.shader->noFog &&
+	          (pStage->adjustColorsForFog == ACFF_MODULATE_RGB || pStage->adjustColorsForFog == ACFF_MODULATE_RGBA)) &&
+	        !r_debugShaderSurfaceFlags->integer) ? qtrue : qfalse;
+}
+
+/**
  * @brief ComputeColors/ComputeTexCoords ported verbatim from renderer1's
  * tr_shade.c (pure CPU math writing into tess.svars; no GL calls).
  */
@@ -192,7 +213,15 @@ static void ComputeColors(shaderStage_t *pStage)
 		Com_Memset(tess.svars.colors, tr.identityLightByte, tess.numVertexes * 4);
 		break;
 	case CGEN_LIGHTING_DIFFUSE:
-		RB_CalcDiffuseColor(( unsigned char * ) tess.svars.colors);
+		if (tess.vkDiffuse)
+		{
+			// rgb comes from the vertex shader; alpha as the light table's
+			Com_Memset(tess.svars.colors, 0xff, tess.numVertexes * 4);
+		}
+		else
+		{
+			RB_CalcDiffuseColor(( unsigned char * ) tess.svars.colors);
+		}
 		break;
 	case CGEN_EXACT_VERTEX:
 		Com_Memcpy(tess.svars.colors, tess.vertexColors, tess.numVertexes * sizeof(tess.vertexColors[0]));
@@ -1109,6 +1138,8 @@ void RB_StageIteratorGeneric(void)
 				break;
 			}
 
+			tess.vkDiffuse = RB_StageGpuDiffuse(pStage);
+
 			ComputeColors(pStage);
 			ComputeTexCoords(pStage);
 
@@ -1175,6 +1206,7 @@ void RB_StageIteratorGeneric(void)
 
 				VK_Draw3D(input, R_GetAnimatedImage(&pStage->bundle[0]), stateBits, cullType);
 			}
+			tess.vkDiffuse = qfalse;
 
 			// allow skipping out to show just lightmaps during development
 			if (r_lightMap->integer && (pStage->bundle[0].isLightmap || pStage->bundle[1].isLightmap))
@@ -1214,7 +1246,15 @@ void RB_StageIteratorVertexLitTexture(void)
 		return;
 	}
 
-	RB_CalcDiffuseColor(( unsigned char * ) tess.svars.colors);
+	tess.vkDiffuse = RB_StageGpuDiffuse(tess.xstages[0]);
+	if (tess.vkDiffuse)
+	{
+		Com_Memset(tess.svars.colors, 0xff, tess.numVertexes * 4); // rgb from the vertex shader
+	}
+	else
+	{
+		RB_CalcDiffuseColor(( unsigned char * ) tess.svars.colors);
+	}
 
 	SetIteratorFog();
 
@@ -1232,7 +1272,9 @@ void RB_StageIteratorVertexLitTexture(void)
 		tess.svars.texcoords[0][i][1] = tess.texCoords[i][0][1];
 	}
 
+	input->vkStage = tess.xstages[0]; // stage colors for GPU-skinned batches
 	VK_Draw3D(input, R_GetAnimatedImage(&tess.xstages[0]->bundle[0]), tess.xstages[0]->stateBits, shader->cullType);
+	tess.vkDiffuse = qfalse;
 
 	RB_DynamicLights();
 	RB_FogPass();
@@ -1338,4 +1380,5 @@ void RB_EndSurface(void)
 	tess.numIndexes  = 0;
 	tess.numVertexes = 0;
 	tess.vkStatic    = qfalse;
+	tess.vkSkin      = qfalse;
 }

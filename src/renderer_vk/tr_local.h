@@ -496,6 +496,7 @@ typedef struct shader_s
 	qboolean entityMergable;            ///< merge across entites optimizable (smoke, blood)
 
 	qboolean vkStatic;                  ///< world surfaces can be drawn from the static world buffer (see ComputeVkStatic)
+	qboolean vkSkinnable;               ///< MDM surfaces can be skinned in the vertex shader (see ComputeVkSkinnable)
 
 	qboolean isSky;
 	skyParms_t sky;
@@ -1257,6 +1258,10 @@ typedef struct model_s
 
 	qhandle_t shadowShader;
 	float shadowParms[6];           ///< x, y, width, height, depth, z offset
+
+	/// MDM: per surface, its first vertex in the Vulkan skin buffer
+	/// (R_LoadMDM), -1 = skinned on the CPU (more than 4 weights, buffer full)
+	int *vkSkinFirstVertex;
 } model_t;
 
 #define MAX_MOD_KNOWN   2048
@@ -1708,6 +1713,17 @@ typedef struct shaderCommands_s
 	/// written once into the frame's scene index arena, starting at this
 	/// index (VK_AllocSceneIndexes); every stage's draw uses that range
 	int vkStaticFirstIndex;
+	/// MDM surface skinned in the vertex shader (one surface per batch, see
+	/// RB_MDM_SurfaceAnimGPU): no tess vertices; numIndexes indexes into the
+	/// skin buffer are in the scene index arena from vkSkinFirstIndex, the
+	/// surface's bones in the bone arena at vkSkinBoneOffset (bytes)
+	qboolean vkSkin;
+	int vkSkinFirstIndex;
+	unsigned int vkSkinBoneOffset;
+	/// the stage being drawn is rgbGen lightingDiffuse computed in the vertex
+	/// shader (VK_Draw3DDiffuse): ComputeColors() left the rgb unset, see
+	/// RB_StageGpuDiffuse()
+	qboolean vkDiffuse;
 	/// stage being drawn (colors for static batches), NULL = constant white
 	shaderStage_t *vkStage;
 } shaderCommands_t;
@@ -1724,7 +1740,23 @@ void RB_EndStaticBatch(void);
 qboolean VK_CreateStaticWorldBuffer(int numVertexes);
 void VK_WriteStaticWorldVertices(int first, const drawVert_t *verts, int count);
 glIndex_t *VK_AllocSceneIndexes(int count, int *firstIndex);
-#define RB_CHECKOVERFLOW(v, i) if (tess.vkStatic) { RB_EndStaticBatch(); } if (tess.numVertexes + (v) >= SHADER_MAX_VERTEXES || tess.numIndexes + (i) >= SHADER_MAX_INDEXES) { RB_CheckOverflow(v, i); }
+
+// Vulkan GPU skinning (vulkan/vk.c): MDM vertices in a skin buffer filled at
+// model load (R_LoadMDM), reset with the models (R_ModelInit); bones are
+// uploaded per batch. Bone indices are local to the surface's bone references.
+typedef struct
+{
+	float uv[2];
+	float normal[3];
+	byte bones[4];
+	float weights[4];
+	float offsets[4][3];
+} vkSkinVertex_t;
+
+void VK_ResetSkinBuffer(void);
+int VK_WriteSkinVertices(const vkSkinVertex_t *verts, int count);
+float *VK_AllocSkinBones(int numBones, unsigned int *offset);
+#define RB_CHECKOVERFLOW(v, i) if (tess.vkStatic || tess.vkSkin) { RB_EndStaticBatch(); } if (tess.numVertexes + (v) >= SHADER_MAX_VERTEXES || tess.numIndexes + (i) >= SHADER_MAX_INDEXES) { RB_CheckOverflow(v, i); }
 
 void RB_StageIteratorGeneric(void);
 void RB_StageIteratorSky(void);

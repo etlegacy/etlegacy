@@ -1716,6 +1716,150 @@ static void R_CalcBones(const refEntity_t *refent, int *boneList, int numBones)
  * @brief RB_MDM_SurfaceAnim
  * @param[in] surface
  */
+/**
+ * @brief Vulkan: the GPU skin buffer's first vertex of this MDM surface
+ * (R_LoadMDMSkinVertices), or -1 if it is skinned on the CPU.
+ */
+static int RB_MDMSkinFirstVertex(const mdmSurface_t *surface, const mdmHeader_t *header)
+{
+	model_t            *mod = R_GetModelByHandle(backEnd.currentEntity->e.hModel);
+	const mdmSurface_t *s;
+	int                i;
+
+	if (!mod || mod->type != MOD_MDM || mod->model.mdm != header || !mod->vkSkinFirstVertex)
+	{
+		return -1;
+	}
+
+	s = (const mdmSurface_t *)((const byte *)header + header->ofsSurfaces);
+	for (i = 0; i < header->numSurfaces; i++, s = (const mdmSurface_t *)((const byte *)s + s->ofsEnd))
+	{
+		if (s == surface)
+		{
+			return mod->vkSkinFirstVertex[i];
+		}
+	}
+
+	return -1;
+}
+
+/**
+ * @brief Vulkan: draws this MDM surface skinned in the vertex shader
+ * (tr3d_skin.vert): uploads its bones (R_CalcBones() has run) and writes
+ * its LOD-collapsed triangle indexes, pointing into the skin buffer, to the
+ * scene index arena; no tess vertices are produced. The surface gets a
+ * batch of its own (its bones), see tess.vkSkin. Needs render_count.
+ * @return qfalse if the surface must be skinned on the CPU: its shader
+ * isn't GPU-skinnable or the batch needs the tess vertices (fog volume,
+ * fading entity, debug views)
+ */
+static qboolean RB_MDM_SurfaceAnimGPU(mdmSurface_t *surface, mdmHeader_t *header, const int *boneList)
+{
+	int       firstVertex, firstIndex, numIndexes, i;
+	int       fadeStart = backEnd.currentEntity->e.fadeStartTime;
+	float     *dst;
+	glIndex_t *pIdx;
+	const int *tri;
+
+	if (!r_vkGpuVertex->integer || !tess.shader->vkSkinnable || tess.fogNum || backEnd.projection2D ||
+	    (fadeStart && fadeStart <= tr.refdef.time) ||
+	    r_bonesDebug->integer || r_showTris->integer || r_showNormals->integer || r_debugShaderSurfaceFlags->integer)
+	{
+		if (tess.vkSkin)
+		{
+			RB_EndStaticBatch(); // a CPU-skinned surface can't join a GPU-skinned batch
+		}
+		return qfalse;
+	}
+
+	firstVertex = RB_MDMSkinFirstVertex(surface, header);
+	if (firstVertex < 0)
+	{
+		if (tess.vkSkin)
+		{
+			RB_EndStaticBatch();
+		}
+		return qfalse;
+	}
+
+	// one surface per GPU-skinned batch: its bones
+	if (tess.numIndexes || tess.numVertexes)
+	{
+		RB_EndStaticBatch();
+	}
+	tess.vkSkin = qtrue;
+
+	dst  = VK_AllocSkinBones(surface->numBoneReferences, &tess.vkSkinBoneOffset);
+	pIdx = VK_AllocSceneIndexes(surface->numTriangles * 3, &firstIndex);
+	if (!dst || !pIdx)
+	{
+		return qtrue; // arena full this frame (reported there): drop the surface
+	}
+
+	// bone rows as in LocalAddScaledMatrixTransformVectorTranslate():
+	// row r = (matrix[r][0..2], translation[r])
+	for (i = 0; i < surface->numBoneReferences; i++, dst += 12)
+	{
+		const mdxBoneFrame_t *b = &bones[boneList[i]];
+		int                  r;
+
+		for (r = 0; r < 3; r++)
+		{
+			dst[r * 4 + 0] = b->matrix[r][0];
+			dst[r * 4 + 1] = b->matrix[r][1];
+			dst[r * 4 + 2] = b->matrix[r][2];
+			dst[r * 4 + 3] = b->translation[r];
+		}
+	}
+
+	// triangle list, as the CPU path below (LOD collapse)
+	tri        = (const int *)((const byte *)surface + surface->ofsTriangles);
+	numIndexes = 0;
+	if (render_count == surface->numVerts)
+	{
+		for (i = 0; i < surface->numTriangles * 3; i++)
+		{
+			pIdx[i] = firstVertex + tri[i];
+		}
+		numIndexes = surface->numTriangles * 3;
+	}
+	else
+	{
+		const int *cmap = (const int *)((const byte *)surface + surface->ofsCollapseMap);
+		int       p0, p1, p2;
+
+		for (i = 0; i < render_count; i++)
+		{
+			collapse[i] = i;
+		}
+		for (; i < surface->numVerts; i++)
+		{
+			collapse[i] = collapse[cmap[i]];
+		}
+
+		for (i = 0; i < surface->numTriangles * 3; i += 3)
+		{
+			p0 = collapse[tri[i]];
+			p1 = collapse[tri[i + 1]];
+			p2 = collapse[tri[i + 2]];
+
+			if (p0 == p1 || p1 == p2 || p2 == p0)
+			{
+				continue;
+			}
+
+			pIdx[numIndexes++] = firstVertex + p0;
+			pIdx[numIndexes++] = firstVertex + p1;
+			pIdx[numIndexes++] = firstVertex + p2;
+		}
+	}
+
+	tess.vkSkinFirstIndex = firstIndex;
+	tess.numIndexes       = numIndexes;
+
+	return qtrue;
+}
+
 void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 {
 	int         j, k;
@@ -1774,6 +1918,11 @@ void RB_MDM_SurfaceAnim(mdmSurface_t *surface)
 
 	// to profile bone transform performance only
 	if (r_bonesDebug->integer == 10)
+	{
+		return;
+	}
+
+	if (RB_MDM_SurfaceAnimGPU(surface, header, boneList))
 	{
 		return;
 	}

@@ -53,7 +53,7 @@
  */
 void RB_CheckOverflow(int verts, int indexes)
 {
-	if (tess.vkStatic)
+	if (tess.vkStatic || tess.vkSkin)
 	{
 		RB_EndStaticBatch();
 	}
