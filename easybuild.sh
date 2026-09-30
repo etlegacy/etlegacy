@@ -417,11 +417,9 @@ parse_commandline() {
             FEATURE_RENDERER2=0
             INSTALL_EXTRA=0
             BUNDLED_OPENSSL=0
-            FEATURE_OPENSSL=0
             BUILD_MOD_PK3=0
             BUNDLED_THEORA=0
             FEATURE_THEORA=0
-            BUNDLED_OPANAL=0
             FEATURE_OPENAL=0
             BUNDLED_WOLFSSL=0
             FEATURE_SSL=1
