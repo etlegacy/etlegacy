@@ -216,12 +216,14 @@ static void DL_cb_Success(emscripten_fetch_t *fetch)
 		}
 	}
 
+	/* *INDENT-OFF* */
 	EM_ASM({
 		if (typeof window.syncFiles === 'function')
 		{
 			window.syncFiles();
 		}
 	});
+	/* *INDENT-ON* */
 
 	DL_FreeRequest(request);
 }
