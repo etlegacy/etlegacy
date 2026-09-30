@@ -370,14 +370,56 @@ void RB_EndStaticBatch(void)
 }
 
 /**
+ * @brief Vulkan: true if a static batch can take a surface lit by dlightBits:
+ * either renderer1 draws no dlight pass for it, or the pass can be folded
+ * into the static draw (tr3d_lm_static_dlight.vert / tr3d_lm_dlight.frag):
+ * lightmapped multitexture iterator, ball dlights only, at most 4 lights in
+ * the batch with one pass per light (r_dynamicLight 2).
+ */
+static qboolean RB_StaticDlightsOk(int dlightBits)
+{
+	int bits, l, n;
+
+	if (!RB_ShaderTakesDlights(dlightBits))
+	{
+		return qtrue; // no dlight pass to fold
+	}
+
+	// the folded pass is written for the opaque single-draw lightmapped
+	// iterator (tr3d_lm_dlight.frag multiplies its result)
+	if (!r_vkGpuVertex->integer || tess.currentStageIteratorFunc != RB_StageIteratorLightmappedMultitexture)
+	{
+		return qfalse;
+	}
+
+	bits = dlightBits | (tess.vkStatic ? tess.dlightBits : 0);
+	for (l = 0, n = 0; l < backEnd.refdef.num_dlights; l++)
+	{
+		if (bits & (1 << l))
+		{
+			// directed dlights need vertex normals, the static buffer has none
+			if (backEnd.refdef.dlights[l].flags & REF_DIRECTED_DLIGHT)
+			{
+				return qfalse;
+			}
+			n++;
+		}
+	}
+
+	// r_dynamicLight 2 draws one pass per light: the shaders fold up to 4
+	return (r_dynamicLight->integer != 2 || n <= 4) ? qtrue : qfalse;
+}
+
+/**
  * @brief Vulkan: true when this triangle surface can be drawn from the
  * static world buffer in the current batch: the shader's stages are static
  * (shader_t::vkStatic) and nothing needs the tessellated vertices - no fog
- * volume or dlight pass, no fading entity, no debug view.
+ * volume, no dlight pass that can't be folded (RB_StaticDlightsOk), no
+ * fading entity, no debug view.
  */
 static qboolean RB_SurfaceCanBeStatic(const srfTriangles_t *srf)
 {
-	return (srf->vkFirstVertex >= 0 && !srf->dlightBits && tess.shader->vkStatic && !tess.fogNum &&
+	return (srf->vkFirstVertex >= 0 && RB_StaticDlightsOk(srf->dlightBits) && tess.shader->vkStatic && !tess.fogNum &&
 	        r_vkStaticWorld->integer && !backEnd.projection2D && !backEnd.currentEntity->e.fadeStartTime &&
 	        !r_showTris->integer && !r_showNormals->integer && !r_debugShaderSurfaceFlags->integer) ? qtrue : qfalse;
 }
@@ -435,6 +477,8 @@ static qboolean RB_SurfaceTrianglesStatic(srfTriangles_t *srf)
 	{
 		tess.vkStaticFirstIndex = first;
 	}
+
+	tess.dlightBits |= srf->dlightBits;
 
 	base = srf->vkFirstVertex;
 	for (i = 0; i < srf->numIndexes; i++)

@@ -55,6 +55,8 @@
 #include "tr3d_static.vert.glsl.h"
 #include "tr3d_diffuse.vert.glsl.h"
 #include "tr3d_skin.vert.glsl.h"
+#include "tr3d_lm_static_dlight.vert.glsl.h"
+#include "tr3d_lm_dlight.frag.glsl.h"
 #include "tr3d_lm_static.vert.glsl.h"
 #include "gamma.vert.glsl.h"
 #include "gamma.frag.glsl.h"
@@ -89,6 +91,7 @@
 #define VK_VERTS_STATIC_LIGHTMAP  2 // static buffer, single texture; uv = lightmap coords
 #define VK_VERTS_DIFFUSE          3 // arena, single texture, vk3DVertexN_t: rgb from entity lighting (tr3d_diffuse.vert)
 #define VK_VERTS_SKIN             4 // skin buffer (vkSkinVertex_t), MDM skinned in tr3d_skin.vert, bones in set 1
+#define VK_VERTS_STATIC_DLIGHT    5 // static buffer, lightmapped, dlight pass folded in (dlights in set 2)
 
 // GPU skinning (VK_VERTS_SKIN): the skin vertex buffer holds every loaded MDM
 // surface (reset with the models), the bone arena one surface's bones per
@@ -378,6 +381,11 @@ typedef struct
 	VkDescriptorSet boneSet;
 	VkPipelineLayout skinPipelineLayout;                   // set 0 texture, set 1 bones
 	VkShaderModule sceneSkinVertModule;
+	// static lightmapped batches with the dlight pass folded in
+	// (VK_VERTS_STATIC_DLIGHT): set 0 base, 1 lightmap, 2 dlights (boneSet)
+	VkPipelineLayout staticDlightPipelineLayout;
+	VkShaderModule sceneLMStaticDlightVertModule;
+	VkShaderModule sceneLMDlightFragModule;
 
 	qboolean initialized;
 	uint32_t currentImageIndex;
@@ -2232,23 +2240,23 @@ int VK_WriteSkinVertices(const vkSkinVertex_t *verts, int count)
 }
 
 /**
- * @brief Reserves numBones bones (12 floats each: 3 rows of matrix +
- * translation) in this frame's bone arena for one GPU-skinned batch.
+ * @brief Reserves bytes of this frame's uniform arena (the bone arena: GPU
+ * skinning bones, folded dlights), read through vk.boneSet at a dynamic
+ * offset. Blocks must fit VK_SKIN_MAX_BONES bones (the descriptor's range).
  * @param[out] offset dynamic offset of the block (bytes)
  * @return write pointer, or NULL if the arena is exhausted this frame
  */
-float *VK_AllocSkinBones(int numBones, unsigned int *offset)
+static float *VK_AllocUniforms(VkDeviceSize bytes, unsigned int *offset)
 {
 	VkDeviceSize start = ((vk.boneArenaOffset + vk.uboAlignment - 1) / vk.uboAlignment) * vk.uboAlignment;
-	VkDeviceSize bytes = (VkDeviceSize)numBones * VK_SKIN_BONE_BYTES;
 
-	if (!vk.initialized || numBones > VK_SKIN_MAX_BONES || start + bytes > vk.boneArenaSize)
+	if (!vk.initialized || start + bytes > vk.boneArenaSize)
 	{
 		static int lastWarnFrame = -1;
 
 		if (vk.initialized && backEnd.refdef.time != lastWarnFrame)
 		{
-			Ren_Print("Vulkan: VK_AllocSkinBones - bone arena exhausted this frame, dropping GPU-skinned surfaces\n");
+			Ren_Print("Vulkan: VK_AllocUniforms - uniform arena exhausted this frame, dropping draws\n");
 			lastWarnFrame = backEnd.refdef.time;
 		}
 		return NULL;
@@ -2258,6 +2266,22 @@ float *VK_AllocSkinBones(int numBones, unsigned int *offset)
 	vk.boneArenaOffset = start + bytes;
 
 	return (float *)((byte *)vk.boneArenaMapped + start);
+}
+
+/**
+ * @brief Reserves numBones bones (12 floats each: 3 rows of matrix +
+ * translation) in this frame's bone arena for one GPU-skinned batch.
+ * @param[out] offset dynamic offset of the block (bytes)
+ * @return write pointer, or NULL if the arena is exhausted this frame
+ */
+float *VK_AllocSkinBones(int numBones, unsigned int *offset)
+{
+	if (numBones > VK_SKIN_MAX_BONES)
+	{
+		return NULL;
+	}
+
+	return VK_AllocUniforms((VkDeviceSize)numBones * VK_SKIN_BONE_BYTES, offset);
 }
 
 static qboolean VK_CreateSceneArenaBuffers(void)
@@ -2430,10 +2454,14 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 	vk.sceneDiffuseVertModule  = VK_CreateShaderModule(tr3d_diffuse_vert_spv, tr3d_diffuse_vert_spv_SIZE);
 	vk.sceneSkinVertModule     = VK_CreateShaderModule(tr3d_skin_vert_spv, tr3d_skin_vert_spv_SIZE);
 
+	vk.sceneLMStaticDlightVertModule = VK_CreateShaderModule(tr3d_lm_static_dlight_vert_spv, tr3d_lm_static_dlight_vert_spv_SIZE);
+	vk.sceneLMDlightFragModule       = VK_CreateShaderModule(tr3d_lm_dlight_frag_spv, tr3d_lm_dlight_frag_spv_SIZE);
+
 	if (vk.sceneVertModule == VK_NULL_HANDLE || vk.sceneFragModule == VK_NULL_HANDLE ||
 	    vk.sceneLMVertModule == VK_NULL_HANDLE || vk.sceneLMFragModule == VK_NULL_HANDLE ||
 	    vk.sceneStaticVertModule == VK_NULL_HANDLE || vk.sceneLMStaticVertModule == VK_NULL_HANDLE ||
-	    vk.sceneDiffuseVertModule == VK_NULL_HANDLE || vk.sceneSkinVertModule == VK_NULL_HANDLE)
+	    vk.sceneDiffuseVertModule == VK_NULL_HANDLE || vk.sceneSkinVertModule == VK_NULL_HANDLE ||
+	    vk.sceneLMStaticDlightVertModule == VK_NULL_HANDLE || vk.sceneLMDlightFragModule == VK_NULL_HANDLE)
 	{
 		return qfalse;
 	}
@@ -2465,6 +2493,23 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 		if (!VK_CheckResult(vkCreatePipelineLayout(vk.device, &layoutInfo, NULL, &vk.skinPipelineLayout), "vkCreatePipelineLayout(skin)"))
 		{
 			return qfalse;
+		}
+
+		// folded dlights: base, lightmap, then the same dynamic uniform set
+		{
+			VkDescriptorSetLayout threeSetLayouts[3];
+
+			threeSetLayouts[0] = vk.uiDescriptorSetLayout;
+			threeSetLayouts[1] = vk.uiDescriptorSetLayout;
+			threeSetLayouts[2] = vk.boneSetLayout;
+
+			layoutInfo.setLayoutCount = 3;
+			layoutInfo.pSetLayouts    = threeSetLayouts;
+
+			if (!VK_CheckResult(vkCreatePipelineLayout(vk.device, &layoutInfo, NULL, &vk.staticDlightPipelineLayout), "vkCreatePipelineLayout(static dlight)"))
+			{
+				return qfalse;
+			}
 		}
 	}
 
@@ -2508,6 +2553,10 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	{
 		stages[0].module = vk.sceneSkinVertModule;
 	}
+	else if (vertexSource == VK_VERTS_STATIC_DLIGHT)
+	{
+		stages[0].module = vk.sceneLMStaticDlightVertModule;
+	}
 	else if (vertexSource != VK_VERTS_ARENA)
 	{
 		stages[0].module = lightmapped ? vk.sceneLMStaticVertModule : vk.sceneStaticVertModule;
@@ -2519,8 +2568,9 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	stages[0].pName  = "main";
 	stages[1].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	stages[1].stage  = VK_SHADER_STAGE_FRAGMENT_BIT;
-	stages[1].module = lightmapped ? vk.sceneLMFragModule : vk.sceneFragModule;
-	stages[1].pName  = "main";
+	stages[1].module = (vertexSource == VK_VERTS_STATIC_DLIGHT) ? vk.sceneLMDlightFragModule :
+	                   (lightmapped ? vk.sceneLMFragModule : vk.sceneFragModule);
+	stages[1].pName = "main";
 
 	Com_Memset(&vertexBinding, 0, sizeof(vertexBinding));
 	vertexBinding.binding   = 0;
@@ -2746,6 +2796,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	pipelineInfo.pColorBlendState    = &colorBlending;
 	pipelineInfo.pDynamicState       = &dynamicState;
 	pipelineInfo.layout              = (vertexSource == VK_VERTS_SKIN) ? vk.skinPipelineLayout :
+	                                   (vertexSource == VK_VERTS_STATIC_DLIGHT) ? vk.staticDlightPipelineLayout :
 	                                   (lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout);
 	pipelineInfo.renderPass = vk.renderPass;
 	pipelineInfo.subpass    = 0;
@@ -3481,6 +3532,18 @@ void VK_Shutdown(void)
 		if (vk.skinPipelineLayout != VK_NULL_HANDLE)
 		{
 			vkDestroyPipelineLayout(vk.device, vk.skinPipelineLayout, NULL);
+		}
+		if (vk.staticDlightPipelineLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyPipelineLayout(vk.device, vk.staticDlightPipelineLayout, NULL);
+		}
+		if (vk.sceneLMStaticDlightVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneLMStaticDlightVertModule, NULL);
+		}
+		if (vk.sceneLMDlightFragModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneLMDlightFragModule, NULL);
 		}
 		if (vk.boneSetLayout != VK_NULL_HANDLE)
 		{
@@ -4900,10 +4963,12 @@ glIndex_t *VK_AllocSceneIndexes(int count, int *firstIndex)
 static void VK_Draw3DStatic(shaderCommands_t *input, int numIndexes, VkDescriptorSet *sets, int numSets,
                             unsigned long stateBits, int cullType)
 {
-	qboolean   lightmapped = (numSets == 2) ? qtrue : qfalse;
-	int        vertexSource;
-	float      pushConstants[56]; // 48 + colorMul + colorAdd
-	VkPipeline pipeline;
+	qboolean         lightmapped = (numSets == 2) ? qtrue : qfalse;
+	int              vertexSource;
+	float            pushConstants[56]; // 48 + colorMul + colorAdd
+	VkPipeline       pipeline;
+	VkPipelineLayout layout;
+	unsigned int     dlightOffset = 0;
 
 	if (vk.staticWorldBuffer == VK_NULL_HANDLE || numIndexes == 0)
 	{
@@ -4918,6 +4983,59 @@ static void VK_Draw3DStatic(shaderCommands_t *input, int numIndexes, VkDescripto
 	{
 		vertexSource = VK_VERTS_STATIC;
 	}
+	layout = lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout;
+
+	// dlit lightmapped batch (RB_StaticDlightsOk): fold renderer1's dlight
+	// pass into this draw. The block lists the batch's dlights (origins in
+	// the current entity's space, R_TransformDlights) for the vertex shader.
+	if (lightmapped && RB_ShaderTakesDlights(input->dlightBits))
+	{
+		float *dst;
+		int   l, count = 0;
+
+		for (l = 0; l < backEnd.refdef.num_dlights; l++)
+		{
+			if (input->dlightBits & (1 << l))
+			{
+				count++;
+			}
+		}
+
+		dst = VK_AllocUniforms((VkDeviceSize)(4 + count * 12) * sizeof(float), &dlightOffset);
+		if (!dst)
+		{
+			return;
+		}
+
+		dst[0] = (float)count;
+		dst[1] = (r_dynamicLight->integer == 2) ? 2.0f : 1.0f;
+		dst[2] = dst[3] = 0.0f;
+		dst   += 4;
+		for (l = 0; l < backEnd.refdef.num_dlights; l++)
+		{
+			const dlight_t *dl = &backEnd.refdef.dlights[l];
+
+			if (!(input->dlightBits & (1 << l)))
+			{
+				continue;
+			}
+
+			dst[0] = dl->transformed[0];
+			dst[1] = dl->transformed[1];
+			dst[2] = dl->transformed[2];
+			dst[3] = dl->radius;
+			dst[4] = dl->color[0] * 255.0f;
+			dst[5] = dl->color[1] * 255.0f;
+			dst[6] = dl->color[2] * 255.0f;
+			dst[7] = dl->intensity;
+			dst[8] = dl->radiusInverseCubed;
+			dst[9] = dst[10] = dst[11] = 0.0f;
+			dst   += 12;
+		}
+
+		vertexSource = VK_VERTS_STATIC_DLIGHT;
+		layout       = vk.staticDlightPipelineLayout;
+	}
 
 	pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), lightmapped, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE, vertexSource);
 	if (pipeline == VK_NULL_HANDLE)
@@ -4929,10 +5047,24 @@ static void VK_Draw3DStatic(shaderCommands_t *input, int numIndexes, VkDescripto
 
 	VK_FillScenePushConstants(pushConstants, stateBits, lightmapped ? VK_MultitextureEnvMode(input) : 0.0f);
 	VK_StaticStageColor(input->vkStage, pushConstants + 48, pushConstants + 52);
-	VK_PushConstantsCached(lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-	                       pushConstants, sizeof(pushConstants));
+	VK_PushConstantsCached(layout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
 
-	VK_BindDescriptorSetsCached(lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout, numSets, sets);
+	if (vertexSource == VK_VERTS_STATIC_DLIGHT)
+	{
+		VkDescriptorSet dlSets[3];
+
+		// set 2 has a dynamic offset: bind directly, the next cached bind rebinds
+		dlSets[0] = sets[0];
+		dlSets[1] = sets[1];
+		dlSets[2] = vk.boneSet;
+		vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, layout, 0, 3, dlSets, 1, &dlightOffset);
+		vk.boundSetLayout = VK_NULL_HANDLE;
+		vk.boundSetCount  = 0;
+	}
+	else
+	{
+		VK_BindDescriptorSetsCached(layout, numSets, sets);
+	}
 
 	VK_BindArenaBuffers(vk.staticWorldBuffer, vk.sceneIndexArenaBuffer);
 	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, (uint32_t)input->vkStaticFirstIndex, 0, 0);
