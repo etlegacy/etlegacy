@@ -370,7 +370,7 @@ jobs:
             +if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)
                 find_program(MAKE NAMES make gmake mingw32-make REQUIRED)
              endif()
-            
+
             @@ -139,7 +139,7 @@ function(etl_setup_cmake_args _list)
                 endif()
              
@@ -404,7 +404,18 @@ jobs:
   # This step also generates the final packages for 32 bit lnx.
   mod-merger:
     runs-on: ubuntu-24.04
-    needs: [ pre-build, lnx64-mod, lnx32-mod, osx-mod, win-mod, win64-mod, lnx-aarch64-mod, android-mod, emscripten-mod ]
+    needs:
+      [
+        pre-build,
+        lnx64-mod,
+        lnx32-mod,
+        osx-mod,
+        win-mod,
+        win64-mod,
+        lnx-aarch64-mod,
+        android-mod,
+        emscripten-mod,
+      ]
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -462,7 +473,7 @@ jobs:
   # Generate the final packages for Lnx, macOS, Windows and Android
   lnx64:
     runs-on: ubuntu-24.04
-    needs: [ pre-build, mod-merger ]
+    needs: [pre-build, mod-merger]
     env:
       CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
       CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
@@ -809,7 +820,7 @@ jobs:
       CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
       CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
       CI_ETL_UID: ${{needs.pre-build.outputs.uid}}
-    needs: [ pre-build, mod-merger ]
+    needs: [pre-build, mod-merger]
     container:
       image: etlegacy/android-build
     steps:
@@ -904,7 +915,7 @@ jobs:
             +if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)
                 find_program(MAKE NAMES make gmake mingw32-make REQUIRED)
              endif()
-            
+
             @@ -139,7 +139,7 @@ function(etl_setup_cmake_args _list)
                 endif()
              
@@ -1031,7 +1042,8 @@ jobs:
 
   upload:
     runs-on: ubuntu-24.04
-    needs: [pre-build, sign, lnx32, lnx64, osx, lnx-aarch64, android, emscripten]
+    needs:
+      [pre-build, sign, lnx32, lnx64, osx, lnx-aarch64, android, emscripten]
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: geekyeggo/delete-artifact@v4
