@@ -363,22 +363,22 @@ jobs:
             --- a/CMakeLists.txt
             +++ b/CMakeLists.txt
             @@ -6,7 +6,7 @@ set(LIBS_DOWNLOAD_DIR ${PROJECT_BINARY_DIR}/downloads/pgk)
-            set(LIBS_DOWNLOAD_SRC_DIR ${PROJECT_BINARY_DIR}/downloads/src)
+             set(LIBS_DOWNLOAD_SRC_DIR ${PROJECT_BINARY_DIR}/downloads/src)
             
-            # keep this check in sync with the external libs build commands
+             # keep this check in sync with the external libs build commands
             -if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))
             +if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)
-               find_program(MAKE NAMES make gmake mingw32-make REQUIRED)
-            endif()
+                find_program(MAKE NAMES make gmake mingw32-make REQUIRED)
+             endif()
             
             @@ -139,7 +139,7 @@ function(etl_setup_cmake_args _list)
-               endif()
-           
-               # NOTE: set the CMAKE_POSITION_INDEPENDENT_CODE flag for all bundled libs (-fPIC) on 64 bit
-            -    if (ETL_64BITS)
-            +    if (ETL_64BITS OR EMSCRIPTEN)
-                   list(APPEND ${_list} -DCMAKE_POSITION_INDEPENDENT_CODE=ON)
-               endif()
+                endif()
+            
+                # NOTE: set the CMAKE_POSITION_INDEPENDENT_CODE flag for all bundled libs (-fPIC) on 64 bit
+            -      if (ETL_64BITS)
+            +      if (ETL_64BITS OR EMSCRIPTEN)
+                    list(APPEND ${_list} -DCMAKE_POSITION_INDEPENDENT_CODE=ON)
+                endif()
             EOF
             ./easybuild.sh build -emscripten -ninja -mod
 
@@ -897,22 +897,22 @@ jobs:
             --- a/CMakeLists.txt
             +++ b/CMakeLists.txt
             @@ -6,7 +6,7 @@ set(LIBS_DOWNLOAD_DIR ${PROJECT_BINARY_DIR}/downloads/pgk)
-            set(LIBS_DOWNLOAD_SRC_DIR ${PROJECT_BINARY_DIR}/downloads/src)
+             set(LIBS_DOWNLOAD_SRC_DIR ${PROJECT_BINARY_DIR}/downloads/src)
             
-            # keep this check in sync with the external libs build commands
+             # keep this check in sync with the external libs build commands
             -if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))
             +if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)
-               find_program(MAKE NAMES make gmake mingw32-make REQUIRED)
-            endif()
+                find_program(MAKE NAMES make gmake mingw32-make REQUIRED)
+             endif()
             
             @@ -139,7 +139,7 @@ function(etl_setup_cmake_args _list)
-               endif()
-           
-               # NOTE: set the CMAKE_POSITION_INDEPENDENT_CODE flag for all bundled libs (-fPIC) on 64 bit
-            -    if (ETL_64BITS)
-            +    if (ETL_64BITS OR EMSCRIPTEN)
-                   list(APPEND ${_list} -DCMAKE_POSITION_INDEPENDENT_CODE=ON)
-               endif()
+                endif()
+            
+                # NOTE: set the CMAKE_POSITION_INDEPENDENT_CODE flag for all bundled libs (-fPIC) on 64 bit
+            -      if (ETL_64BITS)
+            +      if (ETL_64BITS OR EMSCRIPTEN)
+                    list(APPEND ${_list} -DCMAKE_POSITION_INDEPENDENT_CODE=ON)
+                endif()
             EOF
             ./easybuild.sh build -emscripten -ninja
 
