@@ -168,7 +168,7 @@ static void DL_InitDownload(void)
 
 	Com_Printf("Client download subsystem initialized (Emscripten Fetch)\n");
 	webSys.initialized = qtrue;
-	webSys.abort        = qfalse;
+	webSys.abort       = qfalse;
 }
 
 static void DL_cb_Success(emscripten_fetch_t *fetch)
@@ -289,7 +289,7 @@ static void DL_cb_Progress(emscripten_fetch_t *fetch)
  */
 unsigned int DL_BeginDownload(const char *localName, const char *remoteName, void *userData, webCallbackFunc_t complete, webProgressCallbackFunc_t progress)
 {
-	webRequest_t         *request;
+	webRequest_t            *request;
 	emscripten_fetch_attr_t attr;
 
 	if (DL_GetRequestById(FILE_DOWNLOAD_ID))
@@ -331,11 +331,11 @@ unsigned int DL_BeginDownload(const char *localName, const char *remoteName, voi
 
 	emscripten_fetch_attr_init(&attr);
 	Q_strncpyz(attr.requestMethod, "GET", sizeof(attr.requestMethod));
-	attr.attributes  = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
-	attr.onsuccess   = DL_cb_Success;
-	attr.onerror     = DL_cb_Error;
-	attr.onprogress  = DL_cb_Progress;
-	attr.userData    = (void *)request;
+	attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
+	attr.onsuccess  = DL_cb_Success;
+	attr.onerror    = DL_cb_Error;
+	attr.onprogress = DL_cb_Progress;
+	attr.userData   = (void *)request;
 
 	Cvar_Set("cl_downloadName", remoteName);
 
@@ -383,7 +383,7 @@ void DL_AbortAll(qboolean block, qboolean allowContinue)
 	while (req)
 	{
 		req->abort = qtrue;
-		req = req->next;
+		req        = req->next;
 	}
 
 	if (!webSys.requests && allowContinue)

@@ -36,7 +36,7 @@
 
 extern displayContextDef_t *DC;
 
-qboolean  bg_loadscreeninited = qfalse;
+qboolean bg_loadscreeninited = qfalse;
 #ifdef __EMSCRIPTEN__
 static qboolean bg_loadPanelOffsetApplied = qfalse;
 #endif

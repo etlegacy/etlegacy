@@ -1010,9 +1010,9 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 	}
 
 #ifdef __EMSCRIPTEN__
-	dllEntry    = (void(QDECL *)(intptr_t(QDECL *)(intptr_t *)))Sys_LoadFunction(libHandle, "dllEntry");
+	dllEntry = (void(QDECL *)(intptr_t(QDECL *)(intptr_t *)))Sys_LoadFunction(libHandle, "dllEntry");
 #else
-	dllEntry    = (void(QDECL *)(intptr_t(QDECL *)(intptr_t, ...)))Sys_LoadFunction(libHandle, "dllEntry");
+	dllEntry = (void(QDECL *)(intptr_t(QDECL *)(intptr_t, ...)))Sys_LoadFunction(libHandle, "dllEntry");
 #endif
 	*entryPoint = (VM_EntryPoint_t)Sys_LoadFunction(libHandle, "vmMain");
 
@@ -1333,7 +1333,7 @@ static int Sys_GameLoop(void)
 		// Improve input responsiveness by moving sampling to other side of framerate limiter - moved to Com_Frame()
 		//IN_Frame();
 #ifdef __EMSCRIPTEN__
-		emscripten_set_main_loop( Com_Frame, 0, 1 );
+		emscripten_set_main_loop(Com_Frame, 0, 1);
 #else
 		Com_Frame();
 #endif

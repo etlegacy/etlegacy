@@ -351,7 +351,7 @@ CON_Input
 char *CON_Input(void)
 {
 #ifdef __EMSCRIPTEN__
-    return NULL;
+	return NULL;
 #endif
 	// we use this when sending back commands
 	static char text[MAX_EDIT_LINE];

@@ -61,7 +61,7 @@ static qboolean gl4es_initialized = qfalse;
 
 static void *GLimp_GL4ES_GetProcAddress(const char *name)
 {
-        return SDL_GL_GetProcAddress(name);
+	return SDL_GL_GetProcAddress(name);
 }
 #endif
 
@@ -419,9 +419,9 @@ static void GLimp_InitCvars(void)
 
 	// Window cvars
 #ifdef __EMSCRIPTEN__
-	r_fullscreen     = Cvar_Get("r_fullscreen", "0", CVAR_ROM);
+	r_fullscreen = Cvar_Get("r_fullscreen", "0", CVAR_ROM);
 #else
-	r_fullscreen     = Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
+	r_fullscreen = Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
 #endif
 	r_noBorder       = Cvar_Get("r_noborder", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
 	r_centerWindow   = Cvar_Get("r_centerWindow", "0", CVAR_ARCHIVE | CVAR_LATCH);
@@ -438,7 +438,7 @@ static void GLimp_InitCvars(void)
 	r_stencilbits = Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
 	r_depthbits   = Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
 	Cvar_CheckRange(r_depthbits, 0, 24, qtrue);
-	r_colorbits     = Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
+	r_colorbits = Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
 #ifdef __EMSCRIPTEN__
 	r_ignorehwgamma = Cvar_Get("r_ignorehwgamma", "1", CVAR_ROM);
 #else
@@ -1085,7 +1085,7 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		}
 
 #ifdef __EMSCRIPTEN__
-		if(!gl4es_initialized)
+		if (!gl4es_initialized)
 		{
 			set_getprocaddress(GLimp_GL4ES_GetProcAddress);
 			initialize_gl4es();

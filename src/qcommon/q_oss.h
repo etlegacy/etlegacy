@@ -102,8 +102,8 @@ typedef enum
 #ifdef Q_OSS_STR_INC
 // This must be kept in sync with the oss_t enum above
 const char *oss_str[] = {
-	"win_x86",         "lnx_x86",     "lnx_x86_64",   "macos_x86_64",
-	"android_aarch64", "lnx_armv7",   "lnx_armv8_64", "macos_aarch64",
+	"win_x86",         "lnx_x86",     "lnx_x86_64",     "macos_x86_64",
+	"android_aarch64", "lnx_armv7",   "lnx_armv8_64",   "macos_aarch64",
 	"win_x86_64",      "android_x86", "android_x86_64", "emscripten"
 };
 
