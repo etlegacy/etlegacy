@@ -1734,6 +1734,7 @@ void RB_BeginSurface(shader_t *shader, int fogNum);
 void RB_EndSurface(void);
 void RB_CheckOverflow(int verts, int indexes);
 void RB_EndStaticBatch(void);
+qboolean RB_ShaderTakesDlights(int dlightBits);
 
 // Vulkan static world geometry (vulkan/vk.c): per-map vertex buffer that
 // static batches (tess.vkStatic) index into, filled by R_LoadStaticWorldVertices()

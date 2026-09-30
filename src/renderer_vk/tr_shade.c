@@ -967,18 +967,24 @@ static void RB_DrawDlightPass(const glIndex_t *hitIndexes, int numIndexes)
  * (DynamicLightPass), otherwise all lights are summed into one pass
  * (DynamicLightSinglePass).
  */
+/**
+ * @brief True if renderer1 draws dlight passes for a batch of this shader
+ * lit by dlightBits (RB_DynamicLights()'s conditions).
+ */
+qboolean RB_ShaderTakesDlights(int dlightBits)
+{
+	return (dlightBits && tess.shader->fogPass && !(tess.shader->surfaceFlags & (SURF_NODLIGHT | SURF_SKY)) &&
+	        backEnd.refdef.num_dlights) ? qtrue : qfalse;
+}
+
 static void RB_DynamicLights(void)
 {
 	static glIndex_t hitIndexes[SHADER_MAX_INDEXES];
 	int              l;
 
-	if (!tess.dlightBits || !tess.shader->fogPass ||
-	    (tess.shader->surfaceFlags & (SURF_NODLIGHT | SURF_SKY)))
-	{
-		return;
-	}
-
-	if (backEnd.refdef.num_dlights == 0)
+	// static batches have no tess vertices: their dlights are folded into
+	// the static draw (VK_Draw3DStatic, see RB_StaticDlightsOk)
+	if (tess.vkStatic || !RB_ShaderTakesDlights(tess.dlightBits))
 	{
 		return;
 	}
