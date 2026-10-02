@@ -798,9 +798,12 @@ void Q_UTF8_FreeFont(fontHelper_t *font)
 	{
 		if (font->fontData)
 		{
+#ifndef __EMSCRIPTEN__
+			// Due to how emscripten is handling loading modules we do not want to call Com_Dealloc here
 			Com_Dealloc(font->fontData);
 			font->fontData = NULL;
 			font->GetGlyph = NULL;
+#endif
 		}
 	}
 }

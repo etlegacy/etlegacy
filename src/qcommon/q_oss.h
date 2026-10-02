@@ -52,6 +52,7 @@ typedef enum
 	OSS_WIN_X86_64      = BIT(8),   ///< 256 - Windows x86_64
 	OSS_ANDROID_X86     = BIT(9),   ///< 512 - Android x86
 	OSS_ANDROID_X86_64  = BIT(10),  ///< 1024 - Android x86_64
+	OSS_EMSCRIPTEN      = BIT(11),  ///< 2048 - Emscripten Web
 
 	OSS_END                         ///< Moving "known platforms" index
 } oss_t;
@@ -92,6 +93,8 @@ typedef enum
 #else
 #define OSS_CURRENT_PLATFORM OSS_DEFAULT
 #endif
+#elif defined(__EMSCRIPTEN__)
+#define OSS_CURRENT_PLATFORM OSS_EMSCRIPTEN
 #else
 #define OSS_CURRENT_PLATFORM OSS_DEFAULT
 #endif
@@ -99,9 +102,9 @@ typedef enum
 #ifdef Q_OSS_STR_INC
 // This must be kept in sync with the oss_t enum above
 const char *oss_str[] = {
-	"win_x86",         "lnx_x86",     "lnx_x86_64",   "macos_x86_64",
-	"android_aarch64", "lnx_armv7",   "lnx_armv8_64", "macos_aarch64",
-	"win_x86_64",      "android_x86", "android_x86_64"
+	"win_x86",         "lnx_x86",     "lnx_x86_64",     "macos_x86_64",
+	"android_aarch64", "lnx_armv7",   "lnx_armv8_64",   "macos_aarch64",
+	"win_x86_64",      "android_x86", "android_x86_64", "emscripten"
 };
 
 #define OSS_KNOWN_COUNT ARRAY_LEN(oss_str)

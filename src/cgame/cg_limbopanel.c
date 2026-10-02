@@ -43,6 +43,10 @@ extern const char *cg_skillRewardsDetails[SK_NUM_SKILLS][NUM_SKILL_LEVELS - 1];
 #define SOUND_FILTER    SOUNDEVENT(cgs.media.sndLimboFilter)
 //#define SOUND_CANCEL    SOUNDEVENT(cgs.media.sndLimboCancel)
 
+#ifdef __EMSCRIPTEN__
+static qboolean bg_limboPanelOffsetApplied = qfalse;
+#endif
+
 void CG_DrawBorder(float x, float y, float w, float h, qboolean fill, qboolean drawMouseOver);
 
 const team_t teamOrder[3] =
@@ -3462,7 +3466,15 @@ void CG_LimboPanel_Setup(void)
 void CG_LimboPanel_Init(void)
 {
 	BG_PanelButtonsSetup(limboPanelButtons);
+#ifdef __EMSCRIPTEN__
+	if (!bg_limboPanelOffsetApplied)
+	{
+		C_PanelButtonsSetup(limboPanelButtons, cgs.wideXoffset);    // convert to possible widescreen coordinates..
+		bg_limboPanelOffsetApplied = qtrue;
+	}
+#else
 	C_PanelButtonsSetup(limboPanelButtons, cgs.wideXoffset);    // convert to possible widescreen coordinates..
+#endif
 }
 
 /**

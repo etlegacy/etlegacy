@@ -281,6 +281,12 @@ static ID_INLINE float idSqrt(float x)
 
 #endif // defined(__APPLE__)
 
+//================== EMSCRIPTEN DEFINES =================================
+
+#ifdef __EMSCRIPTEN__
+#define CPUSTRING "emsc-wasm32"
+#endif // __EMSCRIPTEN__
+
 //======================= LINUX DEFINES =================================
 
 // the mac compiler can't handle >32k of locals, so we
@@ -436,7 +442,7 @@ typedef float net_float;
 #define ENABLEBIT(x, y) x |= BIT(y)
 #define CLEARBIT(x, y) x  &= ~BIT(y)
 #define TOGGLEBIT(x, y) x ^= BIT(y)
-#define CHECKBIT(x, y) ((x) & BIT(y))
+#define CHECKBIT(x, y) ((x)&BIT(y))
 
 /**
  * @def Check whether input value is present or not in given bitwise.
@@ -822,7 +828,7 @@ int Com_HexStrToInt(const char *str);
 #define COLOR_NULL      '*'
 
 #define COLOR_BITS  31
-#define ColorIndex(c)   (((c) - '0') & COLOR_BITS)
+#define ColorIndex(c)   (((c) - '0')&COLOR_BITS)
 
 #define S_COLOR_BLACK       "^0"
 #define S_COLOR_RED         "^1"
@@ -2105,6 +2111,25 @@ void Com_ParseUA(userAgent_t *ua, const char *string);
 
 #define GET_SYSCALL_MACRO(_0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, NAME, ...) NAME
 
+#ifdef __EMSCRIPTEN__
+#define SystemCall_0(arg) ({ intptr_t _args[] = { (intptr_t)(arg) }; syscall(_args); })
+#define SystemCall_1(arg, a1) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1) }; syscall(_args); })
+#define SystemCall_2(arg, a1, a2) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2) }; syscall(_args); })
+#define SystemCall_3(arg, a1, a2, a3) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3) }; syscall(_args); })
+#define SystemCall_4(arg, a1, a2, a3, a4) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4) }; syscall(_args); })
+#define SystemCall_5(arg, a1, a2, a3, a4, a5) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5) }; syscall(_args); })
+#define SystemCall_6(arg, a1, a2, a3, a4, a5, a6) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6) }; syscall(_args); })
+#define SystemCall_7(arg, a1, a2, a3, a4, a5, a6, a7) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7) }; syscall(_args); })
+#define SystemCall_8(arg, a1, a2, a3, a4, a5, a6, a7, a8) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8) }; syscall(_args); })
+#define SystemCall_9(arg, a1, a2, a3, a4, a5, a6, a7, a8, a9) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9) }; syscall(_args); })
+#define SystemCall_10(arg, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9), (intptr_t)(a10) }; syscall(_args); })
+#define SystemCall_11(arg, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9), (intptr_t)(a10), (intptr_t)(a11) }; syscall(_args); })
+#define SystemCall_12(arg, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9), (intptr_t)(a10), (intptr_t)(a11), (intptr_t)(a12) }; syscall(_args); })
+#define SystemCall_13(arg, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9), (intptr_t)(a10), (intptr_t)(a11), (intptr_t)(a12), (intptr_t)(a13) }; syscall(_args); })
+#define SystemCall_14(arg, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9), (intptr_t)(a10), (intptr_t)(a11), (intptr_t)(a12), (intptr_t)(a13), (intptr_t)(a14) }; syscall(_args); })
+#define SystemCall_15(arg, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9), (intptr_t)(a10), (intptr_t)(a11), (intptr_t)(a12), (intptr_t)(a13), (intptr_t)(a14), (intptr_t)(a15) }; syscall(_args); })
+#define SystemCall_16(arg, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16) ({ intptr_t _args[] = { (intptr_t)(arg), (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9), (intptr_t)(a10), (intptr_t)(a11), (intptr_t)(a12), (intptr_t)(a13), (intptr_t)(a14), (intptr_t)(a15), (intptr_t)(a16) }; syscall(_args); })
+#else
 #define SystemCall_0(arg) syscall(arg, VM_CALL_END)
 #define SystemCall_1(arg, a1) syscall(arg, (intptr_t)(a1), VM_CALL_END)
 #define SystemCall_2(arg, a1, a2) syscall(arg, (intptr_t)(a1), (intptr_t)(a2), VM_CALL_END)
@@ -2122,6 +2147,7 @@ void Com_ParseUA(userAgent_t *ua, const char *string);
 #define SystemCall_14(arg, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14) syscall(arg, (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9), (intptr_t)(a10), (intptr_t)(a11), (intptr_t)(a12), (intptr_t)(a13), (intptr_t)(a14), VM_CALL_END)
 #define SystemCall_15(arg, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15) syscall(arg, (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9), (intptr_t)(a10), (intptr_t)(a11), (intptr_t)(a12), (intptr_t)(a13), (intptr_t)(a14), (intptr_t)(a15), VM_CALL_END)
 #define SystemCall_16(arg, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16) syscall(arg, (intptr_t)(a1), (intptr_t)(a2), (intptr_t)(a3), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(a6), (intptr_t)(a7), (intptr_t)(a8), (intptr_t)(a9), (intptr_t)(a10), (intptr_t)(a11), (intptr_t)(a12), (intptr_t)(a13), (intptr_t)(a14), (intptr_t)(a15), (intptr_t)(a16), VM_CALL_END)
+#endif
 
 #define SystemCall(...) EXPAND(GET_SYSCALL_MACRO(__VA_ARGS__, SystemCall_16, SystemCall_15, SystemCall_14, SystemCall_13, SystemCall_12, SystemCall_11, SystemCall_10, SystemCall_9, SystemCall_8, SystemCall_7, SystemCall_6, SystemCall_5, SystemCall_4, SystemCall_3, SystemCall_2, SystemCall_1, SystemCall_0)(__VA_ARGS__))
 

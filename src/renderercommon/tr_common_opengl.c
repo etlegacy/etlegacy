@@ -61,7 +61,7 @@ static qboolean GLimp_InitOpenGLContext()
 	// get GL version
 	Q_strncpyz(glConfig.version_string, (const char *) glGetString(GL_VERSION), sizeof(glConfig.version_string));
 
-#ifndef FEATURE_RENDERER_GLES
+#if !defined(FEATURE_RENDERER_GLES) && !defined(__EMSCRIPTEN__)
 	// get shading language version
 	Q_strncpyz(glConfig.shadingLanguageVersion, (char *)glGetString(GL_SHADING_LANGUAGE_VERSION), sizeof(glConfig.shadingLanguageVersion));
 	Q_sscanf(glConfig.shadingLanguageVersion, "%d.%d", &glConfig.glslMajorVersion, &glConfig.glslMinorVersion);
@@ -390,7 +390,7 @@ static void GLimp_InitExtensions(void)
 
 	glConfig.textureCompression = TC_NONE;
 
-#ifndef FEATURE_RENDERER_GLES
+#if !defined(FEATURE_RENDERER_GLES) && !defined(__EMSCRIPTEN__)
 	// GL_EXT_texture_compression_s3tc
 	if (GLEW_ARB_texture_compression &&
 	    GLEW_EXT_texture_compression_s3tc)
@@ -419,7 +419,7 @@ static void GLimp_InitExtensions(void)
 	}
 #endif
 
-#ifndef FEATURE_RENDERER_GLES
+#if !defined(FEATURE_RENDERER_GLES) && !defined(__EMSCRIPTEN__)
 	// GL_S3_s3tc ... legacy extension before GL_EXT_texture_compression_s3tc.
 	if (glConfig.textureCompression == TC_NONE)
 	{
@@ -484,6 +484,22 @@ static void GLimp_InitExtensions(void)
 	}
 #elif defined(FEATURE_RENDERER2)
 	glConfig.maxActiveTextures = 32;
+#elif defined(__EMSCRIPTEN__)
+	{
+		GLint glint = 0;
+		glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &glint);
+		glConfig.maxActiveTextures = (int)glint;
+
+		if (glConfig.maxActiveTextures > 1)
+		{
+			Com_Printf("...using GL_ARB_multitexture (%i texture units, forced query for Emscripten)\n", glConfig.maxActiveTextures);
+		}
+		else
+		{
+			glConfig.maxActiveTextures = 1;
+			Com_Printf("...not using GL_ARB_multitexture, < 2 texture units\n");
+		}
+	}
 #else
 	if (GLEW_ARB_multitexture)
 	{
@@ -545,7 +561,11 @@ int RE_InitOpenGlSubsystems(void)
 
 	// ignore GLEW_ERROR_NO_GLX_DISPLAY for now due to GLEW upstream issue
 	// see https://github.com/nigels-com/glew/issues/172
+#ifndef __EMSCRIPTEN__
 	if (GLEW_OK != glewResult && glewResult != GLEW_ERROR_NO_GLX_DISPLAY)
+#else
+	if (GLEW_OK != glewResult)
+#endif
 	{
 		// glewInit failed, something is seriously wrong
 		Ren_Fatal("GLW_StartOpenGL() - could not load OpenGL subsystem: %s", glewGetErrorString(glewResult));

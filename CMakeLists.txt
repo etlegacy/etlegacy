@@ -184,6 +184,10 @@ if(BUNDLED_LIBS)
 	include(cmake/ETLBundledLibs.cmake)
 endif(BUNDLED_LIBS)
 
+if(EMSCRIPTEN)
+	include(cmake/ETLGl4ES.cmake)
+endif(EMSCRIPTEN)
+
 # Set up includes and libraries based on feature options
 include(cmake/ETLSetupFeatures.cmake)
 

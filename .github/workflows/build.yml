@@ -333,6 +333,65 @@ jobs:
             libui*x86_64.so
           if-no-files-found: error
 
+  emscripten-mod:
+    runs-on: ubuntu-24.04
+    needs: pre-build
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Emscripten SDK
+        uses: emscripten-core/setup-emsdk@v15
+        with:
+          version: 6.0.0
+
+      - name: Build
+        env:
+          CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+          CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
+          CI_ETL_UID: ${{needs.pre-build.outputs.uid}}
+        uses: maus007/docker-run-action-fork@v1
+        with:
+          image: etlegacy/lnx-build:latest
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI_ETL_UID=${{needs.pre-build.outputs.uid}} -e CI=true
+          run: |
+            git config --global --add safe.directory /code
+            git apply - << 'EOF'
+            diff --git a/CMakeLists.txt b/CMakeLists.txt
+            index db33ce56..7b27f1c7 100644
+            --- a/CMakeLists.txt
+            +++ b/CMakeLists.txt
+            @@ -6,7 +6,7 @@ set(LIBS_DOWNLOAD_DIR ${PROJECT_BINARY_DIR}/downloads/pgk)
+             set(LIBS_DOWNLOAD_SRC_DIR ${PROJECT_BINARY_DIR}/downloads/src)
+             
+             # keep this check in sync with the external libs build commands
+            -if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))
+            +if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)
+                find_program(MAKE NAMES make gmake mingw32-make REQUIRED)
+             endif()
+
+            @@ -139,7 +139,7 @@ function(etl_setup_cmake_args _list)
+                endif()
+             
+                # NOTE: set the CMAKE_POSITION_INDEPENDENT_CODE flag for all bundled libs (-fPIC) on 64 bit
+            -      if (ETL_64BITS)
+            +      if (ETL_64BITS OR EMSCRIPTEN)
+                    list(APPEND ${_list} -DCMAKE_POSITION_INDEPENDENT_CODE=ON)
+                endif()
+            EOF
+            ./easybuild.sh build -emscripten -ninja -mod
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: emscripten-mod
+          path: |
+            build/legacy/cgame*.so
+            build/legacy/ui*.so
+            build/legacy/qagame*.so
+            build/legacy/tvgame*.so
+          if-no-files-found: error
+
   #   __  __                                                          _
   #  |  \/  |                                                        | |
   #  | \  / |   ___   _ __    __ _    ___     _ __ ___     ___     __| |  ___
@@ -345,7 +404,18 @@ jobs:
   # This step also generates the final packages for 32 bit lnx.
   mod-merger:
     runs-on: ubuntu-24.04
-    needs: [ pre-build, lnx64-mod, lnx32-mod, osx-mod, win-mod, win64-mod, lnx-aarch64-mod, android-mod ]
+    needs:
+      [
+        pre-build,
+        lnx64-mod,
+        lnx32-mod,
+        osx-mod,
+        win-mod,
+        win64-mod,
+        lnx-aarch64-mod,
+        android-mod,
+        emscripten-mod,
+      ]
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -403,7 +473,7 @@ jobs:
   # Generate the final packages for Lnx, macOS, Windows and Android
   lnx64:
     runs-on: ubuntu-24.04
-    needs: [ pre-build, mod-merger ]
+    needs: [pre-build, mod-merger]
     env:
       CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
       CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
@@ -750,7 +820,7 @@ jobs:
       CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
       CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
       CI_ETL_UID: ${{needs.pre-build.outputs.uid}}
-    needs: [ pre-build, mod-merger ]
+    needs: [pre-build, mod-merger]
     container:
       image: etlegacy/android-build
     steps:
@@ -801,6 +871,74 @@ jobs:
         with:
           name: android-packages
           path: app/build/outputs/apk/*/etlegacy*.apk
+          if-no-files-found: error
+
+  emscripten:
+    runs-on: ubuntu-24.04
+    needs: [pre-build, mod-merger]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup Emscripten SDK
+        uses: emscripten-core/setup-emsdk@v15
+        with:
+          version: 6.0.0
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: All-mods
+          path: build/legacy
+
+      - name: Build
+        env:
+          CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
+          CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
+          CI_ETL_UID: ${{needs.pre-build.outputs.uid}}
+        uses: maus007/docker-run-action-fork@v1
+        with:
+          image: etlegacy/lnx-build:latest
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI_ETL_UID=${{needs.pre-build.outputs.uid}} -e CI=true
+          run: |
+            git config --global --add safe.directory /code
+            git apply - << 'EOF'
+            diff --git a/CMakeLists.txt b/CMakeLists.txt
+            index db33ce56..7b27f1c7 100644
+            --- a/CMakeLists.txt
+            +++ b/CMakeLists.txt
+            @@ -6,7 +6,7 @@ set(LIBS_DOWNLOAD_DIR ${PROJECT_BINARY_DIR}/downloads/pgk)
+             set(LIBS_DOWNLOAD_SRC_DIR ${PROJECT_BINARY_DIR}/downloads/src)
+             
+             # keep this check in sync with the external libs build commands
+            -if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))
+            +if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)
+                find_program(MAKE NAMES make gmake mingw32-make REQUIRED)
+             endif()
+
+            @@ -139,7 +139,7 @@ function(etl_setup_cmake_args _list)
+                endif()
+             
+                # NOTE: set the CMAKE_POSITION_INDEPENDENT_CODE flag for all bundled libs (-fPIC) on 64 bit
+            -      if (ETL_64BITS)
+            +      if (ETL_64BITS OR EMSCRIPTEN)
+                    list(APPEND ${_list} -DCMAKE_POSITION_INDEPENDENT_CODE=ON)
+                endif()
+            EOF
+            ./easybuild.sh build -emscripten -ninja
+
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: build/legacy
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: emscripten-packages
+          path: |
+            build/etl.data
+            build/etl.html
+            build/etl.js
+            build/etl.wasm
           if-no-files-found: error
 
   #    ____  _             ____       _   _
@@ -904,7 +1042,8 @@ jobs:
 
   upload:
     runs-on: ubuntu-24.04
-    needs: [pre-build, sign, lnx32, lnx64, osx, lnx-aarch64, android]
+    needs:
+      [pre-build, sign, lnx32, lnx64, osx, lnx-aarch64, android, emscripten]
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: geekyeggo/delete-artifact@v4
@@ -1040,6 +1179,7 @@ jobs:
       - win-mod
       - win64-mod
       - android-mod
+      - emscripten-mod
 
       - mod-merger
 
@@ -1050,6 +1190,7 @@ jobs:
       - win
       - win64
       - android
+      - emscripten
 
       - sign
 

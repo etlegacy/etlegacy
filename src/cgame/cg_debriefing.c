@@ -40,6 +40,10 @@ team_t CG_Debriefing_FindWinningTeamForPos(int pos);
 
 int QDECL CG_SortPlayersByXP(const void *a, const void *b);
 
+#ifdef __EMSCRIPTEN__
+static qboolean bg_debriefPanelOffsetApplied = qfalse;
+#endif
+
 #ifdef FEATURE_XPSAVE
 static qboolean xpSaveResetButtonConfirmation = qfalse;
 #endif
@@ -1659,6 +1663,20 @@ void CG_ChatPanel_Setup(void)
 	BG_PanelButtonsSetup(mapVoteButtons);
 
 	// convert to possible ws coordinates..
+#ifdef __EMSCRIPTEN__
+	if (!bg_debriefPanelOffsetApplied)
+	{
+		C_PanelButtonsSetup(buttonsPanel, cgs.wideXoffset);
+		C_PanelButtonsSetup(chatPanelButtons, cgs.wideXoffset);
+		C_PanelButtonsSetup(teamDebriefPanelButtons, cgs.wideXoffset);
+		C_PanelButtonsSetup(debriefPanelButtons, cgs.wideXoffset);
+		C_PanelButtonsSetup(mapVoteButtons, cgs.wideXoffset);
+		// there is an exception: the same debriefTitleWindow is used in multiple panel_button_t
+		// By now the debriefTitleWindow has been adjusted too much, so we correct for the difference..
+		debriefTitleWindow.rect.x   -= 2 * cgs.wideXoffset;
+		bg_debriefPanelOffsetApplied = qtrue;
+	}
+#else
 	C_PanelButtonsSetup(buttonsPanel, cgs.wideXoffset);
 	C_PanelButtonsSetup(chatPanelButtons, cgs.wideXoffset);
 	C_PanelButtonsSetup(teamDebriefPanelButtons, cgs.wideXoffset);
@@ -1667,6 +1685,7 @@ void CG_ChatPanel_Setup(void)
 	// there is an exception: the same debriefTitleWindow is used in multiple panel_button_t
 	// By now the debriefTitleWindow has been adjusted too much, so we correct for the difference..
 	debriefTitleWindow.rect.x -= 2 * cgs.wideXoffset;
+#endif
 }
 
 /**
