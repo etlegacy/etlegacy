@@ -357,7 +357,7 @@ jobs:
           options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI_ETL_UID=${{needs.pre-build.outputs.uid}} -e CI=true
           run: |
             git config --global --add safe.directory /code
-            git apply - << 'EOF'
+            git apply cmake_fix.patch
             diff --git a/CMakeLists.txt b/CMakeLists.txt
             index db33ce56..7b27f1c7 100644
             --- a/CMakeLists.txt
@@ -380,6 +380,7 @@ jobs:
                     list(APPEND ${_list} -DCMAKE_POSITION_INDEPENDENT_CODE=ON)
                 endif()
             EOF
+            git apply cmake_fix.patch
             ./easybuild.sh build -emscripten -ninja -mod
 
       - uses: actions/upload-artifact@v4
@@ -902,7 +903,7 @@ jobs:
           options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI_ETL_UID=${{needs.pre-build.outputs.uid}} -e CI=true
           run: |
             git config --global --add safe.directory /code
-            git apply - << 'EOF'
+            git apply cmake_fix.patch
             diff --git a/CMakeLists.txt b/CMakeLists.txt
             index db33ce56..7b27f1c7 100644
             --- a/CMakeLists.txt
@@ -925,6 +926,7 @@ jobs:
                     list(APPEND ${_list} -DCMAKE_POSITION_INDEPENDENT_CODE=ON)
                 endif()
             EOF
+            git apply cmake_fix.patch
             ./easybuild.sh build -emscripten -ninja
 
       - name: Display structure of downloaded files
