@@ -22,7 +22,7 @@ layout(push_constant) uniform PushConstants
 // the batch's dlights (VK_Draw3DStatic): light l = lights[3l] (origin in
 // model space, radius), lights[3l + 1] (color * 255, intensity),
 // lights[3l + 2] (radiusInverseCubed); info.x = count, info.y = 1: one
-// combined light (r_dynamicLight 1), 2: one light per output (at most 4)
+// combined light (r_dynamicLight 1), 2: one light per output (at most 8)
 layout(set = 2, binding = 0) uniform Dlights
 {
 	vec4 info;
@@ -39,7 +39,7 @@ layout(location = 1) out vec2 fragUV1;
 layout(location = 2) out vec4 fragColor;
 layout(location = 3) out float fragFogDepth;
 layout(location = 4) out vec3 fragEyePos;
-layout(location = 5) out vec3 fragDlight[4]; // 0..1, multiplied in as (1 + light)
+layout(location = 5) out vec3 fragDlight[8]; // 0..1, multiplied in as (1 + light)
 
 // light l's contribution added to color (bytes, clamped to 255), as the CPU loop
 vec3 AddDlight(int l, vec3 color)
@@ -76,7 +76,7 @@ void main()
 	fragEyePos   = (pc.modelView * vec4(inPos, 1.0)).xyz;
 	fragFogDepth = -fragEyePos.z;
 
-	for (i = 0; i < 4; i++)
+	for (i = 0; i < 8; i++)
 	{
 		fragDlight[i] = vec3(0.0);
 	}
@@ -93,7 +93,7 @@ void main()
 	}
 	else
 	{
-		for (i = 0; i < count && i < 4; i++)
+		for (i = 0; i < count && i < 8; i++)
 		{
 			fragDlight[i] = AddDlight(i, vec3(0.0)) / 255.0;
 		}
