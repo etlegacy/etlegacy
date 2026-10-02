@@ -373,14 +373,14 @@ void RB_EndStaticBatch(void)
  * @brief Vulkan: true if a static batch can take a surface lit by dlightBits:
  * either renderer1 draws no dlight pass for it, or the pass can be folded
  * into the static draw (tr3d_lm_static_dlight.vert / tr3d_lm_dlight.frag):
- * lightmapped multitexture iterator, ball dlights only, at most 4 lights in
+ * lightmapped multitexture iterator, ball dlights only, at most 8 lights in
  * the batch with one pass per light (r_dynamicLight 2).
  */
 static qboolean RB_StaticDlightsOk(int dlightBits)
 {
 	int bits, l, n;
 
-	if (!RB_ShaderTakesDlights(dlightBits))
+	if (!dlightBits || !RB_ShaderTakesDlights(dlightBits))
 	{
 		return qtrue; // no dlight pass to fold
 	}
@@ -406,8 +406,8 @@ static qboolean RB_StaticDlightsOk(int dlightBits)
 		}
 	}
 
-	// r_dynamicLight 2 draws one pass per light: the shaders fold up to 4
-	return (r_dynamicLight->integer != 2 || n <= 4) ? qtrue : qfalse;
+	// r_dynamicLight 2 draws one pass per light: the shaders fold up to 8
+	return (r_dynamicLight->integer != 2 || n <= 8) ? qtrue : qfalse;
 }
 
 /**

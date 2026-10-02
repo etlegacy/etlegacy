@@ -27,7 +27,7 @@ layout(location = 1) in vec2 fragUV1;
 layout(location = 2) in vec4 fragColor;
 layout(location = 3) in float fragFogDepth;
 layout(location = 4) in vec3 fragEyePos;
-layout(location = 5) in vec3 fragDlight[4];
+layout(location = 5) in vec3 fragDlight[8];
 
 layout(location = 0) out vec4 outColor;
 
@@ -101,7 +101,7 @@ void main()
 
 	// one combined light (r_dynamicLight 1) or one pass per light (2);
 	// unused entries are 0. Clamped like the 8-bit framebuffer after each pass.
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 8; i++)
 	{
 		color.rgb = min(color.rgb * (vec3(1.0) + fragDlight[i]), vec3(1.0));
 	}
