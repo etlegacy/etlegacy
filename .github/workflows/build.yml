@@ -356,7 +356,7 @@ jobs:
           image: etlegacy/lnx-build:latest
           options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI_ETL_UID=${{needs.pre-build.outputs.uid}} -e CI=true
           run: |
-            git config --global --add safe.directory /code && python3 -c "p='CMakeLists.txt'; c=open(p).read(); c=c.replace('if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))', 'if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)').replace('if (ETL_64BITS)', 'if (ETL_64BITS OR EMSCRIPTEN)'); open(p,'w').write(c)" && ./easybuild.sh build -emscripten -ninja -mod
+            git config --global --add safe.directory /code && sed -i 's/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)/g' libs/CMakeLists.txt && sed -i 's/if (ETL_64BITS)/if (ETL_64BITS OR EMSCRIPTEN)/g' libs/CMakeLists.txt && ./easybuild.sh build -emscripten -ninja -mod
 
       - uses: actions/upload-artifact@v4
         with:
@@ -877,7 +877,7 @@ jobs:
           image: etlegacy/lnx-build:latest
           options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI_ETL_UID=${{needs.pre-build.outputs.uid}} -e CI=true
           run: |
-            git config --global --add safe.directory /code && python3 -c "p='CMakeLists.txt'; c=open(p).read(); c=c.replace('if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))', 'if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)').replace('if (ETL_64BITS)', 'if (ETL_64BITS OR EMSCRIPTEN)'); open(p,'w').write(c)" && ./easybuild.sh build -emscripten -ninja
+            git config --global --add safe.directory /code && sed -i 's/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)/g' libs/CMakeLists.txt && sed -i 's/if (ETL_64BITS)/if (ETL_64BITS OR EMSCRIPTEN)/g' libs/CMakeLists.txt && ./easybuild.sh build -emscripten -ninja
 
       - name: Display structure of downloaded files
         run: ls -R
