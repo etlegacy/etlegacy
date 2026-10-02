@@ -1,0 +1,72 @@
+#include "ui/menudef.h"
+#include "ui/menumacros.h"
+
+// Defines //
+#define MENU_NAME     "hostgame_advanced_votes"
+#define GROUP_NAME	"grpHostGameAdvanced"
+
+// Host Game Advanced Menu //
+menuDef {
+	name		MENU_NAME
+	visible		0
+	fullscreen	0
+	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	style		WINDOW_STYLE_FILLED
+
+	onESC {
+		close MENU_NAME ;
+		open hostgame
+	}
+
+// Window //
+	WINDOW( _("HOST: ADVANCED"), 266 )
+	
+// There is only one main menu for now
+	BUTTONACTIVE(BTN_MAIN_X, BTN_MAIN_Y, WINDOW_WIDTH - MAIN_ELEMENT_MARGIN * 2, BTN_MAIN_H, "ADVANCED", 0.25, BTN_MAIN_TEXT_ALIGN, setfocus MENU_NAME)
+	
+	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
+
+#define NUM_SUBMENUS 7
+#define SIDEBAR_BTN_Y (SIDEBAR_Y + (SIDEBAR_H * 0.5) - (((NUM_SUBMENUS * SIDEBAR_BTN_H) + (MAIN_ELEMENT_MARGIN * (NUM_SUBMENUS - 1))) * 0.5))
+
+	SIDEBUTTON(1, _("GENERAL"), close MENU_NAME; open hostgame_advanced_general)
+	SIDEBUTTON(2, _("MATCH"), close MENU_NAME; open hostgame_advanced_match)
+	SIDEBUTTON(3, _("LAST MAN STANDING"), close MENU_NAME; open hostgame_advanced_lms)
+	SIDEBUTTON(4, _("ADMIN"), close MENU_NAME; open hostgame_advanced_admin)
+	SIDEBUTTON_ACTIVE(5, _("VOTES"), close MENU_NAME; open hostgame_advanced_votes)
+	SIDEBUTTON(6, _("MESSAGE OF THE DAY"), close MENU_NAME; open hostgame_advanced_motd)
+	SIDEBUTTON(7, _("DOWNLOAD"), close MENU_NAME; open hostgame_advanced_download)
+
+	SUBWINDOW(OPTION_SUBW_X, OPTION_SUBW_Y, OPTION_SUBW_W, OPTION_SUBW_H, _("VOTES"))
+	
+	NUMERICFIELD(OPTION_ITEM_POS(1), _("Max Votes per Player:"), .2, 8, "vote_limit", 2, _("Specify the maximum number of votes per player per match") )
+	MULTI(OPTION_ITEM_POS(2), _("Successful voting:"), .2, 8, "vote_percent", cvarFloatList { "25%" 25 "50%" 50 "60%" 60 "75%" 75 "100%" 100 }, _("Specify the minimum percentage required for a vote to pass") )
+	
+	CHECKBOXALIGNX(OPTION_CHECKBOX_RIGHT_POS(4), _("Game config:"), .2, 24, 8, "vote_allow_config", _("Allow players to vote for game config") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_RIGHT_POS(5), _("Game Type:"), .2, 24, 8, "vote_allow_gametype", _("Allow players to vote for a change in game type") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_RIGHT_POS(6), _("Player Kick:"), .2, 24, 8, "vote_allow_kick", _("Allow players to vote for other players to be kicked") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_RIGHT_POS(7), _("Map:"), .2, 24, 8, "vote_allow_map", _("Allow players to vote for a different campaign or map") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_RIGHT_POS(8), _("Match Reset:"), .2, 24, 8, "vote_allow_matchreset", _("Allow players to vote for the match to be reset") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_RIGHT_POS(9), _("Mute Spects:"), .2, 24, 8, "vote_allow_mutespecs", _("Allow players to vote for spectators to be muted") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_RIGHT_POS(10), _("Next Map:"), .2, 24, 8, "vote_allow_nextmap", _("Allow players to vote for the next campaign or map") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_RIGHT_POS(11), _("Balanced Teams:"), .2, 24, 8, "vote_allow_balancedteams", _("Allow players to vote for enforced team balance") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_RIGHT_POS(12), _("Mute Players:"), .2, 24, 8, "vote_allow_muting", _("Allow players to vote for muting players") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_RIGHT_POS(13), _("Surrender:"), .2, 24, 8, "vote_allow_surrender", _("Allow players to vote for surrender") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_RIGHT_POS(14), _("Referee:"), .2, 24, 8, "vote_allow_referee", _("Allow players to vote for a referee") )
+
+	CHECKBOXALIGNX(OPTION_CHECKBOX_LEFT_POS(4), _("Shuffle:"), .2, 24, 8, "vote_allow_shuffleteams", _("Allow players to vote for teams to be shuffled") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_LEFT_POS(5), _("Shuffle No Restart:"), .2, 24, 8, "vote_allow_shuffleteams_norestart", _("Allow players to vote for teams to be shuffled without a restart") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_LEFT_POS(6), _("Swap Teams:"), .2, 24, 8, "vote_allow_swapteams", _("Allow players to vote for teams to swap sides") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_LEFT_POS(7), _("Friendly Fire:"), .2, 24, 8, "vote_allow_friendlyfire", _("Allow players to vote for friendly fire to be enabled or disabled") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_LEFT_POS(8), _("Timelimit:"), .2, 24, 8, "vote_allow_timelimit", _("Allow players to vote for a different time limit") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_LEFT_POS(9), _("Warmup Damage:"), .2, 24, 8, "vote_allow_warmupdamage", _("Allow players to vote for warmup damage to be enabled or disabled") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_LEFT_POS(10), _("Anti-Lag:"), .2, 24, 8, "vote_allow_antilag", _("Allow players to vote for antilag to be enabled or disabled") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_LEFT_POS(11), _("Restart Campaign:"), .2, 24, 8, "vote_allow_restartcampaign", _("Allow players to vote for restarting campaign") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_LEFT_POS(12), _("Next Campaign:"), .2, 24, 8, "vote_allow_nextcampaign", _("Allow players to vote for next campaign") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_LEFT_POS(13), _("Coin toss:"), .2, 24, 8, "vote_allow_cointoss", _("Allow players to vote for coin toss") )
+	CHECKBOXALIGNX(OPTION_CHECKBOX_LEFT_POS(14), _("Poll:"), .2, 24, 8, "vote_allow_poll", _("Allow players to vote for custom votes") )
+
+// Buttons //
+	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME ; open hostgame)
+	LOWERBUTTON(3, _("MSGID_MENU_DEFAULT"), open hostgame_advanced_default)
+}
