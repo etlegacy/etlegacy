@@ -291,10 +291,17 @@ jobs:
           submodules: true
 
       - name: Setup Emscripten SDK
-        uses: emscripten-core/setup-emsdk@v15
+      - uses: actions/checkout@v4
         with:
-          version: 6.0.0
-          actions-cache-folder: '$GITHUB_WORKSPACE/emsdk-cache'
+          repository: emscripten-core/emsdk
+          path: emsdk
+
+      - name: Install Dependencies
+        run: |
+          cd emsdk
+          ./emsdk install 6.0.0
+          ./emsdk activate 6.0.0
+          source emsdk/emsdk_env.sh
 
       - name: Build
         env:
@@ -305,8 +312,6 @@ jobs:
           image: etlegacy/lnx-build:latest
           options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
           run: |
-            ls -R $GITHUB_WORKSPACE/emsdk-cache
-            source $GITHUB_WORKSPACE/emsdk-cache/emsdk-main/emsdk_env.sh
             git config --global --add safe.directory /code && sed -i 's/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)/g' libs/CMakeLists.txt && sed -i 's/if (ETL_64BITS)/if (ETL_64BITS OR EMSCRIPTEN)/g' libs/CMakeLists.txt && ./easybuild.sh build -emscripten -ninja
 
   check-compiler-warnings:
