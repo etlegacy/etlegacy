@@ -428,7 +428,7 @@ parse_commandline() {
             BUILD_SERVER=0
             BUNDLED_OGG_VORBIS=0
             FEATURE_OGG_VORBIS=0
-            TOOLCHAIN_FILE=${EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
+            TOOLCHAIN_FILE=emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
         elif [ "$var" = "-ninja" ]; then
             einfo "Will use Ninja instead of Unix Makefile"
             MAKEFILE_GENERATOR=${MAKEFILE_GENERATOR:-Ninja}
