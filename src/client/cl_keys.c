@@ -1783,6 +1783,12 @@ void CL_KeyEvent(int key, qboolean down, unsigned time)
 		else if (((cls.keyCatchers & KEYCATCH_UI) && !UI_checkKeyExec(key)) || ((cls.keyCatchers & KEYCATCH_CGAME) && !CL_CGameCheckKeyExec(key)))
 		{
 			bypassMenu = qtrue;
+
+			// binds don't auto-repeat in game either, a repeat would close a menu opened by this key
+			if (keys[key].repeats > 1 && !(cls.keyCatchers & KEYCATCH_CONSOLE))
+			{
+				return;
+			}
 		}
 	}
 
