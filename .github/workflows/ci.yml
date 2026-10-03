@@ -291,7 +291,7 @@ jobs:
           submodules: true
 
       - name: Setup Emscripten SDK
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
         with:
           repository: emscripten-core/emsdk
           path: emsdk
