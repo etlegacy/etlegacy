@@ -301,7 +301,7 @@ jobs:
           cd emsdk
           ./emsdk install 6.0.0
           ./emsdk activate 6.0.0
-          ls -R 
+          ls -R
 
       - name: Build
         env:
