@@ -295,6 +295,10 @@ jobs:
         with:
           submodules: true
 
+      - name: Install Ninja
+        run: |
+          apt-get update && apt-get install -y ninja-build
+
       - name: Build
         run: |
           sed -i 's/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)/g' libs/CMakeLists.txt
