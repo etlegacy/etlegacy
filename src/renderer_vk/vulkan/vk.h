@@ -266,4 +266,13 @@ void VK_Draw3DIndexes(struct shaderCommands_s *input, const unsigned int *indexe
  */
 void VK_Draw3DLightmapped(struct shaderCommands_s *input, struct image_s *base, struct image_s *lightmap, unsigned long stateBits, int cullType);
 
+/**
+ * @brief Draws a two-stage batch in one draw (RB_StageIteratorGeneric's
+ * RB_TwoStageFoldable() case): stage 0 (opaque, stateBits0) with image0,
+ * texcoords[0] and colors0; stage 1 with image1, texcoords[1] and colors1,
+ * blended over it in the shader with stage 1's blendFunc (blendBits1).
+ */
+void VK_Draw3DTwoStage(struct shaderCommands_s *input, struct image_s *image0, struct image_s *image1, const byte (*colors0)[4],
+                       const byte (*colors1)[4], unsigned long stateBits0, unsigned long blendBits1, int cullType);
+
 #endif // VK_H

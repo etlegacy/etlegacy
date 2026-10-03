@@ -57,6 +57,8 @@
 #include "tr3d_skin.vert.glsl.h"
 #include "tr3d_lm_static_dlight.vert.glsl.h"
 #include "tr3d_lm_dlight.frag.glsl.h"
+#include "tr3d_2stage.vert.glsl.h"
+#include "tr3d_2stage.frag.glsl.h"
 #include "tr3d_lm_static.vert.glsl.h"
 #include "gamma.vert.glsl.h"
 #include "gamma.frag.glsl.h"
@@ -92,6 +94,7 @@
 #define VK_VERTS_DIFFUSE          3 // arena, single texture, vk3DVertexN_t: rgb from entity lighting (tr3d_diffuse.vert)
 #define VK_VERTS_SKIN             4 // skin buffer (vkSkinVertex_t), MDM skinned in tr3d_skin.vert, bones in set 1
 #define VK_VERTS_STATIC_DLIGHT    5 // static buffer, lightmapped, dlight pass folded in (dlights in set 2)
+#define VK_VERTS_TWOSTAGE         6 // arena, vk3DVertex2_t: two stages in one draw (tr3d_2stage.*), 2 texture sets
 
 // GPU skinning (VK_VERTS_SKIN): the skin vertex buffer holds every loaded MDM
 // surface (reset with the models), the bone arena one surface's bones per
@@ -386,6 +389,8 @@ typedef struct
 	VkPipelineLayout staticDlightPipelineLayout;
 	VkShaderModule sceneLMStaticDlightVertModule;
 	VkShaderModule sceneLMDlightFragModule;
+	VkShaderModule scene2StageVertModule;                  // VK_VERTS_TWOSTAGE
+	VkShaderModule scene2StageFragModule;
 
 	qboolean initialized;
 	uint32_t currentImageIndex;
@@ -424,6 +429,16 @@ typedef struct
 	float uv1[2];
 	byte color[4];
 } vk3DVertexLM_t;
+
+// VK_VERTS_TWOSTAGE: both stages' texture coords and colors
+typedef struct
+{
+	float pos[3];
+	float uv0[2];
+	float uv1[2];
+	byte color0[4];
+	byte color1[4];
+} vk3DVertex2_t;
 
 // VK_VERTS_DIFFUSE: vk3DVertex_t plus the model-space normal the vertex
 // shader lights with (color only supplies alpha)
@@ -2456,12 +2471,15 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 
 	vk.sceneLMStaticDlightVertModule = VK_CreateShaderModule(tr3d_lm_static_dlight_vert_spv, tr3d_lm_static_dlight_vert_spv_SIZE);
 	vk.sceneLMDlightFragModule       = VK_CreateShaderModule(tr3d_lm_dlight_frag_spv, tr3d_lm_dlight_frag_spv_SIZE);
+	vk.scene2StageVertModule         = VK_CreateShaderModule(tr3d_2stage_vert_spv, tr3d_2stage_vert_spv_SIZE);
+	vk.scene2StageFragModule         = VK_CreateShaderModule(tr3d_2stage_frag_spv, tr3d_2stage_frag_spv_SIZE);
 
 	if (vk.sceneVertModule == VK_NULL_HANDLE || vk.sceneFragModule == VK_NULL_HANDLE ||
 	    vk.sceneLMVertModule == VK_NULL_HANDLE || vk.sceneLMFragModule == VK_NULL_HANDLE ||
 	    vk.sceneStaticVertModule == VK_NULL_HANDLE || vk.sceneLMStaticVertModule == VK_NULL_HANDLE ||
 	    vk.sceneDiffuseVertModule == VK_NULL_HANDLE || vk.sceneSkinVertModule == VK_NULL_HANDLE ||
-	    vk.sceneLMStaticDlightVertModule == VK_NULL_HANDLE || vk.sceneLMDlightFragModule == VK_NULL_HANDLE)
+	    vk.sceneLMStaticDlightVertModule == VK_NULL_HANDLE || vk.sceneLMDlightFragModule == VK_NULL_HANDLE ||
+	    vk.scene2StageVertModule == VK_NULL_HANDLE || vk.scene2StageFragModule == VK_NULL_HANDLE)
 	{
 		return qfalse;
 	}
@@ -2557,6 +2575,10 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	{
 		stages[0].module = vk.sceneLMStaticDlightVertModule;
 	}
+	else if (vertexSource == VK_VERTS_TWOSTAGE)
+	{
+		stages[0].module = vk.scene2StageVertModule;
+	}
 	else if (vertexSource != VK_VERTS_ARENA)
 	{
 		stages[0].module = lightmapped ? vk.sceneLMStaticVertModule : vk.sceneStaticVertModule;
@@ -2569,6 +2591,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	stages[1].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	stages[1].stage  = VK_SHADER_STAGE_FRAGMENT_BIT;
 	stages[1].module = (vertexSource == VK_VERTS_STATIC_DLIGHT) ? vk.sceneLMDlightFragModule :
+	                   (vertexSource == VK_VERTS_TWOSTAGE) ? vk.scene2StageFragModule :
 	                   (lightmapped ? vk.sceneLMFragModule : vk.sceneFragModule);
 	stages[1].pName = "main";
 
@@ -2577,7 +2600,28 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	vertexBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 	Com_Memset(vertexAttributes, 0, sizeof(vertexAttributes));
-	if (vertexSource == VK_VERTS_SKIN)
+	if (vertexSource == VK_VERTS_TWOSTAGE)
+	{
+		vertexBinding.stride = sizeof(vk3DVertex2_t);
+
+		vertexAttributes[0].location = 0;
+		vertexAttributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
+		vertexAttributes[0].offset   = offsetof(vk3DVertex2_t, pos);
+		vertexAttributes[1].location = 1;
+		vertexAttributes[1].format   = VK_FORMAT_R32G32_SFLOAT;
+		vertexAttributes[1].offset   = offsetof(vk3DVertex2_t, uv0);
+		vertexAttributes[2].location = 2;
+		vertexAttributes[2].format   = VK_FORMAT_R32G32_SFLOAT;
+		vertexAttributes[2].offset   = offsetof(vk3DVertex2_t, uv1);
+		vertexAttributes[3].location = 3;
+		vertexAttributes[3].format   = VK_FORMAT_R8G8B8A8_UNORM;
+		vertexAttributes[3].offset   = offsetof(vk3DVertex2_t, color0);
+		vertexAttributes[4].location = 4;
+		vertexAttributes[4].format   = VK_FORMAT_R8G8B8A8_UNORM;
+		vertexAttributes[4].offset   = offsetof(vk3DVertex2_t, color1);
+		attributeCount               = 5;
+	}
+	else if (vertexSource == VK_VERTS_SKIN)
 	{
 		vertexBinding.stride = sizeof(vkSkinVertex_t);
 
@@ -3544,6 +3588,14 @@ void VK_Shutdown(void)
 		if (vk.sceneLMDlightFragModule != VK_NULL_HANDLE)
 		{
 			vkDestroyShaderModule(vk.device, vk.sceneLMDlightFragModule, NULL);
+		}
+		if (vk.scene2StageVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.scene2StageVertModule, NULL);
+		}
+		if (vk.scene2StageFragModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.scene2StageFragModule, NULL);
 		}
 		if (vk.boneSetLayout != VK_NULL_HANDLE)
 		{
@@ -5374,6 +5426,93 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 
 	VK_BindArenaBuffers(vk.sceneVertexArenaBuffer, vk.sceneIndexArenaBuffer);
 	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, (uint32_t)(vk.sceneIndexArenaOffset / sizeof(uint32_t)), (int32_t)(vk.sceneVertexArenaOffset / sizeof(vk3DVertex_t)), 0);
+
+	vk.sceneVertexArenaOffset += vertexBytes;
+	vk.sceneIndexArenaOffset  += indexBytes;
+}
+
+void VK_Draw3DTwoStage(shaderCommands_t *input, struct image_s *image0, struct image_s *image1, const byte (*colors0)[4],
+                       const byte (*colors1)[4], unsigned long stateBits0, unsigned long blendBits1, int cullType)
+{
+	int             numVertexes = input->numVertexes, numIndexes = input->numIndexes, i;
+	VkDeviceSize    vertexBytes, indexBytes;
+	vk3DVertex2_t   *dstVerts;
+	float           pushConstants[56]; // 48 + blend1
+	VkPipeline      pipeline;
+	VkDescriptorSet sets[2];
+
+	if (!vk.initialized || numVertexes == 0 || numIndexes == 0)
+	{
+		return;
+	}
+	if (!image0)
+	{
+		image0 = tr.whiteImage;
+	}
+	if (!image1)
+	{
+		image1 = tr.whiteImage;
+	}
+	if (!image0->vkDescriptorSet || !image1->vkDescriptorSet)
+	{
+		return;
+	}
+
+	pipeline = VK_GetScenePipelineEx(stateBits0, VK_MirrorCullType(cullType), qtrue, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE, VK_VERTS_TWOSTAGE);
+	if (pipeline == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	vk.sceneVertexArenaOffset = VK_ALIGN_UP(vk.sceneVertexArenaOffset, sizeof(vk3DVertex2_t));
+	vertexBytes               = (VkDeviceSize)numVertexes * sizeof(vk3DVertex2_t);
+	indexBytes                = (VkDeviceSize)numIndexes * sizeof(uint32_t);
+
+	if (vk.sceneVertexArenaOffset + vertexBytes > vk.sceneVertexArenaSize ||
+	    vk.sceneIndexArenaOffset + indexBytes > vk.sceneIndexArenaSize)
+	{
+		static int lastWarnFrame = -1;
+
+		if (backEnd.refdef.time != lastWarnFrame)
+		{
+			Ren_Print("Vulkan: VK_Draw3DTwoStage - scene vertex/index arena exhausted this frame, dropping remaining 3D draws\n");
+			lastWarnFrame = backEnd.refdef.time;
+		}
+		return;
+	}
+
+	dstVerts = (vk3DVertex2_t *)((byte *)vk.sceneVertexArenaMapped + vk.sceneVertexArenaOffset);
+	for (i = 0; i < numVertexes; i++)
+	{
+		dstVerts[i].pos[0] = input->xyz[i][0];
+		dstVerts[i].pos[1] = input->xyz[i][1];
+		dstVerts[i].pos[2] = input->xyz[i][2];
+		dstVerts[i].uv0[0] = input->svars.texcoords[0][i][0];
+		dstVerts[i].uv0[1] = input->svars.texcoords[0][i][1];
+		dstVerts[i].uv1[0] = input->svars.texcoords[1][i][0];
+		dstVerts[i].uv1[1] = input->svars.texcoords[1][i][1];
+		Com_Memcpy(dstVerts[i].color0, colors0[i], 4);
+		Com_Memcpy(dstVerts[i].color1, colors1[i], 4);
+	}
+
+	Com_Memcpy((byte *)vk.sceneIndexArenaMapped + vk.sceneIndexArenaOffset, input->indexes, (size_t)indexBytes);
+
+	VK_BindPipelineCached(pipeline);
+
+	VK_FillScenePushConstants(pushConstants, stateBits0, 0.0f);
+	pushConstants[48] = (float)(blendBits1 & GLS_SRCBLEND_BITS);
+	pushConstants[49] = (float)((blendBits1 & GLS_DSTBLEND_BITS) >> 4);
+	pushConstants[50] = 0.0f;
+	pushConstants[51] = 0.0f;
+	pushConstants[52] = pushConstants[53] = pushConstants[54] = pushConstants[55] = 0.0f;
+	VK_PushConstantsCached(vk.sceneLMPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
+
+	sets[0] = (VkDescriptorSet)image0->vkDescriptorSet;
+	sets[1] = (VkDescriptorSet)image1->vkDescriptorSet;
+	VK_BindDescriptorSetsCached(vk.sceneLMPipelineLayout, 2, sets);
+
+	VK_BindArenaBuffers(vk.sceneVertexArenaBuffer, vk.sceneIndexArenaBuffer);
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, (uint32_t)(vk.sceneIndexArenaOffset / sizeof(uint32_t)), (int32_t)(vk.sceneVertexArenaOffset / sizeof(vk3DVertex2_t)), 0);
 
 	vk.sceneVertexArenaOffset += vertexBytes;
 	vk.sceneIndexArenaOffset  += indexBytes;

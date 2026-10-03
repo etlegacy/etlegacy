@@ -1101,6 +1101,81 @@ static void RB_IterateStages2D(shaderCommands_t *input)
 }
 
 /**
+ * @brief Vulkan: true if this batch's two stages can be drawn in one draw
+ * (VK_Draw3DTwoStage): stage 0 opaque (no blend or ONE ZERO), depth writing,
+ * so the color stage 1 blends with is exactly stage 0's; both single
+ * texture, no alpha test, depth tested, same per-stage fog; nothing changes
+ * the colors on the CPU afterwards (entity fade, debug views).
+ */
+static qboolean RB_TwoStageFoldable(void)
+{
+	shaderStage_t *s0 = tess.xstages[0], *s1 = tess.xstages[1];
+	unsigned long b0, b1, blend0;
+	int           fadeStart = backEnd.currentEntity->e.fadeStartTime;
+
+	if (!r_vkGpuVertex->integer || !s0 || !s1 || tess.xstages[2] || tess.vkStatic || tess.vkSkin || !tess.numVertexes ||
+	    backEnd.projection2D || (fadeStart && fadeStart <= tr.refdef.time) || r_lightMap->integer || r_debugShaderSurfaceFlags->integer)
+	{
+		return qfalse;
+	}
+
+	if (s0->bundle[1].image[0] || s1->bundle[1].image[0])
+	{
+		return qfalse;
+	}
+
+	b0     = s0->stateBits;
+	b1     = s1->stateBits;
+	blend0 = b0 & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS);
+	if ((blend0 && blend0 != (GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO)) || !(b0 & GLS_DEPTHMASK_TRUE) ||
+	    ((b0 | b1) & (GLS_ATEST_BITS | GLS_DEPTHTEST_DISABLE | GLS_POLYMODE_LINE)))
+	{
+		return qfalse;
+	}
+
+	// per stage fogging (detail textures) must agree: one fog state per draw
+	return ((tess.shader->noFog && !s0->isFogged) == (tess.shader->noFog && !s1->isFogged)) ? qtrue : qfalse;
+}
+
+/**
+ * @brief Vulkan: draws an RB_TwoStageFoldable() batch in one draw. Both
+ * stages' colors and texcoords are computed on the CPU as for single stages
+ * (stage 1 first, saved), then stage 1 is blended over stage 0 in
+ * tr3d_2stage.frag with its blendFunc.
+ */
+static void RB_DrawTwoStage(void)
+{
+	static byte   colors1[SHADER_MAX_VERTEXES][4];
+	static vec2_t texcoords1[SHADER_MAX_VERTEXES];
+	shaderStage_t *s0 = tess.xstages[0], *s1 = tess.xstages[1];
+
+	tess.vkDiffuse = qfalse;
+
+	ComputeColors(s1);
+	ComputeTexCoords(s1);
+	Com_Memcpy(colors1, tess.svars.colors, tess.numVertexes * 4);
+	Com_Memcpy(texcoords1, tess.svars.texcoords[0], tess.numVertexes * sizeof(vec2_t));
+
+	ComputeColors(s0);
+	ComputeTexCoords(s0);
+	Com_Memcpy(tess.svars.texcoords[1], texcoords1, tess.numVertexes * sizeof(vec2_t));
+
+	if (tess.shader->noFog && !s0->isFogged)
+	{
+		R_FogOff();
+	}
+	else
+	{
+		R_FogOn();
+	}
+
+	tess.vkStage = s0;
+	VK_Draw3DTwoStage(&tess, R_GetAnimatedImage(&s0->bundle[0]), R_GetAnimatedImage(&s1->bundle[0]),
+	                  (const byte (*)[4])tess.svars.colors, (const byte (*)[4])colors1,
+	                  s0->stateBits, s1->stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS), tess.shader->cullType);
+}
+
+/**
  * @brief renderer1's RB_StageIteratorGeneric: computes colors/texcoords per
  * stage and submits via VK_Draw3D/VK_Draw3DLightmapped, or through the UI
  * pipeline for 2D draws (RB_IterateStages2D).
@@ -1127,6 +1202,14 @@ void RB_StageIteratorGeneric(void)
 	RB_DeformTessGeometry();
 
 	SetIteratorFog();
+
+	if (RB_TwoStageFoldable())
+	{
+		RB_DrawTwoStage();
+		RB_DynamicLights();
+		RB_FogPass();
+		return;
+	}
 
 	// no early-out on numUnfoggedPasses == 0: fog volume surfaces have no
 	// stages of their own but still need RB_FogPass() below (renderer1
