@@ -490,17 +490,11 @@ static void CG_QuickFireteams_f(void)
 		return;
 	}
 
-	if (cg.showFireteamMenu)
+	// like mp_fireteamadmin: close the own page, switch from the admin page
+	if (cg.showFireteamMenu && cgs.ftMenuMode == 0)
 	{
-		if (cgs.ftMenuMode == 0)
-		{
-			CG_EventHandling(CGAME_EVENT_NONE, qfalse);
-		}
-		else
-		{
-			cgs.ftMenuMode = 0;
-			CG_Printf("2\n");
-		}
+		CG_EventHandling(CGAME_EVENT_NONE, qfalse);
+		return;
 	}
 
 	CG_EventHandling(CGAME_EVENT_FIRETEAMMSG, qfalse);
@@ -839,6 +833,7 @@ static void CG_QuickSpawnpoint_f(void)
 	if (cg.showSpawnpointsMenu)
 	{
 		CG_EventHandling(CGAME_EVENT_NONE, qfalse);
+		return;
 	}
 
 	CG_EventHandling(CGAME_EVENT_SPAWNPOINTMSG, qfalse);
