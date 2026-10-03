@@ -284,35 +284,26 @@ jobs:
 
   emscripten:
     runs-on: ubuntu-24.04
+    env:
+      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
+      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
     needs: [pre-build]
+    container:
+      image: emscripten/emsdk:6.0.0
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
 
-      - name: Setup Emscripten SDK
-        uses: actions/checkout@v4
-        with:
-          repository: emscripten-core/emsdk
-          path: emsdk
-
-      - name: Install Dependencies
+      - name: Install Ninja
         run: |
-          cd emsdk
-          ./emsdk install 6.0.0
-          ./emsdk activate 6.0.0
-          ls -R 
+          apt-get update && apt-get install -y ninja-build
 
       - name: Build
-        env:
-          CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
-          CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
-        uses: maus007/docker-run-action-fork@v1
-        with:
-          image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI=true
-          run: |
-            git config --global --add safe.directory /code && sed -i 's/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)/g' libs/CMakeLists.txt && sed -i 's/if (ETL_64BITS)/if (ETL_64BITS OR EMSCRIPTEN)/g' libs/CMakeLists.txt && ./easybuild.sh build -emscripten -ninja
+        run: |
+          sed -i 's/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)/g' libs/CMakeLists.txt
+          sed -i 's/if (ETL_64BITS)/if (ETL_64BITS OR EMSCRIPTEN)/g' libs/CMakeLists.txt
+          ./easybuild.sh build -emscripten -ninja
 
   check-compiler-warnings:
     runs-on: ubuntu-latest
