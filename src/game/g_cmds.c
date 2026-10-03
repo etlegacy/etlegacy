@@ -5288,7 +5288,6 @@ void Cmd_SwapPlacesWithBot_f(gentity_t *ent, int botNum)
 	ent->client->ps.pm_flags &= ~PMF_LIMBO; // turns off limbo
 	// copy the location
 	VectorCopy(cl.ps.origin, ent->s.origin);
-	VectorCopy(cl.ps.viewangles, ent->s.angles);
 	// copy session data, so we spawn in as the same class
 	// save items
 	saved = client->pers;
