@@ -1446,10 +1446,9 @@ void ClientThink_real(gentity_t *ent)
 	pm.soldierChargeTime  = level.soldierChargeTime[client->sess.sessionTeam - 1];
 	pm.engineerChargeTime = level.engineerChargeTime[client->sess.sessionTeam - 1];
 	pm.medicChargeTime    = level.medicChargeTime[client->sess.sessionTeam - 1];
+	pm.covertopsChargeTime = level.covertopsChargeTime[client->sess.sessionTeam - 1];
 
 	pm.skill = client->sess.skill;
-
-	pm.covertopsChargeTime = level.covertopsChargeTime[client->sess.sessionTeam - 1];
 
 	if (client->ps.pm_type != PM_DEAD && level.timeCurrent - client->pers.lastBattleSenseBonusTime > 45000)
 	{
@@ -2206,6 +2205,15 @@ void ClientEndFrame(gentity_t *ent)
 
 	if ((ent->client->sess.sessionTeam == TEAM_SPECTATOR) || (ent->client->ps.pm_flags & PMF_LIMBO))
 	{
+		// Limbo players skip the pause compensation below, but their charge
+		// timestamps must still track level.time or paused frames count as
+		// recharge time once they respawn (sticky charge).
+		if (level.match_pause != PAUSE_NONE && (ent->client->ps.pm_flags & PMF_LIMBO))
+		{
+			ent->client->ps.classWeaponTime += level.frameTime;
+			ent->client->deathTime          += level.frameTime;
+		}
+
 		SpectatorClientEndFrame(ent);
 		return;
 	}
