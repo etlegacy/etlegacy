@@ -37,6 +37,7 @@
 extern cvar_t *sv_fps;
 extern cvar_t *sv_timeout;
 extern cvar_t *sv_zombietime;
+extern cvar_t *sv_allowClientIpChange;
 extern cvar_t *sv_rconPassword;
 extern cvar_t *sv_privatePassword;
 extern cvar_t *sv_hidden;

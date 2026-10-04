@@ -59,6 +59,8 @@
 
 #define MAX_ENT_CLUSTERS    16
 
+#define SV_ADDRESS_CHANGE_INTERVAL 5000 ///< min ms between client address re-associations
+
 #define MAX_BPS_WINDOW      20      ///< net debugging
 
 /**
@@ -260,6 +262,7 @@ typedef struct client_s
 	int nextReliableTime;                   ///< svs.time when another reliable command will be allowed
 	int nextReliableUserTime;               ///< svs.time when another userinfo change will be allowed
 	int lastPacketTime;                     ///< svs.time when packet was last received
+	int lastAddressChangeTime;              ///< svs.time when the remote address was last re-associated
 	int lastConnectTime;                    ///< svs.time when connection started
 	int lastValidGamestate;                 ///< svs.time when active in game
 	int lastSnapshotTime;                   ///< svs.time of last sent snapshot

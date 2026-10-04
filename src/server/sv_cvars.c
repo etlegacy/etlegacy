@@ -35,6 +35,7 @@
 cvar_t *sv_fps = NULL;          // time rate for running non-clients
 cvar_t *sv_timeout;             // seconds without any message
 cvar_t *sv_zombietime;          // seconds to sink messages after disconnect
+cvar_t *sv_allowClientIpChange; // re-associate a client session when its source IP changes
 cvar_t *sv_rconPassword;        // password for remote server commands
 cvar_t *sv_privatePassword;     // password for the privateClient slots
 cvar_t *sv_hidden;
