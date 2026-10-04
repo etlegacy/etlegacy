@@ -2207,6 +2207,14 @@ void ClientEndFrame(gentity_t *ent)
 
 	if ((ent->client->sess.sessionTeam == TEAM_SPECTATOR) || (ent->client->ps.pm_flags & PMF_LIMBO))
 	{
+		// Limbo players skip the pause compensation below; shift their charge
+		// timestamps as well so paused frames never count as recharge.
+		if (level.match_pause != PAUSE_NONE && (ent->client->ps.pm_flags & PMF_LIMBO))
+		{
+			ent->client->ps.classWeaponTime += level.frameTime;
+			ent->client->deathTime          += level.frameTime;
+		}
+
 		SpectatorClientEndFrame(ent);
 		return;
 	}
@@ -2289,6 +2297,13 @@ void ClientEndFrame(gentity_t *ent)
 		ent->lastHintCheckTime  += level.frameTime;
 		ent->pain_debounce_time += level.frameTime;
 		ent->s.onFireEnd        += level.frameTime;
+
+		// dead players anchor the sticky charge respawn reconstruction on
+		// deathTime, keep it in sync so paused frames never count as recharge
+		if (ent->client->ps.stats[STAT_HEALTH] <= 0)
+		{
+			ent->client->deathTime += level.frameTime;
+		}
 	}
 
 	// save network bandwidth
