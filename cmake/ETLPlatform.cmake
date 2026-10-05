@@ -5,6 +5,10 @@
 # Used to store real system processor when we overwrite CMAKE_SYSTEM_PROCESSOR for cross-compile builds
 set(ETLEGACY_SYSTEM_PROCESSOR ${CMAKE_SYSTEM_PROCESSOR})
 
+if(EMSCRIPTEN)
+	set_property(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
+endif()
+
 # has to be set to "", otherwise CMake will pass -rdynamic resulting in a client crash
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
 
@@ -305,6 +309,8 @@ if(NOT APPLE)
 	if(ETL_X86 AND ETL_32BITS)
 		if(WIN32)
 			set(ARCH "x86")
+		elseif(EMSCRIPTEN)
+			set(ARCH "wasm32")
 		else()
 			set(ARCH "i386")
 		endif()
@@ -337,7 +343,7 @@ if(NOT APPLE)
 	endif()
 endif()
 
-if(UNIX AND ETL_64BITS)
+if(UNIX AND (ETL_64BITS OR EMSCRIPTEN))
 	set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
