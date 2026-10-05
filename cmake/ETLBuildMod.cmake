@@ -20,22 +20,6 @@ function(etl_enforce_linux_mod_no_undefined target_name)
 	endif()
 endfunction()
 
-function(etl_configure_wasm_side_module target_name base_name)
-	if(EMSCRIPTEN)
-		target_compile_options(${target_name} PRIVATE "-fvisibility=hidden")
-		target_link_options(${target_name} PRIVATE "-sSIDE_MODULE=1")
-		set_target_properties(${target_name} PROPERTIES
-			PREFIX ""
-			SUFFIX ".so"
-			OUTPUT_NAME "${base_name}.mp.${ARCH}"
-			LIBRARY_OUTPUT_DIRECTORY "${MODNAME}"
-			LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MODNAME}"
-			LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
-			LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${MODNAME}"
-		)
-	endif()
-endfunction()
-
 #
 # cgame
 #
@@ -55,7 +39,6 @@ if(BUILD_CLIENT_MOD)
 		LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${MODNAME}"
 	)
 	target_compile_definitions(cgame PRIVATE CGAMEDLL=1 MODLIB=1)
-	etl_configure_wasm_side_module(cgame cgame)
 endif()
 
 #
@@ -77,7 +60,6 @@ if(BUILD_CLIENT_MOD)
 		LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${MODNAME}"
 	)
 	target_compile_definitions(ui PRIVATE UIDLL=1 MODLIB=1)
-	etl_configure_wasm_side_module(ui ui)
 endif()
 
 #
@@ -130,7 +112,6 @@ if(BUILD_SERVER_MOD)
 		RUNTIME_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
 	)
 	target_compile_definitions(qagame PRIVATE GAMEDLL=1 MODLIB=1)
-	etl_configure_wasm_side_module(qagame qagame)
 endif()
 
 #
@@ -176,7 +157,6 @@ if(BUILD_SERVER_MOD)
 		RUNTIME_OUTPUT_DIRECTORY_RELEASE "${MODNAME}"
 	)
 	target_compile_definitions(tvgame PRIVATE GAMEDLL=1 MODLIB=1)
-	etl_configure_wasm_side_module(tvgame tvgame)
 endif()
 
 # Build both architectures on older xcode versions

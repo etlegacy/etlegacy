@@ -1051,11 +1051,6 @@ extern void Sys_In_Restart_f(void);
  */
 void CL_Vid_Restart_f(void)
 {
-#ifdef __EMSCRIPTEN__
-	FS_ConditionalRestart(clc.checksumFeed);
-	Com_Printf(S_COLOR_YELLOW "vid_restart is not supported in the browser - reload the page to apply video changes.\n");
-	return;
-#endif
 	// don't show percent bar, since the memory usage will just sit at the same level anyway
 	// - so keep the value - feels like a bug for users
 	//com_expectedhunkusage = -1;
@@ -1187,16 +1182,9 @@ void CL_Snd_Shutdown(void)
 void CL_Snd_Restart_f(void)
 {
 	CL_Snd_Shutdown();
-#ifdef __EMSCRIPTEN__
-	cls.soundStarted    = qtrue;
-	cls.soundRegistered = qtrue;
-	S_Init();
-	S_BeginRegistration();
-#else
 	// sound will be init in CL_StartHunkUsers of CL_Vid_Restart_f again
 
 	CL_Vid_Restart_f();
-#endif
 }
 
 /**

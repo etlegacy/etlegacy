@@ -675,17 +675,6 @@ cvar_t *Cvar_Set2(const char *var_name, const char *value, qboolean force)
 		var_name = "BADNAME";
 	}
 
-#ifdef __EMSCRIPTEN__
-	if (!Q_stricmp(var_name, "r_mode"))
-	{
-		cvar_t *existing = Cvar_FindVar(var_name);
-		if (!force && existing && existing->string && existing->string[0] && (Q_stricmp(existing->string, "-2") == 0 || Q_stricmp(existing->string, "-1") == 0))
-		{
-			Com_Printf("Blocking non-forced r_mode change (%s -> %s)\n", existing->string, value ? value : "(null)");
-			return existing;
-		}
-	}
-#endif
 	var = Cvar_FindVar(var_name);
 	if (!var)
 	{

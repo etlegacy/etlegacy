@@ -568,11 +568,7 @@ static ID_INLINE uint64_t _vmu64(void *value)
 
 #define VMU64(x) _vmu64(VMA(x))
 
-#ifdef __EMSCRIPTEN__
-typedef intptr_t (QDECL *VM_EntryPoint_t)(int, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t);
-#else
 typedef intptr_t (QDECL *VM_EntryPoint_t)(int, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t);
-#endif
 
 /*
 ==============================================================

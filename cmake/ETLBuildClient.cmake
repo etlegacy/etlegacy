@@ -39,36 +39,6 @@ elseif(ANDROID)
 		set_target_properties(etl PROPERTIES LINKER_LANGUAGE CXX)
 	endif()
 	set(ETL_OUTPUT_DIR "legacy")
-elseif(EMSCRIPTEN)
-	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
-	target_link_options(etl
-			PRIVATE
-				#"SHELL:--shell-file ${CMAKE_CURRENT_SOURCE_DIR}/misc/emscripten/shell_minimal.html"
-				"SHELL:--shell-file ${CMAKE_CURRENT_SOURCE_DIR}/misc/emscripten/et_pak_loader.html"
-				#"SHELL:--preload-file ${CMAKE_BINARY_DIR}/legacy/ui.mp.wasm32.so@/home/web_user/.etlegacy/legacy/ui.mp.wasm32.so"
-				#"SHELL:--preload-file ${CMAKE_BINARY_DIR}/legacy/cgame.mp.wasm32.so@/home/web_user/.etlegacy/legacy/cgame.mp.wasm32.so"
-				"SHELL:--preload-file ${CMAKE_BINARY_DIR}/legacy/qagame.mp.wasm32.so@/home/web_user/.etlegacy/legacy/qagame.mp.wasm32.so"
-				#"SHELL:--preload-file ${CMAKE_BINARY_DIR}/ui.mp.wasm32.so@/ui.mp.wasm32.so"
-				#"SHELL:--preload-file ${CMAKE_BINARY_DIR}/cgame.mp.wasm32.so@/cgame.mp.wasm32.so"
-				#"SHELL:--preload-file ${CMAKE_BINARY_DIR}/etmain@etmain"
-				"SHELL:--preload-file ${CMAKE_BINARY_DIR}/legacy@legacy"
-				-sALLOW_MEMORY_GROWTH=1
-				-sINITIAL_MEMORY=256MB
-				-sMAXIMUM_MEMORY=2GB
-				-sSTACK_SIZE=8MB
-				-sALLOW_TABLE_GROWTH=1
-				#--profiling
-				-sFETCH
-				-sERROR_ON_UNDEFINED_SYMBOLS=0
-				-sMAIN_MODULE=1
-				-sMINIFY_HTML=0
-				-sEXPORTED_RUNTIME_METHODS=['callMain']
-				-sEXIT_RUNTIME=1
-				-sINITIAL_TABLE=500000
-				-sFORCE_FILESYSTEM=1
-				-lidbfs.js
-			)
-	set_target_properties(etl PROPERTIES SUFFIX ".html")
 else()
 	add_executable(etl ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 endif()
@@ -93,7 +63,7 @@ set_target_properties(etl PROPERTIES
 	MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/misc/Info.plist
 )
 
-if((UNIX OR ETL_ARM) AND NOT APPLE AND NOT ANDROID AND NOT EMSCRIPTEN)
+if((UNIX OR ETL_ARM) AND NOT APPLE AND NOT ANDROID)
 	set_target_properties(etl PROPERTIES SUFFIX "${BIN_SUFFIX}")
 endif()
 

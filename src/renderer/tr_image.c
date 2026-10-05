@@ -1274,9 +1274,7 @@ static void R_CreateFogImage(void)
 	borderColor[2] = 1.0;
 	borderColor[3] = 1;
 
-#ifndef __EMSCRIPTEN__
 	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-#endif
 }
 
 #define DEFAULT_SIZE    16
