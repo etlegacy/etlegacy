@@ -333,6 +333,39 @@ jobs:
             libui*x86_64.so
           if-no-files-found: error
 
+  emscripten-mod:
+    runs-on: ubuntu-24.04
+    env:
+      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
+      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
+    needs: pre-build
+    container:
+      image: emscripten/emsdk:6.0.0
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install Ninja
+        run: |
+          apt-get update && apt-get install -y ninja-build
+
+      - name: Build
+        run: |
+          sed -i 's/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)/g' libs/CMakeLists.txt
+          sed -i 's/if (ETL_64BITS)/if (ETL_64BITS OR EMSCRIPTEN)/g' libs/CMakeLists.txt
+          ./easybuild.sh build -emscripten -ninja -mod
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: emscripten-mod
+          path: |
+            build/legacy/cgame*.so
+            build/legacy/ui*.so
+            build/legacy/qagame*.so
+            build/legacy/tvgame*.so
+          if-no-files-found: error
+
   #   __  __                                                          _
   #  |  \/  |                                                        | |
   #  | \  / |   ___   _ __    __ _    ___     _ __ ___     ___     __| |  ___
@@ -355,6 +388,7 @@ jobs:
         win64-mod,
         lnx-aarch64-mod,
         android-mod,
+        emscripten-mod,
       ]
     steps:
       - uses: actions/download-artifact@v4
@@ -813,6 +847,48 @@ jobs:
           path: app/build/outputs/apk/*/etlegacy*.apk
           if-no-files-found: error
 
+  emscripten:
+    runs-on: ubuntu-24.04
+    env:
+      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
+      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
+    needs: [pre-build, mod-merger]
+    container:
+      image: emscripten/emsdk:6.0.0
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install Ninja
+        run: |
+          apt-get update && apt-get install -y ninja-build
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: All-mods
+          path: build/legacy
+
+      - name: Build
+        run: |
+          sed -i 's/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)/g' libs/CMakeLists.txt
+          sed -i 's/if (ETL_64BITS)/if (ETL_64BITS OR EMSCRIPTEN)/g' libs/CMakeLists.txt
+          ./easybuild.sh build -emscripten -ninja
+
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: build/legacy
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: emscripten-packages
+          path: |
+            build/etl.data
+            build/etl.html
+            build/etl.js
+            build/etl.wasm
+          if-no-files-found: error
+
   #    ____  _             ____       _   _
   #   / ___|(_) __ _ _ __ |  _ \ __ _| |_| |__
   #   \___ \| |/ _` | '_ \| |_) / _` | __| '_ \
@@ -914,7 +990,8 @@ jobs:
 
   upload:
     runs-on: ubuntu-24.04
-    needs: [pre-build, sign, lnx32, lnx64, osx, lnx-aarch64, android]
+    needs:
+      [pre-build, sign, lnx32, lnx64, osx, lnx-aarch64, android, emscripten]
     if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: geekyeggo/delete-artifact@v4
@@ -1050,6 +1127,7 @@ jobs:
       - win-mod
       - win64-mod
       - android-mod
+      - emscripten-mod
 
       - mod-merger
 
@@ -1060,6 +1138,7 @@ jobs:
       - win
       - win64
       - android
+      - emscripten
 
       - sign
 
