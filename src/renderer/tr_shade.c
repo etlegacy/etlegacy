@@ -50,7 +50,19 @@
  */
 static void R_DrawElements(int numIndexes, const glIndex_t *indexes)
 {
+#ifdef __EMSCRIPTEN__
+	static GLushort shortIndexes[SHADER_MAX_INDEXES];
+	int             i;
+
+	for (i = 0; i < numIndexes; i++)
+	{
+		shortIndexes[i] = (GLushort)indexes[i];
+	}
+
+	glDrawElements(GL_TRIANGLES, numIndexes, GL_UNSIGNED_SHORT, shortIndexes);
+#else
 	glDrawElements(GL_TRIANGLES, numIndexes, GL_INDEX_TYPE, indexes);
+#endif
 }
 
 /*

@@ -66,6 +66,10 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten/emscripten.h>
+#endif
+
 #ifdef __ANDROID__
 #include <jni.h>
 qboolean call_copyIntoAPPDirectory(JNIEnv *env, jobject javaObject, const char *filename)
@@ -397,6 +401,12 @@ NORETURN_MSVC static _attribute((noreturn)) void Sys_Exit(int exitCode)
 	}
 
 	NET_Shutdown();
+
+#ifdef __EMSCRIPTEN__
+	EM_ASM({
+		location.reload();
+	});
+#endif
 
 #ifdef MAIN_MUST_RETURN
 	longjmp(exit_game, exitCode);
@@ -880,12 +890,21 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
  *
  * @return libHandle or NULL
  */
+#ifdef __EMSCRIPTEN__
+void *Sys_LoadGameDll(const char *name, qboolean extract,
+                      VM_EntryPoint_t *entryPoint,
+                      intptr_t (*systemcalls)(intptr_t *))
+{
+	void *libHandle;
+	void (*dllEntry)(intptr_t (*syscallptr)(intptr_t *));
+#else
 void *Sys_LoadGameDll(const char *name, qboolean extract,
                       VM_EntryPoint_t *entryPoint,
                       intptr_t (*systemcalls)(intptr_t, ...))
 {
 	void *libHandle;
 	void (*dllEntry)(intptr_t (*syscallptr)(intptr_t, ...));
+#endif
 	char fname[MAX_OSPATH];
 	char *basepath;
 	char *homepath;
@@ -990,7 +1009,11 @@ void *Sys_LoadGameDll(const char *name, qboolean extract,
 		return NULL;
 	}
 
-	dllEntry    = (void(QDECL *)(intptr_t(QDECL *)(intptr_t, ...)))Sys_LoadFunction(libHandle, "dllEntry");
+#ifdef __EMSCRIPTEN__
+	dllEntry = (void(QDECL *)(intptr_t(QDECL *)(intptr_t *)))Sys_LoadFunction(libHandle, "dllEntry");
+#else
+	dllEntry = (void(QDECL *)(intptr_t(QDECL *)(intptr_t, ...)))Sys_LoadFunction(libHandle, "dllEntry");
+#endif
 	*entryPoint = (VM_EntryPoint_t)Sys_LoadFunction(libHandle, "vmMain");
 
 	if (!*entryPoint || !dllEntry)
@@ -1266,6 +1289,7 @@ void Sys_SetUpConsoleAndSignals(void)
 	CON_Init();
 #endif
 
+#ifndef __EMSCRIPTEN__
 // don't set signal handlers for anything that will generate coredump (in DEBUG builds)
 #if !defined(ETLEGACY_DEBUG)
 	signal(SIGILL, Sys_SigHandler);
@@ -1274,6 +1298,7 @@ void Sys_SetUpConsoleAndSignals(void)
 #endif
 	signal(SIGINT, Sys_SigHandler);
 	signal(SIGTERM, Sys_SigHandler);
+#endif
 }
 
 /**
@@ -1307,7 +1332,11 @@ static int Sys_GameLoop(void)
 
 		// Improve input responsiveness by moving sampling to other side of framerate limiter - moved to Com_Frame()
 		//IN_Frame();
+#ifdef __EMSCRIPTEN__
+		emscripten_set_main_loop(Com_Frame, 0, 1);
+#else
 		Com_Frame();
+#endif
 
 #ifdef ETLEGACY_DEBUG
 		endTime    = Sys_Milliseconds();

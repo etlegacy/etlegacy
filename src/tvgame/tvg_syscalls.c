@@ -34,6 +34,17 @@
 
 #include "tvg_local.h"
 
+#ifdef __EMSCRIPTEN__
+static intptr_t(QDECL * syscall)(intptr_t *args) = (intptr_t(QDECL *)(intptr_t *)) - 1;
+
+/**
+ * @brief dllEntry
+ */
+Q_EXPORT void dllEntry(intptr_t(QDECL *syscallptr)(intptr_t *args))
+{
+	syscall = syscallptr;
+}
+#else
 static intptr_t(QDECL * syscall)(intptr_t arg, ...) = (intptr_t(QDECL *)(intptr_t, ...)) - 1;
 
 /**
@@ -43,6 +54,7 @@ Q_EXPORT void dllEntry(intptr_t(QDECL *syscallptr)(intptr_t arg, ...))
 {
 	syscall = syscallptr;
 }
+#endif
 
 /**
  * @brief trap_Printf
