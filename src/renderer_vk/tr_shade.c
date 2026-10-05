@@ -1171,7 +1171,7 @@ static void RB_DrawTwoStage(void)
 
 	tess.vkStage = s0;
 	VK_Draw3DTwoStage(&tess, R_GetAnimatedImage(&s0->bundle[0]), R_GetAnimatedImage(&s1->bundle[0]),
-	                  (const byte (*)[4])tess.svars.colors, (const byte (*)[4])colors1,
+	                  (const byte(*)[4]) tess.svars.colors, (const byte(*)[4]) colors1,
 	                  s0->stateBits, s1->stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS), tess.shader->cullType);
 }
 
