@@ -390,11 +390,19 @@ void SV_CL_FastForward_f(void)
 {
 	int time;
 
-	if (Cmd_Argc() != 2 && Cmd_Argc() != 3)
+#ifdef DEDICATED
+	if (Cmd_Argc() != 2)
 	{
-		Com_Printf("ff <seconds>\n");
+		Com_Printf("usage: ff <seconds>\n");
 		return;
 	}
+#else
+	if (Cmd_Argc() != 3)
+	{
+		Com_Printf("usage: tv ff <seconds>\n");
+		return;
+	}
+#endif
 
 	if (!svclc.demo.playing)
 	{
@@ -402,7 +410,7 @@ void SV_CL_FastForward_f(void)
 		return;
 	}
 
-	time = Q_atoi(Cmd_Argv(1));
+	time = Q_atoi(Cmd_Argv(Cmd_Argc() - 1));
 
 	svclc.demo.fastForwardTime = time * 1000 + sv.time;
 }
@@ -416,11 +424,19 @@ void SV_CL_PlayDemo_f(void)
 	char *demoFile;
 	int  nextDemoNo;
 
-	if (Cmd_Argc() != 2 && Cmd_Argc() != 3)
+#ifdef DEDICATED
+	if (Cmd_Argc() != 2)
 	{
-		Com_Printf("demo <demoname>\n");
+		Com_Printf("usage: demo <demoname>\n");
 		return;
 	}
+#else
+	if (Cmd_Argc() != 3)
+	{
+		Com_Printf("usage: tv demo <demoname>\n");
+		return;
+	}
+#endif
 
 	if (sv_etltv_delay->integer)
 	{
@@ -429,6 +445,12 @@ void SV_CL_PlayDemo_f(void)
 	}
 
 	SV_CL_Disconnect();
+
+	// match sv_fps with demo snaps
+	if (sv_fps->integer != DEFAULT_SV_FPS)
+	{
+		Cvar_Set("sv_fps", DEFAULT_SV_FPS_STR);
+	}
 
 	// open the demo file (should be the last arg)
 	demoFile = Cmd_Argv(Cmd_Argc() - 1);

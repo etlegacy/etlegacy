@@ -253,7 +253,7 @@ void SV_CL_CheckForResend(void)
 
 			Info_SetValueForKey(info, "name", sv_etltv_clientname->string);
 			Info_SetValueForKey(info, "rate", "90000");
-			Info_SetValueForKey(info, "snaps", "20");
+			Info_SetValueForKey(info, "snaps", DEFAULT_SV_FPS_STR);
 			Info_SetValueForKey(info, "cl_maxpackets", va("%i", SV_CL_MAXPACKETS));
 			Info_SetValueForKey(info, "cg_uinfo", "0 0 40");
 
