@@ -446,6 +446,12 @@ void SV_CL_PlayDemo_f(void)
 
 	SV_CL_Disconnect();
 
+	// match sv_fps with demo snaps
+	if (sv_fps->integer != DEFAULT_SV_FPS)
+	{
+		Cvar_Set("sv_fps", DEFAULT_SV_FPS_STR);
+	}
+
 	// open the demo file (should be the last arg)
 	demoFile = Cmd_Argv(Cmd_Argc() - 1);
 	Com_sprintf(name, MAX_OSPATH, "tvdemos/%s.%s%d", demoFile, SVCLDEMOEXT, PROTOCOL_VERSION);
