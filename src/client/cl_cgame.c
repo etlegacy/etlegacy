@@ -690,6 +690,30 @@ void CL_ShutdownCGame(void)
 }
 
 /**
+ * @brief Opens a menu requested by the cgame, or closes it if this menu is still open
+ * @details Only menus that pass keys to the binds (cl_bypassMouseInput) can receive the key
+ * that opened them again, so only these are closed. Closing sends ESC: the menu runs its own
+ * onEsc script and held keys stay down, unlike UIMENU_NONE which clears the key states.
+ * @param[in] menu
+ */
+static void CL_CgameUIPopup(int menu)
+{
+	static int lastMenu = UIMENU_NONE;
+
+	if (menu != UIMENU_NONE && menu == lastMenu
+	    && (cls.keyCatchers & KEYCATCH_UI) && cl_bypassMouseInput->integer)
+	{
+		VM_Call(uivm, UI_KEY_EVENT, K_ESCAPE, qtrue);
+		VM_Call(uivm, UI_KEY_EVENT, K_ESCAPE, qfalse);
+		lastMenu = UIMENU_NONE;
+		return;
+	}
+
+	lastMenu = menu;
+	VM_Call(uivm, UI_SET_ACTIVE_MENU, menu);
+}
+
+/**
  * @brief The cgame module is making a system call
  * @param[in] args
  * @return
@@ -1047,7 +1071,7 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 		{
 			if (uivm)     // can be called as the system is shutting down
 			{
-				VM_Call(uivm, UI_SET_ACTIVE_MENU, args[1]);
+				CL_CgameUIPopup(args[1]);
 			}
 		}
 		return 0;
