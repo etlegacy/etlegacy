@@ -162,6 +162,7 @@ cvar_t *r_scale;
 
 cvar_t *r_vkStaticWorld;
 cvar_t *r_vkGpuVertex;
+cvar_t *r_vkBindless;
 cvar_t *r_vkCaptureFrame200;
 cvar_t *r_vkCapturePath;
 
@@ -359,6 +360,10 @@ void R_Register(void)
 	// compute per-vertex stage math (rgbGen lightingDiffuse, ...) in the
 	// vertex shaders instead of the CPU (0 = CPU, as renderer1, for comparisons)
 	r_vkGpuVertex = ri.Cvar_Get("r_vkGpuVertex", "1", 0);
+
+	// bindless textures for the 2D path, so 2D draws batch across textures
+	// (0 = one descriptor set per image as before; read at vid_restart)
+	r_vkBindless = ri.Cvar_Get("r_vkBindless", "1", 0);
 
 	// debug: dump the 200th frame after renderer start to r_vkCapturePath
 	// (stalls that frame for the readback, keep it off when benchmarking)
