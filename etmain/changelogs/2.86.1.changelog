@@ -1,0 +1,45 @@
+^dEngine
+
+^fGeneral
+
+* Fixed ^8cl_shownet^9 may print invalid entity number (Thanks to Quake3e)
+
+^dClient
+
+* Fixed OpenAL backend sound drop sound when out of range
+* Fixed OpenAL backend sound looped sound restarting after re-entering PVS
+
+^dServer
+
+* Fixed tv demo fast forwarding command not working on client
+
+^dMod
+
+^fGeneral
+
+* Fixed camera commands not being available in demo playback
+* Added ^8sharetimerNL^9 and ^8sharetimer_buddyNL^9 command to share timer without
+  location string
+
+^fGraphic
+
+* Fixed overheat smoke doesn't appear in third person
+* Fixed overheated weapons has smoke when leaving overheated mounted MG
+* Fixed overheated weapons shakes when leaving a mounted MG you have started shooting
+  with
+
+^fUI
+
+* Fixed ^8popupmessage4^9 comp wasn't displaying obituaries messages
+* Added following filter to ^8popupmessage^9 component style :
+  * ^8No Announce^9   : Filter out all map script messages (command post constructed,
+    tank damaged, etc.)
+  * ^8No Enemy Team^9 : Filter out all obituaries caused by the enemy team
+  * ^8No Own Team^9   : Filter out all obituaries caused by your own team
+  * ^8No Self^9       : Filter out all obituaries due/caused by yourself
+  * ^8No Suicide^9    : Filter out all obituaries for self kills (of all players)
+* Reordered HUD timers for a more consistent display
+
+* Limbo
+  * Added in-game Skills And Rewards tooltips. Hover over skill counter with mouse
+    will display the tooltip

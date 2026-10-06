@@ -4,7 +4,7 @@
 
 ^dClient
 
-* Increased scan ports tp display more LAN server list from ^84^9 to ^88^9
+* Increased scan ports to display more LAN server list from ^84^9 to ^88^9
 * Added ^8r_allowScreenSaver^9 cvar to allow DPMS while game is running
 
 ^dMod
