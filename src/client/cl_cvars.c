@@ -121,6 +121,9 @@ cvar_t *cl_consoleKeys;
 
 cvar_t *cl_interpolation;
 
+cvar_t *cl_discordPresence;
+cvar_t *cl_discordAppId;
+
 // Functions {{{1
 void CL_InitCvars()
 {
@@ -278,4 +281,9 @@ void CL_InitCvars()
 	// Auto-update
 	com_updateavailable = Cvar_Get("com_updateavailable", "0", CVAR_ROM);
 	com_updatefiles     = Cvar_Get("com_updatefiles", "", CVAR_ROM);
+
+	// Discord Rich Presence
+	cl_discordPresence = Cvar_Get("cl_discordPresence", "1", CVAR_ARCHIVE);
+	Cvar_CheckRange(cl_discordPresence, 0, 1, qtrue);
+	cl_discordAppId = Cvar_Get("cl_discordAppId", "1519838038073671740", CVAR_ARCHIVE);
 }
