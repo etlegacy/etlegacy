@@ -59,6 +59,8 @@
 #include "tr3d_lm_dlight.frag.glsl.h"
 #include "tr3d_2stage.vert.glsl.h"
 #include "tr3d_2stage.frag.glsl.h"
+#include "ui_bindless.vert.glsl.h"
+#include "ui_bindless.frag.glsl.h"
 #include "tr3d_lm_static.vert.glsl.h"
 #include "gamma.vert.glsl.h"
 #include "gamma.frag.glsl.h"
@@ -95,6 +97,10 @@
 #define VK_VERTS_SKIN             4 // skin buffer (vkSkinVertex_t), MDM skinned in tr3d_skin.vert, bones in set 1
 #define VK_VERTS_STATIC_DLIGHT    5 // static buffer, lightmapped, dlight pass folded in (dlights in set 2)
 #define VK_VERTS_TWOSTAGE         6 // arena, vk3DVertex2_t: two stages in one draw (tr3d_2stage.*), 2 texture sets
+
+// bindless texture array size (slots, see vk.bindless): MAX_DRAWIMAGES plus
+// room for images recreated while their old slot waits for its frame fence
+#define VK_BINDLESS_MAX_IMAGES    4096
 
 // GPU skinning (VK_VERTS_SKIN): the skin vertex buffer holds every loaded MDM
 // surface (reset with the models), the bone arena one surface's bones per
@@ -136,6 +142,7 @@ typedef struct
 typedef struct
 {
 	VkInstance instance;
+	uint32_t instanceVersion;                              // VK_API_VERSION_1_0 or _1_2 (see VK_CreateInstance)
 	VkSurfaceKHR surface;
 	VkPhysicalDevice physicalDevice;
 	VkDevice device;
@@ -311,6 +318,7 @@ typedef struct
 		VkDeviceMemory memory;
 		VkImageView view;
 		VkDescriptorSet descriptorSet;
+		int bindlessSlot;                                  // slot + 1, 0 = none
 	} pendingFree[VK_FRAMES_IN_FLIGHT][8];                 // per frame slot
 	int numPendingFree[VK_FRAMES_IN_FLIGHT];
 
@@ -387,6 +395,30 @@ typedef struct
 	// static lightmapped batches with the dlight pass folded in
 	// (VK_VERTS_STATIC_DLIGHT): set 0 base, 1 lightmap, 2 dlights (boneSet)
 	VkPipelineLayout staticDlightPipelineLayout;
+
+	// Bindless textures, used by the 2D path: every image also
+	// has a slot in one big combined-image-sampler array (vk.bindlessSet),
+	// so 2D draws with different textures but the same state can be batched
+	// into one draw (VK_Draw2D / VK_Flush2D). qfalse when the device lacks
+	// descriptor indexing or r_vkBindless is 0: per-image sets, no batching.
+	qboolean bindless;
+	VkDescriptorSetLayout bindlessSetLayout;
+	VkDescriptorPool bindlessPool;
+	VkDescriptorSet bindlessSet;
+	VkPipelineLayout uiBindlessPipelineLayout;
+	VkShaderModule uiBindlessVertModule;
+	VkShaderModule uiBindlessFragModule;
+	int bindlessFree[VK_BINDLESS_MAX_IMAGES];              // free slot stack
+	int numBindlessFree;
+
+	// pending 2D batch (bindless only): consecutive VK_Draw2D calls with the
+	// same stateBits, drawn as one by VK_Flush2D()
+	qboolean batch2DOpen;
+	unsigned long batch2DStateBits;
+	uint32_t batch2DFirstIndex;
+	uint32_t batch2DNumIndexes;
+	int32_t batch2DVertexOffset;
+	int batch2DNumVertexes;
 	VkShaderModule sceneLMStaticDlightVertModule;
 	VkShaderModule sceneLMDlightFragModule;
 	VkShaderModule scene2StageVertModule;                  // VK_VERTS_TWOSTAGE
@@ -406,6 +438,7 @@ typedef struct
 	float pos[2];
 	float uv[2];
 	byte color[4];
+	uint32_t texture; // bindless slot (vk.bindless); unused with per-image sets
 } vkUIVertex_t;
 
 // Sized generously: a single 2D shader batch can be up to SHADER_MAX_VERTEXES
@@ -628,7 +661,22 @@ static qboolean VK_CreateInstance(void)
 	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
 	appInfo.pEngineName        = "ET: Legacy renderer_vk";
 	appInfo.engineVersion      = VK_MAKE_VERSION(1, 0, 0);
-	appInfo.apiVersion         = VK_API_VERSION_1_0;
+	// Vulkan 1.2 where the loader supports it (bindless textures need its
+	// descriptor indexing); vkEnumerateInstanceVersion is missing on 1.0 loaders
+	{
+		PFN_vkEnumerateInstanceVersion enumerateVersion = (PFN_vkEnumerateInstanceVersion)vkGetInstanceProcAddr(NULL, "vkEnumerateInstanceVersion");
+		uint32_t                       version          = VK_API_VERSION_1_0;
+
+		if (enumerateVersion && enumerateVersion(&version) == VK_SUCCESS && version >= VK_API_VERSION_1_2)
+		{
+			vk.instanceVersion = VK_API_VERSION_1_2;
+		}
+		else
+		{
+			vk.instanceVersion = VK_API_VERSION_1_0;
+		}
+	}
+	appInfo.apiVersion = vk.instanceVersion;
 
 	Com_Memset(&createInfo, 0, sizeof(createInfo));
 	createInfo.sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -709,15 +757,16 @@ static qboolean VK_PickPhysicalDeviceAndQueues(void)
 
 static qboolean VK_CreateLogicalDevice(void)
 {
-	float                    queuePriority = 1.0f;
-	VkDeviceQueueCreateInfo  queueCreateInfos[2];
-	uint32_t                 queueCreateInfoCount = 0;
-	VkPhysicalDeviceFeatures deviceFeatures;
-	VkDeviceCreateInfo       createInfo;
-	const char               *deviceExtensions[2] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, NULL };
-	uint32_t                 deviceExtensionCount = 1;
-	uint32_t                 availableExtCount = 0, i;
-	VkExtensionProperties    *availableExt;
+	float                            queuePriority = 1.0f;
+	VkDeviceQueueCreateInfo          queueCreateInfos[2];
+	uint32_t                         queueCreateInfoCount = 0;
+	VkPhysicalDeviceFeatures         deviceFeatures;
+	VkPhysicalDeviceVulkan12Features features12;
+	VkDeviceCreateInfo               createInfo;
+	const char                       *deviceExtensions[2] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, NULL };
+	uint32_t                         deviceExtensionCount = 1;
+	uint32_t                         availableExtCount = 0, i;
+	VkExtensionProperties            *availableExt;
 
 	Com_Memset(queueCreateInfos, 0, sizeof(queueCreateInfos));
 
@@ -801,8 +850,60 @@ static qboolean VK_CreateLogicalDevice(void)
 		}
 	}
 
+	// Bindless textures (vk.bindless): Vulkan 1.2 descriptor indexing - a
+	// partially bound, update-after-bind array of combined image samplers
+	// indexed non-uniformly from the fragment shader
+	Com_Memset(&features12, 0, sizeof(features12));
+	features12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+	vk.bindless      = qfalse;
+	if (r_vkBindless->integer && vk.instanceVersion >= VK_API_VERSION_1_2)
+	{
+		PFN_vkGetPhysicalDeviceFeatures2   getFeatures2   = (PFN_vkGetPhysicalDeviceFeatures2)vkGetInstanceProcAddr(vk.instance, "vkGetPhysicalDeviceFeatures2");
+		PFN_vkGetPhysicalDeviceProperties2 getProperties2 = (PFN_vkGetPhysicalDeviceProperties2)vkGetInstanceProcAddr(vk.instance, "vkGetPhysicalDeviceProperties2");
+		VkPhysicalDeviceProperties         props;
+
+		vkGetPhysicalDeviceProperties(vk.physicalDevice, &props);
+		if (getFeatures2 && getProperties2 && props.apiVersion >= VK_API_VERSION_1_2)
+		{
+			VkPhysicalDeviceVulkan12Features   supported12;
+			VkPhysicalDeviceFeatures2          features2;
+			VkPhysicalDeviceVulkan12Properties props12;
+			VkPhysicalDeviceProperties2        props2;
+
+			Com_Memset(&supported12, 0, sizeof(supported12));
+			supported12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+			Com_Memset(&features2, 0, sizeof(features2));
+			features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+			features2.pNext = &supported12;
+			getFeatures2(vk.physicalDevice, &features2);
+
+			Com_Memset(&props12, 0, sizeof(props12));
+			props12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES;
+			Com_Memset(&props2, 0, sizeof(props2));
+			props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+			props2.pNext = &props12;
+			getProperties2(vk.physicalDevice, &props2);
+
+			if (supported12.descriptorIndexing && supported12.shaderSampledImageArrayNonUniformIndexing &&
+			    supported12.descriptorBindingPartiallyBound && supported12.descriptorBindingSampledImageUpdateAfterBind &&
+			    supported12.descriptorBindingUpdateUnusedWhilePending &&
+			    props12.maxPerStageDescriptorUpdateAfterBindSampledImages >= VK_BINDLESS_MAX_IMAGES &&
+			    props12.maxDescriptorSetUpdateAfterBindSampledImages >= VK_BINDLESS_MAX_IMAGES)
+			{
+				features12.descriptorIndexing                           = VK_TRUE;
+				features12.shaderSampledImageArrayNonUniformIndexing    = VK_TRUE;
+				features12.descriptorBindingPartiallyBound              = VK_TRUE;
+				features12.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE;
+				features12.descriptorBindingUpdateUnusedWhilePending    = VK_TRUE;
+				vk.bindless                                             = qtrue;
+			}
+		}
+	}
+	Ren_Print("Vulkan: bindless textures %s\n", vk.bindless ? "on (2D batching)" : "off");
+
 	Com_Memset(&createInfo, 0, sizeof(createInfo));
 	createInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	createInfo.pNext                   = vk.bindless ? &features12 : NULL;
 	createInfo.pQueueCreateInfos       = queueCreateInfos;
 	createInfo.queueCreateInfoCount    = queueCreateInfoCount;
 	createInfo.pEnabledFeatures        = &deviceFeatures;
@@ -970,6 +1071,7 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 static uint32_t VK_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 static VkShaderModule VK_CreateShaderModule(const unsigned char *code, unsigned int size);
 static void VK_FlushPendingFrees(void);
+static void VK_Flush2D(void);
 
 /**
  * @brief Creates the depth buffer (image + memory + view)
@@ -1878,6 +1980,133 @@ static VkBlendFactor VK_DstBlendFactor(unsigned long stateBits)
  * required for tricks like the automap's circular-mask (alphafunc GE128 +
  * depthFunc equal) in cg_commandmap.c to render correctly.
  */
+/**
+ * @brief Bindless textures (vk.bindless): the set layout (one partially
+ * bound, update-after-bind array of VK_BINDLESS_MAX_IMAGES combined image
+ * samplers), its pool and single set, the 2D pipeline layout using it, the
+ * bindless UI shaders and the free slot list. Images are written into it by
+ * VK_CreateImageTexture (VK_BindlessWrite).
+ */
+static qboolean VK_CreateBindlessResources(const VkPushConstantRange *pushConstantRange)
+{
+	VkDescriptorSetLayoutBinding                binding;
+	VkDescriptorBindingFlags                    bindingFlags;
+	VkDescriptorSetLayoutBindingFlagsCreateInfo flagsInfo;
+	VkDescriptorSetLayoutCreateInfo             layoutInfo;
+	VkDescriptorPoolSize                        poolSize;
+	VkDescriptorPoolCreateInfo                  poolInfo;
+	VkDescriptorSetAllocateInfo                 allocInfo;
+	VkPipelineLayoutCreateInfo                  pipelineLayoutInfo;
+	int                                         i;
+
+	Com_Memset(&binding, 0, sizeof(binding));
+	binding.binding         = 0;
+	binding.descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	binding.descriptorCount = VK_BINDLESS_MAX_IMAGES;
+	binding.stageFlags      = VK_SHADER_STAGE_FRAGMENT_BIT;
+
+	// slots are written while frames using other slots are in flight
+	bindingFlags = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT |
+	               VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT;
+
+	Com_Memset(&flagsInfo, 0, sizeof(flagsInfo));
+	flagsInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
+	flagsInfo.bindingCount  = 1;
+	flagsInfo.pBindingFlags = &bindingFlags;
+
+	Com_Memset(&layoutInfo, 0, sizeof(layoutInfo));
+	layoutInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	layoutInfo.pNext        = &flagsInfo;
+	layoutInfo.flags        = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT;
+	layoutInfo.bindingCount = 1;
+	layoutInfo.pBindings    = &binding;
+
+	if (!VK_CheckResult(vkCreateDescriptorSetLayout(vk.device, &layoutInfo, NULL, &vk.bindlessSetLayout), "vkCreateDescriptorSetLayout(bindless)"))
+	{
+		return qfalse;
+	}
+
+	Com_Memset(&poolSize, 0, sizeof(poolSize));
+	poolSize.type            = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	poolSize.descriptorCount = VK_BINDLESS_MAX_IMAGES;
+
+	Com_Memset(&poolInfo, 0, sizeof(poolInfo));
+	poolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	poolInfo.flags         = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT;
+	poolInfo.poolSizeCount = 1;
+	poolInfo.pPoolSizes    = &poolSize;
+	poolInfo.maxSets       = 1;
+
+	if (!VK_CheckResult(vkCreateDescriptorPool(vk.device, &poolInfo, NULL, &vk.bindlessPool), "vkCreateDescriptorPool(bindless)"))
+	{
+		return qfalse;
+	}
+
+	Com_Memset(&allocInfo, 0, sizeof(allocInfo));
+	allocInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool     = vk.bindlessPool;
+	allocInfo.descriptorSetCount = 1;
+	allocInfo.pSetLayouts        = &vk.bindlessSetLayout;
+
+	if (!VK_CheckResult(vkAllocateDescriptorSets(vk.device, &allocInfo, &vk.bindlessSet), "vkAllocateDescriptorSets(bindless)"))
+	{
+		return qfalse;
+	}
+
+	Com_Memset(&pipelineLayoutInfo, 0, sizeof(pipelineLayoutInfo));
+	pipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	pipelineLayoutInfo.setLayoutCount         = 1;
+	pipelineLayoutInfo.pSetLayouts            = &vk.bindlessSetLayout;
+	pipelineLayoutInfo.pushConstantRangeCount = 1;
+	pipelineLayoutInfo.pPushConstantRanges    = pushConstantRange;
+
+	if (!VK_CheckResult(vkCreatePipelineLayout(vk.device, &pipelineLayoutInfo, NULL, &vk.uiBindlessPipelineLayout), "vkCreatePipelineLayout(bindless)"))
+	{
+		return qfalse;
+	}
+
+	vk.uiBindlessVertModule = VK_CreateShaderModule(ui_bindless_vert_spv, ui_bindless_vert_spv_SIZE);
+	vk.uiBindlessFragModule = VK_CreateShaderModule(ui_bindless_frag_spv, ui_bindless_frag_spv_SIZE);
+	if (vk.uiBindlessVertModule == VK_NULL_HANDLE || vk.uiBindlessFragModule == VK_NULL_HANDLE)
+	{
+		return qfalse;
+	}
+
+	// slot 0 is handed out first
+	vk.numBindlessFree = 0;
+	for (i = VK_BINDLESS_MAX_IMAGES - 1; i >= 0; i--)
+	{
+		vk.bindlessFree[vk.numBindlessFree++] = i;
+	}
+
+	return qtrue;
+}
+
+/**
+ * @brief Writes an image's view and sampler into its bindless slot.
+ */
+static void VK_BindlessWrite(int slot, VkImageView view, VkSampler sampler)
+{
+	VkDescriptorImageInfo imageInfo;
+	VkWriteDescriptorSet  write;
+
+	Com_Memset(&imageInfo, 0, sizeof(imageInfo));
+	imageInfo.sampler     = sampler;
+	imageInfo.imageView   = view;
+	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+	Com_Memset(&write, 0, sizeof(write));
+	write.sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	write.dstSet          = vk.bindlessSet;
+	write.dstBinding      = 0;
+	write.dstArrayElement = (uint32_t)slot;
+	write.descriptorCount = 1;
+	write.descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	write.pImageInfo      = &imageInfo;
+
+	vkUpdateDescriptorSets(vk.device, 1, &write, 0, NULL);
+}
+
 static qboolean VK_CreateUIPipeline(void)
 {
 	VkDescriptorSetLayoutBinding    binding;
@@ -1926,6 +2155,11 @@ static qboolean VK_CreateUIPipeline(void)
 		return qfalse;
 	}
 
+	if (vk.bindless && !VK_CreateBindlessResources(&pushConstantRange))
+	{
+		return qfalse;
+	}
+
 	return qtrue;
 }
 
@@ -1938,7 +2172,7 @@ static VkPipeline VK_CreateUIPipelineVariant(unsigned long stateBits)
 {
 	VkPipelineShaderStageCreateInfo        stages[2];
 	VkVertexInputBindingDescription        vertexBinding;
-	VkVertexInputAttributeDescription      vertexAttributes[3];
+	VkVertexInputAttributeDescription      vertexAttributes[4];
 	VkPipelineVertexInputStateCreateInfo   vertexInputInfo;
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly;
 	VkPipelineViewportStateCreateInfo      viewportState;
@@ -1955,11 +2189,11 @@ static VkPipeline VK_CreateUIPipelineVariant(unsigned long stateBits)
 	Com_Memset(stages, 0, sizeof(stages));
 	stages[0].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	stages[0].stage  = VK_SHADER_STAGE_VERTEX_BIT;
-	stages[0].module = vk.uiVertModule;
+	stages[0].module = vk.bindless ? vk.uiBindlessVertModule : vk.uiVertModule;
 	stages[0].pName  = "main";
 	stages[1].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	stages[1].stage  = VK_SHADER_STAGE_FRAGMENT_BIT;
-	stages[1].module = vk.uiFragModule;
+	stages[1].module = vk.bindless ? vk.uiBindlessFragModule : vk.uiFragModule;
 	stages[1].pName  = "main";
 
 	Com_Memset(&vertexBinding, 0, sizeof(vertexBinding));
@@ -1980,12 +2214,16 @@ static VkPipeline VK_CreateUIPipelineVariant(unsigned long stateBits)
 	vertexAttributes[2].binding  = 0;
 	vertexAttributes[2].format   = VK_FORMAT_R8G8B8A8_UNORM;
 	vertexAttributes[2].offset   = offsetof(vkUIVertex_t, color);
+	vertexAttributes[3].location = 3;
+	vertexAttributes[3].binding  = 0;
+	vertexAttributes[3].format   = VK_FORMAT_R32_UINT;
+	vertexAttributes[3].offset   = offsetof(vkUIVertex_t, texture);
 
 	Com_Memset(&vertexInputInfo, 0, sizeof(vertexInputInfo));
 	vertexInputInfo.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 	vertexInputInfo.vertexBindingDescriptionCount   = 1;
 	vertexInputInfo.pVertexBindingDescriptions      = &vertexBinding;
-	vertexInputInfo.vertexAttributeDescriptionCount = 3;
+	vertexInputInfo.vertexAttributeDescriptionCount = vk.bindless ? 4 : 3;
 	vertexInputInfo.pVertexAttributeDescriptions    = vertexAttributes;
 
 	Com_Memset(&inputAssembly, 0, sizeof(inputAssembly));
@@ -2047,7 +2285,7 @@ static VkPipeline VK_CreateUIPipelineVariant(unsigned long stateBits)
 	pipelineInfo.pDepthStencilState  = &depthStencil;
 	pipelineInfo.pColorBlendState    = &colorBlending;
 	pipelineInfo.pDynamicState       = &dynamicState;
-	pipelineInfo.layout              = vk.uiPipelineLayout;
+	pipelineInfo.layout              = vk.bindless ? vk.uiBindlessPipelineLayout : vk.uiPipelineLayout;
 	pipelineInfo.renderPass          = vk.renderPass;
 	pipelineInfo.subpass             = 0;
 
@@ -3429,6 +3667,26 @@ void VK_Shutdown(void)
 		{
 			vkDestroyShaderModule(vk.device, vk.gammaFragModule, NULL);
 		}
+		if (vk.uiBindlessPipelineLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyPipelineLayout(vk.device, vk.uiBindlessPipelineLayout, NULL);
+		}
+		if (vk.bindlessPool != VK_NULL_HANDLE)
+		{
+			vkDestroyDescriptorPool(vk.device, vk.bindlessPool, NULL); // frees vk.bindlessSet
+		}
+		if (vk.bindlessSetLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyDescriptorSetLayout(vk.device, vk.bindlessSetLayout, NULL);
+		}
+		if (vk.uiBindlessVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.uiBindlessVertModule, NULL);
+		}
+		if (vk.uiBindlessFragModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.uiBindlessFragModule, NULL);
+		}
 		if (vk.uiPipelineLayout != VK_NULL_HANDLE)
 		{
 			vkDestroyPipelineLayout(vk.device, vk.uiPipelineLayout, NULL);
@@ -3666,6 +3924,9 @@ static void VK_ResetBindCache(void)
 
 static void VK_BindPipelineCached(VkPipeline pipeline)
 {
+	// every draw binds its pipeline first: record a pending 2D batch before it
+	VK_Flush2D();
+
 	if (vk.lastBoundPipeline != pipeline)
 	{
 		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
@@ -3782,6 +4043,10 @@ static void VK_FlushPendingFramesSlot(int slot)
 		{
 			vkFreeMemory(vk.device, vk.pendingFree[slot][i].memory, NULL);
 		}
+		if (vk.pendingFree[slot][i].bindlessSlot)
+		{
+			vk.bindlessFree[vk.numBindlessFree++] = vk.pendingFree[slot][i].bindlessSlot - 1;
+		}
 	}
 	vk.numPendingFree[slot] = 0;
 }
@@ -3818,7 +4083,9 @@ static void VK_QueueImageResourcesForFree(struct image_s *image)
 	vk.pendingFree[slot][vk.numPendingFree[slot]].memory        = (VkDeviceMemory)image->vkImageMemory;
 	vk.pendingFree[slot][vk.numPendingFree[slot]].view          = (VkImageView)image->vkImageView;
 	vk.pendingFree[slot][vk.numPendingFree[slot]].descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
+	vk.pendingFree[slot][vk.numPendingFree[slot]].bindlessSlot  = image->vkBindlessSlot;
 	vk.numPendingFree[slot]++;
+	image->vkBindlessSlot = 0;
 
 	image->vkImage         = NULL;
 	image->vkImageMemory   = NULL;
@@ -3900,6 +4167,7 @@ void VK_BeginFrame(void)
 	vk.sceneIndexArenaOffset  = (VkDeviceSize)VK_SCENE_INDEX_ARENA_SIZE * vk.frameIndex;
 	vk.sceneVertexArenaSize   = vk.sceneVertexArenaOffset + VK_SCENE_VERTEX_ARENA_SIZE; // end of region
 	vk.sceneIndexArenaSize    = vk.sceneIndexArenaOffset + VK_SCENE_INDEX_ARENA_SIZE;
+	vk.batch2DOpen            = qfalse; // VK_EndFrame recorded the last one
 	vk.boneArenaOffset        = (VkDeviceSize)VK_SKIN_BONE_ARENA_SIZE * vk.frameIndex;
 	vk.boneArenaSize          = vk.boneArenaOffset + VK_SKIN_BONE_ARENA_SIZE;
 	VK_ResetBindCache();
@@ -4127,6 +4395,8 @@ void VK_EndFrame(void)
 	{
 		return;
 	}
+
+	VK_Flush2D(); // keep the pending 2D batch before this in the command buffer
 
 	vkCmdEndRenderPass(vk.commandBuffer);
 
@@ -4471,6 +4741,21 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 	image->vkSampler       = (void *)sampler; // not owned here: one of the shared samplers
 	image->vkDescriptorSet = (void *)descriptorSet;
 
+	// bindless slot for the 2D path (a new slot: a replaced image's old one
+	// may still be in use by frames in flight, see VK_QueueImageResourcesForFree)
+	if (vk.bindless && !image->vkBindlessSlot)
+	{
+		if (vk.numBindlessFree > 0)
+		{
+			image->vkBindlessSlot = vk.bindlessFree[--vk.numBindlessFree] + 1;
+			VK_BindlessWrite(image->vkBindlessSlot - 1, vkImageView, sampler);
+		}
+		else
+		{
+			Ren_Print("Vulkan: bindless texture array full, %s won't be drawn in 2D\n", image->imgName);
+		}
+	}
+
 	return qtrue;
 }
 
@@ -4516,6 +4801,12 @@ void VK_DeleteImageTexture(struct image_s *image)
 		image->vkImageMemory = NULL;
 	}
 	image->vkSampler = NULL; // shared sampler, not owned by this image
+
+	if (image->vkBindlessSlot)
+	{
+		vk.bindlessFree[vk.numBindlessFree++] = image->vkBindlessSlot - 1; // the device is idle
+		image->vkBindlessSlot                 = 0;
+	}
 }
 
 /**
@@ -4532,6 +4823,165 @@ static float VK_AlphaTestMode(unsigned long stateBits)
 	case GLS_ATEST_GE_80: return 3.0f;
 	default: return 0.0f;
 	}
+}
+
+/**
+ * @brief 2D state for a UI draw: full-window viewport/scissor (dynamic state
+ * that 3D sub-views change; vk.viewport2DSet tracks it) and the push
+ * constants (pixel -> clip transform, alpha test from stateBits).
+ */
+static void VK_Set2DState(VkPipelineLayout layout, unsigned long stateBits)
+{
+	float pushConstants[8];
+
+	// Always set the full-window viewport/scissor for 2D/UI draws: viewport/
+	// scissor are dynamic command-buffer state that persists across pipeline
+	// binds, so if a 3D sub-view (e.g. the limbo menu's small player-model
+	// preview) sets a smaller viewport earlier in this same frame, caching
+	// "set once per frame" here would leave later UI draws incorrectly
+	// clipped to that stale, smaller rect.
+	if (!vk.viewport2DSet)
+	{
+		VkViewport viewport;
+		VkRect2D   scissor;
+
+		Com_Memset(&viewport, 0, sizeof(viewport));
+		viewport.width    = (float)glConfig.vidWidth;
+		viewport.height   = (float)glConfig.vidHeight;
+		viewport.minDepth = 0.0f;
+		viewport.maxDepth = 1.0f;
+		vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
+
+		Com_Memset(&scissor, 0, sizeof(scissor));
+		scissor.extent.width  = (uint32_t)glConfig.vidWidth;
+		scissor.extent.height = (uint32_t)glConfig.vidHeight;
+		vkCmdSetScissor(vk.commandBuffer, 0, 1, &scissor);
+
+		vk.viewport2DSet = qtrue;
+	}
+
+	pushConstants[0] = 2.0f / (float)glConfig.vidWidth;
+	pushConstants[1] = 2.0f / (float)glConfig.vidHeight;
+	pushConstants[2] = -1.0f;
+	pushConstants[3] = -1.0f;
+	pushConstants[4] = VK_AlphaTestMode(stateBits);
+	pushConstants[5] = 0.0f;
+	pushConstants[6] = 0.0f;
+	pushConstants[7] = 0.0f;
+	VK_PushConstantsCached(layout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
+}
+
+/**
+ * @brief Records the pending 2D batch (vk.bindless) as one draw: consecutive
+ * VK_Draw2D() calls with the same stateBits, any textures (each vertex
+ * carries its bindless slot). Called before anything else is recorded into
+ * the frame's command buffer, so the draw order stays renderer1's; within a
+ * draw, primitives blend in order.
+ */
+static void VK_Flush2D(void)
+{
+	VkPipeline pipeline;
+
+	if (!vk.batch2DOpen)
+	{
+		return;
+	}
+	vk.batch2DOpen = qfalse;
+
+	pipeline = VK_GetUIPipeline(vk.batch2DStateBits);
+	if (pipeline == VK_NULL_HANDLE || !vk.batch2DNumIndexes)
+	{
+		return;
+	}
+
+	VK_BindPipelineCached(pipeline);
+	VK_Set2DState(vk.uiBindlessPipelineLayout, vk.batch2DStateBits);
+	VK_BindDescriptorSetsCached(vk.uiBindlessPipelineLayout, 1, &vk.bindlessSet);
+	VK_BindArenaBuffers(vk.vertexArenaBuffer, vk.indexArenaBuffer);
+	vkCmdDrawIndexed(vk.commandBuffer, vk.batch2DNumIndexes, 1, vk.batch2DFirstIndex, vk.batch2DVertexOffset, 0);
+}
+
+/**
+ * @brief VK_Draw2D() with bindless textures: appends the batch's vertices
+ * (with the image's slot) and indexes to the pending 2D batch, starting a
+ * new one when the state differs (VK_Flush2D()).
+ */
+static void VK_Draw2DBatched(shaderCommands_t *input, struct image_s *image, unsigned long stateBits)
+{
+	int          numVertexes = input->numVertexes, numIndexes = input->numIndexes, i;
+	VkDeviceSize vertexBytes = (VkDeviceSize)numVertexes * sizeof(vkUIVertex_t);
+	VkDeviceSize indexBytes  = (VkDeviceSize)numIndexes * sizeof(uint32_t);
+	vkUIVertex_t *dstVerts;
+	uint32_t     *dstIndexes;
+	uint32_t     texture, base;
+
+	if (!image->vkBindlessSlot)
+	{
+		return; // the bindless array was full when it was created
+	}
+	texture = (uint32_t)(image->vkBindlessSlot - 1);
+
+	if (vk.batch2DOpen && stateBits != vk.batch2DStateBits)
+	{
+		VK_Flush2D();
+	}
+
+	if (!vk.batch2DOpen)
+	{
+		// draws address the arena with vertexOffset (in vertices): keep the
+		// byte offset a multiple of this vertex type's stride
+		vk.vertexArenaOffset = VK_ALIGN_UP(vk.vertexArenaOffset, sizeof(vkUIVertex_t));
+	}
+
+	if (vk.vertexArenaOffset + vertexBytes > vk.vertexArenaSize ||
+	    vk.indexArenaOffset + indexBytes > vk.indexArenaSize)
+	{
+		// rate-limited, see VK_Draw2D
+		static int lastWarnFrame = -1;
+
+		if (backEnd.refdef.time != lastWarnFrame)
+		{
+			Ren_Print("Vulkan: VK_Draw2D - UI vertex/index arena exhausted this frame, dropping remaining 2D draws\n");
+			lastWarnFrame = backEnd.refdef.time;
+		}
+		return;
+	}
+
+	if (!vk.batch2DOpen)
+	{
+		vk.batch2DOpen         = qtrue;
+		vk.batch2DStateBits    = stateBits;
+		vk.batch2DFirstIndex   = (uint32_t)(vk.indexArenaOffset / sizeof(uint32_t));
+		vk.batch2DVertexOffset = (int32_t)(vk.vertexArenaOffset / sizeof(vkUIVertex_t));
+		vk.batch2DNumIndexes   = 0;
+		vk.batch2DNumVertexes  = 0;
+	}
+
+	dstVerts = (vkUIVertex_t *)((byte *)vk.vertexArenaMapped + vk.vertexArenaOffset);
+	for (i = 0; i < numVertexes; i++)
+	{
+		dstVerts[i].pos[0]   = input->xyz[i][0];
+		dstVerts[i].pos[1]   = input->xyz[i][1];
+		dstVerts[i].uv[0]    = input->svars.texcoords[0][i][0];
+		dstVerts[i].uv[1]    = input->svars.texcoords[0][i][1];
+		dstVerts[i].color[0] = input->svars.colors[i][0];
+		dstVerts[i].color[1] = input->svars.colors[i][1];
+		dstVerts[i].color[2] = input->svars.colors[i][2];
+		dstVerts[i].color[3] = input->svars.colors[i][3];
+		dstVerts[i].texture  = texture;
+	}
+
+	base       = (uint32_t)vk.batch2DNumVertexes;
+	dstIndexes = (uint32_t *)((byte *)vk.indexArenaMapped + vk.indexArenaOffset);
+	for (i = 0; i < numIndexes; i++)
+	{
+		dstIndexes[i] = input->indexes[i] + base;
+	}
+
+	vk.batch2DNumVertexes += numVertexes;
+	vk.batch2DNumIndexes  += (uint32_t)numIndexes;
+	vk.vertexArenaOffset  += vertexBytes;
+	vk.indexArenaOffset   += indexBytes;
 }
 
 /**
@@ -4555,12 +5005,8 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 	VkDeviceSize    vertexBytes, indexBytes;
 	vkUIVertex_t    *dstVerts;
 	uint32_t        *dstIndexes;
-	VkViewport      viewport;
-	VkRect2D        scissor;
-	float           pushConstants[8];
 	VkDescriptorSet descriptorSet;
 	VkPipeline      pipeline;
-
 
 	if (!vk.initialized || !input || input->numVertexes == 0 || input->numIndexes == 0)
 	{
@@ -4575,6 +5021,12 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 	{
 		// texture failed to upload (or hasn't been uploaded yet); skip this
 		// batch rather than binding a garbage/null descriptor set.
+		return;
+	}
+
+	if (vk.bindless)
+	{
+		VK_Draw2DBatched(input, image, stateBits);
 		return;
 	}
 
@@ -4626,39 +5078,7 @@ void VK_Draw2D(shaderCommands_t *input, struct image_s *image, unsigned long sta
 	}
 
 	VK_BindPipelineCached(pipeline);
-
-	// Always set the full-window viewport/scissor for 2D/UI draws: viewport/
-	// scissor are dynamic command-buffer state that persists across pipeline
-	// binds, so if a 3D sub-view (e.g. the limbo menu's small player-model
-	// preview) sets a smaller viewport earlier in this same frame, caching
-	// "set once per frame" here would leave later UI draws incorrectly
-	// clipped to that stale, smaller rect.
-	if (!vk.viewport2DSet)
-	{
-		Com_Memset(&viewport, 0, sizeof(viewport));
-		viewport.width    = (float)glConfig.vidWidth;
-		viewport.height   = (float)glConfig.vidHeight;
-		viewport.minDepth = 0.0f;
-		viewport.maxDepth = 1.0f;
-		vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
-
-		Com_Memset(&scissor, 0, sizeof(scissor));
-		scissor.extent.width  = (uint32_t)glConfig.vidWidth;
-		scissor.extent.height = (uint32_t)glConfig.vidHeight;
-		vkCmdSetScissor(vk.commandBuffer, 0, 1, &scissor);
-
-		vk.viewport2DSet = qtrue;
-	}
-
-	pushConstants[0] = 2.0f / (float)glConfig.vidWidth;
-	pushConstants[1] = 2.0f / (float)glConfig.vidHeight;
-	pushConstants[2] = -1.0f;
-	pushConstants[3] = -1.0f;
-	pushConstants[4] = VK_AlphaTestMode(stateBits);
-	pushConstants[5] = 0.0f;
-	pushConstants[6] = 0.0f;
-	pushConstants[7] = 0.0f;
-	VK_PushConstantsCached(vk.uiPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
+	VK_Set2DState(vk.uiPipelineLayout, stateBits);
 
 	descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
 	VK_BindDescriptorSetsCached(vk.uiPipelineLayout, 1, &descriptorSet);
@@ -4689,6 +5109,8 @@ void VK_SetSceneViewport(int x, int y, int width, int height)
 	{
 		return;
 	}
+
+	VK_Flush2D(); // keep the pending 2D batch before this in the command buffer
 
 	// backEnd.viewParms.viewportX/Y use GL's bottom-left-origin convention
 	// (y is measured up from the bottom of the window), but Vulkan's
@@ -4740,6 +5162,8 @@ void VK_SetDepthRange(float minDepth, float maxDepth)
 		return;
 	}
 
+	VK_Flush2D(); // keep the pending 2D batch before this in the command buffer
+
 	Com_Memset(&viewport, 0, sizeof(viewport));
 	viewport.x        = (float)vk.lastViewportX;
 	viewport.y        = (float)vk.lastViewportFlippedY;
@@ -4777,6 +5201,8 @@ void VK_ClearSceneColor(qboolean fullFramebuffer)
 	{
 		return;
 	}
+
+	VK_Flush2D(); // keep the pending 2D batch before this in the command buffer
 
 	Com_Memset(&attachment, 0, sizeof(attachment));
 	attachment.aspectMask                  = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -4822,6 +5248,8 @@ void VK_ClearSceneDepth(void)
 	{
 		return;
 	}
+
+	VK_Flush2D(); // keep the pending 2D batch before this in the command buffer
 
 	Com_Memset(&attachment, 0, sizeof(attachment));
 	attachment.aspectMask                      = VK_IMAGE_ASPECT_DEPTH_BIT | (vk.depthHasStencil ? VK_IMAGE_ASPECT_STENCIL_BIT : 0);
@@ -5830,6 +6258,11 @@ void VK_SetTextureMode(int minFilter, int magFilter)
 
 		vkUpdateDescriptorSets(vk.device, 1, &writeSet, 0, NULL);
 		image->vkSampler = (void *)sampler;
+
+		if (image->vkBindlessSlot)
+		{
+			VK_BindlessWrite(image->vkBindlessSlot - 1, (VkImageView)image->vkImageView, sampler);
+		}
 	}
 
 	vkDestroySampler(vk.device, oldRepeat, NULL);

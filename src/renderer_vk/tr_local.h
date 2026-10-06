@@ -127,6 +127,7 @@ typedef struct image_s
 	void *vkImageView;
 	void *vkSampler;
 	void *vkDescriptorSet;
+	int vkBindlessSlot;             ///< slot + 1 in the Vulkan bindless texture array, 0 = none
 
 	struct image_s *next;
 } image_t;

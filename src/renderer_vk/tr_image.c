@@ -821,6 +821,9 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 	}
 
 	image = tr.images[tr.numImages] = R_CacheImageAlloc(sizeof(image_t));
+	// R_CacheImageAlloc() doesn't zero (Com_Allocate with r_cacheShaders);
+	// the Vulkan handles, e.g. vkBindlessSlot, must start out empty
+	Com_Memset(image, 0, sizeof(*image));
 
 	// ok, let's try the recommended way
 
