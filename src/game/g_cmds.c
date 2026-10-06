@@ -4167,7 +4167,14 @@ qboolean Do_Activate_f(gentity_t *ent, gentity_t *traceEnt)
 		ent->client->pmext.weapHeat[WP_DUMMY_MG42] = traceEnt->mg42weapHeat;
 		ent->client->ps.ammo[WP_DUMMY_MG42]        = traceEnt->mg42weapHeat;
 
-		G_UseTargets(traceEnt, ent);     // added for Mike so mounting an MG42 can be a trigger event (let me know if there's any issues with this)
+		if (!Q_stricmp(ent->classname, "misc_aagun"))
+		{
+			ent->client->ps.eFlags |= EF_AAGUN_ACTIVE;
+		}
+		else
+		{
+			ent->client->ps.eFlags |= EF_MG42_ACTIVE;
+		}
 	}
 	else if (((Q_stricmp(traceEnt->classname, "func_door") == 0) || (Q_stricmp(traceEnt->classname, "func_door_rotating") == 0)))
 	{

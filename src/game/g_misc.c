@@ -1301,9 +1301,6 @@ void aagun_fire(gentity_t *other)
 	BG_AdjustAAGunMuzzleForBarrel(muzzle, forward, right, up, self->s.modelindex2);
 	self->s.modelindex2 = (self->s.modelindex2 + 1) % 4;
 
-	self->s.eFlags  |= EF_AAGUN_ACTIVE;
-	other->s.eFlags |= EF_AAGUN_ACTIVE;
-
 	// snap to integer coordinates for more efficient network bandwidth usage
 	SnapVector(muzzle);
 
@@ -1455,9 +1452,6 @@ void mg42_fire(gentity_t *other)
 	{
 		VectorMA(muzzle, 16, up, muzzle);
 	}
-
-	self->s.eFlags  |= EF_MG42_ACTIVE;
-	other->s.eFlags |= EF_MG42_ACTIVE;
 
 	// snap to integer coordinates for more efficient network bandwidth usage
 	SnapVector(muzzle);

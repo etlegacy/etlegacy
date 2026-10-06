@@ -898,10 +898,6 @@ void mountedmg42_fire(gentity_t *other)
 
 	SnapVector(muzzle);
 
-	// ent & activator are same for Fire_Lead_Ext
-	//self->s.eFlags  |= EF_MG42_ACTIVE;
-	other->s.eFlags |= EF_MG42_ACTIVE;
-
 #ifdef FEATURE_LUA
 	if (!G_LuaHook_MountedMGFire(other->s.number))
 #endif
