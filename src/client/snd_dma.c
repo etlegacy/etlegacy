@@ -393,26 +393,57 @@ void S_DefaultSound(sfx_t *sfx)
 */
 
 /**
- * @brief S_Base_Reload
+ * @brief Gives the sound data back to the sound memory
+ * @param[in,out] sfx
+ */
+static void S_FreeSound(sfx_t *sfx)
+{
+	sndBuffer *buffer, *nbuffer;
+
+	buffer = sfx->soundData;
+	while (buffer != NULL)
+	{
+		nbuffer = buffer->next;
+		SND_Com_Dealloc(buffer);
+		buffer = nbuffer;
+	}
+	sfx->inMemory  = qfalse;
+	sfx->soundData = NULL;
+}
+
+/**
+ * @brief Drops the sounds whose file is now read from another pk3 file (server or mod change),
+ * they are loaded again on their next use
  */
 void S_Base_Reload(void)
 {
-	sfx_t *sfx;
-	int   i;
+	sfx_t    *sfx;
+	int      i;
+	qboolean stopped = qfalse;
 
 	if (!s_soundStarted)
 	{
 		return;
 	}
 
-	Com_Printf("reloading sounds...\n");
-
-	S_Base_StopAllSounds();
-
 	for (sfx = knownSfx, i = 0; i < numSfx; i++, sfx++)
 	{
-		sfx->inMemory = qfalse;
-		S_memoryLoad(sfx);
+		// player specific sounds are never directly loaded
+		if (!sfx->inMemory || sfx->soundName[0] == '*' || FS_FilePakChecksum(sfx->soundName) == sfx->pakChecksum)
+		{
+			continue;
+		}
+
+		if (!stopped)
+		{
+			S_Base_StopAllSounds();
+			stopped = qtrue;
+		}
+
+		Com_DPrintf("S_Base_Reload: %s changed\n", sfx->soundName);
+
+		S_FreeSound(sfx);
+		sfx->defaultSound = qfalse;
 	}
 }
 
@@ -2302,9 +2333,8 @@ void S_Base_PauseSounds(qboolean pause)
  */
 void S_FreeOldestSound(void)
 {
-	int       i, oldest, used = 0;
-	sfx_t     *sfx;
-	sndBuffer *buffer, *nbuffer;
+	int   i, oldest, used = 0;
+	sfx_t *sfx;
 
 	oldest = s_soundtime;
 
@@ -2322,15 +2352,7 @@ void S_FreeOldestSound(void)
 
 	Com_DPrintf("S_FreeOldestSound: freeing sound %s\n", sfx->soundName);
 
-	buffer = sfx->soundData;
-	while (buffer != NULL)
-	{
-		nbuffer = buffer->next;
-		SND_Com_Dealloc(buffer);
-		buffer = nbuffer;
-	}
-	sfx->inMemory  = qfalse;
-	sfx->soundData = NULL;
+	S_FreeSound(sfx);
 }
 
 // =======================================================================

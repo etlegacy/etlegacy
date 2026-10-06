@@ -889,6 +889,9 @@ long FS_FOpenFileRead_Filtered(const char *qpath, fileHandle_t *file, qboolean u
 // returns 1 if a file is in the PAK file, otherwise -1
 int FS_FileIsInPAK(const char *fileName, int *pChecksum);
 
+// returns the checksum of the PAK file a file is read from, 0 if outside of PAK files, -1 if not found
+int FS_FilePakChecksum(const char *fileName);
+
 int FS_Delete(const char *fileName);
 
 int FS_Write(const void *buffer, int len, fileHandle_t h);
