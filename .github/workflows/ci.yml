@@ -282,29 +282,6 @@ jobs:
           for FILE in ./app/build/outputs/apk/debug/*; do mv "$FILE" "${FILE%-*}.apk"; done
           ls app/build/outputs/apk/debug
 
-  emscripten:
-    runs-on: ubuntu-24.04
-    env:
-      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
-      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
-    needs: [pre-build]
-    container:
-      image: emscripten/emsdk:6.0.0
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - name: Install Ninja
-        run: |
-          apt-get update && apt-get install -y ninja-build
-
-      - name: Build
-        run: |
-          sed -i 's/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA))/if (UNIX AND (BUNDLED_OGG_VORBIS OR BUNDLED_OPENSSL OR BUNDLED_LUA) AND NOT EMSCRIPTEN)/g' libs/CMakeLists.txt
-          sed -i 's/if (ETL_64BITS)/if (ETL_64BITS OR EMSCRIPTEN)/g' libs/CMakeLists.txt
-          ./easybuild.sh build -emscripten -ninja
-
   check-compiler-warnings:
     runs-on: ubuntu-latest
     needs:
@@ -315,7 +292,6 @@ jobs:
       - osx
       - win
       - win64
-      - emscripten
     steps:
       - uses: actions/checkout@v4
         with:
@@ -347,7 +323,6 @@ jobs:
       - osx
       - win
       - win64
-      - emscripten
 
       - check-compiler-warnings
     if: |

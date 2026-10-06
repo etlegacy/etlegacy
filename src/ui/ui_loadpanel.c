@@ -184,10 +184,6 @@ void UI_DrawLoadPanel(qboolean ownerdraw, qboolean uihack)
 		bg_loadscreeninited = qtrue;
 	}
 
-#ifdef __EMSCRIPTEN__
-	BG_PanelButtonsSetup(loadpanelButtons);
-#endif
-
 	BG_PanelButtonsRender(loadpanelButtons);
 
 	if (!uihack && trap_Cvar_VariableValue("ui_connecting") != 0.f)

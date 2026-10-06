@@ -336,12 +336,6 @@ void VM_LoadSymbols(vm_t *vm)
  * @param[in] arg
  * @return
  */
-#ifdef __EMSCRIPTEN__
-intptr_t QDECL VM_DllSyscall(intptr_t *args)
-{
-	return currentVM->systemCall(args);
-}
-#else
 intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 {
 #if defined(__loongarch64) || defined(__x86_64__) || defined (_WIN64) || defined (__llvm__) || defined(__ANDROID__) || defined(__aarch64__) || ((defined __linux__) && (defined __powerpc__))
@@ -370,7 +364,6 @@ intptr_t QDECL VM_DllSyscall(intptr_t arg, ...)
 	return currentVM->systemCall(&arg);
 #endif
 }
-#endif
 
 /**
  * @brief Reload the data, but leave everything else in place
@@ -783,13 +776,8 @@ intptr_t QDECL VM_CallFunc(vm_t *vm, int callNum, ...)
 		}
 		va_end(ap);
 
-#ifdef __EMSCRIPTEN__
-		r = vm->entryPoint(callNum, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7],
-		                   args[8], args[9], args[10], args[11]);
-#else
 		r = vm->entryPoint(callNum, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7],
 		                   args[8], args[9], args[10], args[11], args[12], args[13], args[14], args[15]);
-#endif
 	}
 #if 0
 	else if (vm->compiled)

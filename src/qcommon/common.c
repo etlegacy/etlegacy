@@ -3248,16 +3248,12 @@ void Com_Init(char *commandLine)
 
 	if (!com_dedicated->integer)
 	{
-#ifdef __EMSCRIPTEN__
-		Cvar_Set("com_introPlayed", "1");
-#else
 		// Don't play intro movie if already played
 		if (!com_introPlayed->integer)
 		{
 			Cbuf_AddText("cinematic etintro.roq\n");
 			Cvar_Set("com_introPlayed", "1");
 		}
-#endif
 	}
 
 #ifdef FEATURE_TRACKER

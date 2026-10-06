@@ -408,27 +408,6 @@ parse_commandline() {
             FEATURE_PNG=1
             FEATURE_OMNIBOT=1
             INSTALL_OMNIBOT=1
-        elif [ "$var" = "-emscripten" ] || [ "$var" = "-emsc" ]; then
-            einfo "Will enable Emscripten build"
-            CROSS_COMPILE32=0
-            x86_build=false
-            FEATURE_RENDERER_GLES=0
-            RENDERER_DYNAMIC=0
-            FEATURE_RENDERER2=0
-            INSTALL_EXTRA=0
-            BUNDLED_OPENSSL=0
-            BUILD_MOD_PK3=0
-            BUNDLED_THEORA=0
-            FEATURE_THEORA=0
-            FEATURE_OPENAL=0
-            BUNDLED_WOLFSSL=0
-            FEATURE_SSL=1
-            FEATURE_CURL=0
-            BUNDLED_GLEW=0
-            BUILD_SERVER=0
-            BUNDLED_OGG_VORBIS=0
-            FEATURE_OGG_VORBIS=0
-            TOOLCHAIN_FILE=${EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
         elif [ "$var" = "-ninja" ]; then
             einfo "Will use Ninja instead of Unix Makefile"
             MAKEFILE_GENERATOR=${MAKEFILE_GENERATOR:-Ninja}

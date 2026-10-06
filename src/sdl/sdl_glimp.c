@@ -48,23 +48,6 @@
 #include "sdl_icon.h"
 #include "sdl_splash.h"
 
-#ifdef __EMSCRIPTEN__
-#include "gl4esinit.h"
-// gl4es (desktop GL over GLES2/WebGL, see cmake/ETLGl4ES.cmake) is linked as a
-// static library and must be initialised explicitly once a GL context exists:
-// its GLES loader needs a proc-address resolver and its hardware probe needs a
-// current context.
-// gl4es can only be initialised once per process: it has no shutdown path and
-// re-running its hardware probe against a (re)created context corrupts its
-// state.
-static qboolean gl4es_initialized = qfalse;
-
-static void *GLimp_GL4ES_GetProcAddress(const char *name)
-{
-	return SDL_GL_GetProcAddress(name);
-}
-#endif
-
 #ifdef __APPLE__
 #define MACOS_X_GAMMA_RESET_FIX
 #ifdef MACOS_X_GAMMA_RESET_FIX
@@ -418,11 +401,7 @@ static void GLimp_InitCvars(void)
 	r_allowResize     = Cvar_Get("r_allowResize", "0", CVAR_ARCHIVE);
 
 	// Window cvars
-#ifdef __EMSCRIPTEN__
-	r_fullscreen = Cvar_Get("r_fullscreen", "0", CVAR_ROM);
-#else
-	r_fullscreen = Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
-#endif
+	r_fullscreen     = Cvar_Get("r_fullscreen", "1", CVAR_ARCHIVE | CVAR_LATCH);
 	r_noBorder       = Cvar_Get("r_noborder", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
 	r_centerWindow   = Cvar_Get("r_centerWindow", "0", CVAR_ARCHIVE | CVAR_LATCH);
 	r_customwidth    = Cvar_Get("r_customwidth", "1280", CVAR_ARCHIVE | CVAR_LATCH);
@@ -438,12 +417,8 @@ static void GLimp_InitCvars(void)
 	r_stencilbits = Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
 	r_depthbits   = Cvar_Get("r_depthbits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
 	Cvar_CheckRange(r_depthbits, 0, 24, qtrue);
-	r_colorbits = Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
-#ifdef __EMSCRIPTEN__
-	r_ignorehwgamma = Cvar_Get("r_ignorehwgamma", "1", CVAR_ROM);
-#else
+	r_colorbits     = Cvar_Get("r_colorbits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
 	r_ignorehwgamma = Cvar_Get("r_ignorehwgamma", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
-#endif
 
 	// Old modes (these are used by the UI code)
 	Cvar_Get("r_oldFullscreen", "", CVAR_ARCHIVE);
@@ -840,10 +815,8 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	// Destroy existing state if it exists
 	if (SDL_glContext != NULL)
 	{
-#ifndef __EMSCRIPTEN__
 		SDL_GL_DeleteContext(SDL_glContext);
 		SDL_glContext = NULL;
-#endif
 	}
 
 	if (main_window != NULL)
@@ -1084,15 +1057,6 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 			Com_Printf("SDL_GL_MakeCurrent failed: %s\n", SDL_GetError());
 		}
 
-#ifdef __EMSCRIPTEN__
-		if (!gl4es_initialized)
-		{
-			set_getprocaddress(GLimp_GL4ES_GetProcAddress);
-			initialize_gl4es();
-			gl4es_initialized = qtrue;
-		}
-#endif
-
 		if (SDL_GL_SetSwapInterval(r_swapInterval->integer) == -1)
 		{
 			Com_Printf("SDL_GL_SetSwapInterval failed: %s\n", SDL_GetError());
@@ -1299,12 +1263,6 @@ void GLimp_EndFrame(void)
 
 	if (r_fullscreen->modified)
 	{
-#ifdef __EMSCRIPTEN__
-		if (r_fullscreen->integer)
-		{
-			Cvar_Set("r_fullscreen", "0");
-		}
-#else
 		qboolean fullscreen;
 		qboolean needToToggle;
 
@@ -1340,7 +1298,6 @@ void GLimp_EndFrame(void)
 		// Radar 15961845
 		gammaResetTime = CL_ScaledMilliseconds() + 3000;
 #endif
-#endif // __EMSCRIPTEN__
 		r_fullscreen->modified = qfalse;
 	}
 
