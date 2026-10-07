@@ -1721,6 +1721,18 @@ typedef struct shaderCommands_s
 	qboolean vkSkin;
 	int vkSkinFirstIndex;
 	unsigned int vkSkinBoneOffset;
+	/// MD3 surface interpolated in the vertex shader (one surface per batch,
+	/// see RB_SurfaceMeshGPU): no tess vertices; the surface's frames, texture
+	/// coords and triangles are in the Vulkan mesh buffer at these byte
+	/// offsets (frame = the entity's frame, old = its oldframe), lerp = new
+	/// xyz scale, old xyz scale, new normal scale, old normal scale (< 0: no
+	/// interpolation, use the new frame's normals)
+	qboolean vkMesh;
+	unsigned int vkMeshNewOfs;
+	unsigned int vkMeshOldOfs;
+	unsigned int vkMeshStOfs;
+	unsigned int vkMeshIndexOfs;
+	float vkMeshLerp[4];
 	/// the stage being drawn is rgbGen lightingDiffuse computed in the vertex
 	/// shader (VK_Draw3DDiffuse): ComputeColors() left the rgb unset, see
 	/// RB_StageGpuDiffuse()
@@ -1758,7 +1770,14 @@ typedef struct
 void VK_ResetSkinBuffer(void);
 int VK_WriteSkinVertices(const vkSkinVertex_t *verts, int count);
 float *VK_AllocSkinBones(int numBones, unsigned int *offset);
-#define RB_CHECKOVERFLOW(v, i) if (tess.vkStatic || tess.vkSkin) { RB_EndStaticBatch(); } if (tess.numVertexes + (v) >= SHADER_MAX_VERTEXES || tess.numIndexes + (i) >= SHADER_MAX_INDEXES) { RB_CheckOverflow(v, i); }
+
+// Vulkan GPU MD3 animation (vulkan/vk.c): every MD3 surface's frames,
+// texture coords and triangles in a mesh buffer, written at model load and
+// reset with the skin buffer; RB_SurfaceMeshGPU looks a surface up here
+int VK_WriteMeshData(const void *data, int bytes);
+void R_VkMeshReset(void);
+void R_VkMeshRegister(md3Surface_t *surf);
+#define RB_CHECKOVERFLOW(v, i) if (tess.vkStatic || tess.vkSkin || tess.vkMesh) { RB_EndStaticBatch(); } if (tess.numVertexes + (v) >= SHADER_MAX_VERTEXES || tess.numIndexes + (i) >= SHADER_MAX_INDEXES) { RB_CheckOverflow(v, i); }
 
 void RB_StageIteratorGeneric(void);
 void RB_StageIteratorSky(void);

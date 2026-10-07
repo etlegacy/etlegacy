@@ -55,6 +55,7 @@
 #include "tr3d_static.vert.glsl.h"
 #include "tr3d_diffuse.vert.glsl.h"
 #include "tr3d_skin.vert.glsl.h"
+#include "tr3d_md3.vert.glsl.h"
 #include "tr3d_lm_static_dlight.vert.glsl.h"
 #include "tr3d_lm_dlight.frag.glsl.h"
 #include "tr3d_2stage.vert.glsl.h"
@@ -97,6 +98,10 @@
 #define VK_VERTS_SKIN             4 // skin buffer (vkSkinVertex_t), MDM skinned in tr3d_skin.vert, bones in set 1
 #define VK_VERTS_STATIC_DLIGHT    5 // static buffer, lightmapped, dlight pass folded in (dlights in set 2)
 #define VK_VERTS_TWOSTAGE         6 // arena, vk3DVertex2_t: two stages in one draw (tr3d_2stage.*), 2 texture sets
+#define VK_VERTS_MD3              7 // mesh buffer: frame, oldframe (md3XyzNormal_t), texcoords; tr3d_md3.vert, sine table in set 1
+
+// MD3 frames + texcoords + triangles of every loaded model (VK_WriteMeshData)
+#define VK_MESH_BUFFER_SIZE       (32 * 1024 * 1024)
 
 // bindless texture array size (slots, see vk.bindless): MAX_DRAWIMAGES plus
 // room for images recreated while their old slot waits for its frame fence
@@ -109,12 +114,16 @@
 #define VK_SKIN_MAX_BONES         256
 #define VK_SKIN_BONE_BYTES        (3 * 4 * sizeof(float))
 #define VK_SKIN_BONE_ARENA_SIZE   (2 * 1024 * 1024)
+// range of vk.boneSet's dynamic uniform buffer: VK_SKIN_MAX_BONES bones or
+// the FUNCTABLE_SIZE sine table (VK_VERTS_MD3), whichever is larger
+#define VK_UNIFORM_RANGE          (FUNCTABLE_SIZE * sizeof(float))
 
 // Scene push constants: mat4 mvp, mat4 modelView, vec4 alphaTest, vec4
 // fogColor, vec4 fogParams, vec4 clipPlane (48 floats, every scene draw),
 // then vec4 colorMul, vec4 colorAdd (static world draws) or vec4 lightDir,
-// vec4 ambient, vec4 directed (VK_VERTS_DIFFUSE draws).
-#define VK_SCENE_PUSH_FLOATS      60
+// vec4 ambient, vec4 directed (VK_VERTS_DIFFUSE/SKIN/MD3 draws), then vec4
+// frame interpolation (VK_VERTS_MD3).
+#define VK_SCENE_PUSH_FLOATS      64
 
 // One lazily-created pipeline variant for a given (stateBits, cullType,
 // polygonOffset) combination used by the 3D scene pipelines.
@@ -390,8 +399,18 @@ typedef struct
 	VkDescriptorSetLayout boneSetLayout;
 	VkDescriptorPool bonePool;
 	VkDescriptorSet boneSet;
-	VkPipelineLayout skinPipelineLayout;                   // set 0 texture, set 1 bones
+	VkPipelineLayout skinPipelineLayout;                   // set 0 texture, set 1 bones (or the MD3 sine table)
 	VkShaderModule sceneSkinVertModule;
+
+	// GPU MD3 animation (VK_VERTS_MD3), see VK_WriteMeshData/VK_Draw3DMesh
+	VkBuffer meshBuffer;
+	VkDeviceMemory meshMemory;
+	void *meshMapped;
+	int meshBytes;
+	VkShaderModule sceneMD3VertModule;
+	unsigned int sinTableOffset;                           // this frame's tr.sinTable in the uniform arena
+	int sinTableFrame;                                     // frame it was uploaded for, -1 = none
+	int frameCount;                                        // VK_BeginFrame counter
 	// static lightmapped batches with the dlight pass folded in
 	// (VK_VERTS_STATIC_DLIGHT): set 0 base, 1 lightmap, 2 dlights (boneSet)
 	VkPipelineLayout staticDlightPipelineLayout;
@@ -2383,7 +2402,7 @@ static qboolean VK_CreateSkinResources(void)
 	VkDescriptorSetAllocateInfo allocInfo;
 	VkDescriptorBufferInfo      bufferInfo;
 	VkWriteDescriptorSet        write;
-	VkDeviceSize                range = (VkDeviceSize)VK_SKIN_MAX_BONES * VK_SKIN_BONE_BYTES;
+	VkDeviceSize                range = MAX((VkDeviceSize)VK_SKIN_MAX_BONES * VK_SKIN_BONE_BYTES, VK_UNIFORM_RANGE);
 
 	vkGetPhysicalDeviceProperties(vk.physicalDevice, &props);
 	vk.uboAlignment = MAX(props.limits.minUniformBufferOffsetAlignment, 16);
@@ -2397,6 +2416,16 @@ static qboolean VK_CreateSkinResources(void)
 		return qfalse;
 	}
 	vk.skinNumVertexes = 0;
+
+	if (!VK_CreateBuffer(VK_MESH_BUFFER_SIZE, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	                     &vk.meshBuffer, &vk.meshMemory) ||
+	    !VK_CheckResult(vkMapMemory(vk.device, vk.meshMemory, 0, VK_WHOLE_SIZE, 0, &vk.meshMapped), "vkMapMemory(mesh)"))
+	{
+		return qfalse;
+	}
+	vk.meshBytes     = 0;
+	vk.sinTableFrame = -1;
 
 	// a full bone range must fit after the last frame slot's region
 	if (!VK_CreateBuffer((VkDeviceSize)VK_SKIN_BONE_ARENA_SIZE * VK_FRAMES_IN_FLIGHT + range, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
@@ -2456,13 +2485,42 @@ static qboolean VK_CreateSkinResources(void)
  */
 void VK_ResetSkinBuffer(void)
 {
-	if (!vk.initialized || !vk.skinNumVertexes)
+	if (!vk.initialized || (!vk.skinNumVertexes && !vk.meshBytes))
 	{
 		return;
 	}
 
 	vkDeviceWaitIdle(vk.device);
 	vk.skinNumVertexes = 0;
+	vk.meshBytes       = 0;
+}
+
+/**
+ * @brief Appends bytes of MD3 data (frames, texture coords or triangles of
+ * one surface, R_VkMeshRegister) to the mesh buffer, 16-byte aligned.
+ * @return its byte offset, or -1 if it doesn't fit (the surface is then
+ * interpolated on the CPU)
+ */
+int VK_WriteMeshData(const void *data, int bytes)
+{
+	int offset;
+
+	if (!vk.initialized || !vk.meshMapped || bytes <= 0)
+	{
+		return -1;
+	}
+
+	offset = (vk.meshBytes + 15) & ~15;
+	if (offset + bytes > VK_MESH_BUFFER_SIZE)
+	{
+		Ren_Developer("Vulkan: mesh buffer full, MD3 surface interpolated on the CPU\n");
+		return -1;
+	}
+
+	Com_Memcpy((byte *)vk.meshMapped + offset, data, (size_t)bytes);
+	vk.meshBytes = offset + bytes;
+
+	return offset;
 }
 
 /**
@@ -2706,6 +2764,7 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 	vk.sceneLMStaticVertModule = VK_CreateShaderModule(tr3d_lm_static_vert_spv, tr3d_lm_static_vert_spv_SIZE);
 	vk.sceneDiffuseVertModule  = VK_CreateShaderModule(tr3d_diffuse_vert_spv, tr3d_diffuse_vert_spv_SIZE);
 	vk.sceneSkinVertModule     = VK_CreateShaderModule(tr3d_skin_vert_spv, tr3d_skin_vert_spv_SIZE);
+	vk.sceneMD3VertModule      = VK_CreateShaderModule(tr3d_md3_vert_spv, tr3d_md3_vert_spv_SIZE);
 
 	vk.sceneLMStaticDlightVertModule = VK_CreateShaderModule(tr3d_lm_static_dlight_vert_spv, tr3d_lm_static_dlight_vert_spv_SIZE);
 	vk.sceneLMDlightFragModule       = VK_CreateShaderModule(tr3d_lm_dlight_frag_spv, tr3d_lm_dlight_frag_spv_SIZE);
@@ -2717,7 +2776,8 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 	    vk.sceneStaticVertModule == VK_NULL_HANDLE || vk.sceneLMStaticVertModule == VK_NULL_HANDLE ||
 	    vk.sceneDiffuseVertModule == VK_NULL_HANDLE || vk.sceneSkinVertModule == VK_NULL_HANDLE ||
 	    vk.sceneLMStaticDlightVertModule == VK_NULL_HANDLE || vk.sceneLMDlightFragModule == VK_NULL_HANDLE ||
-	    vk.scene2StageVertModule == VK_NULL_HANDLE || vk.scene2StageFragModule == VK_NULL_HANDLE)
+	    vk.scene2StageVertModule == VK_NULL_HANDLE || vk.scene2StageFragModule == VK_NULL_HANDLE ||
+	    vk.sceneMD3VertModule == VK_NULL_HANDLE)
 	{
 		return qfalse;
 	}
@@ -2780,7 +2840,8 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cullType, qboolean lightmapped, qboolean polygonOffset, int special, int vertexSource)
 {
 	VkPipelineShaderStageCreateInfo        stages[2];
-	VkVertexInputBindingDescription        vertexBinding;
+	VkVertexInputBindingDescription        vertexBindings[3];
+	uint32_t                               bindingCount = 1;
 	VkVertexInputAttributeDescription      vertexAttributes[8];
 	uint32_t                               attributeCount;
 	VkPipelineVertexInputStateCreateInfo   vertexInputInfo;
@@ -2809,6 +2870,10 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	{
 		stages[0].module = vk.sceneSkinVertModule;
 	}
+	else if (vertexSource == VK_VERTS_MD3)
+	{
+		stages[0].module = vk.sceneMD3VertModule;
+	}
 	else if (vertexSource == VK_VERTS_STATIC_DLIGHT)
 	{
 		stages[0].module = vk.sceneLMStaticDlightVertModule;
@@ -2833,14 +2898,32 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	                   (lightmapped ? vk.sceneLMFragModule : vk.sceneFragModule);
 	stages[1].pName = "main";
 
-	Com_Memset(&vertexBinding, 0, sizeof(vertexBinding));
-	vertexBinding.binding   = 0;
-	vertexBinding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+	Com_Memset(vertexBindings, 0, sizeof(vertexBindings));
+	vertexBindings[0].binding   = 0;
+	vertexBindings[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 	Com_Memset(vertexAttributes, 0, sizeof(vertexAttributes));
-	if (vertexSource == VK_VERTS_TWOSTAGE)
+	if (vertexSource == VK_VERTS_MD3)
 	{
-		vertexBinding.stride = sizeof(vk3DVertex2_t);
+		// binding 0: the entity's frame, 1: its oldframe (md3XyzNormal_t:
+		// short xyz[3], short latlong normal), 2: texture coords
+		for (ai = 0; ai < 3; ai++)
+		{
+			vertexBindings[ai].binding   = ai;
+			vertexBindings[ai].stride    = (ai < 2) ? sizeof(md3XyzNormal_t) : sizeof(md3St_t);
+			vertexBindings[ai].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+			vertexAttributes[ai].location = ai;
+			vertexAttributes[ai].binding  = ai;
+			vertexAttributes[ai].format   = (ai < 2) ? VK_FORMAT_R16G16B16A16_SINT : VK_FORMAT_R32G32_SFLOAT;
+			vertexAttributes[ai].offset   = 0;
+		}
+		bindingCount   = 3;
+		attributeCount = 3;
+	}
+	else if (vertexSource == VK_VERTS_TWOSTAGE)
+	{
+		vertexBindings[0].stride = sizeof(vk3DVertex2_t);
 
 		vertexAttributes[0].location = 0;
 		vertexAttributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
@@ -2861,7 +2944,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	}
 	else if (vertexSource == VK_VERTS_SKIN)
 	{
-		vertexBinding.stride = sizeof(vkSkinVertex_t);
+		vertexBindings[0].stride = sizeof(vkSkinVertex_t);
 
 		vertexAttributes[0].location = 0;
 		vertexAttributes[0].format   = VK_FORMAT_R32G32_SFLOAT;
@@ -2885,7 +2968,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	}
 	else if (vertexSource == VK_VERTS_DIFFUSE)
 	{
-		vertexBinding.stride = sizeof(vk3DVertexN_t);
+		vertexBindings[0].stride = sizeof(vk3DVertexN_t);
 
 		vertexAttributes[0].location = 0;
 		vertexAttributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
@@ -2904,7 +2987,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	else if (vertexSource != VK_VERTS_ARENA && !lightmapped)
 	{
 		// static world buffer read as single-texture vertices
-		vertexBinding.stride = sizeof(vk3DVertexLM_t);
+		vertexBindings[0].stride = sizeof(vk3DVertexLM_t);
 
 		vertexAttributes[0].location = 0;
 		vertexAttributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
@@ -2919,7 +3002,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	}
 	else if (lightmapped)
 	{
-		vertexBinding.stride = sizeof(vk3DVertexLM_t);
+		vertexBindings[0].stride = sizeof(vk3DVertexLM_t);
 
 		vertexAttributes[0].location = 0;
 		vertexAttributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
@@ -2937,7 +3020,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	}
 	else
 	{
-		vertexBinding.stride = sizeof(vk3DVertex_t);
+		vertexBindings[0].stride = sizeof(vk3DVertex_t);
 
 		vertexAttributes[0].location = 0;
 		vertexAttributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
@@ -2950,15 +3033,15 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 		vertexAttributes[2].offset   = offsetof(vk3DVertex_t, color);
 		attributeCount               = 3;
 	}
-	for (ai = 0; ai < attributeCount; ai++)
+	for (ai = 0; ai < attributeCount && bindingCount == 1; ai++)
 	{
 		vertexAttributes[ai].binding = 0;
 	}
 
 	Com_Memset(&vertexInputInfo, 0, sizeof(vertexInputInfo));
 	vertexInputInfo.sType                           = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-	vertexInputInfo.vertexBindingDescriptionCount   = 1;
-	vertexInputInfo.pVertexBindingDescriptions      = &vertexBinding;
+	vertexInputInfo.vertexBindingDescriptionCount   = bindingCount;
+	vertexInputInfo.pVertexBindingDescriptions      = vertexBindings;
 	vertexInputInfo.vertexAttributeDescriptionCount = attributeCount;
 	vertexInputInfo.pVertexAttributeDescriptions    = vertexAttributes;
 
@@ -3077,7 +3160,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	pipelineInfo.pDepthStencilState  = &depthStencil;
 	pipelineInfo.pColorBlendState    = &colorBlending;
 	pipelineInfo.pDynamicState       = &dynamicState;
-	pipelineInfo.layout              = (vertexSource == VK_VERTS_SKIN) ? vk.skinPipelineLayout :
+	pipelineInfo.layout              = (vertexSource == VK_VERTS_SKIN || vertexSource == VK_VERTS_MD3) ? vk.skinPipelineLayout :
 	                                   (vertexSource == VK_VERTS_STATIC_DLIGHT) ? vk.staticDlightPipelineLayout :
 	                                   (lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout);
 	pipelineInfo.renderPass = vk.renderPass;
@@ -3801,6 +3884,22 @@ void VK_Shutdown(void)
 		{
 			vkDestroyShaderModule(vk.device, vk.sceneSkinVertModule, NULL);
 		}
+		if (vk.sceneMD3VertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneMD3VertModule, NULL);
+		}
+		if (vk.meshMapped)
+		{
+			vkUnmapMemory(vk.device, vk.meshMemory);
+		}
+		if (vk.meshBuffer != VK_NULL_HANDLE)
+		{
+			vkDestroyBuffer(vk.device, vk.meshBuffer, NULL);
+		}
+		if (vk.meshMemory != VK_NULL_HANDLE)
+		{
+			vkFreeMemory(vk.device, vk.meshMemory, NULL);
+		}
 
 		// GPU skinning
 		if (vk.skinMapped)
@@ -4168,8 +4267,9 @@ void VK_BeginFrame(void)
 	vk.sceneVertexArenaSize   = vk.sceneVertexArenaOffset + VK_SCENE_VERTEX_ARENA_SIZE; // end of region
 	vk.sceneIndexArenaSize    = vk.sceneIndexArenaOffset + VK_SCENE_INDEX_ARENA_SIZE;
 	vk.batch2DOpen            = qfalse; // VK_EndFrame recorded the last one
-	vk.boneArenaOffset        = (VkDeviceSize)VK_SKIN_BONE_ARENA_SIZE * vk.frameIndex;
-	vk.boneArenaSize          = vk.boneArenaOffset + VK_SKIN_BONE_ARENA_SIZE;
+	vk.frameCount++;
+	vk.boneArenaOffset = (VkDeviceSize)VK_SKIN_BONE_ARENA_SIZE * vk.frameIndex;
+	vk.boneArenaSize   = vk.boneArenaOffset + VK_SKIN_BONE_ARENA_SIZE;
 	VK_ResetBindCache();
 
 	vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX);
@@ -5658,6 +5758,73 @@ static void VK_Draw3DSkinned(shaderCommands_t *input, VkDescriptorSet descriptor
 }
 
 /**
+ * @brief Draws a GPU-animated MD3 batch (tess.vkMesh, RB_SurfaceMeshGPU):
+ * the surface's frame and oldframe and its texture coords from the mesh
+ * buffer as three vertex streams, its triangles as the index buffer, and
+ * tr.sinTable (uploaded once per frame to the uniform arena) as set 1 for
+ * tr3d_md3.vert's normal decoding. Stage colors as for GPU skinning.
+ */
+static void VK_Draw3DMesh(shaderCommands_t *input, VkDescriptorSet descriptorSet, unsigned long stateBits, int cullType)
+{
+	float           pushConstants[VK_SCENE_PUSH_FLOATS];
+	VkPipeline      pipeline;
+	VkDescriptorSet sets[2];
+	VkBuffer        buffers[3];
+	VkDeviceSize    offsets[3];
+
+	if (vk.meshBuffer == VK_NULL_HANDLE || input->numIndexes == 0)
+	{
+		return;
+	}
+
+	if (vk.sinTableFrame != vk.frameCount)
+	{
+		float *dst = VK_AllocUniforms(FUNCTABLE_SIZE * sizeof(float), &vk.sinTableOffset);
+
+		if (!dst)
+		{
+			return;
+		}
+		Com_Memcpy(dst, tr.sinTable, FUNCTABLE_SIZE * sizeof(float));
+		vk.sinTableFrame = vk.frameCount;
+	}
+
+	pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), qfalse, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE, VK_VERTS_MD3);
+	if (pipeline == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	VK_BindPipelineCached(pipeline);
+
+	VK_FillScenePushConstants(pushConstants, stateBits, 0.0f);
+	VK_SkinStageColor(input->vkStage, pushConstants);
+	pushConstants[60] = input->vkMeshLerp[0];
+	pushConstants[61] = input->vkMeshLerp[1];
+	pushConstants[62] = input->vkMeshLerp[2];
+	pushConstants[63] = input->vkMeshLerp[3];
+	VK_PushConstantsCached(vk.skinPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
+
+	// set 1 has a dynamic offset: bind directly, the next cached bind rebinds
+	sets[0] = descriptorSet;
+	sets[1] = vk.boneSet;
+	vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.skinPipelineLayout, 0, 2, sets, 1, &vk.sinTableOffset);
+	vk.boundSetLayout = VK_NULL_HANDLE;
+	vk.boundSetCount  = 0;
+
+	buffers[0] = buffers[1] = buffers[2] = vk.meshBuffer;
+	offsets[0] = input->vkMeshNewOfs;
+	offsets[1] = input->vkMeshOldOfs;
+	offsets[2] = input->vkMeshStOfs;
+	vkCmdBindVertexBuffers(vk.commandBuffer, 0, 3, buffers, offsets);
+	vkCmdBindIndexBuffer(vk.commandBuffer, vk.meshBuffer, input->vkMeshIndexOfs, VK_INDEX_TYPE_UINT32);
+	vk.boundVertexBuffer = VK_NULL_HANDLE; // the arena binds rebind
+	vk.boundIndexBuffer  = VK_NULL_HANDLE;
+
+	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)input->numIndexes, 1, 0, 0, 0);
+}
+
+/**
  * @brief rgbGen lightingDiffuse stage (tess.vkDiffuse): like the arena path
  * of VK_Draw3DIndexes(), but the vertices carry the model-space normal and
  * tr3d_diffuse.vert computes renderer1's RB_CalcDiffuseColor() from the
@@ -5766,7 +5933,7 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 	VkPipeline      pipeline;
 	VkDescriptorSet descriptorSet;
 
-	if (!vk.initialized || !input || (input->numVertexes == 0 && !input->vkStatic && !input->vkSkin) || numIndexes == 0)
+	if (!vk.initialized || !input || (input->numVertexes == 0 && !input->vkStatic && !input->vkSkin && !input->vkMesh) || numIndexes == 0)
 	{
 		return;
 	}
@@ -5783,6 +5950,12 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 	if (input->vkSkin)
 	{
 		VK_Draw3DSkinned(input, (VkDescriptorSet)image->vkDescriptorSet, stateBits, cullType);
+		return;
+	}
+
+	if (input->vkMesh)
+	{
+		VK_Draw3DMesh(input, (VkDescriptorSet)image->vkDescriptorSet, stateBits, cullType);
 		return;
 	}
 

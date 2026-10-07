@@ -1303,6 +1303,9 @@ static qboolean R_LoadMD3(model_t *mod, int lod, void *buffer, const char *name)
 
 		}
 
+		// GPU frame interpolation (Vulkan mesh buffer)
+		R_VkMeshRegister(surf);
+
 		// find the next surface
 		surf = ( md3Surface_t * )((byte *)surf + surf->ofsEnd);
 	}
@@ -1944,8 +1947,9 @@ void R_ModelInit(void)
 {
 	model_t *mod;
 
-	// the models (and their GPU skin vertices) are loaded again
+	// the models (and their GPU skin vertices and MD3 frames) are loaded again
 	VK_ResetSkinBuffer();
+	R_VkMeshReset();
 
 	// leave a space for NULL model
 	tr.numModels = 0;
@@ -2708,6 +2712,16 @@ qboolean R_FindCachedModel(const char *name, model_t *newmod)
 							newmod->model.md3[j] = ri.Hunk_Alloc(mod->model.md3[j]->ofsEnd, h_low);
 							Com_Memcpy(newmod->model.md3[j], mod->model.md3[j], mod->model.md3[j]->ofsEnd);
 							R_RegisterMD3Shaders(newmod, j);
+							{
+								md3Surface_t *surf = (md3Surface_t *)((byte *)newmod->model.md3[j] + newmod->model.md3[j]->ofsSurfaces);
+								int          k;
+
+								// the copy's surfaces are new: register them for GPU frame interpolation
+								for (k = 0; k < newmod->model.md3[j]->numSurfaces; k++, surf = (md3Surface_t *)((byte *)surf + surf->ofsEnd))
+								{
+									R_VkMeshRegister(surf);
+								}
+							}
 							R_CacheModelFree(mod->model.md3[j]);
 						}
 						else
