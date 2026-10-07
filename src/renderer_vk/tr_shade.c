@@ -66,6 +66,7 @@ void RB_BeginSurface(shader_t *shader, int fogNum)
 	tess.vkStatic                 = qfalse; // decided by the first surface (RB_SurfaceTriangles)
 	tess.vkDiffuse                = qfalse;
 	tess.vkSkin                   = qfalse;
+	tess.vkMesh                   = qfalse;
 	tess.vkStage                  = NULL;
 	tess.xstages                  = state->stages;
 	tess.numPasses                = state->numUnfoggedPasses;
@@ -1470,4 +1471,5 @@ void RB_EndSurface(void)
 	tess.numVertexes = 0;
 	tess.vkStatic    = qfalse;
 	tess.vkSkin      = qfalse;
+	tess.vkMesh      = qfalse;
 }

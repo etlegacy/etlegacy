@@ -53,7 +53,7 @@
  */
 void RB_CheckOverflow(int verts, int indexes)
 {
-	if (tess.vkStatic || tess.vkSkin)
+	if (tess.vkStatic || tess.vkSkin || tess.vkMesh)
 	{
 		RB_EndStaticBatch();
 	}
@@ -1300,6 +1300,129 @@ static void LerpMeshVertexes(md3Surface_t *surf, float backlerp)
 	LerpMeshVertexes_scalar(surf, backlerp);
 }
 
+/*
+ * Vulkan GPU MD3 animation: every loaded MD3 surface's frames, texture
+ * coords and triangles live in the mesh buffer (VK_WriteMeshData); this
+ * table maps a surface to their byte offsets. Reset with the models.
+ */
+#define VK_MESH_MAP_SIZE 8192 // power of two, > the number of loaded MD3 surfaces
+
+typedef struct
+{
+	const md3Surface_t *surf;
+	int xyzOfs, stOfs, indexOfs;
+} vkMeshEntry_t;
+
+static vkMeshEntry_t vkMeshMap[VK_MESH_MAP_SIZE];
+
+static unsigned int R_VkMeshHash(const md3Surface_t *surf)
+{
+	return (unsigned int)(((size_t)surf >> 4) * 2654435761u) & (VK_MESH_MAP_SIZE - 1);
+}
+
+/**
+ * @brief Forgets all registered MD3 surfaces (R_ModelInit: the models are
+ * loaded again and VK_ResetSkinBuffer empties the mesh buffer).
+ */
+void R_VkMeshReset(void)
+{
+	Com_Memset(vkMeshMap, 0, sizeof(vkMeshMap));
+}
+
+/**
+ * @brief Uploads an MD3 surface's frames, texture coords and triangles to
+ * the mesh buffer and registers it for RB_SurfaceMeshGPU. A surface that
+ * doesn't fit stays interpolated on the CPU.
+ */
+void R_VkMeshRegister(md3Surface_t *surf)
+{
+	unsigned int h = R_VkMeshHash(surf);
+	int          i, xyzOfs, stOfs, indexOfs;
+
+	if (surf->numVerts <= 0 || surf->numFrames <= 0 || surf->numTriangles <= 0)
+	{
+		return;
+	}
+
+	xyzOfs   = VK_WriteMeshData((byte *)surf + surf->ofsXyzNormals, surf->numFrames * surf->numVerts * (int)sizeof(md3XyzNormal_t));
+	stOfs    = VK_WriteMeshData((byte *)surf + surf->ofsSt, surf->numVerts * (int)sizeof(md3St_t));
+	indexOfs = VK_WriteMeshData((byte *)surf + surf->ofsTriangles, surf->numTriangles * 3 * (int)sizeof(int));
+	if (xyzOfs < 0 || stOfs < 0 || indexOfs < 0)
+	{
+		return;
+	}
+
+	for (i = 0; i < VK_MESH_MAP_SIZE; i++, h = (h + 1) & (VK_MESH_MAP_SIZE - 1))
+	{
+		if (!vkMeshMap[h].surf || vkMeshMap[h].surf == surf)
+		{
+			vkMeshMap[h].surf     = surf;
+			vkMeshMap[h].xyzOfs   = xyzOfs;
+			vkMeshMap[h].stOfs    = stOfs;
+			vkMeshMap[h].indexOfs = indexOfs;
+			return;
+		}
+	}
+}
+
+/**
+ * @brief Vulkan: draws this MD3 surface interpolated in the vertex shader
+ * (tr3d_md3.vert) from the mesh buffer: no tess vertices or indexes, a batch
+ * of its own (its frames). Same conditions as GPU skinning
+ * (RB_MDM_SurfaceAnimGPU), plus the frames must exist in the surface.
+ * @return qfalse if the surface must be interpolated on the CPU
+ */
+static qboolean RB_SurfaceMeshGPU(md3Surface_t *surface, float backlerp)
+{
+	const refEntity_t   *e     = &backEnd.currentEntity->e;
+	const vkMeshEntry_t *entry = NULL;
+	unsigned int        h = R_VkMeshHash(surface), frameBytes;
+	int                 i;
+
+	if (!r_vkGpuVertex->integer || !tess.shader->vkSkinnable || tess.shader == tr.shadowShader || tess.fogNum ||
+	    backEnd.projection2D || (e->fadeStartTime && e->fadeStartTime <= tr.refdef.time) ||
+	    r_showTris->integer || r_showNormals->integer || r_debugShaderSurfaceFlags->integer ||
+	    e->frame < 0 || e->frame >= surface->numFrames || e->oldframe < 0 || e->oldframe >= surface->numFrames)
+	{
+		return qfalse;
+	}
+
+	for (i = 0; i < VK_MESH_MAP_SIZE && vkMeshMap[h].surf; i++, h = (h + 1) & (VK_MESH_MAP_SIZE - 1))
+	{
+		if (vkMeshMap[h].surf == surface)
+		{
+			entry = &vkMeshMap[h];
+			break;
+		}
+	}
+	if (!entry)
+	{
+		return qfalse;
+	}
+
+	// one surface per batch: its frames
+	if (tess.numIndexes || tess.numVertexes)
+	{
+		RB_EndStaticBatch();
+	}
+
+	frameBytes          = (unsigned int)surface->numVerts * sizeof(md3XyzNormal_t);
+	tess.vkMesh         = qtrue;
+	tess.vkMeshNewOfs   = (unsigned int)entry->xyzOfs + (unsigned int)e->frame * frameBytes;
+	tess.vkMeshOldOfs   = (unsigned int)entry->xyzOfs + (unsigned int)e->oldframe * frameBytes;
+	tess.vkMeshStOfs    = (unsigned int)entry->stOfs;
+	tess.vkMeshIndexOfs = (unsigned int)entry->indexOfs;
+	tess.numIndexes     = surface->numTriangles * 3;
+
+	// LerpMeshVertexes_scalar()'s scales
+	tess.vkMeshLerp[0] = MD3_XYZ_SCALE * (1.0 - backlerp);
+	tess.vkMeshLerp[1] = MD3_XYZ_SCALE * backlerp;
+	tess.vkMeshLerp[2] = 1.0f - backlerp;
+	tess.vkMeshLerp[3] = (backlerp == 0.f) ? -1.0f : backlerp;
+
+	return qtrue;
+}
+
 /**
  * @brief RB_SurfaceMesh
  * @param[in] surface
@@ -1330,6 +1453,11 @@ void RB_SurfaceMesh(md3Surface_t *surface)
 	else
 	{
 		backlerp = backEnd.currentEntity->e.backlerp;
+	}
+
+	if (RB_SurfaceMeshGPU(surface, backlerp))
+	{
+		return;
 	}
 
 	RB_CHECKOVERFLOW(surface->numVerts, surface->numTriangles * 3);
