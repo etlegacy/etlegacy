@@ -44,11 +44,13 @@
 #include "sys_win32.h"
 
 #include <windows.h>
+#include <dbghelp.h>
 #include <lmerr.h>
 #include <lmcons.h>
 #include <lmwksta.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <stdio.h>
 #include <direct.h>
 #include <io.h>
@@ -67,6 +69,136 @@ static char homePath[MAX_OSPATH] = { 0 };
 //static jmp_buf sys_exitframe;
 //static int     sys_retcode;
 //static char    sys_exitstr[MAX_STRING_CHARS];
+
+/**
+ * @brief Convert a Win32 exception code into a readable name.
+ * @param[in] exceptionCode Structured exception code.
+ * @return Static exception name string.
+ */
+static const char *Sys_WinExceptionName(DWORD exceptionCode)
+{
+	switch (exceptionCode)
+	{
+	case EXCEPTION_ACCESS_VIOLATION:          return "EXCEPTION_ACCESS_VIOLATION";
+	case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:    return "EXCEPTION_ARRAY_BOUNDS_EXCEEDED";
+	case EXCEPTION_BREAKPOINT:               return "EXCEPTION_BREAKPOINT";
+	case EXCEPTION_DATATYPE_MISALIGNMENT:    return "EXCEPTION_DATATYPE_MISALIGNMENT";
+	case EXCEPTION_FLT_DENORMAL_OPERAND:     return "EXCEPTION_FLT_DENORMAL_OPERAND";
+	case EXCEPTION_FLT_DIVIDE_BY_ZERO:       return "EXCEPTION_FLT_DIVIDE_BY_ZERO";
+	case EXCEPTION_FLT_INVALID_OPERATION:    return "EXCEPTION_FLT_INVALID_OPERATION";
+	case EXCEPTION_FLT_OVERFLOW:             return "EXCEPTION_FLT_OVERFLOW";
+	case EXCEPTION_FLT_STACK_CHECK:          return "EXCEPTION_FLT_STACK_CHECK";
+	case EXCEPTION_FLT_UNDERFLOW:            return "EXCEPTION_FLT_UNDERFLOW";
+	case EXCEPTION_ILLEGAL_INSTRUCTION:      return "EXCEPTION_ILLEGAL_INSTRUCTION";
+	case EXCEPTION_IN_PAGE_ERROR:            return "EXCEPTION_IN_PAGE_ERROR";
+	case EXCEPTION_INT_DIVIDE_BY_ZERO:       return "EXCEPTION_INT_DIVIDE_BY_ZERO";
+	case EXCEPTION_INT_OVERFLOW:             return "EXCEPTION_INT_OVERFLOW";
+	case EXCEPTION_INVALID_DISPOSITION:      return "EXCEPTION_INVALID_DISPOSITION";
+	case EXCEPTION_NONCONTINUABLE_EXCEPTION: return "EXCEPTION_NONCONTINUABLE_EXCEPTION";
+	case EXCEPTION_PRIV_INSTRUCTION:         return "EXCEPTION_PRIV_INSTRUCTION";
+	case EXCEPTION_SINGLE_STEP:              return "EXCEPTION_SINGLE_STEP";
+	case EXCEPTION_STACK_OVERFLOW:           return "EXCEPTION_STACK_OVERFLOW";
+	default:                                 return "UNKNOWN_EXCEPTION";
+	}
+}
+
+/**
+ * @brief Convert a CRT signal into a readable name.
+ * @param[in] signal Signal number.
+ * @return Static signal name string.
+ */
+static const char *Sys_WinSignalName(int signal)
+{
+	switch (signal)
+	{
+	case SIGABRT: return "SIGABRT";
+	case SIGFPE:  return "SIGFPE";
+	case SIGILL:  return "SIGILL";
+	case SIGINT:  return "SIGINT";
+	case SIGSEGV: return "SIGSEGV";
+	case SIGTERM: return "SIGTERM";
+	default:      return "UNKNOWN_SIGNAL";
+	}
+}
+
+/**
+ * @brief Redirect the standard streams to the active Windows console.
+ */
+static void Sys_WinBindConsoleStreams(void)
+{
+	int                        hConHandle;
+	intptr_t                   stdHandleValue;
+	CONSOLE_SCREEN_BUFFER_INFO coninfo;
+	FILE                       *fp;
+	HANDLE                     stdHandle;
+
+	stdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	if (stdHandle != INVALID_HANDLE_VALUE && GetConsoleScreenBufferInfo(stdHandle, &coninfo))
+	{
+		coninfo.dwSize.Y = 9999;
+		SetConsoleScreenBufferSize(stdHandle, coninfo.dwSize);
+	}
+
+	stdHandleValue = (intptr_t)GetStdHandle(STD_OUTPUT_HANDLE);
+	hConHandle     = _open_osfhandle(stdHandleValue, _O_TEXT);
+	fp             = _fdopen(hConHandle, "w");
+	if (fp != NULL)
+	{
+		*stdout = *fp;
+		setvbuf(stdout, NULL, _IONBF, 0);
+	}
+
+	stdHandleValue = (intptr_t)GetStdHandle(STD_INPUT_HANDLE);
+	hConHandle     = _open_osfhandle(stdHandleValue, _O_TEXT);
+	fp             = _fdopen(hConHandle, "r");
+	if (fp != NULL)
+	{
+		*stdin = *fp;
+		setvbuf(stdin, NULL, _IONBF, 0);
+	}
+
+	stdHandleValue = (intptr_t)GetStdHandle(STD_ERROR_HANDLE);
+	hConHandle     = _open_osfhandle(stdHandleValue, _O_TEXT);
+	fp             = _fdopen(hConHandle, "w");
+	if (fp != NULL)
+	{
+		*stderr = *fp;
+		setvbuf(stderr, NULL, _IONBF, 0);
+	}
+}
+
+/**
+ * @brief CRT signal adapter for the shared crash handler.
+ * @param[in] signal Signal number.
+ */
+static void Sys_WinSignalHandler(int signal)
+{
+	Sys_HandleCrash(signal, NULL);
+}
+
+/**
+ * @brief Top-level Win32 exception filter used for crash reporting.
+ * @param[in] exceptionInfo Structured exception information.
+ * @return Win32 exception handling result.
+ */
+static LONG WINAPI Sys_WinExceptionHandler(EXCEPTION_POINTERS *exceptionInfo)
+{
+	Sys_HandleCrash((int)exceptionInfo->ExceptionRecord->ExceptionCode, exceptionInfo);
+	return EXCEPTION_EXECUTE_HANDLER;
+}
+
+/**
+ * @brief Install the Windows crash handlers for structured exceptions and CRT signals.
+ */
+void Sys_InstallCrashHandler(void)
+{
+	SetUnhandledExceptionFilter(Sys_WinExceptionHandler);
+
+	signal(SIGABRT, Sys_WinSignalHandler);
+	signal(SIGFPE, Sys_WinSignalHandler);
+	signal(SIGILL, Sys_WinSignalHandler);
+	signal(SIGSEGV, Sys_WinSignalHandler);
+}
 
 size_t Sys_WideCharArrayToString(wchar_t *array, char *buffer, size_t len)
 {
@@ -1011,62 +1143,27 @@ void Sys_OpenURL(const char *url, qboolean doexit)
  */
 void Sys_CreateConsoleWindow(void)
 {
-#ifndef DEDICATED
-	int                        hConHandle;
-	long                       lStdHandle;
-	CONSOLE_SCREEN_BUFFER_INFO coninfo;
-	FILE                       *fp;
+	HWND consoleWindow;
 
-	static qboolean consoleIsOpen = qfalse;
+	consoleWindow = GetConsoleWindow();
 
-	if (consoleIsOpen)
+	if (!consoleWindow)
 	{
-		FreeConsole();
-		consoleIsOpen = qtrue;
-		return;
-	}
-	else
-	{
-		consoleIsOpen = qtrue;
+		if (!AttachConsole(ATTACH_PARENT_PROCESS) && !AllocConsole())
+		{
+			return;
+		}
+
+		Sys_WinBindConsoleStreams();
+		Sys_SetUpConsoleAndSignals();
+		consoleWindow = GetConsoleWindow();
 	}
 
-	// allocate a console for this app
-	AllocConsole();
-
-	// set the screen buffer to be big enough to let us scroll text
-	if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo))
+	if (consoleWindow)
 	{
-		coninfo.dwSize.Y = 9999;
-		SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), coninfo.dwSize);
+		ShowWindow(consoleWindow, SW_SHOWNORMAL);
+		SetForegroundWindow(consoleWindow);
 	}
-
-	// redirect unbuffered STDOUT to the console
-	lStdHandle = (long)(GetStdHandle(STD_OUTPUT_HANDLE));
-	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
-	fp         = _fdopen(hConHandle, "w");
-	*stdout    = *fp;
-	setvbuf(stdout, NULL, _IONBF, 0);
-
-	// redirect unbuffered STDIN to the console
-	lStdHandle = (long)(GetStdHandle(STD_INPUT_HANDLE));
-	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
-	fp         = _fdopen(hConHandle, "r");
-	*stdin     = *fp;
-
-	setvbuf(stdin, NULL, _IONBF, 0);
-
-	// redirect unbuffered STDERR to the console
-	lStdHandle = (long)(GetStdHandle(STD_ERROR_HANDLE));
-	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
-	fp         = _fdopen(hConHandle, "w");
-	*stderr    = *fp;
-
-	setvbuf(stderr, NULL, _IONBF, 0);
-
-	//SetConsoleTitle(WINDOWNAME);
-
-	Sys_SetUpConsoleAndSignals();
-#endif
 }
 
 // TODO: This could be enabled in the future
@@ -1132,6 +1229,7 @@ WinVars_t g_wv;
 void Sys_PlatformInit(void)
 {
 	g_wv.hInstance = GetModuleHandle(NULL);
+	Sys_InstallCrashHandler();
 
 #ifdef EXCEPTION_HANDLER
 	WinSetExceptionVersion(Q3_VERSION);
@@ -1163,7 +1261,7 @@ void Sys_PlatformInit(void)
 #endif
 
 	// no abort/retry/fail errors
-	SetErrorMode(SEM_FAILCRITICALERRORS);
+	SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX);
 }
 
 NORETURN_MSVC void _attribute((noreturn)) Sys_PlatformExit(int code)
@@ -1181,4 +1279,161 @@ NORETURN_MSVC void _attribute((noreturn)) Sys_PlatformExit(int code)
 qboolean Sys_DllExtension(const char *name)
 {
 	return COM_CompareExtension(name, DLL_EXT);
+}
+
+/**
+ * @brief Write a stack trace for the current Win32 crash context.
+ * @param[in] sig CRT signal number or exception code.
+ * @param[in] context Structured exception information when available.
+ */
+void Sys_Backtrace(int sig, void *context)
+{
+	DWORD              exceptionCode;
+	DWORD              imageType;
+	DWORD              lineDisplacement;
+	DWORD64            address;
+	DWORD64            displacement64;
+	DWORD64            moduleBase;
+	HANDLE             process;
+	HANDLE             thread;
+	STACKFRAME64       stackFrame;
+	CONTEXT            localContext;
+	CONTEXT            *stackContext;
+	EXCEPTION_POINTERS *exceptionInfo;
+	IMAGEHLP_LINE64    lineInfo;
+	PSYMBOL_INFO       symbolInfo;
+	unsigned int       frameIndex;
+	char               modulePath[MAX_OSPATH];
+	char               symbolBuffer[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)];
+	const char         *exceptionName;
+	const char         *moduleName;
+	char               *separator;
+
+	exceptionInfo = (EXCEPTION_POINTERS *)context;
+	process       = GetCurrentProcess();
+	thread        = GetCurrentThread();
+	imageType     = 0;
+	exceptionCode = (DWORD)sig;
+	address       = 0;
+	moduleName    = "<unknown>";
+
+	Sys_CreateConsoleWindow();
+
+	if (exceptionInfo != NULL && exceptionInfo->ContextRecord != NULL)
+	{
+		localContext  = *exceptionInfo->ContextRecord;
+		stackContext  = &localContext;
+		exceptionCode = exceptionInfo->ExceptionRecord->ExceptionCode;
+		address       = (DWORD64)(ULONG_PTR)exceptionInfo->ExceptionRecord->ExceptionAddress;
+		exceptionName = Sys_WinExceptionName(exceptionCode);
+	}
+	else
+	{
+		RtlCaptureContext(&localContext);
+		stackContext  = &localContext;
+		exceptionName = Sys_WinSignalName(sig);
+	}
+
+	ZeroMemory(&stackFrame, sizeof(stackFrame));
+#if defined(_M_X64)
+	imageType                   = IMAGE_FILE_MACHINE_AMD64;
+	stackFrame.AddrPC.Offset    = stackContext->Rip;
+	stackFrame.AddrFrame.Offset = stackContext->Rbp;
+	stackFrame.AddrStack.Offset = stackContext->Rsp;
+#elif defined(_M_IX86)
+	imageType                   = IMAGE_FILE_MACHINE_I386;
+	stackFrame.AddrPC.Offset    = stackContext->Eip;
+	stackFrame.AddrFrame.Offset = stackContext->Ebp;
+	stackFrame.AddrStack.Offset = stackContext->Esp;
+#elif defined(_M_ARM64)
+	imageType                   = IMAGE_FILE_MACHINE_ARM64;
+	stackFrame.AddrPC.Offset    = stackContext->Pc;
+	stackFrame.AddrFrame.Offset = stackContext->Fp;
+	stackFrame.AddrStack.Offset = stackContext->Sp;
+#endif
+	stackFrame.AddrPC.Mode    = AddrModeFlat;
+	stackFrame.AddrFrame.Mode = AddrModeFlat;
+	stackFrame.AddrStack.Mode = AddrModeFlat;
+
+	SymSetOptions(SYMOPT_DEFERRED_LOADS | SYMOPT_LOAD_LINES | SYMOPT_UNDNAME);
+	SymInitialize(process, NULL, TRUE);
+
+	fprintf(stderr, "--- Report this to the project - START ---\n");
+	fprintf(stderr, "ERROR: Caught %s (0x%08lx)\n", exceptionName, (unsigned long)exceptionCode);
+	if (address != 0)
+	{
+		fprintf(stderr, "FAULT ADDRESS: %p\n", (void *)(ULONG_PTR)address);
+	}
+	fprintf(stderr, "VERSION: %s (%s)\n", ETLEGACY_VERSION, ETLEGACY_VERSION_SHORT);
+	fprintf(stderr, "BTIME: %s\n", PRODUCT_BUILD_TIME);
+	fprintf(stderr, "BACKTRACE:\n");
+
+	if (imageType == 0)
+	{
+		fprintf(stderr, "Unsupported Windows architecture for stack walking.\n");
+	}
+	else
+	{
+		for (frameIndex = 0; frameIndex < 64; frameIndex++)
+		{
+			address = stackFrame.AddrPC.Offset;
+			if (address == 0)
+			{
+				break;
+			}
+
+			ZeroMemory(symbolBuffer, sizeof(symbolBuffer));
+			symbolInfo               = (PSYMBOL_INFO)symbolBuffer;
+			symbolInfo->SizeOfStruct = sizeof(SYMBOL_INFO);
+			symbolInfo->MaxNameLen   = MAX_SYM_NAME;
+			displacement64           = 0;
+			moduleBase               = SymGetModuleBase64(process, address);
+			modulePath[0]            = '\0';
+
+			if (moduleBase != 0 && GetModuleFileNameA((HMODULE)(ULONG_PTR)moduleBase, modulePath, sizeof(modulePath)) > 0)
+			{
+				separator = strrchr(modulePath, '\\');
+				if (separator == NULL)
+				{
+					separator = strrchr(modulePath, '/');
+				}
+				moduleName = separator != NULL ? separator + 1 : modulePath;
+			}
+			else
+			{
+				moduleName = "<unknown>";
+			}
+
+			fprintf(stderr, "  %02u %p %s!", frameIndex, (void *)(ULONG_PTR)address, moduleName);
+
+			if (SymFromAddr(process, address, &displacement64, symbolInfo))
+			{
+				fprintf(stderr, "%s+0x%llx", symbolInfo->Name, (unsigned long long)displacement64);
+			}
+			else
+			{
+				fprintf(stderr, "<unknown> (error %lu)", GetLastError());
+			}
+
+			ZeroMemory(&lineInfo, sizeof(lineInfo));
+			lineInfo.SizeOfStruct = sizeof(lineInfo);
+			lineDisplacement      = 0;
+			if (SymGetLineFromAddr64(process, address, &lineDisplacement, &lineInfo))
+			{
+				fprintf(stderr, " [%s:%lu]", lineInfo.FileName, (unsigned long)lineInfo.LineNumber);
+			}
+
+			fprintf(stderr, "\n");
+
+			if (!StackWalk64(imageType, process, thread, &stackFrame, stackContext, NULL,
+			                 SymFunctionTableAccess64, SymGetModuleBase64, NULL))
+			{
+				break;
+			}
+		}
+	}
+
+	fprintf(stderr, "--- Report this to the project -  END  ---\n");
+	fflush(stderr);
+	SymCleanup(process);
 }
