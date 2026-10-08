@@ -826,7 +826,7 @@ void S_StopMusic_f(void)
  */
 void S_Init(void)
 {
-	cvar_t *cv = Cvar_Get("s_initsound", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);  // 0 = disabled, 1 = SDL2, 2 = OpenAL
+	cvar_t *cv = Cvar_Get("s_initsound", "1", CVAR_ARCHIVE | CVAR_LATCH | CVAR_UNSAFE);  // 0 = disabled, 1 = SDL3, 2 = OpenAL
 
 	Com_Printf("----- Initializing Sound (%i) ---\n", cv->integer);
 
@@ -874,14 +874,14 @@ void S_Init(void)
 			if (cv->integer == 2)
 			{
 #ifdef FEATURE_OPENAL
-				Com_Printf("Can't initialize OpenAL - reverting to SDL2 interface\n");
+				Com_Printf("Can't initialize OpenAL - reverting to SDL3 interface\n");
 #else
 				Com_Printf("Can't initialize OpenAL - disabled on build-time\n");
 #endif
 			}
 
 			started = S_Base_Init(&si);
-			Cvar_Set("s_backend", "SDL2");
+			Cvar_Set("s_backend", "SDL3");
 		}
 
 		if (started)

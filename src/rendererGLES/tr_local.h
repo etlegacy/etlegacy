@@ -40,9 +40,9 @@
 #include "../qcommon/qcommon.h"
 #include "../renderercommon/tr_public.h"
 #include "../renderercommon/tr_common.h"
-#include "GLES/gl.h"
+#include "GLES2/gl2.h"
 
-#include "GLES/glext.h"
+#include "GLES2/gl2ext.h"
 #ifndef GL_RGBA4
 #define GL_RGBA4                0x8056
 #endif

@@ -723,7 +723,7 @@ run_clean() {
         # this doesn't work?
         if [ "${BUNDLED_SDL}" == 1 ]; then
             einfo "Cleaning SDL..."
-            cd "${_SRC}"/libs/sdl2
+            cd "${_SRC}"/libs/sdl3
             make clean
         fi
         if [ "${BUNDLED_ZLIB}" == 1 ]; then

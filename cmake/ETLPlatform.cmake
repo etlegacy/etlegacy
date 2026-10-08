@@ -53,7 +53,7 @@ endif()
 
 if(UNIX)
 	# optimization/debug flags
-	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math")
+	# set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -ffast-math")
 	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		# XXX : attach debug symbols to all builds for now
 		# set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -s")
@@ -64,7 +64,7 @@ if(UNIX)
 	endif()
 	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall")
 
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffast-math")
+	# set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffast-math")
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
 	if(ENABLE_ASAN)
@@ -121,6 +121,11 @@ if(UNIX)
 
 		if (DEFINED CMAKE_OSX_ARCHITECTURES)
 			list(LENGTH CMAKE_OSX_ARCHITECTURES ETL_ARCH_COUNT)
+		endif()
+
+		if(BUNDLED_SDL)
+			find_library(uniform_type_id UniformTypeIdentifiers REQUIRED)
+			target_link_libraries(os_libraries INTERFACE ${uniform_type_id})
 		endif()
 
 		# new curl builds need the System Configuration framework
@@ -205,11 +210,11 @@ elseif(WIN32)
 	target_link_libraries(os_libraries INTERFACE wsock32 ws2_32 psapi winmm)
 
 	if(FEATURE_SSL)
-		target_link_libraries(os_libraries INTERFACE Crypt32)
+		target_link_libraries(os_libraries INTERFACE Crypt32 Secur32 Iphlpapi)
 	endif()
 
 	if(BUNDLED_SDL)
-		# Libraries for Win32 native and MinGW required by static SDL2 build
+		# Libraries for Win32 native and MinGW required by static SDL3 build
 		target_link_libraries(os_libraries INTERFACE user32 gdi32 imm32 ole32 oleaut32 version uuid hid setupapi)
 	endif()
 	set(LIB_SUFFIX "_mp_")
