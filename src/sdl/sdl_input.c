@@ -1810,6 +1810,13 @@ static void IN_ProcessEvents(void)
 				}
 			}
 			break;
+
+		case SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED:
+			// FIXME: check that it's the output device?
+			Com_Printf("Audio device format changed, restarting audio subsystem...\n");
+			S_Shutdown();
+			S_Init();
+			break;
 		default:
 			break;
 		}

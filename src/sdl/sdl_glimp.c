@@ -204,7 +204,6 @@ void GLimp_Minimize(void)
  */
 void GLimp_FlashWindow(int state)
 {
-#if SDL_VERSION_ATLEAST(2, 0, 16)
 	if (state == 1)
 	{
 		SDL_FlashWindow(main_window, SDL_FLASH_BRIEFLY);
@@ -217,7 +216,6 @@ void GLimp_FlashWindow(int state)
 	{
 		SDL_FlashWindow(main_window, SDL_FLASH_CANCEL);
 	}
-#endif
 }
 
 /**
@@ -456,6 +454,7 @@ static void GLimp_DetectAvailableModes(void)
 		}
 
 		display = displayList[0];
+		SDL_free(displayList);
 	}
 	else
 	{
@@ -484,6 +483,8 @@ static void GLimp_DetectAvailableModes(void)
 			Com_Printf(S_COLOR_YELLOW "Skipping mode %ux%u, buffer too small\n", modes[i]->w, modes[i]->h);
 		}
 	}
+
+	SDL_free(modes);
 
 	if (*buf)
 	{
@@ -959,20 +960,6 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 		break;
 	}
 
-	GLimp_DetectAvailableModes();
-
-	if (!main_window)
-	{
-		Com_Printf("Couldn't get a visual\n");
-		return RSERR_INVALID_MODE;
-	}
-
-	if (!re.InitOpenGLSubSystem())
-	{
-		Com_Printf("Too old OpenGL driver or hardware");
-		return RSERR_OLD_GL;
-	}
-
 	if (fullscreen)
 	{
 		SDL_DisplayID   displayId = SDL_GetDisplayForWindow(main_window);
@@ -1004,6 +991,20 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 	else
 	{
 		glConfig->isFullscreen = qfalse;
+	}
+
+	GLimp_DetectAvailableModes();
+
+	if (!main_window)
+	{
+		Com_Printf("Couldn't get a visual\n");
+		return RSERR_INVALID_MODE;
+	}
+
+	if (!re.InitOpenGLSubSystem())
+	{
+		Com_Printf("Too old OpenGL driver or hardware");
+		return RSERR_OLD_GL;
 	}
 
 	SDL_DestroySurface(icon);
