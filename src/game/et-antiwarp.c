@@ -57,15 +57,20 @@ void etpro_AddUsercmd(int clientNum, usercmd_t *cmd)
 	gentity_t *ent = g_entities + clientNum;
 	int       idx  = (ent->client->cmdhead + ent->client->cmdcount) % LAG_MAX_COMMANDS;
 
-	ent->client->cmds[idx] = *cmd;
-
 	if (ent->client->cmdcount < LAG_MAX_COMMANDS)
 	{
+		ent->client->cmds[idx] = *cmd;
 		ent->client->cmdcount++;
 	}
 	else
 	{
-		ent->client->cmdhead = (ent->client->cmdhead + 1) % LAG_MAX_COMMANDS;
+		// queue full, the oldest command is overwritten - rescue its button
+		// presses before overwriting so they are not silently lost (refs #1408)
+		// (note: with a full queue, idx == cmdhead)
+		ent->client->droppedButtons  |= ent->client->cmds[ent->client->cmdhead].buttons;
+		ent->client->droppedWButtons |= ent->client->cmds[ent->client->cmdhead].wbuttons;
+		ent->client->cmds[idx]        = *cmd;
+		ent->client->cmdhead          = (ent->client->cmdhead + 1) % LAG_MAX_COMMANDS;
 	}
 }
 
@@ -193,6 +198,11 @@ void DoClientThinks(gentity_t *ent)
 		serverTime = cmd->serverTime;
 		totalDelta = latestTime - cmd->serverTime;
 
+		// remember the command time the client actually authored - antilag
+		// must rewind to this time, since cmd->serverTime may be rewritten
+		// below (deltahax) to enforce the movement budget
+		ent->client->realCmdServerTime = cmd->serverTime;
+
 		if (pmove_fixed.integer || ent->client->pers.pmoveFixed)
 		{
 			serverTime = ((serverTime + pmove_msec.integer - 1) / pmove_msec.integer) * pmove_msec.integer;
@@ -205,18 +215,31 @@ void DoClientThinks(gentity_t *ent)
 			// whoops. too lagged.
 			drop_threshold = LAG_MIN_DROP_THRESHOLD;
 			lastTime       = ent->client->ps.commandTime = cmd->serverTime;
+
+			// don't lose button presses of dropped commands - merge them into
+			// the next processed command (a dropped attack press would
+			// otherwise never fire server-side, refs #1408)
+			ent->client->droppedButtons  |= cmd->buttons;
+			ent->client->droppedWButtons |= cmd->wbuttons;
+
 			goto drop_packet;
 		}
 
 		if (totalDelta < 0)
 		{
 			// oro? packet from the future
+			ent->client->droppedButtons  |= cmd->buttons;
+			ent->client->droppedWButtons |= cmd->wbuttons;
+
 			goto drop_packet;
 		}
 
 		if (timeDelta <= 0)
 		{
 			// packet from the past
+			ent->client->droppedButtons  |= cmd->buttons;
+			ent->client->droppedWButtons |= cmd->wbuttons;
+
 			goto drop_packet;
 		}
 
@@ -283,6 +306,20 @@ void DoClientThinks(gentity_t *ent)
 
 		// erh.  hack, really. make it run for the proper amount of time.
 		ent->client->ps.commandTime = lastTime;
+
+		// merge in button presses of commands dropped above, so they still
+		// take effect (delayed) instead of being silently lost. Weapon fire
+		// is level-triggered on cmd.buttons with pmext->releasedFire as the
+		// semi-auto edge, so a merged press fires at most once.
+		if (ent->client->droppedButtons || ent->client->droppedWButtons)
+		{
+			cmd->buttons  |= ent->client->droppedButtons;
+			cmd->wbuttons |= ent->client->droppedWButtons;
+
+			ent->client->droppedButtons  = 0;
+			ent->client->droppedWButtons = 0;
+		}
+
 		ClientThink_cmd(ent, cmd);
 		lastTime = ent->client->ps.commandTime;
 

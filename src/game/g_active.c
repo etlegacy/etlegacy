@@ -1711,6 +1711,7 @@ void ClientThink(int clientNum)
 		}
 		else
 		{
+			ent->client->realCmdServerTime = newcmd.serverTime;
 			ClientThink_cmd(ent, &newcmd);
 		}
 	}
