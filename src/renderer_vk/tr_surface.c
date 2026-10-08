@@ -1301,23 +1301,113 @@ static void LerpMeshVertexes(md3Surface_t *surf, float backlerp)
 }
 
 /*
- * Vulkan GPU MD3 animation: every loaded MD3 surface's frames, texture
- * coords and triangles live in the mesh buffer (VK_WriteMeshData); this
- * table maps a surface to their byte offsets. Reset with the models.
+ * Vulkan GPU MD3/MDC animation: every loaded MD3 and MDC surface's frames,
+ * texture coords and triangles live in the mesh buffer (VK_WriteMeshData);
+ * this table maps a surface to their byte offsets. Reset with the models.
  */
-#define VK_MESH_MAP_SIZE 8192 // power of two, > the number of loaded MD3 surfaces
+#define VK_MESH_MAP_SIZE 8192 // power of two, > the number of loaded MD3/MDC surfaces
 
 typedef struct
 {
-	const md3Surface_t *surf;
-	int xyzOfs, stOfs, indexOfs;
+	const void *surf;
+	int xyzOfs;        // MD3 frames / MDC base frames (md3XyzNormal_t)
+	int compOfs;       // MDC compressed frames (mdcXyzCompressed_t), -1 = none
+	int stOfs, indexOfs;
 } vkMeshEntry_t;
 
 static vkMeshEntry_t vkMeshMap[VK_MESH_MAP_SIZE];
 
-static unsigned int R_VkMeshHash(const md3Surface_t *surf)
+static unsigned int R_VkMeshHash(const void *surf)
 {
 	return (unsigned int)(((size_t)surf >> 4) * 2654435761u) & (VK_MESH_MAP_SIZE - 1);
+}
+
+static void R_VkMeshInsert(const void *surf, int xyzOfs, int compOfs, int stOfs, int indexOfs)
+{
+	unsigned int h = R_VkMeshHash(surf);
+	int          i;
+
+	for (i = 0; i < VK_MESH_MAP_SIZE; i++, h = (h + 1) & (VK_MESH_MAP_SIZE - 1))
+	{
+		if (!vkMeshMap[h].surf || vkMeshMap[h].surf == surf)
+		{
+			vkMeshMap[h].surf     = surf;
+			vkMeshMap[h].xyzOfs   = xyzOfs;
+			vkMeshMap[h].compOfs  = compOfs;
+			vkMeshMap[h].stOfs    = stOfs;
+			vkMeshMap[h].indexOfs = indexOfs;
+			return;
+		}
+	}
+}
+
+static const vkMeshEntry_t *R_VkMeshFind(const void *surf)
+{
+	unsigned int h = R_VkMeshHash(surf);
+	int          i;
+
+	for (i = 0; i < VK_MESH_MAP_SIZE && vkMeshMap[h].surf; i++, h = (h + 1) & (VK_MESH_MAP_SIZE - 1))
+	{
+		if (vkMeshMap[h].surf == surf)
+		{
+			return &vkMeshMap[h];
+		}
+	}
+
+	return NULL;
+}
+
+/**
+ * @brief Vulkan: the RB_CalcEnvironmentTexCoords() parameters of the current
+ * entity (view origin in model space, s/t adjust from its origin, the two
+ * axis rows the reflection is projected on), written to the uniform arena
+ * for a GPU-skinned/animated batch whose shader has a tcGen environment
+ * stage (tess.vkEnvOffset). Same expressions as the CPU code.
+ */
+void RB_VkSetupEnvParams(void)
+{
+	float *dst;
+	float sAdjust, tAdjust;
+	int   i;
+
+	tess.vkEnvOffset = 0;
+
+	for (i = 0; i < MAX_SHADER_STAGES && tess.shader->stages[i] && tess.shader->stages[i]->active; i++)
+	{
+		if (tess.shader->stages[i]->bundle[0].tcGen == TCGEN_ENVIRONMENT_MAPPED)
+		{
+			break;
+		}
+	}
+	if (i == MAX_SHADER_STAGES || !tess.shader->stages[i] || !tess.shader->stages[i]->active)
+	{
+		return;
+	}
+
+	dst = VK_AllocEnvParams(&tess.vkEnvOffset);
+	if (!dst)
+	{
+		return;
+	}
+
+	sAdjust = VectorLength(backEnd.orientation.origin) * 0.00390625;
+	sAdjust = 0.5 -  (sAdjust - floor(sAdjust));
+
+	tAdjust = backEnd.orientation.origin[2] * 0.00390625;
+	tAdjust = 0.5 - (tAdjust - floor(tAdjust));
+
+	dst[0]  = backEnd.orientation.viewOrigin[0];
+	dst[1]  = backEnd.orientation.viewOrigin[1];
+	dst[2]  = backEnd.orientation.viewOrigin[2];
+	dst[3]  = sAdjust;
+	dst[4]  = backEnd.orientation.axis[0][1] * 0.5f;
+	dst[5]  = backEnd.orientation.axis[1][1] * 0.5f;
+	dst[6]  = backEnd.orientation.axis[2][1] * 0.5f;
+	dst[7]  = tAdjust;
+	dst[8]  = backEnd.orientation.axis[0][2] * 0.5f;
+	dst[9]  = backEnd.orientation.axis[1][2] * 0.5f;
+	dst[10] = backEnd.orientation.axis[2][2] * 0.5f;
+	dst[11] = 0.0f;
 }
 
 /**
@@ -1336,8 +1426,7 @@ void R_VkMeshReset(void)
  */
 void R_VkMeshRegister(md3Surface_t *surf)
 {
-	unsigned int h = R_VkMeshHash(surf);
-	int          i, xyzOfs, stOfs, indexOfs;
+	int xyzOfs, stOfs, indexOfs;
 
 	if (surf->numVerts <= 0 || surf->numFrames <= 0 || surf->numTriangles <= 0)
 	{
@@ -1352,17 +1441,40 @@ void R_VkMeshRegister(md3Surface_t *surf)
 		return;
 	}
 
-	for (i = 0; i < VK_MESH_MAP_SIZE; i++, h = (h + 1) & (VK_MESH_MAP_SIZE - 1))
+	R_VkMeshInsert(surf, xyzOfs, -1, stOfs, indexOfs);
+}
+
+/**
+ * @brief R_VkMeshRegister() for an MDC surface: its base frames, compressed
+ * frames, texture coords and triangles (the frame -> base/compressed frame
+ * maps stay on the CPU, RB_SurfaceCMeshGPU reads them per draw).
+ */
+void R_VkMeshRegisterMDC(mdcSurface_t *surf)
+{
+	int xyzOfs, compOfs = -1, stOfs, indexOfs;
+
+	if (surf->numVerts <= 0 || surf->numBaseFrames <= 0 || surf->numTriangles <= 0)
 	{
-		if (!vkMeshMap[h].surf || vkMeshMap[h].surf == surf)
+		return;
+	}
+
+	xyzOfs = VK_WriteMeshData((byte *)surf + surf->ofsXyzNormals, surf->numBaseFrames * surf->numVerts * (int)sizeof(md3XyzNormal_t));
+	if (surf->numCompFrames > 0)
+	{
+		compOfs = VK_WriteMeshData((byte *)surf + surf->ofsXyzCompressed, surf->numCompFrames * surf->numVerts * (int)sizeof(mdcXyzCompressed_t));
+		if (compOfs < 0)
 		{
-			vkMeshMap[h].surf     = surf;
-			vkMeshMap[h].xyzOfs   = xyzOfs;
-			vkMeshMap[h].stOfs    = stOfs;
-			vkMeshMap[h].indexOfs = indexOfs;
 			return;
 		}
 	}
+	stOfs    = VK_WriteMeshData((byte *)surf + surf->ofsSt, surf->numVerts * (int)sizeof(md3St_t));
+	indexOfs = VK_WriteMeshData((byte *)surf + surf->ofsTriangles, surf->numTriangles * 3 * (int)sizeof(int));
+	if (xyzOfs < 0 || stOfs < 0 || indexOfs < 0)
+	{
+		return;
+	}
+
+	R_VkMeshInsert(surf, xyzOfs, compOfs, stOfs, indexOfs);
 }
 
 /**
@@ -1374,10 +1486,9 @@ void R_VkMeshRegister(md3Surface_t *surf)
  */
 static qboolean RB_SurfaceMeshGPU(md3Surface_t *surface, float backlerp)
 {
-	const refEntity_t   *e     = &backEnd.currentEntity->e;
-	const vkMeshEntry_t *entry = NULL;
-	unsigned int        h = R_VkMeshHash(surface), frameBytes;
-	int                 i;
+	const refEntity_t   *e = &backEnd.currentEntity->e;
+	const vkMeshEntry_t *entry;
+	unsigned int        frameBytes;
 
 	if (!r_vkGpuVertex->integer || !tess.shader->vkSkinnable || tess.shader == tr.shadowShader || tess.fogNum ||
 	    backEnd.projection2D || (e->fadeStartTime && e->fadeStartTime <= tr.refdef.time) ||
@@ -1387,14 +1498,7 @@ static qboolean RB_SurfaceMeshGPU(md3Surface_t *surface, float backlerp)
 		return qfalse;
 	}
 
-	for (i = 0; i < VK_MESH_MAP_SIZE && vkMeshMap[h].surf; i++, h = (h + 1) & (VK_MESH_MAP_SIZE - 1))
-	{
-		if (vkMeshMap[h].surf == surface)
-		{
-			entry = &vkMeshMap[h];
-			break;
-		}
-	}
+	entry = R_VkMeshFind(surface);
 	if (!entry)
 	{
 		return qfalse;
@@ -1406,13 +1510,17 @@ static qboolean RB_SurfaceMeshGPU(md3Surface_t *surface, float backlerp)
 		RB_EndStaticBatch();
 	}
 
-	frameBytes          = (unsigned int)surface->numVerts * sizeof(md3XyzNormal_t);
-	tess.vkMesh         = qtrue;
-	tess.vkMeshNewOfs   = (unsigned int)entry->xyzOfs + (unsigned int)e->frame * frameBytes;
-	tess.vkMeshOldOfs   = (unsigned int)entry->xyzOfs + (unsigned int)e->oldframe * frameBytes;
-	tess.vkMeshStOfs    = (unsigned int)entry->stOfs;
-	tess.vkMeshIndexOfs = (unsigned int)entry->indexOfs;
-	tess.numIndexes     = surface->numTriangles * 3;
+	frameBytes            = (unsigned int)surface->numVerts * sizeof(md3XyzNormal_t);
+	tess.vkMesh           = qtrue;
+	tess.vkMeshFlags      = 0;
+	tess.vkMeshNewOfs     = (unsigned int)entry->xyzOfs + (unsigned int)e->frame * frameBytes;
+	tess.vkMeshOldOfs     = (unsigned int)entry->xyzOfs + (unsigned int)e->oldframe * frameBytes;
+	tess.vkMeshNewCompOfs = tess.vkMeshNewOfs; // unused, any valid offset
+	tess.vkMeshOldCompOfs = tess.vkMeshOldOfs;
+	tess.vkMeshStOfs      = (unsigned int)entry->stOfs;
+	tess.vkMeshIndexOfs   = (unsigned int)entry->indexOfs;
+	tess.numIndexes       = surface->numTriangles * 3;
+	RB_VkSetupEnvParams();
 
 	// LerpMeshVertexes_scalar()'s scales
 	tess.vkMeshLerp[0] = MD3_XYZ_SCALE * (1.0 - backlerp);
@@ -1509,6 +1617,78 @@ void R_LatLongToNormal(vec3_t outNormal, short latLong)
 	outNormal[2] = tr.sinTable[(lng + (FUNCTABLE_SIZE / 4)) & FUNCTABLE_MASK];
 }
 */
+
+/**
+ * @brief Vulkan: RB_SurfaceMeshGPU() for an MDC surface: the entity's frame
+ * and oldframe map to base frames (frameBaseFrames) and, where present,
+ * compressed frames (frameCompFrames) whose offsets and normals
+ * tr3d_md3.vert adds as LerpCMeshVertexes() does.
+ * @return qfalse if the surface must be interpolated on the CPU
+ */
+static qboolean RB_SurfaceCMeshGPU(mdcSurface_t *surface, float backlerp)
+{
+	const refEntity_t   *e = &backEnd.currentEntity->e;
+	const vkMeshEntry_t *entry;
+	const short         *baseFrames = (const short *)((byte *)surface + surface->ofsFrameBaseFrames);
+	const short         *compFrames = (const short *)((byte *)surface + surface->ofsFrameCompFrames);
+	unsigned int        frameBytes, compBytes;
+
+	if (!r_vkGpuVertex->integer || !tess.shader->vkSkinnable || tess.shader == tr.shadowShader || tess.fogNum ||
+	    backEnd.projection2D || (e->fadeStartTime && e->fadeStartTime <= tr.refdef.time) ||
+	    r_showTris->integer || r_showNormals->integer || r_debugShaderSurfaceFlags->integer ||
+	    e->frame < 0 || e->oldframe < 0)
+	{
+		return qfalse;
+	}
+
+	entry = R_VkMeshFind(surface);
+	if (!entry || baseFrames[e->frame] < 0 || baseFrames[e->frame] >= surface->numBaseFrames ||
+	    baseFrames[e->oldframe] < 0 || baseFrames[e->oldframe] >= surface->numBaseFrames)
+	{
+		return qfalse;
+	}
+
+	// one surface per batch: its frames
+	if (tess.numIndexes || tess.numVertexes)
+	{
+		RB_EndStaticBatch();
+	}
+
+	frameBytes            = (unsigned int)surface->numVerts * sizeof(md3XyzNormal_t);
+	compBytes             = (unsigned int)surface->numVerts * sizeof(mdcXyzCompressed_t);
+	tess.vkMesh           = qtrue;
+	tess.vkMeshFlags      = VK_MESH_MDC;
+	tess.vkMeshNewOfs     = (unsigned int)entry->xyzOfs + (unsigned int)baseFrames[e->frame] * frameBytes;
+	tess.vkMeshOldOfs     = (unsigned int)entry->xyzOfs + (unsigned int)baseFrames[e->oldframe] * frameBytes;
+	tess.vkMeshNewCompOfs = tess.vkMeshNewOfs; // unused unless flagged, any valid offset
+	tess.vkMeshOldCompOfs = tess.vkMeshOldOfs;
+	if (surface->numCompFrames > 0 && entry->compOfs >= 0)
+	{
+		if (compFrames[e->frame] >= 0)
+		{
+			tess.vkMeshFlags     |= VK_MESH_NEW_COMP;
+			tess.vkMeshNewCompOfs = (unsigned int)entry->compOfs + (unsigned int)compFrames[e->frame] * compBytes;
+		}
+		if (compFrames[e->oldframe] >= 0)
+		{
+			tess.vkMeshFlags     |= VK_MESH_OLD_COMP;
+			tess.vkMeshOldCompOfs = (unsigned int)entry->compOfs + (unsigned int)compFrames[e->oldframe] * compBytes;
+		}
+	}
+	tess.vkMeshStOfs    = (unsigned int)entry->stOfs;
+	tess.vkMeshIndexOfs = (unsigned int)entry->indexOfs;
+	tess.numIndexes     = surface->numTriangles * 3;
+	RB_VkSetupEnvParams();
+
+	// LerpCMeshVertexes()'s scales (the compressed offsets use 1 - backlerp
+	// and backlerp, the normal scales)
+	tess.vkMeshLerp[0] = MD3_XYZ_SCALE * (1.0 - backlerp);
+	tess.vkMeshLerp[1] = MD3_XYZ_SCALE * backlerp;
+	tess.vkMeshLerp[2] = 1.0f - backlerp;
+	tess.vkMeshLerp[3] = (backlerp == 0.f) ? -1.0f : backlerp;
+
+	return qtrue;
+}
 
 /**
  * @brief LerpCMeshVertexes
@@ -1700,6 +1880,11 @@ void RB_SurfaceCMesh(mdcSurface_t *surface)
 	else
 	{
 		backlerp = backEnd.currentEntity->e.backlerp;
+	}
+
+	if (RB_SurfaceCMeshGPU(surface, backlerp))
+	{
+		return;
 	}
 
 	RB_CHECKOVERFLOW(surface->numVerts, surface->numTriangles * 3);

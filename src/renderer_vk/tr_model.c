@@ -1090,6 +1090,9 @@ static qboolean R_LoadMDC(model_t *mod, int lod, void *buffer, const char *name)
 			}
 		}
 
+		// GPU frame interpolation (Vulkan mesh buffer)
+		R_VkMeshRegisterMDC(surf);
+
 		// find the next surface
 		surf = ( mdcSurface_t * )((byte *)surf + surf->ofsEnd);
 	}
@@ -2741,6 +2744,16 @@ qboolean R_FindCachedModel(const char *name, model_t *newmod)
 							newmod->model.mdc[j] = ri.Hunk_Alloc(mod->model.mdc[j]->ofsEnd, h_low);
 							Com_Memcpy(newmod->model.mdc[j], mod->model.mdc[j], mod->model.mdc[j]->ofsEnd);
 							R_RegisterMDCShaders(newmod, j);
+							{
+								mdcSurface_t *surf = (mdcSurface_t *)((byte *)newmod->model.mdc[j] + newmod->model.mdc[j]->ofsSurfaces);
+								int          k;
+
+								// the copy's surfaces are new: register them for GPU frame interpolation
+								for (k = 0; k < newmod->model.mdc[j]->numSurfaces; k++, surf = (mdcSurface_t *)((byte *)surf + surf->ofsEnd))
+								{
+									R_VkMeshRegisterMDC(surf);
+								}
+							}
 							R_CacheModelFree(mod->model.mdc[j]);
 						}
 						else

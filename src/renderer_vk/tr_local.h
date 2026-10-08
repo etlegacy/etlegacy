@@ -1721,18 +1721,27 @@ typedef struct shaderCommands_s
 	qboolean vkSkin;
 	int vkSkinFirstIndex;
 	unsigned int vkSkinBoneOffset;
-	/// MD3 surface interpolated in the vertex shader (one surface per batch,
-	/// see RB_SurfaceMeshGPU): no tess vertices; the surface's frames, texture
-	/// coords and triangles are in the Vulkan mesh buffer at these byte
-	/// offsets (frame = the entity's frame, old = its oldframe), lerp = new
-	/// xyz scale, old xyz scale, new normal scale, old normal scale (< 0: no
-	/// interpolation, use the new frame's normals)
+	/// MD3/MDC surface interpolated in the vertex shader (one surface per
+	/// batch, see RB_SurfaceMeshGPU/RB_SurfaceCMeshGPU): no tess vertices; the
+	/// surface's frames, texture coords and triangles are in the Vulkan mesh
+	/// buffer at these byte offsets (new = the entity's frame, old = its
+	/// oldframe; MDC: their base frames, plus their compressed frames when
+	/// vkMeshFlags has VK_MESH_NEW_COMP / VK_MESH_OLD_COMP), lerp = new xyz
+	/// scale, old xyz scale, new normal scale, old normal scale (< 0: no
+	/// interpolation)
 	qboolean vkMesh;
+	int vkMeshFlags;
 	unsigned int vkMeshNewOfs;
 	unsigned int vkMeshOldOfs;
+	unsigned int vkMeshNewCompOfs;
+	unsigned int vkMeshOldCompOfs;
 	unsigned int vkMeshStOfs;
 	unsigned int vkMeshIndexOfs;
 	float vkMeshLerp[4];
+	/// GPU-skinned/animated batch with a tcGen environment stage: the
+	/// RB_CalcEnvironmentTexCoords() parameters for the vertex shader, in
+	/// the uniform arena at this offset (RB_VkSetupEnvParams)
+	unsigned int vkEnvOffset;
 	/// the stage being drawn is rgbGen lightingDiffuse computed in the vertex
 	/// shader (VK_Draw3DDiffuse): ComputeColors() left the rgb unset, see
 	/// RB_StageGpuDiffuse()
@@ -1775,8 +1784,15 @@ float *VK_AllocSkinBones(int numBones, unsigned int *offset);
 // texture coords and triangles in a mesh buffer, written at model load and
 // reset with the skin buffer; RB_SurfaceMeshGPU looks a surface up here
 int VK_WriteMeshData(const void *data, int bytes);
+float *VK_AllocEnvParams(unsigned int *offset);
 void R_VkMeshReset(void);
 void R_VkMeshRegister(md3Surface_t *surf);
+void R_VkMeshRegisterMDC(mdcSurface_t *surf);
+void RB_VkSetupEnvParams(void);
+
+#define VK_MESH_MDC      1 // tess.vkMeshFlags: MDC surface (else MD3)
+#define VK_MESH_NEW_COMP 2 // MDC: the frame has a compressed frame
+#define VK_MESH_OLD_COMP 4 // MDC: the oldframe has a compressed frame
 #define RB_CHECKOVERFLOW(v, i) if (tess.vkStatic || tess.vkSkin || tess.vkMesh) { RB_EndStaticBatch(); } if (tess.numVertexes + (v) >= SHADER_MAX_VERTEXES || tess.numIndexes + (i) >= SHADER_MAX_INDEXES) { RB_CheckOverflow(v, i); }
 
 void RB_StageIteratorGeneric(void);
