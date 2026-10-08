@@ -144,7 +144,7 @@ extern vec3_t axisDefault[3];
 
 #define nanmask (255 << 23)
 
-#define IS_NAN(x) (((*(int *)&x) & nanmask) == nanmask)
+#define IS_NAN(x) (((*(int *)&x)&nanmask) == nanmask)
 
 int Q_isnan(float x);
 
@@ -670,5 +670,7 @@ int Q_ClosestMultiple(int n, int x);
 float Q_ClosestMultipleFloat(float n, float x, int decimal);
 
 void Rotate2DPointAroundPoint(vec2_t *point, const vec2_t *origin, float theta);
+
+int Q_GetDigitNumbersBeforeDecimal(float x);
 
 #endif
