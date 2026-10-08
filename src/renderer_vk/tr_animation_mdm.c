@@ -1795,6 +1795,7 @@ static qboolean RB_MDM_SurfaceAnimGPU(mdmSurface_t *surface, mdmHeader_t *header
 	{
 		return qtrue; // arena full this frame (reported there): drop the surface
 	}
+	RB_VkSetupEnvParams();
 
 	// bone rows as in LocalAddScaledMatrixTransformVectorTranslate():
 	// row r = (matrix[r][0..2], translation[r])

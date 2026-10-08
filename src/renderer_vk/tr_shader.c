@@ -2244,8 +2244,9 @@ static void ComputeStageIteratorFunc(void)
  * @brief Vulkan: marks shaders whose MDM surfaces can be skinned in the
  * vertex shader (shader_t::vkSkinnable, RB_MDM_SurfaceAnimGPU). The skinned
  * vertices exist only on the GPU, so every stage must be computable there:
- * texture coords as stored (tcGen texture, no tcMod), rgb lightingDiffuse
- * or constant for the draw, constant alpha, no deforms, single texture.
+ * texture coords as stored or environment mapped (tcGen texture or
+ * environment, no tcMod), rgb lightingDiffuse or constant for the draw,
+ * constant alpha, no deforms, single texture.
  */
 static void ComputeVkSkinnable(void)
 {
@@ -2285,7 +2286,8 @@ static void ComputeVkSkinnable(void)
 			return;
 		}
 
-		if (pStage->bundle[0].numTexMods || pStage->bundle[0].tcGen != TCGEN_TEXTURE || pStage->bundle[1].image[0])
+		if (pStage->bundle[0].numTexMods || pStage->bundle[1].image[0] ||
+		    (pStage->bundle[0].tcGen != TCGEN_TEXTURE && pStage->bundle[0].tcGen != TCGEN_ENVIRONMENT_MAPPED))
 		{
 			return;
 		}
