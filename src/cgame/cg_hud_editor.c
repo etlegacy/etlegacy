@@ -1241,6 +1241,16 @@ static qboolean CG_HudEditor_EditKeyDown(panel_button_t *button, int key)
 		return qfalse;
 	}
 
+	// the only edit field visible is the hud name
+	// for all others, ensure a valid component is selected
+	if (button != &hudEditorHudName)
+	{
+		if (!lastFocusComponent)
+		{
+			return qfalse;
+		}
+	}
+
 	return BG_PanelButton_EditClick(button, key);
 }
 
@@ -1561,6 +1571,11 @@ static qboolean CG_HudEditorStyle_CheckboxKeyDown(panel_button_t *button, int ke
 		return qfalse;
 	}
 
+	if (!lastFocusComponent)
+	{
+		return qfalse;
+	}
+
 	comp->style    ^= button->data[3];
 	button->data[2] = !button->data[2];
 
@@ -1585,6 +1600,11 @@ static qboolean CG_HudEditorBarStyle_CheckboxKeyDown(panel_button_t *button, int
 	}
 
 	if (!hudData.active->isEditable)
+	{
+		return qfalse;
+	}
+
+	if (!lastFocusComponent)
 	{
 		return qfalse;
 	}
@@ -1618,6 +1638,11 @@ static qboolean CG_HudEditorShowBackground_CheckboxKeyDown(panel_button_t *butto
 		return qfalse;
 	}
 
+	if (!lastFocusComponent)
+	{
+		return qfalse;
+	}
+
 	comp->showBackGround = button->data[2] = !button->data[2];
 
 	BG_PanelButtons_SetFocusButton(NULL);
@@ -1646,6 +1671,11 @@ static qboolean CG_HudEditorShowBorder_CheckboxKeyDown(panel_button_t *button, i
 		return qfalse;
 	}
 
+	if (!lastFocusComponent)
+	{
+		return qfalse;
+	}
+
 	comp->showBorder = button->data[2] = !button->data[2];
 
 	BG_PanelButtons_SetFocusButton(NULL);
@@ -1670,6 +1700,11 @@ static qboolean CG_HudEditorAutoAdjust_CheckboxKeyDown(panel_button_t *button, i
 
 	// don't modify default HUD
 	if (!hudData.active->isEditable)
+	{
+		return qfalse;
+	}
+
+	if (!lastFocusComponent)
 	{
 		return qfalse;
 	}
@@ -3969,6 +4004,7 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 	{
 		lastFocusComponent    = NULL;
 		lastButtonTabSelected = &hudEditorColorButton;
+		BG_PanelButtons_SetFocusButton(NULL);
 		return;
 	}
 
