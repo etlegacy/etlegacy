@@ -54,6 +54,7 @@ typedef struct
 	qboolean shiftHealthBarDynamicColorStyle2;          //< added in version 6
 	qboolean moveBarStyleIntoOwnField;                  //< added in version 7
 	qboolean shiftDynamicColorToPrestige;               //< added in version 8
+	qboolean renamePopupMessageComp;                    //< added in version 9
 } hudFileUpgrades_t;
 
 static uint32_t CG_CompareHudComponents(hudStucture_t *hud, hudComponent_t *comp, hudStucture_t *parentHud, hudComponent_t *parentComp);
@@ -1860,7 +1861,16 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 	for (i = 0; hudComponentFields[i].name; i++)
 	{
 		hudComponent_t *component = (hudComponent_t *) ((char *) tmpHud + hudComponentFields[i].offset);
-		cJSON          *comp      = cJSON_GetObjectItem(comps, hudComponentFields[i].name);
+		cJSON          *comp;
+
+		if (upgr->renamePopupMessageComp && !Q_strncmp(hudComponentFields[i].name, "popupmessages1", sizeof(hudComponentFields[i].name)))
+		{
+			comp = cJSON_GetObjectItem(comps, "popupmessages");
+		}
+		else
+		{
+			comp = cJSON_GetObjectItem(comps, hudComponentFields[i].name);
+		}
 
 		if (parentHud)
 		{
@@ -2177,6 +2187,9 @@ static void CG_CheckJsonFileUpgrades(cJSON *root, hudFileUpgrades_t *ret)
 		break;
 	case 7:         // 2.84 - prestige removed, dynamic color shifted to previous prestige value
 		ret->shiftDynamicColorToPrestige = qtrue;
+		break;
+	case 8:         // 2.86.1 - popupmessage component name renamed to popupmessage1
+		ret->renamePopupMessageComp = qtrue;
 		break;
 	default:
 		CG_Printf(S_COLOR_RED "ERROR CG_ReadHudJsonFile: invalid version used: %i only %i is supported\n", fileVersion, CURRENT_HUD_JSON_VERSION);
