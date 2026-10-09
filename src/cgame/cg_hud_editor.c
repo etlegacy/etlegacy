@@ -1523,6 +1523,11 @@ static qboolean CG_HudEditorVisible_CheckboxKeyDown(panel_button_t *button, int 
 {
 	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
+	if (key != K_MOUSE1)
+	{
+		return qfalse;
+	}
+
 	// don't modify default HUD
 	if (!hudData.active->isEditable)
 	{
@@ -1545,6 +1550,11 @@ static qboolean CG_HudEditorVisible_CheckboxKeyDown(panel_button_t *button, int 
 static qboolean CG_HudEditorStyle_CheckboxKeyDown(panel_button_t *button, int key)
 {
 	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
+
+	if (key != K_MOUSE1)
+	{
+		return qfalse;
+	}
 
 	if (!hudData.active->isEditable)
 	{
@@ -1569,6 +1579,11 @@ static qboolean CG_HudEditorBarStyle_CheckboxKeyDown(panel_button_t *button, int
 {
 	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
+	if (key != K_MOUSE1)
+	{
+		return qfalse;
+	}
+
 	if (!hudData.active->isEditable)
 	{
 		return qfalse;
@@ -1591,6 +1606,11 @@ static qboolean CG_HudEditorBarStyle_CheckboxKeyDown(panel_button_t *button, int
 static qboolean CG_HudEditorShowBackground_CheckboxKeyDown(panel_button_t *button, int key)
 {
 	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
+
+	if (key != K_MOUSE1)
+	{
+		return qfalse;
+	}
 
 	// don't modify default HUD
 	if (!hudData.active->isEditable)
@@ -1615,6 +1635,11 @@ static qboolean CG_HudEditorShowBorder_CheckboxKeyDown(panel_button_t *button, i
 {
 	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
+	if (key != K_MOUSE1)
+	{
+		return qfalse;
+	}
+
 	// don't modify default HUD
 	if (!hudData.active->isEditable)
 	{
@@ -1637,6 +1662,11 @@ static qboolean CG_HudEditorShowBorder_CheckboxKeyDown(panel_button_t *button, i
 static qboolean CG_HudEditorAutoAdjust_CheckboxKeyDown(panel_button_t *button, int key)
 {
 	hudComponent_t *comp = (hudComponent_t *)((char *)hudData.active + hudComponentFields[button->data[1]].offset);
+
+	if (key != K_MOUSE1)
+	{
+		return qfalse;
+	}
 
 	// don't modify default HUD
 	if (!hudData.active->isEditable)
