@@ -2789,6 +2789,9 @@ void RE_LoadWorldMap(const char *name)
 	// only set tr.world now that we know the entire level has loaded properly
 	tr.world = &s_worldData;
 
+	// Vulkan: GPU world culling data (needs the leaves and the fogs)
+	R_VkBuildWorldCull();
+
 	// reset fog to world fog (if present)
 	R_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 20, 0, 0, 0, 0);
 

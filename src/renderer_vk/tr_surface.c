@@ -440,6 +440,12 @@ static qboolean RB_SurfaceTrianglesStatic(srfTriangles_t *srf)
 	glIndex_t *dst;
 	int       i, base, first;
 
+	// a GPU-culled group is a batch of its own
+	if (tess.vkIndirect)
+	{
+		RB_EndStaticBatch();
+	}
+
 	if (tess.numIndexes == 0 && tess.numVertexes == 0)
 	{
 		tess.vkStatic = canBeStatic;
@@ -2407,6 +2413,24 @@ void RB_SurfaceSkip(void *surf)
 	return;
 }
 
+/**
+ * @brief Vulkan: a GPU-culled world group (R_VkBuildWorldCull) as a static
+ * batch of its own, drawn with the view's indirect command for the group:
+ * no tess vertices or indexes, numIndexes only marks the batch non-empty.
+ */
+static void RB_SurfaceVkWorldGroup(vkWorldGroup_t *group)
+{
+	if (tess.numIndexes || tess.numVertexes)
+	{
+		RB_EndStaticBatch();
+	}
+
+	tess.vkStatic         = qtrue;
+	tess.vkIndirect       = qtrue;
+	tess.vkIndirectOffset = VK_CullCommandOffset(backEnd.viewParms.vkCullView, group->index);
+	tess.numIndexes       = 3;
+}
+
 void (*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *) =
 {
 	(void (*)(void *)) RB_SurfaceBad,               // SF_BAD,
@@ -2425,4 +2449,5 @@ void (*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *) =
 	(void (*)(void *)) RB_SurfaceDisplayList,       // SF_DISPLAY_LIST
 	(void (*)(void *)) RB_SurfacePolyBuffer,        // SF_POLYBUFFER
 	(void (*)(void *)) RB_SurfaceDecal,             // SF_DECAL
+	(void (*)(void *)) RB_SurfaceVkWorldGroup,      // SF_VK_WORLDGROUP
 };

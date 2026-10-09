@@ -89,6 +89,8 @@
 		X(vkCmdCopyImageToBuffer) \
 		X(vkCmdDraw) \
 		X(vkCmdDrawIndexed) \
+		X(vkCmdDrawIndexedIndirect) \
+		X(vkCmdDispatch) \
 		X(vkCmdEndRenderPass) \
 		X(vkCmdPipelineBarrier) \
 		X(vkCmdPushConstants) \
@@ -101,6 +103,7 @@
 		X(vkCreateFence) \
 		X(vkCreateFramebuffer) \
 		X(vkCreateGraphicsPipelines) \
+		X(vkCreateComputePipelines) \
 		X(vkCreateImage) \
 		X(vkCreateImageView) \
 		X(vkCreatePipelineLayout) \
