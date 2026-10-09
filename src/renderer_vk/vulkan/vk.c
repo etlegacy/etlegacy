@@ -65,6 +65,7 @@
 #include "tr3d_lm_static.vert.glsl.h"
 #include "gamma.vert.glsl.h"
 #include "gamma.frag.glsl.h"
+#include "world_cull.comp.glsl.h"
 
 #define VK_MAX_SWAPCHAIN_IMAGES 8
 
@@ -72,6 +73,25 @@
 // command buffer, fence, acquire semaphore, deferred-free list and region
 // of every vertex/index arena (the VK_*_ARENA_SIZE values are per frame).
 #define VK_FRAMES_IN_FLIGHT 2
+
+// GPU world culling: world views per frame that can be culled on the GPU
+// (the main view, a portal or mirror, the sky portal); further views
+// fall back to the CPU world walk
+#define VK_CULL_MAX_VIEWS 4
+
+// world_cull.comp push constants (128 bytes)
+typedef struct
+{
+	float frustum[5][4];       // normal, dist
+	float viewOrigin[4];
+	unsigned int numSurfs;
+	unsigned int leafBitsOfs;  // word offsets in the cull arena
+	unsigned int skipOfs;
+	unsigned int cmdOfs;
+	unsigned int viewStamp;
+	unsigned int flags;        // VK_CULL_NOCULL, VK_CULL_FACEPLANE
+	unsigned int pad[2];
+} vkCullPush_t;
 
 // A world can have many distinct shader stateBits/cullType combinations;
 // pipelines are created lazily and cached for the life of the renderer.
@@ -392,6 +412,28 @@ typedef struct
 	VkDeviceMemory staticWorldMemory;
 	void *staticWorldMapped;
 	int staticWorldNumVertexes;
+
+	// GPU world culling (world_cull.comp, VK_CreateWorldCull/VK_CullWorldView):
+	// static per-map data (surfaces, their leaves, their indexes into the
+	// static world buffer), the host-written per-frame arena (per frame
+	// slot: skip stamps, then per view the visible-leaf bitset and one
+	// indirect draw command per group) and the output index buffer (per
+	// frame slot and view, every group's region)
+	VkBuffer cullSurfBuffer, cullLeafBuffer, cullIndexBuffer, cullArenaBuffer, cullOutBuffer;
+	VkDeviceMemory cullSurfMemory, cullLeafMemory, cullIndexMemory, cullArenaMemory, cullOutMemory;
+	unsigned int *cullArenaMapped;
+	VkDescriptorSetLayout cullSetLayout;
+	VkDescriptorPool cullPool;
+	VkDescriptorSet cullSet;
+	VkPipelineLayout cullPipelineLayout;
+	VkPipeline cullPipeline;
+	VkCommandBuffer cullCommandBuffers[VK_FRAMES_IN_FLIGHT];
+	qboolean cullRecording;                                // this frame's cull command buffer is begun
+	qboolean inFrame;                                      // between VK_BeginFrame and VK_EndFrame
+	int cullNumViews;                                      // views culled this frame
+	int cullNumSurfs, cullNumGroups, cullNumIndexes;
+	unsigned int cullLeafWords, cullViewWords, cullSlotWords;
+	unsigned int cullStamp;                                // last view stamp (never 0)
 
 	// GPU skinning (VK_VERTS_SKIN), see VK_WriteSkinVertices/VK_AllocSkinBones
 	VkBuffer skinBuffer;
@@ -2731,6 +2773,373 @@ void VK_WriteStaticWorldVertices(int first, const drawVert_t *verts, int count)
 }
 
 /**
+ * @brief GPU world culling: the compute pipeline, its descriptor set and the
+ * per-frame command buffers the culling dispatches are recorded into (each
+ * frame submits its cull command buffer ahead of the main one). Optional:
+ * without it every view walks the world on the CPU.
+ */
+static void VK_CreateCullPipeline(void)
+{
+	VkDescriptorSetLayoutBinding    bindings[5];
+	VkDescriptorSetLayoutCreateInfo setLayoutInfo;
+	VkPushConstantRange             pushRange;
+	VkPipelineLayoutCreateInfo      layoutInfo;
+	VkDescriptorPoolSize            poolSize;
+	VkDescriptorPoolCreateInfo      poolInfo;
+	VkDescriptorSetAllocateInfo     allocInfo;
+	VkCommandBufferAllocateInfo     cmdInfo;
+	VkComputePipelineCreateInfo     pipelineInfo;
+	VkShaderModule                  module;
+	int                             i;
+
+	Com_Memset(bindings, 0, sizeof(bindings));
+	for (i = 0; i < 5; i++)
+	{
+		bindings[i].binding         = i;
+		bindings[i].descriptorType  = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		bindings[i].descriptorCount = 1;
+		bindings[i].stageFlags      = VK_SHADER_STAGE_COMPUTE_BIT;
+	}
+
+	Com_Memset(&setLayoutInfo, 0, sizeof(setLayoutInfo));
+	setLayoutInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	setLayoutInfo.bindingCount = 5;
+	setLayoutInfo.pBindings    = bindings;
+
+	if (!VK_CheckResult(vkCreateDescriptorSetLayout(vk.device, &setLayoutInfo, NULL, &vk.cullSetLayout), "vkCreateDescriptorSetLayout(cull)"))
+	{
+		return;
+	}
+
+	Com_Memset(&pushRange, 0, sizeof(pushRange));
+	pushRange.stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+	pushRange.size       = sizeof(vkCullPush_t);
+
+	Com_Memset(&layoutInfo, 0, sizeof(layoutInfo));
+	layoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	layoutInfo.setLayoutCount         = 1;
+	layoutInfo.pSetLayouts            = &vk.cullSetLayout;
+	layoutInfo.pushConstantRangeCount = 1;
+	layoutInfo.pPushConstantRanges    = &pushRange;
+
+	if (!VK_CheckResult(vkCreatePipelineLayout(vk.device, &layoutInfo, NULL, &vk.cullPipelineLayout), "vkCreatePipelineLayout(cull)"))
+	{
+		return;
+	}
+
+	Com_Memset(&poolSize, 0, sizeof(poolSize));
+	poolSize.type            = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	poolSize.descriptorCount = 5;
+
+	Com_Memset(&poolInfo, 0, sizeof(poolInfo));
+	poolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	poolInfo.poolSizeCount = 1;
+	poolInfo.pPoolSizes    = &poolSize;
+	poolInfo.maxSets       = 1;
+
+	if (!VK_CheckResult(vkCreateDescriptorPool(vk.device, &poolInfo, NULL, &vk.cullPool), "vkCreateDescriptorPool(cull)"))
+	{
+		return;
+	}
+
+	Com_Memset(&allocInfo, 0, sizeof(allocInfo));
+	allocInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool     = vk.cullPool;
+	allocInfo.descriptorSetCount = 1;
+	allocInfo.pSetLayouts        = &vk.cullSetLayout;
+
+	if (!VK_CheckResult(vkAllocateDescriptorSets(vk.device, &allocInfo, &vk.cullSet), "vkAllocateDescriptorSets(cull)"))
+	{
+		return;
+	}
+
+	Com_Memset(&cmdInfo, 0, sizeof(cmdInfo));
+	cmdInfo.sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	cmdInfo.commandPool        = vk.commandPool;
+	cmdInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	cmdInfo.commandBufferCount = VK_FRAMES_IN_FLIGHT;
+
+	if (!VK_CheckResult(vkAllocateCommandBuffers(vk.device, &cmdInfo, vk.cullCommandBuffers), "vkAllocateCommandBuffers(cull)"))
+	{
+		return;
+	}
+
+	module = VK_CreateShaderModule(world_cull_comp_spv, world_cull_comp_spv_SIZE);
+	if (module == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	Com_Memset(&pipelineInfo, 0, sizeof(pipelineInfo));
+	pipelineInfo.sType        = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+	pipelineInfo.stage.sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	pipelineInfo.stage.stage  = VK_SHADER_STAGE_COMPUTE_BIT;
+	pipelineInfo.stage.module = module;
+	pipelineInfo.stage.pName  = "main";
+	pipelineInfo.layout       = vk.cullPipelineLayout;
+
+	VK_CheckResult(vkCreateComputePipelines(vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &vk.cullPipeline), "vkCreateComputePipelines(cull)");
+	vkDestroyShaderModule(vk.device, module, NULL);
+}
+
+static void VK_DestroyCullBuffer(VkBuffer *buffer, VkDeviceMemory *memory)
+{
+	if (*buffer != VK_NULL_HANDLE)
+	{
+		vkDestroyBuffer(vk.device, *buffer, NULL);
+		*buffer = VK_NULL_HANDLE;
+	}
+	if (*memory != VK_NULL_HANDLE)
+	{
+		vkFreeMemory(vk.device, *memory, NULL);
+		*memory = VK_NULL_HANDLE;
+	}
+}
+
+/**
+ * @brief Destroys the map's GPU world culling buffers (waits for the GPU,
+ * only called at map load and shutdown).
+ */
+static void VK_DestroyWorldCull(void)
+{
+	if (vk.cullSurfBuffer == VK_NULL_HANDLE && vk.cullArenaBuffer == VK_NULL_HANDLE && vk.cullOutBuffer == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	vkDeviceWaitIdle(vk.device);
+
+	if (vk.cullArenaMapped)
+	{
+		vkUnmapMemory(vk.device, vk.cullArenaMemory);
+		vk.cullArenaMapped = NULL;
+	}
+	VK_DestroyCullBuffer(&vk.cullSurfBuffer, &vk.cullSurfMemory);
+	VK_DestroyCullBuffer(&vk.cullLeafBuffer, &vk.cullLeafMemory);
+	VK_DestroyCullBuffer(&vk.cullIndexBuffer, &vk.cullIndexMemory);
+	VK_DestroyCullBuffer(&vk.cullArenaBuffer, &vk.cullArenaMemory);
+	VK_DestroyCullBuffer(&vk.cullOutBuffer, &vk.cullOutMemory);
+	vk.cullNumSurfs = vk.cullNumGroups = vk.cullNumIndexes = 0;
+}
+
+/**
+ * @brief Creates a host-visible buffer and copies data into it (bytes may
+ * exceed the data: the rest is zeroed); mapped (left mapped if requested).
+ */
+static qboolean VK_CreateCullBuffer(VkDeviceSize bytes, VkBufferUsageFlags usage, const void *data, VkDeviceSize dataBytes,
+                                    VkBuffer *buffer, VkDeviceMemory *memory, void **keepMapped)
+{
+	void *mapped;
+
+	if (!VK_CreateBuffer(bytes, usage, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, buffer, memory) ||
+	    !VK_CheckResult(vkMapMemory(vk.device, *memory, 0, VK_WHOLE_SIZE, 0, &mapped), "vkMapMemory(cull)"))
+	{
+		return qfalse;
+	}
+
+	Com_Memset(mapped, 0, (size_t)bytes);
+	if (data)
+	{
+		Com_Memcpy(mapped, data, (size_t)dataBytes);
+	}
+
+	if (keepMapped)
+	{
+		*keepMapped = mapped;
+	}
+	else
+	{
+		vkUnmapMemory(vk.device, *memory);
+	}
+
+	return qtrue;
+}
+
+/**
+ * @brief Replaces the GPU world culling data with the loaded map's (see
+ * R_VkBuildWorldCull): the culled surfaces, their leaves (indexes of the
+ * world's nodes array), their triangles (indexes into the static world
+ * buffer, numIndexes in all - also the size of one view's output, which
+ * holds every group's region) and the number of leaves and groups.
+ * @return qfalse if GPU culling is not available (the CPU walks the world)
+ */
+qboolean VK_CreateWorldCull(const vkCullSurface_t *surfs, int numSurfs, const unsigned int *surfLeaves, int numSurfLeaves,
+                            const unsigned int *indexes, int numIndexes, int numLeaves, int numGroups)
+{
+	VkDescriptorBufferInfo infos[5];
+	VkWriteDescriptorSet   writes[5];
+	VkDeviceSize           outBytes;
+	void                   *arena;
+	int                    i;
+
+	if (!vk.initialized)
+	{
+		return qfalse;
+	}
+
+	VK_DestroyWorldCull();
+
+	if (vk.cullPipeline == VK_NULL_HANDLE || numSurfs <= 0 || numSurfLeaves <= 0 || numIndexes <= 0 || numGroups <= 0)
+	{
+		return qfalse;
+	}
+
+	vk.cullLeafWords = (unsigned int)(numLeaves + 31) / 32;
+	vk.cullViewWords = vk.cullLeafWords + (unsigned int)numGroups * 5;
+	vk.cullSlotWords = (unsigned int)numSurfs + VK_CULL_MAX_VIEWS * vk.cullViewWords;
+	outBytes         = (VkDeviceSize)VK_FRAMES_IN_FLIGHT * VK_CULL_MAX_VIEWS * numIndexes * sizeof(unsigned int);
+
+	if (!VK_CreateCullBuffer((VkDeviceSize)numSurfs * sizeof(vkCullSurface_t), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+	                         surfs, (VkDeviceSize)numSurfs * sizeof(vkCullSurface_t), &vk.cullSurfBuffer, &vk.cullSurfMemory, NULL) ||
+	    !VK_CreateCullBuffer((VkDeviceSize)numSurfLeaves * sizeof(unsigned int), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+	                         surfLeaves, (VkDeviceSize)numSurfLeaves * sizeof(unsigned int), &vk.cullLeafBuffer, &vk.cullLeafMemory, NULL) ||
+	    !VK_CreateCullBuffer((VkDeviceSize)numIndexes * sizeof(unsigned int), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+	                         indexes, (VkDeviceSize)numIndexes * sizeof(unsigned int), &vk.cullIndexBuffer, &vk.cullIndexMemory, NULL) ||
+	    !VK_CreateCullBuffer((VkDeviceSize)VK_FRAMES_IN_FLIGHT * vk.cullSlotWords * sizeof(unsigned int),
+	                         VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
+	                         NULL, 0, &vk.cullArenaBuffer, &vk.cullArenaMemory, &arena) ||
+	    !VK_CreateBuffer(outBytes, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+	                     VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &vk.cullOutBuffer, &vk.cullOutMemory))
+	{
+		VK_DestroyWorldCull();
+		return qfalse;
+	}
+	vk.cullArenaMapped = (unsigned int *)arena;
+
+	Com_Memset(infos, 0, sizeof(infos));
+	infos[0].buffer = vk.cullSurfBuffer;
+	infos[1].buffer = vk.cullLeafBuffer;
+	infos[2].buffer = vk.cullIndexBuffer;
+	infos[3].buffer = vk.cullArenaBuffer;
+	infos[4].buffer = vk.cullOutBuffer;
+
+	Com_Memset(writes, 0, sizeof(writes));
+	for (i = 0; i < 5; i++)
+	{
+		infos[i].range = VK_WHOLE_SIZE;
+
+		writes[i].sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		writes[i].dstSet          = vk.cullSet;
+		writes[i].dstBinding      = i;
+		writes[i].descriptorCount = 1;
+		writes[i].descriptorType  = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		writes[i].pBufferInfo     = &infos[i];
+	}
+	vkUpdateDescriptorSets(vk.device, 5, writes, 0, NULL);
+
+	vk.cullNumSurfs   = numSurfs;
+	vk.cullNumGroups  = numGroups;
+	vk.cullNumIndexes = numIndexes;
+
+	Ren_Developer("...GPU world culling: %i surfaces, %i groups, %i indexes\n", numSurfs, numGroups, numIndexes);
+	return qtrue;
+}
+
+/**
+ * @brief Starts GPU culling for a world view: reserves the view's slice of
+ * this frame's arena, clears its visible-leaf bitset and writes its draw
+ * commands (group g draws from groupFirst[g] in the view's output region,
+ * count 0 until the dispatch adds the visible surfaces).
+ * @return qfalse if the view must walk the world on the CPU (no frame being
+ * recorded, no GPU culling for this map, or too many views this frame)
+ */
+qboolean VK_CullBeginView(vkCullView_t *cv, const int *groupFirst)
+{
+	unsigned int *slot, *cmd;
+	unsigned int outBase;
+	int          g;
+
+	if (!vk.initialized || !vk.inFrame || !vk.cullArenaMapped || vk.cullNumViews >= VK_CULL_MAX_VIEWS)
+	{
+		return qfalse;
+	}
+
+	if (++vk.cullStamp == 0)
+	{
+		vk.cullStamp = 1; // 0 is the arena's initial skip stamp
+	}
+
+	cv->view     = vk.cullNumViews++;
+	cv->stamp    = vk.cullStamp;
+	slot         = vk.cullArenaMapped + (size_t)vk.frameIndex * vk.cullSlotWords;
+	cv->skip     = slot;
+	cv->leafBits = slot + vk.cullNumSurfs + cv->view * vk.cullViewWords;
+	Com_Memset(cv->leafBits, 0, vk.cullLeafWords * sizeof(unsigned int));
+
+	outBase = (unsigned int)((vk.frameIndex * VK_CULL_MAX_VIEWS + cv->view) * vk.cullNumIndexes);
+	cmd     = cv->leafBits + vk.cullLeafWords;
+	for (g = 0; g < vk.cullNumGroups; g++, cmd += 5)
+	{
+		cmd[0] = 0;
+		cmd[1] = 1;
+		cmd[2] = outBase + (unsigned int)groupFirst[g];
+		cmd[3] = 0;
+		cmd[4] = 0;
+	}
+
+	return qtrue;
+}
+
+/**
+ * @brief Records a world view's culling dispatch (VK_CullBeginView) into
+ * this frame's cull command buffer, which VK_EndFrame() submits before the
+ * frame's draws. frustum/viewOrigin as R_CullSurface() uses them; flags:
+ * VK_CULL_NOCULL, VK_CULL_FACEPLANE.
+ */
+void VK_CullDispatch(const vkCullView_t *cv, const cplane_t *frustum, const vec3_t viewOrigin, int flags)
+{
+	VkCommandBuffer cb = vk.cullCommandBuffers[vk.frameIndex];
+	vkCullPush_t    push;
+	unsigned int    slotOfs = (unsigned int)vk.frameIndex * vk.cullSlotWords;
+	int             i;
+
+	if (!vk.cullRecording)
+	{
+		VkCommandBufferBeginInfo beginInfo;
+
+		vkResetCommandBuffer(cb, 0);
+		Com_Memset(&beginInfo, 0, sizeof(beginInfo));
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		vkBeginCommandBuffer(cb, &beginInfo);
+		vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_COMPUTE, vk.cullPipeline);
+		vkCmdBindDescriptorSets(cb, VK_PIPELINE_BIND_POINT_COMPUTE, vk.cullPipelineLayout, 0, 1, &vk.cullSet, 0, NULL);
+		vk.cullRecording = qtrue;
+	}
+
+	Com_Memset(&push, 0, sizeof(push));
+	for (i = 0; i < 5; i++)
+	{
+		push.frustum[i][0] = frustum[i].normal[0];
+		push.frustum[i][1] = frustum[i].normal[1];
+		push.frustum[i][2] = frustum[i].normal[2];
+		push.frustum[i][3] = frustum[i].dist;
+	}
+	push.viewOrigin[0] = viewOrigin[0];
+	push.viewOrigin[1] = viewOrigin[1];
+	push.viewOrigin[2] = viewOrigin[2];
+	push.numSurfs      = (unsigned int)vk.cullNumSurfs;
+	push.leafBitsOfs   = slotOfs + (unsigned int)vk.cullNumSurfs + (unsigned int)cv->view * vk.cullViewWords;
+	push.skipOfs       = slotOfs;
+	push.cmdOfs        = push.leafBitsOfs + vk.cullLeafWords;
+	push.viewStamp     = cv->stamp;
+	push.flags         = (unsigned int)flags;
+
+	vkCmdPushConstants(cb, vk.cullPipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(push), &push);
+	vkCmdDispatch(cb, (uint32_t)(vk.cullNumSurfs + 63) / 64, 1, 1);
+}
+
+/**
+ * @brief Byte offset in the cull arena of a view's draw command for a group
+ * (for VK_Draw3DStatic's indirect draw, tess.vkIndirectOffset).
+ */
+unsigned int VK_CullCommandOffset(int view, int group)
+{
+	return (unsigned int)(((size_t)vk.frameIndex * vk.cullSlotWords + vk.cullNumSurfs + (size_t)view * vk.cullViewWords +
+	                       vk.cullLeafWords + (size_t)group * 5) * sizeof(unsigned int));
+}
+
+/**
  * @brief Creates the two pipeline layouts used by static 3D
  * geometry draws - one with a single descriptor set (base texture only,
  * used by RB_StageIteratorGeneric/VertexLitTexture) and one with two
@@ -3701,6 +4110,9 @@ qboolean VK_Init(int width, int height)
 		return qfalse;
 	}
 
+	// GPU world culling pipeline (buffers come with the map)
+	VK_CreateCullPipeline();
+
 	// Gamma/present pass
 	if (!VK_CreateGammaPipelineLayout() ||
 	    !VK_CreatePresentResources())
@@ -4000,6 +4412,23 @@ void VK_Shutdown(void)
 		}
 
 		VK_DestroyStaticWorldBuffer();
+		VK_DestroyWorldCull();
+		if (vk.cullPipeline != VK_NULL_HANDLE)
+		{
+			vkDestroyPipeline(vk.device, vk.cullPipeline, NULL);
+		}
+		if (vk.cullPipelineLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyPipelineLayout(vk.device, vk.cullPipelineLayout, NULL);
+		}
+		if (vk.cullPool != VK_NULL_HANDLE)
+		{
+			vkDestroyDescriptorPool(vk.device, vk.cullPool, NULL);
+		}
+		if (vk.cullSetLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyDescriptorSetLayout(vk.device, vk.cullSetLayout, NULL);
+		}
 	}
 
 	{
@@ -4308,6 +4737,8 @@ void VK_BeginFrame(void)
 	vk.sceneIndexArenaSize    = vk.sceneIndexArenaOffset + VK_SCENE_INDEX_ARENA_SIZE;
 	vk.batch2DOpen            = qfalse; // VK_EndFrame recorded the last one
 	vk.frameCount++;
+	vk.cullRecording   = qfalse;
+	vk.cullNumViews    = 0;
 	vk.boneArenaOffset = (VkDeviceSize)VK_SKIN_BONE_ARENA_SIZE * vk.frameIndex;
 	vk.boneArenaSize   = vk.boneArenaOffset + VK_SKIN_BONE_ARENA_SIZE;
 	VK_ResetBindCache();
@@ -4360,6 +4791,7 @@ void VK_BeginFrame(void)
 	renderPassInfo.pClearValues      = clearValues;
 
 	vkCmdBeginRenderPass(vk.commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+	vk.inFrame = qtrue;
 }
 
 /**
@@ -4524,6 +4956,7 @@ void VK_ReleaseCapturedFrame(void)
 
 void VK_EndFrame(void)
 {
+	VkCommandBuffer      commandBuffers[2];
 	VkSubmitInfo         submitInfo;
 	VkPresentInfoKHR     presentInfo;
 	VkPipelineStageFlags waitStage         = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
@@ -4631,13 +5064,34 @@ void VK_EndFrame(void)
 
 	vkEndCommandBuffer(vk.commandBuffer);
 
+	// GPU world culling: the frame's dispatches run first; the barrier makes
+	// their draw commands and indexes visible to the main command buffer's
+	// draws (later in submission order)
+	commandBuffers[0] = vk.commandBuffer;
+	if (vk.cullRecording)
+	{
+		VkMemoryBarrier barrier;
+
+		Com_Memset(&barrier, 0, sizeof(barrier));
+		barrier.sType         = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+		barrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		barrier.dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT | VK_ACCESS_INDEX_READ_BIT;
+		vkCmdPipelineBarrier(vk.cullCommandBuffers[vk.frameIndex], VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+		                     VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT | VK_PIPELINE_STAGE_VERTEX_INPUT_BIT, 0, 1, &barrier, 0, NULL, 0, NULL);
+		vkEndCommandBuffer(vk.cullCommandBuffers[vk.frameIndex]);
+		commandBuffers[0] = vk.cullCommandBuffers[vk.frameIndex];
+		commandBuffers[1] = vk.commandBuffer;
+		vk.cullRecording  = qfalse;
+	}
+	vk.inFrame = qfalse;
+
 	Com_Memset(&submitInfo, 0, sizeof(submitInfo));
 	submitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 	submitInfo.waitSemaphoreCount   = 1;
 	submitInfo.pWaitSemaphores      = &vk.imageAvailableSemaphore;
 	submitInfo.pWaitDstStageMask    = &waitStage;
-	submitInfo.commandBufferCount   = 1;
-	submitInfo.pCommandBuffers      = &vk.commandBuffer;
+	submitInfo.commandBufferCount   = (commandBuffers[0] == vk.commandBuffer) ? 1 : 2;
+	submitInfo.pCommandBuffers      = commandBuffers;
 	submitInfo.signalSemaphoreCount = 1;
 	submitInfo.pSignalSemaphores    = &vk.renderFinishedSemaphore;
 
@@ -5684,6 +6138,14 @@ static void VK_Draw3DStatic(shaderCommands_t *input, int numIndexes, VkDescripto
 	else
 	{
 		VK_BindDescriptorSetsCached(layout, numSets, sets);
+	}
+
+	if (input->vkIndirect)
+	{
+		// GPU-culled group: the culling dispatch wrote its indexes and count
+		VK_BindArenaBuffers(vk.staticWorldBuffer, vk.cullOutBuffer);
+		vkCmdDrawIndexedIndirect(vk.commandBuffer, vk.cullArenaBuffer, input->vkIndirectOffset, 1, 5 * sizeof(unsigned int));
+		return;
 	}
 
 	VK_BindArenaBuffers(vk.staticWorldBuffer, vk.sceneIndexArenaBuffer);

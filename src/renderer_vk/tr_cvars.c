@@ -161,6 +161,7 @@ cvar_t *r_gfxInfo;
 cvar_t *r_scale;
 
 cvar_t *r_vkStaticWorld;
+cvar_t *r_vkGpuCull;
 cvar_t *r_vkGpuVertex;
 cvar_t *r_vkBindless;
 cvar_t *r_vkCaptureFrame200;
@@ -356,6 +357,7 @@ void R_Register(void)
 	// draw static world surfaces from a per-map GPU vertex buffer instead of
 	// re-tessellating them every frame (0 = always tessellate, for comparisons)
 	r_vkStaticWorld = ri.Cvar_Get("r_vkStaticWorld", "1", 0);
+	r_vkGpuCull     = ri.Cvar_Get("r_vkGpuCull", "1", 0);
 
 	// compute per-vertex stage math (rgbGen lightingDiffuse, ...) in the
 	// vertex shaders instead of the CPU (0 = CPU, as renderer1, for comparisons)

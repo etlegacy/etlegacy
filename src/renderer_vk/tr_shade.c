@@ -67,6 +67,7 @@ void RB_BeginSurface(shader_t *shader, int fogNum)
 	tess.vkDiffuse                = qfalse;
 	tess.vkSkin                   = qfalse;
 	tess.vkMesh                   = qfalse;
+	tess.vkIndirect               = qfalse;
 	tess.vkEnvOffset              = 0;
 	tess.vkStage                  = NULL;
 	tess.xstages                  = state->stages;
@@ -1473,4 +1474,5 @@ void RB_EndSurface(void)
 	tess.vkStatic    = qfalse;
 	tess.vkSkin      = qfalse;
 	tess.vkMesh      = qfalse;
+	tess.vkIndirect  = qfalse;
 }

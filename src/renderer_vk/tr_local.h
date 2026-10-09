@@ -734,6 +734,8 @@ typedef struct
 
 	glfog_t glFog;                  ///< fog parameters
 
+	int vkCullView;                 ///< Vulkan: GPU world culling view this frame (VK_CullBeginView), -1 = CPU world walk
+
 } viewParms_t;
 
 /*
@@ -766,6 +768,7 @@ typedef enum
 	SF_DISPLAY_LIST,
 	SF_POLYBUFFER,
 	SF_DECAL,               ///< decal surfaces
+	SF_VK_WORLDGROUP,       ///< Vulkan: GPU-culled world surfaces of one shader (vkWorldGroup_t)
 
 	SF_NUM_SURFACE_TYPES,
 	SF_MAX = 0xffffffff     ///< ensures that sizeof( surfaceType_t ) == sizeof( int )
@@ -1080,6 +1083,8 @@ typedef struct msurface_s
 	vec3_t cullNormal;
 	float cullDist;
 	byte cullPlaneType;
+
+	int vkCullIndex;                ///< Vulkan: surface number in GPU world culling, -1 = CPU only
 } msurface_t;
 
 /**
@@ -1125,7 +1130,32 @@ typedef struct mnode_s
 
 	msurface_t **firstmarksurface;
 	int nummarksurfaces;
+
+	// Vulkan GPU world culling (R_VkBuildWorldCull): the leaf's marksurfaces
+	// split into GPU-culled ones and the rest, and the groups of the former
+	msurface_t **vkGpuMarks;
+	int numVkGpuMarks;
+	msurface_t **vkCpuMarks;
+	int numVkCpuMarks;
+	int *vkGroups;
+	int numVkGroups;
 } mnode_t;
+
+/**
+ * @struct vkWorldGroup_t
+ * @brief Vulkan: the GPU-culled world surfaces of one shader, added to a
+ * view as one draw surface (SF_VK_WORLDGROUP) when one of its leaves is
+ * visible; drawn with the group's indirect command (VK_CullCommandOffset)
+ */
+typedef struct
+{
+	surfaceType_t surfaceType;
+	int index;
+	shader_t *shader;
+	int firstIndex;                 ///< region in a view's culling output (indexes)
+	int numIndexes;                 ///< all its surfaces' indexes (size of the region)
+	int viewCount;                  ///< added to tr.viewCount's view
+} vkWorldGroup_t;
 
 /**
  * @struct bmodel_s
@@ -1714,6 +1744,10 @@ typedef struct shaderCommands_s
 	/// written once into the frame's scene index arena, starting at this
 	/// index (VK_AllocSceneIndexes); every stage's draw uses that range
 	int vkStaticFirstIndex;
+	/// static batch of one GPU-culled world group (RB_SurfaceVkWorldGroup):
+	/// drawn with the indirect command at this byte offset in the cull arena
+	qboolean vkIndirect;
+	unsigned int vkIndirectOffset;
 	/// MDM surface skinned in the vertex shader (one surface per batch, see
 	/// RB_MDM_SurfaceAnimGPU): no tess vertices; numIndexes indexes into the
 	/// skin buffer are in the scene index arena from vkSkinFirstIndex, the
@@ -1785,6 +1819,39 @@ float *VK_AllocSkinBones(int numBones, unsigned int *offset);
 // reset with the skin buffer; RB_SurfaceMeshGPU looks a surface up here
 int VK_WriteMeshData(const void *data, int bytes);
 float *VK_AllocEnvParams(unsigned int *offset);
+
+/// GPU world culling surface (world_cull.comp's Surface, std430)
+typedef struct
+{
+	float sphere[4];                ///< origin, radius
+	float plane[4];                 ///< normal, dist
+	unsigned int firstIndex;        ///< in the culling index data
+	unsigned int numIndexes;
+	unsigned int group;
+	unsigned int leafFirst;         ///< in the surface leaf list
+	unsigned int leafCount;
+	unsigned int cullMode;          ///< 0: no face plane cull, 1: front sided, 2: back sided
+	unsigned int pad[2];
+} vkCullSurface_t;
+
+/// one world view's GPU culling (VK_CullBeginView)
+typedef struct
+{
+	int view;
+	unsigned int stamp;             ///< skip[surface] = stamp: the CPU draws it in this view
+	unsigned int *skip;
+	unsigned int *leafBits;         ///< visible leaves (world node numbers)
+} vkCullView_t;
+
+#define VK_CULL_NOCULL      1
+#define VK_CULL_FACEPLANE   2
+
+qboolean VK_CreateWorldCull(const vkCullSurface_t *surfs, int numSurfs, const unsigned int *surfLeaves, int numSurfLeaves,
+                            const unsigned int *indexes, int numIndexes, int numLeaves, int numGroups);
+qboolean VK_CullBeginView(vkCullView_t *cv, const int *groupFirst);
+void VK_CullDispatch(const vkCullView_t *cv, const cplane_t *frustum, const vec3_t viewOrigin, int flags);
+unsigned int VK_CullCommandOffset(int view, int group);
+void R_VkBuildWorldCull(void);
 void R_VkMeshReset(void);
 void R_VkMeshRegister(md3Surface_t *surf);
 void R_VkMeshRegisterMDC(mdcSurface_t *surf);
