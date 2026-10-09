@@ -598,6 +598,13 @@ void G_AddKillAssistPoints(gentity_t *target, gentity_t *attacker)
 		return;
 	}
 
+	// no assist points outside of the playing state (e.g. warmup)
+	if (g_gamestate.integer != GS_PLAYING)
+	{
+		Com_Memset(target->client->dmgReceivedSts, 0, sizeof(target->client->dmgReceivedSts));
+		return;
+	}
+
 	for (i = 0; i < ARRAY_LEN(target->client->dmgReceivedSts); ++i)
 	{
 		dmgReceivedSts[i] = &(target->client->dmgReceivedSts[i]);
@@ -617,7 +624,7 @@ void G_AddKillAssistPoints(gentity_t *target, gentity_t *attacker)
 		}
 
 		// skip old damage received
-		if (dmgReceivedSts[i]->lastHitTime + 1500 < level.time)
+		if (dmgReceivedSts[i]->lastHitTime + MAX_ASSIST_ELAPSED_TIME < level.time)
 		{
 			continue;
 		}
@@ -644,6 +651,10 @@ void G_AddKillAssistPoints(gentity_t *target, gentity_t *attacker)
 			complaintSent = G_CheckComplaint(target, ent, ent, dmgReceivedSts[i]->mods);
 		}
 	}
+
+	// reset the damage received, so a revived player dying again within
+	// MAX_ASSIST_ELAPSED_TIME doesn't re-award assists for the same damage
+	Com_Memset(target->client->dmgReceivedSts, 0, sizeof(target->client->dmgReceivedSts));
 }
 
 /////// SKILL DEBUGGING ///////
