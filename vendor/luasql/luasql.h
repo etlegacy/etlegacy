@@ -18,6 +18,7 @@
 		lua_pushnumber(L, (lua_Number)n)
 #endif
 
+#define LUASQL_VERSION_NUMBER "2.8.1"
 #define LUASQL_PREFIX "LuaSQL: "
 #define LUASQL_TABLENAME "luasql"
 #define LUASQL_ENVIRONMENT "Each driver must have an environment metatable"
