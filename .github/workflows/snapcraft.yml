@@ -30,7 +30,7 @@ jobs:
           fetch-depth: 1
 
       - name: Build SNAP
-        uses: canonical/snapcraft-multiarch-action@v1.10.1
+        uses: canonical/snapcraft-multiarch-action@v1.10.2
         id: snapcraft
         with:
           architecture: ${{ matrix.platform }}
