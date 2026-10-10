@@ -1,5 +1,4 @@
 /*
-** $Id: luasql.c,v 1.28 2009/02/11 12:08:50 tomas Exp $
 ** See Copyright Notice in license.html
 */
 
@@ -58,11 +57,11 @@ static int luasql_tostring(lua_State *L)
 	pseudo_data *obj = (pseudo_data *)lua_touserdata(L, 1);
 	if (obj->closed)
 	{
-		strncpy(buff, "closed", sizeof(buff));
+		strcpy(buff, "closed");
 	}
 	else
 	{
-		snprintf(buff, sizeof(buff), "%p", (void *)obj);
+		sprintf(buff, "%p", (void *)obj);
 	}
 	lua_pushfstring(L, "%s (%s)", lua_tostring(L, lua_upvalueindex(1)), buff);
 	return 1;
@@ -136,12 +135,12 @@ LUASQL_API void luasql_setmeta(lua_State *L, const char *name)
 LUASQL_API void luasql_set_info(lua_State *L)
 {
 	lua_pushliteral(L, "_COPYRIGHT");
-	lua_pushliteral(L, "Copyright (C) 2003-2020 Kepler Project");
+	lua_pushliteral(L, "Copyright (C) 2003-2026 Lunar Modules Project");
 	lua_settable(L, -3);
 	lua_pushliteral(L, "_DESCRIPTION");
 	lua_pushliteral(L, "LuaSQL is a simple interface from Lua to a DBMS");
 	lua_settable(L, -3);
 	lua_pushliteral(L, "_VERSION");
-	lua_pushliteral(L, "LuaSQL 2.6.0 (for "LUA_VERSION ")");
+	lua_pushliteral(L, "LuaSQL "LUASQL_VERSION_NUMBER" (for "LUA_VERSION")");
 	lua_settable(L, -3);
 }
