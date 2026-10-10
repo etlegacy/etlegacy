@@ -529,6 +529,7 @@ static int conn_execute(lua_State *L)
 	const char *errmsg;
 	int numcols;
 	const char *tail;
+	int ltop;
 
 #if SQLITE_VERSION_NUMBER > 3006013
 	res = sqlite3_prepare_v2(conn->sql_conn, statement, -1, &vm, &tail);
@@ -542,7 +543,7 @@ static int conn_execute(lua_State *L)
 	}
 
 	/* Bind parameters (if any) */
-	int ltop = lua_gettop(L);
+	ltop = lua_gettop(L);
 	if (ltop > 2)
 	{
 		if (ltop == 3 && lua_type(L, 3) == LUA_TTABLE)
