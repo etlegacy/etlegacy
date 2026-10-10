@@ -449,6 +449,7 @@ static vkWorldGroup_t *vkGroups;
 static int            *vkGroupFirst;
 static int            vkNumGroups;
 static vkCullView_t   vkCull;          ///< the current view's culling (tr.viewParms.vkCullView >= 0)
+static unsigned int   *vkLeafBits;     ///< vkCull.leafBits
 
 /**
  * @brief Vulkan: true if surfaces with this shader can be drawn from the
@@ -704,6 +705,10 @@ void R_VkBuildWorldCull(void)
 	{
 		vkNumGroups = 0; // the CPU walks the whole world
 	}
+	else
+	{
+		vkLeafBits = ri.Hunk_Alloc(VK_CullLeafWords() * sizeof(unsigned int), h_low);
+	}
 
 	ri.Free(leafFill);
 	ri.Free(indexes);
@@ -735,6 +740,7 @@ static qboolean R_VkCullBeginView(void)
 		}
 	}
 
+	vkCull.leafBits = vkLeafBits;
 	return VK_CullBeginView(&vkCull, vkGroupFirst);
 }
 
