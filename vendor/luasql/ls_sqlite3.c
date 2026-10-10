@@ -738,11 +738,11 @@ static int env_connect(lua_State *L)
 	{
 		if (readOnlyMode)
 		{
-			mode = SQLITE_OPEN_READONLY | SQLITE_OPEN_MEMORY;
+			mode = SQLITE_OPEN_READONLY | SQLITE_OPEN_MEMORY | SQLITE_OPEN_SHAREDCACHE;
 		}
 		else
 		{
-			mode = SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY;
+			mode = SQLITE_OPEN_READWRITE | SQLITE_OPEN_MEMORY | SQLITE_OPEN_SHAREDCACHE;
 		}
 	}
 	else
