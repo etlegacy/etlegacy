@@ -1839,8 +1839,8 @@ typedef struct
 {
 	int view;
 	unsigned int stamp;             ///< skip[surface] = stamp: the CPU draws it in this view
-	unsigned int *skip;
-	unsigned int *leafBits;         ///< visible leaves (world node numbers)
+	unsigned int *skip;             ///< in mapped GPU memory: write only
+	unsigned int *leafBits;         ///< visible leaves (world node numbers), in CPU memory: copied by VK_CullDispatch
 } vkCullView_t;
 
 #define VK_CULL_NOCULL      1
@@ -1849,6 +1849,7 @@ typedef struct
 qboolean VK_CreateWorldCull(const vkCullSurface_t *surfs, int numSurfs, const unsigned int *surfLeaves, int numSurfLeaves,
                             const unsigned int *indexes, int numIndexes, int numLeaves, int numGroups);
 qboolean VK_CullBeginView(vkCullView_t *cv, const int *groupFirst);
+unsigned int VK_CullLeafWords(void);
 void VK_CullDispatch(const vkCullView_t *cv, const cplane_t *frustum, const vec3_t viewOrigin, int flags);
 unsigned int VK_CullCommandOffset(int view, int group);
 void R_VkBuildWorldCull(void);

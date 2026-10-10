@@ -3037,7 +3037,8 @@ qboolean VK_CreateWorldCull(const vkCullSurface_t *surfs, int numSurfs, const un
 
 /**
  * @brief Starts GPU culling for a world view: reserves the view's slice of
- * this frame's arena, clears its visible-leaf bitset and writes its draw
+ * this frame's arena, clears the caller's visible-leaf bitset
+ * (cv->leafBits, VK_CullLeafWords() words) and writes the view's draw
  * commands (group g draws from groupFirst[g] in the view's output region,
  * count 0 until the dispatch adds the visible surfaces).
  * @return qfalse if the view must walk the world on the CPU (no frame being
@@ -3059,15 +3060,17 @@ qboolean VK_CullBeginView(vkCullView_t *cv, const int *groupFirst)
 		vk.cullStamp = 1; // 0 is the arena's initial skip stamp
 	}
 
-	cv->view     = vk.cullNumViews++;
-	cv->stamp    = vk.cullStamp;
-	slot         = vk.cullArenaMapped + (size_t)vk.frameIndex * vk.cullSlotWords;
-	cv->skip     = slot;
-	cv->leafBits = slot + vk.cullNumSurfs + cv->view * vk.cullViewWords;
+	cv->view  = vk.cullNumViews++;
+	cv->stamp = vk.cullStamp;
+	slot      = vk.cullArenaMapped + (size_t)vk.frameIndex * vk.cullSlotWords;
+	cv->skip  = slot;
+
+	// the caller's leaf bitset is in CPU memory: setting bits one by one in
+	// mapped GPU memory reads it back (uncached), VK_CullDispatch copies it
 	Com_Memset(cv->leafBits, 0, vk.cullLeafWords * sizeof(unsigned int));
 
 	outBase = (unsigned int)((vk.frameIndex * VK_CULL_MAX_VIEWS + cv->view) * vk.cullNumIndexes);
-	cmd     = cv->leafBits + vk.cullLeafWords;
+	cmd     = slot + vk.cullNumSurfs + cv->view * vk.cullViewWords + vk.cullLeafWords;
 	for (g = 0; g < vk.cullNumGroups; g++, cmd += 5)
 	{
 		cmd[0] = 0;
@@ -3125,8 +3128,18 @@ void VK_CullDispatch(const vkCullView_t *cv, const cplane_t *frustum, const vec3
 	push.viewStamp     = cv->stamp;
 	push.flags         = (unsigned int)flags;
 
+	Com_Memcpy(vk.cullArenaMapped + push.leafBitsOfs, cv->leafBits, vk.cullLeafWords * sizeof(unsigned int));
+
 	vkCmdPushConstants(cb, vk.cullPipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(push), &push);
 	vkCmdDispatch(cb, (uint32_t)(vk.cullNumSurfs + 63) / 64, 1, 1);
+}
+
+/**
+ * @brief Size of a view's visible-leaf bitset (32-bit words)
+ */
+unsigned int VK_CullLeafWords(void)
+{
+	return vk.cullLeafWords;
 }
 
 /**
