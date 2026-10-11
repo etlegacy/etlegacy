@@ -1190,12 +1190,65 @@ static void CG_HudEditor_SetupTitleText(panel_button_t *button)
 	BG_PanelButtonsRender_Text(button);
 }
 
+/**
+ * @brief Ensure we may display the options button depending of the comp type
+ * @param[in] button
+ * @return
+ */
+static qboolean CG_HUDEditorCheckTabDisplayValidity(panel_button_t *button)
+{
+	hudComponentTypes_t type;
+
+	if (!lastFocusComponent)
+	{
+		return qfalse;
+	}
+
+	type = hudComponentFields[lastFocusComponent->data[0]].type;
+
+	// don't display bar customization button if comp isn't a bar
+	if (button == &hudEditorBarButton && type != HUD_COMP_TYPE_BAR)
+	{
+		return qfalse;
+	}
+
+	// don't display font customization button if comp is a bar
+	if (button == &hudEditorFontButton && type == HUD_COMP_TYPE_BAR)
+	{
+		return qfalse;
+	}
+
+	// don't display feed customization if comp isn't a feed comp
+	if (button == &hudEditorFeedButton && type != HUD_COMP_TYPE_FEED)
+	{
+		return qfalse;
+	}
+
+	return qtrue;
+}
+
+/**
+ * @brief CG_HudEditor_EditKeyDown
+ * @param button
+ * @param key
+ * @return
+ */
 static qboolean CG_HudEditor_EditKeyDown(panel_button_t *button, int key)
 {
 	// don't modify default HUD
 	if (!hudData.active->isEditable)
 	{
 		return qfalse;
+	}
+
+	// the only edit field visible is the hud name
+	// for all others, ensure a valid component is selected
+	if (button != &hudEditorHudName)
+	{
+		if (!lastFocusComponent)
+		{
+			return qfalse;
+		}
 	}
 
 	return BG_PanelButton_EditClick(button, key);
@@ -1480,6 +1533,11 @@ static qboolean CG_HudEditorVisible_CheckboxKeyDown(panel_button_t *button, int 
 {
 	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
+	if (key != K_MOUSE1)
+	{
+		return qfalse;
+	}
+
 	// don't modify default HUD
 	if (!hudData.active->isEditable)
 	{
@@ -1503,7 +1561,17 @@ static qboolean CG_HudEditorStyle_CheckboxKeyDown(panel_button_t *button, int ke
 {
 	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
+	if (key != K_MOUSE1)
+	{
+		return qfalse;
+	}
+
 	if (!hudData.active->isEditable)
+	{
+		return qfalse;
+	}
+
+	if (!lastFocusComponent)
 	{
 		return qfalse;
 	}
@@ -1526,7 +1594,17 @@ static qboolean CG_HudEditorBarStyle_CheckboxKeyDown(panel_button_t *button, int
 {
 	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
+	if (key != K_MOUSE1)
+	{
+		return qfalse;
+	}
+
 	if (!hudData.active->isEditable)
+	{
+		return qfalse;
+	}
+
+	if (!lastFocusComponent)
 	{
 		return qfalse;
 	}
@@ -1549,8 +1627,18 @@ static qboolean CG_HudEditorShowBackground_CheckboxKeyDown(panel_button_t *butto
 {
 	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
+	if (key != K_MOUSE1)
+	{
+		return qfalse;
+	}
+
 	// don't modify default HUD
 	if (!hudData.active->isEditable)
+	{
+		return qfalse;
+	}
+
+	if (!lastFocusComponent)
 	{
 		return qfalse;
 	}
@@ -1572,8 +1660,18 @@ static qboolean CG_HudEditorShowBorder_CheckboxKeyDown(panel_button_t *button, i
 {
 	hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[1]].offset);
 
+	if (key != K_MOUSE1)
+	{
+		return qfalse;
+	}
+
 	// don't modify default HUD
 	if (!hudData.active->isEditable)
+	{
+		return qfalse;
+	}
+
+	if (!lastFocusComponent)
 	{
 		return qfalse;
 	}
@@ -1595,8 +1693,18 @@ static qboolean CG_HudEditorAutoAdjust_CheckboxKeyDown(panel_button_t *button, i
 {
 	hudComponent_t *comp = (hudComponent_t *)((char *)hudData.active + hudComponentFields[button->data[1]].offset);
 
+	if (key != K_MOUSE1)
+	{
+		return qfalse;
+	}
+
 	// don't modify default HUD
 	if (!hudData.active->isEditable)
+	{
+		return qfalse;
+	}
+
+	if (!lastFocusComponent)
 	{
 		return qfalse;
 	}
@@ -2398,6 +2506,11 @@ static qboolean CG_HudEditoTabSelection_KeyDown(panel_button_t *button, int key)
 {
 	if (key == K_MOUSE1)
 	{
+		if (!CG_HUDEditorCheckTabDisplayValidity(button))
+		{
+			return qfalse;
+		}
+
 		SOUND_SELECT;
 
 		lastButtonTabSelected = button;
@@ -2416,6 +2529,16 @@ static qboolean CG_HudEditoColorSelection_KeyDown(panel_button_t *button, int ke
 {
 	if (key == K_MOUSE1)
 	{
+		if (!lastFocusComponent)
+		{
+			return qfalse;
+		}
+
+		if (lastButtonTabSelected != &hudEditorColorButton)
+		{
+			return qfalse;
+		}
+
 		SOUND_SELECT;
 
 		lastButtonColorSelected = button;
@@ -2599,36 +2722,6 @@ static void CG_HudEditorRender_HelpButton(panel_button_t *button)
 }
 
 #define TIMER_KEYDOWN 500.f
-
-/**
- * @brief Ensure we may display the options button depending of the comp type
- * @param[in] button
- * @return
- */
-static qboolean CG_HUDEditorCheckTabDisplayValidity(panel_button_t *button)
-{
-	const hudComponentTypes_t type = hudComponentFields[lastFocusComponent->data[0]].type;
-
-	// don't display bar customization button if comp isn't a bar
-	if (button == &hudEditorBarButton && type != HUD_COMP_TYPE_BAR)
-	{
-		return qfalse;
-	}
-
-	// don't display font customization button if comp is a bar
-	if (button == &hudEditorFontButton && type == HUD_COMP_TYPE_BAR)
-	{
-		return qfalse;
-	}
-
-	// don't display feed customization if comp isn't a feed comp
-	if (button == &hudEditorFeedButton && type != HUD_COMP_TYPE_FEED)
-	{
-		return qfalse;
-	}
-
-	return qtrue;
-}
 
 /**
  * @brief CG_PanelButtonsRender_Button
@@ -3911,6 +4004,7 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 	{
 		lastFocusComponent    = NULL;
 		lastButtonTabSelected = &hudEditorColorButton;
+		BG_PanelButtons_SetFocusButton(NULL);
 		return;
 	}
 
