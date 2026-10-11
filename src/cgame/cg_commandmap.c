@@ -536,10 +536,20 @@ static void CG_DrawGrid(float x, float y, float w, float h, mapScissor_t *scisso
 	float  grid_x, grid_y;
 	vec2_t dist;
 	vec4_t gridColor;
-	float  Max0Min0 = cg.mapcoordsMaxs[0] - cg.mapcoordsMins[0];
-	float  Max1Min1 = cg.mapcoordsMaxs[1] - cg.mapcoordsMins[1];
-	float  Min1Max1 = cg.mapcoordsMins[1] - cg.mapcoordsMaxs[1];
+	float  Max0Min0;
+	float  Max1Min1;
+	float  Min1Max1;
 	float  tmp;
+
+	// sanity check
+	if (!cg.mapcoordsValid)
+	{
+		return;
+	}
+
+	Max0Min0 = cg.mapcoordsMaxs[0] - cg.mapcoordsMins[0];
+	Max1Min1 = cg.mapcoordsMaxs[1] - cg.mapcoordsMins[1];
+	Min1Max1 = cg.mapcoordsMins[1] - cg.mapcoordsMaxs[1];
 
 	dist[0] = Max0Min0;
 	dist[1] = Max1Min1;
