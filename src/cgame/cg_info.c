@@ -1096,7 +1096,7 @@ void CG_GameStatsDraw(void)
 		// Fade-in effects
 		if (diff > 0.0f)
 		{
-			float scale = (diff / STATS_FADE_TIME);
+			float scale = (diff / cg_windowTime.integer);
 
 			if (cgs.gamestats.show == SHOW_ON)
 			{
@@ -1336,7 +1336,7 @@ void CG_TopShotsDraw(void)
 		// Fade-in effects
 		if (diff > 0.0f)
 		{
-			float scale = (diff / STATS_FADE_TIME);
+			float scale = (diff / cg_windowTime.integer);
 
 			if (cgs.topshots.show == SHOW_ON)
 			{
@@ -1612,7 +1612,7 @@ void CG_ObjectivesDraw()
 		// Fade-in effects
 		if (diff > 0.0f)
 		{
-			float scale = (diff / STATS_FADE_TIME);
+			float scale = (diff / cg_windowTime.integer);
 
 			if (cgs.objectives.show == SHOW_ON)
 			{
@@ -2098,7 +2098,7 @@ void CG_DemoHelpDraw(void)
 		// Fade-in effects
 		if (diff > 0.0f)
 		{
-			float scale = (diff / STATS_FADE_TIME);
+			float scale = (diff / cg_windowTime.integer);
 
 			if (cg.demohelpWindow == SHOW_ON)
 			{
