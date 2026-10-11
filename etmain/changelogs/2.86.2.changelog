@@ -1,0 +1,5 @@
+^dMod
+
+* Fixed ^8popupmessage^9 was not parsed correctly as it was renamed ^8poupmessage1^9
+* Fixed hud editor invisible button/tick/edit selection on right panel option
+* Fixed client crash on map without mins/maxs boundaries set
