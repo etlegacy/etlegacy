@@ -73,9 +73,9 @@ if(BUILD_CLIENT)
 	endif()
 
 	if(FEATURE_RENDERER_GLES)
-		find_package(GLES REQUIRED)
-		target_link_libraries(renderer_gles_libraries INTERFACE ${GLES_LIBRARY})
-		target_include_directories(renderer_gles_libraries INTERFACE ${GLES_INCLUDE_DIR})
+		find_package(GLES2 REQUIRED)
+		target_link_libraries(renderer_gles_libraries INTERFACE ${GLES2_LIBRARY})
+		target_include_directories(renderer_gles_libraries INTERFACE ${GLES2_INCLUDE_DIR})
 	endif()
 
 	if(FEATURE_RENDERER_VULKAN)
@@ -85,11 +85,11 @@ if(BUILD_CLIENT)
 	endif()
 
 	if(NOT BUNDLED_SDL)
-		find_package(SDL2 2.0.8 REQUIRED)
-		target_link_libraries(client_libraries INTERFACE ${SDL2_LIBRARY})
-		target_include_directories(client_libraries INTERFACE ${SDL2_INCLUDE_DIR})
+        find_package(SDL3 3.2.0 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
+		target_link_libraries(client_libraries INTERFACE SDL3::SDL3)
 	else() # BUNDLED_SDL
 		if(MINGW AND WIN32)
+			# FIXME: check if this is still needed with SDL3!
 			# We append the mingw32 library to the client list since SDL2Main requires it
 			target_link_libraries(client_libraries INTERFACE mingw32)
 		endif()

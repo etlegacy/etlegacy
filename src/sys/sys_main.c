@@ -105,7 +105,7 @@ qboolean call_copyIntoAPPDirectory(JNIEnv *env, jobject javaObject, const char *
 
 qboolean invoke_copy_into_app_directory(const char *filename)
 {
-	JNIEnv *env = (JNIEnv *) SDL_AndroidGetJNIEnv();
+	JNIEnv *env = (JNIEnv *) SDL_GetAndroidJNIEnv();
 
 	// Find the Java class containing the copyIntoAPPDirectory method
 	jclass javaClass = (*env)->FindClass(env, "com/etlegacy/app/CopyToInternal"); // Replace with your actual Java class name
@@ -124,7 +124,7 @@ qboolean invoke_copy_into_app_directory(const char *filename)
 	}
 
 	// Get the application context (replace with a valid Context jobject)
-	jobject appContext = SDL_AndroidGetActivity(); // You need to pass a valid Android context object here
+	jobject appContext = SDL_GetAndroidActivity(); // You need to pass a valid Android context object here
 
 	// Create an instance of the Java class
 	jobject javaObject = (*env)->NewObject(env, javaClass, constructor, appContext);
@@ -236,48 +236,48 @@ dialogResult_t Sys_SDLDialog(dialogType_t type, const char *message, const char 
 	default:
 	case DT_INFO:
 		buttons[0].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-		buttons[0].buttonid = DR_OK;
+		buttons[0].buttonID = DR_OK;
 		buttons[0].text     = _("Ok");
 		data.numbuttons     = 1;
 		data.flags          = SDL_MESSAGEBOX_INFORMATION;
 		break;
 	case DT_WARNING:
 		buttons[0].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-		buttons[0].buttonid = DR_OK;
+		buttons[0].buttonID = DR_OK;
 		buttons[0].text     = _("Ok");
 		data.numbuttons     = 1;
 		data.flags          = SDL_MESSAGEBOX_WARNING;
 		break;
 	case DT_ERROR:
 		buttons[0].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-		buttons[0].buttonid = DR_OK;
+		buttons[0].buttonID = DR_OK;
 		buttons[0].text     = _("Ok");
 		data.numbuttons     = 1;
 		data.flags          = SDL_MESSAGEBOX_ERROR;
 		break;
 	case DT_YES_NO:
 		buttons[0].flags    = 0;
-		buttons[0].buttonid = DR_NO;
+		buttons[0].buttonID = DR_NO;
 		buttons[0].text     = _("No");
 		buttons[1].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-		buttons[1].buttonid = DR_YES;
+		buttons[1].buttonID = DR_YES;
 		buttons[1].text     = _("Yes");
 		data.numbuttons     = 2;
 		data.flags          = SDL_MESSAGEBOX_INFORMATION;
 		break;
 	case DT_OK_CANCEL:
 		buttons[0].flags    = SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT;
-		buttons[0].buttonid = DR_CANCEL;
+		buttons[0].buttonID = DR_CANCEL;
 		buttons[0].text     = _("Cancel");
 		buttons[1].flags    = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT;
-		buttons[1].buttonid = DR_OK;
+		buttons[1].buttonID = DR_OK;
 		buttons[1].text     = _("Ok");
 		data.numbuttons     = 2;
 		data.flags          = SDL_MESSAGEBOX_WARNING;
 		break;
 	}
 
-	if (SDL_ShowMessageBox(&data, &buttonId) < 0)
+	if (!SDL_ShowMessageBox(&data, &buttonId))
 	{
 		Com_Printf(S_COLOR_RED "error displaying message box\n");
 		return DR_ERROR;
@@ -847,7 +847,8 @@ static void *Sys_TryLibraryLoad(const char *base, const char *gamedir, const cha
 	if (invoke_copy_into_app_directory(fnhomepath))
 	{
 		char path[MAX_OSPATH] = { 0 };
-		Q_strncpyz(path, SDL_AndroidGetInternalStoragePath(), sizeof(path));
+		Q_strncpyz(path, SDL_GetAndroidInternalStoragePath(),
+		           sizeof(path));
 		Q_strcat(path, sizeof(path), "/");
 		Q_strcat(path, sizeof(path), fname);
 		libHandle = Sys_LoadLibrary(path);
@@ -1336,6 +1337,10 @@ static int Sys_GameLoop(void)
 	return return_code;
 }
 
+#if !defined (DEDICATED)
+#    include <SDL3/SDL_main.h>
+#endif
+
 /**
  * @brief SDL_main
  * @param[in] argc
@@ -1374,7 +1379,7 @@ int main(int argc, char **argv)
 	Sys_ParseArgs(argc, argv);
 
 #if defined(__APPLE__) && !defined(DEDICATED)
-	SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
+	SDL_SetEventEnabled(SDL_EVENT_DROP_FILE, true);
 	// argv[0] would be /Users/seth/etlegacy/ET Legacy.app/Contents/MacOS
 	// But on OS X we want to pretend the binary path is the .app's parent
 	// So that way the base folder is right next to the .app allowing

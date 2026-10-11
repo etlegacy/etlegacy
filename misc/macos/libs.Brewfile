@@ -1,6 +1,6 @@
 # Apple bundled libs
 brew "glew"
-brew "sdl2"
+brew "sdl3"
 brew "minizip"
 brew "jpeg-turbo"
 brew "curl"

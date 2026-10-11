@@ -34,7 +34,7 @@
  */
 
 #ifndef DEDICATED
-#   include <SDL2/SDL_video.h>
+#   include <SDL3/SDL_video.h>
 #endif
 
 #include "../qcommon/q_shared.h"
