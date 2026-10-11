@@ -66,6 +66,11 @@
 #include "gamma.vert.glsl.h"
 #include "gamma.frag.glsl.h"
 #include "world_cull.comp.glsl.h"
+#include "world_gather.comp.glsl.h"
+#include "tr3d_static_bl.vert.glsl.h"
+#include "tr3d_lm_static_bl.vert.glsl.h"
+#include "tr3d_bl.frag.glsl.h"
+#include "tr3d_lm_bl.frag.glsl.h"
 
 #define VK_MAX_SWAPCHAIN_IMAGES 8
 
@@ -78,6 +83,20 @@
 // (the main view, a portal or mirror, the sky portal); further views
 // fall back to the CPU world walk
 #define VK_CULL_MAX_VIEWS 4
+
+// merged world batches (VK_BatchWorldDraw): pending keys and draws before a
+// flush; per frame at most VK_CULL_MAX_VIEWS * groups * MAX_SHADER_STAGES
+// draws (vk.cullMaxBatchDraws)
+#define VK_WB_MAX_KEYS  128
+#define VK_WB_MAX_DRAWS 2048
+
+// per-draw data of a merged world batch (tr3d_*static_bl.vert's WorldDraw)
+typedef struct
+{
+	uint32_t textures[4];      // base, lightmap bindless slots
+	float colorMul[4];
+	float colorAdd[4];
+} vkWorldDraw_t;
 
 // world_cull.comp push constants (128 bytes)
 typedef struct
@@ -118,6 +137,8 @@ typedef struct
 #define VK_VERTS_SKIN             4 // skin buffer (vkSkinVertex_t), MDM skinned in tr3d_skin.vert, bones in set 1
 #define VK_VERTS_STATIC_DLIGHT    5 // static buffer, lightmapped, dlight pass folded in (dlights in set 2)
 #define VK_VERTS_TWOSTAGE         6 // arena, vk3DVertex2_t: two stages in one draw (tr3d_2stage.*), 2 texture sets
+#define VK_VERTS_STATIC_BL        8 // as VK_VERTS_STATIC, merged world batch: bindless textures, per-draw data (tr3d_*static_bl.vert)
+#define VK_VERTS_STATIC_LIGHTMAP_BL 9 // as VK_VERTS_STATIC_LIGHTMAP, merged world batch
 #define VK_VERTS_MD3              7 // mesh buffer: frame, oldframe (md3XyzNormal_t), texcoords, MDC compressed frame, oldframe; tr3d_md3.vert, normal tables in set 1
 
 // MD3/MDC frames + texcoords + triangles of every loaded model (VK_WriteMeshData)
@@ -434,6 +455,42 @@ typedef struct
 	int cullNumSurfs, cullNumGroups, cullNumIndexes;
 	unsigned int cullLeafWords, cullViewWords, cullSlotWords;
 	unsigned int cullStamp;                                // last view stamp (never 0)
+
+	// merged world batches (VK_BatchWorldDraw/VK_FlushWorldBatch): GPU-culled
+	// group draws with the same pipeline and view state become one
+	// multi-draw indirect call. The gather pass (world_gather.comp, end of
+	// the frame's cull command buffer) copies each draw's group command to
+	// its slot in cullBatchCmdBuffer; vkWorldDraw_t per slot in
+	// cullWorldDrawBuffer (bindless texture slots, stage colors)
+	qboolean multiDrawIndirect;                            // multiDrawIndirect + drawIndirectFirstInstance enabled
+	VkBuffer cullGatherBuffer, cullBatchCmdBuffer, cullWorldDrawBuffer;
+	VkDeviceMemory cullGatherMemory, cullBatchCmdMemory, cullWorldDrawMemory;
+	unsigned int *cullGatherMapped;
+	vkWorldDraw_t *cullWorldDrawMapped;
+	int cullMaxBatchDraws;                                 // per frame slot
+	VkPipeline gatherPipeline;
+	VkDescriptorSetLayout worldDrawSetLayout;
+	VkDescriptorPool worldDrawPool;
+	VkDescriptorSet worldDrawSet;
+	VkPipelineLayout sceneBindlessPipelineLayout;          // set 0 bindless textures, set 1 per-draw data
+	VkShaderModule sceneStaticBLVertModule, sceneLMStaticBLVertModule, sceneBLFragModule, sceneLMBLFragModule;
+	int wbFrameDraws;                                      // slots used this frame
+	struct
+	{
+		VkPipeline pipeline;
+		float header[48];                                  // push constants up to the stage colors
+	} wbKeys[VK_WB_MAX_KEYS];
+	int wbNumKeys;
+	struct
+	{
+		int key;
+		unsigned int srcWord;                              // group command in the cull arena
+		vkWorldDraw_t data;
+	} wbDraws[VK_WB_MAX_DRAWS];
+	int wbNumDraws;
+	unsigned int wbGroupOffset;                            // group of the last batched draw (its stages chain)
+	int wbMinKey;                                          // key of its last stage: later stages go to this or later keys
+	qboolean wbFlushing;
 
 	// GPU skinning (VK_VERTS_SKIN), see VK_WriteSkinVertices/VK_AllocSkinBones
 	VkBuffer skinBuffer;
@@ -872,6 +929,15 @@ static qboolean VK_CreateLogicalDevice(void)
 			vk.maxSamplerAnisotropy          = props.limits.maxSamplerAnisotropy;
 		}
 
+		// merged world batches: several draws per indirect call, each with
+		// its per-draw data index in firstInstance
+		vk.multiDrawIndirect = (supported.multiDrawIndirect && supported.drawIndirectFirstInstance) ? qtrue : qfalse;
+		if (vk.multiDrawIndirect)
+		{
+			deviceFeatures.multiDrawIndirect         = VK_TRUE;
+			deviceFeatures.drawIndirectFirstInstance = VK_TRUE;
+		}
+
 		// Highest supported sample count <= r_ext_multisample
 		{
 			VkSampleCountFlags counts = props.limits.framebufferColorSampleCounts &
@@ -1142,6 +1208,8 @@ static uint32_t VK_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags pro
 static VkShaderModule VK_CreateShaderModule(const unsigned char *code, unsigned int size);
 static void VK_FlushPendingFrees(void);
 static void VK_Flush2D(void);
+static void VK_Flush2DBatch(void);
+static void VK_FlushWorldBatch(void);
 
 /**
  * @brief Creates the depth buffer (image + memory + view)
@@ -2780,7 +2848,7 @@ void VK_WriteStaticWorldVertices(int first, const drawVert_t *verts, int count)
  */
 static void VK_CreateCullPipeline(void)
 {
-	VkDescriptorSetLayoutBinding    bindings[5];
+	VkDescriptorSetLayoutBinding    bindings[7];
 	VkDescriptorSetLayoutCreateInfo setLayoutInfo;
 	VkPushConstantRange             pushRange;
 	VkPipelineLayoutCreateInfo      layoutInfo;
@@ -2792,8 +2860,9 @@ static void VK_CreateCullPipeline(void)
 	VkShaderModule                  module;
 	int                             i;
 
+	// 0-4 world_cull.comp, 3/5/6 world_gather.comp
 	Com_Memset(bindings, 0, sizeof(bindings));
-	for (i = 0; i < 5; i++)
+	for (i = 0; i < 7; i++)
 	{
 		bindings[i].binding         = i;
 		bindings[i].descriptorType  = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
@@ -2803,7 +2872,7 @@ static void VK_CreateCullPipeline(void)
 
 	Com_Memset(&setLayoutInfo, 0, sizeof(setLayoutInfo));
 	setLayoutInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-	setLayoutInfo.bindingCount = 5;
+	setLayoutInfo.bindingCount = 7;
 	setLayoutInfo.pBindings    = bindings;
 
 	if (!VK_CheckResult(vkCreateDescriptorSetLayout(vk.device, &setLayoutInfo, NULL, &vk.cullSetLayout), "vkCreateDescriptorSetLayout(cull)"))
@@ -2829,7 +2898,7 @@ static void VK_CreateCullPipeline(void)
 
 	Com_Memset(&poolSize, 0, sizeof(poolSize));
 	poolSize.type            = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-	poolSize.descriptorCount = 5;
+	poolSize.descriptorCount = 7;
 
 	Com_Memset(&poolInfo, 0, sizeof(poolInfo));
 	poolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -2880,6 +2949,71 @@ static void VK_CreateCullPipeline(void)
 
 	VK_CheckResult(vkCreateComputePipelines(vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &vk.cullPipeline), "vkCreateComputePipelines(cull)");
 	vkDestroyShaderModule(vk.device, module, NULL);
+
+	// merged world batches: gather pipeline (same layout), the per-draw
+	// data set and the bindless static pipeline layout
+	if (!vk.bindless || !vk.multiDrawIndirect)
+	{
+		return;
+	}
+
+	module = VK_CreateShaderModule(world_gather_comp_spv, world_gather_comp_spv_SIZE);
+	if (module == VK_NULL_HANDLE)
+	{
+		return;
+	}
+	pipelineInfo.stage.module = module;
+	VK_CheckResult(vkCreateComputePipelines(vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &vk.gatherPipeline), "vkCreateComputePipelines(gather)");
+	vkDestroyShaderModule(vk.device, module, NULL);
+
+	{
+		VkDescriptorSetLayout setLayouts[2];
+		VkPushConstantRange   scenePush;
+
+		Com_Memset(bindings, 0, sizeof(bindings));
+		bindings[0].binding         = 0;
+		bindings[0].descriptorType  = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		bindings[0].descriptorCount = 1;
+		bindings[0].stageFlags      = VK_SHADER_STAGE_VERTEX_BIT;
+		setLayoutInfo.bindingCount  = 1;
+
+		if (!VK_CheckResult(vkCreateDescriptorSetLayout(vk.device, &setLayoutInfo, NULL, &vk.worldDrawSetLayout), "vkCreateDescriptorSetLayout(world draws)"))
+		{
+			return;
+		}
+
+		poolSize.descriptorCount = 1;
+		if (!VK_CheckResult(vkCreateDescriptorPool(vk.device, &poolInfo, NULL, &vk.worldDrawPool), "vkCreateDescriptorPool(world draws)"))
+		{
+			return;
+		}
+		allocInfo.descriptorPool = vk.worldDrawPool;
+		allocInfo.pSetLayouts    = &vk.worldDrawSetLayout;
+		if (!VK_CheckResult(vkAllocateDescriptorSets(vk.device, &allocInfo, &vk.worldDrawSet), "vkAllocateDescriptorSets(world draws)"))
+		{
+			return;
+		}
+
+		Com_Memset(&scenePush, 0, sizeof(scenePush));
+		scenePush.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+		scenePush.size       = VK_SCENE_PUSH_FLOATS * sizeof(float);
+
+		setLayouts[0]                     = vk.bindlessSetLayout;
+		setLayouts[1]                     = vk.worldDrawSetLayout;
+		layoutInfo.setLayoutCount         = 2;
+		layoutInfo.pSetLayouts            = setLayouts;
+		layoutInfo.pushConstantRangeCount = 1;
+		layoutInfo.pPushConstantRanges    = &scenePush;
+		if (!VK_CheckResult(vkCreatePipelineLayout(vk.device, &layoutInfo, NULL, &vk.sceneBindlessPipelineLayout), "vkCreatePipelineLayout(world batches)"))
+		{
+			return;
+		}
+	}
+
+	vk.sceneStaticBLVertModule   = VK_CreateShaderModule(tr3d_static_bl_vert_spv, tr3d_static_bl_vert_spv_SIZE);
+	vk.sceneLMStaticBLVertModule = VK_CreateShaderModule(tr3d_lm_static_bl_vert_spv, tr3d_lm_static_bl_vert_spv_SIZE);
+	vk.sceneBLFragModule         = VK_CreateShaderModule(tr3d_bl_frag_spv, tr3d_bl_frag_spv_SIZE);
+	vk.sceneLMBLFragModule       = VK_CreateShaderModule(tr3d_lm_bl_frag_spv, tr3d_lm_bl_frag_spv_SIZE);
 }
 
 static void VK_DestroyCullBuffer(VkBuffer *buffer, VkDeviceMemory *memory)
@@ -2902,7 +3036,8 @@ static void VK_DestroyCullBuffer(VkBuffer *buffer, VkDeviceMemory *memory)
  */
 static void VK_DestroyWorldCull(void)
 {
-	if (vk.cullSurfBuffer == VK_NULL_HANDLE && vk.cullArenaBuffer == VK_NULL_HANDLE && vk.cullOutBuffer == VK_NULL_HANDLE)
+	if (vk.cullSurfBuffer == VK_NULL_HANDLE && vk.cullArenaBuffer == VK_NULL_HANDLE && vk.cullOutBuffer == VK_NULL_HANDLE &&
+	    vk.cullGatherBuffer == VK_NULL_HANDLE && vk.cullBatchCmdBuffer == VK_NULL_HANDLE && vk.cullWorldDrawBuffer == VK_NULL_HANDLE)
 	{
 		return;
 	}
@@ -2919,7 +3054,21 @@ static void VK_DestroyWorldCull(void)
 	VK_DestroyCullBuffer(&vk.cullIndexBuffer, &vk.cullIndexMemory);
 	VK_DestroyCullBuffer(&vk.cullArenaBuffer, &vk.cullArenaMemory);
 	VK_DestroyCullBuffer(&vk.cullOutBuffer, &vk.cullOutMemory);
-	vk.cullNumSurfs = vk.cullNumGroups = vk.cullNumIndexes = 0;
+	if (vk.cullGatherMapped)
+	{
+		vkUnmapMemory(vk.device, vk.cullGatherMemory);
+		vk.cullGatherMapped = NULL;
+	}
+	if (vk.cullWorldDrawMapped)
+	{
+		vkUnmapMemory(vk.device, vk.cullWorldDrawMemory);
+		vk.cullWorldDrawMapped = NULL;
+	}
+	VK_DestroyCullBuffer(&vk.cullGatherBuffer, &vk.cullGatherMemory);
+	VK_DestroyCullBuffer(&vk.cullBatchCmdBuffer, &vk.cullBatchCmdMemory);
+	VK_DestroyCullBuffer(&vk.cullWorldDrawBuffer, &vk.cullWorldDrawMemory);
+	vk.cullMaxBatchDraws = 0;
+	vk.cullNumSurfs      = vk.cullNumGroups = vk.cullNumIndexes = 0;
 }
 
 /**
@@ -2966,8 +3115,8 @@ static qboolean VK_CreateCullBuffer(VkDeviceSize bytes, VkBufferUsageFlags usage
 qboolean VK_CreateWorldCull(const vkCullSurface_t *surfs, int numSurfs, const unsigned int *surfLeaves, int numSurfLeaves,
                             const unsigned int *indexes, int numIndexes, int numLeaves, int numGroups)
 {
-	VkDescriptorBufferInfo infos[5];
-	VkWriteDescriptorSet   writes[5];
+	VkDescriptorBufferInfo infos[7];
+	VkWriteDescriptorSet   writes[7];
 	VkDeviceSize           outBytes;
 	void                   *arena;
 	int                    i;
@@ -3006,15 +3155,53 @@ qboolean VK_CreateWorldCull(const vkCullSurface_t *surfs, int numSurfs, const un
 	}
 	vk.cullArenaMapped = (unsigned int *)arena;
 
+	// merged world batches (optional: without them every group draws alone)
+	if (vk.gatherPipeline != VK_NULL_HANDLE && vk.sceneBindlessPipelineLayout != VK_NULL_HANDLE)
+	{
+		void *gather, *draws;
+		int  maxDraws = VK_CULL_MAX_VIEWS * numGroups * MAX_SHADER_STAGES;
+
+		if (VK_CreateCullBuffer((VkDeviceSize)VK_FRAMES_IN_FLIGHT * maxDraws * sizeof(unsigned int), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+		                        NULL, 0, &vk.cullGatherBuffer, &vk.cullGatherMemory, &gather) &&
+		    VK_CreateCullBuffer((VkDeviceSize)VK_FRAMES_IN_FLIGHT * maxDraws * sizeof(vkWorldDraw_t), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+		                        NULL, 0, &vk.cullWorldDrawBuffer, &vk.cullWorldDrawMemory, &draws) &&
+		    VK_CreateBuffer((VkDeviceSize)VK_FRAMES_IN_FLIGHT * maxDraws * 5 * sizeof(unsigned int),
+		                    VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
+		                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &vk.cullBatchCmdBuffer, &vk.cullBatchCmdMemory))
+		{
+			VkDescriptorBufferInfo drawInfo;
+			VkWriteDescriptorSet   drawWrite;
+
+			vk.cullGatherMapped    = (unsigned int *)gather;
+			vk.cullWorldDrawMapped = (vkWorldDraw_t *)draws;
+			vk.cullMaxBatchDraws   = maxDraws;
+
+			Com_Memset(&drawInfo, 0, sizeof(drawInfo));
+			drawInfo.buffer = vk.cullWorldDrawBuffer;
+			drawInfo.range  = VK_WHOLE_SIZE;
+
+			Com_Memset(&drawWrite, 0, sizeof(drawWrite));
+			drawWrite.sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			drawWrite.dstSet          = vk.worldDrawSet;
+			drawWrite.dstBinding      = 0;
+			drawWrite.descriptorCount = 1;
+			drawWrite.descriptorType  = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+			drawWrite.pBufferInfo     = &drawInfo;
+			vkUpdateDescriptorSets(vk.device, 1, &drawWrite, 0, NULL);
+		}
+	}
+
 	Com_Memset(infos, 0, sizeof(infos));
 	infos[0].buffer = vk.cullSurfBuffer;
 	infos[1].buffer = vk.cullLeafBuffer;
 	infos[2].buffer = vk.cullIndexBuffer;
 	infos[3].buffer = vk.cullArenaBuffer;
 	infos[4].buffer = vk.cullOutBuffer;
+	infos[5].buffer = vk.cullGatherBuffer;
+	infos[6].buffer = vk.cullBatchCmdBuffer;
 
 	Com_Memset(writes, 0, sizeof(writes));
-	for (i = 0; i < 5; i++)
+	for (i = 0; i < (vk.cullMaxBatchDraws ? 7 : 5); i++)
 	{
 		infos[i].range = VK_WHOLE_SIZE;
 
@@ -3025,7 +3212,7 @@ qboolean VK_CreateWorldCull(const vkCullSurface_t *surfs, int numSurfs, const un
 		writes[i].descriptorType  = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 		writes[i].pBufferInfo     = &infos[i];
 	}
-	vkUpdateDescriptorSets(vk.device, 5, writes, 0, NULL);
+	vkUpdateDescriptorSets(vk.device, vk.cullMaxBatchDraws ? 7 : 5, writes, 0, NULL);
 
 	vk.cullNumSurfs   = numSurfs;
 	vk.cullNumGroups  = numGroups;
@@ -3334,6 +3521,10 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	{
 		stages[0].module = vk.scene2StageVertModule;
 	}
+	else if (vertexSource == VK_VERTS_STATIC_BL || vertexSource == VK_VERTS_STATIC_LIGHTMAP_BL)
+	{
+		stages[0].module = lightmapped ? vk.sceneLMStaticBLVertModule : vk.sceneStaticBLVertModule;
+	}
 	else if (vertexSource != VK_VERTS_ARENA)
 	{
 		stages[0].module = lightmapped ? vk.sceneLMStaticVertModule : vk.sceneStaticVertModule;
@@ -3347,6 +3538,8 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	stages[1].stage  = VK_SHADER_STAGE_FRAGMENT_BIT;
 	stages[1].module = (vertexSource == VK_VERTS_STATIC_DLIGHT) ? vk.sceneLMDlightFragModule :
 	                   (vertexSource == VK_VERTS_TWOSTAGE) ? vk.scene2StageFragModule :
+	                   (vertexSource == VK_VERTS_STATIC_BL || vertexSource == VK_VERTS_STATIC_LIGHTMAP_BL) ?
+	                   (lightmapped ? vk.sceneLMBLFragModule : vk.sceneBLFragModule) :
 	                   (lightmapped ? vk.sceneLMFragModule : vk.sceneFragModule);
 	stages[1].pName = "main";
 
@@ -3456,7 +3649,8 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 		vertexAttributes[0].offset   = offsetof(vk3DVertexLM_t, pos);
 		vertexAttributes[1].location = 1;
 		vertexAttributes[1].format   = VK_FORMAT_R32G32_SFLOAT;
-		vertexAttributes[1].offset   = (vertexSource == VK_VERTS_STATIC_LIGHTMAP) ? offsetof(vk3DVertexLM_t, uv1) : offsetof(vk3DVertexLM_t, uv0);
+		vertexAttributes[1].offset   = (vertexSource == VK_VERTS_STATIC_LIGHTMAP || vertexSource == VK_VERTS_STATIC_LIGHTMAP_BL) ?
+		                               offsetof(vk3DVertexLM_t, uv1) : offsetof(vk3DVertexLM_t, uv0);
 		vertexAttributes[2].location = 2;
 		vertexAttributes[2].format   = VK_FORMAT_R8G8B8A8_UNORM;
 		vertexAttributes[2].offset   = offsetof(vk3DVertexLM_t, color);
@@ -3624,6 +3818,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	pipelineInfo.pDynamicState       = &dynamicState;
 	pipelineInfo.layout              = (vertexSource == VK_VERTS_SKIN || vertexSource == VK_VERTS_MD3) ? vk.skinPipelineLayout :
 	                                   (vertexSource == VK_VERTS_STATIC_DLIGHT) ? vk.staticDlightPipelineLayout :
+	                                   (vertexSource == VK_VERTS_STATIC_BL || vertexSource == VK_VERTS_STATIC_LIGHTMAP_BL) ? vk.sceneBindlessPipelineLayout :
 	                                   (lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout);
 	pipelineInfo.renderPass = vk.renderPass;
 	pipelineInfo.subpass    = 0;
@@ -4442,6 +4637,38 @@ void VK_Shutdown(void)
 		{
 			vkDestroyDescriptorSetLayout(vk.device, vk.cullSetLayout, NULL);
 		}
+		if (vk.gatherPipeline != VK_NULL_HANDLE)
+		{
+			vkDestroyPipeline(vk.device, vk.gatherPipeline, NULL);
+		}
+		if (vk.sceneBindlessPipelineLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyPipelineLayout(vk.device, vk.sceneBindlessPipelineLayout, NULL);
+		}
+		if (vk.worldDrawPool != VK_NULL_HANDLE)
+		{
+			vkDestroyDescriptorPool(vk.device, vk.worldDrawPool, NULL);
+		}
+		if (vk.worldDrawSetLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyDescriptorSetLayout(vk.device, vk.worldDrawSetLayout, NULL);
+		}
+		if (vk.sceneStaticBLVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneStaticBLVertModule, NULL);
+		}
+		if (vk.sceneLMStaticBLVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneLMStaticBLVertModule, NULL);
+		}
+		if (vk.sceneBLFragModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneBLFragModule, NULL);
+		}
+		if (vk.sceneLMBLFragModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneLMBLFragModule, NULL);
+		}
 	}
 
 	{
@@ -4752,6 +4979,9 @@ void VK_BeginFrame(void)
 	vk.frameCount++;
 	vk.cullRecording   = qfalse;
 	vk.cullNumViews    = 0;
+	vk.wbFrameDraws    = 0;
+	vk.wbNumKeys       = 0;
+	vk.wbNumDraws      = 0;
 	vk.boneArenaOffset = (VkDeviceSize)VK_SKIN_BONE_ARENA_SIZE * vk.frameIndex;
 	vk.boneArenaSize   = vk.boneArenaOffset + VK_SKIN_BONE_ARENA_SIZE;
 	VK_ResetBindCache();
@@ -5084,6 +5314,26 @@ void VK_EndFrame(void)
 	if (vk.cullRecording)
 	{
 		VkMemoryBarrier barrier;
+
+		// merged world batches: gather their group commands, after the
+		// culling dispatches wrote them
+		if (vk.wbFrameDraws)
+		{
+			VkCommandBuffer cb = vk.cullCommandBuffers[vk.frameIndex];
+			unsigned int    push[2];
+
+			Com_Memset(&barrier, 0, sizeof(barrier));
+			barrier.sType         = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+			barrier.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+			barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+			vkCmdPipelineBarrier(cb, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 1, &barrier, 0, NULL, 0, NULL);
+
+			push[0] = (unsigned int)(vk.frameIndex * vk.cullMaxBatchDraws);
+			push[1] = (unsigned int)vk.wbFrameDraws;
+			vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_COMPUTE, vk.gatherPipeline);
+			vkCmdPushConstants(cb, vk.cullPipelineLayout, VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(push), push);
+			vkCmdDispatch(cb, (uint32_t)(vk.wbFrameDraws + 63) / 64, 1, 1);
+		}
 
 		Com_Memset(&barrier, 0, sizeof(barrier));
 		barrier.sType         = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
@@ -5485,7 +5735,7 @@ static void VK_Set2DState(VkPipelineLayout layout, unsigned long stateBits)
  * the frame's command buffer, so the draw order stays renderer1's; within a
  * draw, primitives blend in order.
  */
-static void VK_Flush2D(void)
+static void VK_Flush2DBatch(void)
 {
 	VkPipeline pipeline;
 
@@ -5506,6 +5756,17 @@ static void VK_Flush2D(void)
 	VK_BindDescriptorSetsCached(vk.uiBindlessPipelineLayout, 1, &vk.bindlessSet);
 	VK_BindArenaBuffers(vk.vertexArenaBuffer, vk.indexArenaBuffer);
 	vkCmdDrawIndexed(vk.commandBuffer, vk.batch2DNumIndexes, 1, vk.batch2DFirstIndex, vk.batch2DVertexOffset, 0);
+}
+
+/**
+ * @brief Records what is pending: the merged world batch (older, see
+ * VK_BatchWorldDraw), then the 2D batch. Called before anything else is
+ * recorded into the frame's command buffer.
+ */
+static void VK_Flush2D(void)
+{
+	VK_FlushWorldBatch();
+	VK_Flush2DBatch();
 }
 
 /**
@@ -5556,6 +5817,7 @@ static void VK_Draw2DBatched(shaderCommands_t *input, struct image_s *image, uns
 
 	if (!vk.batch2DOpen)
 	{
+		VK_FlushWorldBatch(); // a pending world batch goes first
 		vk.batch2DOpen         = qtrue;
 		vk.batch2DStateBits    = stateBits;
 		vk.batch2DFirstIndex   = (uint32_t)(vk.indexArenaOffset / sizeof(uint32_t));
@@ -6041,6 +6303,127 @@ glIndex_t *VK_AllocSceneIndexes(int count, int *firstIndex)
 }
 
 /**
+ * @brief Records the pending merged world batch: per key (pipeline + view
+ * state, in first-use order) one multi-draw indirect call over its draws'
+ * slots; writes each slot's group command source (for the gather pass) and
+ * per-draw data.
+ */
+static void VK_FlushWorldBatch(void)
+{
+	VkDescriptorSet sets[2];
+	int             k, d;
+	unsigned int    slotBase;
+
+	if (!vk.wbNumDraws || vk.wbFlushing)
+	{
+		return;
+	}
+	vk.wbFlushing = qtrue;
+
+	slotBase = (unsigned int)(vk.frameIndex * vk.cullMaxBatchDraws);
+	sets[0]  = vk.bindlessSet;
+	sets[1]  = vk.worldDrawSet;
+
+	for (k = 0; k < vk.wbNumKeys; k++)
+	{
+		unsigned int first = slotBase + (unsigned int)vk.wbFrameDraws, count = 0;
+
+		for (d = 0; d < vk.wbNumDraws; d++)
+		{
+			if (vk.wbDraws[d].key == k)
+			{
+				unsigned int slot = slotBase + (unsigned int)vk.wbFrameDraws++;
+
+				vk.cullGatherMapped[slot]    = vk.wbDraws[d].srcWord;
+				vk.cullWorldDrawMapped[slot] = vk.wbDraws[d].data;
+				count++;
+			}
+		}
+
+		VK_BindPipelineCached(vk.wbKeys[k].pipeline);
+		VK_PushConstantsCached(vk.sceneBindlessPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+		                       vk.wbKeys[k].header, sizeof(vk.wbKeys[k].header));
+		VK_BindDescriptorSetsCached(vk.sceneBindlessPipelineLayout, 2, sets);
+		VK_BindArenaBuffers(vk.staticWorldBuffer, vk.cullOutBuffer);
+		vkCmdDrawIndexedIndirect(vk.commandBuffer, vk.cullBatchCmdBuffer, (VkDeviceSize)first * 5 * sizeof(unsigned int), count,
+		                         5 * sizeof(unsigned int));
+	}
+
+	vk.wbNumKeys  = 0;
+	vk.wbNumDraws = 0;
+	vk.wbFlushing = qfalse;
+}
+
+/**
+ * @brief Adds a GPU-culled group's stage draw to the pending merged world
+ * batch instead of recording it (r_vkWorldBatch): same pipeline and view
+ * state (push constants up to the stage colors) as a pending key - the
+ * draws become one multi-draw indirect call in VK_FlushWorldBatch(). A
+ * group's later stage only joins its previous stage's key or a later one,
+ * so its stages keep their order. Opaque groups don't overlap except for
+ * coplanar surfaces, so the order between groups doesn't matter.
+ * @return qfalse if the draw must be recorded on its own
+ */
+static qboolean VK_BatchWorldDraw(shaderCommands_t *input, VkPipeline pipeline, const float *pushConstants,
+                                  const image_t *image0, const image_t *image1)
+{
+	vkWorldDraw_t *data;
+	int           k;
+
+	if (!image0 || !image0->vkBindlessSlot || (image1 && !image1->vkBindlessSlot) ||
+	    vk.wbFrameDraws + vk.wbNumDraws >= vk.cullMaxBatchDraws)
+	{
+		return qfalse;
+	}
+
+	VK_Flush2DBatch(); // keep a pending 2D batch before this in the command buffer
+
+	if (vk.wbNumDraws >= VK_WB_MAX_DRAWS)
+	{
+		VK_FlushWorldBatch();
+	}
+
+	if (input->vkIndirectOffset != vk.wbGroupOffset || !vk.wbNumDraws)
+	{
+		vk.wbGroupOffset = input->vkIndirectOffset;
+		vk.wbMinKey      = 0;
+	}
+
+	for (k = vk.wbMinKey; k < vk.wbNumKeys; k++)
+	{
+		if (vk.wbKeys[k].pipeline == pipeline && !memcmp(vk.wbKeys[k].header, pushConstants, sizeof(vk.wbKeys[k].header)))
+		{
+			break;
+		}
+	}
+	if (k == vk.wbNumKeys)
+	{
+		if (vk.wbNumKeys == VK_WB_MAX_KEYS)
+		{
+			VK_FlushWorldBatch();
+			k = 0;
+		}
+		vk.wbKeys[k].pipeline = pipeline;
+		Com_Memcpy(vk.wbKeys[k].header, pushConstants, sizeof(vk.wbKeys[k].header));
+		vk.wbNumKeys = k + 1;
+	}
+	vk.wbMinKey = k;
+
+	vk.wbDraws[vk.wbNumDraws].key     = k;
+	vk.wbDraws[vk.wbNumDraws].srcWord = input->vkIndirectOffset / sizeof(unsigned int);
+	data                              = &vk.wbDraws[vk.wbNumDraws].data;
+	data->textures[0]                 = (uint32_t)(image0->vkBindlessSlot - 1);
+	data->textures[1]                 = image1 ? (uint32_t)(image1->vkBindlessSlot - 1) : 0;
+	data->textures[2]                 = 0;
+	data->textures[3]                 = 0;
+	Com_Memcpy(data->colorMul, pushConstants + 48, 4 * sizeof(float));
+	Com_Memcpy(data->colorAdd, pushConstants + 52, 4 * sizeof(float));
+	vk.wbNumDraws++;
+
+	return qtrue;
+}
+
+/**
  * @brief Static world batch (tess.vkStatic): its indexes already point into
  * the static world buffer and were written to the scene index arena while
  * the batch was built (input->vkStaticFirstIndex), so every stage draws that
@@ -6048,7 +6431,7 @@ glIndex_t *VK_AllocSceneIndexes(int count, int *firstIndex)
  * shaders (see VK_StaticStageColor()).
  */
 static void VK_Draw3DStatic(shaderCommands_t *input, int numIndexes, VkDescriptorSet *sets, int numSets,
-                            unsigned long stateBits, int cullType)
+                            const image_t *image0, const image_t *image1, unsigned long stateBits, int cullType)
 {
 	qboolean         lightmapped = (numSets == 2) ? qtrue : qfalse;
 	int              vertexSource;
@@ -6124,6 +6507,20 @@ static void VK_Draw3DStatic(shaderCommands_t *input, int numIndexes, VkDescripto
 		layout       = vk.staticDlightPipelineLayout;
 	}
 
+	VK_FillScenePushConstants(pushConstants, stateBits, lightmapped ? VK_MultitextureEnvMode(input) : 0.0f);
+	VK_StaticStageColor(input->vkStage, pushConstants + 48, pushConstants + 52);
+
+	// GPU-culled group: merge into a multi-draw (bindless textures)
+	if (input->vkIndirect && vk.cullMaxBatchDraws && r_vkWorldBatch->integer && vertexSource != VK_VERTS_STATIC_DLIGHT)
+	{
+		pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), lightmapped, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE,
+		                                 (vertexSource == VK_VERTS_STATIC_LIGHTMAP) ? VK_VERTS_STATIC_LIGHTMAP_BL : VK_VERTS_STATIC_BL);
+		if (pipeline != VK_NULL_HANDLE && VK_BatchWorldDraw(input, pipeline, pushConstants, image0, lightmapped ? image1 : NULL))
+		{
+			return;
+		}
+	}
+
 	pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), lightmapped, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE, vertexSource);
 	if (pipeline == VK_NULL_HANDLE)
 	{
@@ -6131,9 +6528,6 @@ static void VK_Draw3DStatic(shaderCommands_t *input, int numIndexes, VkDescripto
 	}
 
 	VK_BindPipelineCached(pipeline);
-
-	VK_FillScenePushConstants(pushConstants, stateBits, lightmapped ? VK_MultitextureEnvMode(input) : 0.0f);
-	VK_StaticStageColor(input->vkStage, pushConstants + 48, pushConstants + 52);
 	VK_PushConstantsCached(layout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
 
 	if (vertexSource == VK_VERTS_STATIC_DLIGHT)
@@ -6505,7 +6899,7 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 	{
 		// always the whole batch: dlit surfaces are never static
 		descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
-		VK_Draw3DStatic(input, input->numIndexes, &descriptorSet, 1, stateBits, cullType);
+		VK_Draw3DStatic(input, input->numIndexes, &descriptorSet, 1, image, NULL, stateBits, cullType);
 		return;
 	}
 
@@ -6700,7 +7094,7 @@ void VK_Draw3DLightmapped(shaderCommands_t *input, struct image_s *base, struct 
 	{
 		descriptorSets[0] = (VkDescriptorSet)base->vkDescriptorSet;
 		descriptorSets[1] = (VkDescriptorSet)lightmap->vkDescriptorSet;
-		VK_Draw3DStatic(input, input->numIndexes, descriptorSets, 2, stateBits, cullType);
+		VK_Draw3DStatic(input, input->numIndexes, descriptorSets, 2, base, lightmap, stateBits, cullType);
 		return;
 	}
 

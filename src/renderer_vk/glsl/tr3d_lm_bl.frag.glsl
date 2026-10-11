@@ -1,0 +1,100 @@
+#version 450
+#extension GL_EXT_nonuniform_qualifier : require
+
+// Lightmapped (base * lightmap) static 3D geometry fragment
+// shader. uBase is bound in descriptor set 0, uLightmap in descriptor set
+// 1 - both reuse the same per-image single-combined-sampler descriptor
+// set layout/pool as the base texture path (vk.uiDescriptorSetLayout).
+
+layout(set = 0, binding = 0) uniform sampler2D uTextures[4096]; // VK_BINDLESS_MAX_IMAGES
+
+layout(push_constant) uniform PushConstants
+{
+	mat4 mvp;
+	mat4 modelView;
+	vec4 alphaTest; // x: 0=off, 1=GT_0, 2=LT_80, 3=GE_80; y: texenv 0=modulate, 1=add, 2=replace, 3=decal
+	                // z: fog mode 0=linear, 1=exp (GL_EXP); w: fog density (exp)
+	vec4 fogColor;
+	vec4 fogParams; // x: fog enabled, y: start, z: end, w: clip plane enabled
+	vec4 clipPlane; // portal/mirror eye-space clip plane (xyz=normal, w=dist)
+} pc;
+
+layout(location = 0) in vec2 fragUV0;
+layout(location = 1) in vec2 fragUV1;
+layout(location = 2) in vec4 fragColor;
+layout(location = 3) in float fragFogDepth;
+layout(location = 4) in vec3 fragEyePos;
+layout(location = 5) flat in uvec2 fragTextures;
+
+layout(location = 0) out vec4 outColor;
+
+void main()
+{
+	// renderer1's DrawMultitextured(): unit 0 is base * vertex color
+	// (GL_MODULATE), unit 1 combines with it per shader->multitextureEnv.
+	vec4 prev  = texture(uTextures[nonuniformEXT(fragTextures.x)], fragUV0) * fragColor;
+	vec4 tex1  = texture(uTextures[nonuniformEXT(fragTextures.y)], fragUV1);
+	vec4 color;
+
+	if (pc.alphaTest.y < 0.5)
+	{
+		color = prev * tex1;
+	}
+	else if (pc.alphaTest.y < 1.5)
+	{
+		color = vec4(prev.rgb + tex1.rgb, prev.a * tex1.a);
+	}
+	else if (pc.alphaTest.y < 2.5)
+	{
+		color = tex1;
+	}
+	else
+	{
+		color = vec4(mix(prev.rgb, tex1.rgb, tex1.a), prev.a);
+	}
+
+	// Portal/mirror clip plane (see tr3d.frag.glsl for details).
+	if (pc.fogParams.w > 0.5)
+	{
+		if (dot(fragEyePos, pc.clipPlane.xyz) + pc.clipPlane.w < 0.0)
+		{
+			discard;
+		}
+	}
+
+	if (pc.alphaTest.x > 0.5)
+	{
+		if (pc.alphaTest.x < 1.5 && color.a <= 0.0)
+		{
+			discard;
+		}
+		else if (pc.alphaTest.x >= 1.5 && pc.alphaTest.x < 2.5 && color.a >= 0.5)
+		{
+			discard;
+		}
+		else if (pc.alphaTest.x >= 2.5 && color.a < 0.5)
+		{
+			discard;
+		}
+	}
+
+	if (pc.fogParams.x > 0.5)
+	{
+		float fogFactor;
+
+		if (pc.alphaTest.z > 0.5)
+		{
+			// GL_EXP: f = e^(-density * z)
+			fogFactor = clamp(exp(-pc.alphaTest.w * fragFogDepth), 0.0, 1.0);
+		}
+		else
+		{
+			// GL_LINEAR: f = (end - z) / (end - start)
+			fogFactor = clamp((pc.fogParams.z - fragFogDepth) / max(pc.fogParams.z - pc.fogParams.y, 0.001), 0.0, 1.0);
+		}
+
+		color.rgb = mix(pc.fogColor.rgb, color.rgb, fogFactor);
+	}
+
+	outColor = color;
+}
