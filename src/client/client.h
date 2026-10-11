@@ -48,6 +48,10 @@
 	#include "../irc/irc_client.h"
 #endif
 
+#ifdef FEATURE_DISCORD
+	#include "../discord/cl_discord.h"
+#endif
+
 #ifdef __ANDROID__
 #include <jni.h>
 #endif
