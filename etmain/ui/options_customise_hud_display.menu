@@ -69,7 +69,9 @@ menuDef {
 	SLIDER(OPTION_ITEM_POS(12), _("Center Print Time:"), .2, 8, "cg_centerTime" 5 0 30, _("Set the time the center print stays visible"))
 	MULTI(OPTION_ITEM_POS(13), _("Scoreboard Tab:"), .2, 8, "cg_scoreboard", cvarFloatList { "XP" 0 "SkillRating" 1 }, _("Select the scoreboard to be displyed by default"))
 	CVARFLOATLABEL(OPTION_ITEM_POS(14), "cg_commandMapTime", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
-	SLIDER(OPTION_ITEM_POS(14), _("Command Map Time:"), .2, 8, "cg_commandMapTime" 5 0 30, _("Set the delay to fully fade in/out commad map"))
+	SLIDER(OPTION_ITEM_POS(14), _("Command Map Time:"), .2, 8, "cg_commandMapTime" 5 0 1000, _("Set the delay to fully fade in/out commad map"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(15), "cg_windowTime", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(15), _("Window Time:"), .2, 8, "cg_windowTime" 5 0 1000, _("Set the delay to fully fade in/out window\nsuch as stats, topshots, objectives, help, ..."))
 
 #ifdef FUI
 	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)
