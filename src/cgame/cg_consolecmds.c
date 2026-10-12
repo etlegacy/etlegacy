@@ -170,11 +170,11 @@ static void CG_StatsDown_f(void)
 
 		if (cgs.gamestats.show == SHOW_SHUTDOWN && cg.time < cgs.gamestats.fadeTime)
 		{
-			cgs.gamestats.fadeTime = 2 * cg.time + STATS_FADE_TIME - cgs.gamestats.fadeTime;
+			cgs.gamestats.fadeTime = 2 * cg.time + cg_windowTime.integer - cgs.gamestats.fadeTime;
 		}
 		else if (cgs.gamestats.show != SHOW_ON)
 		{
-			cgs.gamestats.fadeTime = cg.time + STATS_FADE_TIME;
+			cgs.gamestats.fadeTime = cg.time + cg_windowTime.integer;
 		}
 
 		cgs.gamestats.show = SHOW_ON;
@@ -203,11 +203,11 @@ static void CG_StatsUp_f(void)
 		cgs.gamestats.show = SHOW_SHUTDOWN;
 		if (cg.time < cgs.gamestats.fadeTime)
 		{
-			cgs.gamestats.fadeTime = 2 * cg.time + STATS_FADE_TIME - cgs.gamestats.fadeTime;
+			cgs.gamestats.fadeTime = 2 * cg.time + cg_windowTime.integer - cgs.gamestats.fadeTime;
 		}
 		else
 		{
-			cgs.gamestats.fadeTime = cg.time + STATS_FADE_TIME;
+			cgs.gamestats.fadeTime = cg.time + cg_windowTime.integer;
 		}
 	}
 }
@@ -221,11 +221,11 @@ static void CG_topshotsDown_f(void)
 	{
 		if (cgs.topshots.show == SHOW_SHUTDOWN && cg.time < cgs.topshots.fadeTime)
 		{
-			cgs.topshots.fadeTime = 2 * cg.time + STATS_FADE_TIME - cgs.topshots.fadeTime;
+			cgs.topshots.fadeTime = 2 * cg.time + cg_windowTime.integer - cgs.topshots.fadeTime;
 		}
 		else if (cgs.topshots.show != SHOW_ON)
 		{
-			cgs.topshots.fadeTime = cg.time + STATS_FADE_TIME;
+			cgs.topshots.fadeTime = cg.time + cg_windowTime.integer;
 		}
 
 		cgs.topshots.show = SHOW_ON;
@@ -248,11 +248,11 @@ static void CG_topshotsUp_f(void)
 		cgs.topshots.show = SHOW_SHUTDOWN;
 		if (cg.time < cgs.topshots.fadeTime)
 		{
-			cgs.topshots.fadeTime = 2 * cg.time + STATS_FADE_TIME - cgs.topshots.fadeTime;
+			cgs.topshots.fadeTime = 2 * cg.time + cg_windowTime.integer - cgs.topshots.fadeTime;
 		}
 		else
 		{
-			cgs.topshots.fadeTime = cg.time + STATS_FADE_TIME;
+			cgs.topshots.fadeTime = cg.time + cg_windowTime.integer;
 		}
 	}
 }
@@ -266,11 +266,11 @@ static void CG_objectivesDown_f(void)
 	{
 		if (cgs.objectives.show == SHOW_SHUTDOWN && cg.time < cgs.objectives.fadeTime)
 		{
-			cgs.objectives.fadeTime = 2 * cg.time + STATS_FADE_TIME - cgs.objectives.fadeTime;
+			cgs.objectives.fadeTime = 2 * cg.time + cg_windowTime.integer - cgs.objectives.fadeTime;
 		}
 		else if (cgs.objectives.show != SHOW_ON)
 		{
-			cgs.objectives.fadeTime = cg.time + STATS_FADE_TIME;
+			cgs.objectives.fadeTime = cg.time + cg_windowTime.integer;
 		}
 		cgs.objectives.show = SHOW_ON;
 	}
@@ -286,11 +286,11 @@ void CG_objectivesUp_f(void)
 		cgs.objectives.show = SHOW_SHUTDOWN;
 		if (cg.time < cgs.objectives.fadeTime)
 		{
-			cgs.objectives.fadeTime = 2 * cg.time + STATS_FADE_TIME - cgs.objectives.fadeTime;
+			cgs.objectives.fadeTime = 2 * cg.time + cg_windowTime.integer - cgs.objectives.fadeTime;
 		}
 		else
 		{
-			cgs.objectives.fadeTime = cg.time + STATS_FADE_TIME;
+			cgs.objectives.fadeTime = cg.time + cg_windowTime.integer;
 		}
 	}
 }

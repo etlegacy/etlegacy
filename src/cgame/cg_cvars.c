@@ -328,6 +328,7 @@ vmCvar_t cg_scopeReticleLineThickness;
 vmCvar_t cg_scopeReticleDotThickness;
 
 vmCvar_t cg_commandMapTime;
+vmCvar_t cg_windowTime;
 
 typedef struct
 {
@@ -640,6 +641,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_scopeReticleDotThickness,           "cg_scopeReticleDotThickness",           "2.0",         CVAR_ARCHIVE,                 0 },
 
 	{ &cg_commandMapTime,                     "cg_commandMapTime",                     "0",           CVAR_ARCHIVE,                 0 },
+	{ &cg_windowTime,                         "cg_windowTime",                         "200",         CVAR_ARCHIVE,                 0 },
 };
 
 static const unsigned int cvarTableSize = sizeof(cvarTable) / sizeof(cvarTable[0]);

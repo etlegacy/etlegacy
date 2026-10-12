@@ -1611,11 +1611,11 @@ void CG_ShowHelp_On(int *status)
 
 	if (*status == SHOW_SHUTDOWN && milli < cg.fadeTime)
 	{
-		cg.fadeTime = 2 * milli + STATS_FADE_TIME - cg.fadeTime;
+		cg.fadeTime = 2 * milli + cg_windowTime.integer - cg.fadeTime;
 	}
 	else if (*status != SHOW_ON)
 	{
-		cg.fadeTime = milli + STATS_FADE_TIME;
+		cg.fadeTime = milli + cg_windowTime.integer;
 	}
 
 	*status = SHOW_ON;
@@ -1633,11 +1633,11 @@ void CG_ShowHelp_Off(int *status)
 
 		if (milli < cg.fadeTime)
 		{
-			cg.fadeTime = 2 * milli + STATS_FADE_TIME - cg.fadeTime;
+			cg.fadeTime = 2 * milli + cg_windowTime.integer - cg.fadeTime;
 		}
 		else
 		{
-			cg.fadeTime = milli + STATS_FADE_TIME;
+			cg.fadeTime = milli + cg_windowTime.integer;
 		}
 
 		*status = SHOW_SHUTDOWN;
@@ -1757,7 +1757,7 @@ void CG_DrawHelpWindow(float x, float y, int *status, const char *title, const h
 	// Fade-in effects
 	if (diff > 0.0f)
 	{
-		float scale = (diff / STATS_FADE_TIME);
+		float scale = (diff / cg_windowTime.integer);
 
 		if (*status == SHOW_ON)
 		{

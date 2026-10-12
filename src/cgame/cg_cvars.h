@@ -323,6 +323,7 @@ extern vmCvar_t cg_scopeReticleLineThickness;
 extern vmCvar_t cg_scopeReticleDotThickness;
 
 extern vmCvar_t cg_commandMapTime;
+extern vmCvar_t cg_windowTime;
 
 void CG_RegisterCvars(void);
 
