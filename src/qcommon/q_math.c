@@ -3366,3 +3366,15 @@ void Rotate2DPointAroundPoint(vec2_t *point, const vec2_t *origin, float theta)
 	(*point)[0] = cosf(theta) * (translatedX) - sinf(theta) * (translatedY) + (*origin)[0];
 	(*point)[1] = sinf(theta) * (translatedX) + cosf(theta) * (translatedY) + (*origin)[1];
 }
+
+/**
+ * @brief Retrieved the number of digit before decimal
+ * @param[in] x
+ * @return the number of digit before decimal
+ */
+int Q_GetDigitNumbersBeforeDecimal(float x)
+{
+	// use absolute value of the number as log function
+	// doesn't support negative values
+	return fabs(x) < 1 ? 1 : (int)log10(fabs(x)) + 1;
+}

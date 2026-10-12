@@ -767,7 +767,14 @@ void Menus_CloseByName(const char *p)
 				// if modal doesn't have a parent, the stack item may be NULL .. just go back to the main menu then
 				if (modalMenuStack[modalMenuCount])
 				{
-					Menus_ActivateByName(modalMenuStack[modalMenuCount]->window.name, qfalse);   // don't try to push the one we are opening to the stack
+					if (!Menus_ActivateByName(modalMenuStack[modalMenuCount]->window.name, qfalse)) // don't try to push the one we are opening to the stack
+					{
+						Com_Printf(S_COLOR_YELLOW "WARNING: %s not found, back to the main menu\n", modalMenuStack[modalMenuCount]->window.name);
+					}
+				}
+				else
+				{
+					Com_Printf(S_COLOR_YELLOW "WARNING: back to the main menu as no parent is set!\n");
 				}
 			}
 		}

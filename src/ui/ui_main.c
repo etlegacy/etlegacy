@@ -6380,39 +6380,6 @@ void UI_RunMenuScript(char **args)
 			trap_Cvar_Set("r_ext_multisample", va("%i", ui_r_ext_multisample));
 			trap_Cvar_Set("r_texturemode", ui_r_texturemode);
 			trap_Cvar_Set("r_ignorehwgamma", va("%i", ui_r_ignorehwgamma));
-
-			trap_Cvar_Set("ui_cl_lang", "");
-			trap_Cvar_Set("ui_r_mode", "");
-			trap_Cvar_Set("ui_rate", "");
-			trap_Cvar_Set("ui_cl_maxpackets", "");
-			trap_Cvar_Set("ui_cl_packetdup", "");
-			trap_Cvar_Set("ui_sensitivity", "");
-			trap_Cvar_Set("ui_r_colorbits", "");
-			trap_Cvar_Set("ui_r_fullscreen", "");
-			trap_Cvar_Set("ui_r_noborder", "");
-			trap_Cvar_Set("ui_r_centerwindow", "");
-			trap_Cvar_Set("ui_r_intensity", "");
-			trap_Cvar_Set("ui_r_mapoverbrightbits", "");
-			trap_Cvar_Set("ui_r_overBrightBits", "");
-			trap_Cvar_Set("ui_r_lodscale", "");
-			trap_Cvar_Set("ui_r_subdivisions", "");
-			trap_Cvar_Set("ui_r_picmip", "");
-			trap_Cvar_Set("ui_r_texturebits", "");
-			trap_Cvar_Set("ui_r_depthbits", "");
-			trap_Cvar_Set("ui_r_ext_compressed_textures", "");
-			trap_Cvar_Set("ui_r_finish", "");
-			trap_Cvar_Set("ui_r_dynamiclight", "");
-			trap_Cvar_Set("ui_r_allowextensions", "");
-			trap_Cvar_Set("ui_m_filter", "");
-			trap_Cvar_Set("ui_s_initsound", "");
-			trap_Cvar_Set("ui_s_khz", "");
-			trap_Cvar_Set("ui_s_sdlLevelSamps", "");
-			trap_Cvar_Set("ui_r_detailtextures", "");
-			trap_Cvar_Set("ui_r_ext_texture_filter_anisotropic", "");
-			trap_Cvar_Set("ui_r_ext_multisample", "");
-			trap_Cvar_Set("ui_cg_shadows", "");
-			trap_Cvar_Set("ui_r_texturemode", "");
-			trap_Cvar_Set("ui_r_ignorehwgamma", "");
 		}
 		else if (Q_stricmp(name, "profileCvarsGet") == 0)
 		{

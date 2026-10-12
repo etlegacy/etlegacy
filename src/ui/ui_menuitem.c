@@ -2882,8 +2882,21 @@ void Item_Text_Paint(itemDef_t *item)
 			}
 			else if (item->window.flags & WINDOW_TEXTASFLOAT)
 			{
-				char *s = va("%.2f", atof(text));
-				Q_strncpyz(text, s, sizeof(text));
+				float value;
+				int   digitNumber;
+				int   precision = 0;
+
+				value = atof(text);
+
+				// retrieved the number of digit before decimal
+				// to cap the number of digit after decimal
+				digitNumber = Q_GetDigitNumbersBeforeDecimal(value);
+				if (digitNumber < 5)
+				{
+					precision = 5 - digitNumber;
+				}
+
+				Q_strncpyz(text, va("%.*f", precision, value), sizeof(text));
 				item->textRect.w = 0;   // force recalculation
 			}
 
@@ -3078,6 +3091,9 @@ void Item_CheckBox_Paint(itemDef_t *item)
 	menuDef_t  *parent      = (menuDef_t *)item->parent;
 	qboolean   hasMultiText = qfalse;
 	multiDef_t *multiPtr    = (multiDef_t *)item->typeData;
+	float      x;
+	float      y;
+	qhandle_t  handler;
 
 	if ((item->window.flags & WINDOW_HASFOCUS) && (item->window.flags & WINDOW_FOCUSPULSE))
 	{
@@ -3102,51 +3118,38 @@ void Item_CheckBox_Paint(itemDef_t *item)
 	if (item->text)
 	{
 		Item_Text_Paint(item);
-		if (item->type == ITEM_TYPE_TRICHECKBOX && value == 2.f)
-		{
-			DC->drawHandlePic(item->textRect.x + item->textRect.w + 8, item->window.rect.y, item->window.rect.h, item->window.rect.h, DC->Assets.checkboxCheckNo);
-		}
-		else if (value != 0.f)
-		{
-			DC->drawHandlePic(item->textRect.x + item->textRect.w + 8, item->window.rect.y, item->window.rect.h, item->window.rect.h, DC->Assets.checkboxCheck);
-		}
-		else
-		{
-			DC->drawHandlePic(item->textRect.x + item->textRect.w + 8, item->window.rect.y, item->window.rect.h, item->window.rect.h, DC->Assets.checkboxCheckNot);
-		}
-
-		if (hasMultiText)
-		{
-			vec4_t colour;
-
-			Item_TextColor(item, &colour);
-			DC->drawText(item->textRect.x + item->textRect.w + 8 + item->window.rect.h + 4, item->textRect.y, item->textscale,
-			             colour, Item_Multi_Setting(item), 0, 0, item->textStyle);
-		}
+		x = item->textRect.x + item->textRect.w + 8;
+		y = item->window.rect.y + 1.5f;
 	}
 	else
 	{
-		if (item->type == ITEM_TYPE_TRICHECKBOX && value == 2.f)
-		{
-			DC->drawHandlePic(item->window.rect.x, item->window.rect.y, item->window.rect.h, item->window.rect.h, DC->Assets.checkboxCheckNo);
-		}
-		else if (value != 0.f)
-		{
-			DC->drawHandlePic(item->window.rect.x, item->window.rect.y, item->window.rect.h, item->window.rect.h, DC->Assets.checkboxCheck);
-		}
-		else
-		{
-			DC->drawHandlePic(item->window.rect.x, item->window.rect.y, item->window.rect.h, item->window.rect.h, DC->Assets.checkboxCheckNot);
-		}
+		x = item->window.rect.x;
+		y = item->window.rect.y;
+	}
 
-		if (hasMultiText)
-		{
-			vec4_t colour;
+	if (item->type == ITEM_TYPE_TRICHECKBOX && value == 2.f)
+	{
+		handler = DC->Assets.checkboxCheckNo;
+	}
+	else if (value != 0.f)
+	{
+		handler = DC->Assets.checkboxCheck;
+	}
+	else
+	{
+		handler = DC->Assets.checkboxCheckNot;
+	}
 
-			Item_TextColor(item, &colour);
-			DC->drawText(item->window.rect.x + item->window.rect.h + 4, item->window.rect.y + item->textaligny, item->textscale,
-			             colour, Item_Multi_Setting(item), 0, 0, item->textStyle);
-		}
+	DC->drawHandlePic(x, y, item->window.rect.h, item->window.rect.h, handler);
+
+	if (hasMultiText)
+	{
+		vec4_t colour;
+		y = item->text ? item->textRect.y : item->window.rect.y + item->textaligny;
+
+		Item_TextColor(item, &colour);
+		DC->drawText(x + item->window.rect.h + 4, y, item->textscale,
+		             colour, Item_Multi_Setting(item), 0, 0, item->textStyle);
 	}
 }
 
@@ -3279,16 +3282,16 @@ void Item_Combo_Paint(itemDef_t *item)
 		}
 	}
 
-	selectorOffset = widestText + selectedTextOffset - 4 + borderOffset;
+	selectorOffset = widestText + selectedTextOffset + 7 + borderOffset;
 
 	selectorSize = DC->textWidth(COMBO_SELECTORCHAR, item->textscale, 0);
 
 	rect.x = selectedTextOffset;
 	rect.y = item->textRect.y - item->textRect.h - borderOffset;
-	rect.w = widestText + 4 + selectorSize + borderOffset;
+	rect.w = widestText + selectorSize + 12 + (borderOffset * 2);
 	rect.h = item->textRect.h + (borderOffset * 2);
 
-	selectorRect.x = rect.x + (rect.w - selectorSize - 8 - (borderOffset * 2));
+	selectorRect.x = rect.x + widestText + 4;
 	selectorRect.y = rect.y;
 	selectorRect.w = selectorSize + 8 + (borderOffset * 2);
 	selectorRect.h = rect.h;

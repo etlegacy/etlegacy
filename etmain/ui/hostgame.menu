@@ -2,15 +2,12 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define WINDOW_X		16
-#define WINDOW_Y		16
-#define WINDOW_WIDTH	608
-#define WINDOW_HEIGHT	448
-#define GROUP_NAME		"grpHostGame"
+#define MENU_NAME	"hostgame"
+#define GROUP_NAME	"grpHostGame"
 
 // System Menu //
 menuDef {
-	name		"hostgame"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
@@ -23,7 +20,7 @@ menuDef {
 	}
 
 	onESC {
-		close hostgame ;
+		close MENU_NAME ;
 		open main
 	}
 
@@ -41,7 +38,7 @@ menuDef {
 	// TODO: use FEEDER to automatically show available configs
 	MULTI( 8, 84, (SUBWINDOW_WIDTH)-4, 10, _("Auto-Configure Server:"), .2, 8, "g_customConfig", cvarStrList { "No" 0 "Public Settings" defaultpublic "Competition 1on1" legacy1 "Competition 3on3" legacy3 "Competition 5on5" legacy5 "Competition 6on6" legacy6 }, _("Automatically configure server to specified default settings") )
 	MULTI( 8, 96, (SUBWINDOW_WIDTH)-4, 10, _("Dedicated Server:"), .2, 8, "ui_dedicated", cvarFloatList { "No" 0 "Yes - LAN" 1 "Yes - Internet" 2 }, _("Specify if the server should be \"dedicated\" for LAN or Internet play (no client)") )
-	EDITFIELD( 8, 108, (SUBWINDOW_WIDTH)-4, 10, _("Password:"), .2, 8, "g_password", 25, 18, _("Password clients must set to join the server") )
+	EDITFIELD( 8, 108, (SUBWINDOW_WIDTH)-4, 10, _("Password:"), .2, 8, "g_password", 64, 18, _("Password clients must set to join the server") )
 
 // Settings //
 	SUBWINDOW( 6, 126, (SUBWINDOW_WIDTH), 52, _("FEATURES") )
@@ -191,8 +188,8 @@ menuDef {
     }
 
 // Buttons //
-	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_BACK"), .3, 14, close hostgame ; open main )
-	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_ADVANCED"), .3, 14, close hostgame ; open hostgame_advanced )
+	BUTTON( 6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open main )
+	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .34*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_ADVANCED"), .3, 14, close MENU_NAME ; open hostgame_advanced )
 	BUTTON( 6+.33*(WINDOW_WIDTH-24)+6+.34*(WINDOW_WIDTH-24)+6, WINDOW_HEIGHT-24, .33*(WINDOW_WIDTH-24), 18, _("MSGID_MENU_HOST_START_SERVER"), .3, 14,
 		conditionalScript ui_dedicated 0
 		( "open hostgame_dedicated_warning" )

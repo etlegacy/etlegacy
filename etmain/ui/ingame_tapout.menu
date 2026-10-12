@@ -2,18 +2,14 @@
 #include "ui/menumacros.h"
 
 // Defines //
-#define WINDOW_X		0
-#define WINDOW_Y		0
-#define WINDOW_WIDTH	__WINDOW_WIDTH
-#define WINDOW_HEIGHT	480
-#define GROUP_NAME		"tapoutgrp"
+#define GROUP_NAME	"tapoutgrp"
 
 menuDef
 {
 	name		"tapoutmsg"
 	visible		0
 	fullscreen	0
-	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
+	rect		FULL_WINDOW_X FULL_WINDOW_Y FULL_WINDOW_WIDTH FULL_WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
 	popup
 
@@ -32,7 +28,7 @@ menuDef
 // Background //
 	itemDef {
 		name		"background"
-		rect		0 0 WINDOW_WIDTH 480
+		rect		0 0 FULL_WINDOW_WIDTH 480
 		style		WINDOW_STYLE_FILLED
 		background	"ui/assets/fadebox.tga"
 		backcolor	0 0 0 0
@@ -41,14 +37,14 @@ menuDef
 	}
 
 // Subwindows //
-#define SUBWINDOW_WIDTH		340
-#define SUBWINDOW_HEIGHT	64
-#define SUBWINDOW_X			.5 * (WINDOW_WIDTH - SUBWINDOW_WIDTH)
-#define SUBWINDOW_Y			.5 * (WINDOW_HEIGHT - SUBWINDOW_HEIGHT)
+#define SUBFULL_WINDOW_WIDTH		340
+#define SUBFULL_WINDOW_HEIGHT	64
+#define SUBFULL_WINDOW_X			.5 * (FULL_WINDOW_WIDTH - SUBFULL_WINDOW_WIDTH)
+#define SUBFULL_WINDOW_Y			.5 * (FULL_WINDOW_HEIGHT - SUBFULL_WINDOW_HEIGHT)
 
-	SUBWINDOWBLACK( SUBWINDOW_X, SUBWINDOW_Y, SUBWINDOW_WIDTH, SUBWINDOW_HEIGHT, _("RESPAWNING") )
-	LABEL( SUBWINDOW_X+2, SUBWINDOW_Y+16, (SUBWINDOW_WIDTH)-8, 10, _("This server has Max Lives enabled. Tapping out now will lose a life. Are you sure?"), .2, ITEM_ALIGN_CENTER, .5*((SUBWINDOW_WIDTH)-4), 8 )
+	SUBWINDOWBLACK( SUBFULL_WINDOW_X, SUBFULL_WINDOW_Y, SUBFULL_WINDOW_WIDTH, SUBFULL_WINDOW_HEIGHT, _("RESPAWNING") )
+	LABEL( SUBFULL_WINDOW_X+2, SUBFULL_WINDOW_Y+16, (SUBFULL_WINDOW_WIDTH)-8, 10, _("This server has Max Lives enabled. Tapping out now will lose a life. Are you sure?"), .2, ITEM_ALIGN_CENTER, .5*((SUBFULL_WINDOW_WIDTH)-4), 8 )
 
-	NAMEDBUTTON( "tapoutyesbtn", SUBWINDOW_X+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, exec forcetapout ; close tapoutmsg )
-	BUTTON( SUBWINDOW_X+6+.5*(SUBWINDOW_WIDTH-18)+6, SUBWINDOW_Y+SUBWINDOW_HEIGHT-24, .5*(SUBWINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close tapoutmsg )
+	NAMEDBUTTON( "tapoutyesbtn", SUBFULL_WINDOW_X+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_YES"), .3, 14, exec forcetapout ; close tapoutmsg )
+	BUTTON( SUBFULL_WINDOW_X+6+.5*(SUBFULL_WINDOW_WIDTH-18)+6, SUBFULL_WINDOW_Y+SUBFULL_WINDOW_HEIGHT-24, .5*(SUBFULL_WINDOW_WIDTH-18), 18, _("MSGID_MENU_NO"), .3, 14, close tapoutmsg )
 }
