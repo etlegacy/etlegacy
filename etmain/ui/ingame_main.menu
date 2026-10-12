@@ -43,7 +43,7 @@ menuDef {
 	BUTTONEXT( 6, 56, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_VOTE"), .3, 14, uiScript clientCheckVote ;
 		conditionalScript cg_ui_novote 0
 		( "clearFocus ; open ingame_votedisabled" )
-		( "close MENU_NAME ; open ingame_vote" ),
+		( "close " MENU_NAME " ; open ingame_vote" ),
 		cvarTest "authLevel" showCVar { RL_NONE } )
 	BUTTONEXT( 6, 56, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_REFEREE"), .3, 14, close MENU_NAME ; open ingame_vote, cvarTest "authLevel" showCVar { RL_REFEREE } )
 	BUTTONEXT( 6, 56, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_RCON"), .3, 14, close MENU_NAME ; open ingame_vote, cvarTest "authLevel" showCVar { RL_RCON } )
