@@ -2,18 +2,19 @@
 #include "ui/menumacros.h"
 
 // Defines //
+#define MENU_NAME	"credits_activision"
 #define GROUP_NAME	"grpCreditsActivision"
 
 // System Menu //
 menuDef {
-	name		"credits_activision"
+	name		MENU_NAME
 	visible		0
 	fullscreen	0
 	rect		WINDOW_X WINDOW_Y WINDOW_WIDTH WINDOW_HEIGHT
 	style		WINDOW_STYLE_FILLED
 
 	onESC {
-		close credits_activision ;
+		close MENU_NAME ;
 #ifdef FUI
 		open main
 #else
@@ -119,10 +120,10 @@ menuDef {
 
 // Buttons //
 #ifdef FUI
-	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, close credits_activision ; open main )
+BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open main )
 #else
-	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, close credits_activision ; open ingame_main )
+BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open ingame_main )
 #endif
-	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "ID SOFTWARE", .3, 14, close credits_activision ; open credits_idsoftware )
-	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("ADDITIONAL"), .3, 14, close credits_activision ; open credits_additional )
+	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "ID SOFTWARE", .3, 14, close MENU_NAME ; open credits_idsoftware )
+	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("ADDITIONAL"), .3, 14, close MENU_NAME ; open credits_additional )
 }
