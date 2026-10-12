@@ -34,7 +34,6 @@
 
 		setitemcolor background backcolor 0 0 0 0 ;
 		fadein background ;
-		setEditFocus "efleftProfile Name:" ;
 		uiScript  systemCvarsGet ;
 		setcvar   ui_rate "0" ;
 		clearcvar ui_profile ;
@@ -48,6 +47,8 @@
 		conditionalscript com_recommended 3
 		("setcvar ui_glPreset 0 ; uiScript update glPreset")
 		    ("copycvar com_recommended ui_glPreset ; uiScript update glPreset") "-1"
+
+		setEditFocus "efleftPlayer Alias:" ;
 	}
 
 	onESC {
