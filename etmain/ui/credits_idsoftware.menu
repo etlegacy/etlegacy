@@ -86,10 +86,10 @@ menuDef {
 
 // Buttons //
 #ifdef FUI
-	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, close  ; open main )
+BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open main )
 #else
-	BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, close  ; open ingame_main )
+BUTTON( 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, _("MSGID_MENU_BACK"), .3, 14, close MENU_NAME ; open ingame_main )
 #endif
-	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "SPLASH DAMAGE", .3, 14, close  ; open credits_splashdamage )
-	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "ACTIVISION", .3, 14, close  ; open credits_activision )
+	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .34 * (WINDOW_WIDTH - 24), 18, "SPLASH DAMAGE", .3, 14, close MENU_NAME ; open credits_splashdamage )
+	BUTTON( 6 + .33 * (WINDOW_WIDTH - 24) + 6 + .34 * (WINDOW_WIDTH - 24) + 6, WINDOW_HEIGHT - 24, .33 * (WINDOW_WIDTH - 24), 18, "ACTIVISION", .3, 14, close MENU_NAME ; open credits_activision )
 }
