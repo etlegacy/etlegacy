@@ -1085,6 +1085,8 @@ typedef struct msurface_s
 	byte cullPlaneType;
 
 	int vkCullIndex;                ///< Vulkan: surface number in GPU world culling, -1 = CPU only
+
+	struct decal_s *decals;         ///< decal slots whose parent this is (decal_t::nextOnParent)
 } msurface_t;
 
 /**
@@ -1102,6 +1104,8 @@ typedef struct decal_s
 	polyVert_t verts[MAX_DECAL_VERTS];
 	int projectorNum;
 	int frameAdded;                     ///< need to keep decal for at least one frame so we know not to reproject it in later views
+	struct decal_s *nextOnParent;       ///< the parent's other decal slots (msurface_t::decals)
+	struct decal_s *prevOnParent;
 } decal_t;
 
 #define CONTENTS_NODE       -1
@@ -1169,6 +1173,8 @@ typedef struct bmodel_s
 	int numSurfaces;
 
 	decal_t *decals;
+	int decalFreeHint;                  ///< no slot below this has a NULL shader (none can be free)
+	int decalHighWater;                 ///< slots from here on have a NULL shader
 
 	// for fog volumes
 	int firstBrush;
@@ -1776,6 +1782,8 @@ typedef struct shaderCommands_s
 	/// RB_CalcEnvironmentTexCoords() parameters for the vertex shader, in
 	/// the uniform arena at this offset (RB_VkSetupEnvParams)
 	unsigned int vkEnvOffset;
+	float vkEnvParams[12];          ///< CPU copy of the block at vkEnvOffset (merged model batches)
+	unsigned int vkSurfaceSerial;   ///< RB_BeginSurface count: tells a batch's stages from the next batch's
 	/// the stage being drawn is rgbGen lightingDiffuse computed in the vertex
 	/// shader (VK_Draw3DDiffuse): ComputeColors() left the rgb unset, see
 	/// RB_StageGpuDiffuse()
