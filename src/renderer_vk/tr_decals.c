@@ -387,6 +387,8 @@ void RE_ClearDecals(void)
 		{
 			tr.world->bmodels[i].decals[j].shader = NULL;
 		}
+		tr.world->bmodels[i].decalFreeHint  = 0;
+		tr.world->bmodels[i].decalHighWater = 0;
 	}
 }
 
@@ -689,37 +691,83 @@ static void ProjectDecalOntoWinding(decalProjector_t *dp, int numPoints, vec3_t 
 		}
 	}
 
-	// find first free decal (fixme: optimize this)
-	count  = (bmodel == tr.world->bmodels ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
-	oldest = &bmodel->decals[0];
-	decal  = bmodel->decals;
-	for (i = 0; i < count; i++, decal++)
+	// find first free decal: none below decalFreeHint (their shaders are
+	// set), so start there
+	count = (bmodel == tr.world->bmodels ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
+	decal = bmodel->decals + bmodel->decalFreeHint;
+	for (i = bmodel->decalFreeHint; i < count; i++, decal++)
 	{
 		// try to find an empty decal slot
 		if (decal->shader == NULL && decal->frameAdded != tr.frameCount)
 		{
 			break;
 		}
-
-		// find oldest decal
-		if (decal->fadeEndTime < oldest->fadeEndTime)
-		{
-			oldest = decal;
-		}
 	}
 
 	// guess we have to use the oldest decal
 	if (i >= count)
 	{
+		oldest = &bmodel->decals[0];
+		decal  = bmodel->decals;
+		for (i = 0; i < count; i++, decal++)
+		{
+			if (decal->fadeEndTime < oldest->fadeEndTime)
+			{
+				oldest = decal;
+			}
+		}
 		decal = oldest;
 	}
 
 	// r_speeds useful info
 	tr.pc.c_decalSurfacesCreated++;
 
+	// keep the parents' slot lists (msurface_t::decals) for
+	// R_ProjectDecalOntoSurface's check
+	if (decal->parent != surf)
+	{
+		if (decal->parent)
+		{
+			if (decal->prevOnParent)
+			{
+				decal->prevOnParent->nextOnParent = decal->nextOnParent;
+			}
+			else
+			{
+				decal->parent->decals = decal->nextOnParent;
+			}
+			if (decal->nextOnParent)
+			{
+				decal->nextOnParent->prevOnParent = decal->prevOnParent;
+			}
+		}
+		decal->prevOnParent = NULL;
+		decal->nextOnParent = surf->decals;
+		if (surf->decals)
+		{
+			surf->decals->prevOnParent = decal;
+		}
+		surf->decals = decal;
+	}
+
 	// set it up (fixme: get the shader before this happens)
-	decal->parent        = surf;
-	decal->shader        = dp->shader;
+	decal->parent = surf;
+	decal->shader = dp->shader;
+
+	// the slot is taken: move the free hint past taken slots, grow the
+	// used range
+	i = (int)(decal - bmodel->decals);
+	if (i == bmodel->decalFreeHint)
+	{
+		while (bmodel->decalFreeHint < count && bmodel->decals[bmodel->decalFreeHint].shader != NULL)
+		{
+			bmodel->decalFreeHint++;
+		}
+	}
+	if (i >= bmodel->decalHighWater)
+	{
+		bmodel->decalHighWater = i + 1;
+	}
 	decal->fadeStartTime = dp->fadeStartTime;
 	decal->fadeEndTime   = dp->fadeEndTime;
 	decal->fogIndex      = surf->fogIndex;
@@ -834,7 +882,6 @@ static void ProjectDecalOntoGrid(decalProjector_t *dp, msurface_t *surf, bmodel_
 void R_ProjectDecalOntoSurface(decalProjector_t *dp, msurface_t *surf, bmodel_t *bmodel)
 {
 	srfGeneric_t *gen;
-	int          i;
 
 	// early outs
 	if (dp->shader == NULL)
@@ -886,14 +933,16 @@ void R_ProjectDecalOntoSurface(decalProjector_t *dp, msurface_t *surf, bmodel_t 
 	// add to counts
 	tr.pc.c_decalClipSurfaces++;
 
-	// check if this projector already has a decal on this surface
+	// check if this projector already has a decal on this surface (any of
+	// this bmodel's slots with this parent: walks the surface's slot list
+	// instead of every slot)
 	{
-		int     count  = (bmodel == tr.world->bmodels ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
-		decal_t *decal = bmodel->decals;
+		int     count = (bmodel == tr.world->bmodels ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS);
+		decal_t *decal;
 
-		for (i = 0; i < count; i++, decal++)
+		for (decal = surf->decals; decal; decal = decal->nextOnParent)
 		{
-			if (decal->parent == surf && decal->projectorNum == dp->projectorNum)
+			if (decal->projectorNum == dp->projectorNum && decal >= bmodel->decals && decal < bmodel->decals + count)
 			{
 				return;
 			}
@@ -988,15 +1037,31 @@ void R_AddDecalSurface(decal_t *decal)
  */
 void R_AddDecalSurfaces(bmodel_t *bmodel)
 {
-	int     i;
-	int     count  = (bmodel == tr.world->bmodels ? MAX_WORLD_DECALS : MAX_ENTITY_DECALS); // get decal count
+	int     i, firstFree = -1, lastUsed = -1;
+	int     count  = bmodel->decalHighWater; // the slots after it are unused
 	decal_t *decal = bmodel->decals;
 
 	// iterate through decals
 	for (i = 0; i < count; i++, decal++)
 	{
 		R_AddDecalSurface(decal);
+
+		// R_AddDecalSurface frees expired decals: update the slot bounds
+		if (decal->shader == NULL)
+		{
+			if (firstFree < 0)
+			{
+				firstFree = i;
+			}
+		}
+		else
+		{
+			lastUsed = i;
+		}
 	}
+
+	bmodel->decalHighWater = lastUsed + 1;
+	bmodel->decalFreeHint  = (firstFree >= 0 && firstFree < lastUsed) ? firstFree : lastUsed + 1;
 }
 
 /**

@@ -71,6 +71,7 @@
 #include "tr3d_lm_static_bl.vert.glsl.h"
 #include "tr3d_bl.frag.glsl.h"
 #include "tr3d_lm_bl.frag.glsl.h"
+#include "tr3d_md3_bl.vert.glsl.h"
 
 #define VK_MAX_SWAPCHAIN_IMAGES 8
 
@@ -89,6 +90,27 @@
 // draws (vk.cullMaxBatchDraws)
 #define VK_WB_MAX_KEYS  128
 #define VK_WB_MAX_DRAWS 2048
+
+// merged model batches (VK_BatchModelDraw): pending keys and draws before a
+// flush, draws per frame slot
+#define VK_MB_MAX_KEYS    64
+#define VK_MB_MAX_PENDING 1024
+#define VK_MB_SLOT_DRAWS  4096
+
+// per-draw data of a merged model batch (tr3d_md3_bl.vert's ModelDraw)
+typedef struct
+{
+	float mvp[16];
+	float modelView[16];
+	float alphaTest[4];        // y: tcGen environment
+	float lightDir[4];         // lightDir, ambient, directed, lerp: push constant slots 48-63
+	float ambient[4];
+	float directed[4];
+	float lerp[4];
+	float env[12];             // RB_VkSetupEnvParams
+	uint32_t ofs[4];           // mesh buffer word offsets: frame, oldframe, texcoords, compressed frame
+	uint32_t ofs2[4];          // compressed oldframe, bindless texture slot
+} vkModelDraw_t;
 
 // per-draw data of a merged world batch (tr3d_*static_bl.vert's WorldDraw)
 typedef struct
@@ -139,6 +161,7 @@ typedef struct
 #define VK_VERTS_TWOSTAGE         6 // arena, vk3DVertex2_t: two stages in one draw (tr3d_2stage.*), 2 texture sets
 #define VK_VERTS_STATIC_BL        8 // as VK_VERTS_STATIC, merged world batch: bindless textures, per-draw data (tr3d_*static_bl.vert)
 #define VK_VERTS_STATIC_LIGHTMAP_BL 9 // as VK_VERTS_STATIC_LIGHTMAP, merged world batch
+#define VK_VERTS_MD3_BL           10 // as VK_VERTS_MD3, merged model batch: no vertex streams (tr3d_md3_bl.vert reads the mesh buffer)
 #define VK_VERTS_MD3              7 // mesh buffer: frame, oldframe (md3XyzNormal_t), texcoords, MDC compressed frame, oldframe; tr3d_md3.vert, normal tables in set 1
 
 // MD3/MDC frames + texcoords + triangles of every loaded model (VK_WriteMeshData)
@@ -491,6 +514,38 @@ typedef struct
 	unsigned int wbGroupOffset;                            // group of the last batched draw (its stages chain)
 	int wbMinKey;                                          // key of its last stage: later stages go to this or later keys
 	qboolean wbFlushing;
+
+	// merged model batches (VK_BatchModelDraw/VK_FlushModelBatch): GPU-animated
+	// MD3/MDC draws with the same pipeline and view state become one
+	// multi-draw indirect call with CPU-written commands; tr3d_md3_bl.vert
+	// reads the frames from the mesh buffer (storage) at per-draw offsets
+	qboolean modelBatch;                                   // resources created (VK_CreateModelBatchResources)
+	VkDescriptorSetLayout modelSetLayout;
+	VkDescriptorPool modelPool;
+	VkDescriptorSet modelSet;                              // per-draw data, mesh buffer
+	VkPipelineLayout sceneMD3BLPipelineLayout;             // set 0 bindless textures, 1 modelSet, 2 mesh normal tables
+	VkShaderModule sceneMD3BLVertModule;
+	VkBuffer modelDrawBuffer, modelCmdBuffer;
+	VkDeviceMemory modelDrawMemory, modelCmdMemory;
+	vkModelDraw_t *modelDrawMapped;
+	unsigned int *modelCmdMapped;
+	int mbFrameDraws;
+	struct
+	{
+		VkPipeline pipeline;
+		float header[48];                                  // view state push constants (matrices, env flag zeroed)
+	} mbKeys[VK_MB_MAX_KEYS];
+	int mbNumKeys;
+	struct
+	{
+		int key;
+		unsigned int numIndexes, firstIndex;
+		vkModelDraw_t data;
+	} mbDraws[VK_MB_MAX_PENDING];
+	int mbNumDraws;
+	unsigned int mbSurfaceSerial;                          // batch (tess.vkSurfaceSerial) of the last draw
+	int mbMinKey;                                          // key of its last stage
+	qboolean mbFlushing;
 
 	// GPU skinning (VK_VERTS_SKIN), see VK_WriteSkinVertices/VK_AllocSkinBones
 	VkBuffer skinBuffer;
@@ -1210,6 +1265,8 @@ static void VK_FlushPendingFrees(void);
 static void VK_Flush2D(void);
 static void VK_Flush2DBatch(void);
 static void VK_FlushWorldBatch(void);
+static void VK_FlushModelBatch(void);
+static void VK_CreateModelBatchResources(void);
 
 /**
  * @brief Creates the depth buffer (image + memory + view)
@@ -2536,7 +2593,7 @@ static qboolean VK_CreateSkinResources(void)
 	}
 	vk.skinNumVertexes = 0;
 
-	if (!VK_CreateBuffer(VK_MESH_BUFFER_SIZE, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+	if (!VK_CreateBuffer(VK_MESH_BUFFER_SIZE, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 	                     &vk.meshBuffer, &vk.meshMemory) ||
 	    !VK_CheckResult(vkMapMemory(vk.device, vk.meshMemory, 0, VK_WHOLE_SIZE, 0, &vk.meshMapped), "vkMapMemory(mesh)"))
@@ -3525,6 +3582,10 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	{
 		stages[0].module = lightmapped ? vk.sceneLMStaticBLVertModule : vk.sceneStaticBLVertModule;
 	}
+	else if (vertexSource == VK_VERTS_MD3_BL)
+	{
+		stages[0].module = vk.sceneMD3BLVertModule;
+	}
 	else if (vertexSource != VK_VERTS_ARENA)
 	{
 		stages[0].module = lightmapped ? vk.sceneLMStaticVertModule : vk.sceneStaticVertModule;
@@ -3540,6 +3601,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	                   (vertexSource == VK_VERTS_TWOSTAGE) ? vk.scene2StageFragModule :
 	                   (vertexSource == VK_VERTS_STATIC_BL || vertexSource == VK_VERTS_STATIC_LIGHTMAP_BL) ?
 	                   (lightmapped ? vk.sceneLMBLFragModule : vk.sceneBLFragModule) :
+	                   (vertexSource == VK_VERTS_MD3_BL) ? vk.sceneBLFragModule :
 	                   (lightmapped ? vk.sceneLMFragModule : vk.sceneFragModule);
 	stages[1].pName = "main";
 
@@ -3548,7 +3610,13 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	vertexBindings[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 	Com_Memset(vertexAttributes, 0, sizeof(vertexAttributes));
-	if (vertexSource == VK_VERTS_MD3)
+	if (vertexSource == VK_VERTS_MD3_BL)
+	{
+		// no vertex streams: tr3d_md3_bl.vert reads the mesh buffer
+		bindingCount   = 0;
+		attributeCount = 0;
+	}
+	else if (vertexSource == VK_VERTS_MD3)
 	{
 		// binding 0: the entity's frame, 1: its oldframe (md3XyzNormal_t:
 		// short xyz[3], short latlong normal; MDC: base frames), 2: texture
@@ -3817,6 +3885,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	pipelineInfo.pColorBlendState    = &colorBlending;
 	pipelineInfo.pDynamicState       = &dynamicState;
 	pipelineInfo.layout              = (vertexSource == VK_VERTS_SKIN || vertexSource == VK_VERTS_MD3) ? vk.skinPipelineLayout :
+	                                   (vertexSource == VK_VERTS_MD3_BL) ? vk.sceneMD3BLPipelineLayout :
 	                                   (vertexSource == VK_VERTS_STATIC_DLIGHT) ? vk.staticDlightPipelineLayout :
 	                                   (vertexSource == VK_VERTS_STATIC_BL || vertexSource == VK_VERTS_STATIC_LIGHTMAP_BL) ? vk.sceneBindlessPipelineLayout :
 	                                   (lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout);
@@ -4318,8 +4387,9 @@ qboolean VK_Init(int width, int height)
 		return qfalse;
 	}
 
-	// GPU world culling pipeline (buffers come with the map)
+	// GPU world culling pipeline (buffers come with the map), merged model batches
 	VK_CreateCullPipeline();
+	VK_CreateModelBatchResources();
 
 	// Gamma/present pass
 	if (!VK_CreateGammaPipelineLayout() ||
@@ -4669,6 +4739,32 @@ void VK_Shutdown(void)
 		{
 			vkDestroyShaderModule(vk.device, vk.sceneLMBLFragModule, NULL);
 		}
+		if (vk.sceneMD3BLVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneMD3BLVertModule, NULL);
+		}
+		if (vk.sceneMD3BLPipelineLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyPipelineLayout(vk.device, vk.sceneMD3BLPipelineLayout, NULL);
+		}
+		if (vk.modelPool != VK_NULL_HANDLE)
+		{
+			vkDestroyDescriptorPool(vk.device, vk.modelPool, NULL);
+		}
+		if (vk.modelSetLayout != VK_NULL_HANDLE)
+		{
+			vkDestroyDescriptorSetLayout(vk.device, vk.modelSetLayout, NULL);
+		}
+		if (vk.modelDrawMemory != VK_NULL_HANDLE)
+		{
+			vkUnmapMemory(vk.device, vk.modelDrawMemory);
+		}
+		if (vk.modelCmdMemory != VK_NULL_HANDLE)
+		{
+			vkUnmapMemory(vk.device, vk.modelCmdMemory);
+		}
+		VK_DestroyCullBuffer(&vk.modelDrawBuffer, &vk.modelDrawMemory);
+		VK_DestroyCullBuffer(&vk.modelCmdBuffer, &vk.modelCmdMemory);
 	}
 
 	{
@@ -4982,6 +5078,9 @@ void VK_BeginFrame(void)
 	vk.wbFrameDraws    = 0;
 	vk.wbNumKeys       = 0;
 	vk.wbNumDraws      = 0;
+	vk.mbFrameDraws    = 0;
+	vk.mbNumKeys       = 0;
+	vk.mbNumDraws      = 0;
 	vk.boneArenaOffset = (VkDeviceSize)VK_SKIN_BONE_ARENA_SIZE * vk.frameIndex;
 	vk.boneArenaSize   = vk.boneArenaOffset + VK_SKIN_BONE_ARENA_SIZE;
 	VK_ResetBindCache();
@@ -5759,13 +5858,15 @@ static void VK_Flush2DBatch(void)
 }
 
 /**
- * @brief Records what is pending: the merged world batch (older, see
- * VK_BatchWorldDraw), then the 2D batch. Called before anything else is
+ * @brief Records what is pending: the merged world or model batch (only
+ * one of them is pending: each flushes the other when it starts, see
+ * VK_BatchWorldDraw/VK_BatchModelDraw), then the 2D batch (newer). Called before anything else is
  * recorded into the frame's command buffer.
  */
 static void VK_Flush2D(void)
 {
 	VK_FlushWorldBatch();
+	VK_FlushModelBatch();
 	VK_Flush2DBatch();
 }
 
@@ -5817,7 +5918,8 @@ static void VK_Draw2DBatched(shaderCommands_t *input, struct image_s *image, uns
 
 	if (!vk.batch2DOpen)
 	{
-		VK_FlushWorldBatch(); // a pending world batch goes first
+		VK_FlushWorldBatch(); // pending world and model batches go first
+		VK_FlushModelBatch();
 		vk.batch2DOpen         = qtrue;
 		vk.batch2DStateBits    = stateBits;
 		vk.batch2DFirstIndex   = (uint32_t)(vk.indexArenaOffset / sizeof(uint32_t));
@@ -6303,6 +6405,284 @@ glIndex_t *VK_AllocSceneIndexes(int count, int *firstIndex)
 }
 
 /**
+ * @brief Records the pending merged model batch: per key (pipeline + view
+ * state, in first-use order) one multi-draw indirect call; writes the
+ * draws' commands and per-draw data into this frame slot's model batch
+ * buffers (CPU-written, unlike the world batch's gathered commands).
+ */
+static void VK_FlushModelBatch(void)
+{
+	VkDescriptorSet sets[3];
+	int             k, d;
+	unsigned int    slotBase;
+
+	if (!vk.mbNumDraws || vk.mbFlushing)
+	{
+		return;
+	}
+	vk.mbFlushing = qtrue;
+
+	slotBase = (unsigned int)(vk.frameIndex * VK_MB_SLOT_DRAWS);
+	sets[0]  = vk.bindlessSet;
+	sets[1]  = vk.modelSet;
+	sets[2]  = vk.boneSet;
+
+	for (k = 0; k < vk.mbNumKeys; k++)
+	{
+		unsigned int first = slotBase + (unsigned int)vk.mbFrameDraws, count = 0;
+
+		for (d = 0; d < vk.mbNumDraws; d++)
+		{
+			if (vk.mbDraws[d].key == k)
+			{
+				unsigned int slot = slotBase + (unsigned int)vk.mbFrameDraws++;
+				unsigned int *cmd = vk.modelCmdMapped + slot * 5;
+
+				cmd[0]                   = vk.mbDraws[d].numIndexes;
+				cmd[1]                   = 1;
+				cmd[2]                   = vk.mbDraws[d].firstIndex;
+				cmd[3]                   = 0;
+				cmd[4]                   = slot;
+				vk.modelDrawMapped[slot] = vk.mbDraws[d].data;
+				count++;
+			}
+		}
+
+		VK_BindPipelineCached(vk.mbKeys[k].pipeline);
+		VK_PushConstantsCached(vk.sceneMD3BLPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+		                       vk.mbKeys[k].header, sizeof(vk.mbKeys[k].header));
+		if (k == 0)
+		{
+			// set 2 (the mesh normal tables) has a dynamic offset: bind
+			// directly, the next cached bind rebinds
+			vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.sceneMD3BLPipelineLayout, 0, 3, sets, 1,
+			                        &vk.meshTablesOffset);
+			vk.boundSetLayout = VK_NULL_HANDLE;
+			vk.boundSetCount  = 0;
+			VK_BindArenaBuffers(vk.meshBuffer, vk.meshBuffer);
+		}
+		vkCmdDrawIndexedIndirect(vk.commandBuffer, vk.modelCmdBuffer, (VkDeviceSize)first * 5 * sizeof(unsigned int), count,
+		                         5 * sizeof(unsigned int));
+	}
+
+	vk.mbNumKeys  = 0;
+	vk.mbNumDraws = 0;
+	vk.mbFlushing = qfalse;
+}
+
+/**
+ * @brief Adds a GPU-animated MD3/MDC stage draw (tess.vkMesh) to the pending
+ * merged model batch (r_vkModelBatch): what VK_Draw3DMesh() would push and
+ * bind goes into the draw's per-draw data, the vertex shader
+ * (tr3d_md3_bl.vert) reads the frames from the mesh buffer. Draws with the
+ * same pipeline and view state (push constants without the per-entity
+ * matrices, lighting and lerp) share a multi-draw indirect call. Only for
+ * shaders whose first stage is opaque and writes depth, so the order
+ * between entities doesn't matter; a batch's later stage only joins its
+ * previous stage's key or a later one.
+ * @return qfalse if the draw must be recorded on its own
+ */
+static qboolean VK_BatchModelDraw(shaderCommands_t *input, VkPipeline pipeline, const float *pushConstants, const image_t *image)
+{
+	const shaderStage_t *stage0 = input->shader ? input->shader->stages[0] : NULL;
+	vkModelDraw_t       *data;
+	float               header[48];
+	int                 k;
+
+	if (!image || !image->vkBindlessSlot || !stage0 || input->shader->sort != SS_OPAQUE ||
+	    (stage0->stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) || !(stage0->stateBits & GLS_DEPTHMASK_TRUE) ||
+	    vk.mbFrameDraws + vk.mbNumDraws >= VK_MB_SLOT_DRAWS)
+	{
+		return qfalse;
+	}
+
+	// keep pending 2D and world batches before this in the command buffer
+	VK_FlushWorldBatch();
+	VK_Flush2DBatch();
+
+	if (vk.mbNumDraws >= VK_MB_MAX_PENDING)
+	{
+		VK_FlushModelBatch();
+	}
+
+	// view state only: the matrices and the env flag are per draw
+	Com_Memcpy(header, pushConstants, sizeof(header));
+	Com_Memset(header, 0, 32 * sizeof(float));
+	header[33] = 0.0f;
+
+	if (input->vkSurfaceSerial != vk.mbSurfaceSerial || !vk.mbNumDraws)
+	{
+		vk.mbSurfaceSerial = input->vkSurfaceSerial;
+		vk.mbMinKey        = 0;
+	}
+
+	for (k = vk.mbMinKey; k < vk.mbNumKeys; k++)
+	{
+		if (vk.mbKeys[k].pipeline == pipeline && !memcmp(vk.mbKeys[k].header, header, sizeof(header)))
+		{
+			break;
+		}
+	}
+	if (k == vk.mbNumKeys)
+	{
+		if (vk.mbNumKeys == VK_MB_MAX_KEYS)
+		{
+			VK_FlushModelBatch();
+			k = 0;
+		}
+		vk.mbKeys[k].pipeline = pipeline;
+		Com_Memcpy(vk.mbKeys[k].header, header, sizeof(header));
+		vk.mbNumKeys = k + 1;
+	}
+	vk.mbMinKey = k;
+
+	vk.mbDraws[vk.mbNumDraws].key        = k;
+	vk.mbDraws[vk.mbNumDraws].numIndexes = (unsigned int)input->numIndexes;
+	vk.mbDraws[vk.mbNumDraws].firstIndex = input->vkMeshIndexOfs / sizeof(uint32_t);
+	data                                 = &vk.mbDraws[vk.mbNumDraws].data;
+	Com_Memcpy(data->mvp, pushConstants, 32 * sizeof(float));       // mvp, modelView
+	Com_Memcpy(data->alphaTest, pushConstants + 32, 4 * sizeof(float));
+	Com_Memcpy(data->lightDir, pushConstants + 48, 16 * sizeof(float)); // lightDir, ambient, directed, lerp
+	Com_Memcpy(data->env, input->vkEnvParams, sizeof(data->env));
+	data->ofs[0]  = input->vkMeshNewOfs / sizeof(uint32_t);
+	data->ofs[1]  = input->vkMeshOldOfs / sizeof(uint32_t);
+	data->ofs[2]  = input->vkMeshStOfs / sizeof(uint32_t);
+	data->ofs[3]  = input->vkMeshNewCompOfs / sizeof(uint32_t);
+	data->ofs2[0] = input->vkMeshOldCompOfs / sizeof(uint32_t);
+	data->ofs2[1] = (uint32_t)(image->vkBindlessSlot - 1);
+	data->ofs2[2] = 0;
+	data->ofs2[3] = 0;
+	vk.mbNumDraws++;
+
+	return qtrue;
+}
+
+/**
+ * @brief Merged model batches (VK_BatchModelDraw): the per-draw data set
+ * (draw data, the mesh buffer as storage), the pipeline layout and the
+ * per-frame command and data buffers. Optional (needs vk.bindless and
+ * multi-draw indirect); without it every model draw is recorded on its own.
+ */
+static void VK_CreateModelBatchResources(void)
+{
+	VkDescriptorSetLayoutBinding    bindings[2];
+	VkDescriptorSetLayoutCreateInfo setLayoutInfo;
+	VkDescriptorPoolSize            poolSize;
+	VkDescriptorPoolCreateInfo      poolInfo;
+	VkDescriptorSetAllocateInfo     allocInfo;
+	VkDescriptorSetLayout           setLayouts[3];
+	VkPushConstantRange             pushRange;
+	VkPipelineLayoutCreateInfo      layoutInfo;
+	VkDescriptorBufferInfo          infos[2];
+	VkWriteDescriptorSet            writes[2];
+	void                            *mapped;
+	int                             i;
+
+	if (!vk.bindless || !vk.multiDrawIndirect || vk.meshBuffer == VK_NULL_HANDLE || vk.sceneBLFragModule == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	Com_Memset(bindings, 0, sizeof(bindings));
+	for (i = 0; i < 2; i++)
+	{
+		bindings[i].binding         = i;
+		bindings[i].descriptorType  = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		bindings[i].descriptorCount = 1;
+		bindings[i].stageFlags      = VK_SHADER_STAGE_VERTEX_BIT;
+	}
+
+	Com_Memset(&setLayoutInfo, 0, sizeof(setLayoutInfo));
+	setLayoutInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	setLayoutInfo.bindingCount = 2;
+	setLayoutInfo.pBindings    = bindings;
+	if (!VK_CheckResult(vkCreateDescriptorSetLayout(vk.device, &setLayoutInfo, NULL, &vk.modelSetLayout), "vkCreateDescriptorSetLayout(model batches)"))
+	{
+		return;
+	}
+
+	Com_Memset(&poolSize, 0, sizeof(poolSize));
+	poolSize.type            = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	poolSize.descriptorCount = 2;
+
+	Com_Memset(&poolInfo, 0, sizeof(poolInfo));
+	poolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	poolInfo.poolSizeCount = 1;
+	poolInfo.pPoolSizes    = &poolSize;
+	poolInfo.maxSets       = 1;
+	if (!VK_CheckResult(vkCreateDescriptorPool(vk.device, &poolInfo, NULL, &vk.modelPool), "vkCreateDescriptorPool(model batches)"))
+	{
+		return;
+	}
+
+	Com_Memset(&allocInfo, 0, sizeof(allocInfo));
+	allocInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocInfo.descriptorPool     = vk.modelPool;
+	allocInfo.descriptorSetCount = 1;
+	allocInfo.pSetLayouts        = &vk.modelSetLayout;
+	if (!VK_CheckResult(vkAllocateDescriptorSets(vk.device, &allocInfo, &vk.modelSet), "vkAllocateDescriptorSets(model batches)"))
+	{
+		return;
+	}
+
+	Com_Memset(&pushRange, 0, sizeof(pushRange));
+	pushRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+	pushRange.size       = VK_SCENE_PUSH_FLOATS * sizeof(float);
+
+	setLayouts[0] = vk.bindlessSetLayout;
+	setLayouts[1] = vk.modelSetLayout;
+	setLayouts[2] = vk.boneSetLayout;
+
+	Com_Memset(&layoutInfo, 0, sizeof(layoutInfo));
+	layoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	layoutInfo.setLayoutCount         = 3;
+	layoutInfo.pSetLayouts            = setLayouts;
+	layoutInfo.pushConstantRangeCount = 1;
+	layoutInfo.pPushConstantRanges    = &pushRange;
+	if (!VK_CheckResult(vkCreatePipelineLayout(vk.device, &layoutInfo, NULL, &vk.sceneMD3BLPipelineLayout), "vkCreatePipelineLayout(model batches)"))
+	{
+		return;
+	}
+
+	if (!VK_CreateBuffer((VkDeviceSize)VK_FRAMES_IN_FLIGHT * VK_MB_SLOT_DRAWS * sizeof(vkModelDraw_t), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
+	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &vk.modelDrawBuffer, &vk.modelDrawMemory) ||
+	    !VK_CheckResult(vkMapMemory(vk.device, vk.modelDrawMemory, 0, VK_WHOLE_SIZE, 0, &mapped), "vkMapMemory(model draws)"))
+	{
+		return;
+	}
+	vk.modelDrawMapped = (vkModelDraw_t *)mapped;
+
+	if (!VK_CreateBuffer((VkDeviceSize)VK_FRAMES_IN_FLIGHT * VK_MB_SLOT_DRAWS * 5 * sizeof(unsigned int), VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT,
+	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, &vk.modelCmdBuffer, &vk.modelCmdMemory) ||
+	    !VK_CheckResult(vkMapMemory(vk.device, vk.modelCmdMemory, 0, VK_WHOLE_SIZE, 0, &mapped), "vkMapMemory(model commands)"))
+	{
+		return;
+	}
+	vk.modelCmdMapped = (unsigned int *)mapped;
+
+	Com_Memset(infos, 0, sizeof(infos));
+	infos[0].buffer = vk.modelDrawBuffer;
+	infos[0].range  = VK_WHOLE_SIZE;
+	infos[1].buffer = vk.meshBuffer;
+	infos[1].range  = VK_WHOLE_SIZE;
+
+	Com_Memset(writes, 0, sizeof(writes));
+	for (i = 0; i < 2; i++)
+	{
+		writes[i].sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		writes[i].dstSet          = vk.modelSet;
+		writes[i].dstBinding      = i;
+		writes[i].descriptorCount = 1;
+		writes[i].descriptorType  = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		writes[i].pBufferInfo     = &infos[i];
+	}
+	vkUpdateDescriptorSets(vk.device, 2, writes, 0, NULL);
+
+	vk.sceneMD3BLVertModule = VK_CreateShaderModule(tr3d_md3_bl_vert_spv, tr3d_md3_bl_vert_spv_SIZE);
+	vk.modelBatch           = (vk.sceneMD3BLVertModule != VK_NULL_HANDLE) ? qtrue : qfalse;
+}
+
+/**
  * @brief Records the pending merged world batch: per key (pipeline + view
  * state, in first-use order) one multi-draw indirect call over its draws'
  * slots; writes each slot's group command source (for the gather pass) and
@@ -6376,7 +6756,9 @@ static qboolean VK_BatchWorldDraw(shaderCommands_t *input, VkPipeline pipeline, 
 		return qfalse;
 	}
 
-	VK_Flush2DBatch(); // keep a pending 2D batch before this in the command buffer
+	// keep pending model and 2D batches before this in the command buffer
+	VK_FlushModelBatch();
+	VK_Flush2DBatch();
 
 	if (vk.wbNumDraws >= VK_WB_MAX_DRAWS)
 	{
@@ -6681,8 +7063,9 @@ static void VK_Draw3DSkinned(shaderCommands_t *input, VkDescriptorSet descriptor
  * for tr3d_md3.vert's normal decoding. Stage colors and env params as for
  * GPU skinning.
  */
-static void VK_Draw3DMesh(shaderCommands_t *input, VkDescriptorSet descriptorSet, unsigned long stateBits, int cullType)
+static void VK_Draw3DMesh(shaderCommands_t *input, const image_t *image, unsigned long stateBits, int cullType)
 {
+	VkDescriptorSet descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
 	float           pushConstants[VK_SCENE_PUSH_FLOATS];
 	VkPipeline      pipeline;
 	VkDescriptorSet sets[3];
@@ -6718,14 +7101,6 @@ static void VK_Draw3DMesh(shaderCommands_t *input, VkDescriptorSet descriptorSet
 		vk.meshTablesFrame = vk.frameCount;
 	}
 
-	pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), qfalse, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE, VK_VERTS_MD3);
-	if (pipeline == VK_NULL_HANDLE)
-	{
-		return;
-	}
-
-	VK_BindPipelineCached(pipeline);
-
 	VK_FillScenePushConstants(pushConstants, stateBits, 0.0f);
 	VK_SkinStageColor(input->vkStage, pushConstants);
 	pushConstants[55] = (float)input->vkMeshFlags;
@@ -6733,6 +7108,24 @@ static void VK_Draw3DMesh(shaderCommands_t *input, VkDescriptorSet descriptorSet
 	pushConstants[61] = input->vkMeshLerp[1];
 	pushConstants[62] = input->vkMeshLerp[2];
 	pushConstants[63] = input->vkMeshLerp[3];
+
+	// merge into a multi-draw (bindless textures, frames read in the shader)
+	if (vk.modelBatch && r_vkModelBatch->integer)
+	{
+		pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), qfalse, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE, VK_VERTS_MD3_BL);
+		if (pipeline != VK_NULL_HANDLE && VK_BatchModelDraw(input, pipeline, pushConstants, image))
+		{
+			return;
+		}
+	}
+
+	pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), qfalse, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE, VK_VERTS_MD3);
+	if (pipeline == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	VK_BindPipelineCached(pipeline);
 	VK_PushConstantsCached(vk.skinPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
 
 	// sets 1 and 2 have dynamic offsets: bind directly, the next cached
@@ -6891,7 +7284,7 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 
 	if (input->vkMesh)
 	{
-		VK_Draw3DMesh(input, (VkDescriptorSet)image->vkDescriptorSet, stateBits, cullType);
+		VK_Draw3DMesh(input, image, stateBits, cullType);
 		return;
 	}
 

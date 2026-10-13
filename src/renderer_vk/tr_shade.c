@@ -58,17 +58,18 @@ void RB_BeginSurface(shader_t *shader, int fogNum)
 {
 	shader_t *state = (shader->remappedShader) ? shader->remappedShader : shader;
 
-	tess.numIndexes               = 0;
-	tess.numVertexes              = 0;
-	tess.shader                   = state;
-	tess.fogNum                   = fogNum;
-	tess.dlightBits               = 0; // will be OR'd in by surface functions
-	tess.vkStatic                 = qfalse; // decided by the first surface (RB_SurfaceTriangles)
-	tess.vkDiffuse                = qfalse;
-	tess.vkSkin                   = qfalse;
-	tess.vkMesh                   = qfalse;
-	tess.vkIndirect               = qfalse;
-	tess.vkEnvOffset              = 0;
+	tess.numIndexes  = 0;
+	tess.numVertexes = 0;
+	tess.shader      = state;
+	tess.fogNum      = fogNum;
+	tess.dlightBits  = 0;              // will be OR'd in by surface functions
+	tess.vkStatic    = qfalse;              // decided by the first surface (RB_SurfaceTriangles)
+	tess.vkDiffuse   = qfalse;
+	tess.vkSkin      = qfalse;
+	tess.vkMesh      = qfalse;
+	tess.vkIndirect  = qfalse;
+	tess.vkEnvOffset = 0;
+	tess.vkSurfaceSerial++;
 	tess.vkStage                  = NULL;
 	tess.xstages                  = state->stages;
 	tess.numPasses                = state->numUnfoggedPasses;

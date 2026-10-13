@@ -1372,7 +1372,7 @@ static const vkMeshEntry_t *R_VkMeshFind(const void *surf)
  */
 void RB_VkSetupEnvParams(void)
 {
-	float *dst;
+	float *dst, *p = tess.vkEnvParams;
 	float sAdjust, tAdjust;
 	int   i;
 
@@ -1402,18 +1402,22 @@ void RB_VkSetupEnvParams(void)
 	tAdjust = backEnd.orientation.origin[2] * 0.00390625;
 	tAdjust = 0.5 - (tAdjust - floor(tAdjust));
 
-	dst[0]  = backEnd.orientation.viewOrigin[0];
-	dst[1]  = backEnd.orientation.viewOrigin[1];
-	dst[2]  = backEnd.orientation.viewOrigin[2];
-	dst[3]  = sAdjust;
-	dst[4]  = backEnd.orientation.axis[0][1] * 0.5f;
-	dst[5]  = backEnd.orientation.axis[1][1] * 0.5f;
-	dst[6]  = backEnd.orientation.axis[2][1] * 0.5f;
-	dst[7]  = tAdjust;
-	dst[8]  = backEnd.orientation.axis[0][2] * 0.5f;
-	dst[9]  = backEnd.orientation.axis[1][2] * 0.5f;
-	dst[10] = backEnd.orientation.axis[2][2] * 0.5f;
-	dst[11] = 0.0f;
+	// built in CPU memory (merged model batches copy it) and copied to the
+	// uniform arena
+	p[0]  = backEnd.orientation.viewOrigin[0];
+	p[1]  = backEnd.orientation.viewOrigin[1];
+	p[2]  = backEnd.orientation.viewOrigin[2];
+	p[3]  = sAdjust;
+	p[4]  = backEnd.orientation.axis[0][1] * 0.5f;
+	p[5]  = backEnd.orientation.axis[1][1] * 0.5f;
+	p[6]  = backEnd.orientation.axis[2][1] * 0.5f;
+	p[7]  = tAdjust;
+	p[8]  = backEnd.orientation.axis[0][2] * 0.5f;
+	p[9]  = backEnd.orientation.axis[1][2] * 0.5f;
+	p[10] = backEnd.orientation.axis[2][2] * 0.5f;
+	p[11] = 0.0f;
+
+	Com_Memcpy(dst, p, sizeof(tess.vkEnvParams));
 }
 
 /**
