@@ -48,7 +48,7 @@ menuDef {
 	BUTTONEXT( 6, 56, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_REFEREE"), .3, 14, close MENU_NAME ; open ingame_vote, cvarTest "authLevel" showCVar { RL_REFEREE } )
 	BUTTONEXT( 6, 56, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_RCON"), .3, 14, close MENU_NAME ; open ingame_vote, cvarTest "authLevel" showCVar { RL_RCON } )
 	BUTTONEXT( 6, 80, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_SERVER_INFO"), .3, 14, clearFocus ; open ingame_serverinfo, tooltip _("Print all server info") )
-	BUTTONEXT( 6, 104, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_OPTIONS"), .3, 14, close MENU_NAME ; open options, tooltip _("Set available game options") )
+	BUTTONEXT( 6, 104, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_OPTIONS"), .3, 14, close MENU_NAME ; open options_customise_game_player, tooltip _("Set available game options") )
 	BUTTONEXT( 6, 128, CUSTOM_WINDOW_WIDTH-12, 18, _("MSGID_MENU_INGAME_FAVORITE"), .3, 14, uiScript clientCheckFavorite ;
 		conditionalScript cg_ui_favorite 0
 		( "open popupRemoveFavorite" )
