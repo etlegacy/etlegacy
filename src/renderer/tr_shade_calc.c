@@ -1145,13 +1145,12 @@ void RB_CalcFireRiseEnvTexCoords(float *st)
 {
 	vec3_t viewer, reflected;
 	int    i;
-	float  *v      = tess.xyz[0];
 	float  *normal = tess.normal[0];
 	float  d;
 
 	VectorNegate(backEnd.currentEntity->e.fireRiseDir, viewer);
 
-	for (i = 0 ; i < tess.numVertexes ; i++, v += 4, normal += 4, st += 2)
+	for (i = 0 ; i < tess.numVertexes ; i++, normal += 4, st += 2)
 	{
 		VectorNormalizeFast(viewer);
 
