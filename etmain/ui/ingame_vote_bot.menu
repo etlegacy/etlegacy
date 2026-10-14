@@ -19,7 +19,7 @@ menuDef {
 
 	onEsc {
 		close ingame_vote_bot;
-		open MENU_NAME
+		open ingame_vote
 	}
 
 // Window //

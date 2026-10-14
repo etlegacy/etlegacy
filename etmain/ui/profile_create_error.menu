@@ -25,7 +25,7 @@ menuDef {
 
 	onESC {
 		close profile_create_error ;
-		open MENU_NAME
+		open profile_create
 	}
 
 // Background //
