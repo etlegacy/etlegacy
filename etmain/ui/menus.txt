@@ -30,14 +30,12 @@
 	loadMenu { "ui/viewreplay.menu" }
 	loadMenu { "ui/viewreplay_delete.menu" }
 	loadMenu { "ui/options.menu" }
-	loadMenu { "ui/options_customise_game.menu" }
 	loadMenu { "ui/options_customise_game_player.menu" }
 	loadMenu { "ui/options_customise_game_chat.menu" }
 	loadMenu { "ui/options_customise_game_miscellaneous.menu" }
 	loadMenu { "ui/options_customise_game_scope.menu" }
 	loadMenu { "ui/options_customise_game_sounds.menu" }
 	loadMenu { "ui/options_customise_game_weapons.menu" }
-	loadMenu { "ui/options_customise_hud.menu" }
 	loadMenu { "ui/options_customise_hud_blood.menu" }
 	loadMenu { "ui/options_customise_hud_compass.menu" }
 	loadMenu { "ui/options_customise_hud_crosshair.menu" }
@@ -52,7 +50,6 @@
 	loadMenu { "ui/options_customise_hud_shoutcast.menu" }
 	loadMenu { "ui/options_customise_hud_weapons.menu" }
 	loadMenu { "ui/options_customise_hudeditor_fui.menu" }
-	loadMenu { "ui/options_controls.menu" }
 	loadMenu { "ui/options_controls_selection_menus.menu" }
 	loadMenu { "ui/options_controls_shoutcaster.menu" }
 	loadMenu { "ui/options_controls_weapons.menu" }
@@ -65,7 +62,6 @@
 	loadMenu { "ui/options_controls_popups.menu" }
 	loadMenu { "ui/options_controls_default.menu" }
 	loadMenu { "ui/options_homepath.menu" }
-	loadMenu { "ui/options_system.menu" }
 	loadMenu { "ui/options_system_irc_client.menu" }
 	loadMenu { "ui/options_system_language.menu" }
 	loadMenu { "ui/options_system_multiview.menu" }

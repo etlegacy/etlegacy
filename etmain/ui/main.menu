@@ -152,7 +152,7 @@ menuDef {
 #endif
 	BUTTON( 6, 80, MENU_WIDTH-12, 18, _("MSGID_MENU_MAIN_REPLAYS"), .3, 14, close main ; open viewreplay )
 	// LINE(1, 100.5, MENU_WIDTH - 2, 1, .5 .5 .5 .4)
-	BUTTON( 6, 104, MENU_WIDTH-12, 18, _("MSGID_MENU_MAIN_OPTIONS"), .3, 14, close main ; open options )
+	BUTTON( 6, 104, MENU_WIDTH-12, 18, _("MSGID_MENU_MAIN_OPTIONS"), .3, 14, close main ; open options_customise_game_player )
 	LINE(1, 128, MENU_WIDTH - 2, 1, .5 .5 .5 .4)
 	BUTTON( 6, 135, MENU_WIDTH-12, 18, _("MSGID_MENU_MAIN_PROFILE"), .3, 14, close main ; open profile )
 	// LINE(1, 148.5, MENU_WIDTH - 2, 1, .5 .5 .5 .4)

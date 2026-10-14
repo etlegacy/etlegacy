@@ -24,10 +24,10 @@ menuDef {
 
 	WINDOW(_("OPTIONS"), 122)
 
-	MAINBUTTON_ACTIVE(1, _("MSGID_MENU_OPTION_GAME"), close MENU_NAME; open options_customise_game)
-	MAINBUTTON(2, _("MSGID_MENU_OPTION_VIEW"), close MENU_NAME; open options_customise_hud)
-	MAINBUTTON(3, _("MSGID_MENU_OPTION_CONTROLS"), close MENU_NAME; open options_controls)
-	MAINBUTTON(4, _("MSGID_MENU_OPTION_SYSTEM"), close MENU_NAME; open options_system)
+	MAINBUTTON_ACTIVE(1, _("MSGID_MENU_OPTION_GAME"), close MENU_NAME; open options_customise_game_player)
+	MAINBUTTON(2, _("MSGID_MENU_OPTION_VIEW"), close MENU_NAME; open options_customise_hud_blood)
+	MAINBUTTON(3, _("MSGID_MENU_OPTION_CONTROLS"), close MENU_NAME; open options_controls_move)
+	MAINBUTTON(4, _("MSGID_MENU_OPTION_SYSTEM"), close MENU_NAME; open options_system_graphics)
 
 	WINDOW_BLANK(SIDEBAR_X, SIDEBAR_Y, SIDEBAR_W, SIDEBAR_H)
 
