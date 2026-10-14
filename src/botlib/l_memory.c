@@ -294,15 +294,17 @@ void PrintUsedMemorySize(void)
  */
 void PrintMemoryLabels(void)
 {
+#ifdef MEMDEBUG
+	// Block labels and their indices are available only with memory debugging.
 	memoryblock_t *block;
-	int           i;
+	int           i = 0;
+#endif // MEMDEBUG
 
 	PrintUsedMemorySize();
-	i = 0;
 	Com_Printf("\r\n");
+#ifdef MEMDEBUG
 	for (block = memory; block; block = block->next)
 	{
-#ifdef MEMDEBUG
 		if (block->id == HUNK_ID)
 		{
 			Com_Printf("%6d, hunk %p, %8d: %24s line %6d: %s\r\n", i, block->ptr, block->size, block->file, block->line, block->label);
@@ -311,9 +313,9 @@ void PrintMemoryLabels(void)
 		{
 			Com_Printf("%6d,      %p, %8d: %24s line %6d: %s\r\n", i, block->ptr, block->size, block->file, block->line, block->label);
 		}
-#endif //MEMDEBUG
 		i++;
 	}
+#endif // MEMDEBUG
 }
 
 /**
