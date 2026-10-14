@@ -833,11 +833,10 @@ void S_Base_ClearSounds(qboolean clearStreaming, qboolean clearMusic)
 	// and leave us with a snippet off streaming sounds after we reload
 	if (clearStreaming)
 	{
-		int              i;
-		streamingSound_t *ss;
-		channel_t        *ch;
+		int       i;
+		channel_t *ch;
 
-		for (i = 0, ss = streamingSounds; i < MAX_STREAMING_SOUNDS; i++, ss++)
+		for (i = 0; i < MAX_STREAMING_SOUNDS; i++)
 		{
 			if (i > 0 || clearMusic)
 			{
