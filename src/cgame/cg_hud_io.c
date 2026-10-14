@@ -401,45 +401,6 @@ static qboolean CG_MoveHudFile(const char *source, const char *target, int expec
 }
 
 /**
- * @brief Accepts only canonical hud_v<version>.dat files
- * @param[in] filename
- * @param[out] version
- * @return
- */
-static qboolean CG_ParseHudVersionFilename(const char *filename, int *version)
-{
-	const char *scan;
-	int        parsedVersion;
-
-	*version = 0;
-	if (Q_strncmp(filename, "hud_v", 5))
-	{
-		return qfalse;
-	}
-
-	scan = filename + 5;
-	if (!Q_isnumeric(*scan))
-	{
-		return qfalse;
-	}
-
-	parsedVersion = 0;
-	while (Q_isnumeric(*scan))
-	{
-		parsedVersion = parsedVersion * 10 + (*scan - '0');
-		scan++;
-	}
-
-	if (Q_stricmp(scan, ".dat"))
-	{
-		return qfalse;
-	}
-
-	*version = parsedVersion;
-	return qtrue;
-}
-
-/**
  * @brief CG_HudListSort
  * @param[in] a
  * @param[in] b
@@ -2416,15 +2377,8 @@ void CG_ReadHudsFromFile(void)
 	// `hud_v7.dat`
 	{
 		CG_HudVersionedDirPath(hudDir, sizeof(hudDir));
-		//fileCount = trap_FS_GetFileList(hudDir, ".dat", fileList, sizeof(fileList));
-		//fileName  = fileList;
-		//for (fileIndex = 0; fileIndex < fileCount; fileIndex++)
 		for (filenameVersion = CURRENT_HUD_JSON_VERSION; 0 < filenameVersion; --filenameVersion)
 		{
-			//if (CG_ParseHudVersionFilename(fileName, &filenameVersion) && filenameVersion <= CURRENT_HUD_JSON_VERSION)
-			//{
-			//Com_sprintf(sourcePath, sizeof(sourcePath), "%s/%s", hudDir, fileName);
-
 			Com_sprintf(sourcePath, sizeof(sourcePath), "%s/hud_v%i.dat", hudDir, filenameVersion);
 
 			if (CG_HudFileExists(sourcePath))
@@ -2466,7 +2420,6 @@ void CG_ReadHudsFromFile(void)
 					}
 				}
 			}
-			//fileName += strlen(fileName) + 1;
 		}
 	}
 
@@ -2498,15 +2451,8 @@ void CG_ReadHudsFromFile(void)
 	if (!currentHudUsable)
 	{
 		latestCompatibleHudVersion = 0;
-		//fileCount                  = trap_FS_GetFileList(hudDir, ".dat", fileList, sizeof(fileList));
-		//fileName                   = fileList;
-		//for (fileIndex = 0; fileIndex < fileCount; fileIndex++)
 		for (filenameVersion = CURRENT_HUD_JSON_VERSION; 0 < filenameVersion; --filenameVersion)
 		{
-			//if (CG_ParseHudVersionFilename(fileName, &filenameVersion) && filenameVersion <= CURRENT_HUD_JSON_VERSION)
-			//{
-			//Com_sprintf(sourcePath, sizeof(sourcePath), "%s/%s", hudDir, fileName);
-
 			Com_sprintf(sourcePath, sizeof(sourcePath), "%s/hud_v%i.dat", hudDir, filenameVersion);
 
 			if (CG_HudFileExists(sourcePath))
@@ -2532,7 +2478,6 @@ void CG_ReadHudsFromFile(void)
 					}
 				}
 			}
-			//fileName += strlen(fileName) + 1;
 		}
 
 		if (latestCompatibleHudPath[0] && CG_ReadHudJsonFile(latestCompatibleHudPath, qtrue))
