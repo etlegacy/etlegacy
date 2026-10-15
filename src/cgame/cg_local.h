@@ -4455,6 +4455,7 @@ void CG_DrawHudEditor(void);
 void CG_HudEditor_KeyHandling(int key, qboolean down);
 void CG_HudEditorReset();
 void CG_HudEditorMouseMove_Handling(int x, int y);
+qboolean CG_HudEditor_TryExit(void);
 
 typedef struct
 {
