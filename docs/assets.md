@@ -43,3 +43,24 @@ Recommended for music/streaming tracks:
 Notes:
 
 - Avoid ADPCM/float/compressed WAV variants if you need strict 2.60b compatibility.
+
+### `.pk3` Archives
+
+Standard ZIP archives with the following constraints:
+
+- **Compression**
+  - Stored (ZIP method 0): No compression
+  - Deflate (ZIP method 8): Standard DEFLATE, compression levels 1–9
+
+- **ZIP64:** Unsupported, ZIP 32-bit only, which means:
+  - Maximum archive/member size: engine support up to 2 GiB
+  - Maximum entries: 65,535
+
+- **Encryption:** Unsupported.
+
+- **Paths and Filenames**
+  - Keep the full path (including directories and filename) below 64 bytes for
+    maximum compatibility
+  - Case-insensitive filesystem lookups (files are lowercased, duplicate names
+    within a PK3 resolve to the last entry in ZIP central-directory order, last
+    one wins)
