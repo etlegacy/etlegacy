@@ -1209,7 +1209,8 @@ qboolean infront(gentity_t *self, gentity_t *other)
 	float  dot;
 	vec3_t forward;
 
-	AngleVectors(self->s.angles, forward, NULL, NULL);
+	AngleVectors(self->client ? self->client->ps.viewangles : self->s.angles,
+		forward, NULL, NULL);
 	VectorSubtract(other->r.currentOrigin, self->r.currentOrigin, vec);
 	VectorNormalize(vec);
 	dot = DotProduct(vec, forward);
