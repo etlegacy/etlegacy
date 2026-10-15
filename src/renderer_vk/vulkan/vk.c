@@ -73,6 +73,7 @@
 #include "tr3d_lm_bl.frag.glsl.h"
 #include "tr3d_md3_bl.vert.glsl.h"
 #include "tr3d_skin_bl.vert.glsl.h"
+#include "tr3d_static_fog_bl.vert.glsl.h"
 
 #define VK_MAX_SWAPCHAIN_IMAGES 8
 
@@ -119,6 +120,9 @@ typedef struct
 	uint32_t textures[4];      // base, lightmap bindless slots
 	float colorMul[4];
 	float colorAdd[4];
+	float fogS[4];             // fog pass (VK_Draw3DStaticFog): RB_CalcFogTexCoordParams
+	float fogT[4];
+	float fogEye[4];
 } vkWorldDraw_t;
 
 // world_cull.comp push constants (128 bytes)
@@ -162,6 +166,7 @@ typedef struct
 #define VK_VERTS_TWOSTAGE         6 // arena, vk3DVertex2_t: two stages in one draw (tr3d_2stage.*), 2 texture sets
 #define VK_VERTS_STATIC_BL        8 // as VK_VERTS_STATIC, merged world batch: bindless textures, per-draw data (tr3d_*static_bl.vert)
 #define VK_VERTS_STATIC_LIGHTMAP_BL 9 // as VK_VERTS_STATIC_LIGHTMAP, merged world batch
+#define VK_VERTS_STATIC_FOG_BL    12 // merged world batch, fog pass of a group: fog texcoords from per-draw parameters (tr3d_static_fog_bl.vert)
 #define VK_VERTS_SKIN_BL          11 // as VK_VERTS_SKIN, merged model batch: bones from the bone arena as storage (tr3d_skin_bl.vert)
 #define VK_VERTS_MD3_BL           10 // as VK_VERTS_MD3, merged model batch: no vertex streams (tr3d_md3_bl.vert reads the mesh buffer)
 #define VK_VERTS_MD3              7 // mesh buffer: frame, oldframe (md3XyzNormal_t), texcoords, MDC compressed frame, oldframe; tr3d_md3.vert, normal tables in set 1
@@ -498,7 +503,7 @@ typedef struct
 	VkDescriptorPool worldDrawPool;
 	VkDescriptorSet worldDrawSet;
 	VkPipelineLayout sceneBindlessPipelineLayout;          // set 0 bindless textures, set 1 per-draw data
-	VkShaderModule sceneStaticBLVertModule, sceneLMStaticBLVertModule, sceneBLFragModule, sceneLMBLFragModule;
+	VkShaderModule sceneStaticBLVertModule, sceneLMStaticBLVertModule, sceneBLFragModule, sceneLMBLFragModule, sceneStaticFogBLVertModule;
 	int wbFrameDraws;                                      // slots used this frame
 	struct
 	{
@@ -3071,10 +3076,11 @@ static void VK_CreateCullPipeline(void)
 		}
 	}
 
-	vk.sceneStaticBLVertModule   = VK_CreateShaderModule(tr3d_static_bl_vert_spv, tr3d_static_bl_vert_spv_SIZE);
-	vk.sceneLMStaticBLVertModule = VK_CreateShaderModule(tr3d_lm_static_bl_vert_spv, tr3d_lm_static_bl_vert_spv_SIZE);
-	vk.sceneBLFragModule         = VK_CreateShaderModule(tr3d_bl_frag_spv, tr3d_bl_frag_spv_SIZE);
-	vk.sceneLMBLFragModule       = VK_CreateShaderModule(tr3d_lm_bl_frag_spv, tr3d_lm_bl_frag_spv_SIZE);
+	vk.sceneStaticBLVertModule    = VK_CreateShaderModule(tr3d_static_bl_vert_spv, tr3d_static_bl_vert_spv_SIZE);
+	vk.sceneLMStaticBLVertModule  = VK_CreateShaderModule(tr3d_lm_static_bl_vert_spv, tr3d_lm_static_bl_vert_spv_SIZE);
+	vk.sceneBLFragModule          = VK_CreateShaderModule(tr3d_bl_frag_spv, tr3d_bl_frag_spv_SIZE);
+	vk.sceneLMBLFragModule        = VK_CreateShaderModule(tr3d_lm_bl_frag_spv, tr3d_lm_bl_frag_spv_SIZE);
+	vk.sceneStaticFogBLVertModule = VK_CreateShaderModule(tr3d_static_fog_bl_vert_spv, tr3d_static_fog_bl_vert_spv_SIZE);
 }
 
 static void VK_DestroyCullBuffer(VkBuffer *buffer, VkDeviceMemory *memory)
@@ -3594,6 +3600,10 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	{
 		stages[0].module = vk.sceneMD3BLVertModule;
 	}
+	else if (vertexSource == VK_VERTS_STATIC_FOG_BL)
+	{
+		stages[0].module = vk.sceneStaticFogBLVertModule;
+	}
 	else if (vertexSource != VK_VERTS_ARENA)
 	{
 		stages[0].module = lightmapped ? vk.sceneLMStaticVertModule : vk.sceneStaticVertModule;
@@ -3609,7 +3619,8 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	                   (vertexSource == VK_VERTS_TWOSTAGE) ? vk.scene2StageFragModule :
 	                   (vertexSource == VK_VERTS_STATIC_BL || vertexSource == VK_VERTS_STATIC_LIGHTMAP_BL) ?
 	                   (lightmapped ? vk.sceneLMBLFragModule : vk.sceneBLFragModule) :
-	                   (vertexSource == VK_VERTS_MD3_BL || vertexSource == VK_VERTS_SKIN_BL) ? vk.sceneBLFragModule :
+	                   (vertexSource == VK_VERTS_MD3_BL || vertexSource == VK_VERTS_SKIN_BL || vertexSource == VK_VERTS_STATIC_FOG_BL) ?
+	                   vk.sceneBLFragModule :
 	                   (lightmapped ? vk.sceneLMFragModule : vk.sceneFragModule);
 	stages[1].pName = "main";
 
@@ -3895,7 +3906,8 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	pipelineInfo.layout              = (vertexSource == VK_VERTS_SKIN || vertexSource == VK_VERTS_MD3) ? vk.skinPipelineLayout :
 	                                   (vertexSource == VK_VERTS_MD3_BL || vertexSource == VK_VERTS_SKIN_BL) ? vk.sceneMD3BLPipelineLayout :
 	                                   (vertexSource == VK_VERTS_STATIC_DLIGHT) ? vk.staticDlightPipelineLayout :
-	                                   (vertexSource == VK_VERTS_STATIC_BL || vertexSource == VK_VERTS_STATIC_LIGHTMAP_BL) ? vk.sceneBindlessPipelineLayout :
+	                                   (vertexSource == VK_VERTS_STATIC_BL || vertexSource == VK_VERTS_STATIC_LIGHTMAP_BL ||
+	                                    vertexSource == VK_VERTS_STATIC_FOG_BL) ? vk.sceneBindlessPipelineLayout :
 	                                   (lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout);
 	pipelineInfo.renderPass = vk.renderPass;
 	pipelineInfo.subpass    = 0;
@@ -4746,6 +4758,10 @@ void VK_Shutdown(void)
 		if (vk.sceneLMBLFragModule != VK_NULL_HANDLE)
 		{
 			vkDestroyShaderModule(vk.device, vk.sceneLMBLFragModule, NULL);
+		}
+		if (vk.sceneStaticFogBLVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneStaticFogBLVertModule, NULL);
 		}
 		if (vk.sceneMD3BLVertModule != VK_NULL_HANDLE)
 		{
@@ -6765,7 +6781,7 @@ static void VK_FlushWorldBatch(void)
  * @return qfalse if the draw must be recorded on its own
  */
 static qboolean VK_BatchWorldDraw(shaderCommands_t *input, VkPipeline pipeline, const float *pushConstants,
-                                  const image_t *image0, const image_t *image1)
+                                  const image_t *image0, const image_t *image1, const float *fog)
 {
 	vkWorldDraw_t *data;
 	int           k;
@@ -6820,9 +6836,68 @@ static qboolean VK_BatchWorldDraw(shaderCommands_t *input, VkPipeline pipeline, 
 	data->textures[3]                 = 0;
 	Com_Memcpy(data->colorMul, pushConstants + 48, 4 * sizeof(float));
 	Com_Memcpy(data->colorAdd, pushConstants + 52, 4 * sizeof(float));
+	if (fog)
+	{
+		Com_Memcpy(data->fogS, fog, 12 * sizeof(float)); // fogS, fogT, fogEye
+	}
 	vk.wbNumDraws++;
 
 	return qtrue;
+}
+
+/**
+ * @brief True if GPU-culled groups can be drawn as merged world batches -
+ * needed for fogged groups, whose fog pass only exists there
+ * (VK_Draw3DStaticFog)
+ */
+qboolean VK_WorldBatchOn(void)
+{
+	return (vk.cullMaxBatchDraws && r_vkWorldBatch->integer) ? qtrue : qfalse;
+}
+
+/**
+ * @brief RB_FogPass() for a GPU-culled world group (tess.vkIndirect): one
+ * more merged world batch draw with the fog image, the fog color (stage
+ * color: mul 0, add color) and the texcoord parameters (sVec, tVec, eyeT,
+ * RB_CalcFogTexCoordParams) that tr3d_static_fog_bl.vert evaluates per
+ * vertex.
+ */
+void VK_Draw3DStaticFog(shaderCommands_t *input, const image_t *fogImage, unsigned long stateBits, int cullType,
+                        const vec4_t sVec, const vec4_t tVec, float eyeT, const byte *color)
+{
+	float      pushConstants[56];
+	float      fog[12];
+	VkPipeline pipeline;
+	int        i;
+
+	if (!vk.initialized || !input->vkIndirect || !VK_WorldBatchOn())
+	{
+		return;
+	}
+
+	VK_FillScenePushConstants(pushConstants, stateBits, 0.0f);
+	for (i = 0; i < 4; i++)
+	{
+		pushConstants[48 + i] = 0.0f;
+		pushConstants[52 + i] = color[i] / 255.0f;
+		fog[i]                = sVec[i];
+		fog[4 + i]            = tVec[i];
+		fog[8 + i]            = 0.0f;
+	}
+	fog[8] = eyeT;
+
+	pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), qfalse, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE,
+	                                 VK_VERTS_STATIC_FOG_BL);
+	if (pipeline == VK_NULL_HANDLE || !VK_BatchWorldDraw(input, pipeline, pushConstants, fogImage, NULL, fog))
+	{
+		static int lastWarnFrame = -1;
+
+		if (backEnd.refdef.time != lastWarnFrame)
+		{
+			Ren_Print("Vulkan: VK_Draw3DStaticFog - no room in the world batch, dropping fog passes\n");
+			lastWarnFrame = backEnd.refdef.time;
+		}
+	}
 }
 
 /**
@@ -6917,7 +6992,7 @@ static void VK_Draw3DStatic(shaderCommands_t *input, int numIndexes, VkDescripto
 	{
 		pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), lightmapped, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE,
 		                                 (vertexSource == VK_VERTS_STATIC_LIGHTMAP) ? VK_VERTS_STATIC_LIGHTMAP_BL : VK_VERTS_STATIC_BL);
-		if (pipeline != VK_NULL_HANDLE && VK_BatchWorldDraw(input, pipeline, pushConstants, image0, lightmapped ? image1 : NULL))
+		if (pipeline != VK_NULL_HANDLE && VK_BatchWorldDraw(input, pipeline, pushConstants, image0, lightmapped ? image1 : NULL, NULL))
 		{
 			return;
 		}

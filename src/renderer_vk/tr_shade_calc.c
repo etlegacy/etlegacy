@@ -989,8 +989,58 @@ TEX COORDS
  */
 void RB_CalcFogTexCoords(float *texCoords)
 {
-	int      i;
-	float    *v;
+	int    i;
+	float  *v, eyeT;
+	vec4_t fogDistanceVector, fogDepthVector;
+
+	// general fog case
+	if (RB_CalcFogTexCoordParams(fogDistanceVector, fogDepthVector, &eyeT))
+	{
+		float s, t;
+
+		// calculate density for each point
+		for (i = 0, v = tess.xyz[0] ; i < tess.numVertexes; i++, v += 4)
+		{
+			// calculate the length in fog
+			s = DotProduct(v, fogDistanceVector) + fogDistanceVector[3];
+			t = DotProduct(v, fogDepthVector) + fogDepthVector[3];
+
+			if (eyeT != 0.f)
+			{
+				t += eyeT;
+			}
+
+			//t *= fog->shader->fogParms.tcScale;
+
+			texCoords[0] = s;
+			texCoords[1] = t;
+			texCoords   += 2;
+		}
+	}
+	// optimized for level-wide fogging
+	else
+	{
+		// calculate density for each point
+		for (i = 0, v = tess.xyz[0]; i < tess.numVertexes; i++, v += 4)
+		{
+			// calculate the length in fog (t is always 0 if eye is in fog)
+			texCoords[0] = DotProduct(v, fogDistanceVector) + fogDistanceVector[3];
+			texCoords[1] = 1.0;
+			texCoords   += 2;
+		}
+	}
+}
+
+/**
+ * @brief The fog pass texcoords' parameters for the current entity and fog
+ * (tess.fogNum), shared by RB_CalcFogTexCoords() and the Vulkan GPU path
+ * (a GPU-culled group's fog pass, tr3d_static_fog_bl.vert): per vertex v,
+ * s = DotProduct(v, sVec) + sVec[3], t = DotProduct(v, tVec) + tVec[3],
+ * plus *eyeT (0 unless the eye is inside the fog).
+ * @return qfalse for level-wide fog: t is 1 (tVec = 0, 0, 0, 1, eyeT 0)
+ */
+qboolean RB_CalcFogTexCoordParams(vec4_t sVec, vec4_t tVec, float *eyeT)
+{
 	fog_t    *fog = tr.world->fogs + tess.fogNum;    // get fog stuff
 	vec3_t   local, viewOrigin;
 	vec4_t   fogSurface, fogDistanceVector, fogDepthVector = { 0, 0, 0, 0 };
@@ -1018,11 +1068,11 @@ void RB_CalcFogTexCoords(float *texCoords)
 	VectorCopy(fog->surface, fogSurface);
 	fogSurface[3] = fog->surface[3] + DotProduct(fogSurface, bmodel->orientation.origin);
 
+	Vector4Copy(fogDistanceVector, sVec);
+
 	// general fog case
 	if (fog->originalBrushNumber >= 0)
 	{
-		float    s, t;
-		float    eyeT;
 		qboolean eyeInside;
 
 		// rotate the gradient vector for this orientation
@@ -1042,46 +1092,27 @@ void RB_CalcFogTexCoords(float *texCoords)
 			fogDepthVector[2] *= fog->shader->fogParms.tcScale * 1.0f;
 			fogDepthVector[3] *= fog->shader->fogParms.tcScale * 1.0f;
 
-			eyeT = DotProduct(viewOrigin, fogDepthVector) + fogDepthVector[3];
+			*eyeT = DotProduct(viewOrigin, fogDepthVector) + fogDepthVector[3];
 		}
 		else
 		{
-			eyeT = 1;   // non-surface fog always has eye inside
+			*eyeT = 1;   // non-surface fog always has eye inside
 		}
 		// see if the viewpoint is outside
-		eyeInside = eyeT < 0 ? qfalse : qtrue;
-
-		// calculate density for each point
-		for (i = 0, v = tess.xyz[0] ; i < tess.numVertexes; i++, v += 4)
+		eyeInside = *eyeT < 0 ? qfalse : qtrue;
+		if (!eyeInside)
 		{
-			// calculate the length in fog
-			s = DotProduct(v, fogDistanceVector) + fogDistanceVector[3];
-			t = DotProduct(v, fogDepthVector) + fogDepthVector[3];
-
-			if (eyeInside)
-			{
-				t += eyeT;
-			}
-
-			//t *= fog->shader->fogParms.tcScale;
-
-			texCoords[0] = s;
-			texCoords[1] = t;
-			texCoords   += 2;
+			*eyeT = 0;
 		}
+
+		Vector4Copy(fogDepthVector, tVec);
+		return qtrue;
 	}
+
 	// optimized for level-wide fogging
-	else
-	{
-		// calculate density for each point
-		for (i = 0, v = tess.xyz[0]; i < tess.numVertexes; i++, v += 4)
-		{
-			// calculate the length in fog (t is always 0 if eye is in fog)
-			texCoords[0] = DotProduct(v, fogDistanceVector) + fogDistanceVector[3];
-			texCoords[1] = 1.0;
-			texCoords   += 2;
-		}
-	}
+	Vector4Set(tVec, 0.0f, 0.0f, 0.0f, 1.0f);
+	*eyeT = 0;
+	return qfalse;
 }
 
 /**

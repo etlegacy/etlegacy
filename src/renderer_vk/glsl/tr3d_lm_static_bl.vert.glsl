@@ -22,6 +22,9 @@ struct WorldDraw
 	uvec4 textures; // x: base, y: lightmap
 	vec4  colorMul;
 	vec4  colorAdd;
+	vec4  fogS;     // fog pass texcoords (RB_CalcFogTexCoordParams):
+	vec4  fogT;     // s = dot(pos, fogS) + fogS.w, t = dot(pos, fogT) + fogT.w + fogEye.x
+	vec4  fogEye;
 };
 
 layout(std430, set = 1, binding = 0) readonly buffer WorldDraws
