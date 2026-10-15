@@ -1,52 +1,63 @@
-FROM centos:7
-LABEL version="1.5"
+# ET: Legacy build environment: AlmaLinux 8, GCC Toolset 15, CMake 4.4.3.
+# Supports native x86_64 and -m32 i686 builds (subject to project dependencies).
+FROM almalinux:8
+
+LABEL version="2.0"
 LABEL maintainer="mail@etlegacy.com"
 LABEL description="Linux build machine for the 32 and 64 bit linux releases"
 
-# We will run the installations which will also install the very old system git
-# so after the bulk install, we remove the system git and install an up to date client.
-RUN cd /tmp && \
-	echo "multilib_policy=all" >> /etc/yum.conf && \
-	yum --assumeyes install https://repo.ius.io/ius-release-el7.rpm \
-	https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
-	yum update --assumeyes --skip-broken && \
-	yum groupinstall --assumeyes "Development tools" && \
-	yum --assumeyes --exclude=git* install tar freeglut-devel gmake glibc glibc-devel libX11 \
-	libX11-devel mesa-libGL mesa-libGL-devel alsa-lib-devel pulseaudio-libs-devel \
-	curl-devel zlib-devel wget nasm which libXxf86vm-devel perl-IPC-Cmd \
-	wayland-devel mesa-libEGL-devel mesa-libGLES-devel libxkbcommon-devel libXi-devel libXfixes-devel \
-	libXScrnSaver-devel libXcursor-devel libXinerama-devel libXrandr-devel libXvmc-devel perl-Thread-Queue && \
-	yum --assumeyes remove git && \
-	yum --assumeyes install git236 && \
-	yum clean all && \
-	rm -rf /var/cache/yum && \
-	rm -rf /var/tmp/yum-*
+ARG CMAKE_VERSION=4.4.3
 
-RUN	wget https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.gz && tar -xvzf m4-1.4.19.tar.gz && cd m4-1.4.19 && ./configure --prefix=/usr/local && make && make install && cd .. && \
-	wget https://ftp.gnu.org/pub/gnu/libtool/libtool-2.4.7.tar.gz && tar -xvzf libtool-2.4.7.tar.gz && cd libtool-2.4.7 && ./configure --prefix=/usr/local && make && make install && cd .. && \
-	wget https://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz && tar -xvzf autoconf-2.71.tar.gz && cd autoconf-2.71 && ./configure --prefix=/usr/local && make && make install && cd .. && \
-	wget https://ftp.gnu.org/gnu/automake/automake-1.15.tar.gz && tar -xvzf automake-1.15.tar.gz && cd automake-1.15 && ./configure --prefix=/usr/local && make && make install && cd .. && \
-	rm -Rf m4-1.4.19* libtool-2.4.7* autoconf-2.71* automake-1.15*
+RUN dnf -y install dnf-plugins-core && \
+    dnf config-manager --set-enabled powertools && \
+    dnf -y install \
+      gcc-toolset-15-gcc gcc-toolset-15-gcc-c++ gcc-toolset-15-binutils \
+      glibc-devel.x86_64 glibc-devel.i686 \
+      libgcc.x86_64 libgcc.i686 \
+      libstdc++-devel.x86_64 libstdc++-devel.i686 \
+      gcc-toolset-15-libstdc++-devel.x86_64 gcc-toolset-15-libstdc++-devel.i686 \
+      make ninja-build nasm git curl tar gzip xz unzip zip \
+      pkgconf-pkg-config python3 perl which file patch diffutils \
+      autoconf automake libtool \
+      zlib-devel.x86_64 zlib-devel.i686 \
+      alsa-lib-devel.x86_64 alsa-lib-devel.i686 \
+      pulseaudio-libs-devel.x86_64 pulseaudio-libs-devel.i686 \
+      wayland-devel.x86_64 wayland-devel.i686 wayland-protocols-devel \
+      libxkbcommon-devel.x86_64 libxkbcommon-devel.i686 \
+      libX11-devel.x86_64 libX11-devel.i686 \
+      libXext-devel.x86_64 libXext-devel.i686 \
+      libXrandr-devel.x86_64 libXrandr-devel.i686 \
+      libXcursor-devel.x86_64 libXcursor-devel.i686 \
+      libXi-devel.x86_64 libXi-devel.i686 \
+      libXinerama-devel.x86_64 libXinerama-devel.i686 \
+      libXScrnSaver-devel.x86_64 libXScrnSaver-devel.i686 \
+      libXtst-devel.x86_64 libXtst-devel.i686 \
+      systemd-devel.x86_64 systemd-devel.i686 \
+      libusb1-devel.x86_64 libusb1-devel.i686 \
+      mesa-libGL-devel.x86_64 mesa-libGL-devel.i686 \
+      mesa-libGLU-devel.x86_64 mesa-libGLU-devel.i686 \
+      mesa-libEGL-devel.x86_64 mesa-libEGL-devel.i686 \
+      && dnf clean all
 
-RUN mkdir -p /opt/cmake && wget --no-check-certificate --quiet -O - https://cmake.org/files/v3.28/cmake-3.28.2-linux-x86_64.tar.gz | tar --strip-components=1 -xz -C /opt/cmake
-ENV PATH="/opt/cmake/bin:${PATH}"
+# Official Kitware prebuilt x86_64 CMake distribution.
+RUN curl -fL --retry 3 \
+      "https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz" \
+      -o /tmp/cmake.tar.gz && \
+    mkdir -p /opt/cmake && \
+    tar -xzf /tmp/cmake.tar.gz --strip-components=1 -C /opt/cmake && \
+    rm /tmp/cmake.tar.gz
 
-# SDL2 now requires a newer wayland version >= 1.18 (we still install the older packages for the dependencies) so remove the pre-installed one from the system and build new ones
-# compile 64 and 32 bit wayland
-RUN rpm -e --nodeps --allmatches libwayland-client libwayland-cursor libwayland-egl libwayland-server wayland-devel && \
-    yum --assumeyes install libffi-devel expat-devel libxml2-devel && rm -rf /var/cache/yum && rm -rf /var/tmp/yum-* && \
-    wget --quiet -O - https://wayland.freedesktop.org/releases/wayland-1.18.0.tar.xz | tar -xJ && cd wayland-1.18.0 && \
-    export PKG_CONFIG_PATH=/usr/lib64/pkgconfig && \
-    ./configure --prefix=/usr --disable-static --disable-documentation --libdir=/usr/lib64 && make && make install && \
-    make clean && export PKG_CONFIG_PATH=/usr/lib/pkgconfig && \
-    ./configure --prefix=/usr --disable-static --disable-documentation --libdir=/usr/lib --host=i686-linux-gnu "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32" && make && make install && \
-    cd .. && rm -Rf wayland-1.18.0 && unset PKG_CONFIG_PATH
+# GCC Toolset is installed under /opt/rh, and must be explicitly selected.
+ENV PATH="/opt/rh/gcc-toolset-15/root/usr/bin:/opt/cmake/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/opt/rh/gcc-toolset-15/root/usr/lib64"
 
-RUN git clone --branch v1.11.1 --depth 1 https://github.com/ninja-build/ninja.git && cmake -B ninja/build -S ninja && cmake --build ninja/build && \
-	cmake --install ninja/build && rm -Rf ninja
-
-# RUN groupadd -g 2000 legacy && useradd -m -u 2001 -g legacy legacy && chmod -R 755 /opt/
-# USER legacy
+# Smoke-test both compilation and linking, not just compiler detection.
+RUN printf 'int main(void){return 0;}\n' >/tmp/check.c && \
+    gcc -m64 /tmp/check.c -o /tmp/check64 && \
+    gcc -m32 /tmp/check.c -o /tmp/check32 && \
+    file /tmp/check64 /tmp/check32 && \
+    rm -f /tmp/check.c /tmp/check64 /tmp/check32 && \
+    cmake --version && gcc --version
 
 VOLUME /code
 WORKDIR /code
