@@ -1038,6 +1038,22 @@ static void RB_FogPass(void)
 
 	fog = tr.world->fogs + tess.fogNum;
 
+	// GPU-culled world group: no tess vertices, the vertex shader computes
+	// the texcoords from their parameters (merged world batch)
+	if (tess.vkIndirect)
+	{
+		vec4_t sVec, tVec;
+		float  eyeT;
+
+		RB_CalcFogTexCoordParams(sVec, tVec, &eyeT);
+		VK_Draw3DStaticFog(&tess, tr.fogImage,
+		                   (tess.shader->fogPass == FP_EQUAL)
+		                   ? (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHFUNC_EQUAL)
+		                   : (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA),
+		                   tess.shader->cullType, sVec, tVec, eyeT, (const byte *)&fog->shader->fogParms.colorInt);
+		return;
+	}
+
 	for (i = 0; i < tess.numVertexes; i++)
 	{
 		*( int * )&tess.svars.colors[i] = fog->shader->fogParms.colorInt;

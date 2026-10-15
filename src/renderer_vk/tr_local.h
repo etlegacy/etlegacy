@@ -1156,6 +1156,7 @@ typedef struct
 	surfaceType_t surfaceType;
 	int index;
 	shader_t *shader;
+	int fogIndex;                   ///< fog volume of its surfaces (groups are per shader and fog)
 	int firstIndex;                 ///< region in a view's culling output (indexes)
 	int numIndexes;                 ///< all its surfaces' indexes (size of the region)
 	int viewCount;                  ///< added to tr.viewCount's view
@@ -1857,6 +1858,9 @@ typedef struct
 qboolean VK_CreateWorldCull(const vkCullSurface_t *surfs, int numSurfs, const unsigned int *surfLeaves, int numSurfLeaves,
                             const unsigned int *indexes, int numIndexes, int numLeaves, int numGroups);
 qboolean VK_CullBeginView(vkCullView_t *cv, const int *groupFirst);
+qboolean VK_WorldBatchOn(void);
+void VK_Draw3DStaticFog(shaderCommands_t *input, const image_t *fogImage, unsigned long stateBits, int cullType,
+                        const vec4_t sVec, const vec4_t tVec, float eyeT, const byte *color);
 unsigned int VK_CullLeafWords(void);
 void VK_CullDispatch(const vkCullView_t *cv, const cplane_t *frustum, const vec3_t viewOrigin, int flags);
 unsigned int VK_CullCommandOffset(int view, int group);
@@ -2033,6 +2037,7 @@ void RB_DeformTessGeometry(void);
 void RB_CalcEnvironmentTexCoords(float *texCoords);
 void RB_CalcFireRiseEnvTexCoords(float *st);
 void RB_CalcFogTexCoords(float *texCoords);
+qboolean RB_CalcFogTexCoordParams(vec4_t sVec, vec4_t tVec, float *eyeT);
 void RB_CalcScrollTexCoords(const float scrollSpeed[2], float *texCoords);
 void RB_CalcRotateTexCoords(float degsPerSecond, float *texCoords);
 void RB_CalcScaleTexCoords(const float scale[2], float *texCoords);

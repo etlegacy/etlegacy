@@ -434,9 +434,10 @@ void R_AddBrushModelSurfaces(trRefEntity_t *ent)
 =============================================================
 
 Most world surfaces (R_VkSurfaceGpuCullable: static opaque triangle
-surfaces without fog) are culled on the GPU (world_cull.comp): the CPU
-walk below only marks the visible leaves and adds one draw surface per
-group (the GPU-culled surfaces of one shader) found in them; the culling
+surfaces, in fog volumes too when no stage's colors depend on the fog)
+are culled on the GPU (world_cull.comp): the CPU walk below only marks
+the visible leaves and adds one draw surface per group (the GPU-culled
+surfaces of one shader and fog volume) found in them; the culling
 dispatch then tests each surface of a visible leaf like R_CullSurface()
 and writes the visible ones' indexes and the groups' indirect draw
 commands. The CPU still handles every other surface, and the GPU-culled
@@ -448,6 +449,7 @@ view (its skip stamp keeps the GPU from drawing it too).
 static vkWorldGroup_t *vkGroups;
 static int            *vkGroupFirst;
 static int            vkNumGroups;
+static qboolean       vkFogGroups;     ///< some groups are fogged: their fog pass needs the merged world batch
 static vkCullView_t   vkCull;          ///< the current view's culling (tr.viewParms.vkCullView >= 0)
 static unsigned int   *vkLeafBits;     ///< vkCull.leafBits
 
@@ -464,19 +466,56 @@ static qboolean R_VkGroupShaderOk(const shader_t *shader)
 }
 
 /**
+ * @brief Vulkan: true if surfaces with this shader can be drawn from the GPU
+ * culling output inside a fog volume: no stage's colors are modulated by
+ * the fog (ComputeColors' adjustColorsForFog needs the tess vertices); the
+ * fog pass itself is drawn by VK_Draw3DStaticFog
+ */
+static qboolean R_VkFogShaderOk(const shader_t *shader)
+{
+	int i;
+
+	for (i = 0; i < MAX_SHADER_STAGES && shader->stages[i] && shader->stages[i]->active; i++)
+	{
+		if (shader->stages[i]->adjustColorsForFog != ACFF_NONE)
+		{
+			return qfalse;
+		}
+	}
+
+	return qtrue;
+}
+
+/**
  * @brief Vulkan: true if a world surface is culled on the GPU
  */
 static qboolean R_VkSurfaceGpuCullable(const msurface_t *surf)
 {
 	const srfTriangles_t *tri;
 
-	if (!surf->data || *surf->data != SF_TRIANGLES || surf->fogIndex || !surf->shader || !R_VkGroupShaderOk(surf->shader))
+	if (!surf->data || *surf->data != SF_TRIANGLES || !surf->shader || !R_VkGroupShaderOk(surf->shader) ||
+	    (surf->fogIndex && !R_VkFogShaderOk(surf->shader)))
 	{
 		return qfalse;
 	}
 
 	tri = (const srfTriangles_t *)surf->data;
 	return (tri->vkFirstVertex >= 0 && tri->numIndexes > 0) ? qtrue : qfalse;
+}
+
+/**
+ * @brief Vulkan, R_VkBuildWorldCull: the group of a surface's shader and fog
+ * volume, -1 if there is none yet
+ */
+static int R_VkSurfaceGroup(const int *shaderGroup, const int *groupNext, const int *groupFog, const msurface_t *surf)
+{
+	int g;
+
+	for (g = shaderGroup[surf->shader->index]; g >= 0 && groupFog[g] != surf->fogIndex; g = groupNext[g])
+	{
+	}
+
+	return g;
 }
 
 /**
@@ -492,19 +531,24 @@ void R_VkBuildWorldCull(void)
 	msurface_t      *surf;
 	vkCullSurface_t *surfs;
 	unsigned int    *surfLeaves, *indexes, *leafFill;
-	int             *shaderGroup;
+	int             *shaderGroup, *groupNext, *groupFog;
 	int             i, j, k, numSurfs = 0, numSurfLeaves = 0, numIndexes = 0;
 
 	vkGroups     = NULL;
 	vkGroupFirst = NULL;
 	vkNumGroups  = 0;
+	vkFogGroups  = qfalse;
 
 	for (i = 0, surf = w->surfaces; i < w->numsurfaces; i++, surf++)
 	{
 		surf->vkCullIndex = -1;
 	}
 
+	// groups per shader and fog volume: shaderGroup[shader] is the first,
+	// groupNext the next of the same shader
 	shaderGroup = ri.Z_Malloc(MAX_SHADERS * sizeof(int));
+	groupNext   = ri.Z_Malloc(w->numsurfaces * sizeof(int));
+	groupFog    = ri.Z_Malloc(w->numsurfaces * sizeof(int));
 	for (i = 0; i < MAX_SHADERS; i++)
 	{
 		shaderGroup[i] = -1;
@@ -531,8 +575,10 @@ void R_VkBuildWorldCull(void)
 			{
 				surf->vkCullIndex = numSurfs++;
 				numIndexes       += ((srfTriangles_t *)surf->data)->numIndexes;
-				if (shaderGroup[surf->shader->index] < 0)
+				if (R_VkSurfaceGroup(shaderGroup, groupNext, groupFog, surf) < 0)
 				{
+					groupFog[vkNumGroups]            = surf->fogIndex;
+					groupNext[vkNumGroups]           = shaderGroup[surf->shader->index];
 					shaderGroup[surf->shader->index] = vkNumGroups++;
 				}
 			}
@@ -541,6 +587,8 @@ void R_VkBuildWorldCull(void)
 
 	if (!numSurfs)
 	{
+		ri.Free(groupFog);
+		ri.Free(groupNext);
 		ri.Free(shaderGroup);
 		return;
 	}
@@ -558,6 +606,11 @@ void R_VkBuildWorldCull(void)
 		vkGroups[i].surfaceType = SF_VK_WORLDGROUP;
 		vkGroups[i].index       = i;
 		vkGroups[i].viewCount   = -1;
+		vkGroups[i].fogIndex    = groupFog[i];
+		if (groupFog[i])
+		{
+			vkFogGroups = qtrue;
+		}
 	}
 
 	// surfaces: culling data, group, indexes; groups: size
@@ -573,7 +626,7 @@ void R_VkBuildWorldCull(void)
 		}
 
 		cs  = &surfs[surf->vkCullIndex];
-		g   = &vkGroups[shaderGroup[surf->shader->index]];
+		g   = &vkGroups[R_VkSurfaceGroup(shaderGroup, groupNext, groupFog, surf)];
 		tri = (srfTriangles_t *)surf->data;
 
 		g->shader      = surf->shader;
@@ -680,7 +733,7 @@ void R_VkBuildWorldCull(void)
 			surf = node->firstmarksurface[j];
 			if (R_VkSurfaceGpuCullable(surf))
 			{
-				int g = shaderGroup[surf->shader->index];
+				int g = R_VkSurfaceGroup(shaderGroup, groupNext, groupFog, surf);
 
 				node->vkGpuMarks[node->numVkGpuMarks++]   = surf;
 				surfLeaves[leafFill[surf->vkCullIndex]++] = (unsigned int)i;
@@ -714,6 +767,8 @@ void R_VkBuildWorldCull(void)
 	ri.Free(indexes);
 	ri.Free(surfLeaves);
 	ri.Free(surfs);
+	ri.Free(groupFog);
+	ri.Free(groupNext);
 	ri.Free(shaderGroup);
 }
 
@@ -726,7 +781,8 @@ static qboolean R_VkCullBeginView(void)
 {
 	int i;
 
-	if (!vkNumGroups || !r_vkGpuCull->integer || !r_vkStaticWorld->integer ||
+	// fogged groups' fog pass only exists in the merged world batch
+	if (!vkNumGroups || !r_vkGpuCull->integer || !r_vkStaticWorld->integer || (vkFogGroups && !VK_WorldBatchOn()) ||
 	    r_showTris->integer || r_showNormals->integer || r_debugShaderSurfaceFlags->integer)
 	{
 		return qfalse;
@@ -734,7 +790,9 @@ static qboolean R_VkCullBeginView(void)
 
 	for (i = 0; i < vkNumGroups; i++)
 	{
-		if (vkGroups[i].shader->remappedShader && !R_VkGroupShaderOk(vkGroups[i].shader->remappedShader))
+		if (vkGroups[i].shader->remappedShader &&
+		    (!R_VkGroupShaderOk(vkGroups[i].shader->remappedShader) ||
+		     (vkGroups[i].fogIndex && !R_VkFogShaderOk(vkGroups[i].shader->remappedShader))))
 		{
 			return qfalse;
 		}
@@ -838,7 +896,7 @@ static void R_AddLeafSurfaces(mnode_t *node, int dlightBits, int decalBits)
 			if (g->viewCount != tr.viewCount)
 			{
 				g->viewCount = tr.viewCount;
-				R_AddDrawSurf((surfaceType_t *)g, g->shader, 0, 0, 0);
+				R_AddDrawSurf((surfaceType_t *)g, g->shader, g->fogIndex, 0, 0);
 			}
 		}
 
