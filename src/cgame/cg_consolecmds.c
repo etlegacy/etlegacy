@@ -545,7 +545,7 @@ static void CG_FTSayPlayerClass_f(void)
 		}
 	}
 
-	trap_SendConsoleCommand(va("cmd vsay_buddy -1 %s %s\n", CG_BuildSelectedFirteamString(), s));
+	trap_SendConsoleCommand(va("cmd vsay_buddy -1 %s %s\n", CG_BuildSelectedFireteamString(), s));
 }
 
 /**
@@ -647,7 +647,7 @@ static void CG_BuddyVoiceChat_f(void)
 
 	trap_Argv(1, chatCmd, 64);
 
-	trap_SendConsoleCommand(va("cmd vsay_buddy -1 %s %s\n", CG_BuildSelectedFirteamString(), chatCmd));
+	trap_SendConsoleCommand(va("cmd vsay_buddy -1 %s %s\n", CG_BuildSelectedFireteamString(), chatCmd));
 }
 
 /**
