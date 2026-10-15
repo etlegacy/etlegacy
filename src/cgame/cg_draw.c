@@ -2080,11 +2080,6 @@ static void CG_ScanForCrosshairEntity()
 		return;
 	}
 
-	if (!cent->currentValid)
-	{
-		return;
-	}
-
 	cg.crosshairNotLookingAtClient = qfalse;
 	cg.crosshairClientNoShoot      = qfalse;
 
