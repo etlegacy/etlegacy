@@ -49,6 +49,9 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#ifndef _WIN32
+#include <unistd.h>
+#endif
 
 #include "sys_local.h"
 #include "sys_loadlib.h"
@@ -1216,22 +1219,52 @@ void Sys_BuildCommandLine(int argc, char **argv, char *buffer, size_t bufferSize
 #       define DEFAULT_BASEDIR Sys_BinaryPath()
 #endif
 
+static volatile sig_atomic_t sys_crashSignalCaught;
+static volatile sig_atomic_t sys_signalCaught;
+
+/**
+ * @brief Common crash dispatch shared by the platform-specific handlers.
+ * @param[in] signal Signal number or platform exception code.
+ * @param[in] context Platform-specific crash context.
+ */
+void Sys_HandleCrash(int signal, void *context)
+{
+	if (sys_crashSignalCaught)
+	{
+		fprintf(stderr, "DOUBLE CRASH FAULT: Received signal %d, exiting immediately...\n",
+		        signal);
+#ifdef _WIN32
+		TerminateProcess(GetCurrentProcess(), 3);
+#else
+		_exit(128 + signal);
+#endif
+	}
+
+	sys_crashSignalCaught = 1;
+	Sys_Backtrace(signal, context);
+
+#ifdef _WIN32
+	TerminateProcess(GetCurrentProcess(), 3);
+#else
+	_exit(128 + signal);
+#endif
+}
+
 /**
  * @brief Sys_SigHandler
  * @param[in] signal
  */
 void Sys_SigHandler(int signal)
 {
-	static qboolean signalcaught = qfalse;
-
-	if (signalcaught)
+	if (sys_signalCaught)
 	{
 		fprintf(stderr, "DOUBLE SIGNAL FAULT: Received signal %d, exiting...\n",
 		        signal);
+		Sys_PlatformExit(2);
 	}
 	else
 	{
-		signalcaught = qtrue;
+		sys_signalCaught = 1;
 #ifndef DEDICATED
 		CL_Shutdown();
 #endif
@@ -1241,15 +1274,6 @@ void Sys_SigHandler(int signal)
 	if (signal == SIGTERM || signal == SIGINT)
 	{
 		Sys_Exit(1);
-	}
-	else if (signal == SIGSEGV)
-	{
-#if defined(__linux__) && !defined(__ANDROID__)
-		Sys_Backtrace(signal);
-		// NOTE : must not exit here, otherwise OS might not create coredumps
-#else
-		Sys_Exit(signal);
-#endif
 	}
 	else
 	{
@@ -1262,18 +1286,27 @@ void Sys_SigHandler(int signal)
  */
 void Sys_SetUpConsoleAndSignals(void)
 {
+	static qboolean initialized = qfalse;
+
+	if (initialized)
+	{
+		return;
+	}
+
+	initialized = qtrue;
+
 #ifndef USE_WINDOWS_CONSOLE
 	CON_Init();
 #endif
 
-// don't set signal handlers for anything that will generate coredump (in DEBUG builds)
-#if !defined(ETLEGACY_DEBUG)
-	signal(SIGILL, Sys_SigHandler);
-	signal(SIGFPE, Sys_SigHandler);
-	signal(SIGSEGV, Sys_SigHandler);
-#endif
 	signal(SIGINT, Sys_SigHandler);
 	signal(SIGTERM, Sys_SigHandler);
+#ifdef SIGHUP
+	signal(SIGHUP, Sys_SigHandler);
+#endif
+#ifdef SIGQUIT
+	signal(SIGQUIT, Sys_SigHandler);
+#endif
 }
 
 /**
