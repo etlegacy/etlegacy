@@ -2010,7 +2010,7 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		if (!parentHud || (tmpHud->staminabar.style != parentHud->staminabar.style))
 		{
 			tmpHud->staminabar.barStyle = tmpHud->staminabar.style;
-			tmpHud->staminabar.style    = 0;    // clear all
+			tmpHud->staminabar.style    = STAMINABAR_EMPTYWARN; // Enable the warning when upgrading legacy bar styles.
 		}
 
 		if (!parentHud || (tmpHud->breathbar.style != parentHud->breathbar.style))
