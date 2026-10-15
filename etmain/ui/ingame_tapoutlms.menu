@@ -22,7 +22,7 @@ menuDef
 
 	onESC
 	{
-		close tapoutmsg;
+		close tapoutmsglms;
 	}
 
 // Background //
