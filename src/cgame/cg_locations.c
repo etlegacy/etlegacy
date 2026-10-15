@@ -369,7 +369,7 @@ location_t *CG_GetLocation(int client, vec3_t origin)
 	float      len;
 	int        i;
 
-	if (ISVALIDCLIENTNUM(client) && cgs.clientLocation[client].lastLocation)
+	if (IS_VALID_CLIENT_NUM(client) && cgs.clientLocation[client].lastLocation)
 	{
 		if (cgs.clientLocation[client].lastX == origin[0]
 		    && cgs.clientLocation[client].lastY == origin[1]
@@ -396,7 +396,7 @@ location_t *CG_GetLocation(int client, vec3_t origin)
 	}
 
 	// store new information
-	if (ISVALIDCLIENTNUM(client) && bestLoc != NULL)
+	if (IS_VALID_CLIENT_NUM(client) && bestLoc != NULL)
 	{
 		cgs.clientLocation[client].lastX        = origin[0];
 		cgs.clientLocation[client].lastY        = origin[1];
