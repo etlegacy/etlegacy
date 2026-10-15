@@ -351,7 +351,8 @@ void G_DropWeapon(gentity_t *ent, weapon_t weapon)
 	trap_Trace(&tr, client->ps.origin, mins, maxs, org, ent->s.number, MASK_SOLID);
 	VectorCopy(tr.endpos, org);
 
-	ent2 = LaunchItem(item, org, velocity, client->ps.clientNum);
+	ent2           = LaunchItem(item, org, velocity, client->ps.clientNum);
+	ent2->s.weapon = weapon;
 	COM_BitClear(client->ps.weapons, weapon);
 
 	if (GetWeaponTableData(weapon)->weapAlts)
@@ -1377,4 +1378,6 @@ void G_RunItem(gentity_t *ent)
 	}
 
 	G_BounceItem(ent, &tr);
+
+	G_AddEvent(ent, EV_GRENADE_BOUNCE, BG_FootstepForSurface(tr.surfaceFlags));
 }

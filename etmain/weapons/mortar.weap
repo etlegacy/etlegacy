@@ -38,6 +38,9 @@ weaponDef
 
 		//missileModel		""
 		//missileSound		""
+		missileBouncingSound {
+			default 4 "sound/weapons/bounce/hw_bounce"
+		}
 		//missileTrailFunc	""									// supports "GrenadeTrail", "RocketTrail", "PyroSmokeTrail" and "DynamiteTrail" (we REALLY want a particle system for this)
 		//missileDlight		0
 		//missileDlightColor	0 0 0							// do we still use this?
