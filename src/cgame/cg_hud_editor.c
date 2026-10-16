@@ -238,7 +238,7 @@ static panel_button_text_t hudEditorTextTitleFont =
 static panel_button_text_t hudEditorTextWarningFont =
 {
 	0.3f,                  0.3f,
-	{ 1.f,                 0.f, 0.f,  1.f },
+	{ 1.f,                 1.f, 0.f,  1.f },
 	ITEM_TEXTSTYLE_BLINK,  0,
 	&cgs.media.limboFont2,
 };
@@ -1018,12 +1018,12 @@ static panel_button_t hudEditorHelp =
 static panel_button_t hudEditorWarningLabel =
 {
 	NULL,
-	"CANNOT MODIFY DEFAULT HUDS",
-	{ 0,                         HUDEDITOR_SELECTHUD_Y + HUDEDITOR_TITLE_SPACER_Y + BUTTON_HEIGHT * 2,(BUTTON_WIDTH * 3) + (HUDEDITOR_CONTROLS_SPACER_XY * 2), BUTTON_HEIGHT },
-	{ 0,                         0,                                            0,                                                       0, 0, 0, 0, 1 },
-	&hudEditorTextWarningFont,   // font
-	NULL,                        // keyDown
-	NULL,                        // keyUp
+	"DEFAULT HUDS",
+	{ 0,                        HUDEDITOR_SELECTHUD_Y + HUDEDITOR_TITLE_SPACER_Y + BUTTON_HEIGHT * 2,(BUTTON_WIDTH * 3) + (HUDEDITOR_CONTROLS_SPACER_XY * 2), BUTTON_HEIGHT },
+	{ 0,                        0,                                                          0,                                                       0, 0, 0, 0, 1 },
+	&hudEditorTextWarningFont,  // font
+	NULL,                       // keyDown
+	NULL,                       // keyUp
 	CG_HudEditor_SetupTitleText,
 	NULL,
 	0
@@ -1264,10 +1264,13 @@ static qboolean CG_HUDEditorCheckTabDisplayValidity(panel_button_t *button)
  */
 static qboolean CG_HudEditor_EditKeyDown(panel_button_t *button, int key)
 {
-	// don't modify default HUD
+	// don't modify default HUD, so clone it and modify the copy
 	if (!hudData.active->isEditable)
 	{
-		return qfalse;
+		if (!CG_HudSave(hudData.active->hudnumber, -1))
+		{
+			return qfalse;
+		}
 	}
 
 	// the only edit field visible is the hud name
@@ -1334,7 +1337,7 @@ static void CG_HudEditor_SetupEditPosition(panel_button_t *button, float totalWi
 static void CG_HudEditor_RenderEditName(panel_button_t *button)
 {
 	float      textWidth, textHeight, totalWidth;
-	const char *label = hudData.active->isEditable ? "Name: " : "CLONE IT TO DO MODIFICATION";
+	const char *label = hudData.active->isEditable ? "Name: " : "CHANGES WILL CLONE IT";
 
 	textWidth  = CG_Text_Width_Ext(label, button->font->scalex, 0, button->font->font);
 	textHeight = CG_Text_Height_Ext(label, button->font->scaley, 0, button->font->font);
@@ -1350,7 +1353,7 @@ static void CG_HudEditor_RenderEditName(panel_button_t *button)
 	}
 
 	CG_Text_Paint_Ext(button->rect.x, button->rect.y + (button->rect.h * 0.5f) + (textHeight * 0.5f),
-	                  button->font->scalex, button->font->scaley, hudData.active->isEditable ? colorWhite : colorRed, label, 0, 0,
+	                  button->font->scalex, button->font->scaley, hudData.active->isEditable ? colorWhite : colorYellow, label, 0, 0,
 	                  hudData.active->isEditable ? button->font->style : ITEM_TEXTSTYLE_BLINK, button->font->font);
 
 	if (hudData.active->isEditable)
@@ -1604,10 +1607,18 @@ static qboolean CG_HudEditorVisible_CheckboxKeyDown(panel_button_t *button, int 
 		return qfalse;
 	}
 
-	// don't modify default HUD
-	if (!hudData.active->isEditable)
+	if (!lastFocusComponent)
 	{
 		return qfalse;
+	}
+
+	// don't modify default HUD, so clone it and modify the copy
+	if (!hudData.active->isEditable)
+	{
+		if (!CG_HudSave(hudData.active->hudnumber, -1))
+		{
+			return qfalse;
+		}
 	}
 
 	comp->visible = button->data[2] = !button->data[2];
@@ -1634,14 +1645,18 @@ static qboolean CG_HudEditorStyle_CheckboxKeyDown(panel_button_t *button, int ke
 		return qfalse;
 	}
 
-	if (!hudData.active->isEditable)
+	if (!lastFocusComponent)
 	{
 		return qfalse;
 	}
 
-	if (!lastFocusComponent)
+	// don't modify default HUD, so clone it and modify the copy
+	if (!hudData.active->isEditable)
 	{
-		return qfalse;
+		if (!CG_HudSave(hudData.active->hudnumber, -1))
+		{
+			return qfalse;
+		}
 	}
 
 	comp->style    ^= button->data[3];
@@ -1669,14 +1684,18 @@ static qboolean CG_HudEditorBarStyle_CheckboxKeyDown(panel_button_t *button, int
 		return qfalse;
 	}
 
-	if (!hudData.active->isEditable)
+	if (!lastFocusComponent)
 	{
 		return qfalse;
 	}
 
-	if (!lastFocusComponent)
+	// don't modify default HUD, so clone it and modify the copy
+	if (!hudData.active->isEditable)
 	{
-		return qfalse;
+		if (!CG_HudSave(hudData.active->hudnumber, -1))
+		{
+			return qfalse;
+		}
 	}
 
 	comp->barStyle ^= button->data[3];
@@ -1704,15 +1723,18 @@ static qboolean CG_HudEditorShowBackground_CheckboxKeyDown(panel_button_t *butto
 		return qfalse;
 	}
 
-	// don't modify default HUD
-	if (!hudData.active->isEditable)
+	if (!lastFocusComponent)
 	{
 		return qfalse;
 	}
 
-	if (!lastFocusComponent)
+	// don't modify default HUD, so clone it and modify the copy
+	if (!hudData.active->isEditable)
 	{
-		return qfalse;
+		if (!CG_HudSave(hudData.active->hudnumber, -1))
+		{
+			return qfalse;
+		}
 	}
 
 	comp->showBackGround = button->data[2] = !button->data[2];
@@ -1739,15 +1761,18 @@ static qboolean CG_HudEditorShowBorder_CheckboxKeyDown(panel_button_t *button, i
 		return qfalse;
 	}
 
-	// don't modify default HUD
-	if (!hudData.active->isEditable)
+	if (!lastFocusComponent)
 	{
 		return qfalse;
 	}
 
-	if (!lastFocusComponent)
+	// don't modify default HUD, so clone it and modify the copy
+	if (!hudData.active->isEditable)
 	{
-		return qfalse;
+		if (!CG_HudSave(hudData.active->hudnumber, -1))
+		{
+			return qfalse;
+		}
 	}
 
 	comp->showBorder = button->data[2] = !button->data[2];
@@ -1774,15 +1799,18 @@ static qboolean CG_HudEditorAutoAdjust_CheckboxKeyDown(panel_button_t *button, i
 		return qfalse;
 	}
 
-	// don't modify default HUD
-	if (!hudData.active->isEditable)
+	if (!lastFocusComponent)
 	{
 		return qfalse;
 	}
 
-	if (!lastFocusComponent)
+	// don't modify default HUD, so clone it and modify the copy
+	if (!hudData.active->isEditable)
 	{
-		return qfalse;
+		if (!CG_HudSave(hudData.active->hudnumber, -1))
+		{
+			return qfalse;
+		}
 	}
 
 	comp->autoAdjust = button->data[2] = !button->data[2];
@@ -2189,12 +2217,17 @@ static qboolean CG_HudEditor_Dropdown_KeyDown(panel_button_t *button, int key)
 	{
 		SOUND_SELECT;
 
-		// don't modify default HUD but allow selecting comp and hud
-		if (hudData.active->isEditable || button == &hudEditorHudDropdown || button == &hudEditorCompDropdown)
+		// don't modify default HUD, so clone it and modify the copy
+		if (!hudData.active->isEditable)
 		{
-			BG_PanelButtons_SetFocusButton(button);
-			return qtrue;
+			if (!CG_HudSave(hudData.active->hudnumber, -1))
+			{
+				return qfalse;
+			}
 		}
+
+		BG_PanelButtons_SetFocusButton(button);
+		return qtrue;
 	}
 
 	return qfalse;
@@ -3377,9 +3410,17 @@ static void CG_HudEditorColor_Finish(panel_button_t *button)
 
 static qboolean CG_HudEditorColor_KeyDown(panel_button_t *button, int key)
 {
-	// don't modify default HUD
-	if (hudData.active->isEditable && key == K_MOUSE1)
+	if (key == K_MOUSE1)
 	{
+		// don't modify default HUD, so clone it and modify the copy
+		if (!hudData.active->isEditable)
+		{
+			if (!CG_HudSave(hudData.active->hudnumber, -1))
+			{
+				return qfalse;
+			}
+		}
+
 		BG_PanelButtons_SetFocusButton(button);
 
 		return qtrue;
@@ -4376,14 +4417,24 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		}
 	}
 
-	// don't modify default HUD
-	if (hudData.active->isEditable && lastFocusComponent && down)
+	if (lastFocusComponent && down)
 	{
-		hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
+		hudComponent_t *comp;
 		qboolean       changeSize;
 		qboolean       gridAlign = forceGridAlignment && (showGrid || showMicroGrid);
 		float          offset;
 		float          *pValue = NULL;
+
+		// don't modify default HUD, so clone it and modify the copy
+		if (!hudData.active->isEditable)
+		{
+			if (!CG_HudSave(hudData.active->hudnumber, -1))
+			{
+				return;
+			}
+		}
+
+		comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
 
 		// change the component shape to be a square by using the longest side
 		if (key == 's')
@@ -4525,36 +4576,43 @@ void CG_HudEditorMouseMove_Handling(int x, int y)
 
 	if (button && !button->data[7])
 	{
+		hudComponent_t *comp;
+
 		// we try to move a comp
 		lastFocusComponentMoved = qtrue;
 
-		// don't modify default HUD
-		if (hudData.active->isEditable)
+		// don't modify default HUD, so clone it and modify the copy
+		if (!hudData.active->isEditable)
 		{
-			hudComponent_t *comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[0]].offset);
-
-			if (!offsetX && !offsetY)
+			if (!CG_HudSave(hudData.active->hudnumber, -1))
 			{
-				offsetX = (x - comp->location.x);
-				offsetY = (y - comp->location.y);
+				return;
 			}
-
-			comp->location.x = x - offsetX;
-			comp->location.y = y - offsetY;
-
-			if (forceGridAlignment && (showGrid || showMicroGrid))
-			{
-				float multiple = CG_HudEditor_GetGridScale();
-
-				comp->location.x = Q_ClosestMultipleFloat(comp->location.x, SCREEN_WIDTH_SAFE * (multiple / (1 / multiple)), 3);
-				comp->location.y = Q_ClosestMultipleFloat(comp->location.y, SCREEN_HEIGHT_SAFE * (multiple / (1 / multiple)), 3);
-			}
-
-			CG_HudEditor_SetModified();
-
-			CG_HudEditorUpdateFields(button);
-			return;
 		}
+
+		comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[button->data[0]].offset);
+
+		if (!offsetX && !offsetY)
+		{
+			offsetX = (x - comp->location.x);
+			offsetY = (y - comp->location.y);
+		}
+
+		comp->location.x = x - offsetX;
+		comp->location.y = y - offsetY;
+
+		if (forceGridAlignment && (showGrid || showMicroGrid))
+		{
+			float multiple = CG_HudEditor_GetGridScale();
+
+			comp->location.x = Q_ClosestMultipleFloat(comp->location.x, SCREEN_WIDTH_SAFE * (multiple / (1 / multiple)), 3);
+			comp->location.y = Q_ClosestMultipleFloat(comp->location.y, SCREEN_HEIGHT_SAFE * (multiple / (1 / multiple)), 3);
+		}
+
+		CG_HudEditor_SetModified();
+
+		CG_HudEditorUpdateFields(button);
+		return;
 	}
 
 	// reset offset
