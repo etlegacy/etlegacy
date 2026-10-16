@@ -88,6 +88,35 @@ jobs:
             --workdir "$GITHUB_WORKSPACE/build" \
             etlegacy/lnx-build:latest cpack
 
+      # Reuse collection and upload steps for every desktop platform.
+      - &collect-binaries
+        name: Collect binaries and libraries
+        shell: bash
+        working-directory: build
+        run: |
+          # Exclude compiler probes and duplicate CPack staging trees.
+          find . -type d \( -name CMakeFiles -o -name _CPack_Packages \) -prune -o \
+            \( -type f -o -type l \) \( \
+              -name 'etl' -o -name 'etl.*' -o -name 'etlded' -o -name 'etlded.*' -o \
+              -name '*.exe' -o -name '*.dll' -o -name '*.so' -o -name '*.so.*' -o \
+              -name '*.dylib' -o -name '*.a' -o -name '*.lib' -o -name '*_mac' -o \
+              -path '*.app/*' \) -print0 > "$RUNNER_TEMP/binaries.list"
+          test -s "$RUNNER_TEMP/binaries.list"
+
+          # Tar preserves executable permissions and library symlinks across jobs.
+          tar -czf ../binaries.tar.gz --null -T "$RUNNER_TEMP/binaries.list"
+
+      - &upload-binaries
+        name: Upload platform binaries
+        uses: actions/upload-artifact@v7
+        with:
+          name: ci-binaries-${{ github.job }}
+          path: binaries.tar.gz
+          if-no-files-found: error
+          compression-level: 0
+          overwrite: true
+          retention-days: 1
+
   lnx32:
     runs-on: ubuntu-latest
     needs: [pre-build]
@@ -121,6 +150,9 @@ jobs:
             --workdir "$GITHUB_WORKSPACE/build" \
             etlegacy/lnx-build:latest cpack
 
+      - *collect-binaries
+      - *upload-binaries
+
   lnx-aarch64:
     runs-on: ubuntu-latest
     needs: [pre-build]
@@ -142,6 +174,9 @@ jobs:
         shell: bash
         working-directory: build
         run: cpack
+
+      - *collect-binaries
+      - *upload-binaries
 
   osx:
     runs-on: macos-15
@@ -171,6 +206,9 @@ jobs:
         shell: bash
         run: ./easybuild.sh package -64 --osx=10.10 --osx-arc="x86_64;arm64" -j
 
+      - *collect-binaries
+      - *upload-binaries
+
   win:
     runs-on: windows-2022
     needs: [pre-build]
@@ -192,6 +230,9 @@ jobs:
         working-directory: build
         run: cpack
 
+      - *collect-binaries
+      - *upload-binaries
+
   win64:
     runs-on: windows-2022
     needs: [pre-build]
@@ -212,6 +253,9 @@ jobs:
         shell: cmd
         working-directory: build
         run: cpack
+
+      - *collect-binaries
+      - *upload-binaries
 
   android:
     runs-on: ubuntu-latest
@@ -247,8 +291,59 @@ jobs:
 
       - name: Rename APK
         run: |
-          for FILE in ./app/build/outputs/apk/debug/*; do mv "$FILE" "${FILE%-*}.apk"; done
+          for FILE in ./app/build/outputs/apk/debug/*.apk; do mv "$FILE" "${FILE%-*}.apk"; done
           ls app/build/outputs/apk/debug
+
+      - name: Collect Android binaries and libraries
+        shell: bash
+        run: |
+          # Keep the ABI directories from the APK alongside the installable APK.
+          mkdir -p android-binaries
+          cp app/build/outputs/apk/debug/*.apk android-binaries/
+          for apk in app/build/outputs/apk/debug/*.apk; do
+            unzip -o "$apk" 'lib/*' -d android-binaries
+          done
+          tar -czf binaries.tar.gz -C android-binaries .
+
+      - *upload-binaries
+
+  check-build-artifacts:
+    runs-on: ubuntu-latest
+    needs: [android, lnx-aarch64, lnx32, lnx64, osx, win, win64]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Fetch all platform binaries
+        uses: actions/download-artifact@v8
+        with:
+          pattern: ci-binaries-*
+          path: .ci-binaries
+
+      - name: Assemble distribution
+        shell: bash
+        run: |
+          # Extract each platform into its own directory without losing file modes.
+          for archive in .ci-binaries/ci-binaries-*/binaries.tar.gz; do
+            platform="${archive#*/ci-binaries-}"
+            platform="${platform%/binaries.tar.gz}"
+            mkdir -p "dist/$platform"
+            tar -xzf "$archive" -C "dist/$platform"
+          done
+          tar -czf dist.tar.gz dist
+
+      - name: Publish distribution
+        if: github.run_attempt > 1
+        uses: actions/upload-artifact@v7
+        with:
+          name: ci-dist
+          path: dist.tar.gz
+          if-no-files-found: error
+          compression-level: 0
+          overwrite: true
+          retention-days: 1
 
   check-compiler-warnings:
     runs-on: ubuntu-latest
@@ -292,6 +387,7 @@ jobs:
       - win
       - win64
 
+      - check-build-artifacts
       - check-compiler-warnings
     if: |
       github.event_name == 'push' &&
