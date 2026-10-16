@@ -53,105 +53,73 @@ jobs:
 
   # Run the build on all the current platforms
   #
-  # etlegacy/lnx-build:latest ships an older glibc, so JS-based actions (like actions/checkout)
-  # cannot run inside the job container (node20 fails to start).
-  #
-  # Therefore these jobs use a pure `git` checkout step instead of `uses: actions/checkout`.
+  # Keep Linux compilation and packaging in the legacy image for compatibility.
+  # Run checkout and artifact actions on Ubuntu, where their Node runtime works.
   lnx64:
     runs-on: ubuntu-latest
     needs: [pre-build]
-    container:
-      image: etlegacy/lnx-build:latest
-      options: --user 1001:1001
     env:
       CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
       CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
       CI: "true"
-      GITHUB_TOKEN: ${{ github.token }}
     steps:
-      - name: Checkout (git, no JS actions)
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
-          # Make submodules work even if they use https://github.com/, git://github.com/, or ssh
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "git://github.com/"
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "ssh://git@github.com/"
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "git@github.com:"
-
-          # Ensure workspace is empty
-          mkdir -p "$GITHUB_WORKSPACE"
-          find "$GITHUB_WORKSPACE" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
-
-          cd "$GITHUB_WORKSPACE"
-          git init
-          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
-
-          # Works for push (refs/heads/...) and PR (refs/pull/.../merge)
-          git fetch --no-tags --prune --depth=1 origin "${GITHUB_REF}"
-          git checkout --detach FETCH_HEAD
-
-          git submodule sync --recursive
-          git submodule update --init --recursive --depth 1 || git submodule update --init --recursive
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
 
       - name: Build
         run: |
-          ./easybuild.sh build -64
+          # Match host ownership and paths so artifacts and warning logs remain usable.
+          # Give the container user a writable home without mounting the host home.
+          docker run --rm \
+            --user "$(id -u):$(id -g)" --env HOME=/tmp \
+            --env CI --env CI_ETL_DESCRIBE --env CI_ETL_TAG \
+            --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
+            --workdir "$GITHUB_WORKSPACE" \
+            etlegacy/lnx-build:latest ./easybuild.sh build -64
 
       - name: Generate packages
-        working-directory: build
-        run: cpack
+        run: |
+          # CPack needs the same container tools and absolute paths as the build.
+          docker run --rm \
+            --user "$(id -u):$(id -g)" --env HOME=/tmp \
+            --env CI --env CI_ETL_DESCRIBE --env CI_ETL_TAG \
+            --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
+            --workdir "$GITHUB_WORKSPACE/build" \
+            etlegacy/lnx-build:latest cpack
 
   lnx32:
     runs-on: ubuntu-latest
     needs: [pre-build]
-    container:
-      image: etlegacy/lnx-build:latest
-      options: --user 1001:1001
     env:
       CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
       CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
       CI: "true"
-      GITHUB_TOKEN: ${{ github.token }}
     steps:
-      - name: Checkout (git, no JS actions)
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
-          # Make submodules work even if they use https://github.com/, git://github.com/, or ssh
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "git://github.com/"
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "ssh://git@github.com/"
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "git@github.com:"
-
-          # Ensure workspace is empty
-          mkdir -p "$GITHUB_WORKSPACE"
-          find "$GITHUB_WORKSPACE" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
-
-          cd "$GITHUB_WORKSPACE"
-          git init
-          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
-
-          # Works for push (refs/heads/...) and PR (refs/pull/.../merge)
-          git fetch --no-tags --prune --depth=1 origin "${GITHUB_REF}"
-          git checkout --detach FETCH_HEAD
-
-          git submodule sync --recursive
-          git submodule update --init --recursive --depth 1 || git submodule update --init --recursive
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
 
       - name: Build
         run: |
-          ./easybuild.sh build -32
+          # Match host ownership and paths so artifacts and warning logs remain usable.
+          # Give the container user a writable home without mounting the host home.
+          docker run --rm \
+            --user "$(id -u):$(id -g)" --env HOME=/tmp \
+            --env CI --env CI_ETL_DESCRIBE --env CI_ETL_TAG \
+            --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
+            --workdir "$GITHUB_WORKSPACE" \
+            etlegacy/lnx-build:latest ./easybuild.sh build -32
 
       - name: Generate packages
-        working-directory: build
-        run: cpack
+        run: |
+          # CPack needs the same container tools and absolute paths as the build.
+          docker run --rm \
+            --user "$(id -u):$(id -g)" --env HOME=/tmp \
+            --env CI --env CI_ETL_DESCRIBE --env CI_ETL_TAG \
+            --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
+            --workdir "$GITHUB_WORKSPACE/build" \
+            etlegacy/lnx-build:latest cpack
 
   lnx-aarch64:
     runs-on: ubuntu-latest
