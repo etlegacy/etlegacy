@@ -10,6 +10,7 @@ platforms = ["linux-64", "osx-64", "win-64"]
 
 [tasks]
 "collect-and-check-gh-build-logs" = { cmd = ["python", "./misc/collect-and-check-gh-build-logs.py"] }
+"dist-manifest-check" = { cmd = ["python", "./misc/dist-manifest.py", "check", "./dist", "--manifest", "./dist-manifest.json"] }
 "i18n-sync-pot-files" = { cmd = ["python", "./misc/i18n-sync-pot-files.py"] }
 "i18n-transifex-pull" = { cmd = ["python", "./misc/i18n-transifex-wrapper.py", "pull", "--force"] }
 
