@@ -33,7 +33,7 @@ RUN dnf -y install dnf-plugins-core && \
       libXScrnSaver-devel.x86_64 libXScrnSaver-devel.i686 \
       libXtst-devel.x86_64 libXtst-devel.i686 \
       systemd-devel.x86_64 systemd-devel.i686 \
-      libusb1-devel.x86_64 libusb1-devel.i686 \
+      libusbx-devel.x86_64 libusbx-devel.i686 \
       mesa-libGL-devel.x86_64 mesa-libGL-devel.i686 \
       mesa-libGLU-devel.x86_64 mesa-libGLU-devel.i686 \
       mesa-libEGL-devel.x86_64 mesa-libEGL-devel.i686 \
