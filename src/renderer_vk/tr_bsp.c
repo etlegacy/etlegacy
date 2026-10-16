@@ -632,16 +632,17 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	foliage = R_GetSurfMemory(size);
 
 	// set up surface
-	foliage->surfaceType  = SF_FOLIAGE;
-	foliage->numVerts     = numVerts;
-	foliage->numIndexes   = numIndexes;
-	foliage->numInstances = numInstances;
-	foliage->xyz          = ( vec4_t * )(foliage + 1);
-	foliage->normal       = ( vec4_t * )(foliage->xyz + foliage->numVerts);
-	foliage->texCoords    = ( vec2_t * )(foliage->normal + foliage->numVerts);
-	foliage->lmTexCoords  = ( vec2_t * )(foliage->texCoords + foliage->numVerts);
-	foliage->indexes      = ( unsigned int * )(foliage->lmTexCoords + foliage->numVerts);
-	foliage->instances    = ( foliageInstance_t * )(foliage->indexes + foliage->numIndexes);
+	foliage->surfaceType   = SF_FOLIAGE;
+	foliage->numVerts      = numVerts;
+	foliage->numIndexes    = numIndexes;
+	foliage->numInstances  = numInstances;
+	foliage->xyz           = ( vec4_t * )(foliage + 1);
+	foliage->normal        = ( vec4_t * )(foliage->xyz + foliage->numVerts);
+	foliage->texCoords     = ( vec2_t * )(foliage->normal + foliage->numVerts);
+	foliage->lmTexCoords   = ( vec2_t * )(foliage->texCoords + foliage->numVerts);
+	foliage->indexes       = ( unsigned int * )(foliage->lmTexCoords + foliage->numVerts);
+	foliage->instances     = ( foliageInstance_t * )(foliage->indexes + foliage->numIndexes);
+	foliage->vkFirstVertex = -1;
 
 	surf->data = (surfaceType_t *) foliage;
 
@@ -2009,21 +2010,42 @@ static void R_LoadSurfaceCullData(void)
 }
 
 /**
+ * @brief Vulkan: true if two foliage surfaces have the same model (q3map2
+ * writes a copy of it per surface), so their instances can share draws.
+ */
+static qboolean R_FoliageSameModel(const srfFoliage_t *a, const srfFoliage_t *b)
+{
+	return (a->numVerts == b->numVerts && a->numIndexes == b->numIndexes &&
+	        !memcmp(a->xyz, b->xyz, a->numVerts * sizeof(a->xyz[0])) &&
+	        !memcmp(a->texCoords, b->texCoords, a->numVerts * sizeof(a->texCoords[0])) &&
+	        !memcmp(a->lmTexCoords, b->lmTexCoords, a->numVerts * sizeof(a->lmTexCoords[0])) &&
+	        !memcmp(a->indexes, b->indexes, a->numIndexes * sizeof(a->indexes[0]))) ? qtrue : qfalse;
+}
+
+#define MAX_FOLIAGE_MODELS 256
+
+/**
  * @brief Vulkan: copies the vertices of every triangle surface (planar faces
  * and triangle soups, world and brush models) into one static GPU vertex
- * buffer, so RB_SurfaceTriangles() only has to emit indexes for them.
+ * buffer, so RB_SurfaceTriangles() only has to emit indexes for them, and
+ * the foliage models, which RB_SurfaceFoliage() draws instanced.
  */
 static void R_LoadStaticWorldVertices(void)
 {
 	msurface_t     *surf;
 	srfTriangles_t *tri;
-	int            i, numVertexes = 0;
+	srfFoliage_t   *foliage, *models[MAX_FOLIAGE_MODELS];
+	int            i, j, numVertexes = 0, numModels = 0;
 
 	for (i = 0, surf = s_worldData.surfaces; i < s_worldData.numsurfaces; i++, surf++)
 	{
 		if (surf->data && *surf->data == SF_TRIANGLES)
 		{
 			numVertexes += ((srfTriangles_t *)surf->data)->numVerts;
+		}
+		else if (surf->data && *surf->data == SF_FOLIAGE)
+		{
+			numVertexes += ((srfFoliage_t *)surf->data)->numVerts;
 		}
 	}
 
@@ -2042,9 +2064,33 @@ static void R_LoadStaticWorldVertices(void)
 			tri->vkFirstVertex = numVertexes;
 			numVertexes       += tri->numVerts;
 		}
+		else if (surf->data && *surf->data == SF_FOLIAGE)
+		{
+			foliage = (srfFoliage_t *)surf->data;
+			for (j = 0; j < numModels; j++)
+			{
+				if (R_FoliageSameModel(foliage, models[j]))
+				{
+					break;
+				}
+			}
+			if (j < numModels)
+			{
+				foliage->vkFirstVertex = models[j]->vkFirstVertex;
+				continue;
+			}
+
+			VK_WriteStaticFoliageVertices(numVertexes, foliage);
+			foliage->vkFirstVertex = numVertexes;
+			numVertexes           += foliage->numVerts;
+			if (numModels < MAX_FOLIAGE_MODELS)
+			{
+				models[numModels++] = foliage;
+			}
+		}
 	}
 
-	Ren_Developer("...static world buffer: %i vertexes\n", numVertexes);
+	Ren_Developer("...static world buffer: %i vertexes, %i foliage models\n", numVertexes, numModels);
 }
 
 /**

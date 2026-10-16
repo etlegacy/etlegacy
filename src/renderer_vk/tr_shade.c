@@ -58,17 +58,19 @@ void RB_BeginSurface(shader_t *shader, int fogNum)
 {
 	shader_t *state = (shader->remappedShader) ? shader->remappedShader : shader;
 
-	tess.numIndexes  = 0;
-	tess.numVertexes = 0;
-	tess.shader      = state;
-	tess.fogNum      = fogNum;
-	tess.dlightBits  = 0;              // will be OR'd in by surface functions
-	tess.vkStatic    = qfalse;              // decided by the first surface (RB_SurfaceTriangles)
-	tess.vkDiffuse   = qfalse;
-	tess.vkSkin      = qfalse;
-	tess.vkMesh      = qfalse;
-	tess.vkIndirect  = qfalse;
-	tess.vkEnvOffset = 0;
+	tess.numIndexes        = 0;
+	tess.numVertexes       = 0;
+	tess.shader            = state;
+	tess.fogNum            = fogNum;
+	tess.dlightBits        = 0;        // will be OR'd in by surface functions
+	tess.vkStatic          = qfalse;        // decided by the first surface (RB_SurfaceTriangles)
+	tess.vkDiffuse         = qfalse;
+	tess.vkSkin            = qfalse;
+	tess.vkMesh            = qfalse;
+	tess.vkIndirect        = qfalse;
+	tess.vkFoliage         = qfalse;
+	tess.vkEnvOffset       = 0;
+	tess.vkNumFoliageDraws = 0;
 	tess.vkSurfaceSerial++;
 	tess.vkStage                  = NULL;
 	tess.xstages                  = state->stages;
@@ -987,8 +989,9 @@ static void RB_DynamicLights(void)
 	int              l;
 
 	// static batches have no tess vertices: their dlights are folded into
-	// the static draw (VK_Draw3DStatic, see RB_StaticDlightsOk)
-	if (tess.vkStatic || !RB_ShaderTakesDlights(tess.dlightBits))
+	// the static draw (VK_Draw3DStatic, see RB_StaticDlightsOk); instanced
+	// foliage takes no dlit surfaces (RB_FoliageCanInstance)
+	if (tess.vkStatic || tess.vkFoliage || !RB_ShaderTakesDlights(tess.dlightBits))
 	{
 		return;
 	}
@@ -1051,6 +1054,21 @@ static void RB_FogPass(void)
 		                   ? (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHFUNC_EQUAL)
 		                   : (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA),
 		                   tess.shader->cullType, sVec, tVec, eyeT, (const byte *)&fog->shader->fogParms.colorInt);
+		return;
+	}
+
+	// instanced foliage: the same in its instanced vertex shader
+	if (tess.vkFoliage)
+	{
+		vec4_t sVec, tVec;
+		float  eyeT;
+
+		RB_CalcFogTexCoordParams(sVec, tVec, &eyeT);
+		VK_Draw3DFoliageFog(&tess, tr.fogImage,
+		                    (tess.shader->fogPass == FP_EQUAL)
+		                    ? (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHFUNC_EQUAL)
+		                    : (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA),
+		                    tess.shader->cullType, sVec, tVec, eyeT, (const byte *)&fog->shader->fogParms.colorInt);
 		return;
 	}
 
@@ -1486,10 +1504,12 @@ void RB_EndSurface(void)
 	}
 
 	// clear shader so we can tell we don't have any unclosed surfaces
-	tess.numIndexes  = 0;
-	tess.numVertexes = 0;
-	tess.vkStatic    = qfalse;
-	tess.vkSkin      = qfalse;
-	tess.vkMesh      = qfalse;
-	tess.vkIndirect  = qfalse;
+	tess.numIndexes        = 0;
+	tess.numVertexes       = 0;
+	tess.vkStatic          = qfalse;
+	tess.vkSkin            = qfalse;
+	tess.vkMesh            = qfalse;
+	tess.vkIndirect        = qfalse;
+	tess.vkFoliage         = qfalse;
+	tess.vkNumFoliageDraws = 0;
 }

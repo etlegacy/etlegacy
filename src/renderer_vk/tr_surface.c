@@ -53,7 +53,7 @@
  */
 void RB_CheckOverflow(int verts, int indexes)
 {
-	if (tess.vkStatic || tess.vkSkin || tess.vkMesh)
+	if (tess.vkStatic || tess.vkSkin || tess.vkMesh || tess.vkFoliage)
 	{
 		RB_EndStaticBatch();
 	}
@@ -578,15 +578,193 @@ void RB_SurfaceTriangles(srfTriangles_t *srf)
 }
 
 /**
+ * @brief The per-instance part of RB_SurfaceFoliage: distance and frustum
+ * cull, then the instance color with the distance-faded alpha.
+ * @return qfalse if the instance is culled
+ */
+static ID_INLINE qboolean RB_FoliageInstanceColor(int o, const foliageInstance_t *instance, const vec4_t distanceCull,
+                                                  const vec4_t distanceVector, float fovScale, int *srcColor)
+{
+	float alpha, z, dist;
+	int   i, a;
+
+	// fade alpha based on distance between inner and outer radii
+	if (distanceCull[1] > 0.0f)
+	{
+		// calculate z distance
+		z = fovScale * (DotProduct(instance->origin, distanceVector) + distanceVector[3]);
+		if (z < -64.0f)      // epsilon so close-by foliage doesn't pop in and out
+		{
+			return qfalse;
+		}
+
+		// check against frustum planes
+		for (i = 0; i < 5; i++)
+		{
+			dist = DotProduct(instance->origin, backEnd.viewParms.frustum[i].normal) - backEnd.viewParms.frustum[i].dist;
+			if (dist < -64)
+			{
+				break;
+			}
+		}
+		if (i != 5)
+		{
+			return qfalse;
+		}
+
+		// radix
+		if (o & 1)
+		{
+			z *= 1.25;
+			if (o & 2)
+			{
+				z *= 1.25;
+			}
+		}
+
+		// calculate alpha
+		alpha = (distanceCull[1] - z) * distanceCull[3];
+		if (alpha < distanceCull[2])
+		{
+			return qfalse;
+		}
+
+		// set color
+		a = alpha > 1.0f ? 255 : (int)(alpha * 255);
+#ifdef Q3_BIG_ENDIAN // LBO 3/15/05. Byte-swap fix for Mac - alpha is in the LSB.
+		*srcColor = (*((int *) instance->color) & 0xFFFFFF00) | (a & 0xff);
+#else
+		*srcColor = (*((int *) instance->color) & 0xFFFFFF) | (a << 24);
+#endif
+	}
+	else
+	{
+		*srcColor = *((int *) instance->color);
+	}
+
+	return qtrue;
+}
+
+/**
+ * @brief Vulkan: true when this foliage surface can be drawn instanced
+ * (RB_SurfaceFoliageInstanced): its model is in the static world buffer,
+ * the shader's stages are static (shader_t::vkStatic) single-texture stages
+ * with texture coords in the generic iterator, and nothing needs the
+ * tessellated vertices - no dlight pass, no fog color modulation, no fading
+ * entity, no debug view.
+ */
+static qboolean RB_FoliageCanInstance(const srfFoliage_t *srf)
+{
+	int i;
+
+	if (srf->vkFirstVertex < 0 || !r_vkFoliageInstance->integer || !r_vkStaticWorld->integer || !tess.shader->vkStatic ||
+	    tess.currentStageIteratorFunc != RB_StageIteratorGeneric || backEnd.projection2D || backEnd.currentEntity->e.fadeStartTime ||
+	    (srf->dlightBits && RB_ShaderTakesDlights(srf->dlightBits)) ||
+	    r_showTris->integer || r_showNormals->integer || r_debugShaderSurfaceFlags->integer)
+	{
+		return qfalse;
+	}
+
+	for (i = 0; i < MAX_SHADER_STAGES && tess.xstages[i]; i++)
+	{
+		const shaderStage_t *pStage = tess.xstages[i];
+
+		if (pStage->bundle[1].image[0] || pStage->bundle[0].tcGen != TCGEN_TEXTURE ||
+		    (tess.fogNum && !tess.shader->noFog && pStage->adjustColorsForFog != ACFF_NONE))
+		{
+			return qfalse;
+		}
+	}
+
+	return qtrue;
+}
+
+/**
+ * @brief Vulkan: adds the visible instances of a foliage surface to an
+ * instanced batch (tess.vkFoliage): their origins and colors go into the
+ * frame's scene vertex arena, and the batch's stages draw the model from
+ * the static world buffer once per instance. Instances of consecutive
+ * surfaces with the same model share a draw.
+ */
+static void RB_SurfaceFoliageInstanced(srfFoliage_t *srf, const vec4_t distanceCull, const vec4_t distanceVector, float fovScale)
+{
+	foliageInstance_t       *dst;
+	const foliageInstance_t *instance;
+	vkFoliageDraw_t         *draw;
+	glIndex_t               *indexes;
+	int                     o, i, count = 0, first, firstIndex, srcColor;
+
+	if ((tess.numIndexes || tess.numVertexes || tess.vkStatic || tess.vkSkin || tess.vkMesh) &&
+	    (!tess.vkFoliage || tess.vkNumFoliageDraws == VK_MAX_FOLIAGE_DRAWS))
+	{
+		RB_EndStaticBatch();
+		tess.dlightBits |= srf->dlightBits;
+	}
+
+	dst = VK_AllocFoliageInstances(srf->numInstances, &first);
+	if (!dst)
+	{
+		return; // arena full this frame (reported there): drop the surface
+	}
+
+	instance = srf->instances;
+	for (o = 0; o < srf->numInstances; o++, instance++)
+	{
+		if (!RB_FoliageInstanceColor(o, instance, distanceCull, distanceVector, fovScale, &srcColor))
+		{
+			continue;
+		}
+
+		VectorCopy(instance->origin, dst[count].origin);
+		*(int *)dst[count].color = srcColor;
+		count++;
+	}
+
+	if (!count)
+	{
+		return;
+	}
+	VK_CommitFoliageInstances(count);
+
+	draw = tess.vkNumFoliageDraws ? &tess.vkFoliageDraws[tess.vkNumFoliageDraws - 1] : NULL;
+	if (draw && draw->firstVertex == srf->vkFirstVertex && draw->firstInstance + draw->numInstances == first)
+	{
+		draw->numInstances += count;
+	}
+	else
+	{
+		indexes = VK_AllocSceneIndexes(srf->numIndexes, &firstIndex);
+		if (!indexes)
+		{
+			return; // arena full this frame (reported there)
+		}
+		for (i = 0; i < srf->numIndexes; i++)
+		{
+			indexes[i] = srf->vkFirstVertex + srf->indexes[i];
+		}
+
+		draw                = &tess.vkFoliageDraws[tess.vkNumFoliageDraws++];
+		draw->firstVertex   = srf->vkFirstVertex;
+		draw->firstIndex    = firstIndex;
+		draw->numIndexes    = srf->numIndexes;
+		draw->firstInstance = first;
+		draw->numInstances  = count;
+	}
+
+	tess.vkFoliage   = qtrue;
+	tess.numIndexes += count * srf->numIndexes;
+}
+
+/**
  * @brief RB_SurfaceFoliage
  * @param[in] srf
  */
 void RB_SurfaceFoliage(srfFoliage_t *srf)
 {
-	int               o, i, a;
+	int               o, i;
 	int               numVerts = srf->numVerts, numIndexes = srf->numIndexes;   // basic setup
 	vec4_t            distanceCull, distanceVector;
-	float             alpha, z, dist, fovScale = backEnd.viewParms.fovX * (1.0f / 90.0f);
+	float             alpha, z, fovScale = backEnd.viewParms.fovX * (1.0f / 90.0f);
 	vec3_t            local;
 	vec_t             *xyz;
 	int               srcColor, *color;
@@ -617,62 +795,19 @@ void RB_SurfaceFoliage(srfFoliage_t *srf)
 	dlightBits       = srf->dlightBits;
 	tess.dlightBits |= dlightBits;
 
+	if (RB_FoliageCanInstance(srf))
+	{
+		RB_SurfaceFoliageInstanced(srf, distanceCull, distanceVector, fovScale);
+		return;
+	}
+
 	// iterate through origin list
 	instance = srf->instances;
 	for (o = 0; o < srf->numInstances; o++, instance++)
 	{
-		// fade alpha based on distance between inner and outer radii
-		if (distanceCull[1] > 0.0f)
+		if (!RB_FoliageInstanceColor(o, instance, distanceCull, distanceVector, fovScale, &srcColor))
 		{
-			// calculate z distance
-			z = fovScale * (DotProduct(instance->origin, distanceVector) + distanceVector[3]);
-			if (z < -64.0f)      // epsilon so close-by foliage doesn't pop in and out
-			{
-				continue;
-			}
-
-			// check against frustum planes
-			for (i = 0; i < 5; i++)
-			{
-				dist = DotProduct(instance->origin, backEnd.viewParms.frustum[i].normal) - backEnd.viewParms.frustum[i].dist;
-				if (dist < -64)
-				{
-					break;
-				}
-			}
-			if (i != 5)
-			{
-				continue;
-			}
-
-			// radix
-			if (o & 1)
-			{
-				z *= 1.25;
-				if (o & 2)
-				{
-					z *= 1.25;
-				}
-			}
-
-			// calculate alpha
-			alpha = (distanceCull[1] - z) * distanceCull[3];
-			if (alpha < distanceCull[2])
-			{
-				continue;
-			}
-
-			// set color
-			a = alpha > 1.0f ? 255 : (int)(alpha * 255);
-#ifdef Q3_BIG_ENDIAN // LBO 3/15/05. Byte-swap fix for Mac - alpha is in the LSB.
-			srcColor = (*((int *) instance->color) & 0xFFFFFF00) | (a & 0xff);
-#else
-			srcColor = (*((int *) instance->color) & 0xFFFFFF) | (a << 24);
-#endif
-		}
-		else
-		{
-			srcColor = *((int *) instance->color);
+			continue;
 		}
 
 		//Ren_Print("Color: %d %d %d %d\n", srf->colors[ o ][ 0 ], srf->colors[ o ][ 1 ], srf->colors[ o ][ 2 ], alpha );
@@ -2042,7 +2177,7 @@ void RB_SurfaceGrid(srfGridMesh_t *cv)
 	qboolean      needsNormal;
 
 	// patches share shaders with the static world surfaces around them
-	if (tess.vkStatic)
+	if (tess.vkStatic || tess.vkFoliage)
 	{
 		RB_EndStaticBatch();
 	}
