@@ -77,6 +77,7 @@ extern cvar_t *r_gfxInfo;
 extern cvar_t *r_scale;
 
 extern cvar_t *r_vkStaticWorld;
+extern cvar_t *r_vkFoliageInstance;
 extern cvar_t *r_vkGpuCull;
 extern cvar_t *r_vkWorldBatch;
 extern cvar_t *r_vkModelBatch;

@@ -1044,6 +1044,10 @@ typedef struct
 	// origins
 	int numInstances;
 	foliageInstance_t *instances;
+
+	/// first vertex of the model in the Vulkan static world buffer (shared by
+	/// surfaces with the same model), -1 if not uploaded
+	int vkFirstVertex;
 } srfFoliage_t;
 
 extern void (*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *);
@@ -1713,6 +1717,23 @@ typedef struct
 	vec2_t texcoords[NUM_TEXTURE_BUNDLES][SHADER_MAX_VERTEXES];
 } stageVars_t;
 
+#define VK_MAX_FOLIAGE_DRAWS 64
+
+/**
+ * @struct vkFoliageDraw_t
+ * @brief One instanced draw of a foliage batch (tess.vkFoliage): a model's
+ * indexes in the scene index arena (pointing into the static world buffer)
+ * and its instances (foliageInstance_t) in the scene vertex arena
+ */
+typedef struct
+{
+	int firstVertex; ///< the model (srfFoliage_t::vkFirstVertex)
+	int firstIndex;
+	int numIndexes;
+	int firstInstance;
+	int numInstances;
+} vkFoliageDraw_t;
+
 /**
  * @struct shaderCommands_s
  * @typedef shaderCommands_t
@@ -1791,6 +1812,12 @@ typedef struct shaderCommands_s
 	qboolean vkDiffuse;
 	/// stage being drawn (colors for static batches), NULL = constant white
 	shaderStage_t *vkStage;
+	/// instanced foliage batch (RB_SurfaceFoliage): no tess vertices or
+	/// indexes; every stage draws these instanced draws (numIndexes only
+	/// counts the triangles)
+	qboolean vkFoliage;
+	int vkNumFoliageDraws;
+	vkFoliageDraw_t vkFoliageDraws[VK_MAX_FOLIAGE_DRAWS];
 } shaderCommands_t;
 
 extern shaderCommands_t tess;
@@ -1805,6 +1832,11 @@ qboolean RB_ShaderTakesDlights(int dlightBits);
 // static batches (tess.vkStatic) index into, filled by R_LoadStaticWorldVertices()
 qboolean VK_CreateStaticWorldBuffer(int numVertexes);
 void VK_WriteStaticWorldVertices(int first, const drawVert_t *verts, int count);
+void VK_WriteStaticFoliageVertices(int first, const srfFoliage_t *srf);
+foliageInstance_t *VK_AllocFoliageInstances(int count, int *firstInstance);
+void VK_CommitFoliageInstances(int count);
+void VK_Draw3DFoliageFog(shaderCommands_t *input, const image_t *fogImage, unsigned long stateBits, int cullType,
+                         const vec4_t sVec, const vec4_t tVec, float eyeT, const byte *color);
 glIndex_t *VK_AllocSceneIndexes(int count, int *firstIndex);
 
 // Vulkan GPU skinning (vulkan/vk.c): MDM vertices in a skin buffer filled at
@@ -1873,7 +1905,7 @@ void RB_VkSetupEnvParams(void);
 #define VK_MESH_MDC      1 // tess.vkMeshFlags: MDC surface (else MD3)
 #define VK_MESH_NEW_COMP 2 // MDC: the frame has a compressed frame
 #define VK_MESH_OLD_COMP 4 // MDC: the oldframe has a compressed frame
-#define RB_CHECKOVERFLOW(v, i) if (tess.vkStatic || tess.vkSkin || tess.vkMesh) { RB_EndStaticBatch(); } if (tess.numVertexes + (v) >= SHADER_MAX_VERTEXES || tess.numIndexes + (i) >= SHADER_MAX_INDEXES) { RB_CheckOverflow(v, i); }
+#define RB_CHECKOVERFLOW(v, i) if (tess.vkStatic || tess.vkSkin || tess.vkMesh || tess.vkFoliage) { RB_EndStaticBatch(); } if (tess.numVertexes + (v) >= SHADER_MAX_VERTEXES || tess.numIndexes + (i) >= SHADER_MAX_INDEXES) { RB_CheckOverflow(v, i); }
 
 void RB_StageIteratorGeneric(void);
 void RB_StageIteratorSky(void);

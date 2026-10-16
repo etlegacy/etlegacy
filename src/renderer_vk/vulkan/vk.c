@@ -74,6 +74,8 @@
 #include "tr3d_md3_bl.vert.glsl.h"
 #include "tr3d_skin_bl.vert.glsl.h"
 #include "tr3d_static_fog_bl.vert.glsl.h"
+#include "tr3d_foliage.vert.glsl.h"
+#include "tr3d_foliage_fog.vert.glsl.h"
 
 #define VK_MAX_SWAPCHAIN_IMAGES 8
 
@@ -169,6 +171,8 @@ typedef struct
 #define VK_VERTS_STATIC_FOG_BL    12 // merged world batch, fog pass of a group: fog texcoords from per-draw parameters (tr3d_static_fog_bl.vert)
 #define VK_VERTS_SKIN_BL          11 // as VK_VERTS_SKIN, merged model batch: bones from the bone arena as storage (tr3d_skin_bl.vert)
 #define VK_VERTS_MD3_BL           10 // as VK_VERTS_MD3, merged model batch: no vertex streams (tr3d_md3_bl.vert reads the mesh buffer)
+#define VK_VERTS_FOLIAGE          13 // static buffer + per-instance origin/color stream (foliageInstance_t), tr3d_foliage.vert
+#define VK_VERTS_FOLIAGE_FOG      14 // as VK_VERTS_FOLIAGE, fog pass: fog texcoords from push constants (tr3d_foliage_fog.vert)
 #define VK_VERTS_MD3              7 // mesh buffer: frame, oldframe (md3XyzNormal_t), texcoords, MDC compressed frame, oldframe; tr3d_md3.vert, normal tables in set 1
 
 // MD3/MDC frames + texcoords + triangles of every loaded model (VK_WriteMeshData)
@@ -349,6 +353,8 @@ typedef struct
 	VkShaderModule sceneStaticVertModule;   // static world buffer variants (color = vertex * mul + add)
 	VkShaderModule sceneDiffuseVertModule;  // rgbGen lightingDiffuse variants (VK_VERTS_DIFFUSE)
 	VkShaderModule sceneLMStaticVertModule;
+	VkShaderModule sceneFoliageVertModule;    // instanced foliage (VK_VERTS_FOLIAGE)
+	VkShaderModule sceneFoliageFogVertModule; // its fog pass (VK_VERTS_FOLIAGE_FOG)
 
 	VkShaderModule uiVertModule;
 	VkShaderModule uiFragModule;
@@ -2907,6 +2913,35 @@ void VK_WriteStaticWorldVertices(int first, const drawVert_t *verts, int count)
 }
 
 /**
+ * @brief Copies a foliage surface's model (xyz, texture and lightmap coords)
+ * into the static world buffer starting at vertex `first`. The color comes
+ * from each instance (VK_VERTS_FOLIAGE).
+ */
+void VK_WriteStaticFoliageVertices(int first, const srfFoliage_t *srf)
+{
+	vk3DVertexLM_t *dst;
+	int            i;
+
+	if (!vk.staticWorldMapped || first < 0 || first + srf->numVerts > vk.staticWorldNumVertexes)
+	{
+		return;
+	}
+
+	dst = (vk3DVertexLM_t *)vk.staticWorldMapped + first;
+	for (i = 0; i < srf->numVerts; i++, dst++)
+	{
+		dst->pos[0] = srf->xyz[i][0];
+		dst->pos[1] = srf->xyz[i][1];
+		dst->pos[2] = srf->xyz[i][2];
+		dst->uv0[0] = srf->texCoords[i][0];
+		dst->uv0[1] = srf->texCoords[i][1];
+		dst->uv1[0] = srf->lmTexCoords[i][0];
+		dst->uv1[1] = srf->lmTexCoords[i][1];
+		Com_Memset(dst->color, 0xff, 4);
+	}
+}
+
+/**
  * @brief GPU world culling: the compute pipeline, its descriptor set and the
  * per-frame command buffers the culling dispatches are recorded into (each
  * frame submits its cull command buffer ahead of the main one). Optional:
@@ -3456,11 +3491,13 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 	vk.sceneLMVertModule = VK_CreateShaderModule(tr3d_lm_vert_spv, tr3d_lm_vert_spv_SIZE);
 	vk.sceneLMFragModule = VK_CreateShaderModule(tr3d_lm_frag_spv, tr3d_lm_frag_spv_SIZE);
 
-	vk.sceneStaticVertModule   = VK_CreateShaderModule(tr3d_static_vert_spv, tr3d_static_vert_spv_SIZE);
-	vk.sceneLMStaticVertModule = VK_CreateShaderModule(tr3d_lm_static_vert_spv, tr3d_lm_static_vert_spv_SIZE);
-	vk.sceneDiffuseVertModule  = VK_CreateShaderModule(tr3d_diffuse_vert_spv, tr3d_diffuse_vert_spv_SIZE);
-	vk.sceneSkinVertModule     = VK_CreateShaderModule(tr3d_skin_vert_spv, tr3d_skin_vert_spv_SIZE);
-	vk.sceneMD3VertModule      = VK_CreateShaderModule(tr3d_md3_vert_spv, tr3d_md3_vert_spv_SIZE);
+	vk.sceneStaticVertModule     = VK_CreateShaderModule(tr3d_static_vert_spv, tr3d_static_vert_spv_SIZE);
+	vk.sceneLMStaticVertModule   = VK_CreateShaderModule(tr3d_lm_static_vert_spv, tr3d_lm_static_vert_spv_SIZE);
+	vk.sceneDiffuseVertModule    = VK_CreateShaderModule(tr3d_diffuse_vert_spv, tr3d_diffuse_vert_spv_SIZE);
+	vk.sceneSkinVertModule       = VK_CreateShaderModule(tr3d_skin_vert_spv, tr3d_skin_vert_spv_SIZE);
+	vk.sceneMD3VertModule        = VK_CreateShaderModule(tr3d_md3_vert_spv, tr3d_md3_vert_spv_SIZE);
+	vk.sceneFoliageVertModule    = VK_CreateShaderModule(tr3d_foliage_vert_spv, tr3d_foliage_vert_spv_SIZE);
+	vk.sceneFoliageFogVertModule = VK_CreateShaderModule(tr3d_foliage_fog_vert_spv, tr3d_foliage_fog_vert_spv_SIZE);
 
 	vk.sceneLMStaticDlightVertModule = VK_CreateShaderModule(tr3d_lm_static_dlight_vert_spv, tr3d_lm_static_dlight_vert_spv_SIZE);
 	vk.sceneLMDlightFragModule       = VK_CreateShaderModule(tr3d_lm_dlight_frag_spv, tr3d_lm_dlight_frag_spv_SIZE);
@@ -3473,7 +3510,8 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 	    vk.sceneDiffuseVertModule == VK_NULL_HANDLE || vk.sceneSkinVertModule == VK_NULL_HANDLE ||
 	    vk.sceneLMStaticDlightVertModule == VK_NULL_HANDLE || vk.sceneLMDlightFragModule == VK_NULL_HANDLE ||
 	    vk.scene2StageVertModule == VK_NULL_HANDLE || vk.scene2StageFragModule == VK_NULL_HANDLE ||
-	    vk.sceneMD3VertModule == VK_NULL_HANDLE)
+	    vk.sceneMD3VertModule == VK_NULL_HANDLE || vk.sceneFoliageVertModule == VK_NULL_HANDLE ||
+	    vk.sceneFoliageFogVertModule == VK_NULL_HANDLE)
 	{
 		return qfalse;
 	}
@@ -3604,6 +3642,10 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	{
 		stages[0].module = vk.sceneStaticFogBLVertModule;
 	}
+	else if (vertexSource == VK_VERTS_FOLIAGE || vertexSource == VK_VERTS_FOLIAGE_FOG)
+	{
+		stages[0].module = (vertexSource == VK_VERTS_FOLIAGE) ? vk.sceneFoliageVertModule : vk.sceneFoliageFogVertModule;
+	}
 	else if (vertexSource != VK_VERTS_ARENA)
 	{
 		stages[0].module = lightmapped ? vk.sceneLMStaticVertModule : vk.sceneStaticVertModule;
@@ -3662,6 +3704,34 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 		}
 		bindingCount   = 5;
 		attributeCount = 5;
+	}
+	else if (vertexSource == VK_VERTS_FOLIAGE || vertexSource == VK_VERTS_FOLIAGE_FOG)
+	{
+		// binding 0: the model in the static world buffer, 1: one
+		// foliageInstance_t per instance (origin, color)
+		vertexBindings[0].stride    = sizeof(vk3DVertexLM_t);
+		vertexBindings[1].binding   = 1;
+		vertexBindings[1].stride    = sizeof(foliageInstance_t);
+		vertexBindings[1].inputRate = VK_VERTEX_INPUT_RATE_INSTANCE;
+
+		vertexAttributes[0].location = 0;
+		vertexAttributes[0].binding  = 0;
+		vertexAttributes[0].format   = VK_FORMAT_R32G32B32_SFLOAT;
+		vertexAttributes[0].offset   = offsetof(vk3DVertexLM_t, pos);
+		vertexAttributes[1].location = 1;
+		vertexAttributes[1].binding  = 0;
+		vertexAttributes[1].format   = VK_FORMAT_R32G32_SFLOAT;
+		vertexAttributes[1].offset   = offsetof(vk3DVertexLM_t, uv0);
+		vertexAttributes[2].location = 2;
+		vertexAttributes[2].binding  = 1;
+		vertexAttributes[2].format   = VK_FORMAT_R8G8B8A8_UNORM;
+		vertexAttributes[2].offset   = offsetof(foliageInstance_t, color);
+		vertexAttributes[3].location = 3;
+		vertexAttributes[3].binding  = 1;
+		vertexAttributes[3].format   = VK_FORMAT_R32G32B32_SFLOAT;
+		vertexAttributes[3].offset   = offsetof(foliageInstance_t, origin);
+		bindingCount                 = 2;
+		attributeCount               = 4;
 	}
 	else if (vertexSource == VK_VERTS_TWOSTAGE)
 	{
@@ -4625,6 +4695,14 @@ void VK_Shutdown(void)
 		if (vk.sceneLMStaticVertModule != VK_NULL_HANDLE)
 		{
 			vkDestroyShaderModule(vk.device, vk.sceneLMStaticVertModule, NULL);
+		}
+		if (vk.sceneFoliageVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneFoliageVertModule, NULL);
+		}
+		if (vk.sceneFoliageFogVertModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneFoliageFogVertModule, NULL);
 		}
 		if (vk.sceneDiffuseVertModule != VK_NULL_HANDLE)
 		{
@@ -7037,6 +7115,145 @@ static void VK_Draw3DStatic(shaderCommands_t *input, int numIndexes, VkDescripto
 }
 
 /**
+ * @brief Reserves room for count foliage instances (RB_SurfaceFoliage) in
+ * this frame's scene vertex arena; VK_CommitFoliageInstances() keeps the
+ * ones written. Consecutive reservations are contiguous until another draw
+ * uses the arena.
+ * @param[out] firstInstance position of the first one, for vkCmdDrawIndexed
+ * @return write pointer, or NULL if the arena is exhausted this frame
+ */
+foliageInstance_t *VK_AllocFoliageInstances(int count, int *firstInstance)
+{
+	VkDeviceSize bytes = (VkDeviceSize)count * sizeof(foliageInstance_t);
+
+	vk.sceneVertexArenaOffset = VK_ALIGN_UP(vk.sceneVertexArenaOffset, sizeof(foliageInstance_t));
+	if (!vk.initialized || vk.sceneVertexArenaOffset + bytes > vk.sceneVertexArenaSize)
+	{
+		static int lastWarnFrame = -1;
+
+		if (vk.initialized && backEnd.refdef.time != lastWarnFrame)
+		{
+			Ren_Print("Vulkan: VK_AllocFoliageInstances - scene vertex arena exhausted this frame, dropping foliage\n");
+			lastWarnFrame = backEnd.refdef.time;
+		}
+		return NULL;
+	}
+
+	*firstInstance = (int)(vk.sceneVertexArenaOffset / sizeof(foliageInstance_t));
+	return (foliageInstance_t *)((byte *)vk.sceneVertexArenaMapped + vk.sceneVertexArenaOffset);
+}
+
+/**
+ * @brief Keeps the first count instances of the last
+ * VK_AllocFoliageInstances() reservation.
+ */
+void VK_CommitFoliageInstances(int count)
+{
+	vk.sceneVertexArenaOffset += (VkDeviceSize)count * sizeof(foliageInstance_t);
+}
+
+/**
+ * @brief Records an instanced foliage batch's draws (tess.vkFoliage) with
+ * the bound pipeline and push constants: the models from the static world
+ * buffer, their indexes in the scene index arena, the instances in the
+ * scene vertex arena.
+ */
+static void VK_DrawFoliageInstances(const shaderCommands_t *input)
+{
+	VkDeviceSize zero = 0;
+	int          i;
+
+	VK_BindArenaBuffers(vk.staticWorldBuffer, vk.sceneIndexArenaBuffer);
+	vkCmdBindVertexBuffers(vk.commandBuffer, 1, 1, &vk.sceneVertexArenaBuffer, &zero);
+
+	for (i = 0; i < input->vkNumFoliageDraws; i++)
+	{
+		const vkFoliageDraw_t *d = &input->vkFoliageDraws[i];
+
+		vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)d->numIndexes, (uint32_t)d->numInstances, (uint32_t)d->firstIndex, 0,
+		                 (uint32_t)d->firstInstance);
+	}
+}
+
+/**
+ * @brief A stage of an instanced foliage batch (tess.vkFoliage,
+ * RB_SurfaceFoliage): the stage's color from the instance color as for
+ * static world batches (VK_StaticStageColor), one instanced draw per model.
+ */
+static void VK_Draw3DFoliage(shaderCommands_t *input, const image_t *image, unsigned long stateBits, int cullType)
+{
+	float           pushConstants[56]; // 48 + colorMul + colorAdd
+	VkPipeline      pipeline;
+	VkDescriptorSet descriptorSet;
+
+	if (vk.staticWorldBuffer == VK_NULL_HANDLE || !input->vkNumFoliageDraws)
+	{
+		return;
+	}
+
+	pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), qfalse, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE,
+	                                 VK_VERTS_FOLIAGE);
+	if (pipeline == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	VK_FillScenePushConstants(pushConstants, stateBits, 0.0f);
+	VK_StaticStageColor(input->vkStage, pushConstants + 48, pushConstants + 52);
+
+	VK_BindPipelineCached(pipeline);
+	VK_PushConstantsCached(vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
+	descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
+	VK_BindDescriptorSetsCached(vk.scenePipelineLayout, 1, &descriptorSet);
+
+	VK_DrawFoliageInstances(input);
+}
+
+/**
+ * @brief RB_FogPass() for an instanced foliage batch (tess.vkFoliage): the
+ * fog image and color with the texcoord parameters (sVec, tVec, eyeT,
+ * RB_CalcFogTexCoordParams) that tr3d_foliage_fog.vert evaluates per vertex.
+ */
+void VK_Draw3DFoliageFog(shaderCommands_t *input, const image_t *fogImage, unsigned long stateBits, int cullType,
+                         const vec4_t sVec, const vec4_t tVec, float eyeT, const byte *color)
+{
+	float           pushConstants[64]; // 48 + color + fogS + fogT + fogEye
+	VkPipeline      pipeline;
+	VkDescriptorSet descriptorSet;
+	int             i;
+
+	if (!vk.initialized || vk.staticWorldBuffer == VK_NULL_HANDLE || !input->vkFoliage || !input->vkNumFoliageDraws ||
+	    !fogImage || !fogImage->vkDescriptorSet)
+	{
+		return;
+	}
+
+	pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), qfalse, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE,
+	                                 VK_VERTS_FOLIAGE_FOG);
+	if (pipeline == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	VK_FillScenePushConstants(pushConstants, stateBits, 0.0f);
+	for (i = 0; i < 4; i++)
+	{
+		pushConstants[48 + i] = color[i] / 255.0f;
+		pushConstants[52 + i] = sVec[i];
+		pushConstants[56 + i] = tVec[i];
+		pushConstants[60 + i] = 0.0f;
+	}
+	pushConstants[60] = eyeT;
+
+	VK_BindPipelineCached(pipeline);
+	VK_PushConstantsCached(vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
+	descriptorSet = (VkDescriptorSet)fogImage->vkDescriptorSet;
+	VK_BindDescriptorSetsCached(vk.scenePipelineLayout, 1, &descriptorSet);
+
+	VK_DrawFoliageInstances(input);
+}
+
+/**
  * @brief GPU-skinned MDM batch (tess.vkSkin, RB_MDM_SurfaceAnimGPU): the
  * stage's color for tr3d_skin.vert, in the diffuse lighting slots (48-59)
  * - rgbGen lightingDiffuse: the entity's lightDir/ambientLight/directedLight,
@@ -7383,7 +7600,8 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 	VkPipeline      pipeline;
 	VkDescriptorSet descriptorSet;
 
-	if (!vk.initialized || !input || (input->numVertexes == 0 && !input->vkStatic && !input->vkSkin && !input->vkMesh) || numIndexes == 0)
+	if (!vk.initialized || !input || (input->numVertexes == 0 && !input->vkStatic && !input->vkSkin && !input->vkMesh && !input->vkFoliage) ||
+	    numIndexes == 0)
 	{
 		return;
 	}
@@ -7394,6 +7612,12 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 	}
 	if (!image || !image->vkDescriptorSet)
 	{
+		return;
+	}
+
+	if (input->vkFoliage)
+	{
+		VK_Draw3DFoliage(input, image, stateBits, cullType);
 		return;
 	}
 
