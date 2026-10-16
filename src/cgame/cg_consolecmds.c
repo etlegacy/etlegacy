@@ -2271,7 +2271,7 @@ static void CG_EditHud_f(void)
 {
 	if (cg.editingHud)
 	{
-		CG_EventHandling(CGAME_EVENT_NONE, qfalse);
+		CG_HudEditor_TryExit();
 	}
 	else
 	{
