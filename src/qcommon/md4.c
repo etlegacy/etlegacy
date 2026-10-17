@@ -166,7 +166,8 @@ void MD4Update(MD4_CTX *context, const unsigned char *input, unsigned int inputL
 		Com_Memcpy((POINTER)&context->buffer[index], (POINTER)input, partLen);
 		MD4Transform(context->state, context->buffer);
 
-		for (i = partLen; i + 63 < inputLen; i += 64)
+		// Explicitly exclude short inputs and avoid overflow in the block boundary check.
+		for (i = partLen; inputLen >= 64 && i <= inputLen - 64; i += 64)
 			MD4Transform(context->state, &input[i]);
 
 		index = 0;
