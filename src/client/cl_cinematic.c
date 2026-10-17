@@ -78,8 +78,8 @@ static cinematic_t cin_cinematics[MAX_CINEMATICS];
 
 // scratch buffer used by CIN_UploadCinematic to pad a video frame into the
 // square power-of-two texture layout expected by videoMap surfaces
-static byte *cin_uploadBuffer     = NULL;
-static int  cin_uploadBufferSide  = 0;
+static byte *cin_uploadBuffer    = NULL;
+static int  cin_uploadBufferSide = 0;
 
 /**
  * @brief Finds a free cinHandle_t
@@ -719,7 +719,7 @@ void CIN_DrawCinematic(int handle)
 void CIN_UploadCinematic(int handle)
 {
 	cinematic_t *cin;
-	int          width, height, side, y;
+	int         width, height, side, y;
 
 	if (!CIN_HandleValid(handle))
 	{
