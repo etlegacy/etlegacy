@@ -76,6 +76,11 @@ static videoDecode_t videoDecoders[] =
 
 static cinematic_t cin_cinematics[MAX_CINEMATICS];
 
+// scratch buffer used by CIN_UploadCinematic to pad a video frame into the
+// square power-of-two texture layout expected by videoMap surfaces
+static byte *cin_uploadBuffer     = NULL;
+static int  cin_uploadBufferSide  = 0;
+
 /**
  * @brief Finds a free cinHandle_t
  * @param[out] handle
@@ -557,6 +562,13 @@ void CIN_Shutdown(void)
 			videoDecoders[i].Shutdown();
 		}
 	}
+
+	if (cin_uploadBuffer)
+	{
+		Com_Dealloc(cin_uploadBuffer);
+		cin_uploadBuffer     = NULL;
+		cin_uploadBufferSide = 0;
+	}
 }
 
 /**
@@ -707,6 +719,7 @@ void CIN_DrawCinematic(int handle)
 void CIN_UploadCinematic(int handle)
 {
 	cinematic_t *cin;
+	int          width, height, side, y;
 
 	if (!CIN_HandleValid(handle))
 	{
@@ -722,5 +735,42 @@ void CIN_UploadCinematic(int handle)
 		return;
 	}
 
-	re.UploadCinematic(cin->frameWidth, cin->frameHeight, cin->currentData.width, cin->currentData.height, cin->currentData.image, handle, cin->currentData.dirty);
+	width  = cin->currentData.width;
+	height = cin->currentData.height;
+
+	// W:ET uploads every videoMap frame into a square power-of-two texture (historically
+	// a fixed 256x256), the frame occupying the top-left corner. VideoMap surfaces in maps
+	// are authored against that layout, so keep the frame in the top-left of a matching
+	// square texture rather than uploading it at its native (possibly non-square) size.
+	side = 256;
+	while (side < width || side < height)
+	{
+		side <<= 1;
+	}
+
+	if (side == width && side == height)
+	{
+		re.UploadCinematic(cin->frameWidth, cin->frameHeight, width, height, cin->currentData.image, handle, cin->currentData.dirty);
+		return;
+	}
+
+	if (cin_uploadBufferSide < side)
+	{
+		if (cin_uploadBuffer)
+		{
+			Com_Dealloc(cin_uploadBuffer);
+		}
+
+		cin_uploadBufferSide = side;
+		cin_uploadBuffer     = (byte *)Com_Allocate(side * side * 4);
+	}
+
+	Com_Memset(cin_uploadBuffer, 0, side * side * 4);
+
+	for (y = 0; y < height; y++)
+	{
+		Com_Memcpy(cin_uploadBuffer + (y * side * 4), cin->currentData.image + (y * width * 4), width * 4);
+	}
+
+	re.UploadCinematic(side, side, side, side, cin_uploadBuffer, handle, cin->currentData.dirty);
 }
