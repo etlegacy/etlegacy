@@ -2841,6 +2841,12 @@ enum
 	CROSSHAIR_HIDE_ALT          = BIT(5),
 };
 
+// stamina bar flags
+enum
+{
+	STAMINABAR_EMPTYWARN = BIT(0),
+};
+
 // crosshair bar flags
 enum
 {

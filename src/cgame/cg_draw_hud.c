@@ -57,7 +57,7 @@ static int         fps;
 const hudComponentFields_t hudComponentFields[] =
 {
 	{ HUDF(crosshair),          CG_DrawCrosshair,                 HUD_COMP_TYPE_SPECIFIC,  0.19f,              { "Pulse",         "Pulse Alt",     "Dynamic Color",  "Dynamic Color Alt" } }, // FIXME: outside cg_draw_hud
-	{ HUDF(staminabar),         CG_DrawStaminaBar,                HUD_COMP_TYPE_BAR,       0.19f,              { 0 } },
+	{ HUDF(staminabar),         CG_DrawStaminaBar,                HUD_COMP_TYPE_BAR,       0.19f,              { "Empty Warning" } },
 	{ HUDF(breathbar),          CG_DrawBreathBar,                 HUD_COMP_TYPE_BAR,       0.19f,              { 0 } },
 	{ HUDF(healthbar),          CG_DrawPlayerHealthBar,           HUD_COMP_TYPE_BAR,       0.19f,              { "Dynamic Color" } },
 	{ HUDF(weaponchargebar),    CG_DrawWeapRecharge,              HUD_COMP_TYPE_BAR,       0.19f,              { 0 } },
@@ -206,7 +206,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->hudnumber          = 0;
 	hud->name[0]            = '\0';
 	hud->crosshair          = CG_getComponent(SCREEN_WIDTH * .5f - 24, SCREEN_HEIGHT * .5 - 24, 48, 48, qtrue, CROSSHAIR_PULSE, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawCrosshair);
-	hud->staminabar         = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, 0, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 1.0f, 0.1f, 0.5f }, (vec4_t) { 1.0f, 0, 0.1f, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawStaminaBar);
+	hud->staminabar         = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, STAMINABAR_EMPTYWARN, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 1.0f, 0.1f, 0.5f }, (vec4_t) { 1.0f, 0, 0.1f, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawStaminaBar);
 	hud->breathbar          = CG_getComponent(4, SCREEN_HEIGHT - 92, 12, 72, qtrue, 0, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON, 100.f, (vec4_t) { 0, 0.1f, 1.0f, 0.5f }, (vec4_t) { 1.0f, 0.1f, 0, 0.5f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawBreathBar);
 	hud->healthbar          = CG_getComponent(24, SCREEN_HEIGHT - 92, 12, 72, qtrue, 1, BAR_LEFT | BAR_VERT | BAR_BG | BAR_BGSPACING_X0Y0 | BAR_DECOR | BAR_ICON | BAR_NEEDLE, 100.f, (vec4_t) { 1.f, 1.f, 1.f, 0.75f }, (vec4_t) { 1.f, 0, 0, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawPlayerHealthBar);
 	hud->weaponchargebar    = CG_getComponent(SCREEN_WIDTH - 16, SCREEN_HEIGHT - 92, 12, 72, qtrue, 0, BAR_LEFT | BAR_VERT | BAR_BG | BAR_LERP_COLOR | BAR_DECOR | BAR_ICON | BAR_NEEDLE, 100.f, (vec4_t) { 1.0, 1.0f, 1.0f, 0.75f }, (vec4_t) { 1.0, 1.0f, 0.1f, 0.25f }, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawWeapRecharge);
