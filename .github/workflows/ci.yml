@@ -244,7 +244,8 @@ jobs:
       - *upload-binaries
 
   lnx-aarch64:
-    runs-on: ubuntu-latest
+    # Native arm64 runner and image; build without the cross toolchain file.
+    runs-on: ubuntu-24.04-arm
     needs: [pre-build, publish-lnx-aarch64-build-image]
     # Publication may be skipped, but any requested publish must succeed.
     if: >-
@@ -274,7 +275,7 @@ jobs:
             --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
             --workdir "$GITHUB_WORKSPACE" \
             "$LNX_AARCH64_BUILD_IMAGE" sh -c '
-              ./easybuild.sh build -RPIT -ninja &&
+              ./easybuild.sh build -RPI -ninja &&
               cd build &&
               cpack
             '

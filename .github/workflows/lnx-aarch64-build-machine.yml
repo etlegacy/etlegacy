@@ -17,7 +17,8 @@ on:
 
 jobs:
   docker:
-    runs-on: ubuntu-latest
+    # Native arm64 runner: docker build produces an arm64 image.
+    runs-on: ubuntu-24.04-arm
     if: github.ref == 'refs/heads/master'
     # Serialize automatic and manual publishers without replacing pending jobs.
     concurrency:
@@ -40,7 +41,7 @@ jobs:
 
       - name: Build and push the versioned Docker image
         run: |
-          docker build misc/docker --file misc/docker/lnx-aarch64.Dockerfile --tag etlegacy/lnx-aarch64-build:latest --tag etlegacy/lnx-aarch64-build:${{steps.vars.outputs.tag}}
+          docker build --platform linux/arm64 misc/docker --file misc/docker/lnx-aarch64.Dockerfile --tag etlegacy/lnx-aarch64-build:latest --tag etlegacy/lnx-aarch64-build:${{steps.vars.outputs.tag}}
           docker push etlegacy/lnx-aarch64-build:${{steps.vars.outputs.tag}}
 
       - name: Publish latest if the Dockerfile is still current
