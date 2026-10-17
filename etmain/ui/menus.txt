@@ -29,7 +29,6 @@
 	loadMenu { "ui/mods.menu" }
 	loadMenu { "ui/viewreplay.menu" }
 	loadMenu { "ui/viewreplay_delete.menu" }
-	loadMenu { "ui/options.menu" }
 	loadMenu { "ui/options_customise_game_player.menu" }
 	loadMenu { "ui/options_customise_game_chat.menu" }
 	loadMenu { "ui/options_customise_game_miscellaneous.menu" }
