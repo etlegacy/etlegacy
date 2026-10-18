@@ -132,31 +132,27 @@ static ID_INLINE char CG_ColorCharFromFloat(float val)
  * @param[in] ci
  * @param[in] color As spectator : 1st index is axis color, 2nd index is team kill color, 3rd is allies colors.
  *                  As player    : 1st index is enemy color, 2nd index is team kill color, 3rd is team mate color.
- * @param[in,out] name player name to be colored
+ * @param[out] name buffer getting colored
  * @param[in] same_team is team kill
  */
 static ID_INLINE void CG_ColorObituaryEntName(clientInfo_t *ci, vec4_t color, char *name, qboolean same_team)
 {
 	clientInfo_t *self = &cgs.clientinfo[cg.clientNum];
-	Q_CleanStr(name);
-	memmove(name + 2, name, strlen(name) + 1);
-	name[0] = '^';
+	char         colorCode;
 
 	if (same_team)
 	{
-		name[1] = CG_ColorCharFromFloat(color[1]);
-		return;
+		colorCode = CG_ColorCharFromFloat(color[1]);
 	}
-
-	if (self->team != TEAM_SPECTATOR)
+	else if (self->team != TEAM_SPECTATOR)
 	{
 		if (ci->team != self->team)
 		{
-			name[1] = CG_ColorCharFromFloat(color[0]);
+			colorCode = CG_ColorCharFromFloat(color[0]);
 		}
 		else
 		{
-			name[1] = CG_ColorCharFromFloat(color[2]);
+			colorCode = CG_ColorCharFromFloat(color[2]);
 		}
 	}
 	else
@@ -165,13 +161,15 @@ static ID_INLINE void CG_ColorObituaryEntName(clientInfo_t *ci, vec4_t color, ch
 		// Axis are red, Allies are green by default
 		if (ci->team == TEAM_AXIS)
 		{
-			name[1] = CG_ColorCharFromFloat(color[0]);
+			colorCode = CG_ColorCharFromFloat(color[0]);
 		}
 		else
 		{
-			name[1] = CG_ColorCharFromFloat(color[2]);
+			colorCode = CG_ColorCharFromFloat(color[2]);
 		}
 	}
+
+	Q_ColorizeString(colorCode, ci->name, name, MAX_NAME_LENGTH - 2);
 }
 
 /**
