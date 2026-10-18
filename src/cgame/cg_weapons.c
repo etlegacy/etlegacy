@@ -2250,7 +2250,10 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 		{
 			if ((cg.snap->ps.ammo[GetWeaponTableData(WP_GPG40)->ammoIndex] || cg.snap->ps.ammo[GetWeaponTableData(WP_M7)->ammoIndex] || cg.snap->ps.ammoclip[GetWeaponTableData(WP_GPG40)->ammoIndex] || cg.snap->ps.ammoclip[GetWeaponTableData(WP_M7)->ammoIndex]))
 			{
-				int anim = cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT;
+				// Match the hands' predicted state when available. The local world
+				// model also reaches this branch with no ps, so keep its snapshot fallback.
+				const playerState_t *weaponPs = ps ? ps : &cg.snap->ps;
+				int                 anim      = weaponPs->weapAnim & ~ANIM_TOGGLEBIT;
 
 				// Only grenade-equipped rifles carry a grenade during idle, raise or drop.
 				if (anim == WEAP_ALTSWITCHFROM || anim == WEAP_ALTSWITCHTO ||
@@ -2259,8 +2262,8 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 				{
 					// Keep the grenade on the outgoing rifle when nextWeapon changes.
 					// The grenade tag still needs the switch guard during attach/detach.
-					if ((weaponNum == cg.snap->ps.nextWeapon || (anim != WEAP_ALTSWITCHFROM && anim != WEAP_ALTSWITCHTO)) &&
-					    !(cg.snap->ps.pm_flags & PMF_RESPAWNED))
+					if ((weaponNum == weaponPs->nextWeapon || (anim != WEAP_ALTSWITCHFROM && anim != WEAP_ALTSWITCHTO)) &&
+					    !(weaponPs->pm_flags & PMF_RESPAWNED))
 					{
 						barrel.hModel = weapon->modModels[0];
 
