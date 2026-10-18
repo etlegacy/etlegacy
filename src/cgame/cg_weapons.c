@@ -2307,10 +2307,10 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 
 									// The gun's muzzle tag follows the rifle body, while the hands'
 									// barrel tag moves independently during raise. Muzzle-space
-									// offsets preserve each grenade's mounted idle position.
+									// offsets position each grenade on its rifle's muzzle.
 									if (weaponNum == WP_GPG40)
 									{
-										VectorSet(offset, -1.63f, -0.14f, -0.74f);
+										VectorSet(offset, -0.63f, 0.06f, -0.74f);
 									}
 									else
 									{
