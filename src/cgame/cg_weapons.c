@@ -2252,21 +2252,73 @@ void CG_AddPlayerWeapon(refEntity_t *parent, playerState_t *ps, centity_t *cent)
 			{
 				int anim = cg.snap->ps.weapAnim & ~ANIM_TOGGLEBIT;
 
-				if (anim == WEAP_ALTSWITCHFROM || anim == WEAP_ALTSWITCHTO || anim == WEAP_IDLE1 || anim == WEAP_IDLE2)
+				// Only grenade-equipped rifles carry a grenade during idle, raise or drop.
+				if (anim == WEAP_ALTSWITCHFROM || anim == WEAP_ALTSWITCHTO ||
+				    ((GetWeaponTableData(weaponNum)->type & WEAPON_TYPE_RIFLENADE) &&
+				     (anim == WEAP_IDLE1 || anim == WEAP_IDLE2 || anim == WEAP_RAISE || anim == WEAP_DROP)))
 				{
-					// prevent the flying nade effect (best visible with M7 when swapping while raising)
-					if (weaponNum == cg.snap->ps.nextWeapon && !(cg.snap->ps.pm_flags & PMF_RESPAWNED))
+					// Keep the grenade on the outgoing rifle when nextWeapon changes.
+					// The grenade tag still needs the switch guard during attach/detach.
+					if ((weaponNum == cg.snap->ps.nextWeapon || (anim != WEAP_ALTSWITCHFROM && anim != WEAP_ALTSWITCHTO)) &&
+					    !(cg.snap->ps.pm_flags & PMF_RESPAWNED))
 					{
 						barrel.hModel = weapon->modModels[0];
 
 						if (barrel.hModel)
 						{
-							// only render rifle grenade when NOT firing -
-							// otherwise 'tag_scope' lerps from rifle towards
-							// the player in 1st person view #2602
-							if (!(ps && ps->weaponstate == WEAPON_DROPPING))
+							// A loaded grenade stays on the lowering rifle; hide it after firing.
+							if (!(ps && (ps->weaponstate == WEAPON_DROPPING || ps->weaponstate == WEAPON_DROPPING_TORELOAD) &&
+							      !ps->ammoclip[GetWeaponTableData(weaponNum)->clipIndex]))
 							{
-								CG_PositionEntityOnTag(&barrel, parent, "tag_scope", 0, NULL);
+								// Use the grenade tag only while the hands attach or detach it.
+								if (anim == WEAP_ALTSWITCHFROM || anim == WEAP_ALTSWITCHTO)
+								{
+									if ((weaponNum == WP_CARBINE || weaponNum == WP_M7) && anim == WEAP_ALTSWITCHTO)
+									{
+										const animation_t *detachAnim   = &weapon->weapAnimations[WEAP_ALTSWITCHTO];
+										refEntity_t       grenadeParent = *parent;
+										int               endFrame      = detachAnim->firstFrame + detachAnim->numFrames;
+
+										// The normal rifle idle hides this tag far below the muzzle.
+										// Replace carried-over frames with loaded idle for the grenade
+										// so detachment starts at the muzzle and follows the hand.
+										if (grenadeParent.oldframe < detachAnim->firstFrame || grenadeParent.oldframe >= endFrame)
+										{
+											grenadeParent.oldframe = weapon->weapAnimations[WEAP_IDLE2].firstFrame;
+										}
+										if (grenadeParent.frame < detachAnim->firstFrame || grenadeParent.frame >= endFrame)
+										{
+											grenadeParent.frame = weapon->weapAnimations[WEAP_IDLE2].firstFrame;
+										}
+
+										CG_PositionEntityOnTag(&barrel, &grenadeParent, "tag_scope", 0, NULL);
+									}
+									else
+									{
+										CG_PositionEntityOnTag(&barrel, parent, "tag_scope", 0, NULL);
+									}
+								}
+								else
+								{
+									vec3_t offset;
+
+									// The gun's muzzle tag follows the rifle body, while the hands'
+									// barrel tag moves independently during raise. Muzzle-space
+									// offsets preserve each grenade's mounted idle position.
+									if (weaponNum == WP_GPG40)
+									{
+										VectorSet(offset, -1.63f, -0.14f, -0.74f);
+									}
+									else
+									{
+										VectorSet(offset, 14.06f, 0.31f, 0.91f);
+									}
+
+									CG_PositionEntityOnTag(&barrel, &gun, "tag_flash", 0, NULL);
+									VectorMA(barrel.origin, offset[0], barrel.axis[0], barrel.origin);
+									VectorMA(barrel.origin, offset[1], barrel.axis[1], barrel.origin);
+									VectorMA(barrel.origin, offset[2], barrel.axis[2], barrel.origin);
+								}
 								CG_AddWeaponWithPowerups(&barrel, cent->currentState.powerups, ps, cent);
 							}
 						}
