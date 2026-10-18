@@ -1048,6 +1048,8 @@ typedef struct
 	/// first vertex of the model in the Vulkan static world buffer (shared by
 	/// surfaces with the same model), -1 if not uploaded
 	int vkFirstVertex;
+	/// first instance in the Vulkan foliage instance buffer, -1 if not uploaded
+	int vkFirstInstance;
 } srfFoliage_t;
 
 extern void (*rb_surfaceTable[SF_NUM_SURFACE_TYPES]) (void *);
@@ -1723,7 +1725,8 @@ typedef struct
  * @struct vkFoliageDraw_t
  * @brief One instanced draw of a foliage batch (tess.vkFoliage): a model's
  * indexes in the scene index arena (pointing into the static world buffer)
- * and its instances (foliageInstance_t) in the scene vertex arena
+ * and a range of the foliage instance buffer (culled per instance in the
+ * vertex shader)
  */
 typedef struct
 {
@@ -1814,8 +1817,10 @@ typedef struct shaderCommands_s
 	shaderStage_t *vkStage;
 	/// instanced foliage batch (RB_SurfaceFoliage): no tess vertices or
 	/// indexes; every stage draws these instanced draws (numIndexes only
-	/// counts the triangles)
+	/// counts the triangles) with the batch's per-instance cull parameters
+	/// in the uniform arena at vkFoliageCullOffset
 	qboolean vkFoliage;
+	unsigned int vkFoliageCullOffset;
 	int vkNumFoliageDraws;
 	vkFoliageDraw_t vkFoliageDraws[VK_MAX_FOLIAGE_DRAWS];
 } shaderCommands_t;
@@ -1833,8 +1838,9 @@ qboolean RB_ShaderTakesDlights(int dlightBits);
 qboolean VK_CreateStaticWorldBuffer(int numVertexes);
 void VK_WriteStaticWorldVertices(int first, const drawVert_t *verts, int count);
 void VK_WriteStaticFoliageVertices(int first, const srfFoliage_t *srf);
-foliageInstance_t *VK_AllocFoliageInstances(int count, int *firstInstance);
-void VK_CommitFoliageInstances(int count);
+qboolean VK_CreateFoliageInstanceBuffer(int numInstances);
+void VK_WriteFoliageInstances(int first, const srfFoliage_t *srf);
+float *VK_AllocFoliageCull(unsigned int *offset);
 void VK_Draw3DFoliageFog(shaderCommands_t *input, const image_t *fogImage, unsigned long stateBits, int cullType,
                          const vec4_t sVec, const vec4_t tVec, float eyeT, const byte *color);
 glIndex_t *VK_AllocSceneIndexes(int count, int *firstIndex);

@@ -632,17 +632,18 @@ static void ParseFoliage(dsurface_t *ds, drawVert_t *verts, msurface_t *surf, in
 	foliage = R_GetSurfMemory(size);
 
 	// set up surface
-	foliage->surfaceType   = SF_FOLIAGE;
-	foliage->numVerts      = numVerts;
-	foliage->numIndexes    = numIndexes;
-	foliage->numInstances  = numInstances;
-	foliage->xyz           = ( vec4_t * )(foliage + 1);
-	foliage->normal        = ( vec4_t * )(foliage->xyz + foliage->numVerts);
-	foliage->texCoords     = ( vec2_t * )(foliage->normal + foliage->numVerts);
-	foliage->lmTexCoords   = ( vec2_t * )(foliage->texCoords + foliage->numVerts);
-	foliage->indexes       = ( unsigned int * )(foliage->lmTexCoords + foliage->numVerts);
-	foliage->instances     = ( foliageInstance_t * )(foliage->indexes + foliage->numIndexes);
-	foliage->vkFirstVertex = -1;
+	foliage->surfaceType     = SF_FOLIAGE;
+	foliage->numVerts        = numVerts;
+	foliage->numIndexes      = numIndexes;
+	foliage->numInstances    = numInstances;
+	foliage->xyz             = ( vec4_t * )(foliage + 1);
+	foliage->normal          = ( vec4_t * )(foliage->xyz + foliage->numVerts);
+	foliage->texCoords       = ( vec2_t * )(foliage->normal + foliage->numVerts);
+	foliage->lmTexCoords     = ( vec2_t * )(foliage->texCoords + foliage->numVerts);
+	foliage->indexes         = ( unsigned int * )(foliage->lmTexCoords + foliage->numVerts);
+	foliage->instances       = ( foliageInstance_t * )(foliage->indexes + foliage->numIndexes);
+	foliage->vkFirstVertex   = -1;
+	foliage->vkFirstInstance = -1;
 
 	surf->data = (surfaceType_t *) foliage;
 
@@ -2035,7 +2036,7 @@ static void R_LoadStaticWorldVertices(void)
 	msurface_t     *surf;
 	srfTriangles_t *tri;
 	srfFoliage_t   *foliage, *models[MAX_FOLIAGE_MODELS];
-	int            i, j, numVertexes = 0, numModels = 0;
+	int            i, j, numVertexes = 0, numModels = 0, numInstances = 0;
 
 	for (i = 0, surf = s_worldData.surfaces; i < s_worldData.numsurfaces; i++, surf++)
 	{
@@ -2045,13 +2046,31 @@ static void R_LoadStaticWorldVertices(void)
 		}
 		else if (surf->data && *surf->data == SF_FOLIAGE)
 		{
-			numVertexes += ((srfFoliage_t *)surf->data)->numVerts;
+			numVertexes  += ((srfFoliage_t *)surf->data)->numVerts;
+			numInstances += ((srfFoliage_t *)surf->data)->numInstances;
 		}
 	}
 
 	if (!VK_CreateStaticWorldBuffer(numVertexes))
 	{
 		return;
+	}
+
+	// foliage instances, in surface order: consecutive surfaces with the same
+	// model can share a draw
+	if (VK_CreateFoliageInstanceBuffer(numInstances))
+	{
+		numInstances = 0;
+		for (i = 0, surf = s_worldData.surfaces; i < s_worldData.numsurfaces; i++, surf++)
+		{
+			if (surf->data && *surf->data == SF_FOLIAGE)
+			{
+				foliage = (srfFoliage_t *)surf->data;
+				VK_WriteFoliageInstances(numInstances, foliage);
+				foliage->vkFirstInstance = numInstances;
+				numInstances            += foliage->numInstances;
+			}
+		}
 	}
 
 	numVertexes = 0;
@@ -2090,7 +2109,7 @@ static void R_LoadStaticWorldVertices(void)
 		}
 	}
 
-	Ren_Developer("...static world buffer: %i vertexes, %i foliage models\n", numVertexes, numModels);
+	Ren_Developer("...static world buffer: %i vertexes, %i foliage models, %i foliage instances\n", numVertexes, numModels, numInstances);
 }
 
 /**
