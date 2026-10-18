@@ -1030,6 +1030,7 @@ struct gclient_s
 	qboolean warping;
 	qboolean warped;
 	int lastCmdRealTime;
+	int realCmdServerTime;                  ///< client-authored cmd serverTime - antilag rewind time
 	int cmdhead;                            ///< antiwarp command queue head
 	int cmdcount;                           ///< antiwarp command queue # valid commands
 	float cmddelta;                         ///< antiwarp command queue # valid commands
