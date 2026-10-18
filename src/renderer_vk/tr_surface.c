@@ -579,7 +579,9 @@ void RB_SurfaceTriangles(srfTriangles_t *srf)
 
 /**
  * @brief The per-instance part of RB_SurfaceFoliage: distance and frustum
- * cull, then the instance color with the distance-faded alpha.
+ * cull, then the instance color with the distance-faded alpha. Instanced
+ * foliage does the same in its vertex shaders (FoliageInstanceColor() in
+ * tr3d_foliage.vert / tr3d_foliage_fog.vert): keep them in step.
  * @return qfalse if the instance is culled
  */
 static ID_INLINE qboolean RB_FoliageInstanceColor(int o, const foliageInstance_t *instance, const vec4_t distanceCull,
@@ -657,7 +659,7 @@ static qboolean RB_FoliageCanInstance(const srfFoliage_t *srf)
 {
 	int i;
 
-	if (srf->vkFirstVertex < 0 || !r_vkFoliageInstance->integer || !r_vkStaticWorld->integer || !tess.shader->vkStatic ||
+	if (srf->vkFirstVertex < 0 || srf->vkFirstInstance < 0 || !r_vkFoliageInstance->integer || !r_vkStaticWorld->integer || !tess.shader->vkStatic ||
 	    tess.currentStageIteratorFunc != RB_StageIteratorGeneric || backEnd.projection2D || backEnd.currentEntity->e.fadeStartTime ||
 	    (srf->dlightBits && RB_ShaderTakesDlights(srf->dlightBits)) ||
 	    r_showTris->integer || r_showNormals->integer || r_debugShaderSurfaceFlags->integer)
@@ -680,19 +682,20 @@ static qboolean RB_FoliageCanInstance(const srfFoliage_t *srf)
 }
 
 /**
- * @brief Vulkan: adds the visible instances of a foliage surface to an
- * instanced batch (tess.vkFoliage): their origins and colors go into the
- * frame's scene vertex arena, and the batch's stages draw the model from
- * the static world buffer once per instance. Instances of consecutive
- * surfaces with the same model share a draw.
+ * @brief Vulkan: adds a foliage surface to an instanced batch
+ * (tess.vkFoliage): its instances are in the foliage instance buffer, and
+ * the batch's stages draw the model from the static world buffer once per
+ * instance; the vertex shaders cull each instance with the batch's
+ * parameters (RB_FoliageInstanceColor's view depth, frustum and
+ * distanceCull, written once per batch). Consecutive surfaces with the same
+ * model and adjacent instances share a draw.
  */
 static void RB_SurfaceFoliageInstanced(srfFoliage_t *srf, const vec4_t distanceCull, const vec4_t distanceVector, float fovScale)
 {
-	foliageInstance_t       *dst;
-	const foliageInstance_t *instance;
-	vkFoliageDraw_t         *draw;
-	glIndex_t               *indexes;
-	int                     o, i, count = 0, first, firstIndex, srcColor;
+	vkFoliageDraw_t *draw;
+	glIndex_t       *indexes;
+	float           *cull;
+	int             i, firstIndex;
 
 	if ((tess.numIndexes || tess.numVertexes || tess.vkStatic || tess.vkSkin || tess.vkMesh) &&
 	    (!tess.vkFoliage || tess.vkNumFoliageDraws == VK_MAX_FOLIAGE_DRAWS))
@@ -701,35 +704,29 @@ static void RB_SurfaceFoliageInstanced(srfFoliage_t *srf, const vec4_t distanceC
 		tess.dlightBits |= srf->dlightBits;
 	}
 
-	dst = VK_AllocFoliageInstances(srf->numInstances, &first);
-	if (!dst)
+	// the batch's cull parameters: same shader, entity and view for all its surfaces
+	if (!tess.vkFoliage)
 	{
-		return; // arena full this frame (reported there): drop the surface
-	}
-
-	instance = srf->instances;
-	for (o = 0; o < srf->numInstances; o++, instance++)
-	{
-		if (!RB_FoliageInstanceColor(o, instance, distanceCull, distanceVector, fovScale, &srcColor))
+		cull = VK_AllocFoliageCull(&tess.vkFoliageCullOffset);
+		if (!cull)
 		{
-			continue;
+			return; // arena full this frame (reported there): drop the surface
 		}
-
-		VectorCopy(instance->origin, dst[count].origin);
-		*(int *)dst[count].color = srcColor;
-		count++;
+		for (i = 0; i < 5; i++)
+		{
+			VectorCopy(backEnd.viewParms.frustum[i].normal, cull + i * 4);
+			cull[i * 4 + 3] = backEnd.viewParms.frustum[i].dist;
+		}
+		Vector4Copy(distanceVector, cull + 20);
+		Vector4Copy(distanceCull, cull + 24);
+		cull[28] = fovScale;
+		cull[29] = cull[30] = cull[31] = 0.0f;
 	}
-
-	if (!count)
-	{
-		return;
-	}
-	VK_CommitFoliageInstances(count);
 
 	draw = tess.vkNumFoliageDraws ? &tess.vkFoliageDraws[tess.vkNumFoliageDraws - 1] : NULL;
-	if (draw && draw->firstVertex == srf->vkFirstVertex && draw->firstInstance + draw->numInstances == first)
+	if (draw && draw->firstVertex == srf->vkFirstVertex && draw->firstInstance + draw->numInstances == srf->vkFirstInstance)
 	{
-		draw->numInstances += count;
+		draw->numInstances += srf->numInstances;
 	}
 	else
 	{
@@ -747,12 +744,12 @@ static void RB_SurfaceFoliageInstanced(srfFoliage_t *srf, const vec4_t distanceC
 		draw->firstVertex   = srf->vkFirstVertex;
 		draw->firstIndex    = firstIndex;
 		draw->numIndexes    = srf->numIndexes;
-		draw->firstInstance = first;
-		draw->numInstances  = count;
+		draw->firstInstance = srf->vkFirstInstance;
+		draw->numInstances  = srf->numInstances;
 	}
 
 	tess.vkFoliage   = qtrue;
-	tess.numIndexes += count * srf->numIndexes;
+	tess.numIndexes += srf->numInstances * srf->numIndexes;
 }
 
 /**
