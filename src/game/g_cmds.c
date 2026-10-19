@@ -57,7 +57,8 @@ static qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
 
 	if (plist[0] == -1)
 	{
-		Q_strcat(err, len, "no connected player by that name or slot #");
+		Q_strcat(err, len, "no connected player by that name or slot #\n");
+
 		return qfalse;
 	}
 
@@ -70,19 +71,24 @@ static qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
 		line[0] = '\0';
 
 		Q_strcat(err, len, "more than one player name matches be more specific or use the slot #:\n");
+
 		for (p = plist; *p != -1; p++)
 		{
 			cl = &level.clients[*p];
+
 			if (cl->pers.connected == CON_CONNECTED)
 			{
 				Com_sprintf(line, MAX_NAME_LENGTH + 10, "%2i - %s^7\n", *p, cl->pers.netname);
+
 				if (strlen(err) + strlen(line) > len)
 				{
 					break;
 				}
+
 				Q_strcat(err, len, line);
 			}
 		}
+
 		return qfalse;
 	}
 
