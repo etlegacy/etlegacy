@@ -2557,6 +2557,7 @@ void R_Hunk_End(void);
 void R_FreeImageBuffer(void);
 
 qboolean R_inPVS(const vec3_t p1, const vec3_t p2);
+void R_ClearPVSCache(void);
 
 void GfxInfo_f(void);
 

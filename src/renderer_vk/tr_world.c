@@ -1146,6 +1146,73 @@ static const byte *R_ClusterPVS(int cluster)
 	return tr.world->vis + cluster * tr.world->clusterBytes;
 }
 
+// R_inPVS point cache: cgame asks every frame about the same few hundred
+// fixed points (misc models, coronas, speakers, spawn points) from the same
+// view origin, each a full BSP descent. A point's cluster never changes for
+// a loaded world, so this caches cluster per exact point (bitwise compare).
+#define PVS_CACHE_SIZE  1024 // power of two
+#define PVS_CACHE_PROBE 8
+
+typedef struct
+{
+	unsigned int point[3]; // the point's float bits
+	int cluster;
+	qboolean used;
+} pvsCacheEntry_t;
+
+static pvsCacheEntry_t pvsCache[PVS_CACHE_SIZE];
+static pvsCacheEntry_t pvsLastP1; // the view origin: one per frame, kept out of the table
+
+/**
+ * @brief Empties the R_inPVS point cache (a new world was loaded).
+ */
+void R_ClearPVSCache(void)
+{
+	Com_Memset(pvsCache, 0, sizeof(pvsCache));
+	Com_Memset(&pvsLastP1, 0, sizeof(pvsLastP1));
+}
+
+/**
+ * @brief R_PointInLeaf(p)->cluster through the R_inPVS point cache.
+ */
+static int R_PointClusterCached(const vec3_t p)
+{
+	unsigned int    bits[3], h;
+	pvsCacheEntry_t *e;
+	int             i;
+
+	Com_Memcpy(bits, p, sizeof(bits));
+	h  = (bits[0] * 73856093u) ^ (bits[1] * 19349663u) ^ (bits[2] * 83492791u);
+	h ^= h >> 15;
+
+	for (i = 0; i < PVS_CACHE_PROBE; i++)
+	{
+		e = &pvsCache[(h + i) & (PVS_CACHE_SIZE - 1)];
+		if (!e->used)
+		{
+			break;
+		}
+		if (e->point[0] == bits[0] && e->point[1] == bits[1] && e->point[2] == bits[2])
+		{
+			return e->cluster;
+		}
+	}
+
+	// miss: take the first free slot, or replace the home slot when the
+	// probe range is full (moving points, e.g. player origins)
+	if (i == PVS_CACHE_PROBE)
+	{
+		e = &pvsCache[h & (PVS_CACHE_SIZE - 1)];
+	}
+	e->point[0] = bits[0];
+	e->point[1] = bits[1];
+	e->point[2] = bits[2];
+	e->cluster  = R_PointInLeaf(p)->cluster;
+	e->used     = qtrue;
+
+	return e->cluster;
+}
+
 /**
  * @brief R_inPVS
  * @param[in] p1
@@ -1154,14 +1221,24 @@ static const byte *R_ClusterPVS(int cluster)
  */
 qboolean R_inPVS(const vec3_t p1, const vec3_t p2)
 {
-	mnode_t    *leaf;
-	const byte *vis;
+	const byte   *vis;
+	unsigned int bits[3];
+	int          cluster;
 
-	leaf = R_PointInLeaf(p1);
-	vis  = R_ClusterPVS(leaf->cluster);
-	leaf = R_PointInLeaf(p2);
+	Com_Memcpy(bits, p1, sizeof(bits));
+	if (!pvsLastP1.used || pvsLastP1.point[0] != bits[0] || pvsLastP1.point[1] != bits[1] || pvsLastP1.point[2] != bits[2])
+	{
+		pvsLastP1.point[0] = bits[0];
+		pvsLastP1.point[1] = bits[1];
+		pvsLastP1.point[2] = bits[2];
+		pvsLastP1.cluster  = R_PointInLeaf(p1)->cluster;
+		pvsLastP1.used     = qtrue;
+	}
 
-	if (!(vis[leaf->cluster >> 3] & (1 << (leaf->cluster & 7))))
+	vis     = R_ClusterPVS(pvsLastP1.cluster);
+	cluster = R_PointClusterCached(p2);
+
+	if (!(vis[cluster >> 3] & (1 << (cluster & 7))))
 	{
 		return qfalse;
 	}
