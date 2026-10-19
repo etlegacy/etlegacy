@@ -174,10 +174,18 @@ static void CG_ParseTeamInfo(void)
  */
 static void CG_FillVersionInfo(version_t *version, char *versionStr, const char *delimiter)
 {
+	char *token;
+
 	Com_Printf("Demo Version: %s\n", versionStr);
-	version->major = Q_atoi(strtok(versionStr, delimiter));
-	version->minor = Q_atoi(strtok(NULL, delimiter));
-	version->patch = Q_atoi(strtok(NULL, delimiter));
+
+	token = strtok(versionStr, delimiter);
+	version->major = token ? Q_atoi(token) : 0;
+
+	token = strtok(NULL, delimiter);
+	version->minor = token ? Q_atoi(token) : 0;
+
+	token = strtok(NULL, delimiter);
+	version->patch = token ? Q_atoi(token) : 0;
 }
 
 void CG_ParseDemoVersion(void)
