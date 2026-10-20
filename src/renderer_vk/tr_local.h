@@ -1832,6 +1832,7 @@ void RB_EndSurface(void);
 void RB_CheckOverflow(int verts, int indexes);
 void RB_EndStaticBatch(void);
 qboolean RB_ShaderTakesDlights(int dlightBits);
+qboolean RB_VkModelFogOk(void);
 
 // Vulkan static world geometry (vulkan/vk.c): per-map vertex buffer that
 // static batches (tess.vkStatic) index into, filled by R_LoadStaticWorldVertices()
@@ -1843,6 +1844,8 @@ void VK_WriteFoliageInstances(int first, const srfFoliage_t *srf);
 float *VK_AllocFoliageCull(unsigned int *offset);
 void VK_Draw3DFoliageFog(shaderCommands_t *input, const image_t *fogImage, unsigned long stateBits, int cullType,
                          const vec4_t sVec, const vec4_t tVec, float eyeT, const byte *color);
+void VK_Draw3DModelFog(shaderCommands_t *input, const image_t *fogImage, unsigned long stateBits, int cullType,
+                       const vec4_t sVec, const vec4_t tVec, float eyeT, const byte *color);
 glIndex_t *VK_AllocSceneIndexes(int count, int *firstIndex);
 
 // Vulkan GPU skinning (vulkan/vk.c): MDM vertices in a skin buffer filled at

@@ -18,14 +18,16 @@
 // takes its normal from r_anormals. Interpolated normals are blended and
 // normalized with Q_rsqrt.
 //
-// tcGen environment (alphaTest.y): RB_CalcEnvironmentTexCoords() with the
+// Fog pass (alphaTest.y 2): fog texcoords from the parameters in the env
+// slots, color from the constant color path.
+// tcGen environment (alphaTest.y 1): RB_CalcEnvironmentTexCoords() with the
 // batch's parameters from set 2.
 
 layout(push_constant) uniform PushConstants
 {
 	mat4 mvp;
 	mat4 modelView;
-	vec4 alphaTest; // y: tcGen environment
+	vec4 alphaTest; // y: 1 tcGen environment, 2 fog pass
 	vec4 fogColor;
 	vec4 fogParams;
 	vec4 clipPlane;
@@ -156,7 +158,17 @@ void main()
 		fragColor = vec4(light / 255.0, pc.lightDir.w);
 	}
 
-	if (pc.alphaTest.y > 0.5)
+	if (pc.alphaTest.y > 1.5)
+	{
+		// fog pass (RB_FogPass): RB_CalcFogTexCoords() from the fog volume's
+		// s/t vectors and eye term (RB_CalcFogTexCoordParams) in the env slots
+		precise float fogS = Dot3(pos, env.p[0].xyz) + env.p[0].w;
+		precise float fogT = Dot3(pos, env.p[1].xyz) + env.p[1].w;
+
+		fogT  += env.p[2].x;
+		fragUV = vec2(fogS, fogT);
+	}
+	else if (pc.alphaTest.y > 0.5)
 	{
 		precise vec3  viewer = env.p[0].xyz - pos;
 		precise float d2;

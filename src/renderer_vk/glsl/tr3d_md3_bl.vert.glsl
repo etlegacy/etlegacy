@@ -23,7 +23,9 @@
 // takes its normal from r_anormals. Interpolated normals are blended and
 // normalized with Q_rsqrt.
 //
-// tcGen environment (alphaTest.y): RB_CalcEnvironmentTexCoords() with the
+// Fog pass (alphaTest.y 2): fog texcoords from the parameters in the env
+// slots, color from the constant color path.
+// tcGen environment (alphaTest.y 1): RB_CalcEnvironmentTexCoords() with the
 // batch's parameters from set 2.
 
 // per-draw data of a merged model batch (VK_FlushModelBatch), indexed by
@@ -33,12 +35,12 @@ struct ModelDraw
 {
 	mat4  mvp;
 	mat4  modelView;
-	vec4  alphaTest; // y: tcGen environment
+	vec4  alphaTest; // y: 1 tcGen environment, 2 fog pass
 	vec4  lightDir;  // entity lightDir (model space), w = stage alpha
 	vec4  ambient;   // entity ambientLight or constant color (0..255), w = flags
 	vec4  directed;  // entity directedLight (0..255)
 	vec4  lerp;      // newXyzScale, oldXyzScale, newNormalScale, oldNormalScale (< 0: no interpolation)
-	vec4  env[3];    // tcGen environment parameters (RB_VkSetupEnvParams)
+	vec4  env[3];    // tcGen environment parameters (RB_VkSetupEnvParams) or fog pass parameters
 	uvec4 ofs;       // mesh buffer word offsets: frame, oldframe, texcoords, compressed frame
 	uvec4 ofs2;      // x: compressed oldframe, y: bindless texture slot
 };
@@ -181,7 +183,17 @@ void main()
 		fragColor = vec4(light / 255.0, d.lightDir.w);
 	}
 
-	if (d.alphaTest.y > 0.5)
+	if (d.alphaTest.y > 1.5)
+	{
+		// fog pass (RB_FogPass): RB_CalcFogTexCoords() from the fog volume's
+		// s/t vectors and eye term (RB_CalcFogTexCoordParams) in the env slots
+		precise float fogS = Dot3(pos, d.env[0].xyz) + d.env[0].w;
+		precise float fogT = Dot3(pos, d.env[1].xyz) + d.env[1].w;
+
+		fogT  += d.env[2].x;
+		fragUV = vec2(fogS, fogT);
+	}
+	else if (d.alphaTest.y > 0.5)
 	{
 		precise vec3  viewer = d.env[0].xyz - pos;
 		precise float d2;

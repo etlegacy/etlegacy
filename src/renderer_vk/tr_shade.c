@@ -1013,6 +1013,32 @@ static void RB_DynamicLights(void)
 }
 
 /**
+ * @brief Vulkan: true if a GPU-skinned/animated model surface (tess.vkSkin,
+ * tess.vkMesh) can take this batch's fog volume: its fog pass is drawn by the
+ * model vertex shaders (RB_FogPass), but stages that modulate their colors
+ * by the fog (adjustColorsForFog, ComputeColors) need the CPU vertices.
+ */
+qboolean RB_VkModelFogOk(void)
+{
+	int i;
+
+	if (!tess.fogNum || tess.shader->noFog)
+	{
+		return qtrue;
+	}
+
+	for (i = 0; i < MAX_SHADER_STAGES && tess.xstages[i]; i++)
+	{
+		if (tess.xstages[i]->adjustColorsForFog != ACFF_NONE)
+		{
+			return qfalse;
+		}
+	}
+
+	return qtrue;
+}
+
+/**
  * @brief renderer1's RB_FogPass - blends a Q3 fog volume
  * (tr.world->fogs[tess.fogNum]) over the surface using tr.fogImage with
  * per-vertex fog texcoords from RB_CalcFogTexCoords().
@@ -1054,6 +1080,21 @@ static void RB_FogPass(void)
 		                   ? (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHFUNC_EQUAL)
 		                   : (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA),
 		                   tess.shader->cullType, sVec, tVec, eyeT, (const byte *)&fog->shader->fogParms.colorInt);
+		return;
+	}
+
+	// GPU-skinned/animated model: the same in the model vertex shaders
+	if (tess.vkSkin || tess.vkMesh)
+	{
+		vec4_t sVec, tVec;
+		float  eyeT;
+
+		RB_CalcFogTexCoordParams(sVec, tVec, &eyeT);
+		VK_Draw3DModelFog(&tess, tr.fogImage,
+		                  (tess.shader->fogPass == FP_EQUAL)
+		                  ? (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHFUNC_EQUAL)
+		                  : (GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA),
+		                  tess.shader->cullType, sVec, tVec, eyeT, (const byte *)&fog->shader->fogParms.colorInt);
 		return;
 	}
 

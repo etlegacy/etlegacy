@@ -1632,7 +1632,7 @@ static qboolean RB_SurfaceMeshGPU(md3Surface_t *surface, float backlerp)
 	const vkMeshEntry_t *entry;
 	unsigned int        frameBytes;
 
-	if (!r_vkGpuVertex->integer || !tess.shader->vkSkinnable || tess.shader == tr.shadowShader || tess.fogNum ||
+	if (!r_vkGpuVertex->integer || !tess.shader->vkSkinnable || tess.shader == tr.shadowShader || !RB_VkModelFogOk() ||
 	    backEnd.projection2D || (e->fadeStartTime && e->fadeStartTime <= tr.refdef.time) ||
 	    r_showTris->integer || r_showNormals->integer || r_debugShaderSurfaceFlags->integer ||
 	    e->frame < 0 || e->frame >= surface->numFrames || e->oldframe < 0 || e->oldframe >= surface->numFrames)
@@ -1775,7 +1775,7 @@ static qboolean RB_SurfaceCMeshGPU(mdcSurface_t *surface, float backlerp)
 	const short         *compFrames = (const short *)((byte *)surface + surface->ofsFrameCompFrames);
 	unsigned int        frameBytes, compBytes;
 
-	if (!r_vkGpuVertex->integer || !tess.shader->vkSkinnable || tess.shader == tr.shadowShader || tess.fogNum ||
+	if (!r_vkGpuVertex->integer || !tess.shader->vkSkinnable || tess.shader == tr.shadowShader || !RB_VkModelFogOk() ||
 	    backEnd.projection2D || (e->fadeStartTime && e->fadeStartTime <= tr.refdef.time) ||
 	    r_showTris->integer || r_showNormals->integer || r_debugShaderSurfaceFlags->integer ||
 	    e->frame < 0 || e->oldframe < 0)
