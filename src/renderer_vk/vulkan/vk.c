@@ -572,6 +572,7 @@ typedef struct
 	int mbNumDraws;
 	unsigned int mbSurfaceSerial;                          // batch (tess.vkSurfaceSerial) of the last draw
 	int mbMinKey;                                          // key of its last stage
+	const byte *modelFogColor;                             // VK_Draw3DModelFog: fog pass color, NULL for a stage draw
 	qboolean mbFlushing;
 
 	// GPU skinning (VK_VERTS_SKIN), see VK_WriteSkinVertices/VK_AllocSkinBones
@@ -7387,6 +7388,20 @@ static void VK_SkinStageColor(const shaderStage_t *stage, float *pushConstants)
 
 	// tcGen environment: texcoords from the batch's env params (set 2)
 	pushConstants[33] = (stage && stage->bundle[0].tcGen == TCGEN_ENVIRONMENT_MAPPED) ? 1.0f : 0.0f;
+
+	// fog pass (VK_Draw3DModelFog): the fog color as constant color, fog
+	// texcoords from the parameters in the env slots
+	if (vk.modelFogColor)
+	{
+		for (i = 0; i < 3; i++)
+		{
+			pushConstants[48 + i] = 0.0f;
+			pushConstants[52 + i] = (float)vk.modelFogColor[i];
+			pushConstants[56 + i] = 0.0f;
+		}
+		pushConstants[51] = vk.modelFogColor[3] / 255.0f;
+		pushConstants[33] = 2.0f;
+	}
 }
 
 /**
@@ -7556,6 +7571,58 @@ static void VK_Draw3DMesh(shaderCommands_t *input, const image_t *image, unsigne
 	vk.boundIndexBuffer  = VK_NULL_HANDLE;
 
 	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)input->numIndexes, 1, 0, 0, 0);
+}
+
+/**
+ * @brief RB_FogPass() for a GPU-skinned/animated model surface (tess.vkSkin,
+ * tess.vkMesh): one more draw of the surface through its model path (merged
+ * into the model batch when the stage draws are), with the fog image, the
+ * fog color as constant color and the texcoord parameters (sVec, tVec, eyeT,
+ * RB_CalcFogTexCoordParams) in the env parameter slots, which the model
+ * vertex shaders evaluate per skinned/animated vertex (alphaTest.y 2).
+ */
+void VK_Draw3DModelFog(shaderCommands_t *input, const image_t *fogImage, unsigned long stateBits, int cullType,
+                       const vec4_t sVec, const vec4_t tVec, float eyeT, const byte *color)
+{
+	unsigned int envOffset = input->vkEnvOffset, offset;
+	float        envParams[12], *dst;
+	int          i;
+
+	if (!vk.initialized || (!input->vkSkin && !input->vkMesh) || !fogImage || !fogImage->vkDescriptorSet)
+	{
+		return;
+	}
+
+	dst = VK_AllocEnvParams(&offset);
+	if (!dst)
+	{
+		return;
+	}
+
+	Com_Memcpy(envParams, input->vkEnvParams, sizeof(envParams));
+	for (i = 0; i < 4; i++)
+	{
+		input->vkEnvParams[i]     = sVec[i];
+		input->vkEnvParams[4 + i] = tVec[i];
+		input->vkEnvParams[8 + i] = 0.0f;
+	}
+	input->vkEnvParams[8] = eyeT;
+	Com_Memcpy(dst, input->vkEnvParams, 12 * sizeof(float));
+	input->vkEnvOffset = offset;
+	vk.modelFogColor   = color;
+
+	if (input->vkSkin)
+	{
+		VK_Draw3DSkinned(input, fogImage, stateBits, cullType);
+	}
+	else
+	{
+		VK_Draw3DMesh(input, fogImage, stateBits, cullType);
+	}
+
+	vk.modelFogColor   = NULL;
+	input->vkEnvOffset = envOffset;
+	Com_Memcpy(input->vkEnvParams, envParams, sizeof(envParams));
 }
 
 /**

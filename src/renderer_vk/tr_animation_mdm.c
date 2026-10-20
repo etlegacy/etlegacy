@@ -1761,7 +1761,7 @@ static qboolean RB_MDM_SurfaceAnimGPU(mdmSurface_t *surface, mdmHeader_t *header
 	glIndex_t *pIdx;
 	const int *tri;
 
-	if (!r_vkGpuVertex->integer || !tess.shader->vkSkinnable || tess.fogNum || backEnd.projection2D ||
+	if (!r_vkGpuVertex->integer || !tess.shader->vkSkinnable || !RB_VkModelFogOk() || backEnd.projection2D ||
 	    (fadeStart && fadeStart <= tr.refdef.time) ||
 	    r_bonesDebug->integer || r_showTris->integer || r_showNormals->integer || r_debugShaderSurfaceFlags->integer)
 	{
