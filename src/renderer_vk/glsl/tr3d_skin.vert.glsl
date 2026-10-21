@@ -45,6 +45,12 @@ layout(location = 4) in vec3 inOffset0;
 layout(location = 5) in vec3 inOffset1;
 layout(location = 6) in vec3 inOffset2;
 layout(location = 7) in vec3 inOffset3;
+layout(location = 8) in uvec4 inBones2;   // second weight set (vertices with 5-8 weights)
+layout(location = 9) in vec4 inWeights2;
+layout(location = 10) in vec3 inOffset4;
+layout(location = 11) in vec3 inOffset5;
+layout(location = 12) in vec3 inOffset6;
+layout(location = 13) in vec3 inOffset7;
 
 layout(location = 0) out vec2 fragUV;
 layout(location = 1) out vec4 fragColor;
@@ -79,6 +85,14 @@ void main()
 	           inWeights.y * BonePoint(inBones.y, inOffset1) +
 	           inWeights.z * BonePoint(inBones.z, inOffset2) +
 	           inWeights.w * BonePoint(inBones.w, inOffset3);
+	// weights 5-8, added in the same order as on the CPU
+	if (inWeights2.x != 0.0)
+	{
+		pos = pos + inWeights2.x * BonePoint(inBones2.x, inOffset4) +
+		      inWeights2.y * BonePoint(inBones2.y, inOffset5) +
+		      inWeights2.z * BonePoint(inBones2.z, inOffset6) +
+		      inWeights2.w * BonePoint(inBones2.w, inOffset7);
+	}
 	uint b      = 3u * inBones.x;
 	vec3 normal = vec3(dot(bones.rows[b].xyz, inNormal), dot(bones.rows[b + 1u].xyz, inNormal), dot(bones.rows[b + 2u].xyz, inNormal));
 

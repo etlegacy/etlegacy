@@ -1755,7 +1755,7 @@ static int RB_MDMSkinFirstVertex(const mdmSurface_t *surface, const mdmHeader_t 
  */
 static qboolean RB_MDM_SurfaceAnimGPU(mdmSurface_t *surface, mdmHeader_t *header, const int *boneList)
 {
-	int       firstVertex, firstIndex, numIndexes, i;
+	int       firstVertex, firstIndex, numIndexes, numTriIdx, numVerts, i;
 	int       fadeStart = backEnd.currentEntity->e.fadeStartTime;
 	float     *dst;
 	glIndex_t *pIdx;
@@ -1813,16 +1813,19 @@ static qboolean RB_MDM_SurfaceAnimGPU(mdmSurface_t *surface, mdmHeader_t *header
 		}
 	}
 
-	// triangle list, as the CPU path below (LOD collapse)
+	// triangle list, as the CPU path below (LOD collapse); the counts are
+	// local: the index stores could alias the surface for the compiler
 	tri        = (const int *)((const byte *)surface + surface->ofsTriangles);
 	numIndexes = 0;
-	if (render_count == surface->numVerts)
+	numTriIdx  = surface->numTriangles * 3;
+	numVerts   = surface->numVerts;
+	if (render_count == numVerts)
 	{
-		for (i = 0; i < surface->numTriangles * 3; i++)
+		for (i = 0; i < numTriIdx; i++)
 		{
 			pIdx[i] = firstVertex + tri[i];
 		}
-		numIndexes = surface->numTriangles * 3;
+		numIndexes = numTriIdx;
 	}
 	else
 	{
@@ -1833,12 +1836,12 @@ static qboolean RB_MDM_SurfaceAnimGPU(mdmSurface_t *surface, mdmHeader_t *header
 		{
 			collapse[i] = i;
 		}
-		for (; i < surface->numVerts; i++)
+		for (; i < numVerts; i++)
 		{
 			collapse[i] = collapse[cmap[i]];
 		}
 
-		for (i = 0; i < surface->numTriangles * 3; i += 3)
+		for (i = 0; i < numTriIdx; i += 3)
 		{
 			p0 = collapse[tri[i]];
 			p1 = collapse[tri[i + 1]];

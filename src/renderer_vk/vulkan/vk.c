@@ -3677,7 +3677,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	VkPipelineShaderStageCreateInfo        stages[2];
 	VkVertexInputBindingDescription        vertexBindings[5];
 	uint32_t                               bindingCount = 1;
-	VkVertexInputAttributeDescription      vertexAttributes[8];
+	VkVertexInputAttributeDescription      vertexAttributes[14];
 	uint32_t                               attributeCount;
 	VkPipelineVertexInputStateCreateInfo   vertexInputInfo;
 	VkPipelineInputAssemblyStateCreateInfo inputAssembly;
@@ -3871,7 +3871,20 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 			vertexAttributes[4 + ai].format   = VK_FORMAT_R32G32B32_SFLOAT;
 			vertexAttributes[4 + ai].offset   = offsetof(vkSkinVertex_t, offsets) + ai * 3 * sizeof(float);
 		}
-		attributeCount = 8;
+		// second weight set (5-8 weights)
+		vertexAttributes[8].location = 8;
+		vertexAttributes[8].format   = VK_FORMAT_R8G8B8A8_UINT;
+		vertexAttributes[8].offset   = offsetof(vkSkinVertex_t, bones2);
+		vertexAttributes[9].location = 9;
+		vertexAttributes[9].format   = VK_FORMAT_R32G32B32A32_SFLOAT;
+		vertexAttributes[9].offset   = offsetof(vkSkinVertex_t, weights2);
+		for (ai = 0; ai < 4; ai++)
+		{
+			vertexAttributes[10 + ai].location = 10 + ai;
+			vertexAttributes[10 + ai].format   = VK_FORMAT_R32G32B32_SFLOAT;
+			vertexAttributes[10 + ai].offset   = offsetof(vkSkinVertex_t, offsets2) + ai * 3 * sizeof(float);
+		}
+		attributeCount = 14;
 	}
 	else if (vertexSource == VK_VERTS_DIFFUSE)
 	{

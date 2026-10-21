@@ -1851,6 +1851,9 @@ glIndex_t *VK_AllocSceneIndexes(int count, int *firstIndex);
 // Vulkan GPU skinning (vulkan/vk.c): MDM vertices in a skin buffer filled at
 // model load (R_LoadMDM), reset with the models (R_ModelInit); bones are
 // uploaded per batch. Bone indices are local to the surface's bone references.
+// Up to VK_SKIN_MAX_WEIGHTS weights: the first four, then a second set (zero
+// weights when unused; the Axis player body has vertices with 5).
+#define VK_SKIN_MAX_WEIGHTS 8
 typedef struct
 {
 	float uv[2];
@@ -1858,6 +1861,9 @@ typedef struct
 	byte bones[4];
 	float weights[4];
 	float offsets[4][3];
+	byte bones2[4];
+	float weights2[4];
+	float offsets2[4][3];
 } vkSkinVertex_t;
 
 void VK_ResetSkinBuffer(void);

@@ -1574,7 +1574,7 @@ static void R_LoadMDMSkinVertices(model_t *mod)
 
 		for (j = 0; j < surf->numVerts && ok; j++)
 		{
-			if (v->numWeights < 1 || v->numWeights > 4)
+			if (v->numWeights < 1 || v->numWeights > VK_SKIN_MAX_WEIGHTS)
 			{
 				ok = qfalse;
 				break;
@@ -1594,9 +1594,18 @@ static void R_LoadMDMSkinVertices(model_t *mod)
 					ok = qfalse;
 					break;
 				}
-				out[j].bones[k]   = (byte)b;
-				out[j].weights[k] = v->weights[k].boneWeight;
-				VectorCopy(v->weights[k].offset, out[j].offsets[k]);
+				if (k < 4)
+				{
+					out[j].bones[k]   = (byte)b;
+					out[j].weights[k] = v->weights[k].boneWeight;
+					VectorCopy(v->weights[k].offset, out[j].offsets[k]);
+				}
+				else
+				{
+					out[j].bones2[k - 4]   = (byte)b;
+					out[j].weights2[k - 4] = v->weights[k].boneWeight;
+					VectorCopy(v->weights[k].offset, out[j].offsets2[k - 4]);
+				}
 			}
 
 			v = (mdmVertex_t *)&v->weights[v->numWeights];
