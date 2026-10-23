@@ -61,6 +61,8 @@ menuDef {
 	SLIDER(OPTION_ITEM_POS(5), _("Dynamic Icons Min Scale:"), .2, 8, "cg_dynamicIconsMinScale" 0.5 0 1, _("Clamp the minimum icon scale"))
 	CVARFLOATLABEL(OPTION_ITEM_POS(6), "cg_dynamicIconsMaxScale", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
 	SLIDER(OPTION_ITEM_POS(6), _("Dynamic Icons Max Scale:"), .2, 8, "cg_dynamicIconsMaxScale" 1 0 1, _("Clamp the maximum icon scale"))
+	CVARFLOATLABEL(OPTION_ITEM_POS(6), "cg_compassIconsEdgeScale", .2, ITEM_ALIGN_RIGHT, $evalfloat(SLIDER_LABEL_X), 8)
+	SLIDER(OPTION_ITEM_POS(6), _("Dynamic Icons Max Scale:"), .2, 8, "cg_compassIconsEdgeScale" 1 0 3, _("Scale the Icons on compass edge"))
 
 #ifdef FUI
 	LOWERBUTTON(1, _("MSGID_MENU_BACK"), close MENU_NAME; open main)

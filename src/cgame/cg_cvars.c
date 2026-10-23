@@ -118,6 +118,7 @@ vmCvar_t cg_dynamicIconsDistance;
 vmCvar_t cg_dynamicIconsSize;
 vmCvar_t cg_dynamicIconsMaxScale;
 vmCvar_t cg_dynamicIconsMinScale;
+vmCvar_t cg_compassIconsEdgeScale;
 
 vmCvar_t cg_autoactivate;
 
@@ -398,6 +399,7 @@ static cvarTable_t cvarTable[] =
 	{ &cg_dynamicIconsSize,                   "cg_dynamicIconsSize",                   "20",          CVAR_ARCHIVE,                 0 },
 	{ &cg_dynamicIconsMaxScale,               "cg_dynamicIconsMaxScale",               "1.0",         CVAR_ARCHIVE,                 0 },
 	{ &cg_dynamicIconsMinScale,               "cg_dynamicIconsMinScale",               "0.5",         CVAR_ARCHIVE,                 0 },
+	{ &cg_compassIconsEdgeScale,              "cg_compassIconsEdgeScale",              "1.0",         CVAR_ARCHIVE,                 0 },
 
 	{ &cg_autoactivate,                       "cg_autoactivate",                       "1",           CVAR_ARCHIVE,                 0 },
 
