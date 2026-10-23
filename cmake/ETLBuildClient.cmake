@@ -30,6 +30,16 @@ elseif(APPLE)
 			XCODE_ATTRIBUTE_EXECUTABLE_NAME "etl"
 			MACOSX_BUNDLE_EXECUTABLE_NAME "etl"
 	)
+
+	# the Vulkan renderer's driver: the client loads Contents/Frameworks/libMoltenVK.dylib
+	if(BUNDLED_MOLTENVK)
+		add_dependencies(etl bundled_moltenvk)
+		add_custom_command(TARGET etl POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_BUNDLE_CONTENT_DIR:etl>/Frameworks"
+			COMMAND ${CMAKE_COMMAND} -E copy "${MOLTENVK_BUNDLED_LIBRARY}" "$<TARGET_BUNDLE_CONTENT_DIR:etl>/Frameworks/libMoltenVK.dylib"
+			VERBATIM
+		)
+	endif()
 elseif(ANDROID)
 	add_library(etl SHARED ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC})
 	set_target_properties(etl PROPERTIES PREFIX "lib")

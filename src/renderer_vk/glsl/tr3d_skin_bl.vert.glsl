@@ -29,7 +29,7 @@ struct ModelDraw
 	vec4  lerp;      // newXyzScale, oldXyzScale, newNormalScale, oldNormalScale (< 0: no interpolation)
 	vec4  env[3];    // tcGen environment parameters (RB_VkSetupEnvParams) or fog pass parameters
 	uvec4 ofs;       // x: first bone row (vec4) in the bone arena
-	uvec4 ofs2;      // y: bindless texture slot
+	uvec4 ofs2;      // y: bindless texture index (slot + sampler)
 };
 
 layout(std430, set = 1, binding = 0) readonly buffer ModelDraws

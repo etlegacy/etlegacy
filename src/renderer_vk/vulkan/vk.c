@@ -38,6 +38,9 @@
 #include <vulkan/vulkan.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef __APPLE__
+#include <time.h>
+#endif
 
 #include "vk.h"
 #include "vk_funcs.h"
@@ -84,6 +87,13 @@
 // of every vertex/index arena (the VK_*_ARENA_SIZE values are per frame).
 #define VK_FRAMES_IN_FLIGHT 2
 
+// presents per second without vsync on MoltenVK, see VK_PresentDue(): at
+// most VK_PRESENT_MAX_RATE, lowered while presenting waits for a drawable
+// (longer than VK_PRESENT_WAIT_MSEC), down to VK_PRESENT_MIN_RATE
+#define VK_PRESENT_MAX_RATE  250
+#define VK_PRESENT_MIN_RATE  60
+#define VK_PRESENT_WAIT_MSEC 0.5
+
 // GPU world culling: world views per frame that can be culled on the GPU
 // (the main view, a portal or mirror, the sky portal); further views
 // fall back to the CPU world walk
@@ -113,13 +123,13 @@ typedef struct
 	float lerp[4];
 	float env[12];             // RB_VkSetupEnvParams
 	uint32_t ofs[4];           // mesh buffer word offsets: frame, oldframe, texcoords, compressed frame
-	uint32_t ofs2[4];          // compressed oldframe, bindless texture slot
+	uint32_t ofs2[4];          // compressed oldframe, bindless texture index (VK_BindlessIndex)
 } vkModelDraw_t;
 
 // per-draw data of a merged world batch (tr3d_*static_bl.vert's WorldDraw)
 typedef struct
 {
-	uint32_t textures[4];      // base, lightmap bindless slots
+	uint32_t textures[4];      // base, lightmap bindless texture indexes (VK_BindlessIndex)
 	float colorMul[4];
 	float colorAdd[4];
 	float fogS[4];             // fog pass (VK_Draw3DStaticFog): RB_CalcFogTexCoordParams
@@ -181,6 +191,11 @@ typedef struct
 // bindless texture array size (slots, see vk.bindless): MAX_DRAWIMAGES plus
 // room for images recreated while their old slot waits for its frame fence
 #define VK_BINDLESS_MAX_IMAGES    4096
+// the shared samplers next to it (VK_BindlessSamplerIndex()); a bindless
+// index holds the slot in its low VK_BINDLESS_SAMPLER_SHIFT bits and the
+// sampler above them (VK_BindlessIndex())
+#define VK_BINDLESS_NUM_SAMPLERS  4
+#define VK_BINDLESS_SAMPLER_SHIFT 12 // log2(VK_BINDLESS_MAX_IMAGES)
 
 // GPU skinning (VK_VERTS_SKIN): the skin vertex buffer holds every loaded MDM
 // surface (reset with the models), the bone arena one surface's bones per
@@ -301,6 +316,7 @@ typedef struct
 	VkCommandPool commandPool;
 	VkCommandBuffer commandBuffer;                         // current frame slot's (alias)
 	VkCommandBuffer commandBuffers[VK_FRAMES_IN_FLIGHT];
+	VkCommandBuffer presentCommandBuffers[VK_FRAMES_IN_FLIGHT]; // the present pass, submitted on its own (vk.presentThrottle)
 	int frameIndex;                                        // current frame slot
 
 	// Depth buffer, recreated alongside the swapchain.
@@ -314,6 +330,7 @@ typedef struct
 	VkSemaphore renderFinishedSemaphore;
 	VkFence inFlightFence;
 	VkSemaphore imageAvailableSemaphores[VK_FRAMES_IN_FLIGHT];
+	VkSemaphore sceneDoneSemaphores[VK_FRAMES_IN_FLIGHT];  // scene submit -> present submit (vk.presentThrottle)
 	VkSemaphore renderFinishedSemaphores[VK_MAX_SWAPCHAIN_IMAGES]; // per swapchain image
 	VkFence inFlightFences[VK_FRAMES_IN_FLIGHT];
 
@@ -636,6 +653,9 @@ typedef struct
 
 	qboolean initialized;
 	uint32_t currentImageIndex;
+	qboolean presentThrottle;                              // see VK_PresentDue()
+	double lastPresentTime;                                // msec, VK_PresentClock()
+	double presentInterval;                                // msec between presents, adapted by VK_PresentWaited()
 } vkContext_t;
 
 static vkContext_t vk;
@@ -648,7 +668,7 @@ typedef struct
 	float pos[2];
 	float uv[2];
 	byte color[4];
-	uint32_t texture; // bindless slot (vk.bindless); unused with per-image sets
+	uint32_t texture; // bindless texture index (VK_BindlessIndex); unused with per-image sets
 } vkUIVertex_t;
 
 // Sized generously: a single 2D shader batch can be up to SHADER_MAX_VERTEXES
@@ -699,10 +719,10 @@ typedef struct
 
 #ifdef VK_NO_PROTOTYPES
 /*
- * Runtime-loaded Vulkan entry points (Linux/Windows). The renderer only uses
- * the Vulkan headers; every function is fetched from the system loader
- * (libvulkan.so.1 / vulkan-1.dll, opened by SDL) so no Vulkan SDK or import
- * library is needed. The pointers are named like the prototypes they
+ * Runtime-loaded Vulkan entry points. The renderer only uses the Vulkan
+ * headers; every function is fetched from the library SDL opened (the
+ * system loader libvulkan.so.1 / vulkan-1.dll, or on macOS the MoltenVK in
+ * the app bundle) so no Vulkan SDK or import library is needed. The pointers are named like the prototypes they
  * replace, so the rest of this file calls them unchanged.
  */
 static PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr;
@@ -1107,7 +1127,9 @@ static qboolean VK_CreateLogicalDevice(void)
 			    supported12.descriptorBindingPartiallyBound && supported12.descriptorBindingSampledImageUpdateAfterBind &&
 			    supported12.descriptorBindingUpdateUnusedWhilePending &&
 			    props12.maxPerStageDescriptorUpdateAfterBindSampledImages >= VK_BINDLESS_MAX_IMAGES &&
-			    props12.maxDescriptorSetUpdateAfterBindSampledImages >= VK_BINDLESS_MAX_IMAGES)
+			    props12.maxDescriptorSetUpdateAfterBindSampledImages >= VK_BINDLESS_MAX_IMAGES &&
+			    props12.maxPerStageDescriptorUpdateAfterBindSamplers >= VK_BINDLESS_NUM_SAMPLERS &&
+			    props12.maxDescriptorSetUpdateAfterBindSamplers >= VK_BINDLESS_NUM_SAMPLERS)
 			{
 				features12.descriptorIndexing                           = VK_TRUE;
 				features12.shaderSampledImageArrayNonUniformIndexing    = VK_TRUE;
@@ -1171,6 +1193,10 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 		}
 		presentMode = haveImmediate ? VK_PRESENT_MODE_IMMEDIATE_KHR : (haveMailbox ? VK_PRESENT_MODE_MAILBOX_KHR : VK_PRESENT_MODE_FIFO_KHR);
 	}
+#ifdef __APPLE__
+	vk.presentThrottle = (presentMode == VK_PRESENT_MODE_IMMEDIATE_KHR);
+	vk.presentInterval = 1000.0 / VK_PRESENT_MAX_RATE;
+#endif
 	Ren_Developer("Vulkan: present mode %s\n", presentMode == VK_PRESENT_MODE_IMMEDIATE_KHR ? "IMMEDIATE" :
 	              presentMode == VK_PRESENT_MODE_MAILBOX_KHR ? "MAILBOX" : "FIFO (vsync)");
 	vkGetPhysicalDeviceSurfaceFormatsKHR(vk.physicalDevice, vk.surface, &formatCount, formats);
@@ -1841,7 +1867,8 @@ static qboolean VK_CreateCommandObjects(void)
 	allocInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 	allocInfo.commandBufferCount = VK_FRAMES_IN_FLIGHT;
 
-	if (!VK_CheckResult(vkAllocateCommandBuffers(vk.device, &allocInfo, vk.commandBuffers), "vkAllocateCommandBuffers"))
+	if (!VK_CheckResult(vkAllocateCommandBuffers(vk.device, &allocInfo, vk.commandBuffers), "vkAllocateCommandBuffers") ||
+	    !VK_CheckResult(vkAllocateCommandBuffers(vk.device, &allocInfo, vk.presentCommandBuffers), "vkAllocateCommandBuffers(present)"))
 	{
 		return qfalse;
 	}
@@ -1858,6 +1885,7 @@ static qboolean VK_CreateCommandObjects(void)
 	for (i = 0; i < VK_FRAMES_IN_FLIGHT; i++)
 	{
 		if (!VK_CheckResult(vkCreateSemaphore(vk.device, &semaphoreInfo, NULL, &vk.imageAvailableSemaphores[i]), "vkCreateSemaphore(imageAvailable)") ||
+		    !VK_CheckResult(vkCreateSemaphore(vk.device, &semaphoreInfo, NULL, &vk.sceneDoneSemaphores[i]), "vkCreateSemaphore(sceneDone)") ||
 		    !VK_CheckResult(vkCreateFence(vk.device, &fenceInfo, NULL, &vk.inFlightFences[i]), "vkCreateFence"))
 		{
 			return qfalse;
@@ -2204,60 +2232,117 @@ static VkBlendFactor VK_DstBlendFactor(unsigned long stateBits)
  * depthFunc equal) in cg_commandmap.c to render correctly.
  */
 /**
- * @brief Bindless textures (vk.bindless): the set layout (one partially
- * bound, update-after-bind array of VK_BINDLESS_MAX_IMAGES combined image
- * samplers), its pool and single set, the 2D pipeline layout using it, the
- * bindless UI shaders and the free slot list. Images are written into it by
- * VK_CreateImageTexture (VK_BindlessWrite).
+ * @brief Index of an image's sampler in the bindless sampler array: the
+ * four shared samplers of VK_SamplerForImage(), bit 1 mipmapped, bit 0 clamp.
+ */
+static uint32_t VK_BindlessSamplerIndex(qboolean mipmap, int wrapClampMode)
+{
+	return (mipmap ? 2u : 0u) | (wrapClampMode == GL_REPEAT ? 0u : 1u);
+}
+
+/**
+ * @brief The index the bindless shaders sample an image with: its texture
+ * slot, and its sampler in the bits above (see VK_BINDLESS_SAMPLER_SHIFT).
+ * The image must have a slot.
+ */
+static uint32_t VK_BindlessIndex(const image_t *image)
+{
+	return (uint32_t)(image->vkBindlessSlot - 1) |
+	       (VK_BindlessSamplerIndex(image->mipmap, image->wrapClampMode) << VK_BINDLESS_SAMPLER_SHIFT);
+}
+
+/**
+ * @brief Writes the shared samplers into the bindless sampler array, in
+ * VK_BindlessSamplerIndex() order. The device must be idle (the sampler
+ * binding is not update-after-bind).
+ */
+static void VK_BindlessWriteSamplers(void)
+{
+	VkDescriptorImageInfo samplerInfo[VK_BINDLESS_NUM_SAMPLERS];
+	VkWriteDescriptorSet  write;
+
+	Com_Memset(samplerInfo, 0, sizeof(samplerInfo));
+	samplerInfo[0].sampler = vk.uiSamplerRepeat;
+	samplerInfo[1].sampler = vk.uiSamplerClamp;
+	samplerInfo[2].sampler = vk.mipSamplerRepeat;
+	samplerInfo[3].sampler = vk.mipSamplerClamp;
+
+	Com_Memset(&write, 0, sizeof(write));
+	write.sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	write.dstSet          = vk.bindlessSet;
+	write.dstBinding      = 1;
+	write.descriptorCount = VK_BINDLESS_NUM_SAMPLERS;
+	write.descriptorType  = VK_DESCRIPTOR_TYPE_SAMPLER;
+	write.pImageInfo      = samplerInfo;
+
+	vkUpdateDescriptorSets(vk.device, 1, &write, 0, NULL);
+}
+
+/**
+ * @brief Bindless textures (vk.bindless): the set layout (a partially
+ * bound, update-after-bind array of VK_BINDLESS_MAX_IMAGES sampled images
+ * and the VK_BINDLESS_NUM_SAMPLERS shared samplers - not combined image
+ * samplers, which would each count against the device's much lower sampler
+ * limit, e.g. 1024 on MoltenVK), its pool and single set, the 2D pipeline
+ * layout using it, the bindless UI shaders and the free slot list. Images
+ * are written into it by VK_CreateImageTexture (VK_BindlessWrite).
  */
 static qboolean VK_CreateBindlessResources(const VkPushConstantRange *pushConstantRange)
 {
-	VkDescriptorSetLayoutBinding                binding;
-	VkDescriptorBindingFlags                    bindingFlags;
+	VkDescriptorSetLayoutBinding                bindings[2];
+	VkDescriptorBindingFlags                    bindingFlags[2];
 	VkDescriptorSetLayoutBindingFlagsCreateInfo flagsInfo;
 	VkDescriptorSetLayoutCreateInfo             layoutInfo;
-	VkDescriptorPoolSize                        poolSize;
+	VkDescriptorPoolSize                        poolSizes[2];
 	VkDescriptorPoolCreateInfo                  poolInfo;
 	VkDescriptorSetAllocateInfo                 allocInfo;
 	VkPipelineLayoutCreateInfo                  pipelineLayoutInfo;
 	int                                         i;
 
-	Com_Memset(&binding, 0, sizeof(binding));
-	binding.binding         = 0;
-	binding.descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	binding.descriptorCount = VK_BINDLESS_MAX_IMAGES;
-	binding.stageFlags      = VK_SHADER_STAGE_FRAGMENT_BIT;
+	Com_Memset(bindings, 0, sizeof(bindings));
+	bindings[0].binding         = 0;
+	bindings[0].descriptorType  = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+	bindings[0].descriptorCount = VK_BINDLESS_MAX_IMAGES;
+	bindings[0].stageFlags      = VK_SHADER_STAGE_FRAGMENT_BIT;
+	bindings[1].binding         = 1;
+	bindings[1].descriptorType  = VK_DESCRIPTOR_TYPE_SAMPLER;
+	bindings[1].descriptorCount = VK_BINDLESS_NUM_SAMPLERS;
+	bindings[1].stageFlags      = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-	// slots are written while frames using other slots are in flight
-	bindingFlags = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT |
-	               VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT;
+	// slots are written while frames using other slots are in flight; the
+	// samplers only change with the texture mode, on an idle device
+	bindingFlags[0] = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT |
+	                  VK_DESCRIPTOR_BINDING_UPDATE_UNUSED_WHILE_PENDING_BIT;
+	bindingFlags[1] = 0;
 
 	Com_Memset(&flagsInfo, 0, sizeof(flagsInfo));
 	flagsInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO;
-	flagsInfo.bindingCount  = 1;
-	flagsInfo.pBindingFlags = &bindingFlags;
+	flagsInfo.bindingCount  = 2;
+	flagsInfo.pBindingFlags = bindingFlags;
 
 	Com_Memset(&layoutInfo, 0, sizeof(layoutInfo));
 	layoutInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	layoutInfo.pNext        = &flagsInfo;
 	layoutInfo.flags        = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT;
-	layoutInfo.bindingCount = 1;
-	layoutInfo.pBindings    = &binding;
+	layoutInfo.bindingCount = 2;
+	layoutInfo.pBindings    = bindings;
 
 	if (!VK_CheckResult(vkCreateDescriptorSetLayout(vk.device, &layoutInfo, NULL, &vk.bindlessSetLayout), "vkCreateDescriptorSetLayout(bindless)"))
 	{
 		return qfalse;
 	}
 
-	Com_Memset(&poolSize, 0, sizeof(poolSize));
-	poolSize.type            = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-	poolSize.descriptorCount = VK_BINDLESS_MAX_IMAGES;
+	Com_Memset(poolSizes, 0, sizeof(poolSizes));
+	poolSizes[0].type            = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+	poolSizes[0].descriptorCount = VK_BINDLESS_MAX_IMAGES;
+	poolSizes[1].type            = VK_DESCRIPTOR_TYPE_SAMPLER;
+	poolSizes[1].descriptorCount = VK_BINDLESS_NUM_SAMPLERS;
 
 	Com_Memset(&poolInfo, 0, sizeof(poolInfo));
 	poolInfo.sType         = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	poolInfo.flags         = VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT;
-	poolInfo.poolSizeCount = 1;
-	poolInfo.pPoolSizes    = &poolSize;
+	poolInfo.poolSizeCount = 2;
+	poolInfo.pPoolSizes    = poolSizes;
 	poolInfo.maxSets       = 1;
 
 	if (!VK_CheckResult(vkCreateDescriptorPool(vk.device, &poolInfo, NULL, &vk.bindlessPool), "vkCreateDescriptorPool(bindless)"))
@@ -2275,6 +2360,7 @@ static qboolean VK_CreateBindlessResources(const VkPushConstantRange *pushConsta
 	{
 		return qfalse;
 	}
+	VK_BindlessWriteSamplers();
 
 	Com_Memset(&pipelineLayoutInfo, 0, sizeof(pipelineLayoutInfo));
 	pipelineLayoutInfo.sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -2306,15 +2392,15 @@ static qboolean VK_CreateBindlessResources(const VkPushConstantRange *pushConsta
 }
 
 /**
- * @brief Writes an image's view and sampler into its bindless slot.
+ * @brief Writes an image's view into its bindless slot (its sampler is
+ * picked in the shader, see VK_BindlessIndex()).
  */
-static void VK_BindlessWrite(int slot, VkImageView view, VkSampler sampler)
+static void VK_BindlessWrite(int slot, VkImageView view)
 {
 	VkDescriptorImageInfo imageInfo;
 	VkWriteDescriptorSet  write;
 
 	Com_Memset(&imageInfo, 0, sizeof(imageInfo));
-	imageInfo.sampler     = sampler;
 	imageInfo.imageView   = view;
 	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
@@ -2324,7 +2410,7 @@ static void VK_BindlessWrite(int slot, VkImageView view, VkSampler sampler)
 	write.dstBinding      = 0;
 	write.dstArrayElement = (uint32_t)slot;
 	write.descriptorCount = 1;
-	write.descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	write.descriptorType  = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 	write.pImageInfo      = &imageInfo;
 
 	vkUpdateDescriptorSets(vk.device, 1, &write, 0, NULL);
@@ -4991,6 +5077,10 @@ void VK_Shutdown(void)
 			{
 				vkDestroySemaphore(vk.device, vk.imageAvailableSemaphores[i], NULL);
 			}
+			if (vk.sceneDoneSemaphores[i] != VK_NULL_HANDLE)
+			{
+				vkDestroySemaphore(vk.device, vk.sceneDoneSemaphores[i], NULL);
+			}
 			if (vk.inFlightFences[i] != VK_NULL_HANDLE)
 			{
 				vkDestroyFence(vk.device, vk.inFlightFences[i], NULL);
@@ -5307,9 +5397,6 @@ void VK_BeginFrame(void)
 	VK_FlushPendingFramesSlot(vk.frameIndex);
 	vkResetFences(vk.device, 1, &vk.inFlightFence);
 
-	vkAcquireNextImageKHR(vk.device, vk.swapchain, UINT64_MAX, vk.imageAvailableSemaphore, VK_NULL_HANDLE, &vk.currentImageIndex);
-	vk.renderFinishedSemaphore = vk.renderFinishedSemaphores[vk.currentImageIndex];
-
 	vkResetCommandBuffer(vk.commandBuffer, 0);
 
 	Com_Memset(&beginInfo, 0, sizeof(beginInfo));
@@ -5439,6 +5526,71 @@ static qboolean VK_EnsureCaptureBuffer(void)
 }
 
 /**
+ * @brief Monotonic time in msec with sub-msec resolution for the present
+ * throttle (only used on macOS, see vk.presentThrottle).
+ */
+static double VK_PresentClock(void)
+{
+#ifdef __APPLE__
+	struct timespec ts;
+
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	return ts.tv_sec * 1000.0 + ts.tv_nsec / 1000000.0;
+#else
+	return (double)ri.Milliseconds();
+#endif
+}
+
+/**
+ * @brief Whether VK_EndFrame() presents this frame.
+ *
+ * Without vsync, MoltenVK still hands out at most 3 CAMetalLayer drawables,
+ * and the window compositor keeps the one on screen and the one picked for
+ * the next refresh. When none is free, nextDrawable (called while
+ * vkQueueSubmit encodes the present pass) blocks for up to a refresh, which
+ * at several hundred frames per second halved the frame rate. How fast
+ * drawables come back differs between launches (about 230 instead of 400+
+ * per second in some), so the rate is adapted (VK_PresentWaited()). The
+ * compositor shows one frame per refresh anyway: the frames in between are
+ * rendered (into the persistent scene image) but not presented; the next
+ * presented frame shows them.
+ */
+static qboolean VK_PresentDue(void)
+{
+	double now;
+
+	if (!vk.presentThrottle)
+	{
+		return qtrue;
+	}
+
+	now = VK_PresentClock();
+	if (now - vk.lastPresentTime < vk.presentInterval)
+	{
+		return qfalse;
+	}
+	vk.lastPresentTime = now;
+	return qtrue;
+}
+
+/**
+ * @brief Adapts the present interval to how long submitting the present
+ * pass took, i.e. how long nextDrawable waited for a drawable: back off
+ * quickly while it waits, return slowly to VK_PRESENT_MAX_RATE otherwise.
+ */
+static void VK_PresentWaited(double msec)
+{
+	if (msec > VK_PRESENT_WAIT_MSEC)
+	{
+		vk.presentInterval = MIN(vk.presentInterval * 1.25, 1000.0 / VK_PRESENT_MIN_RATE);
+	}
+	else
+	{
+		vk.presentInterval = MAX(vk.presentInterval * 0.998, 1000.0 / VK_PRESENT_MAX_RATE);
+	}
+}
+
+/**
  * @brief Asks VK_EndFrame() to capture the frame currently
  * being recorded (or the next one, if called between frames).
  */
@@ -5514,12 +5666,14 @@ void VK_ReleaseCapturedFrame(void)
 void VK_EndFrame(void)
 {
 	VkCommandBuffer      commandBuffers[2];
+	VkCommandBuffer      presentCB;
 	VkSubmitInfo         submitInfo;
 	VkPresentInfoKHR     presentInfo;
 	VkPipelineStageFlags waitStage         = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 	static int           debugFrameCount   = 0;
 	const char           *debugCapturePath = NULL;
 	qboolean             captureThisFrame;
+	qboolean             present, splitPresent;
 
 	if (!vk.initialized)
 	{
@@ -5530,8 +5684,45 @@ void VK_EndFrame(void)
 
 	vkCmdEndRenderPass(vk.commandBuffer);
 
+	// debug capture of frame 200 (r_vkCaptureFrame200). It shares the
+	// screenshot capture below and is skipped while a captured screenshot
+	// frame is still unread.
+	debugFrameCount++;
+	if (debugFrameCount == 200 && r_vkCaptureFrame200->integer && !vk.captureReady)
+	{
+		debugCapturePath = r_vkCapturePath->string;
+	}
+	captureThisFrame = (vk.captureRequested || debugCapturePath) && VK_EnsureCaptureBuffer();
+
+	// a captured frame is read from the swapchain image, so it is always presented
+	present = captureThisFrame || VK_PresentDue();
+	if (present)
+	{
+		vkAcquireNextImageKHR(vk.device, vk.swapchain, UINT64_MAX, vk.imageAvailableSemaphore, VK_NULL_HANDLE, &vk.currentImageIndex);
+		vk.renderFinishedSemaphore = vk.renderFinishedSemaphores[vk.currentImageIndex];
+	}
+
+	// with the present throttle the present pass (and a capture) gets its own
+	// command buffer and submit: the scene starts on the GPU without waiting
+	// for a drawable, and the present submit's duration is that wait
+	splitPresent = present && vk.presentThrottle;
+	presentCB    = vk.commandBuffer;
+	if (splitPresent)
+	{
+		VkCommandBufferBeginInfo beginInfo;
+
+		vkEndCommandBuffer(vk.commandBuffer);
+
+		presentCB = vk.presentCommandBuffers[vk.frameIndex];
+		vkResetCommandBuffer(presentCB, 0);
+		Com_Memset(&beginInfo, 0, sizeof(beginInfo));
+		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		vkBeginCommandBuffer(presentCB, &beginInfo);
+	}
+
 	// renderer1's R_ScreenGamma() - copy the offscreen scene
 	// to the swapchain image applying r_gamma and the overbright scale.
+	if (present)
 	{
 		VkRenderPassBeginInfo presentInfoRP;
 		VkViewport            viewport;
@@ -5544,44 +5735,34 @@ void VK_EndFrame(void)
 		presentInfoRP.framebuffer       = vk.swapchainFramebuffers[vk.currentImageIndex];
 		presentInfoRP.renderArea.extent = vk.swapchainExtent;
 
-		vkCmdBeginRenderPass(vk.commandBuffer, &presentInfoRP, VK_SUBPASS_CONTENTS_INLINE);
+		vkCmdBeginRenderPass(presentCB, &presentInfoRP, VK_SUBPASS_CONTENTS_INLINE);
 
 		Com_Memset(&viewport, 0, sizeof(viewport));
 		viewport.width    = (float)vk.swapchainExtent.width;
 		viewport.height   = (float)vk.swapchainExtent.height;
 		viewport.maxDepth = 1.0f;
-		vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
+		vkCmdSetViewport(presentCB, 0, 1, &viewport);
 
 		Com_Memset(&scissor, 0, sizeof(scissor));
 		scissor.extent = vk.swapchainExtent;
-		vkCmdSetScissor(vk.commandBuffer, 0, 1, &scissor);
+		vkCmdSetScissor(presentCB, 0, 1, &scissor);
 
-		vkCmdBindPipeline(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.gammaPipeline);
+		vkCmdBindPipeline(presentCB, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.gammaPipeline);
 		vk.lastBoundPipeline = vk.gammaPipeline;
-		vkCmdBindDescriptorSets(vk.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.gammaPipelineLayout, 0, 1, &vk.sceneColorDescriptor, 0, NULL);
+		vkCmdBindDescriptorSets(presentCB, VK_PIPELINE_BIND_POINT_GRAPHICS, vk.gammaPipelineLayout, 0, 1, &vk.sceneColorDescriptor, 0, NULL);
 
 		push[0] = vk.gammaValue;
 		push[1] = vk.overbrightScale;
-		vkCmdPushConstants(vk.commandBuffer, vk.gammaPipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(push), push);
+		vkCmdPushConstants(presentCB, vk.gammaPipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(push), push);
 
-		vkCmdDraw(vk.commandBuffer, 3, 1, 0, 0);
+		vkCmdDraw(presentCB, 3, 1, 0, 0);
 
-		vkCmdEndRenderPass(vk.commandBuffer);
-	}
-
-	// debug capture of frame 200 (r_vkCaptureFrame200). It shares the
-	// screenshot capture below and is skipped while a captured screenshot
-	// frame is still unread.
-	debugFrameCount++;
-	if (debugFrameCount == 200 && r_vkCaptureFrame200->integer && !vk.captureReady)
-	{
-		debugCapturePath = r_vkCapturePath->string;
+		vkCmdEndRenderPass(presentCB);
 	}
 
 	// Frame capture (renderer1's glReadPixels of the final
 	// image) - copy the swapchain image into the host-visible capture
 	// buffer before it's presented.
-	captureThisFrame = (vk.captureRequested || debugCapturePath) && VK_EnsureCaptureBuffer();
 	if (captureThisFrame)
 	{
 		VkImageMemoryBarrier barrier;
@@ -5599,7 +5780,7 @@ void VK_EndFrame(void)
 		barrier.subresourceRange.layerCount = 1;
 		barrier.srcAccessMask               = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 		barrier.dstAccessMask               = VK_ACCESS_TRANSFER_READ_BIT;
-		vkCmdPipelineBarrier(vk.commandBuffer, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
+		vkCmdPipelineBarrier(presentCB, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
 		                     0, 0, NULL, 0, NULL, 1, &barrier);
 
 		Com_Memset(&region, 0, sizeof(region));
@@ -5608,18 +5789,18 @@ void VK_EndFrame(void)
 		region.imageExtent.width           = vk.swapchainExtent.width;
 		region.imageExtent.height          = vk.swapchainExtent.height;
 		region.imageExtent.depth           = 1;
-		vkCmdCopyImageToBuffer(vk.commandBuffer, vk.swapchainImages[vk.currentImageIndex], VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+		vkCmdCopyImageToBuffer(presentCB, vk.swapchainImages[vk.currentImageIndex], VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 		                       vk.captureBuffer, 1, &region);
 
 		barrier.oldLayout     = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 		barrier.newLayout     = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 		barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 		barrier.dstAccessMask = 0;
-		vkCmdPipelineBarrier(vk.commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+		vkCmdPipelineBarrier(presentCB, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
 		                     0, 0, NULL, 0, NULL, 1, &barrier);
 	}
 
-	vkEndCommandBuffer(vk.commandBuffer);
+	vkEndCommandBuffer(presentCB); // the scene's command buffer, unless splitPresent
 
 	// GPU world culling: the frame's dispatches run first; the barrier makes
 	// their draw commands and indexes visible to the main command buffer's
@@ -5663,26 +5844,64 @@ void VK_EndFrame(void)
 	vk.inFrame = qfalse;
 
 	Com_Memset(&submitInfo, 0, sizeof(submitInfo));
-	submitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submitInfo.waitSemaphoreCount   = 1;
-	submitInfo.pWaitSemaphores      = &vk.imageAvailableSemaphore;
-	submitInfo.pWaitDstStageMask    = &waitStage;
-	submitInfo.commandBufferCount   = (commandBuffers[0] == vk.commandBuffer) ? 1 : 2;
-	submitInfo.pCommandBuffers      = commandBuffers;
-	submitInfo.signalSemaphoreCount = 1;
-	submitInfo.pSignalSemaphores    = &vk.renderFinishedSemaphore;
+	submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submitInfo.commandBufferCount = (commandBuffers[0] == vk.commandBuffer) ? 1 : 2;
+	submitInfo.pCommandBuffers    = commandBuffers;
 
-	vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence);
+	if (splitPresent)
+	{
+		VkSemaphore          waitSemaphores[2];
+		VkPipelineStageFlags waitStages[2];
+		double               start;
 
-	Com_Memset(&presentInfo, 0, sizeof(presentInfo));
-	presentInfo.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-	presentInfo.waitSemaphoreCount = 1;
-	presentInfo.pWaitSemaphores    = &vk.renderFinishedSemaphore;
-	presentInfo.swapchainCount     = 1;
-	presentInfo.pSwapchains        = &vk.swapchain;
-	presentInfo.pImageIndices      = &vk.currentImageIndex;
+		// the scene, then the present pass once it is done: the fence on the
+		// present submit covers both
+		submitInfo.signalSemaphoreCount = 1;
+		submitInfo.pSignalSemaphores    = &vk.sceneDoneSemaphores[vk.frameIndex];
+		vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
 
-	vkQueuePresentKHR(vk.presentQueue, &presentInfo);
+		waitSemaphores[0] = vk.sceneDoneSemaphores[vk.frameIndex];
+		waitStages[0]     = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
+		waitSemaphores[1] = vk.imageAvailableSemaphore;
+		waitStages[1]     = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
+		Com_Memset(&submitInfo, 0, sizeof(submitInfo));
+		submitInfo.sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		submitInfo.waitSemaphoreCount   = 2;
+		submitInfo.pWaitSemaphores      = waitSemaphores;
+		submitInfo.pWaitDstStageMask    = waitStages;
+		submitInfo.commandBufferCount   = 1;
+		submitInfo.pCommandBuffers      = &presentCB;
+		submitInfo.signalSemaphoreCount = 1;
+		submitInfo.pSignalSemaphores    = &vk.renderFinishedSemaphore;
+
+		start = VK_PresentClock();
+		vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence);
+		VK_PresentWaited(VK_PresentClock() - start);
+	}
+	else
+	{
+		submitInfo.waitSemaphoreCount   = present ? 1 : 0;
+		submitInfo.pWaitSemaphores      = &vk.imageAvailableSemaphore;
+		submitInfo.pWaitDstStageMask    = &waitStage;
+		submitInfo.signalSemaphoreCount = present ? 1 : 0;
+		submitInfo.pSignalSemaphores    = &vk.renderFinishedSemaphore;
+
+		vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence);
+	}
+
+	if (present)
+	{
+		Com_Memset(&presentInfo, 0, sizeof(presentInfo));
+		presentInfo.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		presentInfo.waitSemaphoreCount = 1;
+		presentInfo.pWaitSemaphores    = &vk.renderFinishedSemaphore;
+		presentInfo.swapchainCount     = 1;
+		presentInfo.pSwapchains        = &vk.swapchain;
+		presentInfo.pImageIndices      = &vk.currentImageIndex;
+
+		vkQueuePresentKHR(vk.presentQueue, &presentInfo);
+	}
 
 	if (captureThisFrame)
 	{
@@ -5919,7 +6138,7 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 		if (vk.numBindlessFree > 0)
 		{
 			image->vkBindlessSlot = vk.bindlessFree[--vk.numBindlessFree] + 1;
-			VK_BindlessWrite(image->vkBindlessSlot - 1, vkImageView, sampler);
+			VK_BindlessWrite(image->vkBindlessSlot - 1, vkImageView);
 		}
 		else
 		{
@@ -6103,7 +6322,7 @@ static void VK_Draw2DBatched(shaderCommands_t *input, struct image_s *image, uns
 	{
 		return; // the bindless array was full when it was created
 	}
-	texture = (uint32_t)(image->vkBindlessSlot - 1);
+	texture = VK_BindlessIndex(image);
 
 	if (vk.batch2DOpen && stateBits != vk.batch2DStateBits)
 	{
@@ -6767,7 +6986,7 @@ static qboolean VK_BatchModelDraw(shaderCommands_t *input, VkPipeline pipeline, 
 	Com_Memcpy(data->env, input->vkEnvParams, sizeof(data->env));
 	Com_Memcpy(data->ofs, ofs, sizeof(data->ofs));
 	data->ofs2[0] = ofs2x;
-	data->ofs2[1] = (uint32_t)(image->vkBindlessSlot - 1);
+	data->ofs2[1] = VK_BindlessIndex(image);
 	data->ofs2[2] = 0;
 	data->ofs2[3] = 0;
 	vk.mbNumDraws++;
@@ -7017,8 +7236,8 @@ static qboolean VK_BatchWorldDraw(shaderCommands_t *input, VkPipeline pipeline, 
 	vk.wbDraws[vk.wbNumDraws].key     = k;
 	vk.wbDraws[vk.wbNumDraws].srcWord = input->vkIndirectOffset / sizeof(unsigned int);
 	data                              = &vk.wbDraws[vk.wbNumDraws].data;
-	data->textures[0]                 = (uint32_t)(image0->vkBindlessSlot - 1);
-	data->textures[1]                 = image1 ? (uint32_t)(image1->vkBindlessSlot - 1) : 0;
+	data->textures[0]                 = VK_BindlessIndex(image0);
+	data->textures[1]                 = image1 ? VK_BindlessIndex(image1) : 0;
 	data->textures[2]                 = 0;
 	data->textures[3]                 = 0;
 	Com_Memcpy(data->colorMul, pushConstants + 48, 4 * sizeof(float));
@@ -8187,7 +8406,8 @@ float VK_GetMaxAnisotropy(void)
  * @brief Vulkan side of renderer1's GL_TextureMode(): rebuild
  * the mipmapped-image samplers for the new min/mag filter and rebind every
  * mipmapped image's descriptor to them (the sampler is baked into each
- * combined-image-sampler descriptor). Runs from RE_BeginFrame between
+ * per-image combined-image-sampler descriptor) and the bindless sampler
+ * array. Runs from RE_BeginFrame between
  * frames; waits for the GPU so no in-flight frame still uses the old ones.
  */
 void VK_SetTextureMode(int minFilter, int magFilter)
@@ -8252,11 +8472,11 @@ void VK_SetTextureMode(int minFilter, int magFilter)
 
 		vkUpdateDescriptorSets(vk.device, 1, &writeSet, 0, NULL);
 		image->vkSampler = (void *)sampler;
+	}
 
-		if (image->vkBindlessSlot)
-		{
-			VK_BindlessWrite(image->vkBindlessSlot - 1, (VkImageView)image->vkImageView, sampler);
-		}
+	if (vk.bindless)
+	{
+		VK_BindlessWriteSamplers();
 	}
 
 	vkDestroySampler(vk.device, oldRepeat, NULL);

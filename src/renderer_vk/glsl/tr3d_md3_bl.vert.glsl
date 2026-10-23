@@ -42,7 +42,7 @@ struct ModelDraw
 	vec4  lerp;      // newXyzScale, oldXyzScale, newNormalScale, oldNormalScale (< 0: no interpolation)
 	vec4  env[3];    // tcGen environment parameters (RB_VkSetupEnvParams) or fog pass parameters
 	uvec4 ofs;       // mesh buffer word offsets: frame, oldframe, texcoords, compressed frame
-	uvec4 ofs2;      // x: compressed oldframe, y: bindless texture slot
+	uvec4 ofs2;      // x: compressed oldframe, y: bindless texture index (slot + sampler)
 };
 
 layout(std430, set = 1, binding = 0) readonly buffer ModelDraws

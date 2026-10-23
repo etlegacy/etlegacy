@@ -21,7 +21,15 @@ layout(push_constant) uniform PushConstants
 	vec4 clipPlane; // portal/mirror eye-space clip plane (xyz=normal, w=dist)
 } pc;
 
-layout(set = 0, binding = 0) uniform sampler2D uTextures[4096]; // VK_BINDLESS_MAX_IMAGES
+// bindless textures and the shared samplers; a texture index holds the slot
+// in its low 12 bits and the sampler above them (VK_BindlessIndex())
+layout(set = 0, binding = 0) uniform texture2D uTextures[4096]; // VK_BINDLESS_MAX_IMAGES
+layout(set = 0, binding = 1) uniform sampler uSamplers[4];      // VK_BINDLESS_NUM_SAMPLERS
+
+vec4 BindlessTexture(uint index, vec2 uv)
+{
+	return texture(nonuniformEXT(sampler2D(uTextures[nonuniformEXT(index & 4095u)], uSamplers[nonuniformEXT(index >> 12)])), uv);
+}
 
 layout(location = 0) in vec2 fragUV;
 layout(location = 1) in vec4 fragColor;
@@ -33,7 +41,7 @@ layout(location = 0) out vec4 outColor;
 
 void main()
 {
-	vec4 color = texture(uTextures[nonuniformEXT(fragTexture)], fragUV) * fragColor;
+	vec4 color = BindlessTexture(fragTexture, fragUV) * fragColor;
 
 	// Portal/mirror clip plane — replicates
 	// GL_CLIP_PLANE0's semantics (discard fragments on the plane's

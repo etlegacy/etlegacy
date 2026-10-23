@@ -1253,7 +1253,7 @@ static qboolean IsMirror(const drawSurf_t *drawSurf, int entityNum)
  * @param clipDest - unused
  * @return
  */
-static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128])
+static qboolean SurfIsOffscreenTess(const drawSurf_t *drawSurf, vec4_t clipDest[128])
 {
 	float        shortest = 100000000;
 	int          entityNum;
@@ -1346,6 +1346,23 @@ static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128]
 	}
 
 	return qfalse;
+}
+
+/**
+ * @brief SurfIsOffscreenTess(), then empties tess again: the test tessellates
+ * the surface outside the backend loop, and the next RB_EndSurface() would
+ * otherwise draw it before the next frame's first command (renderer1 does -
+ * harmless in GL, but in Vulkan before any view has set its viewport).
+ * @param[in] drawSurf
+ * @param clipDest - unused
+ * @return
+ */
+static qboolean SurfIsOffscreen(const drawSurf_t *drawSurf, vec4_t clipDest[128])
+{
+	qboolean offscreen = SurfIsOffscreenTess(drawSurf, clipDest);
+
+	RB_ClearSurface();
+	return offscreen;
 }
 
 /**

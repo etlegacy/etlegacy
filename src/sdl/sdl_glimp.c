@@ -1149,7 +1149,28 @@ static qboolean GLimp_StartDriverAndSetMode(glconfig_t *glConfig, int mode, qboo
 #ifdef FEATURE_RENDERER_VULKAN
 		if (Q_stricmp(Info_ValueForKey(glConfigString, "type"), "vulkan") == 0)
 		{
-			if (SDL_Vulkan_LoadLibrary(NULL) != 0)
+			qboolean loaded = qfalse;
+#ifdef __APPLE__
+			char *basePath;
+
+			// MoltenVK in the app bundle (Contents/Frameworks, next to the
+			// Resources folder SDL_GetBasePath() returns), unless
+			// SDL_VULKAN_LIBRARY names another library, e.g. the Vulkan SDK
+			// loader for the validation layer
+			if (!getenv("SDL_VULKAN_LIBRARY") && (basePath = SDL_GetBasePath()) != NULL)
+			{
+				char moltenVK[MAX_OSPATH];
+
+				Com_sprintf(moltenVK, sizeof(moltenVK), "%s../Frameworks/libMoltenVK.dylib", basePath);
+				SDL_free(basePath);
+				if (SDL_Vulkan_LoadLibrary(moltenVK) == 0)
+				{
+					Com_Printf("Vulkan library: %s\n", moltenVK);
+					loaded = qtrue;
+				}
+			}
+#endif
+			if (!loaded && SDL_Vulkan_LoadLibrary(NULL) != 0)
 			{
 				Com_Printf("SDL_Vulkan_LoadLibrary failed: %s\n", SDL_GetError());
 			}
