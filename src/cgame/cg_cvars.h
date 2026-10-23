@@ -100,6 +100,7 @@ extern vmCvar_t cg_dynamicIconsDistance;
 extern vmCvar_t cg_dynamicIconsSize;
 extern vmCvar_t cg_dynamicIconsMaxScale;
 extern vmCvar_t cg_dynamicIconsMinScale;
+extern vmCvar_t cg_compassIconsEdgeScale;
 
 extern vmCvar_t cg_zoomDefaultSniper;
 

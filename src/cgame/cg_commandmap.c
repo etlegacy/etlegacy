@@ -348,7 +348,7 @@ static float CG_PlayerDistanceScaling(mapEntityData_t *player)
 	return minScale;
 }
 
-#define COMPASS_MARGIN_OFFSET 0.25f
+#define COMPASS_MARGIN_OFFSET 0.125f
 
 /**
  * @brief CG_IsCompassDecorDraw
@@ -2093,10 +2093,10 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 	// subtract surrounding decoration of the compass if draw
 	if (CG_IsCompassDecorDraw(style))
 	{
-		x = basex + (basew * COMPASS_MARGIN_OFFSET * 0.5f);
-		y = basey + (baseh * COMPASS_MARGIN_OFFSET * 0.5f);
-		w = basew - basew * COMPASS_MARGIN_OFFSET;
-		h = baseh - baseh * COMPASS_MARGIN_OFFSET;
+		x = basex + basew * COMPASS_MARGIN_OFFSET;
+		y = basey + baseh * COMPASS_MARGIN_OFFSET;
+		w = basew - basew * COMPASS_MARGIN_OFFSET * 2.f;
+		h = baseh - baseh * COMPASS_MARGIN_OFFSET * 2.f;
 	}
 	else
 	{
@@ -2191,7 +2191,8 @@ void CG_DrawAutoMap(float basex, float basey, float basew, float baseh, int styl
 
 		if (icon)
 		{
-			float iconSize = MIN(basew * COMPASS_MARGIN_OFFSET * 0.5f, baseh * COMPASS_MARGIN_OFFSET * 0.5f);
+			float iconSize = MIN(basew * COMPASS_MARGIN_OFFSET * cg_compassIconsEdgeScale.value,
+			                     baseh * COMPASS_MARGIN_OFFSET * cg_compassIconsEdgeScale.value);
 
 			CG_DrawCompassIcon(basex, basey, basew, baseh, cg.predictedPlayerState.origin, cent->lerpOrigin, icon, 1.f, iconSize, &mapScissor, style);
 
@@ -2735,10 +2736,12 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 	float    iconx;
 	float    icony;
 	float    iconSize;
-	float    angle, len;
+	float    angle;
+	float    len;
 	float    cosAngle;
 	float    sinAngle;
-	vec3_t   v1, angles;
+	vec3_t   v1;
+	vec3_t   angles;
 	qboolean drawIconInside   = style & COMPASS_DRAW_ICONS_INSIDE;
 	qboolean pointTowardNorth = (style & COMPASS_POINT_TOWARD_NORTH && !(style & COMPASS_DYNAMIC_TICKS));
 
@@ -2758,9 +2761,7 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 	cosAngle    = cosf(angle);
 	sinAngle    = sinf(angle);
 
-	len       = 1 - MIN(1.f, len / 2000.f * dstScale);
-	iconSize  = baseSize * len;
-	iconSize *= ((scissor->zoomFactor + 2.5f) / AUTOMAP_ZOOM);
+	iconSize = MAX(8, baseSize * (1 - MIN(1.f, len / 2000.f * dstScale)));
 
 	if (scissor->circular)
 	{
@@ -2768,10 +2769,10 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 		// and only if we draw inside the compass, not on the decor
 		if (((style & COMPASS_DECOR) || (style & COMPASS_CARDINAL_POINTS)) && drawIconInside)
 		{
-			x = x + (w * COMPASS_MARGIN_OFFSET * 0.5f);
-			y = y + (h * COMPASS_MARGIN_OFFSET * 0.5f);
-			w = w - w * COMPASS_MARGIN_OFFSET;
-			h = h - h * COMPASS_MARGIN_OFFSET;
+			x += MAX(w * COMPASS_MARGIN_OFFSET, iconSize);
+			y += MAX(h * COMPASS_MARGIN_OFFSET, iconSize);
+			w -= MAX(w * COMPASS_MARGIN_OFFSET, iconSize) * 2.f;
+			h -= MAX(h * COMPASS_MARGIN_OFFSET, iconSize) * 2.f;
 		}
 
 		iconx = x + (w * 0.5f);
@@ -2787,10 +2788,10 @@ void CG_DrawCompassIcon(float x, float y, float w, float h, vec3_t origin, vec3_
 		// subtract surrounding decoration of the compass if draw
 		if (CG_IsCompassDecorDraw(style))
 		{
-			x = x + (w * COMPASS_MARGIN_OFFSET * 0.5f);
-			y = y + (h * COMPASS_MARGIN_OFFSET * 0.5f);
-			w = w - w * COMPASS_MARGIN_OFFSET;
-			h = h - h * COMPASS_MARGIN_OFFSET;
+			x += baseSize;
+			y += baseSize;
+			w -= baseSize * 2.f;
+			h -= baseSize * 2.f;
 		}
 
 		iconx = x + (w * 0.5f);
