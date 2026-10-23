@@ -155,7 +155,8 @@ jobs:
       - *upload-binaries
 
   lnx-aarch64:
-    runs-on: ubuntu-latest
+    # Native arm64 runner and image; build without the cross toolchain file.
+    runs-on: ubuntu-24.04-arm
     needs: [pre-build]
     container:
       image: etlegacy/lnx-aarch64-build
@@ -169,7 +170,7 @@ jobs:
 
       - name: Build
         run: |
-          ./easybuild.sh build -RPIT -ninja
+          ./easybuild.sh build -RPI -ninja
 
       - name: Generate packages
         shell: bash
