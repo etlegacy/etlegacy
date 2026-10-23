@@ -77,39 +77,33 @@ if(BUILD_CLIENT)
 	endif()
 
 	if(FEATURE_RENDERER_VULKAN)
-		if(APPLE)
-			# macOS links the Vulkan SDK loader (MoltenVK) directly
-			find_package(Vulkan REQUIRED COMPONENTS glslc)
-			target_link_libraries(renderer_vulkan_libraries INTERFACE Vulkan::Vulkan)
-			set(VK_GLSL_COMPILER Vulkan::glslc)
+		# Vulkan API headers only. The renderer never links a Vulkan library,
+		# all entry points are loaded at runtime from the library SDL opens
+		# (the driver's loader libvulkan.so.1 / vulkan-1.dll; on macOS the
+		# bundled MoltenVK or the SDK loader) - see vk_funcs.h.
+		if(BUNDLED_VULKAN_HEADERS)
+			target_link_libraries(renderer_vulkan_libraries INTERFACE bundled_vulkan_headers_int)
 		else()
-			# Linux/Windows: Vulkan API headers only. The renderer never links a
-			# Vulkan library, all entry points are loaded at runtime from the
-			# driver's loader (libvulkan.so.1 / vulkan-1.dll) - see vk_funcs.h.
-			if(BUNDLED_VULKAN_HEADERS)
-				target_link_libraries(renderer_vulkan_libraries INTERFACE bundled_vulkan_headers_int)
-			else()
-				find_path(VULKAN_INCLUDE_DIR
-					NAMES vulkan/vulkan.h
-					HINTS "$ENV{VULKAN_SDK}/include" "$ENV{VULKAN_SDK}/Include"
-					DOC "Directory containing the Vulkan API headers (vulkan/vulkan.h)"
-				)
-				if(NOT VULKAN_INCLUDE_DIR)
-					message(FATAL_ERROR "Vulkan headers (vulkan/vulkan.h) not found - install the Vulkan-Headers package, set VULKAN_INCLUDE_DIR or enable BUNDLED_VULKAN_HEADERS")
-				endif()
-				target_include_directories(renderer_vulkan_libraries INTERFACE "${VULKAN_INCLUDE_DIR}")
-			endif()
-			target_compile_definitions(renderer_vulkan_libraries INTERFACE VK_NO_PROTOTYPES)
-
-			# shader compiler: glslc (shaderc) preferred, glslangValidator works too
-			find_program(VK_GLSL_COMPILER
-				NAMES glslc glslangValidator
-				HINTS "$ENV{VULKAN_SDK}/bin" "$ENV{VULKAN_SDK}/Bin"
-				DOC "GLSL to SPIR-V compiler (glslc or glslangValidator)"
+			find_path(VULKAN_INCLUDE_DIR
+				NAMES vulkan/vulkan.h
+				HINTS "$ENV{VULKAN_SDK}/include" "$ENV{VULKAN_SDK}/Include"
+				DOC "Directory containing the Vulkan API headers (vulkan/vulkan.h)"
 			)
-			if(NOT VK_GLSL_COMPILER)
-				message(FATAL_ERROR "No GLSL compiler found - install glslc (shaderc) or glslangValidator (glslang), or set VK_GLSL_COMPILER")
+			if(NOT VULKAN_INCLUDE_DIR)
+				message(FATAL_ERROR "Vulkan headers (vulkan/vulkan.h) not found - install the Vulkan-Headers package, set VULKAN_INCLUDE_DIR or enable BUNDLED_VULKAN_HEADERS")
 			endif()
+			target_include_directories(renderer_vulkan_libraries INTERFACE "${VULKAN_INCLUDE_DIR}")
+		endif()
+		target_compile_definitions(renderer_vulkan_libraries INTERFACE VK_NO_PROTOTYPES)
+
+		# shader compiler: glslc (shaderc) preferred, glslangValidator works too
+		find_program(VK_GLSL_COMPILER
+			NAMES glslc glslangValidator
+			HINTS "$ENV{VULKAN_SDK}/bin" "$ENV{VULKAN_SDK}/Bin"
+			DOC "GLSL to SPIR-V compiler (glslc or glslangValidator)"
+		)
+		if(NOT VK_GLSL_COMPILER)
+			message(FATAL_ERROR "No GLSL compiler found - install glslc (shaderc) or glslangValidator (glslang), or set VK_GLSL_COMPILER")
 		endif()
 		message(STATUS "Vulkan GLSL compiler: ${VK_GLSL_COMPILER}")
 	endif()

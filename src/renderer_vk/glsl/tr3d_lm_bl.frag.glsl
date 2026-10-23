@@ -6,7 +6,15 @@
 // 1 - both reuse the same per-image single-combined-sampler descriptor
 // set layout/pool as the base texture path (vk.uiDescriptorSetLayout).
 
-layout(set = 0, binding = 0) uniform sampler2D uTextures[4096]; // VK_BINDLESS_MAX_IMAGES
+// bindless textures and the shared samplers; a texture index holds the slot
+// in its low 12 bits and the sampler above them (VK_BindlessIndex())
+layout(set = 0, binding = 0) uniform texture2D uTextures[4096]; // VK_BINDLESS_MAX_IMAGES
+layout(set = 0, binding = 1) uniform sampler uSamplers[4];      // VK_BINDLESS_NUM_SAMPLERS
+
+vec4 BindlessTexture(uint index, vec2 uv)
+{
+	return texture(nonuniformEXT(sampler2D(uTextures[nonuniformEXT(index & 4095u)], uSamplers[nonuniformEXT(index >> 12)])), uv);
+}
 
 layout(push_constant) uniform PushConstants
 {
@@ -32,8 +40,8 @@ void main()
 {
 	// renderer1's DrawMultitextured(): unit 0 is base * vertex color
 	// (GL_MODULATE), unit 1 combines with it per shader->multitextureEnv.
-	vec4 prev  = texture(uTextures[nonuniformEXT(fragTextures.x)], fragUV0) * fragColor;
-	vec4 tex1  = texture(uTextures[nonuniformEXT(fragTextures.y)], fragUV1);
+	vec4 prev  = BindlessTexture(fragTextures.x, fragUV0) * fragColor;
+	vec4 tex1  = BindlessTexture(fragTextures.y, fragUV1);
 	vec4 color;
 
 	if (pc.alphaTest.y < 0.5)

@@ -1545,6 +1545,15 @@ void RB_EndSurface(void)
 	}
 
 	// clear shader so we can tell we don't have any unclosed surfaces
+	RB_ClearSurface();
+}
+
+/**
+ * @brief Empties tess without drawing it (end of RB_EndSurface(), and after
+ * code that tessellates outside the backend loop just to read tess back).
+ */
+void RB_ClearSurface(void)
+{
 	tess.numIndexes        = 0;
 	tess.numVertexes       = 0;
 	tess.vkStatic          = qfalse;

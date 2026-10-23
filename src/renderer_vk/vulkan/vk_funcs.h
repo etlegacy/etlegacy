@@ -32,12 +32,11 @@
  * @file vulkan/vk_funcs.h
  * @brief X-macro lists of every Vulkan entry point the renderer calls.
  *
- * On Linux and Windows the renderer is built with VK_NO_PROTOTYPES and never
- * links against a Vulkan library: vk.c defines one function pointer per entry
- * below and resolves them at runtime through vkGetInstanceProcAddr (obtained
- * from the system Vulkan loader via ri.VKimp_GetInstanceProcAddr) and
- * vkGetDeviceProcAddr. On macOS the renderer links the Vulkan SDK loader
- * directly and these lists are unused.
+ * The renderer is built with VK_NO_PROTOTYPES and never links against a
+ * Vulkan library: vk.c defines one function pointer per entry below and
+ * resolves them at runtime through vkGetInstanceProcAddr (obtained via
+ * ri.VKimp_GetInstanceProcAddr from the library SDL opened: the system Vulkan
+ * loader, or on macOS the MoltenVK in the app bundle) and vkGetDeviceProcAddr.
  *
  * Calling a Vulkan function that is not listed here fails to compile when
  * VK_NO_PROTOTYPES is defined - add it to the matching list.
