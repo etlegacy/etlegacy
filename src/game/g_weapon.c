@@ -2109,8 +2109,6 @@ void G_DynamitePlantedAnnoucement(gentity_t *traceEnt, gentity_t *ent, gentity_t
 
 	traceEnt->etpro_misc_1 |= 1;    // planted
 
-	G_Script_ScriptEvent(hit, "dynamited", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
-
 	if (hit->s.eType == ET_OID_TRIGGER)
 	{
 		pm->s.effect3Time = hit->s.teamNum;
@@ -2156,6 +2154,8 @@ void G_DynamitePlantedAnnoucement(gentity_t *traceEnt, gentity_t *ent, gentity_t
 			G_LogPrintf("Dynamite_Plant: %d %s\n", (int)(traceEnt->parent - g_entities), hit->parent->track);
 		}
 	}
+	
+	G_Script_ScriptEvent(hit, "dynamited", ent->client->sess.sessionTeam == TEAM_AXIS ? "axis" : "allies");
 
 	// give explode score to guy who armed it
 	traceEnt->parent = ent;
