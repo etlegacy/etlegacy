@@ -96,16 +96,26 @@ if(BUILD_CLIENT)
 		endif()
 		target_compile_definitions(renderer_vulkan_libraries INTERFACE VK_NO_PROTOTYPES)
 
-		# shader compiler: glslc (shaderc) preferred, glslangValidator works too
-		find_program(VK_GLSL_COMPILER
-			NAMES glslc glslangValidator
-			HINTS "$ENV{VULKAN_SDK}/bin" "$ENV{VULKAN_SDK}/Bin"
-			DOC "GLSL to SPIR-V compiler (glslc or glslangValidator)"
-		)
-		if(NOT VK_GLSL_COMPILER)
-			message(FATAL_ERROR "No GLSL compiler found - install glslc (shaderc) or glslangValidator (glslang), or set VK_GLSL_COMPILER")
+		# Shaders: compiled from GLSL to SPIR-V by the build, or precompiled
+		# <name>.spv files (cmake/ETLCompileVkShaders.cmake - the CI compiles
+		# them once for all build machines, which have no GLSL compiler). A
+		# relative VK_SHADER_PREBUILT_DIR is relative to the source directory.
+		set(VK_SHADER_PREBUILT_DIR "" CACHE PATH "Directory with precompiled Vulkan shaders (<name>.spv) to use instead of a GLSL compiler")
+		if(VK_SHADER_PREBUILT_DIR)
+			get_filename_component(VK_SHADER_PREBUILT_DIR_ABS "${VK_SHADER_PREBUILT_DIR}" ABSOLUTE BASE_DIR "${CMAKE_SOURCE_DIR}")
+			message(STATUS "Vulkan shaders: precompiled SPIR-V from ${VK_SHADER_PREBUILT_DIR_ABS}")
+		else()
+			# shader compiler: glslc (shaderc) preferred, glslangValidator works too
+			find_program(VK_GLSL_COMPILER
+				NAMES glslc glslangValidator
+				HINTS "$ENV{VULKAN_SDK}/bin" "$ENV{VULKAN_SDK}/Bin"
+				DOC "GLSL to SPIR-V compiler (glslc or glslangValidator)"
+			)
+			if(NOT VK_GLSL_COMPILER)
+				message(FATAL_ERROR "No GLSL compiler found - install glslc (shaderc) or glslangValidator (glslang), set VK_GLSL_COMPILER, or set VK_SHADER_PREBUILT_DIR to precompiled shaders (cmake/ETLCompileVkShaders.cmake)")
+			endif()
+			message(STATUS "Vulkan GLSL compiler: ${VK_GLSL_COMPILER}")
 		endif()
-		message(STATUS "Vulkan GLSL compiler: ${VK_GLSL_COMPILER}")
 	endif()
 
 	if(NOT BUNDLED_SDL)
