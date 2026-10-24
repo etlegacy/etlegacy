@@ -122,11 +122,13 @@ typedef struct image_s
 
 	// Vulkan-backed texture handles (opaque here to avoid pulling vulkan.h into
 	// this widely shared header; vulkan/vk.c casts these to the real Vk* types).
-	void *vkImage;
-	void *vkImageMemory;
-	void *vkImageView;
-	void *vkSampler;
-	void *vkDescriptorSet;
+	// 64-bit integers, not pointers: on 32-bit builds the non-dispatchable
+	// Vulkan handles are uint64_t and wouldn't fit in a void *.
+	uint64_t vkImage;
+	uint64_t vkImageMemory;
+	uint64_t vkImageView;
+	uint64_t vkSampler;
+	uint64_t vkDescriptorSet;
 	int vkBindlessSlot;             ///< slot + 1 in the Vulkan bindless texture array, 0 = none
 
 	struct image_s *next;

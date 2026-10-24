@@ -171,123 +171,57 @@ if(FEATURE_RENDERER2)
 endif()
 
 if(FEATURE_RENDERER_VULKAN)
-	# Compile the GLSL UI shaders to SPIR-V, then embed each .spv binary into a
-	# generated C header (static const unsigned char[]) so the renderer stays
-	# self-contained and doesn't need runtime filesystem/pk3 access to load them.
+	# Compile the GLSL shaders to SPIR-V (or take precompiled ones,
+	# VK_SHADER_PREBUILT_DIR), then embed them all into one generated C source
+	# (vk_shaders.c, VK_FindShaderCode()) so the renderer stays self-contained
+	# and doesn't need runtime filesystem/pk3 access to load them.
 	set(VK_SHADER_GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/include/vk_shaders")
 	file(MAKE_DIRECTORY "${VK_SHADER_GEN_DIR}")
 
-	set(VK_SHADER_HEADERS "")
-	set(VK_SHADER_NAMES "ui.vert.glsl" "ui.frag.glsl" "tr3d.vert.glsl" "tr3d.frag.glsl" "tr3d_lm.vert.glsl" "tr3d_lm.frag.glsl" "tr3d_static.vert.glsl" "tr3d_lm_static.vert.glsl" "tr3d_diffuse.vert.glsl" "tr3d_skin.vert.glsl" "tr3d_md3.vert.glsl" "tr3d_lm_static_dlight.vert.glsl" "tr3d_lm_dlight.frag.glsl" "tr3d_2stage.vert.glsl" "tr3d_2stage.frag.glsl" "ui_bindless.vert.glsl" "ui_bindless.frag.glsl" "gamma.vert.glsl" "gamma.frag.glsl" "world_cull.comp.glsl" "world_gather.comp.glsl" "tr3d_static_bl.vert.glsl" "tr3d_lm_static_bl.vert.glsl" "tr3d_bl.frag.glsl" "tr3d_lm_bl.frag.glsl" "tr3d_md3_bl.vert.glsl" "tr3d_skin_bl.vert.glsl" "tr3d_static_fog_bl.vert.glsl" "tr3d_foliage.vert.glsl" "tr3d_foliage_fog.vert.glsl")
-	set(VK_SHADER_ARRAY_NAME_ui.vert.glsl "ui_vert_spv")
-	set(VK_SHADER_ARRAY_NAME_ui.frag.glsl "ui_frag_spv")
-	set(VK_SHADER_STAGE_ui.vert.glsl "vertex")
-	set(VK_SHADER_STAGE_ui.frag.glsl "fragment")
-	set(VK_SHADER_ARRAY_NAME_tr3d.vert.glsl "tr3d_vert_spv")
-	set(VK_SHADER_ARRAY_NAME_tr3d.frag.glsl "tr3d_frag_spv")
-	set(VK_SHADER_STAGE_tr3d.vert.glsl "vertex")
-	set(VK_SHADER_STAGE_tr3d.frag.glsl "fragment")
-	set(VK_SHADER_ARRAY_NAME_tr3d_lm.vert.glsl "tr3d_lm_vert_spv")
-	set(VK_SHADER_ARRAY_NAME_tr3d_lm.frag.glsl "tr3d_lm_frag_spv")
-	set(VK_SHADER_STAGE_tr3d_lm.vert.glsl "vertex")
-	set(VK_SHADER_STAGE_tr3d_lm.frag.glsl "fragment")
-	set(VK_SHADER_ARRAY_NAME_tr3d_static.vert.glsl "tr3d_static_vert_spv")
-	set(VK_SHADER_STAGE_tr3d_static.vert.glsl "vertex")
-	set(VK_SHADER_ARRAY_NAME_tr3d_diffuse.vert.glsl "tr3d_diffuse_vert_spv")
-	set(VK_SHADER_STAGE_tr3d_diffuse.vert.glsl "vertex")
-	set(VK_SHADER_ARRAY_NAME_tr3d_skin.vert.glsl "tr3d_skin_vert_spv")
-	set(VK_SHADER_STAGE_tr3d_skin.vert.glsl "vertex")
-	set(VK_SHADER_ARRAY_NAME_tr3d_md3.vert.glsl "tr3d_md3_vert_spv")
-	set(VK_SHADER_STAGE_tr3d_md3.vert.glsl "vertex")
-	set(VK_SHADER_ARRAY_NAME_tr3d_lm_static_dlight.vert.glsl "tr3d_lm_static_dlight_vert_spv")
-	set(VK_SHADER_STAGE_tr3d_lm_static_dlight.vert.glsl "vertex")
-	set(VK_SHADER_ARRAY_NAME_tr3d_lm_dlight.frag.glsl "tr3d_lm_dlight_frag_spv")
-	set(VK_SHADER_STAGE_tr3d_lm_dlight.frag.glsl "fragment")
-	set(VK_SHADER_ARRAY_NAME_tr3d_2stage.vert.glsl "tr3d_2stage_vert_spv")
-	set(VK_SHADER_STAGE_tr3d_2stage.vert.glsl "vertex")
-	set(VK_SHADER_ARRAY_NAME_tr3d_2stage.frag.glsl "tr3d_2stage_frag_spv")
-	set(VK_SHADER_STAGE_tr3d_2stage.frag.glsl "fragment")
-	set(VK_SHADER_ARRAY_NAME_ui_bindless.vert.glsl "ui_bindless_vert_spv")
-	set(VK_SHADER_STAGE_ui_bindless.vert.glsl "vertex")
-	set(VK_SHADER_ARRAY_NAME_ui_bindless.frag.glsl "ui_bindless_frag_spv")
-	set(VK_SHADER_STAGE_ui_bindless.frag.glsl "fragment")
-	set(VK_SHADER_ARRAY_NAME_tr3d_lm_static.vert.glsl "tr3d_lm_static_vert_spv")
-	set(VK_SHADER_STAGE_tr3d_lm_static.vert.glsl "vertex")
-	set(VK_SHADER_ARRAY_NAME_gamma.vert.glsl "gamma_vert_spv")
-	set(VK_SHADER_ARRAY_NAME_gamma.frag.glsl "gamma_frag_spv")
-	set(VK_SHADER_STAGE_gamma.vert.glsl "vertex")
-	set(VK_SHADER_STAGE_gamma.frag.glsl "fragment")
-	set(VK_SHADER_ARRAY_NAME_world_cull.comp.glsl "world_cull_comp_spv")
-	set(VK_SHADER_STAGE_world_cull.comp.glsl "compute")
-	set(VK_SHADER_ARRAY_NAME_world_gather.comp.glsl "world_gather_comp_spv")
-	set(VK_SHADER_STAGE_world_gather.comp.glsl "compute")
-	set(VK_SHADER_ARRAY_NAME_tr3d_static_bl.vert.glsl "tr3d_static_bl_vert_spv")
-	set(VK_SHADER_STAGE_tr3d_static_bl.vert.glsl "vertex")
-	set(VK_SHADER_ARRAY_NAME_tr3d_lm_static_bl.vert.glsl "tr3d_lm_static_bl_vert_spv")
-	set(VK_SHADER_STAGE_tr3d_lm_static_bl.vert.glsl "vertex")
-	set(VK_SHADER_ARRAY_NAME_tr3d_bl.frag.glsl "tr3d_bl_frag_spv")
-	set(VK_SHADER_STAGE_tr3d_bl.frag.glsl "fragment")
-	set(VK_SHADER_ARRAY_NAME_tr3d_lm_bl.frag.glsl "tr3d_lm_bl_frag_spv")
-	set(VK_SHADER_STAGE_tr3d_lm_bl.frag.glsl "fragment")
-	set(VK_SHADER_ARRAY_NAME_tr3d_md3_bl.vert.glsl "tr3d_md3_bl_vert_spv")
-	set(VK_SHADER_STAGE_tr3d_md3_bl.vert.glsl "vertex")
-	set(VK_SHADER_ARRAY_NAME_tr3d_skin_bl.vert.glsl "tr3d_skin_bl_vert_spv")
-	set(VK_SHADER_STAGE_tr3d_skin_bl.vert.glsl "vertex")
-	set(VK_SHADER_ARRAY_NAME_tr3d_static_fog_bl.vert.glsl "tr3d_static_fog_bl_vert_spv")
-	set(VK_SHADER_STAGE_tr3d_static_fog_bl.vert.glsl "vertex")
-	set(VK_SHADER_ARRAY_NAME_tr3d_foliage.vert.glsl "tr3d_foliage_vert_spv")
-	set(VK_SHADER_STAGE_tr3d_foliage.vert.glsl "vertex")
-	set(VK_SHADER_ARRAY_NAME_tr3d_foliage_fog.vert.glsl "tr3d_foliage_fog_vert_spv")
-	set(VK_SHADER_STAGE_tr3d_foliage_fog.vert.glsl "vertex")
+	set(VK_SHADER_SPVS "")
+	include(cmake/ETLVkShaders.cmake)
 
 	foreach(VK_SHADER_SRC_NAME ${VK_SHADER_NAMES})
-		set(VK_SHADER_ARRAY_NAME "${VK_SHADER_ARRAY_NAME_${VK_SHADER_SRC_NAME}}")
-		set(VK_SHADER_STAGE "${VK_SHADER_STAGE_${VK_SHADER_SRC_NAME}}")
-
 		set(VK_SHADER_SRC "${CMAKE_SOURCE_DIR}/src/renderer_vk/glsl/${VK_SHADER_SRC_NAME}")
-		set(VK_SHADER_SPV "${VK_SHADER_GEN_DIR}/${VK_SHADER_SRC_NAME}.spv")
-		set(VK_SHADER_HDR "${VK_SHADER_GEN_DIR}/${VK_SHADER_SRC_NAME}.h")
 
-		get_filename_component(VK_GLSL_COMPILER_NAME "${VK_GLSL_COMPILER}" NAME_WE)
-		if(VK_GLSL_COMPILER_NAME STREQUAL "glslangValidator")
-			if(VK_SHADER_STAGE STREQUAL "vertex")
-				set(VK_GLSL_ARGS -V -S vert)
-			elseif(VK_SHADER_STAGE STREQUAL "compute")
-				set(VK_GLSL_ARGS -V -S comp)
-			else()
-				set(VK_GLSL_ARGS -V -S frag)
+		if(VK_SHADER_PREBUILT_DIR_ABS)
+			# precompiled SPIR-V (see ETLSetupFeatures.cmake)
+			set(VK_SHADER_SPV "${VK_SHADER_PREBUILT_DIR_ABS}/${VK_SHADER_SRC_NAME}.spv")
+			if(NOT EXISTS "${VK_SHADER_SPV}")
+				message(FATAL_ERROR "VK_SHADER_PREBUILT_DIR has no ${VK_SHADER_SRC_NAME}.spv (${VK_SHADER_SPV}) - compile the shaders with cmake/ETLCompileVkShaders.cmake")
 			endif()
 		else()
-			set(VK_GLSL_ARGS -fshader-stage=${VK_SHADER_STAGE})
+			set(VK_SHADER_SPV "${VK_SHADER_GEN_DIR}/${VK_SHADER_SRC_NAME}.spv")
+			etl_vk_shader_stage(${VK_SHADER_SRC_NAME} VK_SHADER_STAGE)
+			etl_vk_glsl_args("${VK_GLSL_COMPILER}" ${VK_SHADER_STAGE} VK_GLSL_ARGS)
+
+			add_custom_command(
+				OUTPUT ${VK_SHADER_SPV}
+				COMMAND ${VK_GLSL_COMPILER} ${VK_GLSL_ARGS} ${VK_SHADER_SRC} -o ${VK_SHADER_SPV}
+				DEPENDS ${VK_SHADER_SRC}
+				COMMENT "Compiling Vulkan shader ${VK_SHADER_SRC_NAME}"
+				VERBATIM
+			)
 		endif()
 
-		add_custom_command(
-			OUTPUT ${VK_SHADER_SPV}
-			COMMAND ${VK_GLSL_COMPILER} ${VK_GLSL_ARGS} ${VK_SHADER_SRC} -o ${VK_SHADER_SPV}
-			DEPENDS ${VK_SHADER_SRC}
-			COMMENT "Compiling Vulkan shader ${VK_SHADER_SRC_NAME}"
-			VERBATIM
-		)
-		add_custom_command(
-			OUTPUT ${VK_SHADER_HDR}
-			COMMAND ${CMAKE_COMMAND} -DIN_FILE=${VK_SHADER_SPV} -DOUT_FILE=${VK_SHADER_HDR} -DARRAY_NAME=${VK_SHADER_ARRAY_NAME} -P ${CMAKE_SOURCE_DIR}/cmake/ETLBin2H.cmake
-			DEPENDS ${VK_SHADER_SPV} ${CMAKE_SOURCE_DIR}/cmake/ETLBin2H.cmake
-			COMMENT "Embedding ${VK_SHADER_SRC_NAME}.spv into ${VK_SHADER_SRC_NAME}.h"
-			VERBATIM
-		)
-
-		list(APPEND VK_SHADER_HEADERS ${VK_SHADER_HDR})
+		list(APPEND VK_SHADER_SPVS ${VK_SHADER_SPV})
 	endforeach()
 
-	add_custom_target(vk_shader_compile DEPENDS ${VK_SHADER_HEADERS})
-	set_target_properties(vk_shader_compile PROPERTIES FOLDER Tools)
+	set(VK_SHADER_SOURCE "${VK_SHADER_GEN_DIR}/vk_shaders.c")
+	string(REPLACE ";" "|" VK_SHADER_SPV_FILES "${VK_SHADER_SPVS}")
+	add_custom_command(
+		OUTPUT ${VK_SHADER_SOURCE}
+		COMMAND ${CMAKE_COMMAND} -DOUTPUT=${VK_SHADER_SOURCE} -DFILES=${VK_SHADER_SPV_FILES} -P ${CMAKE_SOURCE_DIR}/cmake/ETLEmbedVkShaders.cmake
+		DEPENDS ${VK_SHADER_SPVS} ${CMAKE_SOURCE_DIR}/cmake/ETLEmbedVkShaders.cmake
+		COMMENT "Embedding the Vulkan shaders into vk_shaders.c"
+		VERBATIM
+	)
 
-	add_library(renderer_vulkan ${REND_LIBTYPE} ${RENDERER_VULKAN_FILES} ${RENDERER_COMMON} ${RENDERER_COMMON_VULKAN} ${RENDERER_VULKAN_SHADERS})
-	add_dependencies(renderer_vulkan vk_shader_compile)
+	add_library(renderer_vulkan ${REND_LIBTYPE} ${RENDERER_VULKAN_FILES} ${RENDERER_COMMON} ${RENDERER_COMMON_VULKAN} ${RENDERER_VULKAN_SHADERS} ${VK_SHADER_SOURCE})
 	target_link_libraries(renderer_vulkan renderer_vulkan_libraries renderer_libraries)
 	target_compile_definitions(renderer_vulkan PRIVATE FEATURE_RENDERER_VULKAN)
 	target_compile_definitions(client_libraries INTERFACE FEATURE_RENDERER_VULKAN)
-	target_include_directories(renderer_vulkan PRIVATE src/renderer_vk ${VK_SHADER_GEN_DIR})
+	target_include_directories(renderer_vulkan PRIVATE src/renderer_vk)
 
 	if(NOT MSVC)
 		target_link_libraries(renderer_vulkan renderer_libraries m)

@@ -47,38 +47,8 @@
 #include "../../renderercommon/tr_common.h"
 #include "../tr_local.h"
 
-// Generated (GLSL -> SPIR-V -> C header) by cmake/ETLBin2H.cmake at build
-// time; see the FEATURE_RENDERER_VULKAN block in cmake/ETLBuildRenderer.cmake.
-#include "ui.vert.glsl.h"
-#include "ui.frag.glsl.h"
-#include "tr3d.vert.glsl.h"
-#include "tr3d.frag.glsl.h"
-#include "tr3d_lm.vert.glsl.h"
-#include "tr3d_lm.frag.glsl.h"
-#include "tr3d_static.vert.glsl.h"
-#include "tr3d_diffuse.vert.glsl.h"
-#include "tr3d_skin.vert.glsl.h"
-#include "tr3d_md3.vert.glsl.h"
-#include "tr3d_lm_static_dlight.vert.glsl.h"
-#include "tr3d_lm_dlight.frag.glsl.h"
-#include "tr3d_2stage.vert.glsl.h"
-#include "tr3d_2stage.frag.glsl.h"
-#include "ui_bindless.vert.glsl.h"
-#include "ui_bindless.frag.glsl.h"
-#include "tr3d_lm_static.vert.glsl.h"
-#include "gamma.vert.glsl.h"
-#include "gamma.frag.glsl.h"
-#include "world_cull.comp.glsl.h"
-#include "world_gather.comp.glsl.h"
-#include "tr3d_static_bl.vert.glsl.h"
-#include "tr3d_lm_static_bl.vert.glsl.h"
-#include "tr3d_bl.frag.glsl.h"
-#include "tr3d_lm_bl.frag.glsl.h"
-#include "tr3d_md3_bl.vert.glsl.h"
-#include "tr3d_skin_bl.vert.glsl.h"
-#include "tr3d_static_fog_bl.vert.glsl.h"
-#include "tr3d_foliage.vert.glsl.h"
-#include "tr3d_foliage_fog.vert.glsl.h"
+// the embedded SPIR-V shaders (VK_FindShaderCode(), generated at build time)
+#include "vk_shaders.h"
 
 #define VK_MAX_SWAPCHAIN_IMAGES 8
 
@@ -1314,7 +1284,7 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
  * property flags (host-visible, device-local, ...).
  */
 static uint32_t VK_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-static VkShaderModule VK_CreateShaderModule(const unsigned char *code, unsigned int size);
+static VkShaderModule VK_CreateShaderModule(const char *name);
 static void VK_FlushPendingFrees(void);
 static void VK_Flush2D(void);
 static void VK_Flush2DBatch(void);
@@ -1701,8 +1671,8 @@ static qboolean VK_CreateGammaPipelineLayout(void)
 	VkPushConstantRange        pushRange;
 	VkPipelineLayoutCreateInfo layoutInfo;
 
-	vk.gammaVertModule = VK_CreateShaderModule(gamma_vert_spv, gamma_vert_spv_SIZE);
-	vk.gammaFragModule = VK_CreateShaderModule(gamma_frag_spv, gamma_frag_spv_SIZE);
+	vk.gammaVertModule = VK_CreateShaderModule("gamma.vert");
+	vk.gammaFragModule = VK_CreateShaderModule("gamma.frag");
 	if (vk.gammaVertModule == VK_NULL_HANDLE || vk.gammaFragModule == VK_NULL_HANDLE)
 	{
 		return qfalse;
@@ -2167,17 +2137,26 @@ static qboolean VK_CreateUIDescriptorPool(void)
 }
 
 /**
- * @brief Creates a VkShaderModule from an embedded SPIR-V byte array.
+ * @brief Creates a VkShaderModule from an embedded SPIR-V shader, named
+ * like its GLSL source without ".glsl" (e.g. "tr3d_lm.frag" for
+ * glsl/tr3d_lm.frag.glsl, see vk_shaders.h).
  */
-static VkShaderModule VK_CreateShaderModule(const unsigned char *code, unsigned int size)
+static VkShaderModule VK_CreateShaderModule(const char *name)
 {
+	const vkShaderCode_t     *shader = VK_FindShaderCode(name);
 	VkShaderModuleCreateInfo createInfo;
 	VkShaderModule           module = VK_NULL_HANDLE;
 
+	if (!shader)
+	{
+		Ren_Print("Vulkan: shader %s is not embedded (cmake/ETLVkShaders.cmake)\n", name);
+		return VK_NULL_HANDLE;
+	}
+
 	Com_Memset(&createInfo, 0, sizeof(createInfo));
 	createInfo.sType    = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	createInfo.codeSize = size;
-	createInfo.pCode    = (const uint32_t *)code;
+	createInfo.codeSize = shader->size;
+	createInfo.pCode    = shader->code;
 
 	VK_CheckResult(vkCreateShaderModule(vk.device, &createInfo, NULL, &module), "vkCreateShaderModule");
 
@@ -2374,8 +2353,8 @@ static qboolean VK_CreateBindlessResources(const VkPushConstantRange *pushConsta
 		return qfalse;
 	}
 
-	vk.uiBindlessVertModule = VK_CreateShaderModule(ui_bindless_vert_spv, ui_bindless_vert_spv_SIZE);
-	vk.uiBindlessFragModule = VK_CreateShaderModule(ui_bindless_frag_spv, ui_bindless_frag_spv_SIZE);
+	vk.uiBindlessVertModule = VK_CreateShaderModule("ui_bindless.vert");
+	vk.uiBindlessFragModule = VK_CreateShaderModule("ui_bindless.frag");
 	if (vk.uiBindlessVertModule == VK_NULL_HANDLE || vk.uiBindlessFragModule == VK_NULL_HANDLE)
 	{
 		return qfalse;
@@ -2456,8 +2435,8 @@ static qboolean VK_CreateUIPipeline(void)
 		return qfalse;
 	}
 
-	vk.uiVertModule = VK_CreateShaderModule(ui_vert_spv, ui_vert_spv_SIZE);
-	vk.uiFragModule = VK_CreateShaderModule(ui_frag_spv, ui_frag_spv_SIZE);
+	vk.uiVertModule = VK_CreateShaderModule("ui.vert");
+	vk.uiFragModule = VK_CreateShaderModule("ui.frag");
 
 	if (vk.uiVertModule == VK_NULL_HANDLE || vk.uiFragModule == VK_NULL_HANDLE)
 	{
@@ -3211,7 +3190,7 @@ static void VK_CreateCullPipeline(void)
 		return;
 	}
 
-	module = VK_CreateShaderModule(world_cull_comp_spv, world_cull_comp_spv_SIZE);
+	module = VK_CreateShaderModule("world_cull.comp");
 	if (module == VK_NULL_HANDLE)
 	{
 		return;
@@ -3235,7 +3214,7 @@ static void VK_CreateCullPipeline(void)
 		return;
 	}
 
-	module = VK_CreateShaderModule(world_gather_comp_spv, world_gather_comp_spv_SIZE);
+	module = VK_CreateShaderModule("world_gather.comp");
 	if (module == VK_NULL_HANDLE)
 	{
 		return;
@@ -3288,11 +3267,11 @@ static void VK_CreateCullPipeline(void)
 		}
 	}
 
-	vk.sceneStaticBLVertModule    = VK_CreateShaderModule(tr3d_static_bl_vert_spv, tr3d_static_bl_vert_spv_SIZE);
-	vk.sceneLMStaticBLVertModule  = VK_CreateShaderModule(tr3d_lm_static_bl_vert_spv, tr3d_lm_static_bl_vert_spv_SIZE);
-	vk.sceneBLFragModule          = VK_CreateShaderModule(tr3d_bl_frag_spv, tr3d_bl_frag_spv_SIZE);
-	vk.sceneLMBLFragModule        = VK_CreateShaderModule(tr3d_lm_bl_frag_spv, tr3d_lm_bl_frag_spv_SIZE);
-	vk.sceneStaticFogBLVertModule = VK_CreateShaderModule(tr3d_static_fog_bl_vert_spv, tr3d_static_fog_bl_vert_spv_SIZE);
+	vk.sceneStaticBLVertModule    = VK_CreateShaderModule("tr3d_static_bl.vert");
+	vk.sceneLMStaticBLVertModule  = VK_CreateShaderModule("tr3d_lm_static_bl.vert");
+	vk.sceneBLFragModule          = VK_CreateShaderModule("tr3d_bl.frag");
+	vk.sceneLMBLFragModule        = VK_CreateShaderModule("tr3d_lm_bl.frag");
+	vk.sceneStaticFogBLVertModule = VK_CreateShaderModule("tr3d_static_fog_bl.vert");
 }
 
 static void VK_DestroyCullBuffer(VkBuffer *buffer, VkDeviceMemory *memory)
@@ -3663,23 +3642,23 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 		return qfalse;
 	}
 
-	vk.sceneVertModule   = VK_CreateShaderModule(tr3d_vert_spv, tr3d_vert_spv_SIZE);
-	vk.sceneFragModule   = VK_CreateShaderModule(tr3d_frag_spv, tr3d_frag_spv_SIZE);
-	vk.sceneLMVertModule = VK_CreateShaderModule(tr3d_lm_vert_spv, tr3d_lm_vert_spv_SIZE);
-	vk.sceneLMFragModule = VK_CreateShaderModule(tr3d_lm_frag_spv, tr3d_lm_frag_spv_SIZE);
+	vk.sceneVertModule   = VK_CreateShaderModule("tr3d.vert");
+	vk.sceneFragModule   = VK_CreateShaderModule("tr3d.frag");
+	vk.sceneLMVertModule = VK_CreateShaderModule("tr3d_lm.vert");
+	vk.sceneLMFragModule = VK_CreateShaderModule("tr3d_lm.frag");
 
-	vk.sceneStaticVertModule     = VK_CreateShaderModule(tr3d_static_vert_spv, tr3d_static_vert_spv_SIZE);
-	vk.sceneLMStaticVertModule   = VK_CreateShaderModule(tr3d_lm_static_vert_spv, tr3d_lm_static_vert_spv_SIZE);
-	vk.sceneDiffuseVertModule    = VK_CreateShaderModule(tr3d_diffuse_vert_spv, tr3d_diffuse_vert_spv_SIZE);
-	vk.sceneSkinVertModule       = VK_CreateShaderModule(tr3d_skin_vert_spv, tr3d_skin_vert_spv_SIZE);
-	vk.sceneMD3VertModule        = VK_CreateShaderModule(tr3d_md3_vert_spv, tr3d_md3_vert_spv_SIZE);
-	vk.sceneFoliageVertModule    = VK_CreateShaderModule(tr3d_foliage_vert_spv, tr3d_foliage_vert_spv_SIZE);
-	vk.sceneFoliageFogVertModule = VK_CreateShaderModule(tr3d_foliage_fog_vert_spv, tr3d_foliage_fog_vert_spv_SIZE);
+	vk.sceneStaticVertModule     = VK_CreateShaderModule("tr3d_static.vert");
+	vk.sceneLMStaticVertModule   = VK_CreateShaderModule("tr3d_lm_static.vert");
+	vk.sceneDiffuseVertModule    = VK_CreateShaderModule("tr3d_diffuse.vert");
+	vk.sceneSkinVertModule       = VK_CreateShaderModule("tr3d_skin.vert");
+	vk.sceneMD3VertModule        = VK_CreateShaderModule("tr3d_md3.vert");
+	vk.sceneFoliageVertModule    = VK_CreateShaderModule("tr3d_foliage.vert");
+	vk.sceneFoliageFogVertModule = VK_CreateShaderModule("tr3d_foliage_fog.vert");
 
-	vk.sceneLMStaticDlightVertModule = VK_CreateShaderModule(tr3d_lm_static_dlight_vert_spv, tr3d_lm_static_dlight_vert_spv_SIZE);
-	vk.sceneLMDlightFragModule       = VK_CreateShaderModule(tr3d_lm_dlight_frag_spv, tr3d_lm_dlight_frag_spv_SIZE);
-	vk.scene2StageVertModule         = VK_CreateShaderModule(tr3d_2stage_vert_spv, tr3d_2stage_vert_spv_SIZE);
-	vk.scene2StageFragModule         = VK_CreateShaderModule(tr3d_2stage_frag_spv, tr3d_2stage_frag_spv_SIZE);
+	vk.sceneLMStaticDlightVertModule = VK_CreateShaderModule("tr3d_lm_static_dlight.vert");
+	vk.sceneLMDlightFragModule       = VK_CreateShaderModule("tr3d_lm_dlight.frag");
+	vk.scene2StageVertModule         = VK_CreateShaderModule("tr3d_2stage.vert");
+	vk.scene2StageFragModule         = VK_CreateShaderModule("tr3d_2stage.frag");
 
 	if (vk.sceneVertModule == VK_NULL_HANDLE || vk.sceneFragModule == VK_NULL_HANDLE ||
 	    vk.sceneLMVertModule == VK_NULL_HANDLE || vk.sceneLMFragModule == VK_NULL_HANDLE ||
@@ -5296,11 +5275,11 @@ static void VK_QueueImageResourcesForFree(struct image_s *image)
 	vk.numPendingFree[slot]++;
 	image->vkBindlessSlot = 0;
 
-	image->vkImage         = NULL;
-	image->vkImageMemory   = NULL;
-	image->vkImageView     = NULL;
-	image->vkDescriptorSet = NULL;
-	image->vkSampler       = NULL;
+	image->vkImage         = 0;
+	image->vkImageMemory   = 0;
+	image->vkImageView     = 0;
+	image->vkDescriptorSet = 0;
+	image->vkSampler       = 0;
 }
 
 /**
@@ -6125,11 +6104,11 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 
 	vkUpdateDescriptorSets(vk.device, 1, &writeSet, 0, NULL);
 
-	image->vkImage         = (void *)vkImage;
-	image->vkImageMemory   = (void *)vkImageMemory;
-	image->vkImageView     = (void *)vkImageView;
-	image->vkSampler       = (void *)sampler; // not owned here: one of the shared samplers
-	image->vkDescriptorSet = (void *)descriptorSet;
+	image->vkImage         = (uint64_t)vkImage;
+	image->vkImageMemory   = (uint64_t)vkImageMemory;
+	image->vkImageView     = (uint64_t)vkImageView;
+	image->vkSampler       = (uint64_t)sampler; // not owned here: one of the shared samplers
+	image->vkDescriptorSet = (uint64_t)descriptorSet;
 
 	// bindless slot for the 2D path (a new slot: a replaced image's old one
 	// may still be in use by frames in flight, see VK_QueueImageResourcesForFree)
@@ -6173,24 +6152,24 @@ void VK_DeleteImageTexture(struct image_s *image)
 	{
 		VkDescriptorSet ds = (VkDescriptorSet)image->vkDescriptorSet;
 		vkFreeDescriptorSets(vk.device, vk.uiDescriptorPool, 1, &ds);
-		image->vkDescriptorSet = NULL;
+		image->vkDescriptorSet = 0;
 	}
 	if (image->vkImageView)
 	{
 		vkDestroyImageView(vk.device, (VkImageView)image->vkImageView, NULL);
-		image->vkImageView = NULL;
+		image->vkImageView = 0;
 	}
 	if (image->vkImage)
 	{
 		vkDestroyImage(vk.device, (VkImage)image->vkImage, NULL);
-		image->vkImage = NULL;
+		image->vkImage = 0;
 	}
 	if (image->vkImageMemory)
 	{
 		vkFreeMemory(vk.device, (VkDeviceMemory)image->vkImageMemory, NULL);
-		image->vkImageMemory = NULL;
+		image->vkImageMemory = 0;
 	}
-	image->vkSampler = NULL; // shared sampler, not owned by this image
+	image->vkSampler = 0; // shared sampler, not owned by this image
 
 	if (image->vkBindlessSlot)
 	{
@@ -7119,8 +7098,8 @@ static void VK_CreateModelBatchResources(void)
 	}
 	vkUpdateDescriptorSets(vk.device, 3, writes, 0, NULL);
 
-	vk.sceneMD3BLVertModule  = VK_CreateShaderModule(tr3d_md3_bl_vert_spv, tr3d_md3_bl_vert_spv_SIZE);
-	vk.sceneSkinBLVertModule = VK_CreateShaderModule(tr3d_skin_bl_vert_spv, tr3d_skin_bl_vert_spv_SIZE);
+	vk.sceneMD3BLVertModule  = VK_CreateShaderModule("tr3d_md3_bl.vert");
+	vk.sceneSkinBLVertModule = VK_CreateShaderModule("tr3d_skin_bl.vert");
 	vk.modelBatch            = (vk.sceneMD3BLVertModule != VK_NULL_HANDLE && vk.sceneSkinBLVertModule != VK_NULL_HANDLE) ? qtrue : qfalse;
 }
 
@@ -8471,7 +8450,7 @@ void VK_SetTextureMode(int minFilter, int magFilter)
 		writeSet.pImageInfo      = &imageDescInfo;
 
 		vkUpdateDescriptorSets(vk.device, 1, &writeSet, 0, NULL);
-		image->vkSampler = (void *)sampler;
+		image->vkSampler = (uint64_t)sampler;
 	}
 
 	if (vk.bindless)
