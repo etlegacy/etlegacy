@@ -348,6 +348,12 @@ parse_commandline() {
             einfo "Will disable database"
             FEATURE_DBMS=0
             BUNDLED_SQLITE3=0
+        elif [ "$var" = "-vk" ] || [ "$var" = "-vulkan" ]; then
+            einfo "Will enable Vulkan renderer"
+            FEATURE_RENDERER_VULKAN=1
+        elif [ "$var" = "-nor1" ] || [ "$var" = "-no-r1" ]; then
+            einfo "Will disable OpenGL1 renderer"
+            FEATURE_RENDERER1=0
         elif [ "$var" = "-nor2" ] || [ "$var" = "-no-r2" ]; then
             einfo "Will disable renderer2"
             FEATURE_RENDERER2=0
@@ -545,7 +551,14 @@ generate_configuration() {
     FEATURE_RENDERER1=${FEATURE_RENDERER1:-1}
     FEATURE_RENDERER2=${FEATURE_RENDERER2:-0}
     FEATURE_RENDERER_GLES=${FEATURE_RENDERER_GLES:-0}
+    FEATURE_RENDERER_VULKAN=${FEATURE_RENDERER_VULKAN:-0}
     RENDERER_DYNAMIC=${RENDERER_DYNAMIC:-1}
+
+    # a static build holds only one renderer (e.g. -RPIT, -nodynamic)
+    if [ "$FEATURE_RENDERER_VULKAN" -eq 1 ] && [ "$FEATURE_RENDERER1" -eq 1 ] && [ "$RENDERER_DYNAMIC" -eq 0 ]; then
+        einfo "Vulkan and OpenGL1 renderers: building them as dynamic libraries"
+        RENDERER_DYNAMIC=1
+    fi
 
     if [ "$FEATURE_SSL" -eq 0 ] && [ "$FEATURE_AUTH" -eq 1 ]; then
         ewarning "SSL is disabled, but authentication is enabled. Disabling authentication."
@@ -632,6 +645,7 @@ generate_configuration() {
         "-DFEATURE_RENDERER1=${FEATURE_RENDERER1}"
         "-DFEATURE_RENDERER2=${FEATURE_RENDERER2}"
         "-DFEATURE_RENDERER_GLES=${FEATURE_RENDERER_GLES}"
+        "-DFEATURE_RENDERER_VULKAN=${FEATURE_RENDERER_VULKAN}"
         "-DRENDERER_DYNAMIC=${RENDERER_DYNAMIC}"
         "-DFEATURE_LUASQL=${FEATURE_LUASQL}"
         "-DFEATURE_OMNIBOT=${FEATURE_OMNIBOT}"
@@ -646,6 +660,13 @@ generate_configuration() {
     if [ -n "$TOOLCHAIN_FILE" ]; then
         cmake_args+=(
             "-DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE}"
+        )
+    fi
+
+    # precompiled Vulkan shaders instead of a GLSL compiler (the CI's vk-shaders job)
+    if [ -n "$VK_SHADER_PREBUILT_DIR" ]; then
+        cmake_args+=(
+            "-DVK_SHADER_PREBUILT_DIR=${VK_SHADER_PREBUILT_DIR}"
         )
     fi
 
