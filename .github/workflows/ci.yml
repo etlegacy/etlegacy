@@ -16,9 +16,10 @@ on:
   push:
     branches: [master]
 
-# cancel previous unfinished/running jobs in each separate branch
+# Preserve every master run so required image publication cannot be superseded.
+# Other refs share a group so newer runs cancel their unfinished predecessors.
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.ref == 'refs/heads/master' && github.run_id || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -67,6 +68,17 @@ jobs:
           echo "describe=$git_describe" >> "$GITHUB_OUTPUT"
           echo "tag=$git_tag" >> "$GITHUB_OUTPUT"
 
+  # Linux builds wait for publication and use the returned versioned image.
+  publish-lnx-build-image:
+    needs: [pre-build]
+    if: >-
+      github.event_name == 'push' && github.ref == 'refs/heads/master' &&
+      needs.pre-build.outputs.lnx_image == 'true'
+    uses: ./.github/workflows/lnx-build-machine.yml
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+
   # Share changed PR build environments without publishing them to DockerHub.
   lnx-build-image:
     runs-on: ubuntu-latest
@@ -96,13 +108,14 @@ jobs:
   # Run checkout and artifact actions on Ubuntu, where their Node runtime works.
   lnx64:
     runs-on: ubuntu-latest
-    needs: [pre-build, lnx-build-image]
-    # A skipped image build is expected; a failed image build must block Linux CI.
+    needs: [pre-build, publish-lnx-build-image, lnx-build-image]
+    # Image preparation may be skipped, but any requested build or publish must succeed.
     if: &linux-ready >-
       !cancelled() && needs.pre-build.result == 'success' &&
+      (needs.publish-lnx-build-image.result == 'success' || needs.publish-lnx-build-image.result == 'skipped') &&
       (needs.lnx-build-image.result == 'success' || needs.lnx-build-image.result == 'skipped')
     env:
-      LNX_BUILD_IMAGE: &linux-image ${{ needs.lnx-build-image.result == 'success' && 'etlegacy/lnx-build:ci' || 'etlegacy/lnx-build:latest' }}
+      LNX_BUILD_IMAGE: &linux-image ${{ needs.lnx-build-image.result == 'success' && 'etlegacy/lnx-build:ci' || needs.publish-lnx-build-image.outputs.image || 'etlegacy/lnx-build:latest' }}
       CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
       CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
       CI: "true"
@@ -177,7 +190,7 @@ jobs:
 
   lnx32:
     runs-on: ubuntu-latest
-    needs: [pre-build, lnx-build-image]
+    needs: [pre-build, publish-lnx-build-image, lnx-build-image]
     if: *linux-ready
     env:
       LNX_BUILD_IMAGE: *linux-image
@@ -373,6 +386,16 @@ jobs:
   check-build-artifacts:
     runs-on: ubuntu-latest
     needs: [android, lnx-aarch64, lnx32, lnx64, osx, win, win64]
+    # Check platforms explicitly: needs.* can include skipped image ancestors.
+    if: &platform-builds-succeeded >-
+      !cancelled() &&
+      needs.android.result == 'success' &&
+      needs.lnx-aarch64.result == 'success' &&
+      needs.lnx32.result == 'success' &&
+      needs.lnx64.result == 'success' &&
+      needs.osx.result == 'success' &&
+      needs.win.result == 'success' &&
+      needs.win64.result == 'success'
     steps:
       - uses: actions/checkout@v7
         with:
@@ -427,6 +450,7 @@ jobs:
       - osx
       - win
       - win64
+    if: *platform-builds-succeeded
     steps:
       - uses: actions/checkout@v7
         with:
@@ -450,6 +474,7 @@ jobs:
   ci-discord-notify-on-failure:
     needs:
       - pre-build
+      - publish-lnx-build-image
 
       - android
       - lnx-aarch64
