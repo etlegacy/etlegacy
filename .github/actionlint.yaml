@@ -8,3 +8,7 @@ paths:
     ignore:
       # The pinned actionlint does not recognize GitHub's publishing queue setting.
       - '^unexpected key "queue" for "concurrency" section\.'
+  .github/workflows/android-build-machine.yml:
+    ignore:
+      # The pinned actionlint does not recognize GitHub's publishing queue setting.
+      - '^unexpected key "queue" for "concurrency" section\.'

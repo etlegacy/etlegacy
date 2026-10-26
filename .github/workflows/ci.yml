@@ -33,6 +33,7 @@ jobs:
       tag: ${{ steps.git.outputs.tag }}
       lnx_image: ${{ steps.changes.outputs.lnx_image }}
       lnx_aarch64_image: ${{ steps.changes.outputs.lnx_aarch64_image }}
+      android_image: ${{ steps.changes.outputs.android_image }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -51,6 +52,8 @@ jobs:
               - 'misc/docker/build.Dockerfile'
             lnx_aarch64_image:
               - 'misc/docker/lnx-aarch64.Dockerfile'
+            android_image:
+              - 'misc/docker/android.Dockerfile'
 
       - uses: prefix-dev/setup-pixi@v0.10.2
         with:
@@ -112,6 +115,17 @@ jobs:
       github.event_name == 'push' && github.ref == 'refs/heads/master' &&
       needs.pre-build.outputs.lnx_aarch64_image == 'true'
     uses: ./.github/workflows/lnx-aarch64-build-machine.yml
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+  # Android builds wait for publication and use the returned versioned image.
+  publish-android-build-image:
+    needs: [pre-build]
+    if: >-
+      github.event_name == 'push' && github.ref == 'refs/heads/master' &&
+      needs.pre-build.outputs.android_image == 'true'
+    uses: ./.github/workflows/android-build-machine.yml
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -363,16 +377,25 @@ jobs:
 
   android:
     runs-on: ubuntu-latest
+    needs: [pre-build, publish-android-build-image]
+    # Publication may be skipped, but any requested publish must succeed.
+    if: >-
+      !cancelled() && needs.pre-build.result == 'success' &&
+      (needs.publish-android-build-image.result == 'success' || needs.publish-android-build-image.result == 'skipped')
     env:
+      ANDROID_BUILD_IMAGE: ${{ github.event_name == 'pull_request' && needs.pre-build.outputs.android_image == 'true' && 'etlegacy/android-build:ci' || needs.publish-android-build-image.outputs.image || 'etlegacy/android-build:latest' }}
       CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
       CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
-    needs: [pre-build]
-    container:
-      image: etlegacy/android-build
+      CI: "true"
     steps:
       - uses: actions/checkout@v7
         with:
           submodules: true
+
+      # Build changed PR images on their only consumer's runner without publishing.
+      - name: Build Android build image
+        if: github.event_name == 'pull_request' && needs.pre-build.outputs.android_image == 'true'
+        run: docker build misc/docker --file misc/docker/android.Dockerfile --tag "$ANDROID_BUILD_IMAGE"
 
       - name: Setup JDK
         uses: actions/setup-java@v6
@@ -380,23 +403,39 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
-      - name: Build JoyStick Dependency
-        working-directory: ./app/libs/joystick
-        run: |
-          ./gradlew clean               --stacktrace --info
-          ./gradlew assembleRelease     --stacktrace --info
-          ./gradlew publishToMavenLocal --stacktrace --info
-
       - name: Build and Generate Package
         run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          ./gradlew clean assembleDebug
-          ls -R
+          # Keep SDK installations and the local Maven repository in one container.
+          # Mount the configured JDK so compilation continues to use Java 17.
+          docker run --rm \
+            --env CI --env CI_ETL_DESCRIBE --env CI_ETL_TAG --env GITHUB_WORKSPACE \
+            --env JAVA_HOME=/opt/ci-java \
+            --volume "$JAVA_HOME:/opt/ci-java:ro" \
+            --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
+            --workdir "$GITHUB_WORKSPACE" \
+            "$ANDROID_BUILD_IMAGE" bash -e -o pipefail -c '
+              export PATH="$JAVA_HOME/bin:$PATH"
 
-      - name: Rename APK
-        run: |
-          for FILE in ./app/build/outputs/apk/debug/*.apk; do mv "$FILE" "${FILE%-*}.apk"; done
-          ls app/build/outputs/apk/debug
+              # The container user differs from the host checkout owner.
+              git config --global --add safe.directory "$GITHUB_WORKSPACE"
+              git config --global --add safe.directory "$GITHUB_WORKSPACE/app/libs/joystick"
+
+              # Publish the dependency where the following app build can find it.
+              cd app/libs/joystick
+              ./gradlew clean               --stacktrace --info
+              ./gradlew assembleRelease     --stacktrace --info
+              ./gradlew publishToMavenLocal --stacktrace --info
+
+              cd "$GITHUB_WORKSPACE"
+              ./gradlew clean assembleDebug
+              ls -R
+
+              # Rename outputs before returning them to the host runner.
+              for FILE in ./app/build/outputs/apk/debug/*.apk; do
+                mv "$FILE" "${FILE%-*}.apk"
+              done
+              ls app/build/outputs/apk/debug
+            '
 
       - name: Collect Android binaries and libraries
         shell: bash
@@ -504,6 +543,7 @@ jobs:
       - pre-build
       - publish-lnx-build-image
       - publish-lnx-aarch64-build-image
+      - publish-android-build-image
 
       - android
       - lnx-aarch64

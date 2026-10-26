@@ -2,15 +2,36 @@
 name: AndroidBuildMachine
 
 on:
+  # The Android integration branch publishes independently of master CI.
   push:
+    branches: [android-upgrades]
     paths:
       - "misc/docker/android.Dockerfile"
+  # CI decides when automatic publication on master is required.
+  workflow_call:
+    outputs:
+      image:
+        description: Versioned Android build image published by this workflow
+        value: ${{ jobs.docker.outputs.image }}
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_PASSWORD:
+        required: true
   workflow_dispatch:
 
 jobs:
   docker:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/android-upgrades'
+    # Serialize automatic and manual publishers without replacing pending jobs.
+    concurrency:
+      group: android-build-publication
+      cancel-in-progress: false
+      queue: max
+    # Callers use this exact version even if another run updates latest afterward.
+    outputs:
+      image: etlegacy/android-build:${{ steps.vars.outputs.tag }}
     steps:
       - uses: actions/checkout@v7
 
@@ -22,8 +43,21 @@ jobs:
         run: |
           echo "tag=$(date +%Y%m%d%H%M%S)" >> "$GITHUB_OUTPUT"
 
-      - name: Build and push the latest Docker image
+      - name: Build and push the versioned Docker image
         run: |
           docker build misc/docker --file misc/docker/android.Dockerfile --tag etlegacy/android-build:latest --tag etlegacy/android-build:${{steps.vars.outputs.tag}}
           docker push etlegacy/android-build:${{steps.vars.outputs.tag}}
+
+      - name: Publish latest if the Dockerfile is still current
+        run: |
+          # Compare file contents so unrelated branch commits do not block publication.
+          # The publishing queue keeps this check and tag update exclusive.
+          built_dockerfile=$(git rev-parse HEAD:misc/docker/android.Dockerfile)
+          git fetch --no-tags origin "$GITHUB_REF"
+          current_dockerfile=$(git rev-parse FETCH_HEAD:misc/docker/android.Dockerfile)
+          if [ "$built_dockerfile" != "$current_dockerfile" ]; then
+            echo "The Dockerfile changed on the publishing branch; leaving latest unchanged."
+            exit 0
+          fi
+
           docker push etlegacy/android-build:latest
