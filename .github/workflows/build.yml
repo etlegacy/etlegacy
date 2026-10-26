@@ -45,6 +45,29 @@ jobs:
             echo "uid=$ci_id"
           } >> "$GITHUB_OUTPUT"
 
+  # Compile the Vulkan renderer's GLSL shaders to SPIR-V once for all client
+  # builds: SPIR-V doesn't depend on the platform, and the build
+  # machines (containers, Windows) have no GLSL compiler. The build jobs embed
+  # these files through VK_SHADER_PREBUILT_DIR.
+  vk-shaders:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the GLSL compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y glslc
+
+      - name: Compile the shaders
+        run: cmake -DVK_GLSL_COMPILER=glslc -DOUT_DIR=vk-shaders -P cmake/ETLCompileVkShaders.cmake
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vk-shaders
+          path: vk-shaders/*.spv
+          if-no-files-found: error
+
   #   __  __               _                                                  _     _
   #  |  \/  |             | |                                                | |   (_)
   #  | \  / |   ___     __| |     __ _    ___   _ __     ___   _ __    __ _  | |_   _    ___    _ __
@@ -413,7 +436,7 @@ jobs:
   # Generate the final packages for Lnx, macOS, Windows and Android
   lnx64:
     runs-on: ubuntu-latest
-    needs: [pre-build, mod-merger]
+    needs: [pre-build, mod-merger, vk-shaders]
     env:
       CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
       CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
@@ -423,14 +446,20 @@ jobs:
         with:
           submodules: true
 
+      - name: Download the Vulkan shaders
+        uses: actions/download-artifact@v4
+        with:
+          name: vk-shaders
+          path: vk-shaders
+
       - name: Build
         uses: maus007/docker-run-action-fork@v1
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI_ETL_UID=${{needs.pre-build.outputs.uid}} -e CI=true
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI_ETL_UID=${{needs.pre-build.outputs.uid}} -e CI=true -e VK_SHADER_PREBUILT_DIR=vk-shaders
           run: |
             git config --global --add safe.directory /code
-            ./easybuild.sh build -64
+            ./easybuild.sh build -64 -vk
 
       - name: Change Owner of Container Working Directory
         run: |
@@ -466,20 +495,26 @@ jobs:
 
   lnx32:
     runs-on: ubuntu-latest
-    needs: [pre-build, mod-merger]
+    needs: [pre-build, mod-merger, vk-shaders]
     steps:
       - uses: actions/checkout@v7
         with:
           submodules: true
 
+      - name: Download the Vulkan shaders
+        uses: actions/download-artifact@v4
+        with:
+          name: vk-shaders
+          path: vk-shaders
+
       - name: Build
         uses: maus007/docker-run-action-fork@v1
         with:
           image: etlegacy/lnx-build:latest
-          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI_ETL_UID=${{needs.pre-build.outputs.uid}} -e CI=true
+          options: -v ${{ github.workspace }}:/code -e CI_ETL_DESCRIBE=${{needs.pre-build.outputs.describe}} -e CI_ETL_TAG=${{needs.pre-build.outputs.tag}} -e CI_ETL_UID=${{needs.pre-build.outputs.uid}} -e CI=true -e VK_SHADER_PREBUILT_DIR=vk-shaders
           run: |
             git config --global --add safe.directory /code
-            ./easybuild.sh build -32
+            ./easybuild.sh build -32 -vk
 
       - name: Change Owner of Container Working Directory
         run: |
@@ -515,21 +550,28 @@ jobs:
 
   lnx-aarch64:
     runs-on: ubuntu-latest
-    needs: [pre-build, mod-merger]
+    needs: [pre-build, mod-merger, vk-shaders]
     container:
       image: etlegacy/lnx-aarch64-build
     env:
       CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
       CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
       CI_ETL_UID: ${{needs.pre-build.outputs.uid}}
+      VK_SHADER_PREBUILT_DIR: vk-shaders
     steps:
       - uses: actions/checkout@v7
         with:
           submodules: true
 
+      - name: Download the Vulkan shaders
+        uses: actions/download-artifact@v4
+        with:
+          name: vk-shaders
+          path: vk-shaders
+
       - name: Build
         run: |
-          ./easybuild.sh build -RPIT -ninja
+          ./easybuild.sh build -RPIT -ninja -vk
 
       - uses: actions/download-artifact@v8
         with:
@@ -555,15 +597,22 @@ jobs:
 
   osx:
     runs-on: macos-15
-    needs: [pre-build, mod-merger]
+    needs: [pre-build, mod-merger, vk-shaders]
     env:
       CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
       CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
       CI_ETL_UID: ${{needs.pre-build.outputs.uid}}
+      VK_SHADER_PREBUILT_DIR: vk-shaders
     steps:
       - uses: actions/checkout@v7
         with:
           submodules: true
+
+      - name: Download the Vulkan shaders
+        uses: actions/download-artifact@v4
+        with:
+          name: vk-shaders
+          path: vk-shaders
 
       - name: Install dependencies
         run: |
@@ -576,7 +625,7 @@ jobs:
           DEVELOPER_DIR: /Library/Developer/CommandLineTools
         shell: bash
         run: |
-          ./easybuild.sh build -64 --osx=10.10 --osx-arc="x86_64;arm64" -j
+          ./easybuild.sh build -64 -vk --osx=10.10 --osx-arc="x86_64;arm64" -j
 
       - uses: actions/download-artifact@v8
         with:
@@ -589,7 +638,7 @@ jobs:
 
       - name: Generate packages
         shell: bash
-        run: ./easybuild.sh package -64 --osx=10.10 --osx-arc="x86_64;arm64" -j
+        run: ./easybuild.sh package -64 -vk --osx=10.10 --osx-arc="x86_64;arm64" -j
 
       - uses: actions/upload-artifact@v7
         with:
@@ -601,22 +650,29 @@ jobs:
 
   win:
     runs-on: windows-2022
-    needs: [pre-build, mod-merger]
+    needs: [pre-build, mod-merger, vk-shaders]
     outputs:
       win: ${{ steps.artifact-upload-step.outputs.artifact-id }}
     env:
       CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
       CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
       CI_ETL_UID: ${{needs.pre-build.outputs.uid}}
+      VK_SHADER_PREBUILT_DIR: vk-shaders
     steps:
       - uses: actions/checkout@v7
         with:
           submodules: true
 
+      - name: Download the Vulkan shaders
+        uses: actions/download-artifact@v4
+        with:
+          name: vk-shaders
+          path: vk-shaders
+
       - name: Build
         shell: cmd
         run: |
-          call .\easybuild.bat build
+          call .\easybuild.bat build -vk
 
       - uses: actions/download-artifact@v8
         with:
@@ -677,22 +733,29 @@ jobs:
 
   win64:
     runs-on: windows-2022
-    needs: [pre-build, mod-merger]
+    needs: [pre-build, mod-merger, vk-shaders]
     outputs:
       win64: ${{ steps.artifact-upload-step.outputs.artifact-id }}
     env:
       CI_ETL_DESCRIBE: ${{needs.pre-build.outputs.describe}}
       CI_ETL_TAG: ${{needs.pre-build.outputs.tag}}
       CI_ETL_UID: ${{needs.pre-build.outputs.uid}}
+      VK_SHADER_PREBUILT_DIR: vk-shaders
     steps:
       - uses: actions/checkout@v7
         with:
           submodules: true
 
+      - name: Download the Vulkan shaders
+        uses: actions/download-artifact@v4
+        with:
+          name: vk-shaders
+          path: vk-shaders
+
       - name: Build
         shell: cmd
         run: |
-          call .\easybuild.bat build -64
+          call .\easybuild.bat build -64 -vk
 
       - uses: actions/download-artifact@v8
         with:
