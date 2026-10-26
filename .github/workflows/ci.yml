@@ -32,14 +32,15 @@ jobs:
       describe: ${{ steps.git.outputs.describe }}
       tag: ${{ steps.git.outputs.tag }}
       lnx_image: ${{ steps.changes.outputs.lnx_image }}
+      lnx_aarch64_image: ${{ steps.changes.outputs.lnx_aarch64_image }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           fetch-tags: true
 
-      # Manual runs always use the published Linux build image.
-      - name: Check Linux build image changes
+      # Manual runs always use the published build images.
+      - name: Check build image changes
         uses: dorny/paths-filter@v4
         if: github.event_name != 'workflow_dispatch'
         id: changes
@@ -48,6 +49,8 @@ jobs:
           filters: |
             lnx_image:
               - 'misc/docker/build.Dockerfile'
+            lnx_aarch64_image:
+              - 'misc/docker/lnx-aarch64.Dockerfile'
 
       - uses: prefix-dev/setup-pixi@v0.10.2
         with:
@@ -101,6 +104,17 @@ jobs:
           compression-level: 1
           overwrite: true
           retention-days: 1
+
+  # ARM64 builds wait for publication and use the returned versioned image.
+  publish-lnx-aarch64-build-image:
+    needs: [pre-build]
+    if: >-
+      github.event_name == 'push' && github.ref == 'refs/heads/master' &&
+      needs.pre-build.outputs.lnx_aarch64_image == 'true'
+    uses: ./.github/workflows/lnx-aarch64-build-machine.yml
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
   # Run the build on all the current platforms
   #
@@ -231,25 +245,39 @@ jobs:
 
   lnx-aarch64:
     runs-on: ubuntu-latest
-    needs: [pre-build]
-    container:
-      image: etlegacy/lnx-aarch64-build
+    needs: [pre-build, publish-lnx-aarch64-build-image]
+    # Publication may be skipped, but any requested publish must succeed.
+    if: >-
+      !cancelled() && needs.pre-build.result == 'success' &&
+      (needs.publish-lnx-aarch64-build-image.result == 'success' || needs.publish-lnx-aarch64-build-image.result == 'skipped')
     env:
+      LNX_AARCH64_BUILD_IMAGE: ${{ github.event_name == 'pull_request' && needs.pre-build.outputs.lnx_aarch64_image == 'true' && 'etlegacy/lnx-aarch64-build:ci' || needs.publish-lnx-aarch64-build-image.outputs.image || 'etlegacy/lnx-aarch64-build:latest' }}
       CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
       CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
+      CI: "true"
     steps:
       - uses: actions/checkout@v7
         with:
           submodules: true
 
-      - name: Build
-        run: |
-          ./easybuild.sh build -RPIT -ninja
+      # Build changed PR images on their only consumer's runner without publishing.
+      - name: Build Linux ARM64 build image
+        if: github.event_name == 'pull_request' && needs.pre-build.outputs.lnx_aarch64_image == 'true'
+        run: docker build misc/docker --file misc/docker/lnx-aarch64.Dockerfile --tag "$LNX_AARCH64_BUILD_IMAGE"
 
-      - name: Generate packages
-        shell: bash
-        working-directory: build
-        run: cpack
+      - name: Build and generate packages
+        run: |
+          # Match host ownership and paths so artifacts and warning logs remain usable.
+          docker run --rm \
+            --user "$(id -u):$(id -g)" --env HOME=/tmp \
+            --env CI --env CI_ETL_DESCRIBE --env CI_ETL_TAG \
+            --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
+            --workdir "$GITHUB_WORKSPACE" \
+            "$LNX_AARCH64_BUILD_IMAGE" sh -c '
+              ./easybuild.sh build -RPIT -ninja &&
+              cd build &&
+              cpack
+            '
 
       - *collect-binaries
       - *upload-binaries
@@ -475,6 +503,7 @@ jobs:
     needs:
       - pre-build
       - publish-lnx-build-image
+      - publish-lnx-aarch64-build-image
 
       - android
       - lnx-aarch64

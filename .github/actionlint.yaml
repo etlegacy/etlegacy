@@ -4,3 +4,7 @@ paths:
     ignore:
       # The pinned actionlint does not recognize GitHub's publishing queue setting.
       - '^unexpected key "queue" for "concurrency" section\.'
+  .github/workflows/lnx-aarch64-build-machine.yml:
+    ignore:
+      # The pinned actionlint does not recognize GitHub's publishing queue setting.
+      - '^unexpected key "queue" for "concurrency" section\.'
