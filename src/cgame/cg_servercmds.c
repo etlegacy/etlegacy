@@ -178,13 +178,13 @@ static void CG_FillVersionInfo(version_t *version, char *versionStr, const char 
 
 	Com_Printf("Demo Version: %s\n", versionStr);
 
-	token = strtok(versionStr, delimiter);
+	token          = strtok(versionStr, delimiter);
 	version->major = token ? Q_atoi(token) : 0;
 
-	token = strtok(NULL, delimiter);
+	token          = strtok(NULL, delimiter);
 	version->minor = token ? Q_atoi(token) : 0;
 
-	token = strtok(NULL, delimiter);
+	token          = strtok(NULL, delimiter);
 	version->patch = token ? Q_atoi(token) : 0;
 }
 
