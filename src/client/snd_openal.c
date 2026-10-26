@@ -179,6 +179,7 @@ typedef struct alSfx_s
 	qboolean isDefaultChecked;          // Sound has been check if it isDefault
 	qboolean inMemory;                  // Sound is stored in memory
 	qboolean isLocked;                  // Sound is locked (can not be unloaded)
+	int pakChecksum;                    // pk3 file the sound was loaded from, see FS_FilePakChecksum
 	int lastUsedTime;                   // Time last used
 
 	int loopCnt;                        // number of loops using this sfx
@@ -477,6 +478,8 @@ static void S_AL_BufferLoad(sfxHandle_t sfx, qboolean cache)
 	{
 		return;
 	}
+
+	curSfx->pakChecksum = FS_FilePakChecksum(curSfx->filename);
 
 	// Try to load
 	data = S_CodecLoad(curSfx->filename, &info);
@@ -3297,8 +3300,40 @@ static void S_AL_SoundList(void)
 {
 }
 
+/**
+ * @brief Drops the sounds whose file is now read from another pk3 file (server or mod change),
+ * they are loaded again on their next use
+ */
 static void S_AL_Reload(void)
 {
+	int      i;
+	qboolean stopped = qfalse;
+
+	for (i = 0; i < numSfx; i++)
+	{
+		alSfx_t *curSfx = &knownSfx[i];
+
+		// default sounds share the buffer of default_sfx, player specific sounds are never directly loaded
+		if (i == default_sfx || curSfx->filename[0] == '\0' || curSfx->filename[0] == '*' ||
+		    !(curSfx->inMemory || curSfx->isDefaultChecked || curSfx->isDefault) ||
+		    FS_FilePakChecksum(curSfx->filename) == curSfx->pakChecksum)
+		{
+			continue;
+		}
+
+		// a buffer can't be deleted while a source uses it
+		if (!stopped)
+		{
+			S_AL_StopAllSounds();
+			stopped = qtrue;
+		}
+
+		Com_DPrintf("S_AL_Reload: %s changed\n", curSfx->filename);
+
+		S_AL_BufferUnload(i);
+		curSfx->isDefault        = qfalse;
+		curSfx->isDefaultChecked = qfalse;
+	}
 }
 
 #ifdef USE_VOIP
