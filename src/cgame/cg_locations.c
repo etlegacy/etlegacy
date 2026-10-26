@@ -547,25 +547,35 @@ void CG_LoadLocations(void)
 	// start parsing!
 	while (p < fLen)
 	{
-		// check for the beginning of a comment
-		if (fBuffer[p++] == '/')
+		// skip line breaks, so comments are detected at the start of every line
+		if (fBuffer[p] == '\n' || fBuffer[p] == '\r')
 		{
-			//check for single line comment
-			if (fBuffer[p] == '/')
+			p++;
+			continue;
+		}
+
+		// check for the beginning of a comment
+		if (fBuffer[p] == '/')
+		{
+			// check for single line comment
+			if (fBuffer[p + 1] == '/')
 			{
 				while (p < fLen && (fBuffer[p] != '\n' && fBuffer[p] != '\r'))
 				{
 					p++;
 				}
+				continue;
 			}
 			// check for multiline comment
-			else if (fBuffer[p] == '*')
+			else if (fBuffer[p + 1] == '*')
 			{
-				p++;
-				while (p < fLen && (fBuffer[p] != '*' && fBuffer[p + 1] != '/'))
+				p += 2;
+				while (p < fLen && (fBuffer[p] != '*' || fBuffer[p + 1] != '/'))
 				{
 					p++;
 				}
+				p += 2;
+				continue;
 			}
 		}
 
