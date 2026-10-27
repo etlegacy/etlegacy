@@ -6,51 +6,79 @@
 #|______|    |_|    |______|  \___|  \__, |  \__,_|  \___|  \__, |
 #                                     __/ |                  __/ |
 #                                    |___/                  |___/
+# 2024 Legacy team
+#
+# One pipeline for pull requests, master and releases. Every run builds and
+# packages all platforms and checks the results. Release runs, started through
+# build.yml, additionally merge the mod of every platform into one pk3, sign
+# the Windows builds and publish everything.
 name: CI
 
 on:
-  workflow_dispatch:
   pull_request:
     branches: [master]
-    types: [opened, synchronize, reopened]
   push:
     branches: [master]
+  workflow_dispatch:
+    inputs:
+      disable-checks: &disable-checks
+        description: Skip the change, build artifact and compiler warning checks
+        type: boolean
+        default: false
+  workflow_call:
+    inputs:
+      release:
+        description: Merge the mod pk3, sign and publish the build
+        type: boolean
+        default: false
+      disable-checks: *disable-checks
+      # Only releases publish anything worth suppressing, so manual runs of CI
+      # do not offer this.
+      dry:
+        description: Dry run. Publish nothing and send no failure notification, keep the packages and the server image as run artifacts instead.
+        type: boolean
+        default: false
 
-# Preserve every master run so required image publication cannot be superseded.
-# Other refs share a group so newer runs cancel their unfinished predecessors.
+# Pull requests cancel their superseded runs, every other run is kept.
 concurrency:
-  group: ci-${{ github.ref == 'refs/heads/master' && github.run_id || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
-  pre-build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
+  pre-flight:
+    # Pinned like the other platforms, so jobs never move to a new Ubuntu
+    # release by themselves. Every Linux job uses this anchor, so bumping
+    # the version here moves all of them.
+    runs-on: &ubuntu ubuntu-24.04
     outputs:
       describe: ${{ steps.git.outputs.describe }}
       tag: ${{ steps.git.outputs.tag }}
-      lnx_image: ${{ steps.changes.outputs.lnx_image }}
-      lnx_aarch64_image: ${{ steps.changes.outputs.lnx_aarch64_image }}
+      uid: ${{ steps.git.outputs.uid }}
+      release: ${{ steps.git.outputs.release }}
     steps:
+      # Show at a glance which inputs a run was started with. Inputs of calling
+      # workflows arrive here as well, including their defaults.
+      - name: Summarize inputs
+        env:
+          INPUTS: ${{ toJSON(inputs) }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          {
+            echo "### Inputs"
+            echo
+            if [ "$(jq length <<< "$INPUTS")" -eq 0 ]; then
+              echo "None, this \`$EVENT\` run uses the defaults."
+            else
+              echo "| Input | Value |"
+              echo "| --- | --- |"
+              jq -r 'to_entries | sort_by(.key)[] | "| `\(.key)` | `\(.value)` |"' <<< "$INPUTS"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           fetch-tags: true
-
-      # Manual runs always use the published build images.
-      - name: Check build image changes
-        uses: dorny/paths-filter@v4
-        if: github.event_name != 'workflow_dispatch'
-        id: changes
-        with:
-          base: master
-          filters: |
-            lnx_image:
-              - 'misc/docker/build.Dockerfile'
-            lnx_aarch64_image:
-              - 'misc/docker/lnx-aarch64.Dockerfile'
 
       - uses: prefix-dev/setup-pixi@v0.10.2
         with:
@@ -58,124 +86,283 @@ jobs:
           cache: true
 
       - name: Check changes
-        run: |
-          pixi run check-changes --github "origin/master"
+        # Inputs are empty for pull requests and pushes, so checks run there.
+        if: &checks-enabled ${{ !inputs.disable-checks }}
+        run: pixi run check-changes --github "origin/master"
 
       - name: Fetch git version information
         id: git
+        env:
+          RELEASE: ${{ inputs.release && 'true' || 'false' }}
         run: |
           git fetch --tags --force
           git_describe=$(git describe --abbrev=7 2>/dev/null | awk '{$1=$1};1')
           git_tag=$(git describe --abbrev=0 2>/dev/null | awk '{$1=$1};1')
-          echo "Version info: $git_describe ?? $git_tag"
-          echo "describe=$git_describe" >> "$GITHUB_OUTPUT"
-          echo "tag=$git_tag" >> "$GITHUB_OUTPUT"
+          echo "Version info: $git_describe ?? $git_tag (release: $RELEASE)"
+          {
+            echo "describe=$git_describe"
+            echo "tag=$git_tag"
+            echo "uid=$(uuidgen)"
+            echo "release=$RELEASE"
+          } >> "$GITHUB_OUTPUT"
 
-  # Linux builds wait for publication and use the returned versioned image.
-  publish-lnx-build-image:
-    needs: [pre-build]
-    if: >-
-      github.event_name == 'push' && github.ref == 'refs/heads/master' &&
-      needs.pre-build.outputs.lnx_image == 'true'
-    uses: ./.github/workflows/lnx-build-machine.yml
-    secrets:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-  # Share changed PR build environments without publishing them to DockerHub.
-  lnx-build-image:
-    runs-on: ubuntu-latest
-    needs: [pre-build]
-    if: github.event_name == 'pull_request' && needs.pre-build.outputs.lnx_image == 'true'
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Build Linux build image
-        run: |
-          docker build misc/docker --file misc/docker/build.Dockerfile --tag etlegacy/lnx-build:ci
-          docker save --output "$RUNNER_TEMP/lnx-build.tar" etlegacy/lnx-build:ci
-
-      - name: Upload Linux build image
-        uses: actions/upload-artifact@v7
-        with:
-          name: ci-lnx-build-image
-          path: ${{ runner.temp }}/lnx-build.tar
-          if-no-files-found: error
-          compression-level: 1
-          overwrite: true
-          retention-days: 1
-
-  # ARM64 builds wait for publication and use the returned versioned image.
-  publish-lnx-aarch64-build-image:
-    needs: [pre-build]
-    if: >-
-      github.event_name == 'push' && github.ref == 'refs/heads/master' &&
-      needs.pre-build.outputs.lnx_aarch64_image == 'true'
-    uses: ./.github/workflows/lnx-aarch64-build-machine.yml
-    secrets:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-  # Run the build on all the current platforms
+  #   __  __               _
+  #  |  \/  |             | |
+  #  | \  / |   ___     __| |  ___
+  #  | |\/| |  / _ \   / _` | / __|
+  #  | |  | | | (_) | | (_| | \__ \
+  #  |_|  |_|  \___/   \__,_| |___/
+  #     JOBSET
   #
-  # Keep Linux compilation and packaging in the legacy image for compatibility.
-  # Run checkout and artifact actions on Ubuntu, where their Node runtime works.
-  lnx64:
-    runs-on: ubuntu-latest
-    needs: [pre-build, publish-lnx-build-image, lnx-build-image]
-    # Image preparation may be skipped, but any requested build or publish must succeed.
-    if: &linux-ready >-
-      !cancelled() && needs.pre-build.result == 'success' &&
-      (needs.publish-lnx-build-image.result == 'success' || needs.publish-lnx-build-image.result == 'skipped') &&
-      (needs.lnx-build-image.result == 'success' || needs.lnx-build-image.result == 'skipped')
+  # Release only: build the mod libraries of every platform, then merge them
+  # into the single pk3 that all packages ship.
+  desktop-mods:
+    # GitHub does not evaluate the names of skipped matrix jobs, so runs that
+    # are not releases show this literal expression as one skipped job. That
+    # is accepted on purpose: separate jobs per platform could not share the
+    # platforms matrix with the package jobs, and jobs that run but skip all
+    # their steps would still hold up every build with idle runners.
+    name: ${{ matrix.name }}-mod
+    needs: pre-flight
+    if: &release needs.pre-flight.outputs.release == 'true'
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ startsWith(matrix.os, 'windows') && 'cmd' || 'bash' }}
     env:
-      LNX_BUILD_IMAGE: &linux-image ${{ needs.lnx-build-image.result == 'success' && 'etlegacy/lnx-build:ci' || needs.publish-lnx-build-image.outputs.image || 'etlegacy/lnx-build:latest' }}
-      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
-      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
-      CI: "true"
+      CI_ETL_DESCRIBE: ${{ needs.pre-flight.outputs.describe }}
+      CI_ETL_TAG: ${{ needs.pre-flight.outputs.tag }}
+    strategy:
+      # A broken platform must not cancel the builds of the others.
+      fail-fast: false
+      # Linux builds run in the legacy build images through docker-ci.sh,
+      # because the checkout and artifact actions cannot run inside those
+      # images.
+      matrix: &platforms
+        include:
+          - name: lnx64
+            os: *ubuntu
+            lib: .so
+            build: misc/docker-ci.sh run lnx-build ./easybuild.sh build -64 -ninja
+            package: misc/docker-ci.sh run lnx-build sh -c 'cd build && cpack'
+          - name: lnx32
+            os: *ubuntu
+            lib: .so
+            build: misc/docker-ci.sh run lnx-build ./easybuild.sh build -32 -ninja
+            package: misc/docker-ci.sh run lnx-build sh -c 'cd build && cpack'
+          - name: lnx-aarch64
+            os: *ubuntu
+            lib: .so
+            build: misc/docker-ci.sh run lnx-aarch64-build ./easybuild.sh build -RPIT -ninja
+            package: misc/docker-ci.sh run lnx-aarch64-build sh -c 'cd build && cpack'
+          - name: osx
+            os: macos-15
+            lib: _mac
+            build: SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk DEVELOPER_DIR=/Library/Developer/CommandLineTools ./easybuild.sh build -64 --osx=10.10 --osx-arc="x86_64;arm64" -j
+            package: ./easybuild.sh package -64 --osx=10.10 --osx-arc="x86_64;arm64" -j
+          - name: win
+            os: windows-2022
+            lib: .dll
+            build: call .\easybuild.bat build
+            package: cd build && cpack
+          - name: win64
+            os: windows-2022
+            lib: .dll
+            build: call .\easybuild.bat build -64
+            package: cd build && cpack
     steps:
-      - uses: actions/checkout@v7
+      - &checkout
+        uses: actions/checkout@v7
         with:
           submodules: true
 
-      # Each runner needs its own copy of the image before invoking docker run.
-      - &download-lnx-build-image
-        name: Download Linux build image
-        if: needs.lnx-build-image.result == 'success'
-        uses: actions/download-artifact@v8
-        with:
-          name: ci-lnx-build-image
-          path: ${{ runner.temp }}
+      - &brew
+        name: Install dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew bundle
+          brew install freetype librsvg graphicsmagick imagemagick
 
-      - &load-lnx-build-image
-        name: Load Linux build image
-        if: needs.lnx-build-image.result == 'success'
-        run: docker load --input "$RUNNER_TEMP/lnx-build.tar"
+      - name: Build mod
+        run: ${{ matrix.build }} -mod
+
+      # lnx64 also provides the pk3 that collects every platform's libraries.
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.name }}-mod
+          path: |
+            build/legacy/cgame*${{ matrix.lib }}
+            build/legacy/ui*${{ matrix.lib }}
+            build/legacy/qagame*${{ matrix.lib }}
+            build/legacy/tvgame*${{ matrix.lib }}
+            ${{ matrix.name == 'lnx64' && 'build/legacy/legacy_*.pk3' || '' }}
+          if-no-files-found: error
+          retention-days: 1
+
+  android-mod:
+    needs: pre-flight
+    if: *release
+    runs-on: *ubuntu
+    env:
+      &android-env # The SDK downloads missing components into its root owned directory.
+      DOCKER_USER: root
+      SIGNING_KEY_ALIAS: ${{ secrets.ANDROID_SIGN_APK_ALLIAS }}
+      SIGNING_KEY_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+      SIGNING_STORE_PASSWORD: ${{ secrets.ANDROID_SIGN_APK_PASS }}
+      # Only the main repository has the signing secrets of release builds.
+      ANDROID_VARIANT: ${{ github.repository == 'etlegacy/etlegacy' && needs.pre-flight.outputs.release == 'true' && 'Release' || 'Debug' }}
+      CI_ETL_DESCRIBE: ${{ needs.pre-flight.outputs.describe }}
+      CI_ETL_TAG: ${{ needs.pre-flight.outputs.tag }}
+    steps:
+      - *checkout
+
+      # One container run, so the app finds the joystick in the local Maven repository.
+      - &android-build
+        name: Build APK
+        run: |
+          # The single quoted script expands its variables inside the container.
+          # shellcheck disable=SC2016
+          misc/docker-ci.sh run android-build sh -c '
+            set -e
+            git config --global --add safe.directory "$PWD"
+            cd app/libs/joystick
+            ./gradlew clean               --stacktrace --info
+            ./gradlew assembleRelease     --stacktrace --info
+            ./gradlew publishToMavenLocal --stacktrace --info
+            cd ../../..
+            ./gradlew clean assemble${{ env.ANDROID_VARIANT }} --stacktrace --info
+          '
+
+      - name: Collect mod libraries
+        run: |
+          for apk in app/build/outputs/apk/*/*.apk; do
+            unzip -o -j "$apk" 'lib/*/libcgame*' 'lib/*/libui*' -d mod
+          done
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: android-mod
+          path: mod/
+          if-no-files-found: error
+          retention-days: 1
+
+  merge-mods:
+    needs: [pre-flight, desktop-mods, android-mod]
+    runs-on: *ubuntu
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: "*-mod"
+          path: platforms
+          merge-multiple: true
+
+      - name: Merge mod files
+        run: |
+          echo "win_x86 win_x86_64 lnx_x86 lnx_x86_64 macos_x86_64 macos_aarch64 lnx_armv8_64 android_aarch64 android_x86 android_x86_64" > platforms.manifest
+          mv platforms/legacy_*.pk3 .
+          zip -rvj -MM legacy_*.pk3 platforms.manifest platforms/cgame* platforms/ui* platforms/libcgame* platforms/libui*
+          zip -rvj -MM "etlegacy-mod-${{ needs.pre-flight.outputs.describe }}.zip" legacy_*.pk3 platforms/qagame* platforms/tvgame*
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: mod-pk3
+          path: legacy_*.pk3
+          if-no-files-found: error
+          retention-days: 1
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: mod-zip
+          path: etlegacy-mod-*.zip
+          if-no-files-found: error
+          retention-days: 1
+
+  #   _____                 _
+  #  |  __ \               | |
+  #  | |__) |   __ _    ___| | __   __ _    __ _    ___   ___
+  #  |  ___/   / _` |  / __| |/ /  / _` |  / _` |  / _ \ / __|
+  #  | |      | (_| | | (__|   <  | (_| | | (_| | |  __/ \__ \
+  #  |_|       \__,_|  \___|_|\_\  \__,_|  \__, |  \___| |___/
+  #     JOBSET                              __/ |
+  #                                        |___/
+  desktop-packages:
+    # The compiler warning check finds build logs by these job names and the
+    # one of android-package, with or without the "release / " prefix of runs
+    # started through ETLBuild.
+    name: ${{ matrix.name }}
+    needs: [pre-flight, merge-mods]
+    # Outside of releases the mod phase is skipped and every platform ships its
+    # own pk3. Releases can only publish packages with the merged pk3, so they
+    # stop when a mod job failed or was cancelled instead of building packages
+    # that are thrown away, and re-running the failed jobs continues from there.
+    if: &builds-wanted >-
+      ${{ !cancelled() && needs.pre-flight.result == 'success' &&
+      (needs.pre-flight.outputs.release != 'true' || needs.merge-mods.result == 'success') }}
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ startsWith(matrix.os, 'windows') && 'cmd' || 'bash' }}
+    env:
+      CI_ETL_DESCRIBE: ${{ needs.pre-flight.outputs.describe }}
+      CI_ETL_TAG: ${{ needs.pre-flight.outputs.tag }}
+      # Secrets cannot be tested in step conditions directly. Forks have no
+      # SignPath token, so their releases stay unsigned instead of failing.
+      SIGNPATH: ${{ secrets.SIGNPATH_API_TOKEN != '' }}
+    strategy:
+      fail-fast: false
+      matrix: *platforms
+    steps:
+      - *checkout
+      - *brew
 
       - name: Build
-        run: |
-          # Match host ownership and paths so artifacts and warning logs remain usable.
-          # Give the container user a writable home without mounting the host home.
-          docker run --rm \
-            --user "$(id -u):$(id -g)" --env HOME=/tmp \
-            --env CI --env CI_ETL_DESCRIBE --env CI_ETL_TAG \
-            --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
-            --workdir "$GITHUB_WORKSPACE" \
-            "$LNX_BUILD_IMAGE" ./easybuild.sh build -64
+        run: ${{ matrix.build }}
+
+      # Replace the pk3 of this platform with the one of all platforms.
+      - name: Download merged mod pk3
+        if: needs.merge-mods.result == 'success'
+        uses: actions/download-artifact@v8
+        with:
+          name: mod-pk3
+          path: build/legacy
+
+      - name: Note the missing SignPath token
+        if: runner.os == 'Windows' && needs.pre-flight.outputs.release == 'true' && env.SIGNPATH != 'true'
+        run: echo ::warning::No SignPath token available, the ${{ matrix.name }} release stays unsigned.
+
+      # All later signing steps follow the outcome of this one.
+      - name: Upload etl.exe for signing
+        id: exe
+        if: runner.os == 'Windows' && needs.pre-flight.outputs.release == 'true' && env.SIGNPATH == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.name }}-exe
+          path: build/etl.exe
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Sign etl.exe
+        if: steps.exe.outcome == 'success'
+        uses: signpath/github-action-submit-signing-request@v1.3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ secrets.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: etlegacy
+          # Only published tag releases use the release certificate, dry runs
+          # exercise the same path with the test certificate.
+          signing-policy-slug: &signing-policy ${{ github.ref_type == 'tag' && !inputs.dry && 'release-signing' || 'test-signing' }}
+          github-artifact-id: ${{ steps.exe.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed-exe
+
+      - name: Use signed etl.exe
+        if: steps.exe.outcome == 'success'
+        run: copy /y signed-exe\etl.exe build\etl.exe
 
       - name: Generate packages
-        run: |
-          # CPack needs the same container tools and absolute paths as the build.
-          docker run --rm \
-            --user "$(id -u):$(id -g)" --env HOME=/tmp \
-            --env CI --env CI_ETL_DESCRIBE --env CI_ETL_TAG \
-            --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
-            --workdir "$GITHUB_WORKSPACE/build" \
-            "$LNX_BUILD_IMAGE" cpack
+        run: ${{ matrix.package }}
 
-      # Reuse collection and upload steps for every desktop platform.
-      - &collect-binaries
-        name: Collect binaries and libraries
+      - name: Collect binaries and libraries
         shell: bash
         working-directory: build
         run: |
@@ -191,252 +378,144 @@ jobs:
           # Tar preserves executable permissions and library symlinks across jobs.
           tar -czf ../binaries.tar.gz --null -T "$RUNNER_TEMP/binaries.list"
 
-      - &upload-binaries
-        name: Upload platform binaries
+      - name: Upload platform binaries
         uses: actions/upload-artifact@v7
         with:
-          name: ci-binaries-${{ github.job }}
+          name: ci-binaries-${{ matrix.name }}
           path: binaries.tar.gz
           if-no-files-found: error
           compression-level: 0
           overwrite: true
           retention-days: 1
 
-  lnx32:
-    runs-on: ubuntu-latest
-    needs: [pre-build, publish-lnx-build-image, lnx-build-image]
-    if: *linux-ready
-    env:
-      LNX_BUILD_IMAGE: *linux-image
-      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
-      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
-      CI: "true"
+      # Only releases publish the packages, other runs just build them.
+      - name: Upload packages
+        id: packages
+        if: *release
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.name }}-packages
+          path: |
+            build/etlegacy-*.tar.gz
+            build/etlegacy-*.sh
+            build/etlegacy-*.dmg
+            build/etlegacy-*.exe
+            build/etlegacy-*.zip
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Sign packages
+        if: steps.exe.outcome == 'success'
+        uses: signpath/github-action-submit-signing-request@v1.3
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ secrets.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: etlegacy
+          signing-policy-slug: *signing-policy
+          github-artifact-id: ${{ steps.packages.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed-packages
+
+      - name: Upload signed packages
+        if: steps.exe.outcome == 'success'
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.name }}-packages
+          path: signed-packages/
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 1
+
+  android-package:
+    # Named after its platform like the desktop package jobs.
+    name: android
+    needs: [pre-flight, merge-mods]
+    if: *builds-wanted
+    runs-on: *ubuntu
+    env: *android-env
     steps:
-      - uses: actions/checkout@v7
+      - *checkout
+
+      - name: Download merged mod pk3
+        if: needs.merge-mods.result == 'success'
+        uses: actions/download-artifact@v8
         with:
-          submodules: true
+          name: mod-pk3
+          path: app/src/main/assets
 
-      - *download-lnx-build-image
-      - *load-lnx-build-image
-
-      - name: Build
-        run: |
-          # Match host ownership and paths so artifacts and warning logs remain usable.
-          # Give the container user a writable home without mounting the host home.
-          docker run --rm \
-            --user "$(id -u):$(id -g)" --env HOME=/tmp \
-            --env CI --env CI_ETL_DESCRIBE --env CI_ETL_TAG \
-            --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
-            --workdir "$GITHUB_WORKSPACE" \
-            "$LNX_BUILD_IMAGE" ./easybuild.sh build -32
-
-      - name: Generate packages
-        run: |
-          # CPack needs the same container tools and absolute paths as the build.
-          docker run --rm \
-            --user "$(id -u):$(id -g)" --env HOME=/tmp \
-            --env CI --env CI_ETL_DESCRIBE --env CI_ETL_TAG \
-            --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
-            --workdir "$GITHUB_WORKSPACE/build" \
-            "$LNX_BUILD_IMAGE" cpack
-
-      - *collect-binaries
-      - *upload-binaries
-
-  lnx-aarch64:
-    runs-on: ubuntu-latest
-    needs: [pre-build, publish-lnx-aarch64-build-image]
-    # Publication may be skipped, but any requested publish must succeed.
-    if: >-
-      !cancelled() && needs.pre-build.result == 'success' &&
-      (needs.publish-lnx-aarch64-build-image.result == 'success' || needs.publish-lnx-aarch64-build-image.result == 'skipped')
-    env:
-      LNX_AARCH64_BUILD_IMAGE: ${{ github.event_name == 'pull_request' && needs.pre-build.outputs.lnx_aarch64_image == 'true' && 'etlegacy/lnx-aarch64-build:ci' || needs.publish-lnx-aarch64-build-image.outputs.image || 'etlegacy/lnx-aarch64-build:latest' }}
-      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
-      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
-      CI: "true"
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          submodules: true
-
-      # Build changed PR images on their only consumer's runner without publishing.
-      - name: Build Linux ARM64 build image
-        if: github.event_name == 'pull_request' && needs.pre-build.outputs.lnx_aarch64_image == 'true'
-        run: docker build misc/docker --file misc/docker/lnx-aarch64.Dockerfile --tag "$LNX_AARCH64_BUILD_IMAGE"
-
-      - name: Build and generate packages
-        run: |
-          # Match host ownership and paths so artifacts and warning logs remain usable.
-          docker run --rm \
-            --user "$(id -u):$(id -g)" --env HOME=/tmp \
-            --env CI --env CI_ETL_DESCRIBE --env CI_ETL_TAG \
-            --volume "$GITHUB_WORKSPACE:$GITHUB_WORKSPACE" \
-            --workdir "$GITHUB_WORKSPACE" \
-            "$LNX_AARCH64_BUILD_IMAGE" sh -c '
-              ./easybuild.sh build -RPIT -ninja &&
-              cd build &&
-              cpack
-            '
-
-      - *collect-binaries
-      - *upload-binaries
-
-  osx:
-    runs-on: macos-15
-    needs: [pre-build]
-    env:
-      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
-      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          submodules: true
-
-      - name: Install dependencies
-        run: |
-          brew bundle
-          brew install freetype librsvg graphicsmagick imagemagick
-
-      - name: Build
-        env:
-          SDKROOT: /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
-          DEVELOPER_DIR: /Library/Developer/CommandLineTools
-        shell: bash
-        run: |
-          ./easybuild.sh build -64 --osx=10.10 --osx-arc="x86_64;arm64" -j
-
-      - name: Generate packages
-        shell: bash
-        run: ./easybuild.sh package -64 --osx=10.10 --osx-arc="x86_64;arm64" -j
-
-      - *collect-binaries
-      - *upload-binaries
-
-  win:
-    runs-on: windows-2022
-    needs: [pre-build]
-    env:
-      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
-      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          submodules: true
-
-      - name: Build
-        shell: cmd
-        run: |
-          call .\easybuild.bat build
-
-      - name: Generate packages
-        shell: cmd
-        working-directory: build
-        run: cpack
-
-      - *collect-binaries
-      - *upload-binaries
-
-  win64:
-    runs-on: windows-2022
-    needs: [pre-build]
-    env:
-      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
-      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          submodules: true
-
-      - name: Build
-        shell: cmd
-        run: |
-          call .\easybuild.bat build -64
-
-      - name: Generate packages
-        shell: cmd
-        working-directory: build
-        run: cpack
-
-      - *collect-binaries
-      - *upload-binaries
-
-  android:
-    runs-on: ubuntu-latest
-    env:
-      CI_ETL_DESCRIBE: ${{ needs.pre-build.outputs.describe }}
-      CI_ETL_TAG: ${{ needs.pre-build.outputs.tag }}
-    needs: [pre-build]
-    container:
-      image: etlegacy/android-build
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          submodules: true
-
-      - name: Setup JDK
-        uses: actions/setup-java@v6
-        with:
-          distribution: "temurin"
-          java-version: "17"
-
-      - name: Build JoyStick Dependency
-        working-directory: ./app/libs/joystick
-        run: |
-          ./gradlew clean               --stacktrace --info
-          ./gradlew assembleRelease     --stacktrace --info
-          ./gradlew publishToMavenLocal --stacktrace --info
-
-      - name: Build and Generate Package
-        run: |
-          git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          ./gradlew clean assembleDebug
-          ls -R
+      - *android-build
 
       - name: Rename APK
         run: |
-          for FILE in ./app/build/outputs/apk/debug/*.apk; do mv "$FILE" "${FILE%-*}.apk"; done
-          ls app/build/outputs/apk/debug
+          for FILE in app/build/outputs/apk/*/*.apk; do mv "$FILE" "${FILE%-*}.apk"; done
+          ls -R app/build/outputs/apk
 
       - name: Collect Android binaries and libraries
         shell: bash
         run: |
           # Keep the ABI directories from the APK alongside the installable APK.
           mkdir -p android-binaries
-          cp app/build/outputs/apk/debug/*.apk android-binaries/
-          for apk in app/build/outputs/apk/debug/*.apk; do
+          for apk in app/build/outputs/apk/*/*.apk; do
+            cp "$apk" android-binaries/
             unzip -o "$apk" 'lib/*' -d android-binaries
           done
           tar -czf binaries.tar.gz -C android-binaries .
 
-      - *upload-binaries
+      - name: Upload platform binaries
+        uses: actions/upload-artifact@v7
+        with:
+          name: ci-binaries-android
+          path: binaries.tar.gz
+          if-no-files-found: error
+          compression-level: 0
+          overwrite: true
+          retention-days: 1
 
+      - name: Upload packages
+        if: *release
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-packages
+          path: app/build/outputs/apk/*/etlegacy*.apk
+          if-no-files-found: error
+          retention-days: 1
+
+  #    _____   _                     _
+  #   / ____| | |                   | |
+  #  | |      | |__     ___    ___  | | __  ___
+  #  | |      | '_ \   / _ \  / __| | |/ / / __|
+  #  | |____  | | | | |  __/ | (__  |   <  \__ \
+  #   \_____| |_| |_|  \___|  \___| |_|\_\ |___/
+  #     JOBSET
+  #
   check-build-artifacts:
-    runs-on: ubuntu-latest
-    needs: [android, lnx-aarch64, lnx32, lnx64, osx, win, win64]
-    # Check platforms explicitly: needs.* can include skipped image ancestors.
-    if: &platform-builds-succeeded >-
+    runs-on: *ubuntu
+    needs: [desktop-packages, android-package]
+    # Check the builds explicitly, the default success() also fails when only
+    # a mod build failed.
+    if: &builds-succeeded >-
       !cancelled() &&
-      needs.android.result == 'success' &&
-      needs.lnx-aarch64.result == 'success' &&
-      needs.lnx32.result == 'success' &&
-      needs.lnx64.result == 'success' &&
-      needs.osx.result == 'success' &&
-      needs.win.result == 'success' &&
-      needs.win64.result == 'success'
+      needs.desktop-packages.result == 'success' &&
+      needs.android-package.result == 'success'
+    # Disabled checks skip the steps rather than the check jobs, so the jobs
+    # still succeed and everything waiting for them keeps its conditions.
     steps:
-      - uses: actions/checkout@v7
+      - &checkout-full
+        if: *checks-enabled
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
           fetch-tags: true
 
       - name: Fetch all platform binaries
+        if: *checks-enabled
         uses: actions/download-artifact@v8
         with:
           pattern: ci-binaries-*
           path: .ci-binaries
 
       - name: Assemble distribution
+        if: *checks-enabled
         shell: bash
         run: |
           # Extract each platform into its own directory without losing file modes.
@@ -446,94 +525,311 @@ jobs:
             mkdir -p "dist/$platform"
             tar -xzf "$archive" -C "dist/$platform"
           done
-          tar -czf dist.tar.gz dist
 
-      - name: Publish distribution
-        if: github.run_attempt > 1
-        uses: actions/upload-artifact@v7
-        with:
-          name: ci-dist
-          path: dist.tar.gz
-          if-no-files-found: error
-          compression-level: 0
-          overwrite: true
-          retention-days: 1
-
-      - uses: prefix-dev/setup-pixi@v0.10.2
+      - &pixi
+        if: *checks-enabled
+        uses: prefix-dev/setup-pixi@v0.10.2
         with:
           pixi-version: v0.81.0
           cache: true
 
       - name: Check Build Artifacts
-        run: |
-          pixi run dist-manifest-check --github
+        if: *checks-enabled
+        run: pixi run dist-manifest-check --github
 
   check-compiler-warnings:
-    runs-on: ubuntu-latest
-    needs:
-      - android
-      - lnx-aarch64
-      - lnx32
-      - lnx64
-      - osx
-      - win
-      - win64
-    if: *platform-builds-succeeded
+    runs-on: *ubuntu
+    needs: [desktop-packages, android-package]
+    if: *builds-succeeded
     steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-          fetch-tags: true
-
-      - uses: prefix-dev/setup-pixi@v0.10.2
-        with:
-          pixi-version: v0.81.0
-          cache: true
+      - *checkout-full
+      - *pixi
 
       - name: Collect and Check GitHub Build Logs
+        if: *checks-enabled
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # fallback
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_RUN_ID: ${{ github.run_id }}
-        run: |
-          pixi run collect-and-check-gh-build-logs --github
+        run: pixi run collect-and-check-gh-build-logs --github
 
-  ci-discord-notify-on-failure:
+  #   _____           _       _   _         _
+  #  |  __ \         | |     | | (_)       | |
+  #  | |__) |  _   _ | |__   | |  _   ___  | |__
+  #  |  ___/  | | | || '_ \  | | | | / __| | '_ \
+  #  | |      | |_| || |_) | | | | | \__ \ | | | |
+  #  |_|       \__,_||_.__/  |_| |_| |___/ |_| |_|
+  #     JOBSET
+  #
+  publish-packages:
+    runs-on: *ubuntu
+    # Releases are only published once their packages passed the checks. The
+    # package jobs come before the checks, so their artifacts are complete.
     needs:
-      - pre-build
-      - publish-lnx-build-image
-      - publish-lnx-aarch64-build-image
-
-      - android
-      - lnx-aarch64
-      - lnx32
-      - lnx64
-      - osx
-      - win
-      - win64
-
-      - check-build-artifacts
-      - check-compiler-warnings
-    if: |
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/master' &&
-      failure()
-    runs-on: ubuntu-latest
+      [pre-flight, merge-mods, check-build-artifacts, check-compiler-warnings]
+    # Dry runs build everything a release builds, but only collect the
+    # packages into one run artifact instead of publishing them.
+    if: needs.pre-flight.outputs.release == 'true'
+    env:
+      LEGACY_AUTH: ${{ secrets.LEGACY_AUTH }}
+      LEGACY_UPLOAD_URL: ${{ secrets.LEGACY_UPLOAD_URL }}
     steps:
+      # Commits are only published once, e.g. a quiet week reuses the last build.
+      # Dry runs skip the check, which leaves hash_exists empty and so skips
+      # every step that publishes.
+      - name: Get version status
+        id: vars
+        if: ${{ !inputs.dry }}
+        env:
+          LEGACY_UPLOAD_CHECK_URL: ${{ secrets.LEGACY_UPLOAD_CHECK_URL }}
+        run: |
+          echo "hash_exists=$(curl -s -o /dev/null -w "%{http_code}" "${LEGACY_UPLOAD_CHECK_URL}${GITHUB_SHA}" 2>/dev/null)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/download-artifact@v8
+        if: &packages-wanted inputs.dry || steps.vars.outputs.hash_exists == '404'
+        with:
+          pattern: "*-packages"
+          path: packages
+
+      - uses: actions/download-artifact@v8
+        if: *packages-wanted
+        with:
+          name: mod-zip
+          path: packages/mod-zip
+
+      - name: Register version
+        if: steps.vars.outputs.hash_exists == '404'
+        env:
+          LEGACY_VERSION_REGISTER_URL: ${{ secrets.LEGACY_VERSION_REGISTER_URL }}
+        run: |
+          curl --fail -H "Authorization: Bearer $LEGACY_AUTH" -X POST -F"sha=$GITHUB_SHA" -F"uid=${{ needs.pre-flight.outputs.uid }}" -F"desc=${{ needs.pre-flight.outputs.describe }}" "$LEGACY_VERSION_REGISTER_URL"
+
+      - name: Upload packages
+        if: steps.vars.outputs.hash_exists == '404'
+        working-directory: packages
+        run: |
+          # Upload ids of the download slots on etlegacy.com per artifact.
+          declare -A upload_ids=(
+            [lnx64-packages]=ouJ8LoD4tpFE
+            [lnx32-packages]=3Eib0F0HiVcY
+            [osx-packages]=zrm0gXDJ0vvQ
+            [win-packages]=qkKkqKmiKHul
+            [win64-packages]=1EM7l2e6pqpA
+            [android-packages]=pqxx51ioaosg
+            [lnx-aarch64-packages]=r3tqepamenlf
+            [mod-zip]=eacan4jn14wt
+          )
+          for artifact in "${!upload_ids[@]}"; do
+            find "$artifact" -type f -exec curl --fail -H "Authorization: Bearer $LEGACY_AUTH" -X POST -H "Content-Type: multipart/form-data" -F "data=@{}" -F "upload_id=${upload_ids[$artifact]}" -F"sha=$GITHUB_SHA" "$LEGACY_UPLOAD_URL" \;
+          done
+
+      - name: Discord notification
+        if: steps.vars.outputs.hash_exists == '404' && needs.pre-flight.outputs.describe != needs.pre-flight.outputs.tag
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.PUBLISH_DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@0.4.0
+        with:
+          args: "<@&673533235887865879> Build from ETLegacy: ${{ needs.pre-flight.outputs.describe }} (${{ github.sha }}) has been published.\nDownload at: https://www.etlegacy.com/workflow-files"
+
+      # Dry runs keep exactly what would have been uploaded, one directory per
+      # download slot. The name must not match the "*-packages" pattern above,
+      # or a re-run would pick it up again.
+      - name: Upload dry run packages
+        if: inputs.dry
+        uses: actions/upload-artifact@v7
+        with:
+          name: dry-release
+          path: packages/
+          if-no-files-found: error
+          compression-level: 0
+          overwrite: true
+          retention-days: 1
+
+  # Only publish the server image once the packages are on the site. Dry runs
+  # keep the image as a run artifact instead of pushing it.
+  publish-server-image:
+    runs-on: *ubuntu
+    needs: [pre-flight, publish-packages]
+    env:
+      CI_ETL_DESCRIBE: ${{ needs.pre-flight.outputs.describe }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: lnx64-packages
+          path: build/package
+
+      - name: Setup folder
+        working-directory: build/package
+        run: |
+          cp ../../misc/docker/dedicated.Dockerfile ./Dockerfile
+          cp ../../misc/docker/entrypoint.sh ./entrypoint.sh
+
+      - name: Login to DockerHub Registry
+        if: &not-dry ${{ !inputs.dry }}
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+
+      # Dry runs skip the check, which leaves tag_missing empty and so skips
+      # pushing the latest image.
+      - name: Get the version
+        id: vars
+        if: *not-dry
+        run: |
+          tag_missing=$(docker manifest inspect "etlegacy/server:${CI_ETL_DESCRIBE}" > /dev/null ; echo $?)
+          echo "Current tag ${CI_ETL_DESCRIBE} is missing from Docker: $tag_missing"
+          echo "tag_missing=$tag_missing" >> "$GITHUB_OUTPUT"
+
+      - name: Build the server container
+        working-directory: build/package
+        run: docker build . --file Dockerfile --tag etlegacy/server:latest-patch
+
+      # Every release run refreshes the latest-patch version
+      - name: Push the latest-patch Docker image
+        if: *not-dry
+        run: docker push etlegacy/server:latest-patch
+
+      # Load it again with "docker load --input etlegacy-server.tar".
+      - name: Save the server container
+        if: inputs.dry
+        run: docker save --output etlegacy-server.tar etlegacy/server:latest-patch
+
+      - name: Upload the server container
+        if: inputs.dry
+        uses: actions/upload-artifact@v7
+        with:
+          name: dry-server-image
+          path: etlegacy-server.tar
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 1
+
+      # Create weekly tag when scheduled, which is never a dry run
+      - name: Push the weekly Docker image
+        if: github.event_name == 'schedule'
+        run: |
+          docker tag etlegacy/server:latest-patch etlegacy/server:weekly
+          docker push etlegacy/server:weekly
+
+      # If we are on a release tag, then also create the 'latest' tag on docker hub
+      - name: Push the latest Docker image
+        if: needs.pre-flight.outputs.describe == needs.pre-flight.outputs.tag && steps.vars.outputs.tag_missing == '1' && github.event_name != 'schedule'
+        run: |
+          docker tag etlegacy/server:latest-patch "etlegacy/server:${CI_ETL_DESCRIBE}"
+          docker tag etlegacy/server:latest-patch "etlegacy/server:latest"
+          docker push "etlegacy/server:${CI_ETL_DESCRIBE}"
+          docker push "etlegacy/server:latest"
+
+  # The snap is built from etlegacy-snap and released straight to the Snap
+  # Store, so there is nothing a dry run could keep.
+  publish-snap:
+    needs: publish-packages
+    if: ${{ !inputs.dry }}
+    uses: ./.github/workflows/snapcraft.yml
+    secrets: inherit
+
+  # Publish build images for changed Dockerfiles and point latest at the images
+  # of master, but only once every platform build succeeded with them and
+  # passed the artifact and compiler warning checks. Nothing waits for this:
+  # builds build a still missing image locally instead.
+  publish-build-images:
+    needs: [check-build-artifacts, check-compiler-warnings]
+    # Check the results explicitly, the default success() is also false when
+    # the mod phase was skipped. Only the main repository can push to the
+    # etlegacy DockerHub namespace.
+    if: >-
+      !cancelled() &&
+      needs.check-build-artifacts.result == 'success' &&
+      needs.check-compiler-warnings.result == 'success' &&
+      !inputs.dry &&
+      github.repository == 'etlegacy/etlegacy' &&
+      github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+    runs-on: *ubuntu
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [lnx-build, lnx-aarch64-build, android-build]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Login to DockerHub Registry
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+
+      - name: Publish image
+        run: misc/docker-ci.sh publish ${{ matrix.image }}
+
+  #   _____    _                                   _
+  #  |  __ \  (_)                                 | |
+  #  | |  | |  _   ___    ___    ___    _ __    __| |
+  #  | |  | | | | / __|  / __|  / _ \  | '__|  / _` |
+  #  | |__| | | | \__ \ | (__  | (_) | | |    | (_| |
+  #  |_____/  |_| |___/  \___|  \___/  |_|     \__,_|
+  #     JOBSET
+  #
+  report-failures:
+    # Listing the jobs nothing else depends on makes this one run last. New
+    # jobs that nothing depends on must be added here.
+    needs:
+      - publish-server-image
+      - publish-snap
+      - publish-build-images
+    # The results are read from the run itself, because failure() misses
+    # cancelled jobs, for example macOS jobs that never got a runner, which
+    # leave the run failed just the same. Cancelled runs stay quiet, dry runs
+    # only show the notification they would have sent.
+    if: ${{ !cancelled() && github.ref == 'refs/heads/master' }}
+    runs-on: *ubuntu
+    steps:
+      - name: Find failed jobs
+        id: jobs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          # Skipped jobs are fine, and this job has no conclusion yet.
+          failed=$(gh api --paginate "repos/$REPO/actions/runs/$RUN_ID/jobs?per_page=100" \
+            --jq '.jobs[] | select(.conclusion == "failure" or .conclusion == "cancelled" or .conclusion == "timed_out") | "\(.name): \(.conclusion)"')
+          if [ -n "$failed" ]; then
+            echo "$failed"
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No job failed or was cancelled."
+          fi
+
       - name: Notify Discord
+        if: steps.jobs.outputs.failed == 'true'
         env:
           DISCORD_WEBHOOK: ${{ secrets.LEGACY_CI_WEBHOOK }}
           COMMIT_SHA: ${{ github.sha }}
           REPO: ${{ github.repository }}
           RUN_ID: ${{ github.run_id }}
+          WORKFLOW: ${{ github.workflow }}
           DEVS_ROLE_ID: "260752921698762752"
+          DRY: ${{ inputs.dry }}
         run: |
           RUN_URL="https://github.com/${REPO}/actions/runs/${RUN_ID}"
 
-          MESSAGE="❌ **[failed on commit](<${RUN_URL}>)** \`${COMMIT_SHA}\` <@&${DEVS_ROLE_ID}>"
+          MESSAGE="❌ ${WORKFLOW} **[failed on commit](<${RUN_URL}>)** \`${COMMIT_SHA}\` <@&${DEVS_ROLE_ID}>"
+          PAYLOAD="{\"content\": \"$MESSAGE\", \"allowed_mentions\": {\"roles\": [\"$DEVS_ROLE_ID\"]}}"
+
+          # Dry runs annotate the run with what they would have sent instead.
+          # The webhook URL is a secret, so only its presence is shown.
+          if [ "$DRY" = true ]; then
+            webhook="set"
+            [ -n "$DISCORD_WEBHOOK" ] || webhook="not set"
+            echo "::error title=Discord notification not sent (dry run)::Would have posted to the Discord webhook of the LEGACY_CI_WEBHOOK secret ($webhook): $PAYLOAD"
+            exit 0
+          fi
 
           curl -H "Content-Type: application/json" \
                -X POST \
-               -d "{\"content\": \"$MESSAGE\", \"allowed_mentions\": {\"roles\": [\"$DEVS_ROLE_ID\"]}}" \
+               -d "$PAYLOAD" \
                "$DISCORD_WEBHOOK"
