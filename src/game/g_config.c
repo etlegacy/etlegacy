@@ -78,7 +78,7 @@ void G_PrintConfigs(gentity_t *ent)
 	configPointer = configNames;
 	for (i = 0; i < numconfigs; i++, configPointer += namelen + 1)
 	{
-		namelen = strlen(configPointer);
+		namelen = (int)strlen(configPointer);
 		Q_strncpyz(filename, Q_StrReplace(configPointer, ".config", ""), sizeof(filename));
 
 		if (!Q_stricmp(filename, g_customConfig.string))
