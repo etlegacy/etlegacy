@@ -2491,8 +2491,8 @@ void R_LoadEntities(lump_t *l)
 	p = ( char * )(fileBase + l->fileofs);
 
 	// store for reference by the cgame
-	w->entityString = ri.Hunk_Alloc(l->filelen + 1, h_low);
-	Q_strncpyz(w->entityString, p, l->filelen + 1);
+	w->entityString = ri.Hunk_Alloc((int)l->filelen + 1, h_low);
+	Q_strncpyz(w->entityString, p, (int)l->filelen + 1);
 	w->entityParsePoint = w->entityString;
 
 	token = COM_ParseExt(&p, qtrue);
@@ -2556,7 +2556,7 @@ qboolean R_GetEntityToken(char *buffer, size_t size)
 	const char *s;
 
 	s = COM_Parse(&s_worldData.entityParsePoint);
-	Q_strncpyz(buffer, s, size);
+	Q_strncpyz(buffer, s, (int)size);
 	if (!s_worldData.entityParsePoint || !s[0])
 	{
 		s_worldData.entityParsePoint = s_worldData.entityString;
@@ -2643,9 +2643,9 @@ void RE_LoadWorldMap(const char *name)
 
 	// set map meta dir for lightmaps
 	// THIS MUST BE IN SYNC WITH Q3MAP2
-	nameLength  = strlen(name) + 1;
-	tr.worldDir = ri.Hunk_Alloc(sizeof(char) * nameLength, h_low);
-	Q_strncpyz(tr.worldDir, name, sizeof(char) * nameLength);
+	nameLength  = (int)strlen(name) + 1;
+	tr.worldDir = ri.Hunk_Alloc((int)(sizeof(char) * nameLength), h_low);
+	Q_strncpyz(tr.worldDir, name, (int)(sizeof(char) * nameLength));
 	RE_StripExtensionForWorldDir(tr.worldDir, tr.worldDir);
 
 	// clear tr.world so if the level fails to load, the next
