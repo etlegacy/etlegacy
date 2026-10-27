@@ -34,15 +34,10 @@ Use these settings:
   - `8-bit` unsigned PCM, or
   - `16-bit` little-endian PCM
 - Channels: `1` (mono) or `2` (stereo)
-- Sample rate: commonly `22050` Hz or `44100` Hz
-
-Recommended for music/streaming tracks:
-
-- `22050` Hz stereo PCM WAV (this is the classic ET expectation and avoids warnings in the sound streamer path)
-
-Notes:
-
-- Avoid ADPCM/float/compressed WAV variants if you need strict 2.60b compatibility.
+- Sample rate (anything else will produce an engine warning):
+  - For ordinary sounds: `11025` Hz or `22050` Hz or `44100` Hz
+  - For streaming sounds (e.g. music): `22050` Hz
+- Avoid ADPCM/float/compressed WAV variants if you need strict 2.60b compatibility
 
 ### `.pk3` Archives
 
