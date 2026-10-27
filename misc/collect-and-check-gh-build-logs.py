@@ -7,6 +7,8 @@ import re
 import requests
 import sys
 
+NON_PERTINENT_ARCHES = ["android", "win64"]
+
 EXPLICITLY_IGNORED_WARNINGS = {
     "android": [],
     "lnx-aarch64": [
@@ -121,7 +123,7 @@ def check_logs(args):
         found_logs_count += 1
         arch = (txt_file.split("job-logs-")[1]).split(".txt")[0]
 
-        is_non_pertinent = "android" in txt_file or "win64" in txt_file
+        is_non_pertinent = arch in NON_PERTINENT_ARCHES
         pertinent_lines, skipped_lines = clean_and_process_file(arch, txt_file)
 
         if not args.show_skipped and len(pertinent_lines) <= 0:
@@ -160,8 +162,9 @@ def check_logs(args):
         f"{skipped} warnings were skipped/excluded (assumed to not be directly from ETL, but deps)..."
     )
     if failed > 0:
+        ignored_arches = ", ".join(arch.capitalize() for arch in NON_PERTINENT_ARCHES)
         print(
-            f"{failed} pertinent warnings were emitted (ignoring Android), failing..."
+            f"{failed} pertinent warnings were emitted (ignoring {ignored_arches}), failing..."
         )
         exit(1)
     else:
