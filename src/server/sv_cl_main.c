@@ -258,7 +258,7 @@ void SV_CL_CheckForResend(void)
 			Info_SetValueForKey(info, "cg_uinfo", "0 0 40");
 
 			Com_sprintf(data, sizeof(data), "connect \"%s\"", info);
-			NET_OutOfBandData(NS_CLIENT, &svclc.serverAddress, (const char *)data, strlen(data));
+			NET_OutOfBandData(NS_CLIENT, &svclc.serverAddress, (const char *)data, (int)strlen(data));
 
 			// the most current userinfo has been sent, so watch for any
 			// newer changes to userinfo variables
@@ -584,7 +584,7 @@ void SV_CL_ConfigstringModified(void)
 			continue;       // leave with the default empty string
 		}
 
-		len = strlen(dup);
+		len = (int)strlen(dup);
 
 		if (len + 1 + svcl.gameState.dataCount > MAX_GAMESTATE_CHARS)
 		{
