@@ -355,7 +355,7 @@ static void I18N_RecordMissing(const char *msgid)
 		}
 
 		Com_sprintf(line, sizeof(line), "TRANSLATE(\"%s\");\n", msgid);
-		trap_FS_Write(line, strlen(line), file);
+		trap_FS_Write(line, (int)strlen(line), file);
 		trap_FS_FCloseFile(file);
 	}
 #else
@@ -370,7 +370,7 @@ static void I18N_RecordMissing(const char *msgid)
 	}
 
 	Com_sprintf(line, sizeof(line), "TRANSLATE(\"%s\");\n", msgid);
-	FS_Write(line, strlen(line), file);
+	FS_Write(line, (int)strlen(line), file);
 	FS_FCloseFile(file);
 #endif
 }
