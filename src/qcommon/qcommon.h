@@ -1076,6 +1076,8 @@ void Com_SetRecommended(void);
 // if match is NULL, all set commands will be executed, otherwise
 // only a set with the exact name.  Only used during startup.
 
+extern qboolean com_noConfigWrite;
+
 // profile functions
 void Com_TrackProfile(const char *profile_path);
 qboolean Com_CheckProfile(void);

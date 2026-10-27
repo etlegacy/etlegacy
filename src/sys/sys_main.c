@@ -1045,6 +1045,7 @@ void Sys_ParseArgsShowHelpAndExit(int ret)
 	        "Options:\n"
 	        "  -h, --help                 Show help and exit\n"
 	        "  -v, --version              Show version and exit\n"
+	        "  --no-config-write          Disable config writing for this session\n"
 #ifndef DEDICATED
 	        "  -t, --title <title>        Set the game window title\n"
 #endif
@@ -1153,6 +1154,11 @@ void Sys_ParseArgs(int argc, char **argv)
 			argv[i - 1] = NULL;
 		}
 #endif
+		else if (!Q_stricmp(argv[i], "--no-config-write"))
+		{
+			com_noConfigWrite = qtrue;
+			argv[i]           = NULL;
+		}
 		// let's try to catch some errors
 		else if (!strncmp(argv[i], "--", 2))
 		{

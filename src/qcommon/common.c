@@ -177,6 +177,7 @@ int     com_hunkusedvalue;
 
 qboolean com_errorEntered;
 qboolean com_fullyInitialized;
+qboolean com_noConfigWrite = qfalse;  // No config writing for this session
 
 char com_errorMessage[MAX_PRINT_MSG];
 
@@ -3279,6 +3280,12 @@ void Com_WriteConfigToFile(const char *filename, qboolean nodefaults)
 {
 	fileHandle_t f;
 
+	if (com_noConfigWrite)
+	{
+		Com_Printf("Config writing disabled by --no-config-write.\n");
+		return;
+	}
+
 	f = FS_FOpenFileWrite(filename);
 	if (!f)
 	{
@@ -3300,6 +3307,11 @@ void Com_WriteConfiguration(void)
 	// if we are quiting without fully initializing, make sure
 	// we don't write out anything
 	if (!com_fullyInitialized)
+	{
+		return;
+	}
+
+	if (com_noConfigWrite)
 	{
 		return;
 	}
