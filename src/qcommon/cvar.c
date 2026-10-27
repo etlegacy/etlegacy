@@ -200,7 +200,7 @@ void Cvar_VariableStringBuffer(const char *var_name, char *buffer, size_t bufsiz
 	}
 	else
 	{
-		Q_strncpyz(buffer, var->string, bufsize);
+		Q_strncpyz(buffer, var->string, (int)bufsize);
 	}
 }
 
@@ -223,11 +223,11 @@ void Cvar_LatchedVariableStringBuffer(const char *var_name, char *buffer, size_t
 	{
 		if (var->latchedString)
 		{
-			Q_strncpyz(buffer, var->latchedString, bufsize);
+			Q_strncpyz(buffer, var->latchedString, (int)bufsize);
 		}
 		else
 		{
-			Q_strncpyz(buffer, var->string, bufsize);
+			Q_strncpyz(buffer, var->string, (int)bufsize);
 		}
 	}
 }
@@ -1695,7 +1695,7 @@ char *Cvar_InfoString_Big(int bit)
  */
 void Cvar_InfoStringBuffer(int bit, char *buff, size_t buffsize)
 {
-	Q_strncpyz(buff, Cvar_InfoString(bit), buffsize);
+	Q_strncpyz(buff, Cvar_InfoString(bit), (int)buffsize);
 }
 
 /**

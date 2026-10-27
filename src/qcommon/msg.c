@@ -1095,7 +1095,7 @@ void MSG_ReportChangeVectors_f(void)
 typedef struct
 {
 	char *name;
-	int offset;
+	size_t offset;
 	int bits;           // 0 = float
 	int used;
 } netField_t;
@@ -1103,7 +1103,7 @@ typedef struct
 /**
  * @brief Using the stringizing operator to save typing...
  */
-#define NETF(x) # x, (int)(size_t)&((entityState_t *)0)->x
+#define NETF(x) # x, offsetof(entityState_t, x)
 
 netField_t entityStateFields[] =
 {
@@ -1594,7 +1594,7 @@ entityShared_t communication
 #define CLIENTNUM_BITS  LOG2_8BIT(MAX_CLIENTS)
 
 /// Using the stringizing operator to save typing...
-#define ESF(x) # x, (int)(size_t)&((entityShared_t *)0)->x
+#define ESF(x) # x, offsetof(entityShared_t, x)
 
 netField_t entitySharedFields[] =
 {
@@ -2096,7 +2096,7 @@ player_state_t communication
 */
 
 /// Using the stringizing operator to save typing...
-#define PSF(x) # x, (int)(size_t)&((playerState_t *)0)->x
+#define PSF(x) # x, offsetof(playerState_t, x)
 
 netField_t playerStateFields[] =
 {
