@@ -220,7 +220,7 @@ static int _et_G_LogPrint(lua_State *L)
 			Com_sprintf(string, sizeof(string), "%i:%i%i %s", min, tens, sec, text);
 		}
 
-		trap_FS_Write(string, strlen(string), level.logFile);
+		trap_FS_Write(string, (int)strlen(string), level.logFile);
 	}
 	return 0;
 }
@@ -547,7 +547,7 @@ static int _et_trap_FS_GetFileList(lua_State *L)
 
 	for (i = 0; i < numfiles; i++, filenameptr += filelen + 1)
 	{
-		filelen = strlen(filenameptr);
+		filelen = (int)strlen(filenameptr);
 		Q_strncpyz(filename, filenameptr, sizeof(filename));
 
 		lua_pushstring(L, filename);

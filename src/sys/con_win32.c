@@ -147,7 +147,7 @@ static void CON_HistPrev(void)
 	qconsole_history_pos = pos;
 	Q_strncpyz(qconsole_line, qconsole_history[qconsole_history_pos],
 	           sizeof(qconsole_line));
-	qconsole_linelen = strlen(qconsole_line);
+	qconsole_linelen = (int)strlen(qconsole_line);
 }
 
 /**
@@ -169,7 +169,7 @@ static void CON_HistNext(void)
 	qconsole_history_pos = pos;
 	Q_strncpyz(qconsole_line, qconsole_history[qconsole_history_pos],
 	           sizeof(qconsole_line));
-	qconsole_linelen = strlen(qconsole_line);
+	qconsole_linelen = (int)strlen(qconsole_line);
 }
 
 /**
@@ -388,7 +388,7 @@ char *CON_Input(void)
 			Field_AutoComplete(&f);
 			Q_strncpyz(qconsole_line, f.buffer,
 			           sizeof(qconsole_line));
-			qconsole_linelen = strlen(qconsole_line);
+			qconsole_linelen = (int)strlen(qconsole_line);
 			break;
 		}
 

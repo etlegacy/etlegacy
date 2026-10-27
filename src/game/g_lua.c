@@ -764,7 +764,7 @@ static int _et_trap_FS_GetFileList(lua_State *L)
 
 	for (i = 0; i < numfiles; i++, filenameptr += filelen + 1)
 	{
-		filelen = strlen(filenameptr);
+		filelen = (int)strlen(filenameptr);
 		Q_strncpyz(filename, filenameptr, sizeof(filename));
 
 		lua_pushstring(L, filename);
@@ -1870,7 +1870,7 @@ static int _et_G_GetSpawnVar(lua_State *L)
 		return 1;
 	}
 
-	ofs = fields[index].ofs;
+	ofs = (int)fields[index].ofs;
 
 	switch (type)
 	{
@@ -1962,7 +1962,7 @@ static int _et_G_SetSpawnVar(lua_State *L)
 		return 1;
 	}
 
-	ofs = fields[index].ofs;
+	ofs = (int)fields[index].ofs;
 
 	switch (type)
 	{
@@ -1982,8 +1982,8 @@ static int _et_G_SetSpawnVar(lua_State *L)
 		else
 		{
 			Com_Dealloc(*(char **)((byte *)ent + ofs));
-			*(char **)((byte *)ent + ofs) = Com_Allocate(strlen(buffer));
-			Q_strncpyz(*(char **)((byte *)ent + ofs), buffer, strlen(buffer));
+			*(char **)((byte *)ent + ofs) = Com_Allocate((int)strlen(buffer));
+			Q_strncpyz(*(char **)((byte *)ent + ofs), buffer, (int)strlen(buffer));
 		}
 		return 1;
 	case F_VECTOR:
@@ -2159,13 +2159,13 @@ static int _et_gentity_set(lua_State *L)
 		buffer = luaL_checkstring(L, 3);
 		if (field->flags & FIELD_FLAG_NOPTR)
 		{
-			Q_strncpyz((char *)addr, buffer, strlen((char *)addr));
+			Q_strncpyz((char *)addr, buffer, (int)strlen((char *)addr));
 		}
 		else
 		{
 			Com_Dealloc(*(char **)addr);
-			*(char **)addr = Com_Allocate(strlen(buffer) + 1);
-			Q_strncpyz(*(char **)addr, buffer, strlen(buffer));
+			*(char **)addr = Com_Allocate((int)strlen(buffer) + 1);
+			Q_strncpyz(*(char **)addr, buffer, (int)strlen(buffer));
 		}
 		break;
 	case FIELD_FLOAT:
@@ -2697,7 +2697,7 @@ qboolean G_LuaInit(void)
 	else if (lua_modules.string[0])
 	{
 		Q_strncpyz(buff, lua_modules.string, sizeof(buff));
-		len = strlen(buff);
+		len = (int)strlen(buff);
 		crt = buff;
 		for (i = 0; i <= len; i++)
 		{
@@ -4578,7 +4578,7 @@ const char *G_LuaHook_Chat(int sender, int receiver, const char *message, char *
 			    lua_isstring(vm->L, -1))
 			{
 				result = luaL_checkstring(vm->L, -1);
-				Q_strncpyz(buffer, result, bufsize);
+				Q_strncpyz(buffer, result, (int)bufsize);
 				newMessage = buffer;
 			}
 			lua_pop(vm->L, 2);

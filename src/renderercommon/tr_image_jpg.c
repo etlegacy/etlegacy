@@ -403,7 +403,7 @@ size_t RE_SaveJPGToBuffer(byte *buffer, size_t bufSize, int quality, int image_w
 
 	/* Step 2: specify data destination (eg, a file) */
 	/* Note: steps 2 and 3 can be done in either order. */
-	jpegDest(&cinfo, buffer, bufSize);
+	jpegDest(&cinfo, buffer, (int)bufSize);
 
 	/* Step 3: set parameters for compression */
 	cinfo.image_width      = image_width; /* image width and height, in pixels */
@@ -470,7 +470,7 @@ void RE_SaveJPG(const char *filename, int quality, int image_width, int image_he
 	bufSize = RE_SaveJPGToBuffer(out, bufSize, quality, image_width,
 	                             image_height, image_buffer, padding);
 
-	ri.FS_WriteFile(filename, out, bufSize);
+	ri.FS_WriteFile(filename, out, (int)bufSize);
 
 	ri.Hunk_FreeTempMemory(out);
 }

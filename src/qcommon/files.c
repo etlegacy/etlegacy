@@ -2344,7 +2344,7 @@ void QDECL FS_Printf(fileHandle_t h, const char *fmt, ...)
 	Q_vsnprintf(msg, sizeof(msg), fmt, argptr);
 	va_end(argptr);
 
-	FS_Write(msg, strlen(msg), h);
+	FS_Write(msg, (int)strlen(msg), h);
 }
 
 #define PK3_SEEK_BUFFER_SIZE 65536
@@ -2963,7 +2963,7 @@ static int FS_ReturnPath(const char *zname, char *zpath, int *depth)
 		}
 		at++;
 	}
-	Q_strncpyz(zpath, zname, len + 1);
+	Q_strncpyz(zpath, zname, (int)len + 1);
 	*depth = newdep;
 
 	return len;
@@ -3090,7 +3090,7 @@ char **FS_ListFilteredFiles(const char *path, const char *extension, const char 
 					}
 
 					// check for extension match
-					length = strlen(name);
+					length = (int)strlen(name);
 					if (length < extensionLength)
 					{
 						continue;
@@ -3218,10 +3218,10 @@ int FS_GetFileList(const char *path, const char *extension, char *listbuf, int b
 
 	for (i = 0; i < nFiles; i++)
 	{
-		nLen = strlen(pFiles[i]) + 1;
+		nLen = (int)strlen(pFiles[i]) + 1;
 		if (nTotal + nLen + 1 < bufsize)
 		{
-			Q_strncpyz(listbuf, pFiles[i], bufsize - nTotal);
+			Q_strncpyz(listbuf, pFiles[i], (int)(bufsize - nTotal));
 			listbuf += nLen;
 			nTotal  += nLen;
 		}
@@ -3405,7 +3405,7 @@ int FS_GetModList(char *listbuf, int bufsize)
 
 			if (nPaks > 0)
 			{
-				nLen = strlen(name) + 1;
+				nLen = (int)strlen(name) + 1;
 				// nLen is the length of the mod path
 				// we need to see if there is a description available
 				descPath[0] = '\0';
@@ -3437,13 +3437,13 @@ int FS_GetModList(char *listbuf, int bufsize)
 					FS_FCloseFile(descHandle);
 				}
 
-				nDescLen = strlen(descPath) + 1;
+				nDescLen = (int)strlen(descPath) + 1;
 
 				if (nTotal + nLen + 1 + nDescLen + 1 < bufsize)
 				{
-					Q_strncpyz(listbuf, name, bufsize - nTotal);
+					Q_strncpyz(listbuf, name, (int)(bufsize - nTotal));
 					listbuf += nLen;
-					Q_strncpyz(listbuf, descPath, bufsize - nTotal - nLen);
+					Q_strncpyz(listbuf, descPath, (int)(bufsize - nTotal - nLen));
 					listbuf += nDescLen;
 					nTotal  += nLen + nDescLen;
 					nMods++;

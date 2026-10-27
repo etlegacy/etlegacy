@@ -286,7 +286,7 @@ void SV_Netchan_Transmit(client_t *client, msg_t *msg)
 				if (count > MAX_NETCHAN_QUEUE)
 				{
 					Com_Printf(S_COLOR_YELLOW "WARNING: netchan queue overflow for %s [%s] "
-					           "- dropping client (queued=%d, msg=%d bytes)\n",
+					                          "- dropping client (queued=%d, msg=%d bytes)\n",
 					           client->name,
 					           NET_AdrToString(&client->netchan.remoteAddress),
 					           count, msg->cursize);
@@ -304,7 +304,7 @@ void SV_Netchan_Transmit(client_t *client, msg_t *msg)
 		netbuf->lastClientCommandString[0] = '\0';
 		// store the msg, we can't store it encoded, as the encoding depends on stuff we still have to finish sending
 		MSG_Copy(&netbuf->msg, netbuf->msgBuffer, msg->cursize, msg);
-		Q_strncpyz(netbuf->lastClientCommandString, client->lastClientCommandString, cmdLen);
+		Q_strncpyz(netbuf->lastClientCommandString, client->lastClientCommandString, (int)cmdLen);
 		netbuf->next = NULL;
 		// insert it in the queue, the message will be encoded and sent later
 		*client->netchan_end_queue = netbuf;

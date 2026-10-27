@@ -414,7 +414,7 @@ const char *GetParsedIP(const char *ipadd)
 char *CheckUserinfo(int clientNum, char *userinfo)
 {
 	char         *value;
-	unsigned int length = strlen(userinfo);
+	unsigned int length = (unsigned int)strlen(userinfo);
 	int          i, slashCount = 0, count = 0;
 
 	if (length < 1)

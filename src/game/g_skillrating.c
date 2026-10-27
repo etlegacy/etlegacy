@@ -156,7 +156,7 @@ int G_SkillRatingPrepareMatchRating(void)
 		return 1;
 	}
 
-	result = sqlite3_prepare(level.database.db, SRMATCH_SQLWRAP_DELETE, strlen(SRMATCH_SQLWRAP_DELETE), &sqlstmt, NULL);
+	result = sqlite3_prepare(level.database.db, SRMATCH_SQLWRAP_DELETE, (int)strlen(SRMATCH_SQLWRAP_DELETE), &sqlstmt, NULL);
 
 	if (result != SQLITE_OK)
 	{
@@ -209,7 +209,7 @@ int G_SkillRatingGetMatchRating(srData_t *sr_data)
 
 	sql = va(SRMATCH_SQLWRAP_SELECT, sr_data->guid);
 
-	result = sqlite3_prepare(level.database.db, sql, strlen(sql), &sqlstmt, NULL);
+	result = sqlite3_prepare(level.database.db, sql, (int)strlen(sql), &sqlstmt, NULL);
 
 	if (result != SQLITE_OK)
 	{
@@ -284,7 +284,7 @@ int G_SkillRatingSetMatchRating(srData_t *sr_data)
 
 	sql = va(SRMATCH_SQLWRAP_SELECT, sr_data->guid);
 
-	result = sqlite3_prepare(level.database.db, sql, strlen(sql), &sqlstmt, NULL);
+	result = sqlite3_prepare(level.database.db, sql, (int)strlen(sql), &sqlstmt, NULL);
 
 	if (result != SQLITE_OK)
 	{
@@ -351,7 +351,7 @@ int G_SkillRatingGetUserRating(srData_t *sr_data)
 
 	sql = va(SRUSERS_SQLWRAP_SELECT, sr_data->guid);
 
-	result = sqlite3_prepare(level.database.db, sql, strlen(sql), &sqlstmt, NULL);
+	result = sqlite3_prepare(level.database.db, sql, (int)strlen(sql), &sqlstmt, NULL);
 
 	if (result != SQLITE_OK)
 	{
@@ -420,7 +420,7 @@ int G_SkillRatingSetUserRating(srData_t *sr_data)
 
 	sql = va(SRUSERS_SQLWRAP_SELECT, sr_data->guid);
 
-	result = sqlite3_prepare(level.database.db, sql, strlen(sql), &sqlstmt, NULL);
+	result = sqlite3_prepare(level.database.db, sql, (int)strlen(sql), &sqlstmt, NULL);
 
 	if (result != SQLITE_OK)
 	{
@@ -659,7 +659,7 @@ float G_SkillRatingGetMapRating(char *mapname)
 
 	sql = va(SRMAPS_SQLWRAP_SELECT, mapname);
 
-	result = sqlite3_prepare(level.database.db, sql, strlen(sql), &sqlstmt, NULL);
+	result = sqlite3_prepare(level.database.db, sql, (int)strlen(sql), &sqlstmt, NULL);
 
 	if (result != SQLITE_OK)
 	{
@@ -742,7 +742,7 @@ void G_SkillRatingSetMapRating(char *mapname, int winner)
 
 	sql = va(SRMAPS_SQLWRAP_SELECT, mapname);
 
-	result = sqlite3_prepare(level.database.db, sql, strlen(sql), &sqlstmt, NULL);
+	result = sqlite3_prepare(level.database.db, sql, (int)strlen(sql), &sqlstmt, NULL);
 
 	if (result != SQLITE_OK)
 	{
@@ -840,7 +840,7 @@ static qboolean G_SkillRatingHasMatchPlayers(void)
 		return qfalse;
 	}
 
-	result = sqlite3_prepare(level.database.db, SRMATCH_SQLWRAP_TABLE, strlen(SRMATCH_SQLWRAP_TABLE), &sqlstmt, NULL);
+	result = sqlite3_prepare(level.database.db, SRMATCH_SQLWRAP_TABLE, (int)strlen(SRMATCH_SQLWRAP_TABLE), &sqlstmt, NULL);
 
 	if (result != SQLITE_OK)
 	{
@@ -1068,7 +1068,7 @@ void G_UpdateSkillRating(int winner)
 	}
 
 	// player additive factors
-	result = sqlite3_prepare(level.database.db, SRMATCH_SQLWRAP_TABLE, strlen(SRMATCH_SQLWRAP_TABLE), &sqlstmt, NULL);
+	result = sqlite3_prepare(level.database.db, SRMATCH_SQLWRAP_TABLE, (int)strlen(SRMATCH_SQLWRAP_TABLE), &sqlstmt, NULL);
 
 	if (result != SQLITE_OK)
 	{
@@ -1161,7 +1161,7 @@ void G_UpdateSkillRating(int winner)
 	w = W(t, EPSILON / c);
 
 	// update players rating
-	result = sqlite3_prepare(level.database.db, SRMATCH_SQLWRAP_TABLE, strlen(SRMATCH_SQLWRAP_TABLE), &sqlstmt, NULL);
+	result = sqlite3_prepare(level.database.db, SRMATCH_SQLWRAP_TABLE, (int)strlen(SRMATCH_SQLWRAP_TABLE), &sqlstmt, NULL);
 
 	if (result != SQLITE_OK)
 	{
@@ -1358,7 +1358,7 @@ float G_CalculateWinProbability(int team)
 		sqlite3_stmt *sqlstmt;
 		srData_t     sr_data;
 
-		result = sqlite3_prepare(level.database.db, SRMATCH_SQLWRAP_TABLE, strlen(SRMATCH_SQLWRAP_TABLE), &sqlstmt, NULL);
+		result = sqlite3_prepare(level.database.db, SRMATCH_SQLWRAP_TABLE, (int)strlen(SRMATCH_SQLWRAP_TABLE), &sqlstmt, NULL);
 
 		if (result != SQLITE_OK)
 		{

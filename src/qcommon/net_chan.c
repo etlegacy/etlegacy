@@ -689,7 +689,7 @@ void QDECL NET_OutOfBandPrint(netsrc_t sock, const netadr_t *adr, const char *fo
 	va_end(argptr);
 
 	// send the datagram
-	NET_SendPacket(sock, strlen(string), string, adr);
+	NET_SendPacket(sock, (int)strlen(string), string, adr);
 }
 
 /**

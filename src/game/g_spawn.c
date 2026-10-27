@@ -700,7 +700,7 @@ char *G_NewString(const char *string)
 	char         *newb, *new_p;
 	unsigned int i, l;
 
-	l = strlen(string) + 1;
+	l = (unsigned int)strlen(string) + 1;
 
 	newb = G_Alloc(l);
 
@@ -871,7 +871,7 @@ char *G_AddSpawnVarToken(const char *string)
 	dest = level.spawnVarChars + level.numSpawnVarChars;
 	Com_Memcpy(dest, string, l + 1);
 
-	level.numSpawnVarChars += l + 1;
+	level.numSpawnVarChars += (int)l + 1;
 
 	return dest;
 }

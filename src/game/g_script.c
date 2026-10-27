@@ -461,7 +461,7 @@ void G_Script_ScriptParse(gentity_t *ent)
 				Q_strcat(params, sizeof(params), token);
 			}
 
-			len = strlen(params);
+			len = (int)strlen(params);
 
 			if (len)          // copy the params into the event
 			{
@@ -572,8 +572,8 @@ void G_Script_ScriptParse(gentity_t *ent)
 
 				if (strlen(params))       // copy the params into the event
 				{
-					curEvent->stack.items[curEvent->stack.numItems].params = G_Alloc(strlen(params) + 1);
-					Q_strncpyz(curEvent->stack.items[curEvent->stack.numItems].params, params, strlen(params) + 1);
+					curEvent->stack.items[curEvent->stack.numItems].params = G_Alloc((unsigned int)strlen(params) + 1);
+					Q_strncpyz(curEvent->stack.items[curEvent->stack.numItems].params, params, (int)strlen(params) + 1);
 				}
 
 				curEvent->stack.numItems++;

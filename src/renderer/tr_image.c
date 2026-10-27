@@ -1621,7 +1621,7 @@ qboolean RE_GetSkinModel(qhandle_t skinid, const char *type, char *name)
 	int    hash;
 	skin_t *skin = tr.skins[skinid];
 
-	hash = Com_HashKey((char *)type, strlen(type));
+	hash = Com_HashKey((char *)type, (int)strlen(type));
 
 	for (i = 0; i < skin->numModels; i++)
 	{

@@ -869,7 +869,7 @@ void QDECL G_LogPrintf(const char *fmt, ...)
 
 	Com_sprintf(string, sizeof(string), "%8i ", level.time);
 
-	l = strlen(string);
+	l = (int)strlen(string);
 
 	va_start(argptr, fmt);
 	Q_vsnprintf(string + l, sizeof(string) - l, fmt, argptr);
@@ -885,7 +885,7 @@ void QDECL G_LogPrintf(const char *fmt, ...)
 		return;
 	}
 
-	trap_FS_Write(string, strlen(string), level.logFile);
+	trap_FS_Write(string, (int)strlen(string), level.logFile);
 }
 
 void QDECL G_LogPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));

@@ -232,12 +232,12 @@ const char *String_Alloc(const char *p)
 		str = str->next;
 	}
 
-	len = strlen(p);
+	len = (int)strlen(p);
 	if (len + strPoolIndex + 1 < STRING_POOL_SIZE)
 	{
 		int ph = strPoolIndex;
 
-		Q_strncpyz(&strPool[strPoolIndex], p, sizeof(strPool) - (strPoolIndex));
+		Q_strncpyz(&strPool[strPoolIndex], p, (int)(sizeof(strPool) - strPoolIndex));
 		strPoolIndex += len + 1;
 
 		str  = strHandle[hash];
@@ -1380,7 +1380,7 @@ void BG_PanelButton_RenderEdit(panel_button_t *button)
 
 		if (BG_PanelButtons_GetFocusButton() == button)
 		{
-			DC->drawTextWithCursorExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->colour, buffer + (button->data[2] <= offset ? button->data[2] : offset), button->data[2] <= offset ? 0 : button->data[2] - offset, trap_Key_GetOverstrikeMode() ? "_" : "|", offset ? Q_UTF8_Strlen(buffer + offset) : 0, button->font->style, button->font->font);
+			DC->drawTextWithCursorExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->colour, buffer + (button->data[2] <= offset ? button->data[2] : offset), button->data[2] <= offset ? 0 : button->data[2] - offset, trap_Key_GetOverstrikeMode() ? "_" : "|", offset ? (int)Q_UTF8_Strlen(buffer + offset) : 0, button->font->style, button->font->font);
 		}
 		else
 		{
@@ -1403,7 +1403,7 @@ void BG_PanelButton_RenderEdit(panel_button_t *button)
 
 		if (BG_PanelButtons_GetFocusButton())
 		{
-			DC->drawTextWithCursorExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->colour, s + (button->data[2] <= offset ? button->data[2] : offset), button->data[2] <= offset ? 0 : button->data[2] - offset, trap_Key_GetOverstrikeMode() ? "_" : "|", offset ? Q_UTF8_Strlen(s + offset) : 0, button->font->style, button->font->font);
+			DC->drawTextWithCursorExt(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, button->font->colour, s + (button->data[2] <= offset ? button->data[2] : offset), button->data[2] <= offset ? 0 : button->data[2] - offset, trap_Key_GetOverstrikeMode() ? "_" : "|", offset ? (int)Q_UTF8_Strlen(s + offset) : 0, button->font->style, button->font->font);
 		}
 		else
 		{
@@ -1479,7 +1479,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 
 					button->data[2]--;
 
-					offset    = Q_UTF8_ByteOffset(s, stringLen - 1);
+					offset    = Q_UTF8_ByteOffset(s, (int)stringLen - 1);
 					s[offset] = '\0';
 
 					if (useCvar)
@@ -1529,7 +1529,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 				return qtrue;
 			}
 
-			Q_UTF8_Insert(s, stringLen, button->data[2], key, trap_Key_GetOverstrikeMode());
+			Q_UTF8_Insert(s, (int)stringLen, button->data[2], key, trap_Key_GetOverstrikeMode());
 
 			if (useCvar)
 			{
@@ -1553,7 +1553,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 					memmove(s + offset,
 					        s + offset + charWidth, len - offset);
 
-					offset    = Q_UTF8_ByteOffset(s, stringLen - 1);
+					offset    = Q_UTF8_ByteOffset(s, (int)stringLen - 1);
 					s[offset] = '\0';
 
 					if (useCvar)
@@ -1589,7 +1589,7 @@ qboolean BG_PanelButton_EditClick(panel_button_t *button, int key)
 			}
 			else if (key == K_END || key == K_KP_END)
 			{
-				button->data[2] = stringLen;
+				button->data[2] = (int)stringLen;
 				return qtrue;
 			}
 			else if (key == K_INS || key == K_KP_INS)

@@ -102,9 +102,9 @@ void Cbuf_Init(void)
  */
 void Cbuf_AddText(const char *text)
 {
-	size_t l;
+	int l;
 
-	l = strlen(text);
+	l = (int)strlen(text);
 
 	if (cmd_text.cursize + l >= cmd_text.maxsize)
 	{
@@ -123,10 +123,10 @@ void Cbuf_AddText(const char *text)
  */
 void Cbuf_InsertText(const char *text)
 {
-	size_t       len;
+	int          len;
 	unsigned int i;
 
-	len = strlen(text) + 1;
+	len = (int)strlen(text) + 1;
 	if (len + cmd_text.cursize > cmd_text.maxsize)
 	{
 		Com_Printf("Cbuf_InsertText overflowed\n");
@@ -440,7 +440,7 @@ char *Cmd_Argv(int arg)
  */
 void Cmd_ArgvBuffer(int arg, char *buffer, size_t bufferLength)
 {
-	Q_strncpyz(buffer, Cmd_Argv(arg), bufferLength);
+	Q_strncpyz(buffer, Cmd_Argv(arg), (int)bufferLength);
 }
 
 /**
@@ -538,7 +538,7 @@ char *Cmd_ArgsFromTo(int arg, int max)
  */
 void Cmd_ArgsBuffer(char *buffer, size_t bufferLength)
 {
-	Q_strncpyz(buffer, Cmd_Args(), bufferLength);
+	Q_strncpyz(buffer, Cmd_Args(), (int)bufferLength);
 }
 
 /**

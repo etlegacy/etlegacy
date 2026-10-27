@@ -1599,7 +1599,7 @@ void CL_PlayDemo_f(void)
 				len = ARRAY_LEN(retry) - 1;
 			}
 
-			Q_strncpyz(retry, demoFile, len + 1);
+			Q_strncpyz(retry, demoFile, (int)len + 1);
 			retry[len] = '\0';
 			protocol   = CL_WalkDemoExt(retry, name, &clc.demo.file);
 		}
