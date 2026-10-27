@@ -416,33 +416,14 @@ void SV_CL_FastForward_f(void)
 }
 
 /**
- * @brief SV_CL_PlayDemo_f
+ * @brief SV_CL_DemoStart
+ * @param[in] demoName
  */
-void SV_CL_PlayDemo_f(void)
+static void SV_CL_DemoStart(char *demoName)
 {
 	char name[MAX_OSPATH], nextDemo[MAX_OSPATH];
 	char *demoFile;
 	int  nextDemoNo;
-
-#ifdef DEDICATED
-	if (Cmd_Argc() != 2)
-	{
-		Com_Printf("usage: demo <demoname>\n");
-		return;
-	}
-#else
-	if (Cmd_Argc() != 3)
-	{
-		Com_Printf("usage: tv demo <demoname>\n");
-		return;
-	}
-#endif
-
-	if (sv_etltv_delay->integer)
-	{
-		Com_Printf("sv_etltv_delay must be set to 0 to play demo (current value %d).\n", sv_etltv_delay->integer);
-		return;
-	}
 
 	SV_CL_Disconnect();
 
@@ -453,7 +434,7 @@ void SV_CL_PlayDemo_f(void)
 	}
 
 	// open the demo file (should be the last arg)
-	demoFile = Cmd_Argv(Cmd_Argc() - 1);
+	demoFile = demoName;
 	Com_sprintf(name, MAX_OSPATH, "tvdemos/%s.%s%d", demoFile, SVCLDEMOEXT, PROTOCOL_VERSION);
 	FS_FOpenFileRead(name, &svclc.demo.file, qtrue);
 
@@ -490,6 +471,82 @@ void SV_CL_PlayDemo_f(void)
 	sv.time = svcl.serverTime;
 }
 
+/**
+ * @brief SV_CL_PlayDemo_f
+ */
+void SV_CL_PlayDemo_f(void)
+{
+#ifdef DEDICATED
+	if (Cmd_Argc() != 2)
+	{
+		Com_Printf("usage: demo <demoname>\n");
+		return;
+	}
+#else
+	if (Cmd_Argc() != 3)
+	{
+		Com_Printf("usage: tv demo <demoname>\n");
+		return;
+	}
+#endif
+
+	if (sv_etltv_delay->integer)
+	{
+		Com_Printf("sv_etltv_delay must be set to 0 to play demo (current value %d).\n", sv_etltv_delay->integer);
+		return;
+	}
+
+	SV_CL_DemoStart(Cmd_Argv(Cmd_Argc() - 1));
+}
+
+/**
+ * @brief SV_CL_Skip_f skips the demo forward or backwards
+ */
+void SV_CL_Skip_f(void)
+{
+	char name[MAX_QPATH];
+	char *arg;
+	int  time;
+
+#ifdef DEDICATED
+	if (Cmd_Argc() != 2)
+	{
+		Com_Printf("usage: skip <seconds>\n");
+		return;
+	}
+#else
+	if (Cmd_Argc() != 3)
+	{
+		Com_Printf("usage: tv skip <seconds>\n");
+		return;
+	}
+#endif
+
+	if (!svclc.demo.playing)
+	{
+		Com_Printf("Must be playing a demo\n");
+		return;
+	}
+
+	arg  = Cmd_Argv(Cmd_Argc() - 1);
+	time = Q_atoi(arg);
+
+	if (!time)
+	{
+		Com_Printf("Could not convert time argument '%s' to valid integer\n", arg);
+		return;
+	}
+
+	time = time * 1000 + sv.time;
+
+	Q_strncpyz(name, svclc.demo.demoName, sizeof(svclc.demo.demoName));
+
+	SV_CL_DemoStart(name);
+
+	svclc.demo.skipping        = qtrue;
+	svclc.demo.fastForwardTime = time;
+}
+
 #ifdef DEDICATED
 
 /**
@@ -517,6 +574,7 @@ void SV_CL_DemoInit(void)
 	Cmd_AddCommand("stoprecord", SV_CL_StopRecord_f);
 	Cmd_AddCommand("demo", SV_CL_PlayDemo_f);
 	Cmd_AddCommand("ff", SV_CL_FastForward_f);
+	Cmd_AddCommand("skip", SV_CL_Skip_f);
 	Cmd_SetCommandCompletionFunc("demo", SV_CL_CompleteDemoName);
 }
 

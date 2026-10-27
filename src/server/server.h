@@ -683,6 +683,7 @@ typedef struct
 	int timeBaseTime;                       ///< each frame will be at this time + frameNum * 50
 
 	int fastForwardTime;
+	qboolean skipping;
 } svcldemo_t;
 
 /**
@@ -940,6 +941,7 @@ void SV_CL_Record(const char *name);
 void SV_CL_StopRecord_f(void);
 void SV_CL_PlayDemo_f(void);
 void SV_CL_FastForward_f(void);
+void SV_CL_Skip_f(void);
 void SV_CL_WriteDemoMessage(msg_t *msg, int headerBytes);
 void SV_CL_ReadDemoMessage(void);
 void SV_CL_DemoCompleted(void);
