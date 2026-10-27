@@ -419,7 +419,7 @@ void SV_CL_FastForward_f(void)
  * @brief SV_CL_DemoStart
  * @param[in] demoName
  */
-static void SV_CL_DemoStart(char *demoName)
+static void SV_CL_DemoStart(char *demo)
 {
 	char name[MAX_OSPATH], nextDemo[MAX_OSPATH];
 	char *demoFile;
@@ -434,7 +434,7 @@ static void SV_CL_DemoStart(char *demoName)
 	}
 
 	// open the demo file (should be the last arg)
-	demoFile = demoName;
+	demoFile = demo;
 	Com_sprintf(name, MAX_OSPATH, "tvdemos/%s.%s%d", demoFile, SVCLDEMOEXT, PROTOCOL_VERSION);
 	FS_FOpenFileRead(name, &svclc.demo.file, qtrue);
 
