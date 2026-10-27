@@ -4540,7 +4540,7 @@ qboolean PC_String_ParseNoAlloc(int handle, char *out, size_t size)
 		return qfalse;
 	}
 
-	Q_strncpyz(out, token.string, size);
+	Q_strncpyz(out, token.string, (int)size);
 	return qtrue;
 }
 
