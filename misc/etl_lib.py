@@ -10,6 +10,29 @@ from typing import List, Optional
 ROOT_DIR = Path(__file__).resolve().parent.parent
 CWD = Path.cwd()
 
+# Directories (relative to the repo root) containing third-party code that
+# is never formatted or checked by our tooling.
+EXCLUDED_PATHS = [
+    "libs/",
+    "vendor/",
+]
+
+# The formatter handling each (lower-case) file extension. Shared so that
+# autoformat and check-changes always cover the same set of files.
+#
+# NOTE: .glsl files are deliberately NOT listed, i.e. they are skipped by both
+# autoformat and check-changes. Do not add them here without agreeing on
+# formatting them first.
+FORMATTER_BY_EXT = {
+    ".c": "uncrustify",
+    ".cpp": "uncrustify",
+    ".h": "uncrustify",
+    ".py": "black",
+    ".sh": "shfmt",
+    ".yml": "prettier",
+    ".yaml": "prettier",
+}
+
 
 def decode_subprocess_output(data: bytes) -> str:
     # Most tool output in this repo is UTF-8, but Windows helper text can still
@@ -92,7 +115,26 @@ def get_changed_files(commit_hash: str) -> set[str]:
     return changed_files
 
 
-def argparse_add_commit_param(parser):
+def get_all_tracked_files() -> set[Path]:
+    """Returns all files checked into git (as absolute paths)."""
+    return {
+        ROOT_DIR / path
+        for path in run_git_command(["git", "-C", str(ROOT_DIR), "ls-files"])
+    }
+
+
+def get_formatter(path: Path) -> Optional[str]:
+    """Returns the name of the formatter responsible for the file (if any)."""
+    return FORMATTER_BY_EXT.get(Path(path).suffix.lower())
+
+
+def is_excluded_path(path: Path) -> bool:
+    """Returns whether the path is below one of the EXCLUDED_PATHS."""
+    path = Path(path).resolve()
+    return any(path.is_relative_to((ROOT_DIR / p).resolve()) for p in EXCLUDED_PATHS)
+
+
+def argparse_add_file_selection_params(parser):
     import argparse
 
     # optionally read default upstream_remote_branch from
@@ -109,6 +151,22 @@ def argparse_add_commit_param(parser):
         nargs="?",
         help="Compare with this commit (defaults to HEAD)",
     )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Consider all git-tracked files from the repo root instead of only the changes.",
+    )
+
+
+def get_selected_files(args) -> set[Path]:
+    """
+    Returns the files selected via argparse_add_file_selection_params():
+    all git-tracked files with --all, otherwise the changed ones.
+    """
+    if args.all:
+        print("Considering all git-tracked files ...")
+        return get_all_tracked_files()
+    return get_changed_files(args.commit_hash)
 
 
 def rel(path: Path) -> Path:
