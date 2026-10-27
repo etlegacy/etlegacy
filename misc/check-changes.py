@@ -137,13 +137,51 @@ def check_tga(path: Path, errors: List["Error"]):
         errors.append(Error(path, f"Failed to check TGA origin: {e}"))
 
 
+# SOF markers announcing a progressive DCT frame (Huffman: SOF2, differential
+# Huffman: SOF6, arithmetic: SOF10, differential arithmetic: SOF14).
+JPEG_PROGRESSIVE_SOF = {0xC2, 0xC6, 0xCA, 0xCE}
+# All SOF markers (0xC4 = DHT, 0xC8 = JPG, 0xCC = DAC are not frame headers).
+JPEG_SOF = set(range(0xC0, 0xD0)) - {0xC4, 0xC8, 0xCC}
+
+
+def jpeg_is_progressive(data: bytes) -> bool:
+    """Walks the JPEG marker segments up to the frame header (SOF).
+
+    Merely counting SOS markers is wrong: embedded thumbnails (e.g. in EXIF
+    APP1 segments) contain their own SOS markers and baseline JPEGs may use
+    multiple scans. The SOF marker always precedes the first scan, so we never
+    have to look at the entropy coded data.
+    """
+    pos = 2  # skip SOI
+    while pos + 1 < len(data):
+        if data[pos] != 0xFF:
+            raise ValueError(f"Expected marker at offset {pos}.")
+        marker = data[pos + 1]
+        if marker == 0xFF:  # fill byte
+            pos += 1
+            continue
+        pos += 2
+        # Markers without a length field (TEM, RSTn, SOI).
+        if marker == 0x01 or 0xD0 <= marker <= 0xD8:
+            continue
+        if marker in (0xD9, 0xDA):  # EOI/SOS before any SOF
+            raise ValueError("No frame header found.")
+        if pos + 2 > len(data):
+            break
+        if marker in JPEG_SOF:
+            return marker in JPEG_PROGRESSIVE_SOF
+        (length,) = struct.unpack(">H", data[pos : pos + 2])
+        pos += length
+    raise ValueError("No frame header found.")
+
+
 def check_jpeg(path: Path, errors: List[Error]):
     try:
         with open(path, "rb") as f:
             data = f.read()
         if not data.startswith(b"\xff\xd8"):
             errors.append(Error(path, "Not a valid JPEG file."))
-        elif data.count(b"\xff\xda") > 1:
+        elif jpeg_is_progressive(data):
             errors.append(Error(path, "Progressive JPEG not supported."))
     except Exception as e:
         errors.append(Error(path, f"Failed to check JPEG: {e}"))
