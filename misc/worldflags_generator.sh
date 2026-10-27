@@ -17,56 +17,56 @@ total_rows=0
 
 # changed "--" to "00" as cp doesn't like it
 geoip_country_codes=("00" "AP" "EU" "AD" "AE" "AF"
-	"AG" "AI" "AL" "AM" "CW"
-	"AO" "AQ" "AR" "AS" "AT" "AU"
-	"AW" "AZ" "BA" "BB"
-	"BD" "BE" "BF" "BG" "BH" "BI"
-	"BJ" "BM" "BN" "BO"
-	"BR" "BS" "BT" "BV" "BW" "BY"
-	"BZ" "CA" "CC" "CD"
-	"CF" "CG" "CH" "CI" "CK" "CL"
-	"CM" "CN" "CO" "CR"
-	"CU" "CV" "CX" "CY" "CZ" "DE"
-	"DJ" "DK" "DM" "DO"
-	"DZ" "EC" "EE" "EG" "EH" "ER"
-	"ES" "ET" "FI" "FJ"
-	"FK" "FM" "FO" "FR" "SX" "GA"
-	"GB" "GD" "GE" "GF"
-	"GH" "GI" "GL" "GM" "GN" "GP"
-	"GQ" "GR" "GS" "GT"
-	"GU" "GW" "GY" "HK" "HM" "HN"
-	"HR" "HT" "HU" "ID"
-	"IE" "IL" "IN" "IO" "IQ" "IR"
-	"IS" "IT" "JM" "JO"
-	"JP" "KE" "KG" "KH" "KI" "KM"
-	"KN" "KP" "KR" "KW"
-	"KY" "KZ" "LA" "LB" "LC" "LI"
-	"LK" "LR" "LS" "LT"
-	"LU" "LV" "LY" "MA" "MC" "MD"
-	"MG" "MH" "MK" "ML"
-	"MM" "MN" "MO" "MP" "MQ" "MR"
-	"MS" "MT" "MU" "MV"
-	"MW" "MX" "MY" "MZ" "NA" "NC"
-	"NE" "NF" "NG" "NI"
-	"NL" "NO" "NP" "NR" "NU" "NZ"
-	"OM" "PA" "PE" "PF"
-	"PG" "PH" "PK" "PL" "PM" "PN"
-	"PR" "PS" "PT" "PW"
-	"PY" "QA" "RE" "RO" "RU" "RW"
-	"SA" "SB" "SC" "SD"
-	"SE" "SG" "SH" "SI" "SJ" "SK"
-	"SL" "SM" "SN" "SO"
-	"SR" "ST" "SV" "SY" "SZ" "TC"
-	"TD" "TF" "TG" "TH"
-	"TJ" "TK" "TM" "TN" "TO" "TL"
-	"TR" "TT" "TV" "TW"
-	"TZ" "UA" "UG" "UM" "US" "UY"
-	"UZ" "VA" "VC" "VE"
-	"VG" "VI" "VN" "VU" "WF" "WS"
-	"YE" "YT" "RS" "ZA"
-	"ZM" "ME" "ZW" "A1" "A2" "01"
-	"AX" "GG" "IM" "JE"
-	"BL" "MF" "BQ" "SS" "01")
+    "AG" "AI" "AL" "AM" "CW"
+    "AO" "AQ" "AR" "AS" "AT" "AU"
+    "AW" "AZ" "BA" "BB"
+    "BD" "BE" "BF" "BG" "BH" "BI"
+    "BJ" "BM" "BN" "BO"
+    "BR" "BS" "BT" "BV" "BW" "BY"
+    "BZ" "CA" "CC" "CD"
+    "CF" "CG" "CH" "CI" "CK" "CL"
+    "CM" "CN" "CO" "CR"
+    "CU" "CV" "CX" "CY" "CZ" "DE"
+    "DJ" "DK" "DM" "DO"
+    "DZ" "EC" "EE" "EG" "EH" "ER"
+    "ES" "ET" "FI" "FJ"
+    "FK" "FM" "FO" "FR" "SX" "GA"
+    "GB" "GD" "GE" "GF"
+    "GH" "GI" "GL" "GM" "GN" "GP"
+    "GQ" "GR" "GS" "GT"
+    "GU" "GW" "GY" "HK" "HM" "HN"
+    "HR" "HT" "HU" "ID"
+    "IE" "IL" "IN" "IO" "IQ" "IR"
+    "IS" "IT" "JM" "JO"
+    "JP" "KE" "KG" "KH" "KI" "KM"
+    "KN" "KP" "KR" "KW"
+    "KY" "KZ" "LA" "LB" "LC" "LI"
+    "LK" "LR" "LS" "LT"
+    "LU" "LV" "LY" "MA" "MC" "MD"
+    "MG" "MH" "MK" "ML"
+    "MM" "MN" "MO" "MP" "MQ" "MR"
+    "MS" "MT" "MU" "MV"
+    "MW" "MX" "MY" "MZ" "NA" "NC"
+    "NE" "NF" "NG" "NI"
+    "NL" "NO" "NP" "NR" "NU" "NZ"
+    "OM" "PA" "PE" "PF"
+    "PG" "PH" "PK" "PL" "PM" "PN"
+    "PR" "PS" "PT" "PW"
+    "PY" "QA" "RE" "RO" "RU" "RW"
+    "SA" "SB" "SC" "SD"
+    "SE" "SG" "SH" "SI" "SJ" "SK"
+    "SL" "SM" "SN" "SO"
+    "SR" "ST" "SV" "SY" "SZ" "TC"
+    "TD" "TF" "TG" "TH"
+    "TJ" "TK" "TM" "TN" "TO" "TL"
+    "TR" "TT" "TV" "TW"
+    "TZ" "UA" "UG" "UM" "US" "UY"
+    "UZ" "VA" "VC" "VE"
+    "VG" "VI" "VN" "VU" "WF" "WS"
+    "YE" "YT" "RS" "ZA"
+    "ZM" "ME" "ZW" "A1" "A2" "01"
+    "AX" "GG" "IM" "JE"
+    "BL" "MF" "BQ" "SS" "01")
 
 # handle special territories
 cp -fpv _bots.png 00.png # was '--'
@@ -87,21 +87,21 @@ cp -f _united-nations.png A2.png
 cp -fpv _united-nations.png 01.png # localhost
 
 for i in "${geoip_country_codes[@]}"; do
-	items=$((items+1))
-	current_row+="${i}.png "
+    items=$((items + 1))
+    current_row+="${i}.png "
 
-	if [[ $(( "${items}" % 16 )) -eq 0 ]] || [[ ${items} -eq 256 ]]; then
-		printf "Stitching items on row %d: %s\n" "${total_rows}" "${current_row}"
-		total_rows=$((total_rows+1))
-		convert "${current_row}" +append "row${total_rows}.png"
-		current_row=""
-	fi
+    if [[ $(("${items}" % 16)) -eq 0 ]] || [[ ${items} -eq 256 ]]; then
+        printf "Stitching items on row %d: %s\n" "${total_rows}" "${current_row}"
+        total_rows=$((total_rows + 1))
+        convert "${current_row}" +append "row${total_rows}.png"
+        current_row=""
+    fi
 done
 
 rows=""
 
-for (( i = 1; i <= total_rows; i++ )); do
-	rows+="row${i}.png "
+for ((i = 1; i <= total_rows; i++)); do
+    rows+="row${i}.png "
 done
 
 printf "Stitching rows: %s\n" "${rows}"

@@ -286,7 +286,7 @@ void SV_Netchan_Transmit(client_t *client, msg_t *msg)
 				if (count > MAX_NETCHAN_QUEUE)
 				{
 					Com_Printf(S_COLOR_YELLOW "WARNING: netchan queue overflow for %s [%s] "
-					           "- dropping client (queued=%d, msg=%d bytes)\n",
+					                          "- dropping client (queued=%d, msg=%d bytes)\n",
 					           client->name,
 					           NET_AdrToString(&client->netchan.remoteAddress),
 					           count, msg->cursize);
