@@ -1216,13 +1216,18 @@ static int CL_CompareFrametimes(const void *a, const void *b)
  */
 static void CL_TimedemoResults(void)
 {
-	int      i, time, numFrames;
+	int      i, time, numSampledFrames;
 	uint16_t sortedFrametimes[MAX_TIMEDEMO_FRAMES];
 	int      onePercentIdx, pointOnePercentIdx;
 	float    fps, minFps, maxFps;
 	char     onePercent[8], pointOnePercent[8];
 	int      desiredFrametime, numOptimalFrames;
 
+	// FIXME: this is the total time for the playback - for scenarios where we
+	// wrap around the frametime buffer, this is no longer a realistic time measurement
+	// to calculate average fps from, as we have less frametime samples than what the
+	// actual demo runtime was. The buffer holds ~3.6h of frames though, so this is
+	// highly unlikely to ever happen.
 	time = Sys_Milliseconds() - clc.demo.timedemo.timeStart;
 
 	if (time <= 0)
@@ -1232,20 +1237,27 @@ static void CL_TimedemoResults(void)
 
 	// timeFrames gets incremented before we get here, but we never have a chance to measure the frametime
 	// since the playback ends, therefore scrap the last frame entirely as it never gets stored
-	numFrames = clc.demo.timedemo.timeFrames - 1;
+	// the writer uses a circular buffer, so don't let this be higher than the buffer size
+	numSampledFrames = MIN(clc.demo.timedemo.timeFrames - 1, MAX_TIMEDEMO_FRAMES);
 
-	fps = numFrames * 1000.0f / time;
+	if (numSampledFrames <= 0)
+	{
+		Com_Printf("Not enough frames recorded to produce timedemo results.\n");
+		return;
+	}
 
-	Com_Memcpy(sortedFrametimes, clc.demo.timedemo.frametime, numFrames * sizeof(uint16_t));
-	qsort(sortedFrametimes, numFrames, sizeof(uint16_t), CL_CompareFrametimes);
+	fps = numSampledFrames * 1000.0f / time;
 
-	minFps = 1000.0f / sortedFrametimes[numFrames - 1];
+	Com_Memcpy(sortedFrametimes, clc.demo.timedemo.frametime, numSampledFrames * sizeof(uint16_t));
+	qsort(sortedFrametimes, numSampledFrames, sizeof(uint16_t), CL_CompareFrametimes);
+
+	minFps = 1000.0f / sortedFrametimes[numSampledFrames - 1];
 	maxFps = 1000.0f / sortedFrametimes[0];
 
 	// filter out potential 0ms anomalies for maxfps
 	if (sortedFrametimes[0] == 0)
 	{
-		for (i = 0; i < numFrames; i++)
+		for (i = 0; i < numSampledFrames; i++)
 		{
 			if (sortedFrametimes[i] != 0)
 			{
@@ -1255,14 +1267,14 @@ static void CL_TimedemoResults(void)
 		}
 	}
 
-	onePercentIdx = (int)(0.01f * numFrames);
+	onePercentIdx = (int)(0.01f * numSampledFrames);
 
 	// make sure we have enough total frames to display 1% lows
 	if (onePercentIdx)
 	{
 		float totalFrametime = 0;
 
-		for (i = numFrames - onePercentIdx; i < numFrames; i++)
+		for (i = numSampledFrames - onePercentIdx; i < numSampledFrames; i++)
 		{
 			totalFrametime += sortedFrametimes[i];
 		}
@@ -1270,14 +1282,14 @@ static void CL_TimedemoResults(void)
 		Com_sprintf(onePercent, sizeof(onePercent), "%3.2f", 1000.0f * onePercentIdx / totalFrametime);
 	}
 
-	pointOnePercentIdx = (int)(0.001f * numFrames);
+	pointOnePercentIdx = (int)(0.001f * numSampledFrames);
 
 	// make sure we have enough total frames to display 0.1% lows
 	if (pointOnePercentIdx)
 	{
 		float totalFrametime = 0;
 
-		for (i = numFrames - pointOnePercentIdx; i < numFrames; i++)
+		for (i = numSampledFrames - pointOnePercentIdx; i < numSampledFrames; i++)
 		{
 			totalFrametime += sortedFrametimes[i];
 		}
@@ -1288,7 +1300,7 @@ static void CL_TimedemoResults(void)
 	desiredFrametime = 1000 / Cvar_VariableIntegerValue("com_maxfps");
 	numOptimalFrames = 0;
 
-	for (i = 0; i < numFrames; i++)
+	for (i = 0; i < numSampledFrames; i++)
 	{
 		if (sortedFrametimes[i] > desiredFrametime)
 		{
@@ -1301,13 +1313,13 @@ static void CL_TimedemoResults(void)
 	Com_FuncPrinf("\n----- Benchmark results -----\n");
 	Com_Printf("\n%-18s %3.2f sec\n%-18s %i\n%-18s %3.2f\n%-18s %3.2f\n%-18s %3.2f\n%-18s %s\n%-18s %s\n%-18s %3.2f pct\n",
 	           "Time elapsed:", time / 1000.0f,
-	           "Total frames:", numFrames,
+	           "Total frames:", clc.demo.timedemo.timeFrames - 1,
 	           "Minimum fps:", minFps,
 	           "Maximum fps:", maxFps,
 	           "Average fps:", fps,
 	           "1 pct. lows:", onePercentIdx ? onePercent : "--",
 	           "0.1 pct. lows:", pointOnePercentIdx ? pointOnePercent : "--",
-	           "Stability:", (float)numOptimalFrames / (float)numFrames * 100.0f);
+	           "Stability:", (float)numOptimalFrames / (float)numSampledFrames * 100.0f);
 	Com_Printf("\n-----------------------------\n\n");
 }
 
