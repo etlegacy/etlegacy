@@ -7,6 +7,8 @@ import os
 import struct
 import sys
 import difflib
+from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import cpu_count
 from pathlib import Path
 from dataclasses import dataclass, field
 from typing import List, Optional
@@ -14,9 +16,11 @@ from typing import List, Optional
 from etl_lib import (
     CWD,
     ROOT_DIR,
-    argparse_add_commit_param,
-    get_changed_files,
+    argparse_add_file_selection_params,
     get_current_git_branch,
+    get_formatter,
+    get_selected_files,
+    is_excluded_path,
     rel_str,
     run_command,
 )
@@ -252,27 +256,31 @@ def check_yml(path: Path, errors: List[Error]):
 def check_file(path: Path) -> Optional[List[Error]]:
     errors = []
 
-    match path.suffix.lower():
-        case ".c" | ".cpp" | ".glsl" | ".h":
+    # formatter-backed file types (shared with autoformat)
+    match get_formatter(path):
+        case "uncrustify":
             check_uncrustify(path, errors)
+        case "black":
+            check_black(path, errors)
+        case "shfmt":
+            check_sh(path, errors)
+        case "prettier":
+            check_yml(path, errors)
+
+    # asset checks, nothing to autoformat there
+    match path.suffix.lower():
         case ".tga":
             check_tga(path, errors)
         case ".jpg" | ".jpeg":
             check_jpeg(path, errors)
         case ".wav":
             check_wav(path, errors)
-        case ".py":
-            check_black(path, errors)
-        case ".sh":
-            check_sh(path, errors)
-        case ".yml" | ".yaml":
-            check_yml(path, errors)
     return errors
 
 
 def check_changes(state: State):
     # assemble files
-    changed_files = get_changed_files(state.args.commit_hash)
+    changed_files = get_selected_files(state.args)
 
     if len(changed_files) < 1:
         print("No changes found.")
@@ -280,18 +288,13 @@ def check_changes(state: State):
 
     print("------------------------------------------")
 
-    # check assembled files for errors
+    # collect the files that actually need checking
+    to_check = []
     for path in sorted(list(changed_files)):
         relpath = path.relative_to(ROOT_DIR)
 
         # ignore files below certain directories
-        if any(
-            relpath.parts[0] == x
-            for x in [
-                "libs",
-                "vendor",
-            ]
-        ):
+        if is_excluded_path(path):
             print(f"☇ Skipping ignored: {path.relative_to(ROOT_DIR)}")
             continue
 
@@ -299,7 +302,16 @@ def check_changes(state: State):
             print(f"☇ Skipping removed/missing: {path.relative_to(ROOT_DIR)}")
             continue
 
-        errors = check_file(path)
+        to_check.append((path, relpath))
+
+    # The checks are dominated by spawning external tools (uncrustify, black,
+    # ...) per file, so run them in parallel. Threads are sufficient since the
+    # work happens in subprocesses. map() preserves the (sorted) input order
+    # so the output stays deterministic.
+    with ThreadPoolExecutor(max_workers=cpu_count()) as executor:
+        all_errors = list(executor.map(lambda x: check_file(x[0]), to_check))
+
+    for (_path, relpath), errors in zip(to_check, all_errors):
         if errors == None:
             pass
         elif errors:
@@ -330,7 +342,8 @@ def main(args):
     state = State(args=args)
 
     current_git_branch = get_current_git_branch()
-    skip_changes = args.commit_hash == current_git_branch
+    # with --all the commit is irrelevant, so never skip
+    skip_changes = not args.all and args.commit_hash == current_git_branch
 
     if not skip_changes:
         check_changes(state)
@@ -370,10 +383,10 @@ def cli():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Check files in commit(s) for formatting or asset issues."
+        description="Check files in commit(s) (or all git-tracked files with --all) for formatting or asset issues."
     )
 
-    argparse_add_commit_param(parser)
+    argparse_add_file_selection_params(parser)
 
     parser.add_argument(
         "-hd",

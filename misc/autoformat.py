@@ -12,107 +12,42 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from multiprocessing import cpu_count
 
 from etl_lib import (
-    get_changed_files,
+    get_formatter,
+    get_selected_files,
+    is_excluded_path,
     CWD,
     ROOT_DIR,
-    argparse_add_commit_param,
+    argparse_add_file_selection_params,
     rel,
     run_command,
 )
 
-# Constants
-INCLUDED_EXTS = {".c", ".cpp", ".h", ".py", ".sh", ".yml", ".yaml"}
-EXCLUDED_PATHS = [
-    "libs/",
-    "vendor/",
-]
 
+def filter_target_files(files, report_unsupported=True):
+    """
+    Filter out excluded files and non-target extensions.
 
-def _excluded_abs_paths():
-    root = Path(ROOT_DIR).resolve()
-    return [(root / p).resolve() for p in EXCLUDED_PATHS]
-
-
-def filter_target_files(files):
-    """Filter out excluded files and non-target extensions."""
-    excluded = _excluded_abs_paths()
+    Skipped files are reported, except for unsupported file types if
+    report_unsupported is False (there are far too many when looking at all
+    tracked files).
+    """
     filtered = []
-    for path in files:
-        path = Path(path).resolve()
-        if any(path.is_relative_to(excl) for excl in excluded):
+    for path in sorted(Path(f).resolve() for f in files):
+        if not get_formatter(path):
+            if report_unsupported:
+                print(f"⏸ {rel(path)}")
+        elif is_excluded_path(path):
             print(f"⏸ {rel(path)}")
-            continue
-        if path.suffix in INCLUDED_EXTS:
-            filtered.append(path)
         else:
-            print(f"⏸ {rel(path)}")
+            filtered.append(path)
     return filtered
-
-
-def list_all_target_files_from_root():
-    """
-    List all *git-tracked* files under the repo root that:
-      - have an extension in INCLUDED_EXTS
-      - are NOT under any EXCLUDED_PATHS
-
-    Returns absolute Paths under ROOT_DIR so rel() works.
-    """
-    root = Path(ROOT_DIR).resolve()
-    excluded = _excluded_abs_paths()
-
-    # Build git pathspecs for the included extensions.
-    # Using ':(glob)' ensures ** works reliably.
-    pathspecs = [f":(glob)**/*{ext}" for ext in INCLUDED_EXTS]
-
-    try:
-        proc = subprocess.run(
-            ["git", "-C", str(root), "ls-files", "-z", "--", *pathspecs],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            check=True,
-        )
-        entries = [e for e in proc.stdout.decode("utf-8").split("\x00") if e]
-    except subprocess.CalledProcessError as e:
-        print(
-            f"❌ git ls-files failed ({e.returncode}). Falling back to filesystem scan.",
-            file=sys.stderr,
-        )
-        entries = []
-
-    targets = []
-
-    if entries:
-        # Convert to absolute paths and apply EXCLUDED_PATHS filter
-        for rel_path in entries:
-            p = (root / rel_path).resolve()
-            if p.suffix not in INCLUDED_EXTS:
-                continue
-            if any(p.is_relative_to(excl) for excl in excluded):
-                print(f"⏸ {rel(p)}")
-                continue
-            targets.append(p)
-        return targets
-
-    # Fallback: rglob (only used if git command failed)
-    for p in root.rglob("*"):
-        if not p.is_file():
-            continue
-        if p.suffix not in INCLUDED_EXTS:
-            continue
-        if any(p.is_relative_to(excl) for excl in excluded):
-            print(f"⏸ {rel(p)}")
-            continue
-        targets.append(p)
-
-    return targets
 
 
 def process_file(path) -> str:
     """Run uncrustify for C/C++ files or black for Python files and rewrite the file if formatting changed."""
     path = Path(path)
-    ext = path.suffix
-    match ext:
-        case ".c" | ".cpp" | ".glsl" | ".h":
+    match get_formatter(path):
+        case "uncrustify":
             with open(path, "r", encoding="utf-8", errors="ignore") as f:
                 original = f.read()
             proc = subprocess.run(
@@ -128,7 +63,7 @@ def process_file(path) -> str:
                 return f"✿ Formatting {rel(path)} (C/C++)"
             else:
                 return f"✓ {rel(path)} (C/C++ already formatted)"
-        case ".py":
+        case "black":
             # Check if formatting would change anything
             check_proc = subprocess.run(
                 ["black", "--check", "--quiet", str(path)],
@@ -140,7 +75,7 @@ def process_file(path) -> str:
             else:
                 run_command(["black", str(path)])
                 return f"✿ Formatting {rel(path)} (Python)"
-        case ".sh":
+        case "shfmt":
             # Check if formatting would change anything
             check_proc = subprocess.run(
                 ["shfmt", "--diff", str(path)],
@@ -152,7 +87,7 @@ def process_file(path) -> str:
             else:
                 run_command(["shfmt", "--write", str(path)])
                 return f"✿ Formatting {rel(path)} (Shfmt)"
-        case ".yml" | ".yaml":
+        case "prettier":
             # Check if formatting would change anything
             check_proc = run_command(
                 ["prettier", "--no-config", "--check", str(path)], check=False
@@ -169,19 +104,12 @@ def process_file(path) -> str:
 def main(args):
     os.chdir(ROOT_DIR)
 
-    if args.all:
-        print("------------------------------------------")
-        target_files = list_all_target_files_from_root()
-        if len(target_files) < 1:
-            print("No target files found.")
-            quit(0)
-    else:
-        changed_files = get_changed_files(args.commit_hash)
-        if len(changed_files) < 1:
-            print("No changes found.")
-            quit(0)
-        print("------------------------------------------")
-        target_files = filter_target_files(changed_files)
+    selected_files = get_selected_files(args)
+    if len(selected_files) < 1:
+        print("No changes found.")
+        quit(0)
+    print("------------------------------------------")
+    target_files = filter_target_files(selected_files, report_unsupported=not args.all)
 
     # filter removed files
     target_files = [x for x in target_files if Path(x).exists()]
@@ -226,12 +154,7 @@ def cli():
         description="Autoformats your local changes (or all git-tracked files with --all) so that they pass 'check-changes'."
     )
 
-    argparse_add_commit_param(parser)
-    parser.add_argument(
-        "--all",
-        action="store_true",
-        help="Format all git-tracked files from the repo root, respecting INCLUDED_EXTS and EXCLUDED_PATHS.",
-    )
+    argparse_add_file_selection_params(parser)
     args = parser.parse_args()
     main(args)
 
