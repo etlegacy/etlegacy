@@ -3,6 +3,10 @@ LABEL version="1.0"
 LABEL maintainer="mail@etlegacy.com"
 LABEL description="Linux build machine for the arm64 (aarch64) linux releases"
 
+# Debian 11 moved to archive.debian.org, the regular mirrors already dropped
+# the files of its security updates.
+RUN sed -i 's#http://deb.debian.org#http://archive.debian.org#' /etc/apt/sources.list
+
 RUN cd /tmp && \
     dpkg --add-architecture arm64 && \
 	apt-get update && apt-get install -y \

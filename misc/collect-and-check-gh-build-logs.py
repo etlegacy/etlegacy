@@ -191,8 +191,10 @@ def collect_logs():
         "Accept": "application/vnd.github.v3+json",
     }
 
-    # List jobs for this workflow run
-    jobs_url = f"{api}/repos/{repo}/actions/runs/{run_id}/jobs"
+    # List jobs for this workflow run. The API returns 30 jobs per page by
+    # default, which a release run with all its matrix jobs gets close to, so
+    # ask for the maximum of 100 to get them all on the one page read here.
+    jobs_url = f"{api}/repos/{repo}/actions/runs/{run_id}/jobs?per_page=100"
     resp = requests.get(jobs_url, headers=headers)
     if resp.status_code != 200:
         print(f"Failed to fetch jobs: {resp.status_code} {resp.text}")
@@ -200,8 +202,13 @@ def collect_logs():
     jobs = resp.json().get("jobs", [])
 
     for need in needs_list:
-        # Find job with matching name
-        job = next((j for j in jobs if j["name"] == need), None)
+        # Find job with matching name. Runs started through a calling workflow
+        # like ETLBuild prefix every job name with its calling job, e.g.
+        # "release / lnx64".
+        job = next(
+            (j for j in jobs if j["name"] == need or j["name"].endswith(f" / {need}")),
+            None,
+        )
         if job:
             job_id = job["id"]
             log_url = f"{api}/repos/{repo}/actions/jobs/{job_id}/logs"
