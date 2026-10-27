@@ -250,11 +250,17 @@ def check_wav(path: Path, errors: List[Error]):
 
             if audio_format != 1:
                 errors.append(Error(path, "WAV file must be uncompressed PCM."))
-            if bits_per_sample != 16:
-                errors.append(Error(path, "WAV file must be 16-bit."))
+            # PCM WAV stores 8-bit samples as unsigned and 16-bit samples as little-endian.
+            if bits_per_sample not in (8, 16):
+                errors.append(
+                    Error(
+                        path,
+                        "WAV file must be 8-bit unsigned PCM or 16-bit little-endian PCM.",
+                    )
+                )
             if channels != 1:
                 errors.append(Error(path, "WAV file must be mono."))
-            if sample_rate not in (22050, 44100):
+            if sample_rate not in (11025, 22050, 44100):
                 errors.append(
                     Error(
                         path,
