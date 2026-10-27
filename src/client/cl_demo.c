@@ -1310,7 +1310,7 @@ static void CL_TimedemoResults(void)
 		numOptimalFrames++;
 	}
 
-	Com_FuncPrinf("\n----- Benchmark results -----\n");
+	Com_Printf("\n----- Benchmark results -----\n");
 	Com_Printf("\n%-18s %3.2f sec\n%-18s %i\n%-18s %3.2f\n%-18s %3.2f\n%-18s %3.2f\n%-18s %s\n%-18s %s\n%-18s %3.2f pct\n",
 	           "Time elapsed:", time / 1000.0f,
 	           "Total frames:", clc.demo.timedemo.timeFrames - 1,
