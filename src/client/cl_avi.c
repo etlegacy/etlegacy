@@ -122,7 +122,7 @@ static ID_INLINE void WRITE_STRING(const char *s)
 	}
 
 	Com_Memcpy(&buffer[bufIndex], s, strlen(s));
-	bufIndex += strlen(s);
+	bufIndex += (int)strlen(s);
 }
 
 /**
@@ -505,7 +505,7 @@ qboolean CL_OpenAVIForWriting(const char *fileName, qboolean pipe)
 	{
 		afd.audio = qfalse;
 		Com_Printf(S_COLOR_YELLOW "WARNING: Audio capture is not supported "
-		           "with OpenAL. Set s_useOpenAL to 0 for audio capture\n");
+		                          "with OpenAL. Set s_useOpenAL to 0 for audio capture\n");
 	}
 
 	// This doesn't write a real header, but allocates the

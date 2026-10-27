@@ -1012,7 +1012,7 @@ static void CL_Rcon_f(void)
 		}
 	}
 
-	NET_SendPacket(NS_CLIENT, strlen(message) + 1, message, &rcon_address);
+	NET_SendPacket(NS_CLIENT, (int)strlen(message) + 1, message, &rcon_address);
 }
 
 /**
@@ -1584,7 +1584,7 @@ static void CL_CheckForResend(void)
 			Info_SetValueForKey(info, "challenge", va("%i", clc.challenge));
 
 			Com_sprintf(data, sizeof(data), "connect \"%s\"", info);
-			NET_OutOfBandData(NS_CLIENT, &clc.serverAddress, (const char *) data, strlen(data));
+			NET_OutOfBandData(NS_CLIENT, &clc.serverAddress, (const char *) data, (int)strlen(data));
 
 			// the most current userinfo has been sent, so watch for any
 			// newer changes to userinfo variables
@@ -2742,7 +2742,7 @@ static void CL_Cache_EndGather_f(void)
 			// if it's a valid filename, and it's been hit enough times, cache it
 			if (cacheItems[i][j].hits >= cachePass && strstr(cacheItems[i][j].name, "/"))
 			{
-				(void) FS_Write(cacheItems[i][j].name, strlen(cacheItems[i][j].name), handle);
+				(void) FS_Write(cacheItems[i][j].name, (int)strlen(cacheItems[i][j].name), handle);
 				(void) FS_Write("\n", 1, handle);
 			}
 		}
@@ -3660,7 +3660,7 @@ int CL_ServerStatus(const char *serverAddress, char *serverStatusString, size_t 
 		// if we recieved an response for this server status request
 		if (!serverStatus->pending)
 		{
-			Q_strncpyz(serverStatusString, serverStatus->string, maxLen);
+			Q_strncpyz(serverStatusString, serverStatus->string, (int)maxLen);
 			serverStatus->retrieved = qtrue;
 			serverStatus->startTime = 0;
 			return qtrue;
@@ -3723,7 +3723,7 @@ static void CL_ServerStatusResponse(const netadr_t *from, msg_t *msg)
 	s = MSG_ReadStringLine(msg);
 
 	len = 0;
-	Com_sprintf(&serverStatus->string[len], sizeof(serverStatus->string) - len, "%s", s);
+	Com_sprintf(&serverStatus->string[len], (unsigned int)(sizeof(serverStatus->string) - len), "%s", s);
 
 	if (serverStatus->print)
 	{
@@ -3764,8 +3764,8 @@ static void CL_ServerStatusResponse(const netadr_t *from, msg_t *msg)
 		}
 	}
 
-	len = strlen(serverStatus->string);
-	Com_sprintf(&serverStatus->string[len], sizeof(serverStatus->string) - len, "\\");
+	len = (unsigned int)strlen(serverStatus->string);
+	Com_sprintf(&serverStatus->string[len], (unsigned int)(sizeof(serverStatus->string) - len), "\\");
 
 	if (serverStatus->print)
 	{
@@ -3775,8 +3775,8 @@ static void CL_ServerStatusResponse(const netadr_t *from, msg_t *msg)
 	for (i = 0, s = MSG_ReadStringLine(msg); *s; s = MSG_ReadStringLine(msg), i++)
 	{
 
-		len = strlen(serverStatus->string);
-		Com_sprintf(&serverStatus->string[len], sizeof(serverStatus->string) - len, "\\%s", s);
+		len = (unsigned int)strlen(serverStatus->string);
+		Com_sprintf(&serverStatus->string[len], (unsigned int)(sizeof(serverStatus->string) - len), "\\%s", s);
 
 		if (serverStatus->print)
 		{
@@ -3799,8 +3799,8 @@ static void CL_ServerStatusResponse(const netadr_t *from, msg_t *msg)
 			Com_Printf("%-2d   %-3d    %-3d   \"%s^7\"\n", i, score, ping, name);
 		}
 	}
-	len = strlen(serverStatus->string);
-	Com_sprintf(&serverStatus->string[len], sizeof(serverStatus->string) - len, "\\");
+	len = (unsigned int)strlen(serverStatus->string);
+	Com_sprintf(&serverStatus->string[len], (unsigned int)(sizeof(serverStatus->string) - len), "\\");
 
 	serverStatus->time    = Sys_Milliseconds();
 	serverStatus->address = *from;
@@ -3839,7 +3839,7 @@ void CL_LocalServers_f(void)
 	// by the server.  We don't care about that here, but master servers
 	// can use that to prevent spoofed server responses from invalid ip
 	message    = "\377\377\377\377getinfo xxx";
-	messageLen = strlen(message);
+	messageLen = (int)strlen(message);
 
 	// send each message twice in case one is dropped
 	for (i = 0 ; i < 2 ; i++)
@@ -4027,7 +4027,7 @@ void CL_GetPing(int n, char *buf, size_t buflen, int *pingtime)
 	}
 
 	str = NET_AdrToString(&cl_pinglist[n].adr);
-	Q_strncpyz(buf, str, buflen);
+	Q_strncpyz(buf, str, (int)buflen);
 
 	time = cl_pinglist[n].time;
 	if (!time)
@@ -4071,7 +4071,7 @@ void CL_GetPingInfo(int n, char *buf, size_t buflen)
 		return;
 	}
 
-	Q_strncpyz(buf, cl_pinglist[n].info, buflen);
+	Q_strncpyz(buf, cl_pinglist[n].info, (int)buflen);
 }
 
 /**
@@ -4525,7 +4525,7 @@ const char *CL_TranslateStringBuf(const char *string)
 		*p = '\n';
 		p++;
 
-		l = strlen(p);
+		l = (unsigned int)strlen(p);
 		for (i = 0; i < l; i++)
 		{
 			*p = *(p + 1);

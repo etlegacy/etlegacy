@@ -101,7 +101,7 @@ size_t S_OGG_Callback_read(void *ptr, size_t size, size_t nmemb, void *datasourc
 	stream = (snd_stream_t *) datasource;
 
 	// FS_Read does not support multi-byte elements
-	byteSize = nmemb * size;
+	byteSize = (int)(nmemb * size);
 
 	// read it with the Q3 function FS_Read()
 	bytesRead = FS_Read(ptr, byteSize, stream->file);
