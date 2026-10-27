@@ -1260,7 +1260,14 @@ static void CL_TimedemoResults(void)
 	// make sure we have enough total frames to display 1% lows
 	if (onePercentIdx)
 	{
-		Com_sprintf(onePercent, sizeof(onePercent), "%3.2f", 1000.0f / sortedFrametimes[numFrames - 1 - onePercentIdx]);
+		float totalFrametime = 0;
+
+		for (i = numFrames - onePercentIdx; i < numFrames; i++)
+		{
+			totalFrametime += sortedFrametimes[i];
+		}
+
+		Com_sprintf(onePercent, sizeof(onePercent), "%3.2f", 1000.0f * onePercentIdx / totalFrametime);
 	}
 
 	pointOnePercentIdx = (int)(0.001f * numFrames);
@@ -1268,7 +1275,14 @@ static void CL_TimedemoResults(void)
 	// make sure we have enough total frames to display 0.1% lows
 	if (pointOnePercentIdx)
 	{
-		Com_sprintf(pointOnePercent, sizeof(pointOnePercent), "%3.2f", 1000.0f / sortedFrametimes[numFrames - 1 - pointOnePercentIdx]);
+		float totalFrametime = 0;
+
+		for (i = numFrames - pointOnePercentIdx; i < numFrames; i++)
+		{
+			totalFrametime += sortedFrametimes[i];
+		}
+
+		Com_sprintf(pointOnePercent, sizeof(pointOnePercent), "%3.2f", 1000.0f * pointOnePercentIdx / totalFrametime);
 	}
 
 	desiredFrametime = 1000 / Cvar_VariableIntegerValue("com_maxfps");
@@ -1291,8 +1305,8 @@ static void CL_TimedemoResults(void)
 	           "Minimum fps:", minFps,
 	           "Maximum fps:", maxFps,
 	           "Average fps:", fps,
-	           "99th pct. min:", onePercentIdx ? onePercent : "--",
-	           "99.9th pct. min:", pointOnePercentIdx ? pointOnePercent : "--",
+	           "1 pct. lows:", onePercentIdx ? onePercent : "--",
+	           "0.1 pct. lows:", pointOnePercentIdx ? pointOnePercent : "--",
 	           "Stability:", (float)numOptimalFrames / (float)numFrames * 100.0f);
 	Com_Printf("\n-----------------------------\n\n");
 }
