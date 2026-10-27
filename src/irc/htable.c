@@ -327,12 +327,12 @@ void *HT_GetItem(
 	{
 		char **key_ptr = (char **)(((char *) data) + table->key_offset);
 		*key_ptr = Z_Malloc(strlen(key) + 1);
-		Q_strncpyz(*key_ptr, key, strlen(key) + 1);
+		Q_strncpyz(*key_ptr, key, (int)strlen(key) + 1);
 	}
 	else
 	{
 		char *key_ptr = ((char *) data) + table->key_offset;
-		Q_strncpyz(key_ptr, key, table->item_size);
+		Q_strncpyz(key_ptr, key, (int)table->item_size);
 	}
 
 	return data;
