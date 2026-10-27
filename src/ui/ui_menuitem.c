@@ -1773,7 +1773,7 @@ void Item_CalcTextFieldCursor(itemDef_t *item)
 
 		Com_Memset(buff, 0, sizeof(buff));
 		DC->getCVarString(item->cvar, buff, sizeof(buff));
-		len = Q_UTF8_Strlen(buff);
+		len = (int)Q_UTF8_Strlen(buff);
 
 		if (editPtr && editPtr->maxChars && len > editPtr->maxChars)
 		{
@@ -1925,7 +1925,7 @@ qboolean Item_TextField_HandleKey(itemDef_t *item, int key)
 	Com_Memset(buff, 0, sizeof(buff));
 	DC->getCVarString(EDITFIELD_TEMP_CVAR, buff, sizeof(buff));
 
-	valueLen = Q_UTF8_Strlen(buff);
+	valueLen = (int)Q_UTF8_Strlen(buff);
 
 	if (editPtr->maxChars && valueLen > editPtr->maxChars)
 	{
