@@ -128,7 +128,6 @@ void RB_BeginDrawingView(void)
 	// we will need to change the projection matrix before drawing
 	// 2D images again
 	backEnd.projection2D = qfalse;
-	R_BindMainFBO();
 
 	// set the modelview matrix for the viewer
 	SetViewportAndScissor();
@@ -513,7 +512,6 @@ RENDER BACK END FUNCTIONS
 void RB_SetGL2D(void)
 {
 	backEnd.projection2D = qtrue;
-	R_BindHudFBO();
 
 	// set 2D virtual screen size
 
@@ -1017,12 +1015,6 @@ const void *RB_DrawBuffer(const void *data)
 {
 	const drawBufferCommand_t *cmd = ( const drawBufferCommand_t * ) data;
 
-	if (tr.useFBO)
-	{
-		return ( const void * ) (cmd + 1);
-	}
-
-
 	// clear screen for debugging
 	if (r_clear->integer)
 	{
@@ -1040,7 +1032,18 @@ void RB_GammaScreen(void)
 {
 	// We force the 2D drawing
 	RB_SetGL2D();
-	R_ScreenGamma();
+
+	// r_gamma and the overbright scale for VK_EndFrame()'s gamma pass
+	// (renderer1's R_ScreenGamma()); neutral when the pass doesn't apply
+	// them (r_ignorehwgamma, see R_Init())
+	if (tr.gammaInShader)
+	{
+		VK_SetGammaParams(r_gamma->value, (float)(1 << tr.overbrightBits));
+	}
+	else
+	{
+		VK_SetGammaParams(1.0f, 1.0f);
+	}
 }
 
 /**
@@ -1172,20 +1175,7 @@ const void *RB_SwapBuffers(const void *data)
 		RB_ShowImages();
 	}
 
-	GL_CheckErrors();
-
-	// If we are using a multisample fbo then blit it to a normal fbo first.
-	if (msMainFbo)
-	{
-		R_FboBlit(msMainFbo, mainFbo);
-	}
-	R_BindFBO(NULL);
-
-	GL_CheckErrors();
-
 	RB_GammaScreen();
-
-	R_DrawHudOnTop();
 
 	cmd = ( const swapBuffersCommand_t * ) data;
 

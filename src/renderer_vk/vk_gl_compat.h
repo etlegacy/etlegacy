@@ -50,12 +50,9 @@
 
 typedef unsigned int GLenum;
 typedef unsigned char GLboolean;
-typedef int GLint;
 typedef int GLsizei;
-typedef unsigned int GLuint;
 typedef float GLfloat;
 typedef char GLchar;
-typedef unsigned int GLhandleARB;
 
 #define GL_FALSE 0
 #define GL_TRUE  1

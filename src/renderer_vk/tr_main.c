@@ -400,20 +400,6 @@ void R_LocalPointToWorld(vec3_t local, vec3_t world)
 }
 
 /**
- * @brief R_WorldToLocal
- * @param[in] world
- * @param[out] local
- *
- * @note Unused
- */
-void R_WorldToLocal(vec3_t world, vec3_t local)
-{
-	local[0] = DotProduct(world, tr.orientation.axis[0]);
-	local[1] = DotProduct(world, tr.orientation.axis[1]);
-	local[2] = DotProduct(world, tr.orientation.axis[2]);
-}
-
-/**
  * @brief R_TransformModelToClip
  * @param[in] src
  * @param[in] modelMatrix

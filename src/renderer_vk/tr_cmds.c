@@ -464,9 +464,6 @@ void RE_BeginFrame(void)
 	tr.frameCount++;
 	tr.frameSceneNum = 0;
 
-	R_ClearHudFBO();
-	R_BindMainFBO();
-
 	// overdraw measurement: renderer1 counts stencil increments read back
 	// with glReadPixels; the Vulkan backend has no stencil readback
 	if (r_measureOverdraw->integer)
@@ -492,9 +489,6 @@ void RE_BeginFrame(void)
 		R_IssuePendingRenderCommands();
 		R_SetColorMappings();
 	}
-
-	// check for errors
-	GL_CheckErrors();
 
 	// draw buffer stuff
 	cmd = R_GetCommandBuffer(sizeof(*cmd));
