@@ -215,7 +215,7 @@ void R_Register(void)
 	ri.Cvar_CheckRange(r_zNear, 0.001f, 200, qfalse);
 	r_zFar = ri.Cvar_Get("r_zfar", "0", CVAR_CHEAT);
 
-	r_fastSky        = ri.Cvar_Get("r_fastsky", "0", CVAR_ARCHIVE_ND);
+	r_fastSky = ri.Cvar_Get("r_fastsky", "0", CVAR_ARCHIVE_ND);
 
 	r_drawSun      = ri.Cvar_Get("r_drawSun", "1", CVAR_ARCHIVE_ND);
 	r_dynamicLight = ri.Cvar_Get("r_dynamiclight", "1", CVAR_ARCHIVE);

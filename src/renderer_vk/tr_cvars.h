@@ -44,7 +44,7 @@ extern cvar_t *r_textureBits;           ///< number of desired texture bits
                                         ///< 32 = use 32-bit textures
                                         ///< all else = error
 
-                                        ///< FIXME: "extern int      maxAnisotropy" founded
+///< FIXME: "extern int      maxAnisotropy" founded
 
 extern cvar_t *r_lightMap;              ///< render lightmaps only
 
