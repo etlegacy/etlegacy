@@ -108,21 +108,6 @@ void R_FreeImageBuffer(void)
 	}
 }
 
-/**
- * @brief R_GammaCorrect
- * @param[in,out] buffer
- * @param[in] bufSize
- */
-void R_GammaCorrect(byte *buffer, int bufSize)
-{
-	int i;
-
-	for (i = 0; i < bufSize; i++)
-	{
-		buffer[i] = s_gammatable[buffer[i]];
-	}
-}
-
 typedef struct
 {
 	const char *name;
@@ -353,9 +338,10 @@ void R_LightScaleTexture(unsigned *in, int inwidth, int inheight, qboolean only_
 	int  i, c;
 	byte *p;
 
+	// gamma goes into the textures only without the gamma pass (r_ignorehwgamma)
 	if (only_gamma)
 	{
-		if (!glConfig.deviceSupportsGamma)
+		if (!tr.gammaInShader)
 		{
 			p = (byte *)in;
 
@@ -374,7 +360,7 @@ void R_LightScaleTexture(unsigned *in, int inwidth, int inheight, qboolean only_
 
 		c = inwidth * inheight;
 
-		if (glConfig.deviceSupportsGamma)
+		if (tr.gammaInShader)
 		{
 			for (i = 0 ; i < c ; i++, p += 4)
 			{
@@ -580,6 +566,7 @@ static void Upload32(image_t *image, unsigned *data,
 	int      c;
 	byte     *scan;
 	GLenum   internalFormat = GL_RGB;
+	qboolean unscaled;
 
 	// convert to exact power of 2 sizes
 	for (scaled_width = 1 ; scaled_width < width ; scaled_width <<= 1)
@@ -670,7 +657,8 @@ static void Upload32(image_t *image, unsigned *data,
 	(void)noCompress; // texture compression formats are not used by the Vulkan upload path
 
 	// copy or resample data for the single uploaded mip level
-	if (scaled_width == width && scaled_height == height)
+	unscaled = (scaled_width == width && scaled_height == height) ? qtrue : qfalse;
+	if (unscaled)
 	{
 		Com_Memcpy(scaledBuffer, data, (size_t)width * height * 4);
 	}
@@ -694,7 +682,12 @@ static void Upload32(image_t *image, unsigned *data,
 		Com_Memcpy(scaledBuffer, data, (size_t)width * height * 4);
 	}
 
-	R_LightScaleTexture(scaledBuffer, scaled_width, scaled_height, !mipmap);
+	// as renderer1, which uploads an image without mipmaps at its own size
+	// directly: no software gamma/intensity for those (lightmaps, 2D images)
+	if (mipmap || !unscaled)
+	{
+		R_LightScaleTexture(scaledBuffer, scaled_width, scaled_height, !mipmap);
+	}
 
 	image->internalFormat = internalFormat;
 	image->uploadWidth    = scaled_width;
@@ -1233,15 +1226,10 @@ void R_SetColorMappings(void)
 	int   inf;
 	int   shift;
 
-	// setup the overbright lighting
+	// setup the overbright lighting: the gamma pass applies it (the device
+	// gamma ramp is never used); without the pass (r_ignorehwgamma) there is none
 	tr.overbrightBits = r_overBrightBits->integer;
-	if (!glConfig.deviceSupportsGamma)
-	{
-		tr.overbrightBits = 0;      // need hardware gamma for overbright
-	}
-
-	// never overbright in windowed mode if we are not using glsl..
-	if (!glConfig.isFullscreen && !tr.gammaInShader)
+	if (!tr.gammaInShader)
 	{
 		tr.overbrightBits = 0;
 	}
@@ -1305,11 +1293,6 @@ void R_SetColorMappings(void)
 	for (i = 0 ; i < 256 ; i++)
 	{
 		s_intensitytable[i] = ClampByte((int)(i * r_intensity->value));
-	}
-
-	if (glConfig.deviceSupportsGamma && !tr.gammaInShader)
-	{
-		ri.GLimp_SetGamma(s_gammatable, s_gammatable, s_gammatable);
 	}
 }
 

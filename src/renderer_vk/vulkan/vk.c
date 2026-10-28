@@ -2045,7 +2045,9 @@ static VkSampler VK_CreateMipSampler(VkSamplerAddressMode addressMode)
 	samplerInfo.minLod = 0.0f;
 	samplerInfo.maxLod = useMips ? VK_LOD_CLAMP_NONE : 0.25f;
 
-	if (useMips && vk.maxSamplerAnisotropy > 1.0f && r_extTextureFilterAnisotropic->value > 1.0f)
+	// renderer1 sets the anisotropy on every mipmapped texture, whatever the min
+	// filter: with GL_LINEAR / GL_NEAREST the driver filters level 0 anisotropically
+	if (vk.maxSamplerAnisotropy > 1.0f && r_extTextureFilterAnisotropic->value > 1.0f)
 	{
 		samplerInfo.anisotropyEnable = VK_TRUE;
 		samplerInfo.maxAnisotropy    = Com_Clamp(1.0f, vk.maxSamplerAnisotropy, r_extTextureFilterAnisotropic->value);
