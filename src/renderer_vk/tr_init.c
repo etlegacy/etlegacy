@@ -744,8 +744,6 @@ void R_Init(void)
 
 	R_InitNextFrame();
 
-	InitVulkan();
-
 	// r_gamma and overbright are applied in the gamma pass (VK_EndFrame(),
 	// RB_GammaScreen()); r_ignorehwgamma turns that off, like renderer1's
 	// gamma program
@@ -754,6 +752,8 @@ void R_Init(void)
 	{
 		Ren_Print("INFO: gamma pass disabled - r_ignorehwgamma is set\n");
 	}
+
+	InitVulkan();
 
 	R_InitImages();
 
