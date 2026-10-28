@@ -122,6 +122,7 @@ cvar_t *r_overBrightBits;
 cvar_t *r_mapOverBrightBits;
 
 cvar_t *r_debugSurface;
+cvar_t *r_logFile;
 cvar_t *r_debugShaderSurfaceFlags;
 cvar_t *r_simpleMipMaps;
 
@@ -272,6 +273,7 @@ void R_Register(void)
 	r_speeds          = ri.Cvar_Get("r_speeds", "0", CVAR_CHEAT);
 
 	r_debugSurface            = ri.Cvar_Get("r_debugSurface", "0", CVAR_CHEAT);
+	r_logFile                 = ri.Cvar_Get("r_logFile", "0", CVAR_CHEAT);
 	r_debugShaderSurfaceFlags = ri.Cvar_Get("r_debugShaderSurfaceFlags", "0", CVAR_CHEAT);
 	ri.Cvar_SetDescription(r_debugShaderSurfaceFlags,
 	                       "Highlights any shader with passed SURF_* bitflag set.\n"
