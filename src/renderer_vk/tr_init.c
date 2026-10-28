@@ -178,12 +178,6 @@ static void RB_TakeScreenshotTGA(int width, int height, const char *fileName)
 
 	memcount = linelen * height;
 
-	// gamma correct
-	if (glConfig.deviceSupportsGamma && !tr.gammaInShader)
-	{
-		R_GammaCorrect(allbuf + offset, memcount);
-	}
-
 	ri.FS_WriteFile(fileName, buffer, memcount + 18);
 
 	ri.Hunk_FreeTempMemory(allbuf);
@@ -195,17 +189,10 @@ static void RB_TakeScreenshotTGA(int width, int height, const char *fileName)
 static void RB_TakeScreenshotJPEG(int width, int height, char *fileName)
 {
 	byte   *buffer;
-	size_t offset = 0, memcount;
+	size_t offset = 0;
 	int    padlen;
 
-	buffer   = RB_ReadCapturedPixels(width, height, &offset, &padlen);
-	memcount = (width * 3 + padlen) * height;
-
-	// gamma correct
-	if (glConfig.deviceSupportsGamma && !tr.gammaInShader)
-	{
-		R_GammaCorrect(buffer + offset, memcount);
-	}
+	buffer = RB_ReadCapturedPixels(width, height, &offset, &padlen);
 
 	RE_SaveJPG(fileName, r_screenshotJpegQuality->integer, width, height, buffer + offset, padlen);
 	ri.Hunk_FreeTempMemory(buffer);
@@ -218,17 +205,10 @@ static void RB_TakeScreenshotJPEG(int width, int height, char *fileName)
 static void RB_TakeScreenshotPNG(int width, int height, char *fileName)
 {
 	byte   *buffer;
-	size_t offset = 0, memcount;
+	size_t offset = 0;
 	int    padlen;
 
-	buffer   = RB_ReadCapturedPixels(width, height, &offset, &padlen);
-	memcount = (width * 3 + padlen) * height;
-
-	// gamma correct
-	if (glConfig.deviceSupportsGamma && !tr.gammaInShader)
-	{
-		R_GammaCorrect(buffer + offset, memcount);
-	}
+	buffer = RB_ReadCapturedPixels(width, height, &offset, &padlen);
 
 	RE_SavePNG(fileName, width, height, buffer + offset, padlen);
 	ri.Hunk_FreeTempMemory(buffer);
@@ -295,12 +275,6 @@ static void R_WriteLevelShot(int width, int height)
 		}
 	}
 
-	// gamma correct
-	if (glConfig.deviceSupportsGamma && !tr.gammaInShader)
-	{
-		R_GammaCorrect(buffer + 18, 128 * 128 * 3);
-	}
-
 	ri.FS_WriteFile(checkname, buffer, 128 * 128 * 3 + 18);
 
 	ri.Hunk_FreeTempMemory(buffer);
@@ -331,12 +305,6 @@ static void RB_WriteVideoFrame(const videoFrameCommand_t *cmd)
 	VK_ReadCapturedFrameRGB(cBuf, cmd->width, cmd->height, 0);
 
 	memcount = padwidth * cmd->height;
-
-	// gamma correct
-	if (glConfig.deviceSupportsGamma && !tr.gammaInShader)
-	{
-		R_GammaCorrect(cBuf, memcount);
-	}
 
 	if (cmd->motionJpeg)
 	{
@@ -698,10 +666,11 @@ void GfxInfo_f(void)
 		Ren_Print("N/A\n");
 	}
 
-	// same lines as renderer1's GfxInfo_f
-	if (glConfig.deviceSupportsGamma)
+	// renderer1's GfxInfo_f line; Vulkan applies gamma in its gamma pass, or
+	// bakes it into the textures with r_ignorehwgamma (never a device gamma ramp)
+	if (tr.gammaInShader)
 	{
-		Ren_Print("GAMMA: hardware w/ %d overbright bits\n", tr.overbrightBits);
+		Ren_Print("GAMMA: gamma pass w/ %d overbright bits\n", tr.overbrightBits);
 	}
 	else
 	{
