@@ -76,8 +76,8 @@ static void InitVulkan(void)
 			glConfig.vidHeight *= scale;
 		}
 
-		// renderer1 sizes its main FBO from the scaled vidWidth/vidHeight
-		// (R_InitFBO) and blits it to the window
+		// the scene targets are sized from the scaled vidWidth/vidHeight
+		// (renderer1's main FBO); the gamma pass scales them to the window
 		if (!VK_SetSceneSize(glConfig.vidWidth, glConfig.vidHeight))
 		{
 			Ren_Fatal("InitVulkan: could not create %dx%d render targets (r_scale %g)\n",
@@ -87,16 +87,6 @@ static void InitVulkan(void)
 
 	// print info
 	GfxInfo_f();
-}
-
-/**
- * @brief GL_CheckErrors
- *
- * No-op for Vulkan: there is no implicit GL error state to poll. Kept so
- * callers copied verbatim from renderer1 (tr_backend.c et al.) still link.
- */
-void GL_CheckErrors(void)
-{
 }
 
 /*
@@ -189,7 +179,7 @@ static void RB_TakeScreenshotTGA(int width, int height, const char *fileName)
 	memcount = linelen * height;
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
+	if (glConfig.deviceSupportsGamma && !tr.gammaInShader)
 	{
 		R_GammaCorrect(allbuf + offset, memcount);
 	}
@@ -212,7 +202,7 @@ static void RB_TakeScreenshotJPEG(int width, int height, char *fileName)
 	memcount = (width * 3 + padlen) * height;
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
+	if (glConfig.deviceSupportsGamma && !tr.gammaInShader)
 	{
 		R_GammaCorrect(buffer + offset, memcount);
 	}
@@ -235,7 +225,7 @@ static void RB_TakeScreenshotPNG(int width, int height, char *fileName)
 	memcount = (width * 3 + padlen) * height;
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
+	if (glConfig.deviceSupportsGamma && !tr.gammaInShader)
 	{
 		R_GammaCorrect(buffer + offset, memcount);
 	}
@@ -306,7 +296,7 @@ static void R_WriteLevelShot(int width, int height)
 	}
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
+	if (glConfig.deviceSupportsGamma && !tr.gammaInShader)
 	{
 		R_GammaCorrect(buffer + 18, 128 * 128 * 3);
 	}
@@ -343,7 +333,7 @@ static void RB_WriteVideoFrame(const videoFrameCommand_t *cmd)
 	memcount = padwidth * cmd->height;
 
 	// gamma correct
-	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
+	if (glConfig.deviceSupportsGamma && !tr.gammaInShader)
 	{
 		R_GammaCorrect(cBuf, memcount);
 	}
@@ -787,11 +777,14 @@ void R_Init(void)
 
 	InitVulkan();
 
-	R_InitShaderPrograms();
-
-	R_InitFBO();
-
-	R_InitGamma();
+	// r_gamma and overbright are applied in the gamma pass (VK_EndFrame(),
+	// RB_GammaScreen()); r_ignorehwgamma turns that off, like renderer1's
+	// gamma program
+	tr.gammaInShader = ri.Cvar_VariableIntegerValue("r_ignorehwgamma") ? qfalse : qtrue;
+	if (!tr.gammaInShader)
+	{
+		Ren_Print("INFO: gamma pass disabled - r_ignorehwgamma is set\n");
+	}
 
 	R_InitImages();
 
@@ -865,12 +858,6 @@ void RE_Shutdown(qboolean destroyWindow)
 	}
 
 	R_DoneFreeType();
-
-	R_ShutdownGamma();
-
-	R_ShutdownFBO();
-
-	R_ShutdownShaderPrograms();
 
 	// shut down platform specific Vulkan stuff
 	if (destroyWindow)

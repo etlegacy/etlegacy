@@ -84,16 +84,12 @@ cvar_t *r_extMultitexture;
 cvar_t *r_extTextureEnvAdd;
 
 cvar_t *r_extTextureFilterAnisotropic;
-cvar_t *r_extMaxAnisotropy;
 
-cvar_t *r_ignoreGLErrors;
-cvar_t *r_logFile;
 
 cvar_t *r_textureBits;
 
 cvar_t *r_drawBuffer;
 cvar_t *r_lightMap;
-cvar_t *r_uiFullScreen;
 cvar_t *r_shadows;
 cvar_t *r_portalSky;
 cvar_t *r_flares;
@@ -146,7 +142,6 @@ cvar_t *r_cacheGathering;
 
 cvar_t *r_bonesDebug;
 
-cvar_t *r_fbo;
 
 cvar_t *r_wolfFog;
 
@@ -156,7 +151,6 @@ cvar_t *r_screenshotJpegQuality;
 cvar_t *r_maxPolys;
 cvar_t *r_maxPolyVerts;
 
-cvar_t *r_gfxInfo;
 
 cvar_t *r_scale;
 
@@ -188,7 +182,6 @@ void R_Register(void)
 	r_extTextureEnvAdd      = ri.Cvar_Get("r_ext_texture_env_add", "1", CVAR_ARCHIVE_ND | CVAR_LATCH);
 
 	r_extTextureFilterAnisotropic = ri.Cvar_Get("r_ext_texture_filter_anisotropic", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
-	r_extMaxAnisotropy            = ri.Cvar_Get("r_ext_max_anisotropy", "2", CVAR_ARCHIVE_ND | CVAR_LATCH);
 
 	r_picMip = ri.Cvar_Get("r_picmip", "1", CVAR_ARCHIVE | CVAR_LATCH);          // mod for DM and DK for id build.  was "1" - pushed back to 1
 	ri.Cvar_CheckRange(r_picMip, 0, 3, qtrue);
@@ -201,7 +194,6 @@ void R_Register(void)
 	r_overBrightBits = ri.Cvar_Get("r_overBrightBits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);        // disable overbrightbits by default
 	ri.Cvar_CheckRange(r_overBrightBits, 0, 1, qtrue);                                    // limit to overbrightbits 1 (sorry 1337 players)
 	r_simpleMipMaps = ri.Cvar_Get("r_simpleMipMaps", "1", CVAR_ARCHIVE_ND | CVAR_LATCH);
-	r_uiFullScreen  = ri.Cvar_Get("r_uifullscreen", "0", 0);
 
 	r_subDivisions = ri.Cvar_Get("r_subdivisions", "4", CVAR_ARCHIVE_ND | CVAR_LATCH);
 
@@ -223,7 +215,6 @@ void R_Register(void)
 	ri.Cvar_CheckRange(r_zNear, 0.001f, 200, qfalse);
 	r_zFar = ri.Cvar_Get("r_zfar", "0", CVAR_CHEAT);
 
-	r_ignoreGLErrors = ri.Cvar_Get("r_ignoreGLErrors", "1", CVAR_ARCHIVE_ND);
 	r_fastSky        = ri.Cvar_Get("r_fastsky", "0", CVAR_ARCHIVE_ND);
 
 	r_drawSun      = ri.Cvar_Get("r_drawSun", "1", CVAR_ARCHIVE_ND);
@@ -255,7 +246,6 @@ void R_Register(void)
 	r_cacheGathering = ri.Cvar_Get("cl_cacheGathering", "0", 0);
 	r_bonesDebug     = ri.Cvar_Get("r_bonesDebug", "0", CVAR_CHEAT);
 
-	r_fbo = ri.Cvar_Get("r_fbo", "1", CVAR_LATCH);
 
 	r_wolfFog = ri.Cvar_Get("r_wolffog", "1", CVAR_ARCHIVE);
 
@@ -281,7 +271,6 @@ void R_Register(void)
 	r_showCluster     = ri.Cvar_Get("r_showcluster", "0", CVAR_CHEAT);
 	r_speeds          = ri.Cvar_Get("r_speeds", "0", CVAR_CHEAT);
 
-	r_logFile                 = ri.Cvar_Get("r_logFile", "0", CVAR_CHEAT);
 	r_debugSurface            = ri.Cvar_Get("r_debugSurface", "0", CVAR_CHEAT);
 	r_debugShaderSurfaceFlags = ri.Cvar_Get("r_debugShaderSurfaceFlags", "0", CVAR_CHEAT);
 	ri.Cvar_SetDescription(r_debugShaderSurfaceFlags,
@@ -353,7 +342,6 @@ void R_Register(void)
 	r_maxPolyVerts = ri.Cvar_Get("r_maxpolyverts", va("%d", DEFAULT_POLYVERTS), CVAR_LATCH); // now latched to check against used r_maxpolyverts and not MAX_POLYVERTS
 	ri.Cvar_CheckRange(r_maxPolyVerts, MIN_POLYVERTS, MAX_POLYVERTS, qtrue);            // MIN_POLYVERTS was old static value
 
-	r_gfxInfo = ri.Cvar_Get("r_gfxinfo", "0", 0); // less spammy gfx output at start - enable to print full GL_EXTENSION string
 
 	r_scale = ri.Cvar_Get("r_scale", "1", CVAR_ARCHIVE | CVAR_LATCH);
 

@@ -44,7 +44,6 @@ extern cvar_t *r_textureBits;           ///< number of desired texture bits
                                         ///< 32 = use 32-bit textures
                                         ///< all else = error
 
-extern cvar_t *r_extMaxAnisotropy;      ///< FIXME: not used in GLES ! move it ?
                                         ///< FIXME: "extern int      maxAnisotropy" founded
 
 extern cvar_t *r_lightMap;              ///< render lightmaps only
@@ -64,7 +63,6 @@ extern cvar_t *r_cache;
 extern cvar_t *r_cacheShaders;
 extern cvar_t *r_cacheModels;
 
-extern cvar_t *r_fbo;
 
 extern cvar_t *r_cacheGathering;
 
@@ -72,7 +70,6 @@ extern cvar_t *r_bonesDebug;
 
 extern cvar_t *r_wolfFog;
 
-extern cvar_t *r_gfxInfo;
 
 extern cvar_t *r_scale;
 

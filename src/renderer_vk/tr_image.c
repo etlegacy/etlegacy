@@ -1241,7 +1241,7 @@ void R_SetColorMappings(void)
 	}
 
 	// never overbright in windowed mode if we are not using glsl..
-	if (!glConfig.isFullscreen && !tr.gammaProgramUsed)
+	if (!glConfig.isFullscreen && !tr.gammaInShader)
 	{
 		tr.overbrightBits = 0;
 	}
@@ -1307,7 +1307,7 @@ void R_SetColorMappings(void)
 		s_intensitytable[i] = ClampByte((int)(i * r_intensity->value));
 	}
 
-	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
+	if (glConfig.deviceSupportsGamma && !tr.gammaInShader)
 	{
 		ri.GLimp_SetGamma(s_gammatable, s_gammatable, s_gammatable);
 	}

@@ -91,7 +91,9 @@ static qboolean LoadSplashImage(const char *name, byte *data, unsigned int size,
 	splashHandle = RE_RegisterShaderFromImage(LEGACY_SPLASH_NAME, LIGHTMAP_2D, splashImage, qfalse);
 #endif // FEATURE_RENDERER2
 
+#ifndef FEATURE_RENDERER_VULKAN
 	GL_CheckErrors();
+#endif
 
 	return qtrue;
 }
@@ -131,5 +133,7 @@ void R_DrawSplash(void)
 	RE_StretchPic(x, y, w, h, 0, 0, 1, 1, splashHandle);
 	RE_EndFrame(NULL, NULL);
 
+#ifndef FEATURE_RENDERER_VULKAN
 	GL_CheckErrors();
+#endif
 }
