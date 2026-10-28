@@ -605,6 +605,8 @@ typedef void (*completionFunc_t)(char *args, int argNum);
 
 void Cmd_Init(void);
 
+extern qboolean cmd_inExec; ///< Current command comes from an exec script.
+
 #define GET_MACRO(_1, _2, _3, _4, NAME, ...) NAME
 #define Cmd_AddCommand1(x) Cmd_AddSystemCommand(x, NULL, NULL, NULL)
 #define Cmd_AddCommand2(x, y) Cmd_AddSystemCommand(x, y, NULL, NULL)

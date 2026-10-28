@@ -55,6 +55,10 @@ int   cmd_wait;
 cmd_t cmd_text;
 byte  cmd_text_buf[MAX_CMD_BUFFER];
 
+// Exec text stays at the front of the buffer, including nested execs and vstrs.
+static unsigned int cmd_execBytes;
+qboolean            cmd_inExec;
+
 //=============================================================================
 
 /**
@@ -94,6 +98,8 @@ void Cbuf_Init(void)
 	cmd_text.data    = cmd_text_buf;
 	cmd_text.maxsize = MAX_CMD_BUFFER;
 	cmd_text.cursize = 0;
+	cmd_execBytes    = 0;
+	cmd_inExec       = qfalse;
 }
 
 /**
@@ -146,6 +152,12 @@ void Cbuf_InsertText(const char *text)
 	cmd_text.data[len - 1] = '\n';
 
 	cmd_text.cursize += len;
+
+	// Preserve the exec boundary when inserting text, even across wait frames.
+	if (cmd_execBytes || cmd_inExec)
+	{
+		cmd_execBytes += len;
+	}
 }
 
 /**
@@ -189,6 +201,7 @@ void Cbuf_Execute(void)
 	char         *text;
 	char         line[MAX_CMD_LINE];
 	int          quotes;
+	qboolean     wasInExec = cmd_inExec;
 	// This will keep // style comments all on one line by not breaking on
 	// a semicolon.  It will keep /* ... */ style comments all on one line by not
 	// breaking it for semicolon or newline.
@@ -264,6 +277,7 @@ void Cbuf_Execute(void)
 		// this is necessary because commands (exec) can insert data at the
 		// beginning of the text buffer
 
+		cmd_inExec = cmd_execBytes > 0;
 		if (i == cmd_text.cursize)
 		{
 			cmd_text.cursize = 0;
@@ -274,9 +288,11 @@ void Cbuf_Execute(void)
 			cmd_text.cursize -= i;
 			memmove(text, text + i, cmd_text.cursize);
 		}
+		cmd_execBytes -= MIN(cmd_execBytes, i);
 
 		// execute the command line
 		Cmd_ExecuteString(line);
+		cmd_inExec = wasInExec;
 	}
 }
 
@@ -298,6 +314,7 @@ void Cmd_Exec_f(void)
 		void *v;
 	} f;
 	qboolean quiet;
+	qboolean wasInExec;
 
 	quiet = !Q_stricmp(Cmd_Argv(0), "execq");
 	f.v   = NULL;
@@ -322,7 +339,11 @@ void Cmd_Exec_f(void)
 		Com_Printf("execing %s\n", filename);
 	}
 
+	// Tag the inserted script without marking commands already queued after it.
+	wasInExec  = cmd_inExec;
+	cmd_inExec = qtrue;
 	Cbuf_InsertText(f.c);
+	cmd_inExec = wasInExec;
 
 	FS_FreeFile(f.v);
 }
