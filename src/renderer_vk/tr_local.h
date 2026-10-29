@@ -1907,6 +1907,7 @@ unsigned int VK_CullLeafWords(void);
 void VK_CullDispatch(const vkCullView_t *cv, const cplane_t *frustum, const vec3_t viewOrigin, int flags);
 unsigned int VK_CullCommandOffset(int view, int group);
 void R_VkBuildWorldCull(void);
+qboolean R_VkSurfaceInVisibleLeaf(const msurface_t *surf);
 void R_VkMeshReset(void);
 void R_VkMeshRegister(md3Surface_t *surf);
 void R_VkMeshRegisterMDC(mdcSurface_t *surf);
