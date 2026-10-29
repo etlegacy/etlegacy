@@ -104,17 +104,18 @@ if(BUILD_CLIENT)
 		if(VK_SHADER_PREBUILT_DIR)
 			get_filename_component(VK_SHADER_PREBUILT_DIR_ABS "${VK_SHADER_PREBUILT_DIR}" ABSOLUTE BASE_DIR "${CMAKE_SOURCE_DIR}")
 			message(STATUS "Vulkan shaders: precompiled SPIR-V from ${VK_SHADER_PREBUILT_DIR_ABS}")
-		else()
-			# shader compiler: glslc (shaderc) preferred, glslangValidator works too
-			find_program(VK_GLSL_COMPILER
-				NAMES glslc glslangValidator
-				HINTS "$ENV{VULKAN_SDK}/bin" "$ENV{VULKAN_SDK}/Bin"
-				DOC "GLSL to SPIR-V compiler (glslc or glslangValidator)"
-			)
+		elseif(NOT BUNDLED_SHADERC)
+			# The find glslc call gets made in the main CMakeLists
 			if(NOT VK_GLSL_COMPILER)
 				message(FATAL_ERROR "No GLSL compiler found - install glslc (shaderc) or glslangValidator (glslang), set VK_GLSL_COMPILER, or set VK_SHADER_PREBUILT_DIR to precompiled shaders (cmake/ETLCompileVkShaders.cmake)")
 			endif()
 			message(STATUS "Vulkan GLSL compiler: ${VK_GLSL_COMPILER}")
+			add_custom_target(glslc_binary)
+			set_target_properties(glslc_binary PROPERTIES
+				GLSLC_EXECUTABLE "${VK_GLSL_COMPILER}"
+			)
+		else()
+			message(STATUS "Defaulting to bundled shaderc compilation")
 		endif()
 	endif()
 
