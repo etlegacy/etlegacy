@@ -85,6 +85,11 @@ void CG_FitTextToWidth_Ext(char *instr, float scale, float w, int size, fontHelp
 	char buffer[1024];
 	char *s, *p, *c, *ls = NULL;
 
+	if (!instr || *instr == '\0')
+	{
+		return;
+	}
+
 	Q_strncpyz(buffer, instr, 1024);
 	Com_Memset(instr, 0, size);
 

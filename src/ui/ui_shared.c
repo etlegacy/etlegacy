@@ -1871,6 +1871,11 @@ void BG_FitTextToWidth_Ext(char *instr, float scale, float w, size_t size, fontH
 	char *s, *p, *c, *ls = NULL;
 	char lastColorCode[3] = "";
 
+	if (!instr || *instr == '\0')
+	{
+		return;
+	}
+
 	Q_strncpyz(buffer, instr, 1024);
 	Com_Memset(instr, 0, size);
 
