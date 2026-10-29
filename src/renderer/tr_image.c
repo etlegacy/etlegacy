@@ -1452,6 +1452,10 @@ void R_SetColorMappings(void)
 void R_InitImages(void)
 {
 	Com_Memset(hashTable, 0, sizeof(hashTable));
+
+	// Register the gamma image after clearing the table, before color mappings use gammaProgramUsed.
+	R_InitGamma();
+
 	// build brightness translation tables
 	R_SetColorMappings();
 
@@ -1469,12 +1473,18 @@ void R_DeleteTextures(void)
 {
 	int i;
 
+	// Exceed the maximum backup count so the purge also resets its cursor.
+	R_PurgeBackupImages(MAX_DRAWIMAGES + 1);
+
+	// The active array includes every image, regardless of hash collisions or duplicate names.
 	for (i = 0; i < tr.numImages ; i++)
 	{
 		glDeleteTextures(1, &tr.images[i]->texnum);
+		R_CacheImageFree(tr.images[i]);
 	}
 
 	Com_Memset(tr.images, 0, sizeof(tr.images));
+	Com_Memset(hashTable, 0, sizeof(hashTable));
 	tr.numImages = 0;
 
 	Com_Memset(glState.currenttextures, 0, sizeof(glState.currenttextures));
@@ -1489,8 +1499,6 @@ void R_DeleteTextures(void)
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-
-	R_CacheImageFreeAll();
 }
 
 /*
@@ -1974,36 +1982,6 @@ void *R_CacheImageAlloc(int size)
 }
 
 /**
- * @brief R_CacheImageFreeAll
- *
- * @note Unused
- */
-void R_CacheImageFreeAll()
-{
-	if (r_cache->integer && r_cacheShaders->integer)
-	{
-		int i;
-		for (i = 0; i < FILE_HASH_SIZE; i++)
-		{
-			if (backupHashTable[i])
-			{
-				R_CacheImageFree(backupHashTable[i]);
-				backupHashTable[i] = NULL;
-			}
-		}
-
-		for (i = 0; i < FILE_HASH_SIZE; i++)
-		{
-			if (hashTable[i])
-			{
-				R_CacheImageFree(hashTable[i]);
-				hashTable[i] = NULL;
-			}
-		}
-	}
-}
-
-/**
  * @brief R_CacheImageFree
  * @param[in] ptr
  */
@@ -2024,6 +2002,12 @@ qboolean R_TouchImage(image_t *inImage)
 {
 	image_t *bImage, *bImagePrev;
 	int     hash;
+
+	// Do not restore heap-backed images into a renderer using hunk-backed images.
+	if (!r_cache->integer || !r_cacheShaders->integer)
+	{
+		return qfalse;
+	}
 
 	if (inImage == tr.dlightImage ||
 	    inImage == tr.whiteImage ||
@@ -2084,7 +2068,8 @@ void R_PurgeImage(image_t *image)
 {
 	glDeleteTextures(1, &image->texnum);
 
-	R_CacheImageFree(image);
+	// Only backed-up images reach this path; they were heap-allocated even if caching is now disabled.
+	Com_Dealloc(image);
 
 	Com_Memset(glState.currenttextures, 0, sizeof(glState.currenttextures));
 	if (glActiveTextureARB)
@@ -2152,19 +2137,19 @@ void R_PurgeBackupImages(int purgeCount)
  */
 void R_BackupImages(void)
 {
-	if (!r_cache->integer)
+	if (!r_cache->integer || !r_cacheShaders->integer)
 	{
-		return;
-	}
-	if (!r_cacheShaders->integer)
-	{
+		// Release hunk-backed images before their storage is cleared on map changes.
+		R_IssuePendingRenderCommands();
+		R_DeleteTextures();
 		return;
 	}
 
-	// backup the hashTable
+	// Transfer ownership to the backup table so active and backed-up images stay disjoint.
 	Com_Memcpy(backupHashTable, hashTable, sizeof(backupHashTable));
+	Com_Memset(hashTable, 0, sizeof(hashTable));
+	Com_Memset(tr.images, 0, sizeof(tr.images));
 
-	// pretend we have cleared the list
 	numBackupImages = tr.numImages;
 	tr.numImages    = 0;
 
@@ -2192,7 +2177,8 @@ image_t *R_FindCachedImage(const char *name, int hash)
 {
 	image_t *bImage;
 
-	if (!r_cacheShaders->integer)
+	// Match the allocation policy before restoring any heap-backed images.
+	if (!r_cache->integer || !r_cacheShaders->integer)
 	{
 		return NULL;
 	}
