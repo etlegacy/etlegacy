@@ -361,9 +361,12 @@ void R_LightScaleTexture(unsigned *in, int inwidth, int inheight, qboolean only_
 	int  i, c;
 	byte *p;
 
+	// gamma goes into the textures only when neither the gamma program nor
+	// hardware gamma applies it (otherwise e.g. native Wayland, where SDL
+	// can't set the window brightness, got r_gamma twice)
 	if (only_gamma)
 	{
-		if (!glConfig.deviceSupportsGamma)
+		if (!glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 		{
 			p = (byte *)in;
 
@@ -382,7 +385,7 @@ void R_LightScaleTexture(unsigned *in, int inwidth, int inheight, qboolean only_
 
 		c = inwidth * inheight;
 
-		if (glConfig.deviceSupportsGamma)
+		if (glConfig.deviceSupportsGamma || tr.gammaProgramUsed)
 		{
 			for (i = 0 ; i < c ; i++, p += 4)
 			{
@@ -1368,9 +1371,9 @@ void R_SetColorMappings(void)
 
 	// setup the overbright lighting
 	tr.overbrightBits = r_overBrightBits->integer;
-	if (!glConfig.deviceSupportsGamma)
+	if (!glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
-		tr.overbrightBits = 0;      // need hardware gamma for overbright
+		tr.overbrightBits = 0;      // need hardware gamma or the gamma program for overbright
 	}
 
 	// never overbright in windowed mode if we are not using glsl..

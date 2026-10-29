@@ -892,7 +892,11 @@ void GfxInfo_f(void)
 		Ren_Print("N/A\n");
 	}
 
-	if (glConfig.deviceSupportsGamma)
+	if (tr.gammaProgramUsed)
+	{
+		Ren_Print("GAMMA: gamma program w/ %d overbright bits\n", tr.overbrightBits);
+	}
+	else if (glConfig.deviceSupportsGamma)
 	{
 		Ren_Print("GAMMA: hardware w/ %d overbright bits\n", tr.overbrightBits);
 	}
