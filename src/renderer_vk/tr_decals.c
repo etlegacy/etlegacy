@@ -977,7 +977,10 @@ void R_AddDecalSurface(decal_t *decal)
 	srfGeneric_t *gen;
 
 	// early outs
-	if (decal->shader == NULL || (decal->parent != NULL && decal->parent->viewCount != tr.viewCount) || r_firstSceneDecal + tr.refdef.numDecals >= MAX_DECALS)
+	// a GPU-culled parent isn't visited by the walk: its leaves tell instead
+	if (decal->shader == NULL ||
+	    (decal->parent != NULL && decal->parent->viewCount != tr.viewCount && !R_VkSurfaceInVisibleLeaf(decal->parent)) ||
+	    r_firstSceneDecal + tr.refdef.numDecals >= MAX_DECALS)
 	{
 		return;
 	}

@@ -452,6 +452,8 @@ static int            vkNumGroups;
 static qboolean       vkFogGroups;     ///< some groups are fogged: their fog pass needs the merged world batch
 static vkCullView_t   vkCull;          ///< the current view's culling (tr.viewParms.vkCullView >= 0)
 static unsigned int   *vkLeafBits;     ///< vkCull.leafBits
+static unsigned int   *vkSurfLeafRange; ///< per GPU-culled surface: first entry in vkSurfLeaves, count
+static unsigned int   *vkSurfLeaves;    ///< the leaves of each GPU-culled surface
 
 /**
  * @brief Vulkan: true if surfaces with this shader can be drawn from the
@@ -534,10 +536,12 @@ void R_VkBuildWorldCull(void)
 	int             *shaderGroup, *groupNext, *groupFog;
 	int             i, j, k, numSurfs = 0, numSurfLeaves = 0, numIndexes = 0;
 
-	vkGroups     = NULL;
-	vkGroupFirst = NULL;
-	vkNumGroups  = 0;
-	vkFogGroups  = qfalse;
+	vkGroups        = NULL;
+	vkGroupFirst    = NULL;
+	vkNumGroups     = 0;
+	vkFogGroups     = qfalse;
+	vkSurfLeafRange = NULL;
+	vkSurfLeaves    = NULL;
 
 	for (i = 0, surf = w->surfaces; i < w->numsurfaces; i++, surf++)
 	{
@@ -761,6 +765,17 @@ void R_VkBuildWorldCull(void)
 	else
 	{
 		vkLeafBits = ri.Hunk_Alloc(VK_CullLeafWords() * sizeof(unsigned int), h_low);
+
+		// the surfaces' leaves on the CPU too: a decal on a GPU-culled surface
+		// is drawn when one of them is visible (R_VkSurfaceInVisibleLeaf)
+		vkSurfLeafRange = ri.Hunk_Alloc(MAX(numSurfs, 1) * 2 * sizeof(unsigned int), h_low);
+		vkSurfLeaves    = ri.Hunk_Alloc(MAX(numSurfLeaves, 1) * sizeof(unsigned int), h_low);
+		for (i = 0; i < numSurfs; i++)
+		{
+			vkSurfLeafRange[2 * i]     = surfs[i].leafFirst;
+			vkSurfLeafRange[2 * i + 1] = surfs[i].leafCount;
+		}
+		Com_Memcpy(vkSurfLeaves, surfLeaves, numSurfLeaves * sizeof(unsigned int));
 	}
 
 	ri.Free(leafFill);
@@ -800,6 +815,35 @@ static qboolean R_VkCullBeginView(void)
 
 	vkCull.leafBits = vkLeafBits;
 	return VK_CullBeginView(&vkCull, vkGroupFirst);
+}
+
+/**
+ * @brief Vulkan: true if this GPU-culled world surface is in a leaf the
+ * current view's walk reached (vkCull.leafBits). The CPU walk doesn't visit
+ * GPU-culled surfaces, so their viewCount isn't set; renderer1 sets it for
+ * every surface in a visited leaf, which is what R_AddDecalSurface() tests.
+ */
+qboolean R_VkSurfaceInVisibleLeaf(const msurface_t *surf)
+{
+	unsigned int i, first, count, leaf;
+
+	if (tr.viewParms.vkCullView < 0 || !vkSurfLeaves || surf->vkCullIndex < 0)
+	{
+		return qfalse;
+	}
+
+	first = vkSurfLeafRange[2 * surf->vkCullIndex];
+	count = vkSurfLeafRange[2 * surf->vkCullIndex + 1];
+	for (i = 0; i < count; i++)
+	{
+		leaf = vkSurfLeaves[first + i];
+		if (vkCull.leafBits[leaf >> 5] & (1u << (leaf & 31)))
+		{
+			return qtrue;
+		}
+	}
+
+	return qfalse;
 }
 
 /**
