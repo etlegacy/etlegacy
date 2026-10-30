@@ -440,8 +440,9 @@ GOTO :EOF
 
 	:: precompiled Vulkan shaders instead of a GLSL compiler (the CI's vk-shaders job)
 	IF DEFINED VK_SHADER_PREBUILT_DIR (
+		for %%I in ("!VK_SHADER_PREBUILT_DIR!") do set "VK_SHADER_PREBUILT_DIR_ABS=%%~fI"
 		SET local_build_string=!local_build_string! ^
-		-DVK_SHADER_PREBUILT_DIR="!VK_SHADER_PREBUILT_DIR!"
+		-DVK_SHADER_PREBUILT_DIR="!VK_SHADER_PREBUILT_DIR_ABS!"
 	)
 
 	IF !etpub!==1 (

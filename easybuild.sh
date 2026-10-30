@@ -665,8 +665,10 @@ generate_configuration() {
 
     # precompiled Vulkan shaders instead of a GLSL compiler (the CI's vk-shaders job)
     if [ -n "$VK_SHADER_PREBUILT_DIR" ]; then
+        local abs_shader_dir
+        abs_shader_dir=$(realpath "$VK_SHADER_PREBUILT_DIR")
         cmake_args+=(
-            "-DVK_SHADER_PREBUILT_DIR=${VK_SHADER_PREBUILT_DIR}"
+            "-DVK_SHADER_PREBUILT_DIR=${abs_shader_dir}"
         )
     fi
 
