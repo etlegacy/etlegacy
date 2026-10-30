@@ -651,7 +651,7 @@ void GfxInfo_f(void)
 
 	Ren_Print("VULKAN_VENDOR: %s\n", glConfig.vendor_string);
 	Ren_Print("VULKAN_DEVICE: %s\n", glConfig.renderer_string);
-	Ren_Print("VULKAN_API_VERSION: %s\n", glConfig.version_string);
+	Ren_Print("VULKAN_VERSION: %s\n", glConfig.version_string);
 
 	Ren_Print("MAX_TEXTURE_SIZE: %d\n", glConfig.maxTextureSize);
 	Ren_Print("PIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits);

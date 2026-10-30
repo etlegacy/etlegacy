@@ -4582,7 +4582,9 @@ qboolean VK_SetSceneSize(int width, int height)
 
 qboolean VK_Init(int width, int height)
 {
-	VkPhysicalDeviceProperties props;
+	VkPhysicalDeviceProperties         props;
+	VkPhysicalDeviceDriverProperties   driverProps;
+	PFN_vkGetPhysicalDeviceProperties2 getProperties2 = NULL;
 
 	Com_Memset(&vk, 0, sizeof(vk));
 
@@ -4665,10 +4667,43 @@ qboolean VK_Init(int width, int height)
 	}
 
 	vkGetPhysicalDeviceProperties(vk.physicalDevice, &props);
-	Q_strncpyz(glConfig.vendor_string, "Vulkan", sizeof(glConfig.vendor_string));
+
+	// driver properties ('VK_KHR_driver_properties') needs Vulkan 1.2 or newer
+	// TODO: resolve this for < 1.2
+	if (vk.instanceVersion >= VK_API_VERSION_1_2 && props.apiVersion >= VK_API_VERSION_1_2)
+	{
+		getProperties2 = (PFN_vkGetPhysicalDeviceProperties2)vkGetInstanceProcAddr(vk.instance, "vkGetPhysicalDeviceProperties2");
+
+		if (getProperties2)
+		{
+			VkPhysicalDeviceProperties2 props2;
+
+			Com_Memset(&driverProps, 0, sizeof(driverProps));
+			driverProps.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES;
+
+			Com_Memset(&props2, 0, sizeof(props2));
+			props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+			props2.pNext = &driverProps;
+
+			getProperties2(vk.physicalDevice, &props2);
+		}
+	}
+
 	Q_strncpyz(glConfig.renderer_string, props.deviceName, sizeof(glConfig.renderer_string));
-	Com_sprintf(glConfig.version_string, sizeof(glConfig.version_string), "%d.%d.%d",
+	Com_sprintf(glConfig.version_string, sizeof(glConfig.version_string), "API: %d.%d.%d",
 	            VK_VERSION_MAJOR(props.apiVersion), VK_VERSION_MINOR(props.apiVersion), VK_VERSION_PATCH(props.apiVersion));
+
+	if (getProperties2 && driverProps.driverName[0] != '\0')
+	{
+		Q_strncpyz(glConfig.vendor_string, driverProps.driverName, sizeof(glConfig.vendor_string));
+		Q_strcat(glConfig.version_string, sizeof(glConfig.version_string), va(" Driver: %s", driverProps.driverInfo));
+	}
+	else
+	{
+		Q_strncpyz(glConfig.vendor_string, va("Unknown (0x%04X)", props.vendorID), sizeof(glConfig.vendor_string));
+		Q_strcat(glConfig.version_string, sizeof(glConfig.version_string), va(" Driver: 0x%08X", props.driverVersion));
+	}
+
 	glConfig.maxTextureSize = (int)props.limits.maxImageDimension2D;
 
 	vk.initialized = qtrue;
