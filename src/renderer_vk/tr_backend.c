@@ -1016,7 +1016,7 @@ const void *RB_DrawBuffer(const void *data)
 	const drawBufferCommand_t *cmd = ( const drawBufferCommand_t * ) data;
 
 	// clear screen for debugging
-	if (r_clear->integer)
+	if (r_clear->integer && tr.frameSceneNum != 0)
 	{
 		VK_SetClearColor(1, 0, 0.5f, 1);
 		VK_ClearSceneColor(qtrue);
