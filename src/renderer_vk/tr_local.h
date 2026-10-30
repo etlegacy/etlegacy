@@ -1494,6 +1494,7 @@ typedef struct
 
 	int numLightmaps;
 	image_t *lightmaps[MAX_LIGHTMAPS];
+	qboolean lightmapFailed[MAX_LIGHTMAPS];     ///< external lightmap lookup failed for this index
 
 	trRefEntity_t *currentEntity;
 	trRefEntity_t worldEntity;                  ///< point currentEntity at this when rendering world
