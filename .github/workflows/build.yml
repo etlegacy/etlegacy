@@ -50,9 +50,9 @@ jobs:
   # machines (containers, Windows) have no GLSL compiler. The build jobs embed
   # these files through VK_SHADER_PREBUILT_DIR.
   vk-shaders:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install the GLSL compiler
         run: |
@@ -62,7 +62,7 @@ jobs:
       - name: Compile the shaders
         run: cmake -DVK_GLSL_COMPILER=glslc -DOUT_DIR=vk-shaders -P cmake/ETLCompileVkShaders.cmake
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: vk-shaders
           path: vk-shaders/*.spv
@@ -447,7 +447,7 @@ jobs:
           submodules: true
 
       - name: Download the Vulkan shaders
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: vk-shaders
           path: vk-shaders
@@ -502,7 +502,7 @@ jobs:
           submodules: true
 
       - name: Download the Vulkan shaders
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: vk-shaders
           path: vk-shaders
@@ -564,7 +564,7 @@ jobs:
           submodules: true
 
       - name: Download the Vulkan shaders
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: vk-shaders
           path: vk-shaders
@@ -609,7 +609,7 @@ jobs:
           submodules: true
 
       - name: Download the Vulkan shaders
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: vk-shaders
           path: vk-shaders
@@ -664,7 +664,7 @@ jobs:
           submodules: true
 
       - name: Download the Vulkan shaders
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: vk-shaders
           path: vk-shaders
@@ -747,7 +747,7 @@ jobs:
           submodules: true
 
       - name: Download the Vulkan shaders
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: vk-shaders
           path: vk-shaders
