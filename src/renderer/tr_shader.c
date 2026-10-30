@@ -3283,6 +3283,19 @@ void R_FindLightmap(int *lightmapIndex)
 		return;
 	}
 
+	if (*lightmapIndex >= MAX_LIGHTMAPS)
+	{
+		*lightmapIndex = LIGHTMAP_BY_VERTEX;
+		return;
+	}
+
+	// don't probe the filesystem again for a lightmap that is already known to be missing
+	if (tr.lightmapFailed[*lightmapIndex])
+	{
+		*lightmapIndex = LIGHTMAP_BY_VERTEX;
+		return;
+	}
+
 	// sync up render thread, because we're going to have to load an image
 	R_IssuePendingRenderCommands();
 
@@ -3291,7 +3304,8 @@ void R_FindLightmap(int *lightmapIndex)
 	image = R_FindImageFile(fileName, qfalse, qfalse, GL_CLAMP_TO_EDGE, qtrue);
 	if (image == NULL)
 	{
-		*lightmapIndex = LIGHTMAP_BY_VERTEX;
+		tr.lightmapFailed[*lightmapIndex] = qtrue;
+		*lightmapIndex                    = LIGHTMAP_BY_VERTEX;
 		return;
 	}
 
