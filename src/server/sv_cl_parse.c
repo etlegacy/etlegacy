@@ -1112,7 +1112,7 @@ void SV_CL_ParseServerMessage(msg_t *msg, int headerBytes)
 
 	SV_CL_ParseBinaryMessage(msg);
 
-	if (svcls.TVServer)
+	if (svcls.TVServer && !svclc.demo.skipping)
 	{
 		SV_CL_RunFrame();
 	}
