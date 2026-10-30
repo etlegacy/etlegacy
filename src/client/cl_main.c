@@ -3015,7 +3015,7 @@ void CL_InitRef(void)
 #else // *nix
 		Com_sprintf(dllName, sizeof(dllName), "librenderer_" DEFAULT_RENDERER_NAME "_" ARCH_STRING DLL_EXT);
 #endif
-		rendererLib = Sys_LoadLibrary(dllName);
+		rendererLib = Sys_LoadDll(dllName, qfalse);
 	}
 
 	if (!rendererLib)
