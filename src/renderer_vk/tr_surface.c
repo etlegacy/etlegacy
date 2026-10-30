@@ -634,14 +634,14 @@ static ID_INLINE qboolean RB_FoliageInstanceColor(int o, const foliageInstance_t
 		// set color
 		a = alpha > 1.0f ? 255 : (int)(alpha * 255);
 #ifdef Q3_BIG_ENDIAN // LBO 3/15/05. Byte-swap fix for Mac - alpha is in the LSB.
-		*srcColor = (*((int *) instance->color) & 0xFFFFFF00) | (a & 0xff);
+		*srcColor = (*((const int *) instance->color) & 0xFFFFFF00) | (a & 0xff);
 #else
-		*srcColor = (*((int *) instance->color) & 0xFFFFFF) | (a << 24);
+		*srcColor = (*((const int *) instance->color) & 0xFFFFFF) | (a << 24);
 #endif
 	}
 	else
 	{
-		*srcColor = *((int *) instance->color);
+		*srcColor = *((const int *) instance->color);
 	}
 
 	return qtrue;
