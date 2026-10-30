@@ -2995,8 +2995,12 @@ void CL_InitRef(void)
 #endif
 
 #ifdef USE_RENDERER_DLOPEN
-	cl_renderer = Cvar_Get("cl_renderer", DEFAULT_RENDERER_NAME, CVAR_ARCHIVE_ND | CVAR_LATCH);
-
+	cl_renderer = Cvar_GetAndDescribe("cl_renderer", DEFAULT_RENDERER_NAME, CVAR_ARCHIVE_ND | CVAR_LATCH,
+#ifdef FEATURE_RENDERER_VULKAN
+	                                  "Renderer library to load, valid values are 'opengl1' and 'vulkan'");
+#else
+	                                  "Renderer library to load, valid value is 'opengl1'");
+#endif
 
 #if defined(_WIN32)
 	Com_sprintf(dllName, sizeof(dllName), "renderer_%s_" ARCH_STRING DLL_EXT, cl_renderer->string);
@@ -3015,7 +3019,7 @@ void CL_InitRef(void)
 #else // *nix
 		Com_sprintf(dllName, sizeof(dllName), "librenderer_" DEFAULT_RENDERER_NAME "_" ARCH_STRING DLL_EXT);
 #endif
-		rendererLib = Sys_LoadLibrary(dllName);
+		rendererLib = Sys_LoadDll(dllName, qfalse);
 	}
 
 	if (!rendererLib)
