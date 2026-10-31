@@ -783,6 +783,24 @@ static qboolean VK_CheckResult(VkResult result, const char *what)
 }
 
 /**
+ * @brief Stops with a clear message when the GPU device was lost. Unlike
+ * VK_CheckResult() this is meant for the frame path, which has nothing to bail
+ * out to; recreating the device is not supported, so the game exits. Other
+ * results are left to the caller.
+ * @param[in] result Result of a queue or swapchain call
+ * @param[in] what   Name of the call, shown in the error message
+ */
+static void VK_CheckDeviceLost(VkResult result, const char *what)
+{
+	if (result == VK_ERROR_DEVICE_LOST)
+	{
+		Ren_Fatal("Vulkan: the GPU device was lost (VK_ERROR_DEVICE_LOST in %s).\n"
+		          "This is often a graphics driver problem - try updating your GPU driver.\n"
+		          "Workaround: switch to the OpenGL renderer (set cl_renderer to opengl1).\n", what);
+	}
+}
+
+/**
  * @brief Returns qtrue if the named instance extension is present in the
  * loader's enumeration (used to conditionally opt in to
  * VK_KHR_portability_enumeration, required by MoltenVK-based loaders on
@@ -1984,8 +2002,8 @@ static void VK_EndOneShotCommands(VkCommandBuffer commandBuffer)
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers    = &commandBuffer;
 
-	vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-	vkQueueWaitIdle(vk.graphicsQueue);
+	VK_CheckDeviceLost(vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE), "vkQueueSubmit(one-shot)");
+	VK_CheckDeviceLost(vkQueueWaitIdle(vk.graphicsQueue), "vkQueueWaitIdle");
 
 	vkFreeCommandBuffers(vk.device, vk.commandPool, 1, &commandBuffer);
 }
@@ -5406,7 +5424,7 @@ void VK_BeginFrame(void)
 	vk.boneArenaSize   = vk.boneArenaOffset + VK_SKIN_BONE_ARENA_SIZE;
 	VK_ResetBindCache();
 
-	vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX);
+	VK_CheckDeviceLost(vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX), "vkWaitForFences");
 
 	// That frame is done, so resources queued while recording
 	// it can go now
@@ -5714,7 +5732,7 @@ void VK_EndFrame(void)
 	present = captureThisFrame || VK_PresentDue();
 	if (present)
 	{
-		vkAcquireNextImageKHR(vk.device, vk.swapchain, UINT64_MAX, vk.imageAvailableSemaphore, VK_NULL_HANDLE, &vk.currentImageIndex);
+		VK_CheckDeviceLost(vkAcquireNextImageKHR(vk.device, vk.swapchain, UINT64_MAX, vk.imageAvailableSemaphore, VK_NULL_HANDLE, &vk.currentImageIndex), "vkAcquireNextImageKHR");
 		vk.renderFinishedSemaphore = vk.renderFinishedSemaphores[vk.currentImageIndex];
 	}
 
@@ -5874,7 +5892,7 @@ void VK_EndFrame(void)
 		// present submit covers both
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores    = &vk.sceneDoneSemaphores[vk.frameIndex];
-		vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+		VK_CheckDeviceLost(vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE), "vkQueueSubmit(scene)");
 
 		waitSemaphores[0] = vk.sceneDoneSemaphores[vk.frameIndex];
 		waitStages[0]     = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
@@ -5892,7 +5910,7 @@ void VK_EndFrame(void)
 		submitInfo.pSignalSemaphores    = &vk.renderFinishedSemaphore;
 
 		start = VK_PresentClock();
-		vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence);
+		VK_CheckDeviceLost(vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence), "vkQueueSubmit(present)");
 		VK_PresentWaited(VK_PresentClock() - start);
 	}
 	else
@@ -5903,7 +5921,7 @@ void VK_EndFrame(void)
 		submitInfo.signalSemaphoreCount = present ? 1 : 0;
 		submitInfo.pSignalSemaphores    = &vk.renderFinishedSemaphore;
 
-		vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence);
+		VK_CheckDeviceLost(vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence), "vkQueueSubmit(frame)");
 	}
 
 	if (present)
@@ -5916,13 +5934,13 @@ void VK_EndFrame(void)
 		presentInfo.pSwapchains        = &vk.swapchain;
 		presentInfo.pImageIndices      = &vk.currentImageIndex;
 
-		vkQueuePresentKHR(vk.presentQueue, &presentInfo);
+		VK_CheckDeviceLost(vkQueuePresentKHR(vk.presentQueue, &presentInfo), "vkQueuePresentKHR");
 	}
 
 	if (captureThisFrame)
 	{
 		// the fence stays signaled, so VK_BeginFrame()'s wait returns at once
-		vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX);
+		VK_CheckDeviceLost(vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX), "vkWaitForFences");
 		vk.captureWidth  = vk.swapchainExtent.width;
 		vk.captureHeight = vk.swapchainExtent.height;
 		vk.captureFormat = vk.swapchainFormat;
