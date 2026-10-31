@@ -789,6 +789,37 @@ void Sys_Sleep(int msec)
 }
 
 /**
+ * @brief Create a directory and all its missing parents, without raising an error
+ * @param[in] path Directory to create
+ * @return qtrue if the directory exists afterwards
+ *
+ * Unlike FS_CreatePath this is safe to use from the error handler. The home path may
+ * be nested, e.g. ~/.local/share/etlegacy, and none of its parents have to exist yet.
+ */
+static qboolean Sys_MkdirAll(const char *path)
+{
+	char buf[MAX_OSPATH];
+	char *p;
+
+	Q_strncpyz(buf, path, sizeof(buf));
+
+	for (p = buf + 1; *p; p++)
+	{
+		if (*p == '/')
+		{
+			*p = '\0';
+			if (!Sys_Mkdir(buf))
+			{
+				return qfalse;
+			}
+			*p = '/';
+		}
+	}
+
+	return Sys_Mkdir(buf);
+}
+
+/**
  * @brief Displays an error message and writes the error into crashlog.txt
  * @param[in] error Error String
  */
@@ -811,7 +842,7 @@ void Sys_ErrorDialog(const char *error)
 
 	// Make sure the write path for the crashlog exists...
 	// check homepath
-	if (!Sys_Mkdir(homepath))
+	if (!Sys_MkdirAll(homepath))
 	{
 		Com_Printf("ERROR: couldn't create path '%s' to write file '%s'.\n", homepath, ospath);
 		return;
