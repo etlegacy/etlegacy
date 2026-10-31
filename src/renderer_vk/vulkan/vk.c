@@ -783,6 +783,22 @@ static qboolean VK_CheckResult(VkResult result, const char *what)
 }
 
 /**
+ * @brief Stops with a clear message when the GPU device was lost. The results
+ * of submits, presents and acquires are otherwise ignored, so a driver fault
+ * would just show up as a black screen.
+ * @return result, unchanged
+ */
+static VkResult VK_CheckDeviceLost(VkResult result, const char *what)
+{
+	if (result == VK_ERROR_DEVICE_LOST)
+	{
+		Ren_Fatal("Vulkan: the GPU device was lost (VK_ERROR_DEVICE_LOST in %s).\n"
+		          "This is usually a graphics driver problem - please update your GPU driver.\n", what);
+	}
+	return result;
+}
+
+/**
  * @brief Returns qtrue if the named instance extension is present in the
  * loader's enumeration (used to conditionally opt in to
  * VK_KHR_portability_enumeration, required by MoltenVK-based loaders on
@@ -1984,8 +2000,8 @@ static void VK_EndOneShotCommands(VkCommandBuffer commandBuffer)
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers    = &commandBuffer;
 
-	vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-	vkQueueWaitIdle(vk.graphicsQueue);
+	VK_CheckDeviceLost(vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE), "vkQueueSubmit");
+	VK_CheckDeviceLost(vkQueueWaitIdle(vk.graphicsQueue), "vkQueueWaitIdle");
 
 	vkFreeCommandBuffers(vk.device, vk.commandPool, 1, &commandBuffer);
 }
@@ -5714,7 +5730,7 @@ void VK_EndFrame(void)
 	present = captureThisFrame || VK_PresentDue();
 	if (present)
 	{
-		vkAcquireNextImageKHR(vk.device, vk.swapchain, UINT64_MAX, vk.imageAvailableSemaphore, VK_NULL_HANDLE, &vk.currentImageIndex);
+		VK_CheckDeviceLost(vkAcquireNextImageKHR(vk.device, vk.swapchain, UINT64_MAX, vk.imageAvailableSemaphore, VK_NULL_HANDLE, &vk.currentImageIndex), "vkAcquireNextImageKHR");
 		vk.renderFinishedSemaphore = vk.renderFinishedSemaphores[vk.currentImageIndex];
 	}
 
@@ -5874,7 +5890,7 @@ void VK_EndFrame(void)
 		// present submit covers both
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores    = &vk.sceneDoneSemaphores[vk.frameIndex];
-		vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+		VK_CheckDeviceLost(vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE), "vkQueueSubmit");
 
 		waitSemaphores[0] = vk.sceneDoneSemaphores[vk.frameIndex];
 		waitStages[0]     = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
@@ -5892,7 +5908,7 @@ void VK_EndFrame(void)
 		submitInfo.pSignalSemaphores    = &vk.renderFinishedSemaphore;
 
 		start = VK_PresentClock();
-		vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence);
+		VK_CheckDeviceLost(vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence), "vkQueueSubmit");
 		VK_PresentWaited(VK_PresentClock() - start);
 	}
 	else
@@ -5903,7 +5919,7 @@ void VK_EndFrame(void)
 		submitInfo.signalSemaphoreCount = present ? 1 : 0;
 		submitInfo.pSignalSemaphores    = &vk.renderFinishedSemaphore;
 
-		vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence);
+		VK_CheckDeviceLost(vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence), "vkQueueSubmit");
 	}
 
 	if (present)
@@ -5916,7 +5932,7 @@ void VK_EndFrame(void)
 		presentInfo.pSwapchains        = &vk.swapchain;
 		presentInfo.pImageIndices      = &vk.currentImageIndex;
 
-		vkQueuePresentKHR(vk.presentQueue, &presentInfo);
+		VK_CheckDeviceLost(vkQueuePresentKHR(vk.presentQueue, &presentInfo), "vkQueuePresentKHR");
 	}
 
 	if (captureThisFrame)
