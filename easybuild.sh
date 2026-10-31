@@ -70,8 +70,8 @@ cmake_args=()
 # Command that can be run
 # first array has the cmd names which can be given
 # second array holds the functions which match the cmd names
-easy_keys=(clean build generate package install download crust release project updatelicense watch _watch help)
-easy_cmd=(run_clean run_build run_generate run_package run_install run_download run_uncrustify run_release run_project run_license_year_udpate run_watch run_watch_progress print_help)
+easy_keys=(clean build generate package install uninstall download crust release project updatelicense watch _watch help)
+easy_cmd=(run_clean run_build run_generate run_package run_install run_uninstall run_download run_uncrustify run_release run_project run_license_year_udpate run_watch run_watch_progress print_help)
 easy_count=$((${#easy_keys[*]} - 1))
 
 check_exit() {
@@ -947,6 +947,9 @@ create_osx_dmg() {
 run_package() {
     einfo "Package..."
     cd "${BUILDDIR}"
+    if detect_installed_layout; then
+        ewarning "${BUILDDIR} is configured for the FHS layout, the package will not be relocatable"
+    fi
     # check_exit "make package"
     # calling cpack directly we are not checking the build output anymore
     check_exit "cpack"
@@ -956,10 +959,56 @@ run_package() {
     fi
 }
 
+# The install layout is the one the build directory was configured with: the command line
+# only takes effect on build and generate. Sets INSTALLED_PREFIX and succeeds for an FHS tree.
+detect_installed_layout() {
+    local cache="${BUILDDIR}/CMakeCache.txt"
+
+    [ "${PLATFORMSYS}" = "Linux" ] && [ -f "${cache}" ] || return 1
+    grep -q '^INSTALL_DEFAULT_MODDIR:[A-Z]*=lib/etlegacy$' "${cache}" || return 1
+    INSTALLED_PREFIX=$(sed -n 's/^CMAKE_INSTALL_PREFIX:[A-Z]*=//p' "${cache}")
+}
+
+# Refresh the desktop caches so the menu entry, icon and et:// handler show up
+# without logging out. Skipped when staging into a DESTDIR.
+update_desktop_caches() {
+    [ -z "${DESTDIR}" ] || return 0
+
+    local share="${INSTALLED_PREFIX}/share"
+
+    if command -v update-desktop-database &>/dev/null; then
+        update-desktop-database -q "${share}/applications" 2>/dev/null
+    fi
+    if command -v update-mime-database &>/dev/null; then
+        update-mime-database "${share}/mime" 2>/dev/null
+    fi
+    if command -v gtk-update-icon-cache &>/dev/null && [ -f "${share}/icons/hicolor/index.theme" ]; then
+        gtk-update-icon-cache -q -t -f "${share}/icons/hicolor" 2>/dev/null
+    fi
+    return 0
+}
+
 run_install() {
     einfo "Install..."
     cd "${BUILDDIR}"
     check_exit "make install"
+
+    if detect_installed_layout; then
+        update_desktop_caches
+        case ":${PATH}:" in
+            *":${INSTALLED_PREFIX}/bin:"*) ;;
+            *) ewarning "${INSTALLED_PREFIX}/bin is not in PATH, add it to start etl from a shell or the menu entry" ;;
+        esac
+        einfo "Installed to ${INSTALLED_PREFIX}, remove it with: ./easybuild.sh uninstall"
+    fi
+}
+
+run_uninstall() {
+    einfo "Uninstall..."
+    cd "${BUILDDIR}"
+    check_exit "make uninstall"
+    detect_installed_layout && update_desktop_caches
+    return 0
 }
 
 run_watch_progress() {
@@ -1053,6 +1102,7 @@ print_help() {
     ehead "generate - generate the build files"
     ehead "package - run the package process"
     ehead "install - install the game"
+    ehead "uninstall - remove the files recorded by the last install"
     ehead "download - download assets"
     ehead "crust - run the uncrustify to the source"
     ehead "project - generate the project files for your platform"
