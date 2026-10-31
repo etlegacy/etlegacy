@@ -43,6 +43,13 @@ echo "ET: Legacy version: ${ETLEGACY_VERSION}"
 
 INSTALL_PREFIX=${HOME}/etlegacy
 
+# By default everything is installed in a single relocatable directory, which is also
+# what the release packages are made of. On Linux --fhs selects the FHS layout instead,
+# with the per-user XDG prefix (~/.local) as default prefix:
+#   <prefix>/bin, <prefix>/lib/etlegacy, <prefix>/share
+portable_install=true
+PREFIX_FROM_USER=
+
 # Set this to false to disable colors
 color=true
 
@@ -299,7 +306,10 @@ parse_commandline() {
         elif [[ $var == --build=* ]]; then
             BUILDDIR=$(echo "$var" | cut -d'=' -f 2)
             einfo "Will use build dir of: ${BUILDDIR}"
+        elif [ "$var" = "--fhs" ]; then
+            portable_install=false
         elif [[ $var == --prefix=* ]]; then
+            PREFIX_FROM_USER=1
             INSTALL_PREFIX=$(echo "$var" | cut -d'=' -f 2)
             einfo "Will use installation dir of: ${INSTALL_PREFIX}"
         elif [[ $var == --osx=* ]]; then
@@ -691,7 +701,7 @@ generate_configuration() {
                 einfo "Building for macOS architecture(s): ${MACOS_ARCHITECTURES}"
             fi
 
-        else
+        elif $portable_install || [ "${PLATFORMSYS}" != "Linux" ]; then
             PREFIX=${INSTALL_PREFIX}
             cmake_args+=(
                 "-DCMAKE_INSTALL_PREFIX=${PREFIX}"
@@ -699,6 +709,15 @@ generate_configuration() {
                 "-DINSTALL_DEFAULT_SHAREDIR=."
                 "-DINSTALL_DEFAULT_BINDIR=."
                 "-DINSTALL_DEFAULT_BASEDIR=."
+            )
+        else
+            PREFIX=${INSTALL_PREFIX}
+            cmake_args+=(
+                "-DCMAKE_INSTALL_PREFIX=${PREFIX}"
+                "-DINSTALL_DEFAULT_BINDIR=bin"
+                "-DINSTALL_DEFAULT_SHAREDIR=share"
+                "-DINSTALL_DEFAULT_MODDIR=lib/etlegacy"
+                "-DINSTALL_DEFAULT_BASEDIR=${PREFIX}/lib/etlegacy"
             )
         fi
     fi
@@ -1033,7 +1052,7 @@ print_help() {
     ehead "build - run the build process"
     ehead "generate - generate the build files"
     ehead "package - run the package process"
-    ehead "install - install the game into the system"
+    ehead "install - install the game"
     ehead "download - download assets"
     ehead "crust - run the uncrustify to the source"
     ehead "project - generate the project files for your platform"
@@ -1046,6 +1065,7 @@ print_help() {
     ehead "-64, -32, -debug, -clang, -lsp, -nodb -nor2, -nodynamic, -nossl, -systemlibs"
     ehead "-noextra, -noupdate, -mod, -server, -ninja, -nopk3, -lsp"
     ehead "--build=*, --prefix=*, --osx=* --osx-arc=*"
+    ehead "--fhs (Linux: bin, lib and share layout, default prefix ~/.local)"
     ehead "--silent -etpub -jaymod -nq"
     echo
 }
@@ -1054,6 +1074,15 @@ start_script() {
     setup_sensible_defaults
 
     parse_commandline "$@"
+
+    if ! $portable_install; then
+        if [ "$(uname -s)" != "Linux" ]; then
+            ewarning "--fhs is only supported on Linux, ignoring it"
+            portable_install=true
+        elif [ -z "${PREFIX_FROM_USER}" ]; then
+            INSTALL_PREFIX=${HOME}/.local
+        fi
+    fi
 
     #CMD_ARGS="${@:2}"
     #CMD_ARGS=$@
