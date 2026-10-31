@@ -124,6 +124,43 @@ char *Sys_CdToExtStorage(void)
 }
 #endif
 
+#if !defined(__APPLE__) && !defined(__ANDROID__)
+/**
+ * @brief Build the default home path following the XDG base directory specification
+ * @param[in] home value of $HOME
+ *
+ * An existing ~/.etlegacy keeps being used so that current installs do not lose their
+ * configuration, downloads and demos. Otherwise the home path is $XDG_DATA_HOME/etlegacy,
+ * with $XDG_DATA_HOME defaulting to ~/.local/share. A relative $XDG_DATA_HOME is invalid
+ * and must be ignored.
+ */
+static void Sys_XdgHomePath(const char *home)
+{
+	struct stat st;
+	const char  *dataHome = getenv("XDG_DATA_HOME");
+
+	Q_strncpyz(homePath, home, sizeof(homePath));
+	Q_strcat(homePath, sizeof(homePath), "/.etlegacy");
+
+	if (stat(homePath, &st) == 0 && S_ISDIR(st.st_mode))
+	{
+		return;
+	}
+
+	if (dataHome && dataHome[0] == '/')
+	{
+		Q_strncpyz(homePath, dataHome, sizeof(homePath));
+	}
+	else
+	{
+		Q_strncpyz(homePath, home, sizeof(homePath));
+		Q_strcat(homePath, sizeof(homePath), "/.local/share");
+	}
+
+	Q_strcat(homePath, sizeof(homePath), "/etlegacy");
+}
+#endif
+
 /**
  * @brief Get current home path
  * @return path to ET: Legacy directory
@@ -136,11 +173,13 @@ char *Sys_DefaultHomePath(void)
 	{
 		if ((p = getenv("HOME")) != NULL)
 		{
-			Q_strncpyz(homePath, p, sizeof(homePath));
 #ifdef __APPLE__
 			Q_strncpyz(homePath, OSX_ApplicationSupportPath(), sizeof(homePath));
 			Q_strcat(homePath, sizeof(homePath), "/etlegacy");
+#elif !defined(__ANDROID__)
+			Sys_XdgHomePath(p);
 #else
+			Q_strncpyz(homePath, p, sizeof(homePath));
 			Q_strcat(homePath, sizeof(homePath), "/.etlegacy");
 #endif
 		}
