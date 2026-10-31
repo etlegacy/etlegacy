@@ -14,8 +14,15 @@ PROJECTDIR="${_SRC}/project"
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
     MODMAIN="${HOME}/Library/Application Support/etlegacy/etmain"
-else
+elif [ -d "${HOME}/.etlegacy" ]; then
+    # legacy home path, still preferred by the engine when it exists
     MODMAIN="${HOME}/.etlegacy/etmain"
+else
+    # XDG base directory specification, a relative XDG_DATA_HOME is invalid
+    case "${XDG_DATA_HOME}" in
+        /*) MODMAIN="${XDG_DATA_HOME}/etlegacy/etmain" ;;
+        *) MODMAIN="${HOME}/.local/share/etlegacy/etmain" ;;
+    esac
 fi
 
 ETLEGACY_MIRROR="https://mirror.etlegacy.com/etmain/"
