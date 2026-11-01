@@ -295,13 +295,15 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install the GLSL compiler
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y glslc
+      - &pixi-setup
+        if: *checks-enabled
+        uses: prefix-dev/setup-pixi@v0.10.2
+        with:
+          pixi-version: v0.81.0
+          cache: true
 
-      - name: Compile the shaders
-        run: cmake -DVK_GLSL_COMPILER=glslc -DOUT_DIR=vk-shaders -P cmake/ETLCompileVkShaders.cmake
+      - name: Compile Vulkan Shaders
+        run: pixi run shaderc
 
       - uses: actions/upload-artifact@v7
         with:
@@ -559,12 +561,7 @@ jobs:
             tar -xzf "$archive" -C "dist/$platform"
           done
 
-      - &pixi
-        if: *checks-enabled
-        uses: prefix-dev/setup-pixi@v0.10.2
-        with:
-          pixi-version: v0.81.0
-          cache: true
+      - *pixi-setup
 
       - name: Check Build Artifacts
         if: *checks-enabled
@@ -576,7 +573,7 @@ jobs:
     if: *builds-succeeded
     steps:
       - *checkout-full
-      - *pixi
+      - *pixi-setup
 
       - name: Collect and Check GitHub Build Logs
         if: *checks-enabled
