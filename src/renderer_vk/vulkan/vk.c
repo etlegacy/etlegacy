@@ -836,6 +836,15 @@ static void VK_RequestRestart(const char *error, const char *what)
 }
 
 /**
+ * @brief qtrue after a lost device or surface until the vid_restart: the
+ * backend then records and submits nothing (R_IssueRenderCommands).
+ */
+qboolean VK_RestartPending(void)
+{
+	return vk.restartPending;
+}
+
+/**
  * @brief Logs what the driver knows about the fault that lost the device
  * (VK_EXT_device_fault): a description, the faulting GPU addresses and vendor
  * fault codes, so a player's log shows why the GPU hung.
@@ -845,7 +854,7 @@ static void VK_LogDeviceFault(void)
 #ifdef VK_EXT_device_fault
 	static const char *addressTypes[] =
 	{
-		"none", "invalid read", "invalid write", "invalid execute",
+		"none",                          "invalid read",                  "invalid write", "invalid execute",
 		"instruction pointer (unknown)", "instruction pointer (invalid)", "instruction pointer (fault)"
 	};
 	VkDeviceFaultCountsEXT      counts;
@@ -1324,8 +1333,8 @@ static qboolean VK_CreateLogicalDevice(void)
 	Ren_Print("Vulkan: bindless textures %s\n", vk.bindless ? "on (2D batching)" : "off");
 
 	Com_Memset(&createInfo, 0, sizeof(createInfo));
-	createInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	createInfo.pNext                   = vk.bindless ? &features12 : NULL;
+	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+	createInfo.pNext = vk.bindless ? &features12 : NULL;
 
 #ifdef VK_EXT_device_fault
 	// fault details after a lost device (VK_LogDeviceFault)
@@ -1345,11 +1354,11 @@ static qboolean VK_CreateLogicalDevice(void)
 			getFeatures2(vk.physicalDevice, &features2);
 			if (faultFeatures.deviceFault)
 			{
-				faultFeatures.pNext                        = (void *)createInfo.pNext;
-				faultFeatures.deviceFaultVendorBinary      = VK_FALSE;
-				createInfo.pNext                           = &faultFeatures;
-				deviceExtensions[deviceExtensionCount++]   = VK_EXT_DEVICE_FAULT_EXTENSION_NAME;
-				hasDeviceFault                             = qtrue;
+				faultFeatures.pNext                      = (void *)createInfo.pNext;
+				faultFeatures.deviceFaultVendorBinary    = VK_FALSE;
+				createInfo.pNext                         = &faultFeatures;
+				deviceExtensions[deviceExtensionCount++] = VK_EXT_DEVICE_FAULT_EXTENSION_NAME;
+				hasDeviceFault                           = qtrue;
 			}
 		}
 	}
@@ -2223,6 +2232,13 @@ static void VK_EndOneShotCommands(VkCommandBuffer commandBuffer)
 	VkSubmitInfo submitInfo;
 
 	vkEndCommandBuffer(commandBuffer);
+
+	// a lost device runs nothing: an upload until the vid_restart is dropped
+	if (vk.restartPending)
+	{
+		vkFreeCommandBuffers(vk.device, vk.commandPool, 1, &commandBuffer);
+		return;
+	}
 
 	Com_Memset(&submitInfo, 0, sizeof(submitInfo));
 	submitInfo.sType              = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -5676,7 +5692,9 @@ void VK_BeginFrame(void)
 	VkRenderPassBeginInfo    renderPassInfo;
 	VkClearValue             clearValues[2];
 
-	if (!vk.initialized)
+	// after a lost device the command buffers submitted before the loss never
+	// complete, so nothing is recorded until the vid_restart (VK_RestartPending)
+	if (!vk.initialized || vk.restartPending)
 	{
 		return;
 	}
@@ -5721,6 +5739,10 @@ void VK_BeginFrame(void)
 	if (vk.fenceSubmitted[vk.frameIndex])
 	{
 		VK_WaitForFence(vk.inFlightFence, "vkWaitForFences");
+		if (vk.restartPending)
+		{
+			return; // lost while waiting: the frame isn't started
+		}
 	}
 
 	// That frame is done, so resources queued while recording
@@ -5728,7 +5750,7 @@ void VK_BeginFrame(void)
 	VK_FlushPendingFramesSlot(vk.frameIndex);
 
 	// the presentation engine reported the swapchain out of date
-	if (vk.swapchainStale && !vk.restartPending)
+	if (vk.swapchainStale)
 	{
 		VK_RecreateSwapchain();
 	}
@@ -6011,7 +6033,7 @@ void VK_EndFrame(void)
 	qboolean             captureThisFrame;
 	qboolean             present, splitPresent;
 
-	if (!vk.initialized)
+	if (!vk.initialized || !vk.inFrame) // not started after a lost device
 	{
 		return;
 	}

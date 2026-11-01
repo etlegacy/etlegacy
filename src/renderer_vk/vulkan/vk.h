@@ -84,6 +84,12 @@ void VK_BeginFrame(void);
  */
 void VK_EndFrame(void);
 
+/**
+ * @brief qtrue after a lost device or window surface until the queued
+ * vid_restart recreates the renderer; nothing is recorded meanwhile.
+ */
+qboolean VK_RestartPending(void);
+
 struct image_s;
 struct shaderCommands_s;
 

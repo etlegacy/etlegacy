@@ -114,8 +114,9 @@ void R_IssueRenderCommands(qboolean runPerformanceCounters)
 		R_PerformanceCounters();
 	}
 
-	// actually start the commands going
-	if (!r_skipBackEnd->integer)
+	// actually start the commands going (not on a lost device, until the
+	// vid_restart: its command buffers can't be recorded again)
+	if (!r_skipBackEnd->integer && !VK_RestartPending())
 	{
 		// let it start on the new batch
 		RB_ExecuteRenderCommands(cmdList->cmds);
