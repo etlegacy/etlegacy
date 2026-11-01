@@ -165,7 +165,7 @@ void SV_CL_Commands_f(void)
 
 	if (argc < 2)
 	{
-		Com_Printf("usage: tv <demo|ff>\n");
+		Com_Printf("usage: tv <demo|ff|skip>\n");
 		return;
 	}
 
@@ -178,6 +178,10 @@ void SV_CL_Commands_f(void)
 	else if (!Q_stricmp(cmd, "ff"))
 	{
 		SV_CL_FastForward_f();
+	}
+	else if (!Q_stricmp(cmd, "skip"))
+	{
+		SV_CL_Skip_f();
 	}
 }
 
@@ -1590,7 +1594,27 @@ void SV_CL_Frame(int frameMsec)
 
 	SV_CL_ParseMessageQueue();
 
-	if (svclc.demo.fastForwardTime <= sv.time)
+	if (svclc.demo.skipping)
+	{
+		while (sv.time < svclc.demo.fastForwardTime && svclc.demo.file)
+		{
+			SV_CL_ReadDemoMessage();
+			sv.time = svcl.serverTime;
+		}
+
+		svclc.demo.skipping = qfalse;
+
+#ifndef DEDICATED
+		// error out here otherwise client will ERR_FATAL on uivm being null
+		// dedicated server properly drops clients but the message is
+		// "cl.snap.serverTime < cl.oldFrameServerTime" and this error does not work
+		if (!svclc.demo.file)
+		{
+			Com_Error(ERR_DROP, "Skipped past the demo\n");
+		}
+#endif
+	}
+	else if (svclc.demo.fastForwardTime <= sv.time)
 	{
 		// run the game simulation in chunks
 		while (sv.timeResidual >= frameMsec)
