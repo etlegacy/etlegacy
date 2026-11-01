@@ -158,8 +158,8 @@ jobs:
           - name: osx
             os: macos-15
             lib: _mac
-            build: SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk DEVELOPER_DIR=/Library/Developer/CommandLineTools ./easybuild.sh build -64 --osx=10.10 --osx-arc="x86_64;arm64" -j
-            package: ./easybuild.sh package -64 --osx=10.10 --osx-arc="x86_64;arm64" -j
+            build: SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk DEVELOPER_DIR=/Library/Developer/CommandLineTools ./easybuild.sh build -64 --osx=10.10 --osx-arc="x86_64;arm64" -ninja
+            package: ./easybuild.sh package -64 --osx=10.10 --osx-arc="x86_64;arm64" -ninja
           - name: win
             os: windows-2022
             lib: .dll
