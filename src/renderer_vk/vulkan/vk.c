@@ -305,6 +305,9 @@ typedef struct
 	qboolean fenceSubmitted[VK_FRAMES_IN_FLIGHT];          // inFlightFences[i] has a submit that signals it
 	qboolean swapchainStale;                               // out of date / resized: rebuild before presenting (VK_RecreateSwapchain)
 	qboolean restartPending;                               // device or surface lost: no submits until the vid_restart (VK_RequestRestart)
+#ifdef VK_EXT_device_fault
+	PFN_vkGetDeviceFaultInfoEXT getDeviceFaultInfo;        // VK_EXT_device_fault, NULL when not supported (VK_LogDeviceFault)
+#endif
 	VkFence inFlightFences[VK_FRAMES_IN_FLIGHT];
 
 	// UI/2D rendering pipeline.
@@ -833,6 +836,82 @@ static void VK_RequestRestart(const char *error, const char *what)
 }
 
 /**
+ * @brief Logs what the driver knows about the fault that lost the device
+ * (VK_EXT_device_fault): a description, the faulting GPU addresses and vendor
+ * fault codes, so a player's log shows why the GPU hung.
+ */
+static void VK_LogDeviceFault(void)
+{
+#ifdef VK_EXT_device_fault
+	static const char *addressTypes[] =
+	{
+		"none", "invalid read", "invalid write", "invalid execute",
+		"instruction pointer (unknown)", "instruction pointer (invalid)", "instruction pointer (fault)"
+	};
+	VkDeviceFaultCountsEXT      counts;
+	VkDeviceFaultInfoEXT        info;
+	VkDeviceFaultAddressInfoEXT *addresses = NULL;
+	VkDeviceFaultVendorInfoEXT  *vendors   = NULL;
+	VkResult                    result;
+	uint32_t                    i;
+
+	if (!vk.getDeviceFaultInfo)
+	{
+		return;
+	}
+
+	Com_Memset(&counts, 0, sizeof(counts));
+	counts.sType = VK_STRUCTURE_TYPE_DEVICE_FAULT_COUNTS_EXT;
+	if (vk.getDeviceFaultInfo(vk.device, &counts, NULL) != VK_SUCCESS)
+	{
+		return;
+	}
+	counts.vendorBinarySize = 0; // the vendor crash dump isn't saved
+
+	if (counts.addressInfoCount)
+	{
+		addresses = calloc(counts.addressInfoCount, sizeof(*addresses));
+	}
+	if (counts.vendorInfoCount)
+	{
+		vendors = calloc(counts.vendorInfoCount, sizeof(*vendors));
+	}
+	if (!addresses)
+	{
+		counts.addressInfoCount = 0;
+	}
+	if (!vendors)
+	{
+		counts.vendorInfoCount = 0;
+	}
+
+	Com_Memset(&info, 0, sizeof(info));
+	info.sType         = VK_STRUCTURE_TYPE_DEVICE_FAULT_INFO_EXT;
+	info.pAddressInfos = addresses;
+	info.pVendorInfos  = vendors;
+	result             = vk.getDeviceFaultInfo(vk.device, &counts, &info);
+	if (result == VK_SUCCESS || result == VK_INCOMPLETE)
+	{
+		Ren_Print("Vulkan: device fault: %s\n", info.description[0] ? info.description : "(no description)");
+		for (i = 0; i < counts.addressInfoCount; i++)
+		{
+			Ren_Print("  %s at 0x%llx (precision 0x%llx)\n",
+			          (unsigned)addresses[i].addressType < ARRAY_LEN(addressTypes) ? addressTypes[addresses[i].addressType] : "unknown",
+			          (unsigned long long)addresses[i].reportedAddress, (unsigned long long)addresses[i].addressPrecision);
+		}
+		for (i = 0; i < counts.vendorInfoCount; i++)
+		{
+			Ren_Print("  vendor fault: %s (code 0x%llx, data 0x%llx)\n", vendors[i].description,
+			          (unsigned long long)vendors[i].vendorFaultCode, (unsigned long long)vendors[i].vendorFaultData);
+		}
+	}
+
+	free(addresses);
+	free(vendors);
+#endif
+}
+
+/**
  * @brief Restarts the renderer when the GPU device was lost (a driver reset
  * after a GPU hang, e.g. a Windows TDR). Other results are left to the caller.
  * @param[in] result Result of a queue, fence or swapchain call
@@ -844,13 +923,21 @@ static void VK_CheckDeviceLost(VkResult result, const char *what)
 	{
 		// fence waits on a lost device return at once (VK_SUCCESS or
 		// VK_ERROR_DEVICE_LOST), so the frame slots are still waited for
+		if (!vk.restartPending)
+		{
+			VK_LogDeviceFault();
+		}
 		VK_RequestRestart("the GPU device was lost (VK_ERROR_DEVICE_LOST)", what);
 	}
 }
 
-// a frame fence that doesn't signal within this time means the GPU hung
-// without the driver reporting a lost device
+// fence waits are cut into steps of this length; a GPU hang usually ends in a
+// driver reset (Windows TDR after 2 s, amdgpu after its 10 s lockup_timeout)
+// that turns it into VK_ERROR_DEVICE_LOST, which the renderer recovers from.
+// A fence still unsignaled after VK_FENCE_HANG_STEPS steps means the GPU hung
+// without the driver noticing.
 #define VK_FENCE_TIMEOUT_NS   (10ull * 1000000000ull)
+#define VK_FENCE_HANG_STEPS   3
 // a swapchain image that isn't available within this time: skip presenting
 #define VK_ACQUIRE_TIMEOUT_NS 1000000000ull
 
@@ -861,13 +948,25 @@ static void VK_CheckDeviceLost(VkResult result, const char *what)
  */
 static void VK_WaitForFence(VkFence fence, const char *what)
 {
-	VkResult result = vkWaitForFences(vk.device, 1, &fence, VK_TRUE, VK_FENCE_TIMEOUT_NS);
+	VkResult result;
+	int      step;
 
-	if (result == VK_TIMEOUT)
+	for (step = 1; ; step++)
 	{
-		Ren_Fatal("Vulkan: the GPU stopped responding (%s timed out).\n"
-		          "This is often a graphics driver problem - try updating your GPU driver.\n"
-		          "Workaround: switch to the OpenGL renderer (set cl_renderer to opengl1).\n", what);
+		result = vkWaitForFences(vk.device, 1, &fence, VK_TRUE, VK_FENCE_TIMEOUT_NS);
+		if (result != VK_TIMEOUT)
+		{
+			break;
+		}
+		if (step == VK_FENCE_HANG_STEPS)
+		{
+			Ren_Fatal("Vulkan: the GPU stopped responding (%s timed out after %d s).\n"
+			          "This is often a graphics driver problem - try updating your GPU driver.\n"
+			          "Workaround: switch to the OpenGL renderer (set cl_renderer to opengl1).\n",
+			          what, (int)(step * (VK_FENCE_TIMEOUT_NS / 1000000000ull)));
+		}
+		Ren_Warning("Vulkan: the GPU hasn't finished a frame for %d s (%s), waiting for a driver reset\n",
+		            (int)(step * (VK_FENCE_TIMEOUT_NS / 1000000000ull)), what);
 	}
 	VK_CheckDeviceLost(result, what);
 }
@@ -1066,10 +1165,14 @@ static qboolean VK_CreateLogicalDevice(void)
 	VkPhysicalDeviceFeatures         deviceFeatures;
 	VkPhysicalDeviceVulkan12Features features12;
 	VkDeviceCreateInfo               createInfo;
-	const char                       *deviceExtensions[2] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, NULL };
+	const char                       *deviceExtensions[3] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, NULL, NULL };
 	uint32_t                         deviceExtensionCount = 1;
 	uint32_t                         availableExtCount = 0, i;
 	VkExtensionProperties            *availableExt;
+	qboolean                         hasDeviceFault = qfalse;
+#ifdef VK_EXT_device_fault
+	VkPhysicalDeviceFaultFeaturesEXT faultFeatures;
+#endif
 
 	Com_Memset(queueCreateInfos, 0, sizeof(queueCreateInfos));
 
@@ -1152,8 +1255,13 @@ static qboolean VK_CreateLogicalDevice(void)
 				if (!strcmp(availableExt[i].extensionName, "VK_KHR_portability_subset"))
 				{
 					deviceExtensions[deviceExtensionCount++] = "VK_KHR_portability_subset";
-					break;
 				}
+#ifdef VK_EXT_device_fault
+				else if (!strcmp(availableExt[i].extensionName, VK_EXT_DEVICE_FAULT_EXTENSION_NAME))
+				{
+					hasDeviceFault = qtrue;
+				}
+#endif
 			}
 		}
 		if (availableExt)
@@ -1218,6 +1326,35 @@ static qboolean VK_CreateLogicalDevice(void)
 	Com_Memset(&createInfo, 0, sizeof(createInfo));
 	createInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 	createInfo.pNext                   = vk.bindless ? &features12 : NULL;
+
+#ifdef VK_EXT_device_fault
+	// fault details after a lost device (VK_LogDeviceFault)
+	if (hasDeviceFault)
+	{
+		PFN_vkGetPhysicalDeviceFeatures2 getFeatures2 = (PFN_vkGetPhysicalDeviceFeatures2)vkGetInstanceProcAddr(vk.instance, "vkGetPhysicalDeviceFeatures2");
+		VkPhysicalDeviceFeatures2        features2;
+
+		Com_Memset(&faultFeatures, 0, sizeof(faultFeatures));
+		faultFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FAULT_FEATURES_EXT;
+		Com_Memset(&features2, 0, sizeof(features2));
+		features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+		features2.pNext = &faultFeatures;
+		hasDeviceFault  = qfalse;
+		if (getFeatures2 && vk.instanceVersion >= VK_API_VERSION_1_1)
+		{
+			getFeatures2(vk.physicalDevice, &features2);
+			if (faultFeatures.deviceFault)
+			{
+				faultFeatures.pNext                        = (void *)createInfo.pNext;
+				faultFeatures.deviceFaultVendorBinary      = VK_FALSE;
+				createInfo.pNext                           = &faultFeatures;
+				deviceExtensions[deviceExtensionCount++]   = VK_EXT_DEVICE_FAULT_EXTENSION_NAME;
+				hasDeviceFault                             = qtrue;
+			}
+		}
+	}
+#endif
+
 	createInfo.pQueueCreateInfos       = queueCreateInfos;
 	createInfo.queueCreateInfoCount    = queueCreateInfoCount;
 	createInfo.pEnabledFeatures        = &deviceFeatures;
@@ -1232,6 +1369,11 @@ static qboolean VK_CreateLogicalDevice(void)
 
 	vkGetDeviceQueue(vk.device, vk.graphicsQueueFamily, 0, &vk.graphicsQueue);
 	vkGetDeviceQueue(vk.device, vk.presentQueueFamily, 0, &vk.presentQueue);
+
+#ifdef VK_EXT_device_fault
+	vk.getDeviceFaultInfo = hasDeviceFault ? (PFN_vkGetDeviceFaultInfoEXT)vkGetDeviceProcAddr(vk.device, "vkGetDeviceFaultInfoEXT") : NULL;
+#endif
+	Ren_Developer("Vulkan: device fault reports %s\n", hasDeviceFault ? "on" : "off");
 
 	return qtrue;
 }
