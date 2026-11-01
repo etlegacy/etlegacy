@@ -43,12 +43,20 @@ check-changes = { cmd = ["python", "./misc/check-changes.py"] }
 
 # -- updatechangelogs
 [feature.updatechangelogs.tasks]
-"update-changelogs" = { cmd = ["python", "./misc/update-changelog.py"] }
+"update-changelogs" = { cmd = ["python", "./misc/update-changelog.py"], description = "Sync the in-game Changelog from GitHub" }
 
 [feature.updatechangelogs.dependencies]
 "go" = "1.26.0.*"
 
+# -- shaderc
+[feature.shaderc.tasks]
+"shaderc" = { cmd = ["cmake", "-DVK_GLSL_COMPILER=glslc", "-DOUT_DIR=vk-shaders", "-P", "cmake/ETLCompileVkShaders.cmake"], description = "Compile the Vulkan Shaders" }
+
+[feature.shaderc.dependencies]
+"shaderc" = "2025.5.*"
+
 [environments]
+shaderc = ["shaderc"]
 updatechangelogs = ["updatechangelogs"]
 validation = ["validation"]
 libclang = ["libclang"]
