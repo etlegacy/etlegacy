@@ -35,6 +35,7 @@ check-changes = { cmd = ["python", "./misc/check-changes.py"] }
 "go-shfmt"   = "3.12.0.*"
 "prettier"   = "3.5.3.*"
 "shellcheck" = "0.10.0.*"
+"tombi" = "1.9.8.*"
 "uncrustify" = "0.78.1.*"
 
 [feature.updatechangelogs.tasks]

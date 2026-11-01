@@ -44,7 +44,7 @@ def filter_target_files(files, report_unsupported=True):
 
 
 def process_file(path) -> str:
-    """Run uncrustify for C/C++ files or black for Python files and rewrite the file if formatting changed."""
+    """Run the selected formatter and rewrite the file if formatting changed."""
     path = Path(path)
     match get_formatter(path):
         case "uncrustify":
@@ -87,6 +87,16 @@ def process_file(path) -> str:
             else:
                 run_command(["shfmt", "--write", str(path)])
                 return f"✿ Formatting {rel(path)} (Shfmt)"
+        case "tombi":
+            # Use the same check as CI before applying TOML formatting.
+            check_proc = run_command(
+                ["tombi", "format", "--check", str(path)], check=False
+            )
+            if check_proc.returncode == 0:
+                return f"✓ {rel(path)} (TOML already formatted)"
+            else:
+                run_command(["tombi", "format", str(path)])
+                return f"✿ Formatting {rel(path)} (TOML Tombi)"
         case "prettier":
             # Check if formatting would change anything
             check_proc = run_command(

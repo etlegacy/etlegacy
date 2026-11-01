@@ -483,6 +483,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/readline-8.3-hd6e31c0_1.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/shellcheck-0.10.0-ha770c72_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/tk-8.6.13-noxft_h1df4ec4_4.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/tombi-1.9.8-hf19af3b_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/uncrustify-0.78.1-h5888daf_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/zstd-1.5.7-hb78ec9c_7.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/black-25.1.0-pyh866005b_0.conda
@@ -558,6 +559,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-64/readline-8.3-h000c2f7_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/shellcheck-0.10.0-h7dd6a17_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/tk-8.6.13-ha6c374e_4.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/tombi-1.9.8-h3047c83_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/uncrustify-0.78.1-h240833e_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-64/zstd-1.5.7-hbc1a06c_7.conda
       win-64:
@@ -598,6 +600,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/python-3.13.3-h261c0b1_101_cp313.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/shellcheck-0.10.0-h57928b3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/tk-8.6.13-h967ab96_4.conda
+      - conda: https://conda.anaconda.org/conda-forge/win-64/tombi-1.9.8-h18a1a76_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/ucrt-10.0.26100.0-h57928b3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/uncrustify-0.78.1-he0c23c2_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/vc-14.5-ha367084_41.conda
@@ -1329,6 +1332,19 @@ packages:
     - tk >=8.6.13,<8.7.0a0
   size: 3566806
   timestamp: 1787272857910
+- conda: https://conda.anaconda.org/conda-forge/linux-64/tombi-1.9.8-hf19af3b_0.conda
+  sha256: 651b26c93504ef608072e9fcc38f200de475e616a7eb03582ec42712c83d2c0e
+  md5: 9dd910abc89e91132eb10c71a936274d
+  depends:
+  - __glibc >=2.17,<3.0.a0
+  - libgcc >=15
+  constrains:
+  - __glibc >=2.17
+  license: MIT
+  license_family: MIT
+  run_exports: {}
+  size: 7141667
+  timestamp: 1793312616532
 - conda: https://conda.anaconda.org/conda-forge/linux-64/uncrustify-0.78.1-h5888daf_0.conda
   sha256: ec68bfe28822c49493bae0d9ad9e726cfa0a32ceea7e6ab53377264eafb96642
   md5: 2c08270f1ca79849b3667f9f159afd89
@@ -2254,6 +2270,18 @@ packages:
     - tk >=8.6.13,<8.7.0a0
   size: 3512384
   timestamp: 1787272935349
+- conda: https://conda.anaconda.org/conda-forge/osx-64/tombi-1.9.8-h3047c83_0.conda
+  sha256: b70ad09001ff629de561df7fc0899a80e6fdb76714a41c676e7aa2bb80931e98
+  md5: 95ee2a178831a23fbd7a6ab87c220be7
+  depends:
+  - __osx >=11.0
+  constrains:
+  - __osx >=11.0
+  license: MIT
+  license_family: MIT
+  run_exports: {}
+  size: 7036276
+  timestamp: 1793312761564
 - conda: https://conda.anaconda.org/conda-forge/osx-64/uncrustify-0.78.1-h240833e_0.conda
   sha256: 6d548d63cce8c0bf7f506f3865d127acf039ec03a370bbcaf206af86564e2a0e
   md5: d6e72863781ce1339a4efc8e7177d838
@@ -2711,6 +2739,18 @@ packages:
     - tk >=8.6.13,<8.7.0a0
   size: 3782376
   timestamp: 1787272860855
+- conda: https://conda.anaconda.org/conda-forge/win-64/tombi-1.9.8-h18a1a76_0.conda
+  sha256: e87f2f5b27dc427fa769bb9a15ebda2cd83e568430f8e2192cbfc2a8a5b778a4
+  md5: bbed12dbcd5ddbd64976e4f940409048
+  depends:
+  - vc >=14.3,<15
+  - vc14_runtime >=14.44.35208
+  - ucrt >=10.0.20348.0
+  license: MIT
+  license_family: MIT
+  run_exports: {}
+  size: 7941811
+  timestamp: 1793312630248
 - conda: https://conda.anaconda.org/conda-forge/win-64/ucrt-10.0.26100.0-h57928b3_0.conda
   sha256: 3005729dce6f3d3f5ec91dfc49fc75a0095f9cd23bab49efb899657297ac91a5
   md5: 71b24316859acd00bdb8b38f5e2ce328

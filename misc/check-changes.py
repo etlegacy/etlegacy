@@ -297,6 +297,25 @@ def check_yml(path: Path, errors: List[Error]):
         errors.append(Error(path, f"Failed to diff: {e}"))
 
 
+def check_toml(path: Path, errors: List[Error]):
+    """Check TOML formatting without modifying the file and retain diagnostics."""
+    result = run_command(
+        ["tombi", "format", "--check", "--diff", str(path)], check=False
+    )
+    if result.returncode != 0:
+        errors.append(
+            Error(
+                path=path,
+                reason="Tombi formatting check failed.",
+                detail="\n".join(
+                    output.strip()
+                    for output in (result.stdout, result.stderr)
+                    if output.strip()
+                ),
+            )
+        )
+
+
 def check_file(path: Path) -> Optional[List[Error]]:
     errors = []
 
@@ -310,6 +329,8 @@ def check_file(path: Path) -> Optional[List[Error]]:
             check_sh(path, errors)
         case "prettier":
             check_yml(path, errors)
+        case "tombi":
+            check_toml(path, errors)
 
     # asset checks, nothing to autoformat there
     match path.suffix.lower():
