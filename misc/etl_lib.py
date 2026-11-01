@@ -96,7 +96,14 @@ def get_current_git_branch(path="."):
 
 def get_commits(base_commit: Optional[str]) -> List[str]:
     if base_commit:
-        return run_git_command(["git", "rev-list", f"...{base_commit}"])
+        # Two-dot range: only commits reachable from HEAD but not from
+        # base_commit. The symmetric `...` form would also return commits that
+        # were added to base_commit (e.g. master) after the branch diverged.
+        # --no-merges: CI checks out GitHub's synthetic PR merge commit, which
+        # is not an author commit and must not be validated.
+        return run_git_command(
+            ["git", "rev-list", "--no-merges", f"{base_commit}..HEAD"]
+        )
     return [run_git_command(["git", "rev-parse", "HEAD"])[0]]
 
 
