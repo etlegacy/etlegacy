@@ -469,6 +469,7 @@ typedef struct shader_s
 	char name[MAX_QPATH];               ///< game path, including extension
 	int lightmapIndex;                  ///< for a shader to match, both name and lightmapIndex must match
 
+
 	int index;                          ///< this shader == tr.shaders[index]
 	int sortedIndex;                    ///< this shader == tr.sortedShaders[sortedIndex]
 
@@ -1421,6 +1422,7 @@ typedef struct
 
 	int numLightmaps;
 	image_t *lightmaps[MAX_LIGHTMAPS];
+	qboolean lightmapFailed[MAX_LIGHTMAPS];     ///< external lightmap lookup failed for this index
 
 	trRefEntity_t *currentEntity;
 	trRefEntity_t worldEntity;                  ///< point currentEntity at this when rendering world

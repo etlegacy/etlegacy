@@ -234,6 +234,7 @@ static void R_LoadLightmaps(lump_t *l)
 	// clear lightmaps first
 	tr.numLightmaps = 0;
 	Com_Memset(tr.lightmaps, 0, sizeof(*tr.lightmaps) * MAX_LIGHTMAPS);
+	Com_Memset(tr.lightmapFailed, 0, sizeof(tr.lightmapFailed));
 
 	len = l->filelen;
 	if (!len)
