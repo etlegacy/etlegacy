@@ -1045,7 +1045,7 @@ void Sys_ParseArgsShowHelpAndExit(int ret)
 	        "Options:\n"
 	        "  -h, --help                 Show help and exit\n"
 	        "  -v, --version              Show version and exit\n"
-	        "  --no-config-write          Disable config writing for this session\n"
+	        "  --no-config-write          Disable automatic and scripted config writing\n"
 #ifndef DEDICATED
 	        "  -t, --title <title>        Set the game window title\n"
 #endif

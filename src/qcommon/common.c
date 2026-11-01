@@ -177,7 +177,7 @@ int     com_hunkusedvalue;
 
 qboolean com_errorEntered;
 qboolean com_fullyInitialized;
-qboolean com_noConfigWrite = qfalse;  // No config writing for this session
+qboolean com_noConfigWrite = qfalse;  // No automatic or scripted config writing for this session
 
 char com_errorMessage[MAX_PRINT_MSG];
 
@@ -3280,12 +3280,6 @@ void Com_WriteConfigToFile(const char *filename, qboolean nodefaults)
 {
 	fileHandle_t f;
 
-	if (com_noConfigWrite)
-	{
-		Com_Printf("Config writing disabled by --no-config-write.\n");
-		return;
-	}
-
 	f = FS_FOpenFileWrite(filename);
 	if (!f)
 	{
@@ -3344,6 +3338,13 @@ void Com_WriteConfig_f(void)
 	char     filename[MAX_QPATH];
 	int      arg        = 1;
 	qboolean nodefaults = qfalse;
+
+	// Explicit console writes remain available when automatic saving is disabled.
+	if (com_noConfigWrite && cmd_inExec)
+	{
+		Com_Printf("Config writing from exec disabled by --no-config-write.\n");
+		return;
+	}
 
 	if (Cmd_Argc() < 2)
 	{
