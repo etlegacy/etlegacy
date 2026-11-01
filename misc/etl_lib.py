@@ -29,6 +29,7 @@ FORMATTER_BY_EXT = {
     ".h": "uncrustify",
     ".py": "black",
     ".sh": "shfmt",
+    ".toml": "tombi",
     ".yml": "prettier",
     ".yaml": "prettier",
 }
