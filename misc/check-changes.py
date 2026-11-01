@@ -4,6 +4,7 @@
 #
 # REQUIRES: python uncrustify git
 import os
+import re
 import struct
 import sys
 import difflib
@@ -17,6 +18,7 @@ from etl_lib import (
     CWD,
     ROOT_DIR,
     argparse_add_file_selection_params,
+    get_commits,
     get_current_git_branch,
     get_formatter,
     get_selected_files,
@@ -38,7 +40,14 @@ class State:
 @dataclass
 class Error:
     path: Path
+    # Short, self-contained explanation of the failure. Always printed (also
+    # with --hide-details and in the GitHub annotation), so anything needed to
+    # identify and understand the failure (e.g. the offending commit subject)
+    # MUST go here.
     reason: str
+    # OPTIONAL bulky tool output (diffs, linter stdout) that supplements
+    # `reason`. Suppressed by --hide-details and never part of the GitHub
+    # annotation, so never put information here that `reason` depends on.
     detail: Optional[str] = None
 
     def __str__(self):
@@ -400,6 +409,42 @@ def check_global(state: State):
     check_global_actionlint()
 
 
+def check_commit_messages(state: State):
+    # Check the selected commits even when they contain no files to validate.
+    for commit in get_commits(state.args.commit_hash):
+        subject = run_command(
+            ["git", "show", "-s", "--format=%s", commit]
+        ).stdout.rstrip("\n")
+        path = f"[commit {commit}]"
+
+        # Git-generated revert subjects retain their standard capitalization.
+        if subject.startswith("Revert ") or (
+            re.fullmatch(r"[^:\s]+: [a-z].*", subject)
+            and subject.partition(":")[0].islower()
+        ):
+            state.succeeded_files.append(path)
+        else:
+            state.failed_files.append(
+                [
+                    path,
+                    [
+                        Error(
+                            path,
+                            # The subject is part of the reason (not the detail) so
+                            # it is still shown with --hide-details and in the
+                            # GitHub annotation.
+                            "Invalid commit subject: ↓\n\n"
+                            f"{subject}\n\n"
+                            "Commit subject MUST use 'category: description', with a "
+                            "lowercase category, a space after ':', and a description "
+                            "starting with a lowercase letter. Use 'various: ...' if you "
+                            "don't know which category to use.",
+                        )
+                    ],
+                ]
+            )
+
+
 def main(args):
     global HIDE_DETAIL
     HIDE_DETAIL = args.hide_details
@@ -415,6 +460,7 @@ def main(args):
     else:
         print("Skipping checking changes...")
 
+    check_commit_messages(state)
     check_global(state)
 
     for relpath in state.succeeded_files:
@@ -432,7 +478,9 @@ def main(args):
                     path = error.path
                     if isinstance(path, Path):
                         path = error.path.relative_to(CWD)
-                    print(f"::error ::{path} - {error.reason}")
+                    # Newlines must be escaped to stay inside one annotation.
+                    reason = error.reason.replace("\n", "%0A")
+                    print(f"::error ::{path} - {reason}")
                 total_errors += 1
 
     if total_errors:
@@ -448,7 +496,7 @@ def cli():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Check files in commit(s) (or all git-tracked files with --all) for formatting or asset issues."
+        description="Check commit subjects and files in commit(s) (or all git-tracked files with --all) for formatting or asset issues."
     )
 
     argparse_add_file_selection_params(parser)
