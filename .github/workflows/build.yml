@@ -25,6 +25,10 @@ jobs:
   release:
     # Only tags and master are ever published.
     if: github.ref_type == 'tag' || github.ref == 'refs/heads/master'
+    # Allow the reusable pipeline to delete artifacts after publication.
+    permissions:
+      contents: read
+      actions: write
     uses: ./.github/workflows/ci.yml
     with:
       release: true

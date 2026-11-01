@@ -815,7 +815,7 @@ jobs:
   #  |_____/  |_| |___/  \___|  \___/  |_|     \__,_|
   #     JOBSET
   #
-  report-failures:
+  post-flight:
     # Listing the jobs nothing else depends on makes this one run last. New
     # jobs that nothing depends on must be added here.
     needs:
@@ -826,9 +826,11 @@ jobs:
     # cancelled jobs, for example macOS jobs that never got a runner, which
     # leave the run failed just the same. Cancelled runs stay quiet, dry runs
     # only show the notification they would have sent.
-    if: ${{ !cancelled() && github.ref == 'refs/heads/master' }}
+    if: ${{ !cancelled() }}
     runs-on: *ubuntu
     timeout-minutes: 30
+    permissions:
+      actions: write
     steps:
       - name: Find failed jobs
         id: jobs
@@ -848,7 +850,7 @@ jobs:
           fi
 
       - name: Notify Discord
-        if: steps.jobs.outputs.failed == 'true'
+        if: github.ref == 'refs/heads/master' && steps.jobs.outputs.failed == 'true'
         env:
           DISCORD_WEBHOOK: ${{ secrets.LEGACY_CI_WEBHOOK }}
           COMMIT_SHA: ${{ github.sha }}
@@ -876,3 +878,9 @@ jobs:
                -X POST \
                -d "$PAYLOAD" \
                "$DISCORD_WEBHOOK"
+
+      - name: Clean up release artifacts
+        if: inputs.release && !inputs.dry && steps.jobs.outputs.failed != 'true'
+        uses: geekyeggo/delete-artifact@v6
+        with:
+          name: "*"
