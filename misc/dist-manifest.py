@@ -50,7 +50,8 @@ acceptable is a job for whoever reads the diff.
 
 On a mismatch, `check` prints a complete unified patch to stdout updating
 the supplied manifest to match the selected binaries. Diagnostics go to
-stderr and the command exits with status 1. The patch can be saved as a
+stderr, or stdout with `--github` so CI logs keep the patch together, and
+the command exits with status 1. Without `--github`, the patch can be saved as a
 `.patch` or `.diff` file and applied with `patch -p1` from the current
 directory. Unreadable binaries are reported, but their existing profiles
 are preserved in the patch rather than replaced with guessed values.
@@ -1040,25 +1041,26 @@ def _list_differences(label, left, right, names):
 # --------------------------------------------------------------------------
 
 
-def _github_annotation(message, level="error"):
+def _github_annotation(message, level="error", *, file=sys.stderr):
     """Emit one annotation, escaping data so it stays inside the message."""
     message = message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
     sys.stdout.flush()
-    print(f"::{level} ::{message}", file=sys.stderr)
+    print(f"::{level} ::{message}", file=file)
 
 
 def _report(problems, heading, github=False):
     """Prints the problems, if any, and returns the process exit status."""
     if not problems:
         return 0
-    # The commands print to stdout before calling this; without the flush the
-    # two streams arrive interleaved whenever either one is redirected.
+    # CI can merge stdout and stderr out of order even after a flush. Keep
+    # diagnostics on the patch's stream in GitHub mode so it stays intact.
+    output = sys.stdout if github else sys.stderr
     sys.stdout.flush()
-    print(heading, file=sys.stderr)
+    print(heading, file=output)
     for problem in problems:
-        print(f"  {problem}", file=sys.stderr)
+        print(f"  {problem}", file=output)
         if github:
-            _github_annotation(problem)
+            _github_annotation(problem, file=output)
     return 1
 
 
@@ -1159,7 +1161,10 @@ def main():
             "--github",
             action="store_true",
             default=False if command_parser is parser else argparse.SUPPRESS,
-            help="also emit GitHub Actions warning/error annotations on stderr",
+            help=(
+                "also emit GitHub Actions warning/error annotations; check keeps "
+                "diagnostics on stdout after the patch to preserve log ordering"
+            ),
         )
 
     args = parser.parse_args()
