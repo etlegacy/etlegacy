@@ -302,6 +302,9 @@ typedef struct
 	VkSemaphore imageAvailableSemaphores[VK_FRAMES_IN_FLIGHT];
 	VkSemaphore sceneDoneSemaphores[VK_FRAMES_IN_FLIGHT];  // scene submit -> present submit (vk.presentThrottle)
 	VkSemaphore renderFinishedSemaphores[VK_MAX_SWAPCHAIN_IMAGES]; // per swapchain image
+	qboolean fenceSubmitted[VK_FRAMES_IN_FLIGHT];          // inFlightFences[i] has a submit that signals it
+	qboolean swapchainStale;                               // out of date / resized: rebuild before presenting (VK_RecreateSwapchain)
+	qboolean restartPending;                               // device or surface lost: no submits until the vid_restart (VK_RequestRestart)
 	VkFence inFlightFences[VK_FRAMES_IN_FLIGHT];
 
 	// UI/2D rendering pipeline.
@@ -780,6 +783,106 @@ static qboolean VK_CheckResult(VkResult result, const char *what)
 		return qfalse;
 	}
 	return qtrue;
+}
+
+// losses closer together than this count as one series: after more than
+// VK_LOST_MAX_RESTARTS restarts in a series the game stops
+#define VK_LOST_SERIES_MSEC   60000
+#define VK_LOST_MAX_RESTARTS  2
+
+/**
+ * @brief Recovers from a lost device or window surface: every Vulkan object
+ * has to be created again, which a vid_restart does (renderer shutdown and
+ * init, then all media are reloaded). Until it runs, VK_EndFrame() records
+ * frames but submits and presents nothing. A driver that keeps losing the
+ * device ends the game with a message instead of restarting forever.
+ * @param[in] error What was lost, shown in the message
+ * @param[in] what  Name of the call that reported it
+ */
+static void VK_RequestRestart(const char *error, const char *what)
+{
+	cvar_t *lostTime, *lostRestarts;
+	int    now, restarts;
+
+	// the calls after a loss fail the same way, also during the shutdown
+	if (vk.restartPending)
+	{
+		return;
+	}
+	vk.restartPending = qtrue;
+
+	// the series is kept in engine cvars: vid_restart unloads the renderer
+	// library, so statics would start over
+	lostTime     = ri.Cvar_Get("r_vkLostTime", "0", CVAR_ROM | CVAR_TEMP);
+	lostRestarts = ri.Cvar_Get("r_vkLostRestarts", "0", CVAR_ROM | CVAR_TEMP);
+	now          = ri.Milliseconds();
+	restarts     = (now - lostTime->integer > VK_LOST_SERIES_MSEC) ? 1 : lostRestarts->integer + 1;
+	ri.Cvar_Set("r_vkLostTime", va("%i", now));
+	ri.Cvar_Set("r_vkLostRestarts", va("%i", restarts));
+
+	if (restarts > VK_LOST_MAX_RESTARTS)
+	{
+		Ren_Fatal("Vulkan: %s in %s, again after restarting the renderer.\n"
+		          "This is often a graphics driver problem - try updating your GPU driver.\n"
+		          "Workaround: switch to the OpenGL renderer (set cl_renderer to opengl1).\n", error, what);
+	}
+
+	Ren_Warning("Vulkan: %s in %s, restarting the renderer\n", error, what);
+	// ahead of queued commands (a script's wait chain), run next frame
+	ri.Cmd_ExecuteText(EXEC_INSERT, "vid_restart\n");
+}
+
+/**
+ * @brief Restarts the renderer when the GPU device was lost (a driver reset
+ * after a GPU hang, e.g. a Windows TDR). Other results are left to the caller.
+ * @param[in] result Result of a queue, fence or swapchain call
+ * @param[in] what   Name of the call, shown in the message
+ */
+static void VK_CheckDeviceLost(VkResult result, const char *what)
+{
+	if (result == VK_ERROR_DEVICE_LOST)
+	{
+		// fence waits on a lost device return at once (VK_SUCCESS or
+		// VK_ERROR_DEVICE_LOST), so the frame slots are still waited for
+		VK_RequestRestart("the GPU device was lost (VK_ERROR_DEVICE_LOST)", what);
+	}
+}
+
+// a frame fence that doesn't signal within this time means the GPU hung
+// without the driver reporting a lost device
+#define VK_FENCE_TIMEOUT_NS   (10ull * 1000000000ull)
+// a swapchain image that isn't available within this time: skip presenting
+#define VK_ACQUIRE_TIMEOUT_NS 1000000000ull
+
+/**
+ * @brief vkWaitForFences() with a finite timeout: a GPU that hangs without the
+ * driver reporting a lost device stops the game with a message instead of
+ * freezing it (a vid_restart would hang in vkDeviceWaitIdle()).
+ */
+static void VK_WaitForFence(VkFence fence, const char *what)
+{
+	VkResult result = vkWaitForFences(vk.device, 1, &fence, VK_TRUE, VK_FENCE_TIMEOUT_NS);
+
+	if (result == VK_TIMEOUT)
+	{
+		Ren_Fatal("Vulkan: the GPU stopped responding (%s timed out).\n"
+		          "This is often a graphics driver problem - try updating your GPU driver.\n"
+		          "Workaround: switch to the OpenGL renderer (set cl_renderer to opengl1).\n", what);
+	}
+	VK_CheckDeviceLost(result, what);
+}
+
+/**
+ * @brief Restarts the renderer when the window surface was lost
+ * (VK_ERROR_SURFACE_LOST_KHR): the vid_restart creates a new window and
+ * surface.
+ */
+static void VK_CheckSurfaceLost(VkResult result, const char *what)
+{
+	if (result == VK_ERROR_SURFACE_LOST_KHR)
+	{
+		VK_RequestRestart("the window surface was lost (VK_ERROR_SURFACE_LOST_KHR)", what);
+	}
 }
 
 /**
@@ -1984,8 +2087,8 @@ static void VK_EndOneShotCommands(VkCommandBuffer commandBuffer)
 	submitInfo.commandBufferCount = 1;
 	submitInfo.pCommandBuffers    = &commandBuffer;
 
-	vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-	vkQueueWaitIdle(vk.graphicsQueue);
+	VK_CheckDeviceLost(vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE), "vkQueueSubmit(one-shot)");
+	VK_CheckDeviceLost(vkQueueWaitIdle(vk.graphicsQueue), "vkQueueWaitIdle");
 
 	vkFreeCommandBuffers(vk.device, vk.commandPool, 1, &commandBuffer);
 }
@@ -2762,7 +2865,7 @@ void VK_ResetSkinBuffer(void)
 		return;
 	}
 
-	vkDeviceWaitIdle(vk.device);
+	VK_CheckDeviceLost(vkDeviceWaitIdle(vk.device), "vkDeviceWaitIdle");
 	vk.skinNumVertexes = 0;
 	vk.meshBytes       = 0;
 }
@@ -2925,7 +3028,7 @@ static void VK_DestroyStaticWorldBuffer(void)
 		return;
 	}
 
-	vkDeviceWaitIdle(vk.device);
+	VK_CheckDeviceLost(vkDeviceWaitIdle(vk.device), "vkDeviceWaitIdle");
 
 	if (vk.staticWorldMapped)
 	{
@@ -3302,7 +3405,7 @@ static void VK_DestroyWorldCull(void)
 		return;
 	}
 
-	vkDeviceWaitIdle(vk.device);
+	VK_CheckDeviceLost(vkDeviceWaitIdle(vk.device), "vkDeviceWaitIdle");
 
 	if (vk.cullArenaMapped)
 	{
@@ -4409,7 +4512,7 @@ static void VK_DestroySceneTargets(void)
 {
 	uint32_t i;
 
-	vkDeviceWaitIdle(vk.device);
+	VK_CheckDeviceLost(vkDeviceWaitIdle(vk.device), "vkDeviceWaitIdle");
 
 	for (i = 0; i < vk.swapchainImageCount; i++)
 	{
@@ -4541,6 +4644,71 @@ qboolean VK_ResizeSwapchain(int width, int height)
 	{
 		return qfalse;
 	}
+
+	return qtrue;
+}
+
+/**
+ * @brief True if the window's size differs from the swapchain's, or the
+ * window is minimized: then a VK_SUBOPTIMAL_KHR swapchain is rebuilt. (Some
+ * drivers report suboptimal for reasons a rebuild doesn't change, so it
+ * isn't rebuilt for that alone.)
+ */
+static qboolean VK_SwapchainSizeChanged(void)
+{
+	VkSurfaceCapabilitiesKHR caps;
+
+	if (vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vk.physicalDevice, vk.surface, &caps) != VK_SUCCESS ||
+	    caps.currentExtent.width == 0xFFFFFFFFu)
+	{
+		return qfalse;
+	}
+
+	return (caps.currentExtent.width != vk.swapchainExtent.width || caps.currentExtent.height != vk.swapchainExtent.height) ? qtrue : qfalse;
+}
+
+/**
+ * @brief Rebuilds the swapchain after the presentation engine reported it
+ * out of date (window resized, minimized and restored, a fullscreen window
+ * losing or regaining the display on alt-tab), at the start of a frame
+ * before anything is recorded. The scene targets keep the game's render
+ * resolution, which doesn't follow the window (the gamma pass scales the
+ * scene to the new size). While the window is minimized (a 0x0 surface) no
+ * swapchain can be created: it stays stale and VK_EndFrame() doesn't present.
+ * @return qtrue if the swapchain can be presented to again
+ */
+static qboolean VK_RecreateSwapchain(void)
+{
+	VkSurfaceCapabilitiesKHR caps;
+	VkResult                 result;
+
+	result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vk.physicalDevice, vk.surface, &caps);
+	VK_CheckDeviceLost(result, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
+	VK_CheckSurfaceLost(result, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
+	if (result != VK_SUCCESS || caps.currentExtent.width == 0 || caps.currentExtent.height == 0)
+	{
+		return qfalse; // minimized: try again next frame (or lost: the vid_restart rebuilds it)
+	}
+
+	VK_CheckDeviceLost(vkDeviceWaitIdle(vk.device), "vkDeviceWaitIdle");
+	if (vk.restartPending)
+	{
+		return qfalse;
+	}
+
+	if (!vk.sceneSize.width)
+	{
+		vk.sceneSize = vk.sceneExtent;
+	}
+
+	if (!VK_ResizeSwapchain((int)vk.swapchainExtent.width, (int)vk.swapchainExtent.height))
+	{
+		Ren_Fatal("Vulkan: couldn't recreate the swapchain after the window changed.\n");
+	}
+
+	vk.swapchainStale = qfalse;
+	Ren_Developer("Vulkan: swapchain recreated, window %ux%u, render resolution %ux%u\n", vk.swapchainExtent.width,
+	              vk.swapchainExtent.height, vk.sceneExtent.width, vk.sceneExtent.height);
 
 	return qtrue;
 }
@@ -5406,12 +5574,22 @@ void VK_BeginFrame(void)
 	vk.boneArenaSize   = vk.boneArenaOffset + VK_SKIN_BONE_ARENA_SIZE;
 	VK_ResetBindCache();
 
-	vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX);
+	// the fence is only waited for when a submit signals it (a failed submit
+	// leaves it unsignaled), and reset right before the next submit
+	if (vk.fenceSubmitted[vk.frameIndex])
+	{
+		VK_WaitForFence(vk.inFlightFence, "vkWaitForFences");
+	}
 
 	// That frame is done, so resources queued while recording
 	// it can go now
 	VK_FlushPendingFramesSlot(vk.frameIndex);
-	vkResetFences(vk.device, 1, &vk.inFlightFence);
+
+	// the presentation engine reported the swapchain out of date
+	if (vk.swapchainStale && !vk.restartPending)
+	{
+		VK_RecreateSwapchain();
+	}
 
 	vkResetCommandBuffer(vk.commandBuffer, 0);
 
@@ -5711,12 +5889,32 @@ void VK_EndFrame(void)
 	captureThisFrame = (vk.captureRequested || debugCapturePath) && VK_EnsureCaptureBuffer();
 
 	// a captured frame is read from the swapchain image, so it is always presented
-	present = captureThisFrame || VK_PresentDue();
+	present = (captureThisFrame || VK_PresentDue()) && !vk.swapchainStale && !vk.restartPending;
 	if (present)
 	{
-		vkAcquireNextImageKHR(vk.device, vk.swapchain, UINT64_MAX, vk.imageAvailableSemaphore, VK_NULL_HANDLE, &vk.currentImageIndex);
+		VkResult result = vkAcquireNextImageKHR(vk.device, vk.swapchain, VK_ACQUIRE_TIMEOUT_NS, vk.imageAvailableSemaphore,
+		                                        VK_NULL_HANDLE, &vk.currentImageIndex);
+
+		VK_CheckDeviceLost(result, "vkAcquireNextImageKHR");
+		VK_CheckSurfaceLost(result, "vkAcquireNextImageKHR");
+		if (result == VK_SUBOPTIMAL_KHR && VK_SwapchainSizeChanged())
+		{
+			vk.swapchainStale = qtrue; // the image is acquired: present it, rebuild next frame
+		}
+		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+		{
+			// out of date (or no image in time): nothing acquired, so the submit
+			// below neither waits for the acquire nor signals the present
+			if (result == VK_ERROR_OUT_OF_DATE_KHR)
+			{
+				vk.swapchainStale = qtrue;
+			}
+			present = qfalse;
+		}
 		vk.renderFinishedSemaphore = vk.renderFinishedSemaphores[vk.currentImageIndex];
 	}
+	// a capture needs a presented frame: it waits for one that can present
+	captureThisFrame = captureThisFrame && present;
 
 	// with the present throttle the present pass (and a capture) gets its own
 	// command buffer and submit: the scene starts on the GPU without waiting
@@ -5864,17 +6062,23 @@ void VK_EndFrame(void)
 	submitInfo.commandBufferCount = (commandBuffers[0] == vk.commandBuffer) ? 1 : 2;
 	submitInfo.pCommandBuffers    = commandBuffers;
 
-	if (splitPresent)
+	if (vk.restartPending)
+	{
+		// lost device or surface: nothing is submitted until the vid_restart
+		vk.fenceSubmitted[vk.frameIndex] = qfalse;
+	}
+	else if (splitPresent)
 	{
 		VkSemaphore          waitSemaphores[2];
 		VkPipelineStageFlags waitStages[2];
 		double               start;
+		VkResult             result;
 
 		// the scene, then the present pass once it is done: the fence on the
 		// present submit covers both
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores    = &vk.sceneDoneSemaphores[vk.frameIndex];
-		vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+		VK_CheckDeviceLost(vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE), "vkQueueSubmit(scene)");
 
 		waitSemaphores[0] = vk.sceneDoneSemaphores[vk.frameIndex];
 		waitStages[0]     = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
@@ -5892,22 +6096,33 @@ void VK_EndFrame(void)
 		submitInfo.pSignalSemaphores    = &vk.renderFinishedSemaphore;
 
 		start = VK_PresentClock();
-		vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence);
+		vkResetFences(vk.device, 1, &vk.inFlightFence);
+		result = vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence);
+		VK_CheckDeviceLost(result, "vkQueueSubmit(present)");
+		vk.fenceSubmitted[vk.frameIndex] = (result == VK_SUCCESS) ? qtrue : qfalse;
 		VK_PresentWaited(VK_PresentClock() - start);
 	}
 	else
 	{
+		VkResult result;
+
 		submitInfo.waitSemaphoreCount   = present ? 1 : 0;
 		submitInfo.pWaitSemaphores      = &vk.imageAvailableSemaphore;
 		submitInfo.pWaitDstStageMask    = &waitStage;
 		submitInfo.signalSemaphoreCount = present ? 1 : 0;
 		submitInfo.pSignalSemaphores    = &vk.renderFinishedSemaphore;
 
-		vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence);
+		vkResetFences(vk.device, 1, &vk.inFlightFence);
+		result = vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence);
+		VK_CheckDeviceLost(result, "vkQueueSubmit(frame)");
+		vk.fenceSubmitted[vk.frameIndex] = (result == VK_SUCCESS) ? qtrue : qfalse;
 	}
 
-	if (present)
+	// a submit above may have lost the device
+	if (present && !vk.restartPending)
 	{
+		VkResult result;
+
 		Com_Memset(&presentInfo, 0, sizeof(presentInfo));
 		presentInfo.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 		presentInfo.waitSemaphoreCount = 1;
@@ -5916,13 +6131,19 @@ void VK_EndFrame(void)
 		presentInfo.pSwapchains        = &vk.swapchain;
 		presentInfo.pImageIndices      = &vk.currentImageIndex;
 
-		vkQueuePresentKHR(vk.presentQueue, &presentInfo);
+		result = vkQueuePresentKHR(vk.presentQueue, &presentInfo);
+		VK_CheckDeviceLost(result, "vkQueuePresentKHR");
+		VK_CheckSurfaceLost(result, "vkQueuePresentKHR");
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || (result == VK_SUBOPTIMAL_KHR && VK_SwapchainSizeChanged()))
+		{
+			vk.swapchainStale = qtrue;
+		}
 	}
 
-	if (captureThisFrame)
+	if (captureThisFrame && !vk.restartPending)
 	{
 		// the fence stays signaled, so VK_BeginFrame()'s wait returns at once
-		vkWaitForFences(vk.device, 1, &vk.inFlightFence, VK_TRUE, UINT64_MAX);
+		VK_WaitForFence(vk.inFlightFence, "vkWaitForFences(capture)");
 		vk.captureWidth  = vk.swapchainExtent.width;
 		vk.captureHeight = vk.swapchainExtent.height;
 		vk.captureFormat = vk.swapchainFormat;
@@ -6183,7 +6404,7 @@ void VK_DeleteImageTexture(struct image_s *image)
 		return;
 	}
 
-	vkDeviceWaitIdle(vk.device);
+	VK_CheckDeviceLost(vkDeviceWaitIdle(vk.device), "vkDeviceWaitIdle");
 
 	if (image->vkDescriptorSet)
 	{
@@ -8436,7 +8657,7 @@ void VK_SetTextureMode(int minFilter, int magFilter)
 		return;
 	}
 
-	vkDeviceWaitIdle(vk.device);
+	VK_CheckDeviceLost(vkDeviceWaitIdle(vk.device), "vkDeviceWaitIdle");
 
 	oldRepeat       = vk.mipSamplerRepeat;
 	oldClamp        = vk.mipSamplerClamp;
