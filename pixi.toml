@@ -1,7 +1,7 @@
 [workspace]
 authors = ["ET:Legacy Team"]
 channels = [
-    "conda-forge",
+  "conda-forge",
 ]
 name = "etlegacy"
 version = "0.0.0"
@@ -19,31 +19,36 @@ platforms = ["linux-64", "osx-64", "win-64"]
 "python" = "3.13.3.*"
 "requests" = "2.32.4.*"
 
-
+# -- libclang
 [feature.libclang.tasks]
-"clang-regenerate-luals-definitions" = { cmd = ["python", "./misc/clang-regenerate-luals-definitions.py", "./src/game/g_lua.c"]}
+"clang-regenerate-luals-definitions" = { cmd = ["python", "./misc/clang-regenerate-luals-definitions.py", "./src/game/g_lua.c"] }
 "clang-padding-report" = { cmd = ["python", "./misc/clang-padding-report.py"] }
+
 [feature.libclang.dependencies]
 "python-clang" = "20.1.5.*"
 
+# -- validation
 [feature.validation.tasks]
 autoformat = { cmd = ["python", "./misc/autoformat.py"] }
 check-changes = { cmd = ["python", "./misc/check-changes.py"] }
+
 [feature.validation.dependencies]
 "actionlint" = "1.7.12.*"
-"black"      = "25.1.0.*"
-"go-shfmt"   = "3.12.0.*"
-"prettier"   = "3.5.3.*"
+"black" = "25.1.0.*"
+"go-shfmt" = "3.12.0.*"
+"prettier" = "3.5.3.*"
 "shellcheck" = "0.10.0.*"
 "tombi" = "1.9.8.*"
 "uncrustify" = "0.78.1.*"
 
+# -- updatechangelogs
 [feature.updatechangelogs.tasks]
 "update-changelogs" = { cmd = ["python", "./misc/update-changelog.py"] }
+
 [feature.updatechangelogs.dependencies]
 "go" = "1.26.0.*"
 
 [environments]
-libclang = ["libclang"]
-validation = ["validation"]
 updatechangelogs = ["updatechangelogs"]
+validation = ["validation"]
+libclang = ["libclang"]
