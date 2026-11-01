@@ -77,6 +77,36 @@ void CG_BuildSolidList(void)
 		cent = &cg_entities[snap->entities[i].number];
 		ent  = &cent->currentState;
 
+		// All consumers of `cg_solidEntities`
+		// (i.e. `CG_ClipMoveToEntities` and `CG_PointContents`)
+		// read the entities' `currentState` or `lerpOrigin`
+		// (which is (generally) a lerp between `currentState` and `nextState`).
+		// So we must ensure that `cg_solidEntities`
+		// only contains entities present in `cg.snap` (and not `cg.nextSnap`).
+		// Otheriwse we get bugs like
+		// https://github.com/ioquake/ioq3/issues/732
+		// (https://github.com/etlegacy/etlegacy/pull/2065),
+		// i.e. `CG_ScanForCrosshairEntity` using a player position
+		// from a very old snap.
+		//
+		// We still do check `nextState.solid` (below) though,
+		// in order to drop an entity from the solid list
+		// as soon as it stops being solid in the next snap
+		// (e.g. player getting gibbed).
+		//
+		// Thoughts:
+		// Maybe there was a bigger idea behind trying to use `cg.nextSnap`
+		// for building the solid list.
+		// Looking at the fact that we're in a file named `cg_predict.c`,
+		// maybe it was better movement prediction,
+		// i.e. maybe detecting a collision as soon as a solid
+		// is in `cg.nextSnap` but not yet in `cg.snap`.
+		// But until we're sure that we don't access invalid state,
+		// let's just have this check.
+		if ( !cent->currentValid ) {
+			continue;
+		}
+
 		// don't clip against temporarily non-solid SOLID_BMODELS
 		// (e.g. constructibles); use current state so prediction isn't fubar
 		if (cent->currentState.solid == SOLID_BMODEL &&
