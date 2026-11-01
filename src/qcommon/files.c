@@ -1886,6 +1886,44 @@ long FS_FOpenFileRead(const char *fileName, fileHandle_t *file, qboolean uniqueF
 	}
 }
 
+/**
+ * @brief Finds the pk3 file a file would be read from, in the same search order
+ * and with the same pure server restrictions as FS_FOpenFileRead
+ * @param[in] fileName
+ * @return The checksum of the pk3 file, 0 for a file outside of pk3 files or -1 if not found
+ */
+int FS_FilePakChecksum(const char *fileName)
+{
+	searchpath_t *search;
+	fileHandle_t f;
+	qboolean     unpure = ALLOW_RAW_FILE_ACCESS;
+
+	if (!fs_searchpaths)
+	{
+		Com_Error(ERR_FATAL, "FS_FilePakChecksum: Filesystem call made without initialization");
+	}
+
+	for (search = fs_searchpaths; search; search = search->next)
+	{
+		if (search->pack)
+		{
+			// the existence check doesn't mark the pk3 file as referenced
+			if ((unpure || FS_PakIsPure(search->pack)) && FS_FOpenFileReadDir(fileName, search, NULL, qfalse, unpure) > 0)
+			{
+				return search->pack->checksum;
+			}
+		}
+		// the existence check ignores the pure server restrictions, opening the file applies them
+		else if (FS_FOpenFileReadDir(fileName, search, &f, qfalse, unpure) >= 0 && f)
+		{
+			FS_FCloseFile(f);
+			return 0;
+		}
+	}
+
+	return -1;
+}
+
 long FS_FOpenFileRead_Filtered(const char *qpath, fileHandle_t *file, qboolean uniqueFILE, int filter_flag)
 {
 	long ret;

@@ -505,6 +505,9 @@ void S_DisableSounds(void)
  */
 void S_BeginRegistration(void)
 {
+	// the cache outlives server and mod changes, pk3 files may have replaced cached sounds
+	S_Reload();
+
 	if (si.BeginRegistration)
 	{
 		si.BeginRegistration();
@@ -904,9 +907,7 @@ void S_Init(void)
 }
 
 /**
- * @brief S_Reload
- *
- * @note Unused
+ * @brief Drops the sounds whose file is now read from another pk3 file
  */
 void S_Reload(void)
 {

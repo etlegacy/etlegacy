@@ -249,6 +249,8 @@ qboolean S_LoadSound(sfx_t *sfx)
 		return qfalse;
 	}
 
+	sfx->pakChecksum = FS_FilePakChecksum(sfx->soundName);
+
 	if (FS_FOpenFileRead(sfx->soundName, NULL, qfalse) <= 0)
 	{
 		if (!Q_stricmp(Cvar_VariableString("fs_game"), DEFAULT_MODGAME))
