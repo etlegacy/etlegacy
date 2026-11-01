@@ -1109,6 +1109,12 @@ def _command_check(args):
     )
     if status == 0:
         print(f"ok: {len(manifest.get('files', {}))} files in {args.directory}")
+    else:
+        print(
+            "\nIf you confirm that the above changes are intentional, apply the "
+            "diff/patch above to update the distribution manifest.",
+            file=sys.stdout if args.github else sys.stderr,
+        )
     return status
 
 
