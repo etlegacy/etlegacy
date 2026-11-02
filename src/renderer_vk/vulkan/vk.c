@@ -4319,12 +4319,14 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	// shader->polygonOffset (decals, marks): renderer1 enables
 	// GL_POLYGON_OFFSET_FILL with glPolygonOffset(r_offsetFactor,
 	// r_offsetUnits). Baked into the pipeline; both cvars are CVAR_CHEAT
-	// and effectively never change at runtime.
+	// and effectively never change at runtime. The sign is negated because
+	// reversed-Z inverts the depth direction: pulling a surface toward the
+	// viewer now means increasing its depth value.
 	if (polygonOffset)
 	{
 		rasterizer.depthBiasEnable         = VK_TRUE;
-		rasterizer.depthBiasSlopeFactor    = r_offsetFactor->value;
-		rasterizer.depthBiasConstantFactor = r_offsetUnits->value;
+		rasterizer.depthBiasSlopeFactor    = -r_offsetFactor->value;
+		rasterizer.depthBiasConstantFactor = -r_offsetUnits->value;
 	}
 
 	Com_Memset(&multisampling, 0, sizeof(multisampling));
@@ -4335,7 +4337,10 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	depthStencil.sType            = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 	depthStencil.depthTestEnable  = (stateBits & GLS_DEPTHTEST_DISABLE) ? VK_FALSE : VK_TRUE;
 	depthStencil.depthWriteEnable = (stateBits & GLS_DEPTHMASK_TRUE) ? VK_TRUE : VK_FALSE;
-	depthStencil.depthCompareOp   = (stateBits & GLS_DEPTHFUNC_EQUAL) ? VK_COMPARE_OP_EQUAL : VK_COMPARE_OP_LESS_OR_EQUAL;
+	// reversed-Z: the depth buffer stores near at 1 and far at 0, so the
+	// default pass test (GL LEQUAL) becomes GEQUAL. GLS_DEPTHFUNC_EQUAL is
+	// unaffected. The 2D/UI pipeline keeps LEQUAL (it never depth-tests).
+	depthStencil.depthCompareOp   = (stateBits & GLS_DEPTHFUNC_EQUAL) ? VK_COMPARE_OP_EQUAL : VK_COMPARE_OP_GREATER_OR_EQUAL;
 
 	Com_Memset(&colorBlendAttachment, 0, sizeof(colorBlendAttachment));
 	colorBlendAttachment.blendEnable         = (stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) ? VK_TRUE : VK_FALSE;
@@ -4543,7 +4548,12 @@ void VK_SetProjectionMatrix(const float *m)
 	{
 		vk.projMatrix[c * 4 + 0] = m[c * 4 + 0];
 		vk.projMatrix[c * 4 + 1] = -m[c * 4 + 1];
-		vk.projMatrix[c * 4 + 2] = 0.5f * m[c * 4 + 2] + 0.5f * m[c * 4 + 3];
+		// GL NDC z in [-1, 1] (near -1, far +1) -> reversed-Z Vulkan clip z
+		// (near maps to 1, far to 0). A floating-point depth buffer (the only
+		// depth+stencil format MoltenVK exposes) has most of its precision near
+		// 0, so putting the far plane there keeps distant coplanar surfaces
+		// from z-fighting the way a 0..1 mapping did.
+		vk.projMatrix[c * 4 + 2] = 0.5f * m[c * 4 + 3] - 0.5f * m[c * 4 + 2];
 		vk.projMatrix[c * 4 + 3] = m[c * 4 + 3];
 	}
 
@@ -5781,7 +5791,7 @@ void VK_BeginFrame(void)
 	clearValues[0].color.float32[1]     = 0.0f;
 	clearValues[0].color.float32[2]     = 0.0f;
 	clearValues[0].color.float32[3]     = 1.0f;
-	clearValues[1].depthStencil.depth   = 1.0f;
+	clearValues[1].depthStencil.depth   = 0.0f; // reversed-Z: far plane = 0
 	clearValues[1].depthStencil.stencil = 0;
 
 	Com_Memset(&renderPassInfo, 0, sizeof(renderPassInfo));
@@ -6975,8 +6985,13 @@ void VK_SetDepthRange(float minDepth, float maxDepth)
 	viewport.y        = (float)vk.lastViewportFlippedY;
 	viewport.width    = (float)vk.lastViewportWidth;
 	viewport.height   = (float)vk.lastViewportHeight;
-	viewport.minDepth = minDepth;
-	viewport.maxDepth = maxDepth;
+	// Callers pass GL-convention depth (0 = near, 1 = far), matching
+	// renderer1's glDepthRange(). Under reversed-Z the window depth is flipped,
+	// so map [min, max] -> [1 - max, 1 - min]: e.g. (0, 1) stays full range,
+	// (1, 1) (sky/sun at the far plane) becomes (0, 0), and (0, 0.3)
+	// (RF_DEPTHHACK, first-person weapon) becomes (0.7, 1).
+	viewport.minDepth = 1.0f - maxDepth;
+	viewport.maxDepth = 1.0f - minDepth;
 	vkCmdSetViewport(vk.commandBuffer, 0, 1, &viewport);
 	vk.viewport2DSet = qfalse;
 }
@@ -7059,7 +7074,7 @@ void VK_ClearSceneDepth(void)
 
 	Com_Memset(&attachment, 0, sizeof(attachment));
 	attachment.aspectMask                      = VK_IMAGE_ASPECT_DEPTH_BIT | (vk.depthHasStencil ? VK_IMAGE_ASPECT_STENCIL_BIT : 0);
-	attachment.clearValue.depthStencil.depth   = 1.0f;
+	attachment.clearValue.depthStencil.depth   = 0.0f; // reversed-Z: far plane = 0
 	attachment.clearValue.depthStencil.stencil = 0;
 
 	Com_Memset(&rect, 0, sizeof(rect));
