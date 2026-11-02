@@ -4340,7 +4340,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	// reversed-Z: the depth buffer stores near at 1 and far at 0, so the
 	// default pass test (GL LEQUAL) becomes GEQUAL. GLS_DEPTHFUNC_EQUAL is
 	// unaffected. The 2D/UI pipeline keeps LEQUAL (it never depth-tests).
-	depthStencil.depthCompareOp   = (stateBits & GLS_DEPTHFUNC_EQUAL) ? VK_COMPARE_OP_EQUAL : VK_COMPARE_OP_GREATER_OR_EQUAL;
+	depthStencil.depthCompareOp = (stateBits & GLS_DEPTHFUNC_EQUAL) ? VK_COMPARE_OP_EQUAL : VK_COMPARE_OP_GREATER_OR_EQUAL;
 
 	Com_Memset(&colorBlendAttachment, 0, sizeof(colorBlendAttachment));
 	colorBlendAttachment.blendEnable         = (stateBits & (GLS_SRCBLEND_BITS | GLS_DSTBLEND_BITS)) ? VK_TRUE : VK_FALSE;
@@ -6345,11 +6345,11 @@ void VK_EndFrame(void)
  */
 static VkFormat VK_TextureFormat(int internalFormat)
 {
-	static VkPhysicalDevice checkedDevice = VK_NULL_HANDLE;
-	static VkFormat         formats[2]    = { VK_FORMAT_A1R5G5B5_UNORM_PACK16, VK_FORMAT_B4G4R4A4_UNORM_PACK16 };
-	static qboolean         supported[2];
+	static VkPhysicalDevice    checkedDevice = VK_NULL_HANDLE;
+	static VkFormat            formats[2]    = { VK_FORMAT_A1R5G5B5_UNORM_PACK16, VK_FORMAT_B4G4R4A4_UNORM_PACK16 };
+	static qboolean            supported[2];
 	const VkFormatFeatureFlags need = VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT | VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT;
-	int                     i;
+	int                        i;
 
 	if (checkedDevice != vk.physicalDevice)
 	{
@@ -6466,7 +6466,7 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 	VkSampler                   sampler;
 	VkBufferImageCopy           regions[16];
 	int                         level, levelW, levelH;
-	VkFormat                    format = VK_TextureFormat(internalFormat);
+	VkFormat                    format    = VK_TextureFormat(internalFormat);
 	VkDeviceSize                texelSize = (format == VK_FORMAT_R8G8B8A8_UNORM) ? 4 : 2;
 	const byte                  *src;
 
@@ -7090,10 +7090,10 @@ void VK_SetDepthRange(float minDepth, float maxDepth)
 	VK_Flush2D(); // keep the pending 2D batch before this in the command buffer
 
 	Com_Memset(&viewport, 0, sizeof(viewport));
-	viewport.x        = (float)vk.lastViewportX;
-	viewport.y        = (float)vk.lastViewportFlippedY;
-	viewport.width    = (float)vk.lastViewportWidth;
-	viewport.height   = (float)vk.lastViewportHeight;
+	viewport.x      = (float)vk.lastViewportX;
+	viewport.y      = (float)vk.lastViewportFlippedY;
+	viewport.width  = (float)vk.lastViewportWidth;
+	viewport.height = (float)vk.lastViewportHeight;
 	// Callers pass GL-convention depth (0 = near, 1 = far), matching
 	// renderer1's glDepthRange(). Under reversed-Z the window depth is flipped,
 	// so map [min, max] -> [1 - max, 1 - min]: e.g. (0, 1) stays full range,
