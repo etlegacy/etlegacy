@@ -50,6 +50,7 @@ jobs:
     # release by themselves. Every Linux job uses this anchor, so bumping
     # the version here moves all of them.
     runs-on: &ubuntu ubuntu-24.04
+    timeout-minutes: 30
     outputs:
       describe: ${{ steps.git.outputs.describe }}
       tag: ${{ steps.git.outputs.tag }}
@@ -126,6 +127,7 @@ jobs:
     needs: pre-flight
     if: &release needs.pre-flight.outputs.release == 'true'
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     defaults:
       run:
         shell: ${{ startsWith(matrix.os, 'windows') && 'cmd' || 'bash' }}
@@ -203,6 +205,7 @@ jobs:
     needs: pre-flight
     if: *release
     runs-on: *ubuntu
+    timeout-minutes: 30
     env:
       &android-env # The SDK downloads missing components into its root owned directory.
       DOCKER_USER: root
@@ -249,6 +252,7 @@ jobs:
   merge-mods:
     needs: [pre-flight, desktop-mods, android-mod]
     runs-on: *ubuntu
+    timeout-minutes: 30
     steps:
       - uses: actions/download-artifact@v8
         with:
@@ -292,6 +296,7 @@ jobs:
   vk-shaders:
     needs: pre-flight
     runs-on: *ubuntu
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
 
@@ -325,6 +330,7 @@ jobs:
       ${{ !cancelled() && needs.pre-flight.result == 'success' && needs.vk-shaders.result == 'success' &&
       (needs.pre-flight.outputs.release != 'true' || needs.merge-mods.result == 'success') }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     defaults:
       run:
         shell: ${{ startsWith(matrix.os, 'windows') && 'cmd' || 'bash' }}
@@ -467,6 +473,7 @@ jobs:
       ${{ !cancelled() && needs.pre-flight.result == 'success' &&
       (needs.pre-flight.outputs.release != 'true' || needs.merge-mods.result == 'success') }}
     runs-on: *ubuntu
+    timeout-minutes: 30
     env: *android-env
     steps:
       - *checkout
@@ -525,6 +532,7 @@ jobs:
   #
   check-build-artifacts:
     runs-on: *ubuntu
+    timeout-minutes: 30
     needs: [desktop-packages, android-package]
     # Check the builds explicitly, the default success() also fails when only
     # a mod build failed.
@@ -569,6 +577,7 @@ jobs:
 
   check-compiler-warnings:
     runs-on: *ubuntu
+    timeout-minutes: 30
     needs: [desktop-packages, android-package]
     if: *builds-succeeded
     steps:
@@ -594,6 +603,7 @@ jobs:
   #
   publish-packages:
     runs-on: *ubuntu
+    timeout-minutes: 30
     # Releases are only published once their packages passed the checks. The
     # package jobs come before the checks, so their artifacts are complete.
     needs:
@@ -680,6 +690,7 @@ jobs:
   # keep the image as a run artifact instead of pushing it.
   publish-server-image:
     runs-on: *ubuntu
+    timeout-minutes: 30
     needs: [pre-flight, publish-packages]
     env:
       CI_ETL_DESCRIBE: ${{ needs.pre-flight.outputs.describe }}
@@ -779,6 +790,7 @@ jobs:
       github.repository == 'etlegacy/etlegacy' &&
       github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
     runs-on: *ubuntu
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -816,6 +828,7 @@ jobs:
     # only show the notification they would have sent.
     if: ${{ !cancelled() && github.ref == 'refs/heads/master' }}
     runs-on: *ubuntu
+    timeout-minutes: 30
     steps:
       - name: Find failed jobs
         id: jobs
