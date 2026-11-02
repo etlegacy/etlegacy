@@ -11,13 +11,9 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        platform:
-          - amd64
-    #      - arm64
-    #      - i386
+    # Must match the base of the snap (core24 is Ubuntu 24.04), as the snap is
+    # built directly on the runner. Do not use ubuntu-latest here.
+    runs-on: ubuntu-24.04
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -27,11 +23,21 @@ jobs:
           repository: etlegacy/etlegacy-snap
           fetch-depth: 1
 
+      # Builds natively on the runner (amd64) without LXD or Docker. Unlike
+      # the Docker based snapcraft-multiarch-action this fails instead of
+      # hanging forever when the Snap Store can not be reached. Other
+      # architectures would need a runner of that architecture.
+      - name: Install Snapcraft
+        run: sudo snap install snapcraft --classic --channel 9.x/stable
+
       - name: Build SNAP
-        uses: canonical/snapcraft-multiarch-action@v1.10.2
         id: snapcraft
-        with:
-          architecture: ${{ matrix.platform }}
+        run: |
+          # Root is needed as snapcraft installs the build packages via apt
+          sudo snapcraft pack --destructive-mode --verbose
+          # Hand the resulting file name to the publish step
+          snap="$(ls ./*.snap)"
+          echo "snap=$snap" >> "$GITHUB_OUTPUT"
       - name: Publish
         uses: snapcore/action-publish@v1.2.0
         env:
