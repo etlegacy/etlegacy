@@ -41,6 +41,8 @@ static def getVersionShort() {
 android {
 	namespace "com.etlegacy.app"
 	compileSdkVersion 36
+	// Pinned to the NDK preinstalled in misc/docker/android.Dockerfile
+	ndkVersion "27.0.12077973"
 	defaultConfig {
 		if (buildAsApplication) {
 			applicationId "com.etlegacy.app"
