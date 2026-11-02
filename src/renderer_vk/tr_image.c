@@ -644,17 +644,49 @@ static void Upload32(image_t *image, unsigned *data,
 			}
 		}
 
+		// renderer1's internal format selection: r_texturebits 16 stores
+		// GL_RGB5 / GL_RGBA4 textures (VK_CreateImageTexture() uploads them
+		// as 16-bit images); the Vulkan path doesn't compress textures
+		// (glConfig.textureCompression stays TC_NONE)
 		if (samples == 3)
 		{
-			internalFormat = r_greyScale->integer ? GL_LUMINANCE : GL_RGB8;
+			if (r_greyScale->integer)
+			{
+				internalFormat = GL_LUMINANCE;
+			}
+			else if (!noCompress && glConfig.textureCompression != TC_NONE)
+			{
+				internalFormat = GL_RGB8;
+			}
+			else if (r_textureBits->integer == 16)
+			{
+				internalFormat = GL_RGB5;
+			}
+			else
+			{
+				internalFormat = GL_RGB8;
+			}
 		}
 		else
 		{
-			internalFormat = r_greyScale->integer ? GL_LUMINANCE_ALPHA : GL_RGBA8;
+			if (r_greyScale->integer)
+			{
+				internalFormat = GL_LUMINANCE_ALPHA;
+			}
+			else if (!noCompress && glConfig.textureCompression != TC_NONE)
+			{
+				internalFormat = GL_RGBA8;
+			}
+			else if (r_textureBits->integer == 16)
+			{
+				internalFormat = GL_RGBA4;
+			}
+			else
+			{
+				internalFormat = GL_RGBA8;
+			}
 		}
 	}
-
-	(void)noCompress; // texture compression formats are not used by the Vulkan upload path
 
 	// copy or resample data for the single uploaded mip level
 	unscaled = (scaled_width == width && scaled_height == height) ? qtrue : qfalse;
@@ -734,14 +766,14 @@ static void Upload32(image_t *image, unsigned *data,
 			offset += (size_t)levelW * levelH * 4;
 		}
 
-		if (!VK_CreateImageTexture(image, chain, scaled_width, scaled_height, mipLevels, qtrue, wrapClampMode))
+		if (!VK_CreateImageTexture(image, chain, scaled_width, scaled_height, mipLevels, qtrue, wrapClampMode, internalFormat))
 		{
 			Ren_Print("Upload32: Vulkan texture upload failed for '%s'\n", image->imgName);
 		}
 
 		ri.Hunk_FreeTempMemory(chain);
 	}
-	else if (!VK_CreateImageTexture(image, (const byte *)scaledBuffer, scaled_width, scaled_height, 1, qfalse, wrapClampMode))
+	else if (!VK_CreateImageTexture(image, (const byte *)scaledBuffer, scaled_width, scaled_height, 1, qfalse, wrapClampMode, internalFormat))
 	{
 		Ren_Print("Upload32: Vulkan texture upload failed for '%s'\n", image->imgName);
 	}
@@ -859,7 +891,7 @@ image_t *R_CreateImage(const char *name, const byte *pic, int width, int height,
 		image->uploadWidth    = image->width;
 		image->uploadHeight   = image->height;
 
-		if (!VK_CreateImageTexture(image, empty, image->width, image->height, 1, mipmap, wrapClampMode))
+		if (!VK_CreateImageTexture(image, empty, image->width, image->height, 1, mipmap, wrapClampMode, GL_RGBA8))
 		{
 			Ren_Print("R_CreateImage: Vulkan texture upload failed for '%s'\n", image->imgName);
 		}

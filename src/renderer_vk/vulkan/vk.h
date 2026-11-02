@@ -100,7 +100,8 @@ struct shaderCommands_s;
  * image_t. Returns qfalse on failure (caller should treat the image as
  * untextured / fall back to tr.whiteImage).
  */
-qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int width, int height, int mipLevels, qboolean mipmap, int wrapClampMode);
+qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int width, int height, int mipLevels, qboolean mipmap, int wrapClampMode,
+                               int internalFormat);
 
 /**
  * @brief Rebuilds the mipmapped-image samplers for a new

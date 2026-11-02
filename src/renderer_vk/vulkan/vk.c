@@ -6337,17 +6337,114 @@ void VK_EndFrame(void)
 }
 
 /**
- * @brief Uploads a 32-bit RGBA image to a new device-local
+ * @brief The Vulkan format for renderer1's internal texture format: the
+ * 16-bit formats of r_texturebits 16 as the GL driver stores them (GL_RGB5
+ * as 5:5:5 with an opaque alpha bit - a 5-bit green, measured against
+ * radeonsi - GL_RGBA4 as 4:4:4:4), when the device can sample and filter
+ * them; RGBA8 otherwise (and for every other format).
+ */
+static VkFormat VK_TextureFormat(int internalFormat)
+{
+	static VkPhysicalDevice checkedDevice = VK_NULL_HANDLE;
+	static VkFormat         formats[2]    = { VK_FORMAT_A1R5G5B5_UNORM_PACK16, VK_FORMAT_B4G4R4A4_UNORM_PACK16 };
+	static qboolean         supported[2];
+	const VkFormatFeatureFlags need = VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT | VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT;
+	int                     i;
+
+	if (checkedDevice != vk.physicalDevice)
+	{
+		for (i = 0; i < 2; i++)
+		{
+			VkFormatProperties props;
+
+			vkGetPhysicalDeviceFormatProperties(vk.physicalDevice, formats[i], &props);
+			supported[i] = ((props.optimalTilingFeatures & need) == need) ? qtrue : qfalse;
+		}
+		checkedDevice = vk.physicalDevice;
+	}
+
+	switch (internalFormat)
+	{
+	case GL_RGB5:
+		return supported[0] ? formats[0] : VK_FORMAT_R8G8B8A8_UNORM;
+	case GL_RGBA4:
+		return supported[1] ? formats[1] : VK_FORMAT_R8G8B8A8_UNORM;
+	default:
+		return VK_FORMAT_R8G8B8A8_UNORM;
+	}
+}
+
+/**
+ * @brief Copies RGBA8 pixels into the staging buffer as internalFormat
+ * stores them: GL_RGB5 / GL_RGBA4 are rounded to the nearest 5/6/4-bit value
+ * (as the GL driver converts them), packed into the 16-bit format, or - when
+ * the device lacks it - expanded back to RGBA8 with the same precision.
+ */
+static void VK_PackTexels(void *dst, const byte *src, int count, int internalFormat, VkFormat format)
+{
+	int i;
+
+	if (internalFormat == GL_RGB5)
+	{
+		for (i = 0; i < count; i++, src += 4)
+		{
+			unsigned int r = (src[0] * 31 + 127) / 255, g = (src[1] * 31 + 127) / 255, b = (src[2] * 31 + 127) / 255;
+
+			if (format == VK_FORMAT_A1R5G5B5_UNORM_PACK16)
+			{
+				((unsigned short *)dst)[i] = (unsigned short)((1u << 15) | (r << 10) | (g << 5) | b);
+			}
+			else
+			{
+				byte *d = (byte *)dst + 4 * i;
+
+				d[0] = (byte)((r * 255 + 15) / 31);
+				d[1] = (byte)((g * 255 + 15) / 31);
+				d[2] = (byte)((b * 255 + 15) / 31);
+				d[3] = 255;
+			}
+		}
+	}
+	else if (internalFormat == GL_RGBA4)
+	{
+		for (i = 0; i < count; i++, src += 4)
+		{
+			unsigned int r = (src[0] * 15 + 127) / 255, g = (src[1] * 15 + 127) / 255, b = (src[2] * 15 + 127) / 255, a = (src[3] * 15 + 127) / 255;
+
+			if (format == VK_FORMAT_B4G4R4A4_UNORM_PACK16)
+			{
+				((unsigned short *)dst)[i] = (unsigned short)((b << 12) | (g << 8) | (r << 4) | a);
+			}
+			else
+			{
+				byte *d = (byte *)dst + 4 * i;
+
+				d[0] = (byte)(r * 17);
+				d[1] = (byte)(g * 17);
+				d[2] = (byte)(b * 17);
+				d[3] = (byte)(a * 17);
+			}
+		}
+	}
+	else
+	{
+		Com_Memcpy(dst, src, (size_t)count * 4);
+	}
+}
+
+/**
+ * @brief Uploads an RGBA8 image to a new device-local
  * VkImage via a host-visible staging buffer and a synchronous one-shot
  * transfer command buffer, then creates its view and descriptor set
  * (sampler picked by mipmap/wrapClampMode). Stores the new handles on the
  * image_t itself.
  *
- * @note Always uploads as VK_FORMAT_R8G8B8A8_UNORM regardless of the
- * legacy GL internalFormat selection. Uploads the mipLevels packed levels
- * in data (built CPU-side by Upload32()).
+ * @note Stored as RGBA8, or as the 16-bit format renderer1's internalFormat
+ * selects for r_texturebits 16 (VK_TextureFormat()). Uploads the mipLevels
+ * packed levels in data (built CPU-side by Upload32()).
  */
-qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int width, int height, int mipLevels, qboolean mipmap, int wrapClampMode)
+qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int width, int height, int mipLevels, qboolean mipmap, int wrapClampMode,
+                               int internalFormat)
 {
 	VkDeviceSize                imageSize     = 0;
 	VkBuffer                    stagingBuffer = VK_NULL_HANDLE;
@@ -6369,6 +6466,9 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 	VkSampler                   sampler;
 	VkBufferImageCopy           regions[16];
 	int                         level, levelW, levelH;
+	VkFormat                    format = VK_TextureFormat(internalFormat);
+	VkDeviceSize                texelSize = (format == VK_FORMAT_R8G8B8A8_UNORM) ? 4 : 2;
+	const byte                  *src;
 
 	if (!vk.initialized || !data || width <= 0 || height <= 0)
 	{
@@ -6400,7 +6500,7 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 		regions[level].imageExtent.height          = (uint32_t)levelH;
 		regions[level].imageExtent.depth           = 1;
 
-		imageSize += (VkDeviceSize)levelW * (VkDeviceSize)levelH * 4;
+		imageSize += (VkDeviceSize)levelW * (VkDeviceSize)levelH * texelSize;
 
 		levelW = (levelW > 1) ? levelW >> 1 : 1;
 		levelH = (levelH > 1) ? levelH >> 1 : 1;
@@ -6414,7 +6514,16 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 	}
 
 	vkMapMemory(vk.device, stagingMemory, 0, imageSize, 0, &mapped);
-	Com_Memcpy(mapped, data, (size_t)imageSize);
+	src    = data;
+	levelW = width;
+	levelH = height;
+	for (level = 0; level < mipLevels; level++)
+	{
+		VK_PackTexels((byte *)mapped + regions[level].bufferOffset, src, levelW * levelH, internalFormat, format);
+		src   += (size_t)levelW * levelH * 4;
+		levelW = (levelW > 1) ? levelW >> 1 : 1;
+		levelH = (levelH > 1) ? levelH >> 1 : 1;
+	}
 	vkUnmapMemory(vk.device, stagingMemory);
 
 	Com_Memset(&imageInfo, 0, sizeof(imageInfo));
@@ -6425,7 +6534,7 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 	imageInfo.extent.depth  = 1;
 	imageInfo.mipLevels     = (uint32_t)mipLevels;
 	imageInfo.arrayLayers   = 1;
-	imageInfo.format        = VK_FORMAT_R8G8B8A8_UNORM;
+	imageInfo.format        = format;
 	imageInfo.tiling        = VK_IMAGE_TILING_OPTIMAL;
 	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	imageInfo.usage         = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
@@ -6493,7 +6602,7 @@ qboolean VK_CreateImageTexture(struct image_s *image, const byte *data, int widt
 	viewInfo.sType                       = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	viewInfo.image                       = vkImage;
 	viewInfo.viewType                    = VK_IMAGE_VIEW_TYPE_2D;
-	viewInfo.format                      = VK_FORMAT_R8G8B8A8_UNORM;
+	viewInfo.format                      = format;
 	viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	viewInfo.subresourceRange.levelCount = (uint32_t)mipLevels;
 	viewInfo.subresourceRange.layerCount = 1;
@@ -8942,7 +9051,8 @@ qboolean VK_UploadScratchImage(struct image_s *image, const byte *data, int cols
 		image->uploadWidth   = cols;
 		image->uploadHeight  = rows;
 
-		return VK_CreateImageTexture(image, data, cols, rows, 1, qfalse, GL_CLAMP_TO_EDGE);
+		// RGBA8: updated in place below with RGBA8 data
+		return VK_CreateImageTexture(image, data, cols, rows, 1, qfalse, GL_CLAMP_TO_EDGE, GL_RGBA8);
 	}
 
 	if (!VK_CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
