@@ -77,6 +77,7 @@ cvar_t *r_mode;
 cvar_t *r_customaspect;
 cvar_t *r_displayRefresh;
 cvar_t *r_windowLocation;
+cvar_t *r_windowHidden;
 
 // Window surface cvars
 cvar_t *r_stencilbits;  // number of desired stencil bits
@@ -412,6 +413,7 @@ static void GLimp_InitCvars(void)
 	r_displayRefresh = Cvar_Get("r_displayRefresh", "0", CVAR_LATCH);
 	Cvar_CheckRange(r_displayRefresh, 0, 480, qtrue);
 	r_windowLocation = Cvar_Get("r_windowLocation", "0,-1,-1", CVAR_ARCHIVE | CVAR_PROTECTED);
+	r_windowHidden   = Cvar_Get("r_windowHidden", "0", CVAR_INIT | CVAR_NOTABCOMPLETE | CVAR_NODEFAULT);
 
 	// Window render surface cvars
 	r_stencilbits = Cvar_Get("r_stencilbits", "0", CVAR_ARCHIVE_ND | CVAR_LATCH | CVAR_UNSAFE);
@@ -993,7 +995,17 @@ static int GLimp_SetMode(glconfig_t *glConfig, int mode, qboolean fullscreen, qb
 			}
 		}
 
-		main_window = SDL_CreateWindow(GlobalGameTitle, x, y, glConfig->vidWidth, glConfig->vidHeight, flags | SDL_WINDOW_SHOWN);
+		if (r_windowHidden->integer)
+		{
+			flags |= SDL_WINDOW_HIDDEN;
+			x      = y = SDL_WINDOWPOS_UNDEFINED;
+		}
+		else
+		{
+			flags |= SDL_WINDOW_SHOWN;
+		}
+
+		main_window = SDL_CreateWindow(GlobalGameTitle, x, y, glConfig->vidWidth, glConfig->vidHeight, flags);
 
 		if (!main_window)
 		{
