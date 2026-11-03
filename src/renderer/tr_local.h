@@ -2155,7 +2155,6 @@ qboolean R_FindCachedModel(const char *name, model_t *newmod);
 void R_LoadCacheModels(void);
 
 void *R_CacheImageAlloc(int size);
-void R_CacheImageFreeAll();
 void R_CacheImageFree(void *ptr);
 qboolean R_TouchImage(image_t *inImage);
 image_t *R_FindCachedImage(const char *name, int hash);

@@ -987,8 +987,6 @@ void R_Init(void)
 
 	R_InitFBO();
 
-	R_InitGamma();
-
 	R_InitImages();
 
 	R_InitShaders();
