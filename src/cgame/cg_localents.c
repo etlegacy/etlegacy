@@ -164,6 +164,9 @@ or generates more localentities along a trail.
  * @brief Leave expanding blood puffs behind gibs
  * @param le
  */
+#define BLOOD_TRAIL_LIFE      180 // ms, the life of a blood trail junction
+#define BLOOD_TRAIL_MAX_STEPS 64  // junctions added per blood entity and frame
+
 void CG_BloodTrail(localEntity_t *le)
 {
 	int    t, t2, step;
@@ -202,6 +205,21 @@ void CG_BloodTrail(localEntity_t *le)
 	t  = step * ((cg.time - cg.frametime + step) / step);
 	t2 = step * (cg.time / step);
 
+#ifndef BLOOD_PARTICLE_TRAIL
+	// Fast blood has a small step: one long frame added so many junctions that
+	// the next frame took even longer, until the game stalled. Skip junctions
+	// that would already have faded out, and add at most the newest
+	// BLOOD_TRAIL_MAX_STEPS per frame.
+	if (t < t2 - BLOOD_TRAIL_LIFE)
+	{
+		t = t2 - step * (BLOOD_TRAIL_LIFE / step);
+	}
+	if ((t2 - t) / step >= BLOOD_TRAIL_MAX_STEPS)
+	{
+		t = t2 - step * (BLOOD_TRAIL_MAX_STEPS - 1);
+	}
+#endif
+
 	for ( ; t <= t2; t += step)
 	{
 		BG_EvaluateTrajectory(&le->pos, t, newOrigin, qfalse, -1);
@@ -216,7 +234,7 @@ void CG_BloodTrail(localEntity_t *le)
 		                                    t,
 		                                    STYPE_STRETCH,
 		                                    newOrigin,
-		                                    180,
+		                                    BLOOD_TRAIL_LIFE,
 		                                    1.0,  // start alpha
 		                                    0.0,  // end alpha
 		                                    12.0,
