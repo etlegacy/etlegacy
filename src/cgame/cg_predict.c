@@ -201,7 +201,25 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 	clipHandle_t  cmodel;
 	vec3_t        bmins, bmaxs;
 	vec3_t        origin, angles;
+	vec3_t        boxmins, boxmaxs;
 	centity_t     *cent;
+
+	// bounding box of the entire move (1 unit margin), as the server does in
+	// SV_Trace(): a box entity whose bounds fall outside it can't be hit by
+	// this trace, so it needs neither a temp box model nor a transformed trace.
+	for (i = 0 ; i < 3 ; i++)
+	{
+		if (end[i] > start[i])
+		{
+			boxmins[i] = start[i] + mins[i] - 1;
+			boxmaxs[i] = end[i] + maxs[i] + 1;
+		}
+		else
+		{
+			boxmins[i] = end[i] + mins[i] - 1;
+			boxmaxs[i] = start[i] + maxs[i] + 1;
+		}
+	}
 
 	for (i = 0 ; i < cg_numSolidEntities ; i++)
 	{
@@ -255,11 +273,21 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 				}
 			}
 
-			//cmodel = trap_CM_TempCapsuleModel( bmins, bmaxs );
-			cmodel = trap_CM_TempBoxModel(bmins, bmaxs);
-
 			VectorCopy(vec3_origin, angles);
 			VectorCopy(cent->lerpOrigin, origin);
+
+			// skip box entities whose world-space bounds don't overlap the
+			// move's swept box (brush models above keep the full trace; they
+			// may be large or rotated). Exact: a trace can't hit a box it
+			// doesn't overlap.
+			if (origin[0] + bmaxs[0] < boxmins[0] || origin[0] + bmins[0] > boxmaxs[0]
+			    || origin[1] + bmaxs[1] < boxmins[1] || origin[1] + bmins[1] > boxmaxs[1]
+			    || origin[2] + bmaxs[2] < boxmins[2] || origin[2] + bmins[2] > boxmaxs[2])
+			{
+				continue;
+			}
+
+			cmodel = trap_CM_TempBoxModel(bmins, bmaxs);
 		}
 		// use bbox of capsule
 		if (capsule)
