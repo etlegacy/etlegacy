@@ -55,18 +55,40 @@
 #define BUTTON_REWIND 1
 #define BUTTON_PLAY_PAUSE 2
 #define BUTTON_FASTFORWARD 3
+#define BUTTON_SLOWER 4
+#define BUTTON_FASTER 5
+#define BUTTON_VIEW 6
+#define BUTTON_HELP 7
+#define BUTTON_NORMAL_SPEED 8
+
+// the demo bar along the bottom of the screen, see CG_DemoBarDraw()
+#define DEMOBAR_H            40
+#define DEMOBAR_BUTTON_H     16
+#define DEMOBAR_SPEED_W      28
+#define DEMOBAR_SPEED_BTN_W  28
+#define DEMOBAR_VIEW_W       80
+#define DEMOBAR_TOOLTIP_H    12
+#define DEMOBAR_TEXT_SCALE   0.19f
+#define DEMOBAR_SKIP_SECONDS 15
+#define DEMOBAR_SLIDE_MSEC   150  // time to slide open or closed
+#define DEMOBAR_HIDE_MSEC    3000 // without mouse movement, off the bar
+
+static float demoBarOpen     = 0.0f; // 0 = closed, 1 = open
+static int   demoBarLastMove = 0;    // trap_Milliseconds()
 
 // emulates holding down key when using the ticker, set on key down, unset on key up
 #define DEMOUI_DATA_TICKER_HELD 1
 // the timestamp we want to seek to
 #define DEMOUI_DATA_TICKER_RESULT 2
 
-static const vec4_t color_bg_title     = COLOR_BG_TITLE;
-static const vec4_t color_border1      = COLOR_BORDER;
-static const vec4_t color_bg           = COLOR_BG_VIEW;
-static const vec4_t color_border       = COLOR_BORDER_VIEW;
-static const vec4_t color_button_hover = COLOR_BUTTON_HOVER;
-static const vec4_t color_bg_window    = COLOR_BG;
+static const vec4_t color_bg_title             = COLOR_BG_TITLE;
+static const vec4_t color_border1              = COLOR_BORDER;
+static const vec4_t color_bg                   = COLOR_BG_VIEW;
+static const vec4_t color_demobar_hover_bg     = { 1.0f, 1.0f, 1.0f, 0.12f };
+static const vec4_t color_demobar_hover_border = { 1.0f, 1.0f, 1.0f, 0.35f };
+static const vec4_t color_border               = COLOR_BORDER_VIEW;
+static const vec4_t color_button_hover         = COLOR_BUTTON_HOVER;
+static const vec4_t color_bg_window            = COLOR_BG;
 
 static panel_button_text_t specHelpDrawHeader =
 {
@@ -160,6 +182,14 @@ void CG_DrawInformation(qboolean forcerefresh)
 	*/
 }
 
+/**
+ * @brief Whether the cursor is on the open demo bar.
+ */
+static qboolean CG_DemoBarCursorOver(void)
+{
+	return (demoBarOpen > 0.0f && cgDC.cursory >= SCREEN_HEIGHT - DEMOBAR_H) ? qtrue : qfalse;
+}
+
 static int CG_DemoTickerTime(qtime_t *qtime, const int msec)
 {
 	int seconds;
@@ -214,13 +244,15 @@ static void CG_DemoTicker_DrawTooltip(const panel_button_t *button)
 
 	x = Com_Clamp(button->rect.x, button->rect.x + button->rect.w, cgDC.cursorx);
 
-	CG_FillRect(x - (timestampWidth * 1.5f), button->rect.y - button->rect.h - 2,
-	            timestampWidth * 1.5f, button->rect.h, color_bg_window);
-	CG_DrawRect(x - (timestampWidth * 1.5f), button->rect.y - button->rect.h - 2,
-	            timestampWidth * 1.5f, button->rect.h, 1, color_border);
+	// keep the tooltip on screen
+	x = Com_Clamp(button->rect.x + timestampWidth * 0.75f, button->rect.x + button->rect.w - timestampWidth * 0.75f, x);
 
+	CG_FillRect(x - (timestampWidth * 0.75f), button->rect.y - DEMOBAR_TOOLTIP_H - 2,
+	            timestampWidth * 1.5f, DEMOBAR_TOOLTIP_H, color_bg_window);
+	CG_DrawRect(x - (timestampWidth * 0.75f), button->rect.y - DEMOBAR_TOOLTIP_H - 2,
+	            timestampWidth * 1.5f, DEMOBAR_TOOLTIP_H, 1, color_border);
 
-	CG_Text_Paint_Centred_Ext(x - ((timestampWidth * 1.5f) * 0.5f), button->rect.y - 2 - (timestampHeight * 0.5f),
+	CG_Text_Paint_Centred_Ext(x, button->rect.y - 2 - (DEMOBAR_TOOLTIP_H * 0.5f) + (timestampHeight * 0.5f),
 	                          button->font->scalex, button->font->scaley, button->font->colour,
 	                          timestamp, 0, 0, button->font->style, button->font->font);
 }
@@ -230,9 +262,6 @@ static void CG_DrawDemoTicker(panel_button_t *button)
 	// how far are we into the demo (0.0 - 1.0)
 	const float progression = ((float)(cg.time - cg.demoinfo->firstTime)) / (cg.demoinfo->lastTime - cg.demoinfo->firstTime);
 	vec4_t      barColor;
-	qtime_t     fullTime, currentTime;
-	float       textHeight;
-	const char  *tickerStr;
 
 	Vector4Copy(colorGreen, barColor);
 	barColor[3] = button->font->colour[3];
@@ -240,15 +269,6 @@ static void CG_DrawDemoTicker(panel_button_t *button)
 	CG_FilledBar(button->rect.x, button->rect.y, button->rect.w, button->rect.h,
 	             barColor, NULL, color_border1, color_border1,
 	             progression, 0.f, BAR_BG, -1);
-
-	CG_DemoTickerTime(&currentTime, cg.time - cg.demoinfo->firstTime);
-	CG_DemoTickerTime(&fullTime, cg.demoinfo->lastTime - cg.demoinfo->firstTime);
-	tickerStr  = va("%02i:%02i / %02i:%02i", currentTime.tm_min, currentTime.tm_sec, fullTime.tm_min, fullTime.tm_sec);
-	textHeight = CG_Text_Height_Ext_Float("00:00", button->font->scaley, 0, button->font->font);
-
-	CG_Text_Paint_RightAligned_Ext(button->rect.x + button->rect.w, button->rect.y + button->rect.h + textHeight + 3,
-	                               button->font->scalex, button->font->scaley,
-	                               button->font->colour, tickerStr, 0, 0, button->font->style, button->font->font);
 
 	if (BG_CursorInRect(&button->rect) || button->data[DEMOUI_DATA_TICKER_HELD])
 	{
@@ -298,51 +318,107 @@ static void CG_DrawDemoTicker(panel_button_t *button)
 	}
 }
 
+extern panel_button_t demoTickerButton;
+
+/**
+ * @brief Text on a demo bar button, centred.
+ */
+static void CG_DemoControlButtonText(const panel_button_t *button, const char *text)
+{
+	float h = CG_Text_Height_Ext_Float(text, button->font->scaley, 0, button->font->font);
+
+	CG_Text_Paint_Centred_Ext(button->rect.x + button->rect.w * 0.5f, button->rect.y + button->rect.h * 0.5f + h * 0.5f,
+	                          button->font->scalex, button->font->scaley, button->font->colour,
+	                          text, 0, 0, button->font->style, button->font->font);
+}
+
 /**
  * @brief CG_DemoControlButtonRender
  * @param[in] button
  */
 static void CG_DemoControlButtonRender(panel_button_t *button)
 {
-	if (button->data[DEMOUI_DATA_BUTTON_TYPE] != BUTTON_TICKER)
-	{
-		const float iconSize = button->rect.h * 0.75f;
-		char        buf[2]; // 'cl_freezeDemo' is 'CVAR_ROM', engine will only ever set it to 0/1
-		qboolean    paused;
+	const float iconSize = button->rect.h * 0.75f;
+	char        buf[2]; // 'cl_freezeDemo' is 'CVAR_ROM', engine will only ever set it to 0/1
+	qboolean    paused, hover;
 
-		trap_Cvar_VariableStringBuffer("cl_freezeDemo", buf, sizeof(buf));
-		paused = Q_atoi(buf);
-
-		CG_FillRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, BG_CursorInRect(&button->rect) ? color_button_hover : color_bg_title);
-		CG_DrawRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, 1, color_border);
-
-		switch (button->data[0])
-		{
-		case BUTTON_REWIND:
-			trap_R_SetColor(colorWhite);
-			CG_DrawPic(button->rect.x + (button->rect.w * 0.5f) - iconSize, button->rect.y + (button->rect.h * 0.5f) - (iconSize * 0.5f),
-			           iconSize * 2, iconSize, cgs.media.demoRewind);
-			break;
-		case BUTTON_PLAY_PAUSE:
-			trap_R_SetColor(colorWhite);
-			CG_DrawPic(button->rect.x + (button->rect.w * 0.5f) - (iconSize * 0.5f), button->rect.y + (button->rect.h * 0.5f) - (iconSize * 0.5f),
-			           iconSize, iconSize, paused ? cgs.media.demoPlay : cgs.media.demoPause);
-			break;
-		case BUTTON_FASTFORWARD:
-			trap_R_SetColor(colorWhite);
-			CG_DrawPic(button->rect.x + (button->rect.w * 0.5f) - iconSize, button->rect.y + (button->rect.h * 0.5f) - (iconSize * 0.5f),
-			           iconSize * 2, iconSize, cgs.media.demoFastForward);
-			break;
-		default:
-			break;
-		}
-
-		trap_R_SetColor(NULL);
-	}
-	else // status ticker
+	if (button->data[DEMOUI_DATA_BUTTON_TYPE] == BUTTON_TICKER)
 	{
 		CG_DrawDemoTicker(button);
+		return;
 	}
+
+	trap_Cvar_VariableStringBuffer("cl_freezeDemo", buf, sizeof(buf));
+	paused = Q_atoi(buf);
+
+	// no hover while the timeline is being dragged across the buttons
+	hover = (BG_CursorInRect(&button->rect) && !demoTickerButton.data[DEMOUI_DATA_TICKER_HELD]) ? qtrue : qfalse;
+
+	CG_FillRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, hover ? color_demobar_hover_bg : color_bg);
+	CG_DrawRect(button->rect.x, button->rect.y, button->rect.w, button->rect.h, 1, hover ? color_demobar_hover_border : color_border);
+
+	trap_R_SetColor(colorWhite);
+	switch (button->data[DEMOUI_DATA_BUTTON_TYPE])
+	{
+	case BUTTON_PLAY_PAUSE:
+		CG_DrawPic(button->rect.x + (button->rect.w - iconSize) * 0.5f, button->rect.y + (button->rect.h - iconSize) * 0.5f,
+		           iconSize, iconSize, paused ? cgs.media.demoPlay : cgs.media.demoPause);
+		break;
+	case BUTTON_SLOWER:
+		CG_DrawPic(button->rect.x + button->rect.w * 0.5f - iconSize, button->rect.y + (button->rect.h - iconSize) * 0.5f,
+		           iconSize * 2, iconSize, cgs.media.demoRewind);
+		break;
+	case BUTTON_FASTER:
+		CG_DrawPic(button->rect.x + button->rect.w * 0.5f - iconSize, button->rect.y + (button->rect.h - iconSize) * 0.5f,
+		           iconSize * 2, iconSize, cgs.media.demoFastForward);
+		break;
+	case BUTTON_NORMAL_SPEED:
+		// shows the current speed
+		CG_DemoControlButtonText(button, va("%gx", (double)cg_timescale.value));
+		break;
+	case BUTTON_REWIND:
+		CG_DemoControlButtonText(button, va("-%is", DEMOBAR_SKIP_SECONDS));
+		break;
+	case BUTTON_FASTFORWARD:
+		CG_DemoControlButtonText(button, va("+%is", DEMOBAR_SKIP_SECONDS));
+		break;
+	case BUTTON_VIEW:
+		CG_DemoControlButtonText(button, CG_TranslateString(cg_thirdPerson.integer ? "Third person" : "First person"));
+		break;
+	case BUTTON_HELP:
+		CG_DemoControlButtonText(button, "?");
+		break;
+	default:
+		break;
+	}
+	trap_R_SetColor(NULL);
+}
+
+/**
+ * @brief The next demo speed from a fixed list, in the given direction.
+ */
+static void CG_DemoSetNextSpeed(qboolean faster)
+{
+	static const float speeds[] = { 0.1f, 0.25f, 0.5f, 1.0f, 2.0f, 4.0f, 8.0f };
+	float              speed    = cg_timescale.value;
+	int                i;
+
+	if (faster)
+	{
+		for (i = 0; i < (int)ARRAY_LEN(speeds) - 1 && speeds[i] <= cg_timescale.value + 0.01f; i++)
+		{
+		}
+	}
+	else
+	{
+		for (i = (int)ARRAY_LEN(speeds) - 1; i > 0 && speeds[i] >= cg_timescale.value - 0.01f; i--)
+		{
+		}
+	}
+	speed = speeds[i];
+
+	trap_Cvar_Set("timescale", va("%f", speed));
+	cgs.timescaleUpdate = cg.time + (int)(1000.0f * speed);
 }
 
 /**
@@ -358,10 +434,11 @@ static qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
 		return qfalse;
 	}
 
-	// NOTE: we must use console commands to play audio from the button clicks!
-	// using 'trap_S_StartLocalSound' does not work for ff/rewind reliably,
-	// because we're messing with time, which breaks the timestamp for local sounds
-	// (we set the timestamp to the current time, then ff/rewind on the next frame)
+	if (button->data[DEMOUI_DATA_BUTTON_TYPE] != BUTTON_TICKER)
+	{
+		trap_S_StartLocalSound(cgs.media.sndLimboFilter, CHAN_LOCAL_SOUND);
+	}
+
 	switch (button->data[DEMOUI_DATA_BUTTON_TYPE])
 	{
 	case BUTTON_TICKER:
@@ -373,15 +450,39 @@ static qboolean CG_DemoControlButtonDown(panel_button_t *button, int key)
 		// This is because when we rewind, 'CG_EventHandling' gets called once the rewind is complete,
 		// with 'cg.time 0' (as the playback effectively restarts), which sets the cursor timeout value to 10000.
 		// After that, we get a call to 'CG_DrawActiveFrame', where we actually fix-up the timestamp.
-		trap_SendConsoleCommand("rewind 5; play sound/menu/filter.wav\n");
+		trap_SendConsoleCommand(va("rewind %i\n", DEMOBAR_SKIP_SECONDS));
 		break;
 	case BUTTON_PLAY_PAUSE:
-		trap_SendConsoleCommand("pausedemo; play sound/menu/filter.wav\n");
+		trap_SendConsoleCommand("pausedemo\n");
 		break;
 	case BUTTON_FASTFORWARD:
-		trap_SendConsoleCommand("fastforward 5; play sound/menu/filter.wav\n");
-		// we're fast-forwarding 5s, so set the timeout 5s after that
-		cgs.cursorTimeout = cg.time + 10000;
+		trap_SendConsoleCommand(va("fastforward %i\n", DEMOBAR_SKIP_SECONDS));
+		// we're fast-forwarding, so set the timeout that much later
+		cgs.cursorTimeout = cg.time + 5000 + DEMOBAR_SKIP_SECONDS * 1000;
+		break;
+	case BUTTON_SLOWER:
+	case BUTTON_FASTER:
+		CG_DemoSetNextSpeed(button->data[DEMOUI_DATA_BUTTON_TYPE] == BUTTON_FASTER);
+		break;
+	case BUTTON_NORMAL_SPEED:
+		trap_Cvar_Set("timescale", "1");
+		cgs.timescaleUpdate = cg.time + 1000;
+		break;
+	case BUTTON_VIEW:
+#ifdef FEATURE_EDV
+		cgs.demoCamera.renderingFreeCam = qfalse;
+#endif
+		trap_Cvar_Set("cg_thirdperson", cg_thirdPerson.integer ? "0" : "1");
+		break;
+	case BUTTON_HELP:
+		if (cg.demohelpWindow == SHOW_ON)
+		{
+			CG_ShowHelp_Off(&cg.demohelpWindow);
+		}
+		else
+		{
+			CG_ShowHelp_On(&cg.demohelpWindow);
+		}
 		break;
 	default:
 		break;
@@ -443,54 +544,41 @@ panel_button_t demoTickerButton =
 	0
 };
 
-panel_button_t demoRewindButton =
-{
-	NULL,
-	NULL,
-	{ 0,                       0,  0, 0 },
-	{ BUTTON_REWIND,           0,  0, 0, 0, 0, 0, 0},
-	NULL,                      // font
-	CG_DemoControlButtonDown,  // keyDown
-	CG_DemoControlButtonUp,    // keyUp
-	CG_DemoControlButtonRender,
-	NULL,
-	0
-};
+#define DEMO_BAR_BUTTON(name, type) \
+		panel_button_t name = \
+		{ \
+			NULL, \
+			NULL, \
+			{ 0,                        0, 0, 0 }, \
+			{ type,                     0, 0, 0, 0, 0, 0, 0}, \
+			NULL, \
+			CG_DemoControlButtonDown, \
+			CG_DemoControlButtonUp, \
+			CG_DemoControlButtonRender, \
+			NULL, \
+			0 \
+		}
 
-panel_button_t demoPauseButton =
-{
-	NULL,
-	NULL,
-	{ 0,                       0,  0, 0 },
-	{ BUTTON_PLAY_PAUSE,       0,  0, 0, 0, 0, 0, 0},
-	NULL,                      // font
-	CG_DemoControlButtonDown,  // keyDown
-	CG_DemoControlButtonUp,    // keyUp
-	CG_DemoControlButtonRender,
-	NULL,
-	0
-};
-
-panel_button_t demoFFButton =
-{
-	NULL,
-	NULL,
-	{ 0,                       0,  0, 0 },
-	{ BUTTON_FASTFORWARD,      0,  0, 0, 0, 0, 0, 0},
-	NULL,                      // font
-	CG_DemoControlButtonDown,  // keyDown
-	CG_DemoControlButtonUp,    // keyUp
-	CG_DemoControlButtonRender,
-	NULL,
-	0
-};
+DEMO_BAR_BUTTON(demoPauseButton, BUTTON_PLAY_PAUSE);
+DEMO_BAR_BUTTON(demoSlowerButton, BUTTON_SLOWER);
+DEMO_BAR_BUTTON(demoNormalSpeedButton, BUTTON_NORMAL_SPEED);
+DEMO_BAR_BUTTON(demoFasterButton, BUTTON_FASTER);
+DEMO_BAR_BUTTON(demoRewindButton, BUTTON_REWIND);
+DEMO_BAR_BUTTON(demoFFButton, BUTTON_FASTFORWARD);
+DEMO_BAR_BUTTON(demoViewButton, BUTTON_VIEW);
+DEMO_BAR_BUTTON(demoHelpButton, BUTTON_HELP);
 
 static panel_button_t *demoControlButtons[] =
 {
 	&demoTickerButton,
-	&demoRewindButton,
 	&demoPauseButton,
+	&demoSlowerButton,
+	&demoNormalSpeedButton,
+	&demoFasterButton,
+	&demoRewindButton,
 	&demoFFButton,
+	&demoViewButton,
+	&demoHelpButton,
 	NULL
 };
 
@@ -517,7 +605,16 @@ void CG_DemoClick(int key, qboolean down)
 
 	cgs.fKeyPressed[key] = down;
 
+	if (key >= K_MOUSE1 && key <= K_MOUSE3 && CG_DemoBarCursorOver())
+	{
+		demoBarLastMove = milli; // a click keeps the bar open too
+	}
+
 	if (BG_PanelButtonsKeyEvent(key, down, demoControlButtons))
+	{
+		return;
+	}
+	if (key >= K_MOUSE1 && key <= K_MOUSE3 && CG_DemoBarCursorOver())
 	{
 		return;
 	}
@@ -1859,64 +1956,141 @@ void CG_ObjectivesDraw()
 #define DH_W    148
 
 /**
- * @brief CG_DrawDemoControls
- * @param[in] x
- * @param[in] y
- * @param[in] w
- * @param[in] borderColor
- * @param[in] bgColor
- * @param[in] tSpacing
- * @param[in] bgColorTitle
- * @param[in] borderColorTitle
- * @param[in] hScale
- * @param[in] hScaleY
- * @param[in] hdrColor
- * @param[in] hStyle
- * @param[in] hFont
+ * @brief Whether this client can show the demo bar (it needs the seek support
+ * and demo length of an ET: Legacy client). Without it the help window stays
+ * the demo's on screen help.
  */
-void CG_DrawDemoControls(int x, int y, int w, vec4_t borderColor, vec4_t bgColor, int tSpacing, vec4_t bgColorTitle, vec4_t borderColorTitle, float hScale, float hScaleY, vec4_t hdrColor, int hStyle, fontHelper_t *hFont)
+qboolean CG_DemoBarAvailable(void)
 {
-	static panel_button_text_t demoControlTxt;
-	int                        i;
-
-	demoControlTxt.scalex = hScale;
-	demoControlTxt.scaley = hScaleY;
-	Vector4Copy(hdrColor, demoControlTxt.colour);
-	demoControlTxt.style = ITEM_TEXTSTYLE_NORMAL;
-	demoControlTxt.align = ITEM_ALIGN_LEFT;
-	demoControlTxt.font  = hFont;
-
-	CG_FillRect(x, y, w, 62, bgColor);
-	CG_DrawRect(x, y, w, 62, 1, borderColor);
-
-	y += 1;
-
-	// Header
-	CG_FillRect(x + 1, y, w - 2, tSpacing + 4, bgColorTitle);
-	CG_DrawRect(x + 1, y, w - 2, tSpacing + 4, 1, borderColorTitle);
-	CG_Text_Paint_Ext(x + 4, y + tSpacing, hScale, hScaleY, hdrColor, CG_TranslateString("DEMO STATUS"), 0.0f, 0, hStyle, hFont);
-
-	for (i = 0; i < 4; i++)
+#ifdef FEATURE_EDV
+	if (!cg_predefineddemokeys.integer)
 	{
-		if (i)
-		{
-			rect_set(demoControlButtons[i]->rect, (x + (i * (w / 4)) - 15), y + 42, 30, 15);
-		}
-		else
-		{
-			rect_set(demoControlButtons[i]->rect, x + 4, y + 15, w - 8, 12);
-		}
-
-		demoControlButtons[i]->font = &demoControlTxt;
+		return qfalse;
 	}
+#endif
+	return (cg.etLegacyClient && cg.demoinfo && cg.demoinfo->lastTime > cg.demoinfo->firstTime) ? qtrue : qfalse;
+}
+
+/**
+ * @brief Whether the demo bar is on screen (it shows the speed too).
+ */
+qboolean CG_DemoBarOpen(void)
+{
+	return (demoBarOpen > 0.0f) ? qtrue : qfalse;
+}
+
+/**
+ * @brief Opens the demo bar on mouse movement. Real time, as cg.time stands
+ * still in a paused demo and jumps when seeking.
+ */
+void CG_DemoBarMouseMoved(void)
+{
+#ifdef FEATURE_EDV
+	if (cgs.demoCamera.renderingFreeCam)
+	{
+		return; // the mouse turns the camera, there is no cursor
+	}
+#endif
+	demoBarLastMove = trap_Milliseconds();
+}
+
+/**
+ * @brief Draws the demo bar: slides up from the bottom of the screen while the
+ * mouse moves or the cursor is on it, and away again afterwards.
+ */
+static void CG_DemoBarDraw(void)
+{
+	static panel_button_text_t text;
+	static int                 lastDraw;
+	const int                  now     = trap_Milliseconds();
+	const float                width   = Ccg_WideX(SCREEN_WIDTH);
+	const float                step    = (now - lastDraw) / (float)DEMOBAR_SLIDE_MSEC;
+	vec4_t                     bgColor = { 0.0f, 0.0f, 0.0f, 0.85f };
+	float                      y, row, x, ease;
+	qtime_t                    fullTime, currentTime;
+	const char                 *timeStr, *tickStr;
+	const qboolean             held = demoTickerButton.data[DEMOUI_DATA_TICKER_HELD] ? qtrue : qfalse;
+	qboolean                   wanted;
+
+	lastDraw = now;
+
+	if (!demo_infoWindow.integer || !CG_DemoBarAvailable())
+	{
+		demoBarOpen     = 0.0f;
+		demoBarLastMove = 0;
+		return;
+	}
+
+	wanted = (cgs.eventHandling == CGAME_EVENT_DEMO && demoBarLastMove &&
+	          (now - demoBarLastMove < DEMOBAR_HIDE_MSEC || held || CG_DemoBarCursorOver())) ? qtrue : qfalse;
+#ifdef FEATURE_EDV
+	if (cgs.demoCamera.renderingFreeCam)
+	{
+		wanted = qfalse;
+	}
+#endif
+
+	demoBarOpen = Com_Clamp(0.0f, 1.0f, demoBarOpen + (wanted ? step : -step));
+	// the rects stay off screen when closed, so the cursor can't reach them
+	ease = 1.0f - (1.0f - demoBarOpen) * (1.0f - demoBarOpen);
+	y    = SCREEN_HEIGHT + 1 - (DEMOBAR_H + 1) * ease;
+
+	text.scalex = DEMOBAR_TEXT_SCALE;
+	text.scaley = DEMOBAR_TEXT_SCALE;
+	Vector4Set(text.colour, 1.0f, 1.0f, 1.0f, 1.0f);
+	text.style = ITEM_TEXTSTYLE_NORMAL;
+	text.align = ITEM_ALIGN_LEFT;
+	text.font  = FONT_TEXT;
+
+	row = y + 18;
+	x   = 8;
+	rect_set(demoTickerButton.rect, 8, y + 5, width - 16, 8);
+	rect_set(demoPauseButton.rect, x, row, 22, DEMOBAR_BUTTON_H);
+	x += 26;
+	rect_set(demoSlowerButton.rect, x, row, DEMOBAR_SPEED_BTN_W, DEMOBAR_BUTTON_H);
+	rect_set(demoNormalSpeedButton.rect, x + DEMOBAR_SPEED_BTN_W, row, DEMOBAR_SPEED_W, DEMOBAR_BUTTON_H);
+	rect_set(demoFasterButton.rect, x + DEMOBAR_SPEED_BTN_W + DEMOBAR_SPEED_W, row, DEMOBAR_SPEED_BTN_W, DEMOBAR_BUTTON_H);
+	x += DEMOBAR_SPEED_BTN_W + DEMOBAR_SPEED_W + DEMOBAR_SPEED_BTN_W + 8;
+
+	rect_set(demoRewindButton.rect, width * 0.5f - 34, row, 32, DEMOBAR_BUTTON_H);
+	rect_set(demoFFButton.rect, width * 0.5f + 2, row, 32, DEMOBAR_BUTTON_H);
+
+	rect_set(demoHelpButton.rect, width - 8 - 18, row, 18, DEMOBAR_BUTTON_H);
+	rect_set(demoViewButton.rect, width - 8 - 18 - 4 - DEMOBAR_VIEW_W, row, DEMOBAR_VIEW_W, DEMOBAR_BUTTON_H);
+
+	{
+		int i;
+
+		for (i = 0; demoControlButtons[i]; i++)
+		{
+			demoControlButtons[i]->font = &text;
+		}
+	}
+
+	if (demoBarOpen <= 0.0f)
+	{
+		return;
+	}
+
+	CG_FillRect(0, y, width, DEMOBAR_H, bgColor);
 	BG_PanelButtonsRender(demoControlButtons);
 
-	if (cg.time < cgs.cursorTimeout)
+	// the time next to the speed buttons
+	CG_DemoTickerTime(&currentTime, Com_Clamp(0, cg.demoinfo->lastTime - cg.demoinfo->firstTime, cg.time - cg.demoinfo->firstTime));
+	CG_DemoTickerTime(&fullTime, cg.demoinfo->lastTime - cg.demoinfo->firstTime);
+	timeStr = va("%02i:%02i / %02i:%02i", currentTime.tm_min, currentTime.tm_sec, fullTime.tm_min, fullTime.tm_sec);
+	CG_Text_Paint_Ext(x, row + DEMOBAR_BUTTON_H * 0.5f + 3, text.scalex, text.scaley, text.colour, timeStr, 0, 0, text.style, text.font);
+	x += CG_Text_Width_Ext_Float(timeStr, text.scalex, 0, text.font) + 10;
+
+	// server frames since the start of the demo, if there is room before the skip buttons
+	tickStr = va("%s %i", CG_TranslateString("Tick:"), (int)(MAX(cg.snap->serverTime - cg.demoinfo->firstTime, 0) * (long long)cgs.sv_fps / 1000));
+	if (x + CG_Text_Width_Ext_Float(tickStr, text.scalex, 0, text.font) < demoRewindButton.rect.x - 4)
 	{
-		// render cursor
-		trap_R_SetColor(NULL);
-		CG_DrawCursor(cgDC.cursorx, cgDC.cursory);
+		CG_Text_Paint_Ext(x, row + DEMOBAR_BUTTON_H * 0.5f + 3, text.scalex, text.scaley, text.colour, tickStr, 0, 0, text.style, text.font);
 	}
+
+	trap_R_SetColor(NULL);
+	CG_DrawCursor(cgDC.cursorx, cgDC.cursory);
 }
 
 /**
@@ -2125,12 +2299,6 @@ void CG_DemoHelpDraw(void)
 			y += DH_Y - h;
 		}
 
-		if (cg.etLegacyClient && cg.demoinfo)
-		{
-			CG_DrawDemoControls(x, y - 62, w, borderColor, bgColor, tSpacing, bgColorTitle, borderColorTitle, hScale, hScaleY, hdrColor, hStyle, hFont);
-			y += 10;
-		}
-
 		CG_FillRect(x, y, w, h, bgColor);
 		CG_DrawRect(x, y, w, h, 1, borderColor);
 
@@ -2277,5 +2445,6 @@ void CG_DrawDemoOverlay(void)
 #endif
 	{
 		CG_DemoHelpDraw();
+		CG_DemoBarDraw();
 	}
 }
