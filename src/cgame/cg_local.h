@@ -3357,6 +3357,9 @@ void CG_ShowHelp_On(int *status);
 qboolean CG_ViewingDraw(void);
 #endif
 void CG_DrawDemoOverlay(void);
+qboolean CG_DemoBarAvailable(void);
+qboolean CG_DemoBarOpen(void);
+void CG_DemoBarMouseMoved(void);
 
 // cg_scoreboard.c
 qboolean CG_DrawScoreboard(void);

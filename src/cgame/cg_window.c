@@ -305,7 +305,7 @@ void CG_demoAviFPSDraw(void)
  */
 void CG_demoTimescaleDraw(void)
 {
-	if (cg.demoPlayback && cgs.timescaleUpdate > cg.time && demo_drawTimeScale.integer != 0)
+	if (cg.demoPlayback && !CG_DemoBarOpen() && cgs.timescaleUpdate > cg.time && demo_drawTimeScale.integer != 0)
 	{
 		vec4_t bgColor = { 0.0f, 0.0f, 0.0f, 0.6f };
 		vec4_t bdColor = { 0.5f, 0.5f, 0.5f, 0.5f };
