@@ -805,9 +805,9 @@ void CG_UpdateCvars(void)
 				{
 					if (demo_infoWindow.integer == 0 && cg.demohelpWindow == SHOW_ON)
 					{
-						CG_ShowHelp_On(&cg.demohelpWindow);
+						CG_ShowHelp_Off(&cg.demohelpWindow);
 					}
-					else if (demo_infoWindow.integer > 0 && cg.demohelpWindow != SHOW_ON)
+					else if (demo_infoWindow.integer > 0 && cg.demohelpWindow != SHOW_ON && !CG_DemoBarAvailable())
 					{
 						CG_ShowHelp_On(&cg.demohelpWindow);
 					}

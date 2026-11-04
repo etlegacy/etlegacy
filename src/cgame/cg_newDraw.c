@@ -667,6 +667,10 @@ void CG_MouseEvent(int x, int y)
 		if (x != 0 || y != 0)
 		{
 			cgs.cursorTimeout = cg.time + 5000;
+			if (cgs.eventHandling == CGAME_EVENT_DEMO)
+			{
+				CG_DemoBarMouseMoved();
+			}
 		} // fall through
 	case CGAME_EVENT_SPEAKEREDITOR:
 	case CGAME_EVENT_CAMERAEDITOR:

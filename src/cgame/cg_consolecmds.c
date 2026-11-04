@@ -1009,7 +1009,7 @@ void CG_keyOn_f(void)
 		return;
 	}
 
-	if (demo_infoWindow.integer > 0)
+	if (demo_infoWindow.integer > 0 && !CG_DemoBarAvailable())
 	{
 		CG_ShowHelp_On(&cg.demohelpWindow);
 	}

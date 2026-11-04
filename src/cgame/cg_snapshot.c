@@ -248,7 +248,7 @@ void CG_SetInitialSnapshot(snapshot_t *snap)
 	if (cg.demoPlayback)
 	{
 		CG_keyOn_f();
-		if (demo_infoWindow.integer > 0)
+		if (demo_infoWindow.integer > 0 && !CG_DemoBarAvailable())
 		{
 			CG_ShowHelp_On(&cg.demohelpWindow);
 		}
