@@ -204,6 +204,16 @@ static void CG_ClipMoveToEntities(const vec3_t start, const vec3_t mins, const v
 	vec3_t        boxmins, boxmaxs;
 	centity_t     *cent;
 
+	// a point trace passes NULL, as the engine's traces allow
+	if (!mins)
+	{
+		mins = vec3_origin;
+	}
+	if (!maxs)
+	{
+		maxs = vec3_origin;
+	}
+
 	// bounding box of the entire move (1 unit margin), as the server does in
 	// SV_Trace(): a box entity whose bounds fall outside it can't be hit by
 	// this trace, so it needs neither a temp box model nor a transformed trace.
