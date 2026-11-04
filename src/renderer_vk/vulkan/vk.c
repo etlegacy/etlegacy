@@ -57,12 +57,20 @@
 // of every vertex/index arena (the VK_*_ARENA_SIZE values are per frame).
 #define VK_FRAMES_IN_FLIGHT 2
 
-// presents per second without vsync on MoltenVK, see VK_PresentDue(): at
-// most VK_PRESENT_MAX_RATE, lowered while presenting waits for a drawable
-// (longer than VK_PRESENT_WAIT_MSEC), down to VK_PRESENT_MIN_RATE
-#define VK_PRESENT_MAX_RATE  250
-#define VK_PRESENT_MIN_RATE  60
-#define VK_PRESENT_WAIT_MSEC 0.5
+// present pacing without vsync on MoltenVK, see VK_PresentDue(): displays faster
+// than this are paced by the clock. For the others: recent presents whose landing
+// refresh is still unknown, and the deadline adjustments in msec
+#define VK_PRESENT_CLOCK_MIN_HZ    75.0
+#define VK_PRESENT_LOCK_HISTORY    64
+#define VK_PRESENT_LOCK_SKIP       30   // presents ignored after a swapchain change or a stall
+#define VK_PRESENT_LOCK_STALL      8.0  // refreshes between landings that make a stall (more than a flush)
+#define VK_PRESENT_LOCK_FLUSH      4    // refreshes left out to empty the swapchain queue
+#define VK_PRESENT_LOCK_SEEK       0.05 // later per present until the first late landing
+#define VK_PRESENT_LOCK_GUARD      2.0  // earlier after the first late landing
+#define VK_PRESENT_LOCK_BACKOFF    1.0  // earlier after later ones, at most once per
+#define VK_PRESENT_LOCK_BACKOFF_MS 5000.0 // this time
+#define VK_PRESENT_LOCK_RESEEK     10   // late landings in that time that move the margin
+#define VK_PRESENT_LOCK_ACCEPT     3    // skipped refreshes in a row that didn't help
 
 // GPU world culling: world views per frame that can be culled on the GPU
 // (the main view, a portal or mirror, the sky portal); further views
@@ -226,6 +234,37 @@ typedef struct
 	VkPipeline pipeline;
 } vkUIPipelineEntry_t;
 
+// present pacing without vsync on MoltenVK, see VK_PresentDue(); on other
+// platforms lock stays qfalse. Times in msec, VK_PresentClock().
+typedef struct
+{
+	PFN_vkGetPastPresentationTimingGOOGLE getPastPresentationTiming; // VK_GOOGLE_display_timing, NULL without the lock
+	PFN_vkGetRefreshCycleDurationGOOGLE getRefreshCycleDuration;
+
+	qboolean lock;                                         // one present per refresh
+	qboolean byClock;                                      // IMMEDIATE, paced by the clock (fast displays)
+	double lastRead;                                       // when the display's refresh was last read
+	double lastPresentTime;
+	double refresh;                                        // measured refresh period
+	double nominalRefresh;                                 // refresh period the display reports
+	double vsync;                                          // the latest refresh a present landed on
+	double anchor;                                         // start of the refresh period measurement
+	double margin;                                         // how long before its refresh a frame is presented
+	double frameTime;                                      // smoothed time between frames
+	double prevFrame;
+	double lastRefresh;                                    // the refresh targeted by the last present
+	double target;                                         // same, for the present being issued; 0 = not paced (capture)
+	double lastBackoff;
+	double drainTarget;                                    // late landings before this refresh are from the last skip
+	double targets[VK_PRESENT_LOCK_HISTORY];
+	uint32_t id;
+	int skip;
+	double latency;                                        // lowest deadline-to-landing time seen, 0 = unknown
+	int late;                                              // skipped refreshes in a row
+	int lateCount;                                         // late landings since lastBackoff
+	qboolean seeking;
+} vkPresentPacing_t;
+
 typedef struct
 {
 	VkInstance instance;
@@ -286,7 +325,7 @@ typedef struct
 	VkCommandPool commandPool;
 	VkCommandBuffer commandBuffer;                         // current frame slot's (alias)
 	VkCommandBuffer commandBuffers[VK_FRAMES_IN_FLIGHT];
-	VkCommandBuffer presentCommandBuffers[VK_FRAMES_IN_FLIGHT]; // the present pass, submitted on its own (vk.presentThrottle)
+	VkCommandBuffer presentCommandBuffers[VK_FRAMES_IN_FLIGHT]; // the present pass, submitted on its own (vk.pacing.lock)
 	int frameIndex;                                        // current frame slot
 
 	// Depth buffer, recreated alongside the swapchain.
@@ -300,7 +339,7 @@ typedef struct
 	VkSemaphore renderFinishedSemaphore;
 	VkFence inFlightFence;
 	VkSemaphore imageAvailableSemaphores[VK_FRAMES_IN_FLIGHT];
-	VkSemaphore sceneDoneSemaphores[VK_FRAMES_IN_FLIGHT];  // scene submit -> present submit (vk.presentThrottle)
+	VkSemaphore sceneDoneSemaphores[VK_FRAMES_IN_FLIGHT];  // scene submit -> present submit (vk.pacing.lock)
 	VkSemaphore renderFinishedSemaphores[VK_MAX_SWAPCHAIN_IMAGES]; // per swapchain image
 	qboolean fenceSubmitted[VK_FRAMES_IN_FLIGHT];          // inFlightFences[i] has a submit that signals it
 	qboolean swapchainStale;                               // out of date / resized: rebuild before presenting (VK_RecreateSwapchain)
@@ -629,9 +668,7 @@ typedef struct
 
 	qboolean initialized;
 	uint32_t currentImageIndex;
-	qboolean presentThrottle;                              // see VK_PresentDue()
-	double lastPresentTime;                                // msec, VK_PresentClock()
-	double presentInterval;                                // msec between presents, adapted by VK_PresentWaited()
+	vkPresentPacing_t pacing;
 } vkContext_t;
 
 static vkContext_t vk;
@@ -1174,8 +1211,9 @@ static qboolean VK_CreateLogicalDevice(void)
 	VkPhysicalDeviceFeatures         deviceFeatures;
 	VkPhysicalDeviceVulkan12Features features12;
 	VkDeviceCreateInfo               createInfo;
-	const char                       *deviceExtensions[3] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, NULL, NULL };
+	const char                       *deviceExtensions[4] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, NULL, NULL, NULL };
 	uint32_t                         deviceExtensionCount = 1;
+	qboolean                         hasDisplayTiming     = qfalse;
 	uint32_t                         availableExtCount = 0, i;
 	VkExtensionProperties            *availableExt;
 	qboolean                         hasDeviceFault = qfalse;
@@ -1265,6 +1303,13 @@ static qboolean VK_CreateLogicalDevice(void)
 				{
 					deviceExtensions[deviceExtensionCount++] = "VK_KHR_portability_subset";
 				}
+#ifdef __APPLE__
+				else if (!strcmp(availableExt[i].extensionName, VK_GOOGLE_DISPLAY_TIMING_EXTENSION_NAME))
+				{
+					deviceExtensions[deviceExtensionCount++] = VK_GOOGLE_DISPLAY_TIMING_EXTENSION_NAME;
+					hasDisplayTiming                         = qtrue;
+				}
+#endif
 #ifdef VK_EXT_device_fault
 				else if (!strcmp(availableExt[i].extensionName, VK_EXT_DEVICE_FAULT_EXTENSION_NAME))
 				{
@@ -1382,9 +1427,72 @@ static qboolean VK_CreateLogicalDevice(void)
 #ifdef VK_EXT_device_fault
 	vk.getDeviceFaultInfo = hasDeviceFault ? (PFN_vkGetDeviceFaultInfoEXT)vkGetDeviceProcAddr(vk.device, "vkGetDeviceFaultInfoEXT") : NULL;
 #endif
+	vk.pacing.getPastPresentationTiming = hasDisplayTiming ? (PFN_vkGetPastPresentationTimingGOOGLE)vkGetDeviceProcAddr(vk.device, "vkGetPastPresentationTimingGOOGLE") : NULL;
+	vk.pacing.getRefreshCycleDuration   = hasDisplayTiming ? (PFN_vkGetRefreshCycleDurationGOOGLE)vkGetDeviceProcAddr(vk.device, "vkGetRefreshCycleDurationGOOGLE") : NULL;
 	Ren_Developer("Vulkan: device fault reports %s\n", hasDeviceFault ? "on" : "off");
 
 	return qtrue;
+}
+
+#ifdef __APPLE__
+/**
+ * @brief Starts the present lock over for a new swapchain, see VK_PresentDue().
+ */
+static void VK_PresentLockReset(void)
+{
+	PFN_vkGetPastPresentationTimingGOOGLE getPast    = vk.pacing.getPastPresentationTiming;
+	PFN_vkGetRefreshCycleDurationGOOGLE   getRefresh = vk.pacing.getRefreshCycleDuration;
+	qboolean                              byClock    = vk.pacing.byClock;
+
+	Com_Memset(&vk.pacing, 0, sizeof(vk.pacing));
+	vk.pacing.getPastPresentationTiming = getPast;
+	vk.pacing.getRefreshCycleDuration   = getRefresh;
+	vk.pacing.byClock                   = byClock;
+
+	vk.pacing.lock           = qtrue;
+	vk.pacing.refresh        = 1000.0 / 60.0;
+	vk.pacing.nominalRefresh = vk.pacing.refresh;
+	vk.pacing.margin         = vk.pacing.refresh * 0.5;
+	vk.pacing.frameTime      = 2.0;
+	vk.pacing.skip           = VK_PRESENT_LOCK_SKIP;
+	vk.pacing.seeking        = qtrue;
+}
+#endif
+
+/**
+ * @brief Reads the refresh period the display reports. It has to come from the
+ * display: presents landing on every second refresh of a 120 Hz panel look just
+ * like a 60 Hz one. A change (first call, the window moved to another display)
+ * makes the lock learn its latency again.
+ */
+static void VK_PresentLockReadRefresh(void)
+{
+	VkRefreshCycleDurationGOOGLE duration;
+	double                       nominal;
+
+	if (vk.pacing.getRefreshCycleDuration(vk.device, vk.swapchain, &duration) != VK_SUCCESS || duration.refreshDuration == 0)
+	{
+		return;
+	}
+	nominal = duration.refreshDuration / 1000000.0;
+	if (fabs(nominal - vk.pacing.nominalRefresh) > vk.pacing.nominalRefresh * 0.01)
+	{
+		Ren_Developer("Vulkan: present pacing: refresh %.1f Hz\n", 1000.0 / nominal);
+		vk.pacing.refresh = nominal;
+		vk.pacing.latency = 0;
+		vk.pacing.skip    = VK_PRESENT_LOCK_SKIP;
+		vk.pacing.anchor  = 0;
+	}
+	vk.pacing.nominalRefresh = nominal;
+}
+
+/**
+ * @brief Whether the display reported last is too fast for a FIFO swapchain to
+ * keep up, see VK_PresentDue().
+ */
+static qboolean VK_PresentWantsClock(void)
+{
+	return (1000.0 / vk.pacing.nominalRefresh > VK_PRESENT_CLOCK_MIN_HZ) ? qtrue : qfalse;
 }
 
 static qboolean VK_CreateSwapchainAndViews(int width, int height)
@@ -1417,11 +1525,20 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 		}
 		presentMode = haveImmediate ? VK_PRESENT_MODE_IMMEDIATE_KHR : (haveMailbox ? VK_PRESENT_MODE_MAILBOX_KHR : VK_PRESENT_MODE_FIFO_KHR);
 	}
+	vk.pacing.lock = qfalse;
 #ifdef __APPLE__
-	vk.presentThrottle = (presentMode == VK_PRESENT_MODE_IMMEDIATE_KHR);
-	vk.presentInterval = 1000.0 / VK_PRESENT_MAX_RATE;
+	// no vsync on MoltenVK: render every frame, present one per refresh
+	if (presentMode == VK_PRESENT_MODE_IMMEDIATE_KHR && vk.pacing.getPastPresentationTiming && vk.pacing.getRefreshCycleDuration)
+	{
+		if (!vk.pacing.byClock)
+		{
+			presentMode = VK_PRESENT_MODE_FIFO_KHR;
+		}
+		VK_PresentLockReset();
+	}
 #endif
-	Ren_Developer("Vulkan: present mode %s\n", presentMode == VK_PRESENT_MODE_IMMEDIATE_KHR ? "IMMEDIATE" :
+	Ren_Developer("Vulkan: present mode %s\n", vk.pacing.lock ? (vk.pacing.byClock ? "IMMEDIATE (one present per refresh, by the clock)" : "FIFO (one present per refresh)") :
+	              presentMode == VK_PRESENT_MODE_IMMEDIATE_KHR ? "IMMEDIATE" :
 	              presentMode == VK_PRESENT_MODE_MAILBOX_KHR ? "MAILBOX" : "FIFO (vsync)");
 	vkGetPhysicalDeviceSurfaceFormatsKHR(vk.physicalDevice, vk.surface, &formatCount, formats);
 	if (formatCount == 0)
@@ -1501,6 +1618,27 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 	if (!VK_CheckResult(vkCreateSwapchainKHR(vk.device, &createInfo, NULL, &vk.swapchain), "vkCreateSwapchainKHR"))
 	{
 		return qfalse;
+	}
+
+	// the refresh can only be read from a swapchain: create it again if this
+	// display needs the other mode
+	if (vk.pacing.lock)
+	{
+		VK_PresentLockReadRefresh();
+		if (VK_PresentWantsClock() != vk.pacing.byClock)
+		{
+			vk.pacing.byClock = VK_PresentWantsClock();
+			Ren_Developer("Vulkan: present mode %s\n", vk.pacing.byClock ? "IMMEDIATE (one present per refresh, by the clock)" : "FIFO (one present per refresh)");
+			vkDestroySwapchainKHR(vk.device, vk.swapchain, NULL);
+			vk.swapchain = VK_NULL_HANDLE;
+
+			createInfo.presentMode  = vk.pacing.byClock ? VK_PRESENT_MODE_IMMEDIATE_KHR : VK_PRESENT_MODE_FIFO_KHR;
+			createInfo.oldSwapchain = VK_NULL_HANDLE;
+			if (!VK_CheckResult(vkCreateSwapchainKHR(vk.device, &createInfo, NULL, &vk.swapchain), "vkCreateSwapchainKHR"))
+			{
+				return qfalse;
+			}
+		}
 	}
 
 	vkGetSwapchainImagesKHR(vk.device, vk.swapchain, &vk.swapchainImageCount, NULL);
@@ -5898,15 +6036,15 @@ static qboolean VK_EnsureCaptureBuffer(void)
 }
 
 /**
- * @brief Monotonic time in msec with sub-msec resolution for the present
- * throttle (only used on macOS, see vk.presentThrottle).
+ * @brief Time in msec for the present lock, in the clock of the presented
+ * times MoltenVK reports (only used on macOS, see vk.pacing.lock).
  */
 static double VK_PresentClock(void)
 {
 #ifdef __APPLE__
 	struct timespec ts;
 
-	clock_gettime(CLOCK_MONOTONIC, &ts);
+	clock_gettime(CLOCK_UPTIME_RAW, &ts);
 	return ts.tv_sec * 1000.0 + ts.tv_nsec / 1000000.0;
 #else
 	return (double)ri.Milliseconds();
@@ -5916,49 +6054,228 @@ static double VK_PresentClock(void)
 /**
  * @brief Whether VK_EndFrame() presents this frame.
  *
- * Without vsync, MoltenVK still hands out at most 3 CAMetalLayer drawables,
- * and the window compositor keeps the one on screen and the one picked for
- * the next refresh. When none is free, nextDrawable (called while
- * vkQueueSubmit encodes the present pass) blocks for up to a refresh, which
- * at several hundred frames per second halved the frame rate. How fast
- * drawables come back differs between launches (about 230 instead of 400+
- * per second in some), so the rate is adapted (VK_PresentWaited()). The
- * compositor shows one frame per refresh anyway: the frames in between are
- * rendered (into the persistent scene image) but not presented; the next
- * presented frame shows them.
+ * Without vsync on MoltenVK, frames render uncapped but only the newest one
+ * before each display refresh is presented (vk.pacing.lock), on a FIFO
+ * swapchain so that it lands on that refresh. Presenting more often gains
+ * nothing, as the compositor shows one frame per refresh, and costs a lot:
+ * CAMetalLayer has only 3 drawables, and nextDrawable blocks in
+ * vkQueueSubmit when none is free. Presenting at a rate of its own was smooth
+ * neither: which frame reached the screen beat against the refresh, so the
+ * game time between visible frames varied by +-5 ms instead of +-1.5 ms.
+ *
+ * The frame presented is the last one that finishes before the refresh minus
+ * vk.pacing.margin. VK_PresentLockUpdate() takes the refresh times and the
+ * margin from where earlier presents landed.
+ *
+ * Fast displays (vk.pacing.byClock) don't get the FIFO swapchain: even with real
+ * vsync the 120 Hz ProMotion panel lands only about 110 presents per second, so
+ * the queue fills up and nextDrawable blocks. There the swapchain stays
+ * IMMEDIATE, which never queues for a refresh, and presents follow the clock at
+ * the refresh rate. On a 60 Hz display the FIFO lock is better: the reported rate
+ * differs a little from the real one (59.95 Hz), which a clock drifts against.
  */
 static qboolean VK_PresentDue(void)
 {
-	double now;
+	double now, late, refresh;
 
-	if (!vk.presentThrottle)
+	if (!vk.pacing.lock)
 	{
 		return qtrue;
 	}
 
 	now = VK_PresentClock();
-	if (now - vk.lastPresentTime < vk.presentInterval)
+	if (vk.pacing.prevFrame > 0)
+	{
+		vk.pacing.frameTime += (MIN(now - vk.pacing.prevFrame, 50.0) - vk.pacing.frameTime) * 0.05;
+	}
+	vk.pacing.prevFrame = now;
+
+	if (vk.pacing.byClock)
+	{
+		if (now - vk.pacing.lastPresentTime < vk.pacing.refresh)
+		{
+			return qfalse;
+		}
+		vk.pacing.lastPresentTime += vk.pacing.refresh; // an even rate, unless far behind
+		if (now - vk.pacing.lastPresentTime > 50.0)
+		{
+			vk.pacing.lastPresentTime = now;
+		}
+		return qtrue;
+	}
+
+	if (vk.pacing.vsync == 0)
+	{
+		// nothing has landed yet
+		if (now - vk.pacing.lastPresentTime < vk.pacing.refresh)
+		{
+			return qfalse;
+		}
+		vk.pacing.lastPresentTime = now;
+		return qtrue;
+	}
+
+	// a frame finishing just after a deadline still serves that refresh: a refresh
+	// without a present would show the previous frame twice
+	late    = MIN(vk.pacing.frameTime * 2.0, vk.pacing.refresh * 0.5);
+	refresh = vk.pacing.vsync + ceil((now - late + vk.pacing.margin - vk.pacing.vsync) / vk.pacing.refresh) * vk.pacing.refresh;
+	if (now + vk.pacing.frameTime < refresh - vk.pacing.margin || refresh < vk.pacing.lastRefresh + vk.pacing.refresh * 0.5)
 	{
 		return qfalse;
 	}
-	vk.lastPresentTime = now;
+	vk.pacing.lastRefresh     = refresh;
+	vk.pacing.target          = refresh;
+	vk.pacing.lastPresentTime = now;
 	return qtrue;
 }
 
 /**
- * @brief Adapts the present interval to how long submitting the present
- * pass took, i.e. how long nextDrawable waited for a drawable: back off
- * quickly while it waits, return slowly to VK_PRESENT_MAX_RATE otherwise.
+ * @brief Leaves out the next refreshes, so the swapchain queue runs empty; the
+ * presents still on their way when that is seen aren't measured.
  */
-static void VK_PresentWaited(double msec)
+static void VK_PresentLockSkip(int refreshes)
 {
-	if (msec > VK_PRESENT_WAIT_MSEC)
+	vk.pacing.lastRefresh = MAX(vk.pacing.lastRefresh, vk.pacing.vsync) + vk.pacing.refresh * refreshes;
+	vk.pacing.drainTarget = vk.pacing.lastRefresh + vk.pacing.refresh;
+}
+
+/**
+ * @brief Reads where earlier presents landed: the refresh times and period
+ * for VK_PresentDue(), and whether the margin is right.
+ *
+ * The latency of a present, from its deadline to where it landed, shrinks with
+ * the margin until the margin gets too small: then a present misses its refresh
+ * and lands one later. The margin shrinks until that happens, grows a little and
+ * then stays. A late landing also means the swapchain
+ * queue is a frame longer, which would stay so and add up to the latency of real
+ * vsync, so a refresh is skipped to empty it.
+ */
+static void VK_PresentLockUpdate(void)
+{
+	VkPastPresentationTimingGOOGLE timings[VK_PRESENT_LOCK_HISTORY];
+	uint32_t                       count = VK_PRESENT_LOCK_HISTORY, i;
+	double                         readTime = VK_PresentClock();
+
+	// the window may have moved to another display
+	if (readTime - vk.pacing.lastRead > 2000.0)
 	{
-		vk.presentInterval = MIN(vk.presentInterval * 1.25, 1000.0 / VK_PRESENT_MIN_RATE);
+		vk.pacing.lastRead = readTime;
+		VK_PresentLockReadRefresh();
+		if (VK_PresentWantsClock() != vk.pacing.byClock)
+		{
+			vk.pacing.byClock = VK_PresentWantsClock();
+			vk.swapchainStale = qtrue;
+		}
 	}
-	else
+
+	if (vk.pacing.byClock)
 	{
-		vk.presentInterval = MAX(vk.presentInterval * 0.998, 1000.0 / VK_PRESENT_MAX_RATE);
+		return; // its presented times don't follow the refreshes
+	}
+
+	if (vk.pacing.getPastPresentationTiming(vk.device, vk.swapchain, &count, timings) < 0)
+	{
+		return;
+	}
+
+	for (i = 0; i < count; i++)
+	{
+		double landed = timings[i].actualPresentTime / 1000000.0;
+		double *slot  = &vk.pacing.targets[timings[i].presentID % VK_PRESENT_LOCK_HISTORY];
+		double target = *slot;
+		double latency;
+
+		*slot = 0;
+		if (landed <= vk.pacing.vsync)
+		{
+			continue;
+		}
+
+		// a stall (a map loading) says nothing about the margin
+		if (vk.pacing.vsync > 0 && landed - vk.pacing.vsync > vk.pacing.refresh * VK_PRESENT_LOCK_STALL)
+		{
+			vk.pacing.skip   = VK_PRESENT_LOCK_SKIP;
+			vk.pacing.anchor = 0;
+		}
+		vk.pacing.vsync = landed;
+
+		if (vk.pacing.anchor == 0)
+		{
+			vk.pacing.anchor = landed;
+		}
+		else if (landed - vk.pacing.anchor > 2000.0)
+		{
+			vk.pacing.refresh = (landed - vk.pacing.anchor) / floor((landed - vk.pacing.anchor) / vk.pacing.nominalRefresh + 0.5);
+			vk.pacing.anchor  = landed;
+		}
+
+		if (target == 0)
+		{
+			continue;
+		}
+		if (vk.pacing.skip > 0)
+		{
+			if (--vk.pacing.skip == 0 && vk.pacing.latency == 0)
+			{
+				VK_PresentLockSkip(VK_PRESENT_LOCK_FLUSH); // start learning with an empty queue
+			}
+			continue;
+		}
+		if (target < vk.pacing.drainTarget)
+		{
+			continue; // was on its way during the last skip
+		}
+
+		latency = landed - (target - vk.pacing.margin);
+		if (vk.pacing.latency == 0 || latency < vk.pacing.latency)
+		{
+			vk.pacing.latency = latency;
+		}
+
+		if (latency > vk.pacing.latency + vk.pacing.refresh * 0.75)
+		{
+			double now = VK_PresentClock();
+
+			VK_PresentLockSkip(MIN((int)floor((latency - vk.pacing.latency) / vk.pacing.refresh + 0.25), VK_PRESENT_LOCK_FLUSH));
+			if (++vk.pacing.late >= VK_PRESENT_LOCK_ACCEPT)
+			{
+				vk.pacing.latency = latency; // skipping didn't help: the new normal
+				vk.pacing.late    = 0;
+			}
+			// the first late landing ends the search; after that the margin only
+			// moves if landings stay late, as single ones come from the system
+			vk.pacing.lateCount++;
+			if (vk.pacing.seeking || (now - vk.pacing.lastBackoff > VK_PRESENT_LOCK_BACKOFF_MS && vk.pacing.lateCount >= VK_PRESENT_LOCK_RESEEK))
+			{
+				vk.pacing.margin     += vk.pacing.seeking ? VK_PRESENT_LOCK_GUARD : VK_PRESENT_LOCK_BACKOFF;
+				vk.pacing.lastBackoff = now;
+				vk.pacing.lateCount   = 0;
+				vk.pacing.seeking     = qfalse;
+			}
+			else if (now - vk.pacing.lastBackoff > VK_PRESENT_LOCK_BACKOFF_MS)
+			{
+				vk.pacing.lastBackoff = now;
+				vk.pacing.lateCount   = 0;
+			}
+		}
+		else
+		{
+			vk.pacing.late = 0;
+			if (vk.pacing.seeking)
+			{
+				vk.pacing.margin -= VK_PRESENT_LOCK_SEEK;
+			}
+		}
+
+		// one refresh more or less is the same deadline
+		if (vk.pacing.margin < 0)
+		{
+			vk.pacing.margin += vk.pacing.refresh;
+		}
+		else if (vk.pacing.margin >= vk.pacing.refresh)
+		{
+			vk.pacing.margin -= vk.pacing.refresh;
+		}
 	}
 }
 
@@ -6094,10 +6411,10 @@ void VK_EndFrame(void)
 	// a capture needs a presented frame: it waits for one that can present
 	captureThisFrame = captureThisFrame && present;
 
-	// with the present throttle the present pass (and a capture) gets its own
+	// with the present lock the present pass (and a capture) gets its own
 	// command buffer and submit: the scene starts on the GPU without waiting
-	// for a drawable, and the present submit's duration is that wait
-	splitPresent = present && vk.presentThrottle;
+	// for a drawable
+	splitPresent = present && vk.pacing.lock;
 	presentCB    = vk.commandBuffer;
 	if (splitPresent)
 	{
@@ -6249,7 +6566,6 @@ void VK_EndFrame(void)
 	{
 		VkSemaphore          waitSemaphores[2];
 		VkPipelineStageFlags waitStages[2];
-		double               start;
 		VkResult             result;
 
 		// the scene, then the present pass once it is done: the fence on the
@@ -6273,12 +6589,10 @@ void VK_EndFrame(void)
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores    = &vk.renderFinishedSemaphore;
 
-		start = VK_PresentClock();
 		vkResetFences(vk.device, 1, &vk.inFlightFence);
 		result = vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence);
 		VK_CheckDeviceLost(result, "vkQueueSubmit(present)");
 		vk.fenceSubmitted[vk.frameIndex] = (result == VK_SUCCESS) ? qtrue : qfalse;
-		VK_PresentWaited(VK_PresentClock() - start);
 	}
 	else
 	{
@@ -6299,7 +6613,9 @@ void VK_EndFrame(void)
 	// a submit above may have lost the device
 	if (present && !vk.restartPending)
 	{
-		VkResult result;
+		VkResult                 result;
+		VkPresentTimeGOOGLE      presentTime;
+		VkPresentTimesInfoGOOGLE presentTimes;
 
 		Com_Memset(&presentInfo, 0, sizeof(presentInfo));
 		presentInfo.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -6309,12 +6625,31 @@ void VK_EndFrame(void)
 		presentInfo.pSwapchains        = &vk.swapchain;
 		presentInfo.pImageIndices      = &vk.currentImageIndex;
 
+		if (vk.pacing.lock)
+		{
+			vk.pacing.id++;
+			vk.pacing.targets[vk.pacing.id % VK_PRESENT_LOCK_HISTORY] = vk.pacing.target;
+			vk.pacing.target                                          = 0;
+
+			presentTime.presentID          = vk.pacing.id;
+			presentTime.desiredPresentTime = 0;
+			Com_Memset(&presentTimes, 0, sizeof(presentTimes));
+			presentTimes.sType          = VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE;
+			presentTimes.swapchainCount = 1;
+			presentTimes.pTimes         = &presentTime;
+			presentInfo.pNext           = &presentTimes;
+		}
+
 		result = vkQueuePresentKHR(vk.presentQueue, &presentInfo);
 		VK_CheckDeviceLost(result, "vkQueuePresentKHR");
 		VK_CheckSurfaceLost(result, "vkQueuePresentKHR");
 		if (result == VK_ERROR_OUT_OF_DATE_KHR || (result == VK_SUBOPTIMAL_KHR && VK_SwapchainSizeChanged()))
 		{
 			vk.swapchainStale = qtrue;
+		}
+		else if (vk.pacing.lock && !vk.restartPending)
+		{
+			VK_PresentLockUpdate();
 		}
 	}
 
