@@ -25,7 +25,9 @@ layout(location = 1) out vec4 fragColor;
 
 void main()
 {
-	gl_Position = vec4(inPos * pc.scale + pc.offset, 0.0, 1.0);
+	// depth 1 is the near plane with reversed Z, as GL's 0 is for renderer1's 2D:
+	// a depth write here must never equal the far plane the sky leaves in the buffer
+	gl_Position = vec4(inPos * pc.scale + pc.offset, 1.0, 1.0);
 	fragUV      = inUV;
 	fragColor   = inColor;
 }
