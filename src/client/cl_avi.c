@@ -86,8 +86,9 @@ static aviFileData_t afd;
 
 #define MAX_AVI_BUFFER 2048
 
-static byte buffer[MAX_AVI_BUFFER];
-static int  bufIndex;
+static byte     buffer[MAX_AVI_BUFFER];
+static int      bufIndex;
+static qboolean aviWriteFailed;
 
 /**
  * @brief SafeFS_Write
@@ -97,8 +98,17 @@ static int  bufIndex;
  */
 static ID_INLINE void SafeFS_Write(const void *buffer, int len, fileHandle_t f)
 {
+	// the error's shutdown closes the video, and another error there would be fatal
+	if (aviWriteFailed)
+	{
+		return;
+	}
+
 	if (FS_Write(buffer, len, f) < len)
 	{
+		aviWriteFailed = qtrue;
+		Com_SetExitCode(1);
+
 		if (videoPipe)
 		{
 			Com_Error(ERR_DROP, "Failed to write avi file.\n\nMake sure the path to ffmpeg binary is part of $PATH environmental variable, or is placed next to the ETL executable.\n");
@@ -418,6 +428,8 @@ qboolean CL_OpenAVIForWriting(const char *fileName, qboolean pipe)
 	{
 		return qfalse;
 	}
+
+	aviWriteFailed = qfalse;
 
 	Com_Memset(&afd, 0, sizeof(aviFileData_t));
 	bytesInBuffer = 0;
@@ -752,7 +764,11 @@ qboolean CL_CloseAVI(void)
 	if (afd.pipe)
 	{
 		Com_Printf("Wrote %d:%d (v:a) frames to pipe: %s\n", afd.numVideoFrames, afd.numAudioFrames, afd.fileName);
-		FS_FCloseFile(afd.f);
+		if (FS_FClosePipe(afd.f))
+		{
+			Com_Printf(S_COLOR_RED "video-pipe: ffmpeg failed, see %s-log.txt\n", afd.fileName);
+			Com_SetExitCode(1);
+		}
 		afd.f        = 0;
 		afd.fileOpen = qfalse;
 		afd.pipe     = qfalse;

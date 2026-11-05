@@ -903,6 +903,7 @@ int FS_Read(void *buffer, int len, fileHandle_t f);
 // properly handles partial reads and reads from other dlls
 
 void FS_FCloseFile(fileHandle_t f);
+int FS_FClosePipe(fileHandle_t f);
 // note: you can't just fclose from another DLL, due to MS libc issues
 
 int FS_ReadFile(const char *qpath, void **buffer);
@@ -1060,6 +1061,8 @@ void QDECL Com_Printf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 void QDECL Com_DPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
 NORETURN_MSVC void QDECL Com_Error(int code, const char *fmt, ...) _attribute((noreturn, format(printf, 2, 3)));
 NORETURN_MSVC void Com_Quit_f(void) _attribute((noreturn));
+void Com_SetExitCode(int code);
+int Com_ExitCode(void);
 
 int Com_Milliseconds(void);     // will be journaled properly
 int64_t Com_Microseconds(void);

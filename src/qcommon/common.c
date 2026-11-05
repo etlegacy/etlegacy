@@ -464,6 +464,26 @@ void QDECL Com_Error(int code, const char *fmt, ...)
 	Sys_Error("%s", com_errorMessage);
 }
 
+static int com_exitCode;
+
+/**
+ * @brief Sets the code the game exits with on a normal quit, for scripts running it
+ * @param[in] code
+ */
+void Com_SetExitCode(int code)
+{
+	com_exitCode = code;
+}
+
+/**
+ * @brief Com_ExitCode
+ * @return code to exit with on a normal quit
+ */
+int Com_ExitCode(void)
+{
+	return com_exitCode;
+}
+
 /**
  * @brief Both client and server can use this, and it will do the appropriate thing.
  */
