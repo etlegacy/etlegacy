@@ -346,6 +346,8 @@ qboolean Sys_WritePIDFile(void)
  * @brief Single exit point (regular exit or in case of error)
  * @param[in] exitCode
  */
+static qboolean sys_quitting;    ///< a normal quit, which has shut down the filesystem and removed the PID file
+
 NORETURN_MSVC static _attribute((noreturn)) void Sys_Exit(int exitCode)
 {
 	CON_Shutdown();
@@ -358,7 +360,7 @@ NORETURN_MSVC static _attribute((noreturn)) void Sys_Exit(int exitCode)
 	// FIXME: normal exit pid deletion is done in Com_Shutdown
 	//        why do we have 2 locations for this job?
 	//        ... is this Com or Sys code?
-	if (exitCode > 0)
+	if (exitCode > 0 && !sys_quitting)
 	{
 		// Normal exit
 		// com_pidfile does not yet exist on early exit
@@ -414,7 +416,8 @@ void Sys_Quit(void)
 #ifdef USE_WINDOWS_CONSOLE
 	Sys_DestroyConsole();
 #endif
-	Sys_Exit(0);
+	sys_quitting = qtrue;
+	Sys_Exit(Com_ExitCode());
 }
 
 #ifdef USE_WINDOWS_CONSOLE

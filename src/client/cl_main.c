@@ -3323,6 +3323,12 @@ void CL_Shutdown(void)
 	}
 	recursive = qtrue;
 
+	// the game was closed during a clip
+	if (CL_DemoClipActive())
+	{
+		Com_SetExitCode(1);
+	}
+
 	if (clc.waverecording)     // write wav header when we quit
 	{
 		CL_WavStopRecord_f();
