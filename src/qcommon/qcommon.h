@@ -1469,6 +1469,7 @@ int Sys_Stat(const char *path, void *stat);
 int Sys_Rename(const char *from, const char *to);
 char *Sys_RealPath(const char *path);
 #define Sys_PathAbsolute(name) (name && strlen(name) > 3 && name[1] == ':' && (name[2] == '\\' || name[2] == '/'))
+FILE *Sys_Popen(const char *command, const char *mode);
 #else
 #include <unistd.h>
 #define Sys_Remove(x) remove(x)
@@ -1481,6 +1482,7 @@ char *Sys_RealPath(const char *path);
 #define sys_stat_t struct stat
 #define Sys_Stat(osPath, statBuf) stat(osPath, statBuf)
 #define Sys_S_IsDir(m) S_ISDIR(m)
+#define Sys_Popen(command, mode) popen((command), (mode))
 #endif
 
 char *Sys_Cwd(void);

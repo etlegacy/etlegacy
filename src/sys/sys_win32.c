@@ -330,6 +330,21 @@ char *Sys_RealPath(const char *path)
 }
 
 /**
+ * @brief Sys_Popen
+ * @param[in] command
+ * @param[in] mode
+ * @return
+ */
+FILE *Sys_Popen(const char *command, const char *mode)
+{
+	wchar_t w_command[MAX_OSPATH];
+	wchar_t w_mode[10];
+	Sys_StringToWideCharArray(command, w_command, MAX_OSPATH);
+	Sys_StringToWideCharArray(mode, w_mode, MAX_OSPATH);
+	return _wpopen(w_command, w_mode);
+}
+
+/**
  * @brief Sys_FOpen
  * @param[in] ospath
  * @param[in] mode

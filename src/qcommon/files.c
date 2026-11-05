@@ -1327,9 +1327,9 @@ fileHandle_t FS_PipeOpenWrite(const char *cmd, const char *filename)
 	// linux-aarch64 probably fine?
 	// android most likely doesn't work?
 #ifdef _WIN32
-	fd->handleFiles.file.o = _popen(cmd, "wb");
+	fd->handleFiles.file.o = Sys_Popen(cmd, "wb");
 #else
-	fd->handleFiles.file.o = popen(cmd, "w");
+	fd->handleFiles.file.o = Sys_Popen(cmd, "w");
 	// a process that has died must fail the write, not kill the game
 	signal(SIGPIPE, SIG_IGN);
 #endif
