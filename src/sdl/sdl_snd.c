@@ -55,6 +55,7 @@ cvar_t *s_sdlLevelSamps;
 static int               dmapos    = 0;
 static int               dmasize   = 0;
 static SDL_AudioDeviceID device_id = 0;
+static Uint8             silence   = 0;
 
 /**
  * @brief SNDDMA_AudioCallback
@@ -96,6 +97,12 @@ static void SNDDMA_AudioCallback(void *userdata, Uint8 *stream, int len)
 		{
 			Com_Memcpy(stream + len1, dma.buffer, len2);
 			dmapos = (len2 / (dma.samplebits / 8));
+		}
+
+		// the mix goes into the video only, and keep dmapos moving for after the recording
+		if (CL_VideoSilencesSpeakers())
+		{
+			Com_Memset(stream, silence, len);
 		}
 	}
 
@@ -354,6 +361,7 @@ qboolean SNDDMA_Init(void)
 	}
 
 	dmapos               = 0;
+	silence              = obtained.silence;
 	dma.samplebits       = obtained.format & 0xFF; // first byte of format is bits.
 	dma.channels         = obtained.channels;
 	dma.samples          = tmp;

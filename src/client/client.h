@@ -288,8 +288,6 @@ typedef struct
 	fileHandle_t wavefile;
 	int wavetime;
 
-	//float aviVideoFrameRemainder;
-	//float aviSoundFrameRemainder;
 	userAgent_t agent;                          ///< holds server engine information
 
 	/// big stuff at end of structure so most offsets are 15 bits or less
@@ -508,6 +506,7 @@ void CL_WriteAVIVideoFrame(const byte *imageBuffer, int size);
 void CL_WriteAVIAudioFrame(const byte *pcmBuffer, int size);
 qboolean CL_CloseAVI(void);
 qboolean CL_VideoRecording(void);
+qboolean CL_VideoClocksSound(void);
 
 // cl_demo
 extern demoPlayInfo_t dpi;
@@ -517,6 +516,10 @@ void CL_DemoCompleted(void);
 void CL_WriteDemoMessage(msg_t *msg, int headerBytes);
 void CL_StopRecord_f(void);
 void CL_DemoRun(void);
+qboolean CL_DemoClipActive(void);
+qboolean CL_DemoClipInPreroll(void);
+int CL_DemoClipBeginFrame(void);
+void CL_DemoClipStartIfDue(int msec);
 void CL_DemoInit(void);
 void CL_DemoShutdown(void);
 
