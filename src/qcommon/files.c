@@ -40,6 +40,10 @@
 #include "qcommon.h"
 #include "../../vendor/sha-1/sha1.h"
 
+#ifndef _WIN32
+#include <signal.h>
+#endif
+
 #ifdef BUNDLED_MINIZIP
 #    include "unzip.h"
 #elif defined(__APPLE__)
@@ -338,6 +342,7 @@ typedef struct
 } fileHandleData_t;
 
 static fileHandleData_t fsh[MAX_FILE_HANDLES];
+static int              fs_lastPipeStatus;
 
 /**
  * @var fs_reordered
@@ -1136,9 +1141,9 @@ void FS_FCloseFile(fileHandle_t f)
 		{
 			// also waits for the other process to finish
 #ifdef _WIN32
-			_pclose(fsh[f].handleFiles.file.o);
+			fs_lastPipeStatus = _pclose(fsh[f].handleFiles.file.o);
 #else
-			pclose(fsh[f].handleFiles.file.o);
+			fs_lastPipeStatus = pclose(fsh[f].handleFiles.file.o);
 #endif
 		}
 		else
@@ -1278,6 +1283,18 @@ fileHandle_t FS_FOpenFileAppend(const char *fileName)
 	return f;
 }
 
+/**
+ * @brief Closes a file opened with FS_PipeOpenWrite, and waits for its process
+ * @param[in] f
+ * @return 0 if the process succeeded
+ */
+int FS_FClosePipe(fileHandle_t f)
+{
+	fs_lastPipeStatus = 0;
+	FS_FCloseFile(f);
+	return fs_lastPipeStatus;
+}
+
 fileHandle_t FS_PipeOpenWrite(const char *cmd, const char *filename)
 {
 	fileHandleData_t *fd;
@@ -1313,6 +1330,8 @@ fileHandle_t FS_PipeOpenWrite(const char *cmd, const char *filename)
 	fd->handleFiles.file.o = _popen(cmd, "wb");
 #else
 	fd->handleFiles.file.o = popen(cmd, "w");
+	// a process that has died must fail the write, not kill the game
+	signal(SIGPIPE, SIG_IGN);
 #endif
 
 	if (fd->handleFiles.file.o == NULL)

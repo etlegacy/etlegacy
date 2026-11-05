@@ -1324,12 +1324,17 @@ static void CL_TimedemoResults(void)
 }
 
 
+#if NEW_DEMOFUNC
+static qboolean demoClipDemoEnded;      ///< the demo ran out during the clip
+#endif
+
 /**
  * @brief CL_DemoCompleted
  */
 void CL_DemoCompleted(void)
 {
 #if NEW_DEMOFUNC
+	demoClipDemoEnded = qtrue;
 	CL_FreeDemoPoints();
 #endif
 
@@ -2026,6 +2031,12 @@ static void CL_DemoClipEnd(qboolean finished)
 	else
 	{
 		Com_Printf(S_COLOR_YELLOW "democlip: %s: stopped early, %d frames were wanted\n", demoClip.name, demoClip.numFrames);
+
+		// a clip cut short by the end of the demo is what the demo has, so it isn't a failure
+		if (!demoClipDemoEnded)
+		{
+			Com_SetExitCode(1);
+		}
 	}
 }
 
@@ -2063,6 +2074,7 @@ int CL_DemoClipBeginFrame(void)
 	if (demoClip.state == DEMOCLIP_LOADING)
 	{
 		demoClip.state = DEMOCLIP_NONE;
+		Com_SetExitCode(1);
 		return 0;
 	}
 
@@ -2132,6 +2144,7 @@ void CL_DemoClipStartIfDue(int msec)
 
 	demoClip.state      = DEMOCLIP_RECORD;
 	demoClip.framesDone = 1;
+	demoClipDemoEnded   = qfalse;
 }
 
 /**
@@ -2168,11 +2181,18 @@ static void CL_DemoClip_f(void)
 	qboolean  avi;
 	const int argc = Cmd_Argc();
 
+	// the previous clip's demo command failed, and no frame has run since
+	if (demoClip.state == DEMOCLIP_LOADING)
+	{
+		Com_SetExitCode(1);
+	}
+
 	if (argc < 5 || argc > 7)
 	{
 		Com_Printf("usage: democlip <demo> <start> <length> <name> [fps] [avi]\n"
 		           "  start and length are in seconds, or in ticks with a leading t (t1200)\n"
 		           "  fps defaults to cl_aviFrameRate, avi writes an .avi without ffmpeg\n");
+		Com_SetExitCode(1);
 		return;
 	}
 
@@ -2203,6 +2223,7 @@ static void CL_DemoClip_f(void)
 	if (fps < 1 || fps > 1000)
 	{
 		Com_Printf(S_COLOR_RED "democlip: fps must be 1 to 1000\n");
+		Com_SetExitCode(1);
 		return;
 	}
 
@@ -2213,6 +2234,7 @@ static void CL_DemoClip_f(void)
 	if (!clc.demo.playing)
 	{
 		demoClip.state = DEMOCLIP_NONE;
+		Com_SetExitCode(1);
 		return;
 	}
 
@@ -2224,6 +2246,7 @@ static void CL_DemoClip_f(void)
 		Com_Printf(S_COLOR_RED "democlip: the clip must start inside the demo (%.1f s long) and have a length\n",
 		           (double)(di.lastServerTime - di.firstServerTime) / 1000.0);
 		demoClip.state = DEMOCLIP_NONE;
+		Com_SetExitCode(1);
 		return;
 	}
 
@@ -2234,6 +2257,7 @@ static void CL_DemoClip_f(void)
 	demoClip.numFrames  = MAX((int)floor((double)lengthMs * fps / 1000.0 + 0.5), 1);
 	demoClip.framesDone = 0;
 	demoClip.state      = DEMOCLIP_SETTLE;
+	demoClipDemoEnded   = qfalse;
 
 	Cvar_Set("timescale", "1");
 	Cvar_Set("cl_aviFrameRate", va("%d", fps)); // the sound follows it in the preroll too
