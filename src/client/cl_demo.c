@@ -2014,6 +2014,65 @@ static struct
 	int firstFrameTime;
 } demoClip;
 
+#define DEMOCLIPS_MAX_TEXT  65536       ///< queued commands of a list, well inside the command buffer
+#define DEMOCLIPS_MAX_NAMES 512
+
+/**
+ * @struct demoClipList
+ * @brief The list being run by the democlips command. Each clip starts with an exit
+ * code of 0, so that a failure can be put down to that clip.
+ */
+static struct
+{
+	qboolean active;
+	qboolean clipPending;               ///< the current clip's result isn't counted yet
+	char file[MAX_QPATH];
+	char clipName[MAX_QPATH];
+	int total;
+	int failed;
+	int exitCode;                       ///< exit code from before the list
+	char failedNames[DEMOCLIPS_MAX_NAMES];
+	char shortNames[DEMOCLIPS_MAX_NAMES];
+} demoClipList;
+
+/**
+ * @brief Adds a name to a list printed in the summary, which is cut off if it gets long
+ * @param[in,out] names
+ * @param[in] name
+ */
+static void CL_DemoClipListAddName(char *names, const char *name)
+{
+	if (strlen(names) + strlen(name) + 6 < DEMOCLIPS_MAX_NAMES)
+	{
+		Q_strcat(names, DEMOCLIPS_MAX_NAMES, " ");
+		Q_strcat(names, DEMOCLIPS_MAX_NAMES, name);
+	}
+	else if (!strstr(names, "..."))
+	{
+		Q_strcat(names, DEMOCLIPS_MAX_NAMES, " ...");
+	}
+}
+
+/**
+ * @brief Counts the result of the clip that just ran in a list
+ */
+static void CL_DemoClipListCountClip(void)
+{
+	if (!demoClipList.active || !demoClipList.clipPending)
+	{
+		return;
+	}
+
+	demoClipList.clipPending = qfalse;
+
+	if (Com_ExitCode())
+	{
+		demoClipList.failed++;
+		CL_DemoClipListAddName(demoClipList.failedNames, demoClipList.clipName);
+		Com_SetExitCode(0);
+	}
+}
+
 /**
  * @brief Ends the clip, and lets the commands queued behind it run
  * @param[in] finished qfalse if the clip was cut short
@@ -2036,6 +2095,10 @@ static void CL_DemoClipEnd(qboolean finished)
 		if (!demoClipDemoEnded)
 		{
 			Com_SetExitCode(1);
+		}
+		else if (demoClipList.active)
+		{
+			CL_DemoClipListAddName(demoClipList.shortNames, demoClip.name);
 		}
 	}
 }
@@ -2187,6 +2250,14 @@ static void CL_DemoClip_f(void)
 		Com_SetExitCode(1);
 	}
 
+	CL_DemoClipListCountClip();
+
+	if (demoClipList.active && argc >= 5)
+	{
+		demoClipList.clipPending = qtrue;
+		Q_strncpyz(demoClipList.clipName, Cmd_Argv(4), sizeof(demoClipList.clipName));
+	}
+
 	if (argc < 5 || argc > 7)
 	{
 		Com_Printf("usage: democlip <demo> <start> <length> <name> [fps] [avi]\n"
@@ -2265,6 +2336,201 @@ static void CL_DemoClip_f(void)
 	// hold the commands queued after this one until the clip is done
 	Cbuf_SetWait(DEMOCLIP_WAIT_FOREVER);
 }
+
+/**
+ * @brief Prints the summary of a list, queued behind its last clip
+ */
+static void CL_DemoClipsDone_f(void)
+{
+	if (!demoClipList.active)
+	{
+		return;
+	}
+
+	if (demoClip.state == DEMOCLIP_LOADING)
+	{
+		demoClip.state = DEMOCLIP_NONE;
+		Com_SetExitCode(1);
+	}
+
+	CL_DemoClipListCountClip();
+
+	Com_Printf("democlips: %s: %d of %d clips recorded\n", demoClipList.file,
+	           demoClipList.total - demoClipList.failed, demoClipList.total);
+
+	if (demoClipList.failedNames[0])
+	{
+		Com_Printf(S_COLOR_RED "democlips: failed:%s\n", demoClipList.failedNames);
+	}
+	if (demoClipList.shortNames[0])
+	{
+		Com_Printf(S_COLOR_YELLOW "democlips: cut short by the end of the demo:%s\n", demoClipList.shortNames);
+	}
+
+	Com_SetExitCode(demoClipList.failed ? 1 : demoClipList.exitCode);
+	demoClipList.active = qfalse;
+}
+
+/**
+ * @brief Records the clips in a text file, then runs the commands queued after it
+ *
+ * Each line holds the arguments of democlip. Blank lines, and lines starting with
+ * # or //, are skipped. The arguments are queued quoted, so a line can only ever
+ * run democlip.
+ */
+static void CL_DemoClips_f(void)
+{
+	char       filename[MAX_QPATH], line[MAX_STRING_CHARS];
+	char       *queue, *names;
+	const char *p;
+	int        i, len, lineNum = 0;
+	union
+	{
+		char *c;
+		void *v;
+	} f;
+
+	if (Cmd_Argc() != 2)
+	{
+		Com_Printf("usage: democlips <file>\n"
+		           "  each line of the file holds: <demo> <start> <length> <name> [fps] [avi]\n");
+		Com_SetExitCode(1);
+		return;
+	}
+
+	if (demoClip.state == DEMOCLIP_LOADING)
+	{
+		demoClip.state = DEMOCLIP_NONE;
+		Com_SetExitCode(1);
+	}
+
+	Q_strncpyz(filename, Cmd_Argv(1), sizeof(filename));
+
+	len = FS_ReadFile(filename, &f.v);
+	if (len < 0 || !f.c)
+	{
+		Com_Printf(S_COLOR_RED "democlips: couldn't read %s\n", filename);
+		Com_SetExitCode(1);
+		return;
+	}
+
+	Com_Memset(&demoClipList, 0, sizeof(demoClipList));
+	Q_strncpyz(demoClipList.file, filename, sizeof(demoClipList.file));
+	demoClipList.exitCode = Com_ExitCode();
+	Com_SetExitCode(0);
+
+	queue    = Z_Malloc(DEMOCLIPS_MAX_TEXT);
+	queue[0] = '\0';
+	// output names of the lines queued so far, as "\n<name>.<type>\t<line>"
+	names    = Z_Malloc(DEMOCLIPS_MAX_TEXT);
+	names[0] = '\0';
+
+	for (p = f.c; *p; )
+	{
+		const char *end = p;
+		size_t     lineLen;
+
+		while (*end && *end != '\n')
+		{
+			end++;
+		}
+
+		lineLen = MIN((size_t)(end - p), sizeof(line) - 1);
+		Com_Memcpy(line, p, lineLen);
+		line[lineLen] = '\0';
+		p             = *end ? end + 1 : end;
+		lineNum++;
+
+		if (line[0] == '#')
+		{
+			continue;
+		}
+
+		Cmd_TokenizeString(line);
+
+		if (Cmd_Argc() == 0)
+		{
+			continue;
+		}
+
+		demoClipList.total++;
+
+		if (Cmd_Argc() < 4 || Cmd_Argc() > 6)
+		{
+			Com_Printf(S_COLOR_RED "democlips: %s line %d: expected <demo> <start> <length> <name> [fps] [avi]\n", filename, lineNum);
+			demoClipList.failed++;
+			CL_DemoClipListAddName(demoClipList.failedNames, va("line%d", lineNum));
+			continue;
+		}
+
+		// a later clip with the same output file would replace the earlier one
+		{
+			const int  argc = Cmd_Argc();
+			const char *type;
+			char       key[MAX_QPATH + 8];
+			const char *used;
+
+			type = ((argc >= 5 && !Q_stricmp(Cmd_Argv(4), "avi")) || (argc == 6 && !Q_stricmp(Cmd_Argv(5), "avi"))) ? "avi" : "pipe";
+			Com_sprintf(key, sizeof(key), "\n%s.%s\t", Cmd_Argv(3), type);
+			Q_strlwr(key);
+
+			used = strstr(names, key);
+			if (used)
+			{
+				Com_Printf(S_COLOR_RED "democlips: %s line %d: %s is already the name of the clip on line %d\n",
+				           filename, lineNum, Cmd_Argv(3), Q_atoi(used + strlen(key)));
+				demoClipList.failed++;
+				CL_DemoClipListAddName(demoClipList.failedNames, va("line%d", lineNum));
+				continue;
+			}
+
+			if (strlen(names) + strlen(key) + 16 < DEMOCLIPS_MAX_TEXT)
+			{
+				Q_strcat(names, DEMOCLIPS_MAX_TEXT, va("%s%d", key, lineNum));
+			}
+		}
+
+		{
+			char command[MAX_STRING_CHARS * 2];
+
+			Q_strncpyz(command, "democlip", sizeof(command));
+			for (i = 0; i < Cmd_Argc(); i++)
+			{
+				Q_strcat(command, sizeof(command), va(" \"%s\"", Cmd_Argv(i)));
+			}
+			Q_strcat(command, sizeof(command), "\n");
+
+			if (strlen(queue) + strlen(command) + 32 >= DEMOCLIPS_MAX_TEXT)
+			{
+				Com_Printf(S_COLOR_RED "democlips: %s is too long, nothing was recorded\n", filename);
+				Com_SetExitCode(1);
+				demoClipList.active = qfalse;
+				Z_Free(queue);
+				Z_Free(names);
+				FS_FreeFile(f.v);
+				return;
+			}
+
+			Q_strcat(queue, DEMOCLIPS_MAX_TEXT, command);
+		}
+	}
+
+	FS_FreeFile(f.v);
+	Z_Free(names);
+
+	if (demoClipList.total == 0)
+	{
+		Com_Printf(S_COLOR_RED "democlips: %s has no clips\n", filename);
+		Com_SetExitCode(1);
+		Z_Free(queue);
+		return;
+	}
+
+	demoClipList.active = qtrue;
+	Q_strcat(queue, DEMOCLIPS_MAX_TEXT, "democlipsdone");
+	Cbuf_ExecuteText(EXEC_INSERT, queue);
+	Z_Free(queue);
+}
 #else
 qboolean CL_DemoClipActive(void)
 {
@@ -2329,6 +2595,8 @@ void CL_DemoInit(void)
 	Cmd_AddCommand("seeknext", CL_SeekNext_f);
 	Cmd_AddCommand("seekprev", CL_SeekPrev_f);
 	Cmd_AddCommand("democlip", CL_DemoClip_f, "Records a part of a demo to a video.", CL_CompleteDemoName);
+	Cmd_AddCommand("democlips", CL_DemoClips_f, "Records the clips listed in a text file.");
+	Cmd_AddCommand("democlipsdone", CL_DemoClipsDone_f, "Ends a democlips list, queued by democlips.");
 
 	cl_maxRewindBackups = Cvar_Get("cl_maxRewindBackups", va("%i", MAX_REWIND_BACKUPS), CVAR_ARCHIVE_ND | CVAR_LATCH);
 #endif
@@ -2355,5 +2623,7 @@ void CL_DemoShutdown(void)
 	Cmd_RemoveCommand("seeknext");
 	Cmd_RemoveCommand("seekprev");
 	Cmd_RemoveCommand("democlip");
+	Cmd_RemoveCommand("democlips");
+	Cmd_RemoveCommand("democlipsdone");
 #endif
 }
