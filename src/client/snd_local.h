@@ -361,4 +361,6 @@ qboolean S_AL_Init(soundInterface_t *si);
 
 #endif // FEATURE_OPENAL
 
+qboolean CL_VideoSilencesSpeakers(void);
+
 #endif // #ifndef INCLUDE_SND_LOCAL_H

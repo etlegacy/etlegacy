@@ -193,6 +193,15 @@ void Cbuf_ExecuteText(int exec_when, const char *text)
 }
 
 /**
+ * @brief Cbuf_SetWait
+ * @param[in] count
+ */
+void Cbuf_SetWait(int count)
+{
+	cmd_wait = count;
+}
+
+/**
  * @brief Cbuf_Execute
  */
 void Cbuf_Execute(void)

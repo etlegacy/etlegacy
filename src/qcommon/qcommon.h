@@ -584,6 +584,7 @@ files can be execed.
 
 void Cbuf_Init(void); ///< allocates an initial text buffer that will grow as needed
 
+void Cbuf_SetWait(int count); ///< Delays the remaining command buffer by this many executions, 0 releases it
 void Cbuf_AddText(const char *text); ///< Adds command text at the end of the buffer, does NOT add a final \n
 
 void Cbuf_ExecuteText(int exec_when, const char *text); ///< this can be used in place of either Cbuf_AddText or Cbuf_InsertText

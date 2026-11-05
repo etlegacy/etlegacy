@@ -1600,22 +1600,37 @@ void S_Base_Update(void)
  */
 void S_GetSoundtime(void)
 {
-	int        samplepos;
-	static int buffers;
-	static int oldsamplepos;
-	int        fullsamples = dma.samples / dma.channels;
+	int             samplepos;
+	static int      buffers;
+	static int      oldsamplepos;
+	static double   aviSampleRemainder;
+	static qboolean videoClock;
+	int             fullsamples = dma.samples / dma.channels;
 
-	if (CL_VideoRecording())
+	// a video has its own clock: one frame's worth of samples per video frame. Start
+	// from what is already mixed, so that the video only gets what is mixed from now on
+	if (CL_VideoClocksSound())
 	{
-		float fps           = MIN(cl_aviFrameRate->integer, 1000.0f);
-		float frameDuration = MAX(dma.speed / fps, 1.0f); // +clc.aviSoundFrameRemainder;
+		float fps = MIN(cl_aviFrameRate->integer, 1000.0f);
+		int   step;
 
-		int msec = (int)frameDuration;
-		s_soundtime += msec;
-		//clc.aviSoundFrameRemainder = frameDuration - msec;
+		if (!videoClock)
+		{
+			videoClock         = qtrue;
+			aviSampleRemainder = 0.0;
+			s_soundtime        = s_paintedtime;
+		}
+
+		// carry the fraction, as at 40 fps a frame is 1102.5 samples at 44.1 kHz
+		aviSampleRemainder += MAX((double)dma.speed / (double)fps, 1.0);
+		step                = (int)floor(aviSampleRemainder + 1e-9);
+		aviSampleRemainder -= step;
+		s_soundtime        += step;
 
 		return;
 	}
+
+	videoClock = qfalse;
 
 	// it is possible to miscount buffers if it has wrapped twice between
 	// calls to S_Update.  Oh well.
@@ -1692,26 +1707,35 @@ void S_Update_(void)
 		sane = 11;          // 85hz
 	}
 
-	ma = s_mixahead->value * dma.speed;
-	op = s_mixOffset->value + sane * dma.speed * 0.01f;
-
-	if (op < ma)
+	// mix exactly up to the video's time, as the file gets everything that is mixed.
+	// Mixing ahead by the clock below would give each run a different audio length.
+	if (CL_VideoClocksSound())
 	{
-		ma = op;
+		endtime = s_soundtime;
 	}
-
-	// mix ahead of current position
-	endtime = s_soundtime + ma;
-
-	// mix to an even submission block size
-	endtime = (endtime + dma.submission_chunk - 1)
-	          & ~(dma.submission_chunk - 1);
-
-	// never mix more than the complete buffer
-	samps = dma.samples >> (dma.channels - 1);
-	if (endtime - s_soundtime > samps)
+	else
 	{
-		endtime = s_soundtime + samps;
+		ma = s_mixahead->value * dma.speed;
+		op = s_mixOffset->value + sane * dma.speed * 0.01f;
+
+		if (op < ma)
+		{
+			ma = op;
+		}
+
+		// mix ahead of current position
+		endtime = s_soundtime + ma;
+
+		// mix to an even submission block size
+		endtime = (endtime + dma.submission_chunk - 1)
+		          & ~(dma.submission_chunk - 1);
+
+		// never mix more than the complete buffer
+		samps = dma.samples >> (dma.channels - 1);
+		if (endtime - s_soundtime > samps)
+		{
+			endtime = s_soundtime + samps;
+		}
 	}
 
 	// global volume fading
