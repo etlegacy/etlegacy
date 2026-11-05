@@ -82,7 +82,8 @@ static void CL_ServerStatusResponse(const netadr_t *from, msg_t *msg);
 
 void CL_WavStopRecord_f(void);
 
-qboolean videoPipe;
+qboolean      videoPipe;
+static double aviFrameRemainder;
 
 /**
  * @brief CL_PurgeCache
@@ -2465,17 +2466,57 @@ void CL_CaptureFrameVideo(void)
 	}
 }
 
+/**
+ * @brief Length of the next video frame in whole milliseconds
+ *
+ * Client time only has millisecond steps, so the fraction is carried to the next
+ * frame. Without that, 60 fps would run the game at 16 ms per frame, 4% slower
+ * than the video and its sound.
+ *
+ * @param[in] fps
+ * @return frame length in milliseconds
+ */
+static int CL_VideoFrameStep(float fps)
+{
+	int step;
+
+	aviFrameRemainder += MAX(1000.0 / (double)fps, 1.0);
+	step               = (int)floor(aviFrameRemainder + 1e-9);
+	aviFrameRemainder -= step;
+
+	return step;
+}
+
+/**
+ * @brief CL_FrameHandleVideo
+ * @param[in,out] msec
+ */
 static void CL_FrameHandleVideo(int *msec)
 {
-	qboolean videoActive = CL_VideoRecording();
-	qboolean inGame      = cls.state == CA_ACTIVE;
+	const int clipFps = CL_DemoClipBeginFrame();
+	qboolean  videoActive;
+	qboolean  inGame = cls.state == CA_ACTIVE;
+
+	// a demo clip plays up to its first frame in the fixed steps of the video
+	if (clipFps)
+	{
+		*msec = CL_VideoFrameStep((float)clipFps);
+		CL_DemoClipStartIfDue(*msec);
+
+		if (CL_VideoRecording())
+		{
+			CL_CaptureFrameVideo();
+		}
+		return;
+	}
+
+	videoActive = CL_VideoRecording();
 
 	// if recording an avi, lock to a fixed fps
 	if ((cl_avidemo->integer && *msec && ((inGame && clc.demo.playing) || cl_forceavidemo->integer))
 	    || (videoActive && (inGame && clc.demo.playing)))
 	{
 		float     fps;
-		float     frameDuration;
 		const int videoFps = videoActive ? cl_aviFrameRate->integer : cl_avidemo->integer;
 
 		if (com_timescale->value > 0.0f)
@@ -2486,14 +2527,16 @@ static void CL_FrameHandleVideo(int *msec)
 		{
 			fps = MIN(videoFps, 1000.0f);
 		}
-		frameDuration = MAX(1000.0f / fps, 1.0f); // + clc.aviVideoFrameRemainder;
 
 		CL_CaptureFrameVideo();
 
-		*msec = (int)frameDuration;
-		//clc.aviVideoFrameRemainder = frameDuration + msec;
+		*msec = CL_VideoFrameStep(fps);
+		return;
 	}
-	else if ((cl_avidemo->integer && (!inGame || !cl_forceavidemo->integer)) || (videoActive && !inGame))
+
+	aviFrameRemainder = 0.0;
+
+	if ((cl_avidemo->integer && (!inGame || !cl_forceavidemo->integer)) || (videoActive && !inGame))
 	{
 		CL_StopVideo_f();
 	}

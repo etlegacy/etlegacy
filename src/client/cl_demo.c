@@ -1978,6 +1978,290 @@ void CL_PauseDemo_f(void)
 }
 
 
+#if NEW_DEMOFUNC
+/**
+ * @enum demoClipState_t
+ * @brief Steps of a clip recorded with the democlip command
+ */
+typedef enum
+{
+	DEMOCLIP_NONE = 0,
+	DEMOCLIP_LOADING,                   ///< the demo command is running
+	DEMOCLIP_SETTLE,                    ///< playback starting, not yet seeked
+	DEMOCLIP_PREROLL,                   ///< seeked, playing in fixed steps up to the first frame
+	DEMOCLIP_RECORD
+} demoClipState_t;
+
+#define DEMOCLIP_SETTLE_FRAMES  2       ///< frames cgame gets before the seek
+#define DEMOCLIP_PREROLL_MSEC   1000    ///< a whole second, so fixed steps of any integer frame rate land on the start time
+#define DEMOCLIP_WAIT_FOREVER   0x40000000
+#define DEMOCLIP_DEFAULT_SV_FPS 20
+
+static struct
+{
+	demoClipState_t state;
+	char name[MAX_QPATH];
+	qboolean avi;
+	int fps;
+	int startTime;                      ///< server time of the first frame
+	int numFrames;
+	int framesDone;
+	int firstFrameTime;
+} demoClip;
+
+/**
+ * @brief Ends the clip, and lets the commands queued behind it run
+ * @param[in] finished qfalse if the clip was cut short
+ */
+static void CL_DemoClipEnd(qboolean finished)
+{
+	demoClip.state = DEMOCLIP_NONE;
+	Cbuf_SetWait(0);
+
+	if (finished)
+	{
+		Com_Printf("democlip: %s: %d frames at %d fps, server time %d to %d\n",
+		           demoClip.name, demoClip.framesDone, demoClip.fps, demoClip.firstFrameTime, cl.serverTime);
+	}
+	else
+	{
+		Com_Printf(S_COLOR_YELLOW "democlip: %s: stopped early, %d frames were wanted\n", demoClip.name, demoClip.numFrames);
+	}
+}
+
+/**
+ * @brief CL_DemoClipActive
+ * @return qtrue from loading the clip's demo until the clip has ended
+ */
+qboolean CL_DemoClipActive(void)
+{
+	return demoClip.state != DEMOCLIP_NONE ? qtrue : qfalse;
+}
+
+/**
+ * @brief CL_DemoClipInPreroll
+ * @return qtrue while playing up to the first frame of the clip
+ */
+qboolean CL_DemoClipInPreroll(void)
+{
+	return demoClip.state == DEMOCLIP_PREROLL ? qtrue : qfalse;
+}
+
+/**
+ * @brief Runs the clip for this frame, before the frame's time is decided
+ * @return frame rate when the frame must step like a video frame without being
+ * captured by the normal video path, otherwise 0
+ */
+int CL_DemoClipBeginFrame(void)
+{
+	if (demoClip.state == DEMOCLIP_NONE)
+	{
+		return 0;
+	}
+
+	// the demo command failed, and it has printed why
+	if (demoClip.state == DEMOCLIP_LOADING)
+	{
+		demoClip.state = DEMOCLIP_NONE;
+		return 0;
+	}
+
+	// the demo ended, or was replaced or dropped
+	if (!clc.demo.playing || cls.state < CA_PRIMED)
+	{
+		CL_DemoClipEnd(qfalse);
+		return 0;
+	}
+
+	switch (demoClip.state)
+	{
+	case DEMOCLIP_SETTLE:
+		if (cls.state != CA_ACTIVE || ++demoClip.framesDone < DEMOCLIP_SETTLE_FRAMES)
+		{
+			return 0;
+		}
+		demoClip.framesDone = 0;
+		demoClip.state      = DEMOCLIP_PREROLL;
+		CL_DemoSeekMs((double)MAX(demoClip.startTime - DEMOCLIP_PREROLL_MSEC, di.firstServerTime), -1);
+		return demoClip.fps;
+	case DEMOCLIP_PREROLL:
+		return demoClip.fps;
+	case DEMOCLIP_RECORD:
+		if (demoClip.framesDone == 1)
+		{
+			demoClip.firstFrameTime = cl.serverTime;
+		}
+		if (demoClip.framesDone >= demoClip.numFrames)
+		{
+			Cmd_ExecuteString("stopvideo");
+			CL_DemoClipEnd(qtrue);
+			return 0;
+		}
+		// without an open video the normal path would no longer step the frames
+		if (!CL_VideoRecording())
+		{
+			CL_DemoClipEnd(qfalse);
+			return 0;
+		}
+		demoClip.framesDone++;
+		return 0;
+	default:
+		return 0;
+	}
+}
+
+/**
+ * @brief Starts the video if this frame reaches the clip's start time
+ * @param[in] msec length of this frame
+ */
+void CL_DemoClipStartIfDue(int msec)
+{
+	if (demoClip.state != DEMOCLIP_PREROLL
+	    || cls.realtime + msec + cl.serverTimeDelta - cl_timeNudge->integer < demoClip.startTime)
+	{
+		return;
+	}
+
+	Cmd_ExecuteString(va("%s \"%s\" %d", demoClip.avi ? "video" : "video-pipe", demoClip.name, demoClip.fps));
+
+	if (!CL_VideoRecording())
+	{
+		CL_DemoClipEnd(qfalse);
+		return;
+	}
+
+	demoClip.state      = DEMOCLIP_RECORD;
+	demoClip.framesDone = 1;
+}
+
+/**
+ * @brief Converts a clip time to milliseconds
+ * @param[in] arg seconds, or ticks with a leading t
+ * @return milliseconds, rounded
+ */
+static int CL_DemoClipTimeToMs(const char *arg)
+{
+	if (arg[0] == 't' || arg[0] == 'T')
+	{
+		int svFps = Q_atoi(Info_ValueForKey(cl.gameState.stringData + cl.gameState.stringOffsets[CS_SERVERINFO], "sv_fps"));
+
+		if (svFps <= 0)
+		{
+			svFps = DEMOCLIP_DEFAULT_SV_FPS;
+		}
+		return (int)floor(Q_atof(arg + 1) * 1000.0 / svFps + 0.5);
+	}
+
+	return (int)floor(Q_atof(arg) * 1000.0 + 0.5);
+}
+
+/**
+ * @brief Records a part of a demo to a video, then runs the commands queued after it
+ *
+ * The clip's start and length follow demo time, so they don't depend on how fast
+ * the machine runs or on counting wait commands.
+ */
+static void CL_DemoClip_f(void)
+{
+	char      demoName[MAX_OSPATH], start[32], length[32], name[MAX_QPATH];
+	int       fps, startMs, lengthMs;
+	qboolean  avi;
+	const int argc = Cmd_Argc();
+
+	if (argc < 5 || argc > 7)
+	{
+		Com_Printf("usage: democlip <demo> <start> <length> <name> [fps] [avi]\n"
+		           "  start and length are in seconds, or in ticks with a leading t (t1200)\n"
+		           "  fps defaults to cl_aviFrameRate, avi writes an .avi without ffmpeg\n");
+		return;
+	}
+
+	Q_strncpyz(demoName, Cmd_Argv(1), sizeof(demoName));
+	Q_strncpyz(start, Cmd_Argv(2), sizeof(start));
+	Q_strncpyz(length, Cmd_Argv(3), sizeof(length));
+	Q_strncpyz(name, Cmd_Argv(4), sizeof(name));
+
+	fps = cl_aviFrameRate->integer;
+	avi = qfalse;
+
+	if (argc >= 6)
+	{
+		if (!Q_stricmp(Cmd_Argv(5), "avi"))
+		{
+			avi = qtrue;
+		}
+		else
+		{
+			fps = Q_atoi(Cmd_Argv(5));
+		}
+	}
+	if (argc == 7)
+	{
+		avi = !Q_stricmp(Cmd_Argv(6), "avi") ? qtrue : qfalse;
+	}
+
+	if (fps < 1 || fps > 1000)
+	{
+		Com_Printf(S_COLOR_RED "democlip: fps must be 1 to 1000\n");
+		return;
+	}
+
+	// a missing demo drops out of this function, and the next frame clears the state
+	demoClip.state = DEMOCLIP_LOADING;
+	Cmd_ExecuteString(va("demo \"%s\"", demoName));
+
+	if (!clc.demo.playing)
+	{
+		demoClip.state = DEMOCLIP_NONE;
+		return;
+	}
+
+	startMs  = CL_DemoClipTimeToMs(start);
+	lengthMs = CL_DemoClipTimeToMs(length);
+
+	if (startMs < 0 || lengthMs <= 0 || di.firstServerTime + startMs >= di.lastServerTime)
+	{
+		Com_Printf(S_COLOR_RED "democlip: the clip must start inside the demo (%.1f s long) and have a length\n",
+		           (double)(di.lastServerTime - di.firstServerTime) / 1000.0);
+		demoClip.state = DEMOCLIP_NONE;
+		return;
+	}
+
+	Q_strncpyz(demoClip.name, name, sizeof(demoClip.name));
+	demoClip.avi        = avi;
+	demoClip.fps        = fps;
+	demoClip.startTime  = di.firstServerTime + startMs;
+	demoClip.numFrames  = MAX((int)floor((double)lengthMs * fps / 1000.0 + 0.5), 1);
+	demoClip.framesDone = 0;
+	demoClip.state      = DEMOCLIP_SETTLE;
+
+	Cvar_Set("timescale", "1");
+	Cvar_Set("cl_aviFrameRate", va("%d", fps)); // the sound follows it in the preroll too
+
+	// hold the commands queued after this one until the clip is done
+	Cbuf_SetWait(DEMOCLIP_WAIT_FOREVER);
+}
+#else
+qboolean CL_DemoClipActive(void)
+{
+	return qfalse;
+}
+
+qboolean CL_DemoClipInPreroll(void)
+{
+	return qfalse;
+}
+
+int CL_DemoClipBeginFrame(void)
+{
+	return 0;
+}
+
+void CL_DemoClipStartIfDue(int msec)
+{
+}
+#endif
+
 /**
  * @brief CL_PauseDemo_f
  * @brief Simple wrapper command for "timedemo 1; demo <demoname>"
@@ -2020,6 +2304,7 @@ void CL_DemoInit(void)
 	Cmd_AddCommand("seekend", CL_SeekEnd_f);
 	Cmd_AddCommand("seeknext", CL_SeekNext_f);
 	Cmd_AddCommand("seekprev", CL_SeekPrev_f);
+	Cmd_AddCommand("democlip", CL_DemoClip_f, "Records a part of a demo to a video.", CL_CompleteDemoName);
 
 	cl_maxRewindBackups = Cvar_Get("cl_maxRewindBackups", va("%i", MAX_REWIND_BACKUPS), CVAR_ARCHIVE_ND | CVAR_LATCH);
 #endif
@@ -2045,5 +2330,6 @@ void CL_DemoShutdown(void)
 	Cmd_RemoveCommand("seekend");
 	Cmd_RemoveCommand("seeknext");
 	Cmd_RemoveCommand("seekprev");
+	Cmd_RemoveCommand("democlip");
 #endif
 }

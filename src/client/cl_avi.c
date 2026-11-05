@@ -373,6 +373,11 @@ static void CL_WriteAVIHeader(void)
 	}
 }
 
+#define PCM_BUFFER_SIZE 44100
+
+static byte pcmCaptureBuffer[PCM_BUFFER_SIZE] = { 0 };
+static int  bytesInBuffer                     = 0;
+
 /**
  * @brief CL_ValidatePipeFormat
  * @param[in] fileName
@@ -415,6 +420,7 @@ qboolean CL_OpenAVIForWriting(const char *fileName, qboolean pipe)
 	}
 
 	Com_Memset(&afd, 0, sizeof(aviFileData_t));
+	bytesInBuffer = 0;
 
 	if (pipe)
 	{
@@ -625,7 +631,44 @@ void CL_WriteAVIVideoFrame(const byte *imageBuffer, int size)
 	afd.numIndices++;
 }
 
-#define PCM_BUFFER_SIZE 44100
+/**
+ * @brief Writes the collected audio to the file
+ */
+static void CL_FlushAVIAudio(void)
+{
+	int  chunkOffset = afd.fileSize - afd.moviOffset - 8;
+	int  chunkSize   = 8 + bytesInBuffer;
+	int  paddingSize = PAD(bytesInBuffer, 2) - bytesInBuffer;
+	byte padding[4]  = { 0 };
+
+	bufIndex = 0;
+	WRITE_STRING("01wb");
+	WRITE_4BYTES(bytesInBuffer);
+
+	SafeFS_Write(buffer, 8, afd.f);
+	SafeFS_Write(pcmCaptureBuffer, bytesInBuffer, afd.f);
+	SafeFS_Write(padding, paddingSize, afd.f);
+	afd.numAudioFrames++;
+
+	if (!afd.pipe)
+	{
+		afd.fileSize     += (chunkSize + paddingSize);
+		afd.moviSize     += (chunkSize + paddingSize);
+		afd.a.totalBytes += bytesInBuffer;
+
+		// Index
+		bufIndex = 0;
+		WRITE_STRING("01wb");   //dwIdentifier
+		WRITE_4BYTES(0);        //dwFlags
+		WRITE_4BYTES(chunkOffset);  //dwOffset
+		WRITE_4BYTES(bytesInBuffer);    //dwLength
+		SafeFS_Write(buffer, 16, afd.idxF);
+
+		afd.numIndices++;
+	}
+
+	bytesInBuffer = 0;
+}
 
 /**
  * @brief CL_WriteAVIAudioFrame
@@ -634,9 +677,6 @@ void CL_WriteAVIVideoFrame(const byte *imageBuffer, int size)
  */
 void CL_WriteAVIAudioFrame(const byte *pcmBuffer, int size)
 {
-	static byte pcmCaptureBuffer[PCM_BUFFER_SIZE] = { 0 };
-	static int  bytesInBuffer                     = 0;
-
 	if (!afd.audio)
 	{
 		return;
@@ -665,38 +705,7 @@ void CL_WriteAVIAudioFrame(const byte *pcmBuffer, int size)
 	// Only write if we have a frame's worth of audio
 	if (bytesInBuffer >= (int)(ceil((double)afd.a.rate / (double)afd.frameRate) * afd.a.sampleSize))
 	{
-		int  chunkOffset = afd.fileSize - afd.moviOffset - 8;
-		int  chunkSize   = 8 + bytesInBuffer;
-		int  paddingSize = PAD(bytesInBuffer, 2) - bytesInBuffer;
-		byte padding[4]  = { 0 };
-
-		bufIndex = 0;
-		WRITE_STRING("01wb");
-		WRITE_4BYTES(bytesInBuffer);
-
-		SafeFS_Write(buffer, 8, afd.f);
-		SafeFS_Write(pcmCaptureBuffer, bytesInBuffer, afd.f);
-		SafeFS_Write(padding, paddingSize, afd.f);
-		afd.numAudioFrames++;
-
-		if (!afd.pipe)
-		{
-			afd.fileSize     += (chunkSize + paddingSize);
-			afd.moviSize     += (chunkSize + paddingSize);
-			afd.a.totalBytes += bytesInBuffer;
-
-			// Index
-			bufIndex = 0;
-			WRITE_STRING("01wb");   //dwIdentifier
-			WRITE_4BYTES(0);        //dwFlags
-			WRITE_4BYTES(chunkOffset);  //dwOffset
-			WRITE_4BYTES(bytesInBuffer);    //dwLength
-			SafeFS_Write(buffer, 16, afd.idxF);
-
-			afd.numIndices++;
-		}
-
-		bytesInBuffer = 0;
+		CL_FlushAVIAudio();
 	}
 }
 
@@ -721,7 +730,7 @@ void CL_TakeVideoFrame(void)
 qboolean CL_CloseAVI(void)
 {
 	int        indexRemainder;
-	int        indexSize    = afd.numIndices * 16;
+	int        indexSize;
 	const char *idxFileName = va("%s" INDEX_FILE_EXTENSION, afd.fileName);
 
 	// AVI file isn't open
@@ -729,6 +738,13 @@ qboolean CL_CloseAVI(void)
 	{
 		return qfalse;
 	}
+
+	// the last frames' audio, which is less than a chunk
+	if (afd.audio && bytesInBuffer > 0)
+	{
+		CL_FlushAVIAudio();
+	}
+	indexSize = afd.numIndices * 16;
 
 	Z_Free(afd.cBuffer);
 	Z_Free(afd.eBuffer);
@@ -804,4 +820,22 @@ qboolean CL_CloseAVI(void)
 qboolean CL_VideoRecording(void)
 {
 	return afd.fileOpen;
+}
+
+/**
+ * @brief CL_VideoClocksSound
+ * @return qtrue while the sound mixer follows video frames instead of the sound device
+ */
+qboolean CL_VideoClocksSound(void)
+{
+	return (afd.fileOpen || CL_DemoClipInPreroll()) ? qtrue : qfalse;
+}
+
+/**
+ * @brief Called from the audio thread, the sound of a recording only goes into the video
+ * @return qtrue while a video or a demo clip is being recorded
+ */
+qboolean CL_VideoSilencesSpeakers(void)
+{
+	return (afd.fileOpen || CL_DemoClipActive()) ? qtrue : qfalse;
 }
