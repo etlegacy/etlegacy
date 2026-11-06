@@ -472,11 +472,6 @@ void CG_DrawCursorHintBar(hudComponent_t *comp)
 	float  curValue;
 	float  hintAlpha;
 
-	if (cgs.clientinfo[cg.clientNum].shoutcaster)
-	{
-		return;
-	}
-
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR)
 	{
 		return;
