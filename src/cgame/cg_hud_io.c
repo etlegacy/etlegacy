@@ -1824,7 +1824,7 @@ static hudStucture_t *CG_ReadHudJsonObject(cJSON *hud, hudFileUpgrades_t *upgr, 
 		hudComponent_t *component = (hudComponent_t *) ((char *) tmpHud + hudComponentFields[i].offset);
 		cJSON          *comp;
 
-		if (upgr->renamePopupMessageComp && !Q_strncmp(hudComponentFields[i].name, "popupmessages1", sizeof(hudComponentFields[i].name)))
+		if (upgr->renamePopupMessageComp && !Q_strncmp(hudComponentFields[i].name, "popupmessages1", strlen("popupmessages1")))
 		{
 			comp = cJSON_GetObjectItem(comps, "popupmessages");
 		}
