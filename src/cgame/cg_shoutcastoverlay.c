@@ -73,12 +73,30 @@ static int CG_GetPlayerCurrentWeapon(clientInfo_t *player)
 }
 
 /**
+* @brief CG_GetPlayerHealth
+* @param[in] player
+*/
+static int CG_GetPlayerHealth(clientInfo_t *player)
+{
+	if (cg.snap->ps.clientNum == player->clientNum)
+	{
+		return cg.snap->ps.stats[STAT_HEALTH];
+	}
+
+	return player->health;
+}
+
+/**
 * @brief CG_GetPlayerPowerups
 * @param[in] player
 */
 static int CG_GetPlayerPowerups(clientInfo_t *player)
 {
-	if (cg_entities[player->clientNum].currentValid)
+	if (cg.snap->ps.clientNum == player->clientNum)
+	{
+		return cg.predictedPlayerEntity.currentState.powerups;
+	}
+	else if (cg_entities[player->clientNum].currentValid)
 	{
 		return cg_entities[player->clientNum].currentState.powerups;
 	}
@@ -161,7 +179,7 @@ static void CG_ShoutcastPlayerAmmoValue(clientInfo_t *ci, int *ammo, int *clips)
 static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t *player, float y, int index)
 {
 	int    curWeap, weapScale, textWidth, textHeight;
-	int    ammo, clip, powerups;
+	int    ammo, clip, powerups, health;
 	float  fraction;
 	float  statusWidth = comp->location.w / 5.f;
 	float  topRowX     = comp->location.x;
@@ -171,7 +189,9 @@ static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t
 	char   name[MAX_NAME_LENGTH + 2] = { 0 };
 	vec4_t hcolor, borderColor;
 
-	if (player->health > 0)
+	health = CG_GetPlayerHealth(player);
+
+	if (health > 0)
 	{
 		Vector4Copy(colorLtGrey, borderColor);
 	}
@@ -188,36 +208,36 @@ static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t
 	CG_DrawRect_FixedBorder(comp->location.x, y, comp->location.w, height, 2, cg.snap->ps.clientNum == player->clientNum ? colorYellow : borderColor);
 
 	// draw HP bar
-	fraction = (float)player->health / (float)CG_GetPlayerMaxHealth(player->clientNum, player->cls, player->team);
+	fraction = (float)health / (float)CG_GetPlayerMaxHealth(player->clientNum, player->cls, player->team);
 	CG_FilledBar(topRowX + statusWidth, y + 1, comp->location.w - statusWidth - 1, height / 2 - 1.75f, comp->colorSecondary, comp->colorSecondary,
 	             comp->colorBackground, comp->colorBackground, fraction, 0.f, BAR_BGSPACING_X0Y0, -1);
 
 	// draw health
-	if (player->health > 0)
+	if (health > 0)
 	{
 		Vector4Copy(colorWhite, hcolor);
-		CG_ColorForHealth(player->health, hcolor);
+		CG_ColorForHealth(health, hcolor);
 
-		text      = va("%i", player->health);
+		text      = va("%i", health);
 		textWidth = CG_Text_Width_Ext(text, 0.27f, 0, FONT_TEXT);
 		CG_Text_Paint_Ext(topRowX + (statusWidth / 2) - (textWidth / 2) - 0.5f, y + (height / 2) + 4, 0.27f, 0.27f, hcolor, text, 0, 0, comp->styleText, FONT_TEXT);
 	}
-	else if (player->health == 0)
+	else if (health == 0)
 	{
 		CG_DrawPic(topRowX + (statusWidth / 2) - 10, y + (height / 2) - 10, 20, 20, cgs.media.medicIcon);
 	}
-	else if (player->health < 0)
+	else if (health < 0)
 	{
 		CG_DrawPic(topRowX + (statusWidth / 2) - 10, y + (height / 2) - 10, 20, 20, cgs.media.scoreEliminatedShader);
 	}
 
 	// draw name
-	Q_ColorizeString(player->health < 0 ? '9' : '7', player->name, name, MAX_NAME_LENGTH + 2);
+	Q_ColorizeString(health < 0 ? '9' : '7', player->name, name, MAX_NAME_LENGTH + 2);
 	textHeight = CG_Text_Height_Ext(name, 0.16f, 0, FONT_TEXT);
 	CG_Text_Paint_Ext(comp->location.x + statusWidth + 1, y + (height / 4) + (textHeight / 2), 0.16f, 0.16f, comp->colorMain, name, 0, 20, comp->styleText, FONT_TEXT);
 
 	// draw follow bind
-	if (player->health < 0)
+	if (health < 0)
 	{
 		Vector4Copy(colorMdGrey, hcolor);
 	}
@@ -315,7 +335,7 @@ static void CG_DrawShoutcastPlayerOverlayAxis(hudComponent_t *comp, clientInfo_t
 static void CG_DrawShoutcastPlayerOverlayAllies(hudComponent_t *comp, clientInfo_t *player, float y, int index)
 {
 	int    curWeap, weapScale, textWidth, textHeight;
-	int    ammo, clip, powerups;
+	int    ammo, clip, powerups, health;
 	float  fraction;
 	float  statusWidth = comp->location.w / 5.f;
 	float  topRowX     = comp->location.x;
@@ -325,7 +345,9 @@ static void CG_DrawShoutcastPlayerOverlayAllies(hudComponent_t *comp, clientInfo
 	char   name[MAX_NAME_LENGTH + 2] = { 0 };
 	vec4_t hcolor, borderColor;
 
-	if (player->health > 0)
+	health = CG_GetPlayerHealth(player);
+
+	if (health > 0)
 	{
 		Vector4Copy(colorLtGrey, borderColor);
 	}
@@ -342,33 +364,33 @@ static void CG_DrawShoutcastPlayerOverlayAllies(hudComponent_t *comp, clientInfo
 	CG_DrawRect_FixedBorder(comp->location.x, y, comp->location.w, height, 2, cg.snap->ps.clientNum == player->clientNum ? colorYellow : borderColor);
 
 	// draw HP bar
-	fraction = (float)player->health / (float)CG_GetPlayerMaxHealth(player->clientNum, player->cls, player->team);
+	fraction = (float)health / (float)CG_GetPlayerMaxHealth(player->clientNum, player->cls, player->team);
 	CG_FilledBar(topRowX + 1, y + 1, comp->location.w - statusWidth - 1, height / 2 - 1.5f, comp->colorSecondary, comp->colorSecondary,
 	             comp->colorBackground, comp->colorBackground, fraction, 0.f, BAR_BGSPACING_X0Y0 | BAR_LEFT, -1);
 
 	topRowX += comp->location.w;
 
 	// draw health
-	if (player->health > 0)
+	if (health > 0)
 	{
 		Vector4Copy(colorWhite, hcolor);
-		CG_ColorForHealth(player->health, hcolor);
+		CG_ColorForHealth(health, hcolor);
 
-		text      = va("%i", player->health);
+		text      = va("%i", health);
 		textWidth = CG_Text_Width_Ext(text, 0.27f, 0, FONT_TEXT);
 		CG_Text_Paint_Ext(topRowX - (statusWidth / 2) - (textWidth / 2) - 0.5f, y + (height / 2) + 4, 0.27f, 0.27f, hcolor, text, 0, 0, comp->styleText, FONT_TEXT);
 	}
-	else if (player->health == 0)
+	else if (health == 0)
 	{
 		CG_DrawPic(topRowX - (statusWidth / 2) - 10, y + (height / 2) - 10, 20, 20, cgs.media.medicIcon);
 	}
-	else if (player->health < 0)
+	else if (health < 0)
 	{
 		CG_DrawPic(topRowX - (statusWidth / 2) - 10, y + (height / 2) - 10, 20, 20, cgs.media.scoreEliminatedShader);
 	}
 
 	// draw name
-	Q_ColorizeString(player->health < 0 ? '9' : '7', player->name, name, MAX_NAME_LENGTH + 2);
+	Q_ColorizeString(health < 0 ? '9' : '7', player->name, name, MAX_NAME_LENGTH + 2);
 	textWidth  = CG_Text_Width_Ext(name, 0.16f, 0, FONT_TEXT);
 	textHeight = CG_Text_Height_Ext(name, 0.16f, 0, FONT_TEXT);
 	if (textWidth > 116)
@@ -378,7 +400,7 @@ static void CG_DrawShoutcastPlayerOverlayAllies(hudComponent_t *comp, clientInfo
 	CG_Text_Paint_Ext(comp->location.x + comp->location.w - textWidth - 30, y + (height / 4) + (textHeight / 2), 0.16f, 0.16f, comp->colorMain, name, 0, 20, comp->styleText, FONT_TEXT);
 
 	// draw follow bind
-	if (player->health < 0)
+	if (health < 0)
 	{
 		Vector4Copy(colorMdGrey, hcolor);
 	}
