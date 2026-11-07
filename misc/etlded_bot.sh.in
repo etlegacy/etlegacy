@@ -1,4 +1,7 @@
 #!/bin/sh
 # Simple script to start 64-bit ET: Legacy dedicated server with Omni-Bots
 #
-./etlded@BIN_SUFFIX@ +set g_protect 1 +set omnibot_enable 1 +set omnibot_path "./legacy/omni-bot" +exec etl_server.cfg
+dir=$(dirname "$(readlink -f "$0")")
+bin="$dir/etlded@BIN_SUFFIX@"
+[ -x "$bin" ] || bin="etlded@BIN_SUFFIX@"
+exec "$bin" +set g_protect 1 +set omnibot_enable 1 +set omnibot_path "$dir/legacy/omni-bot" +exec etl_server.cfg
