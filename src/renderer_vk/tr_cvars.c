@@ -162,6 +162,7 @@ cvar_t *r_vkWorldBatch;
 cvar_t *r_vkModelBatch;
 cvar_t *r_vkGpuVertex;
 cvar_t *r_vkBindless;
+cvar_t *r_softParticles;
 cvar_t *r_vkCaptureFrame200;
 cvar_t *r_vkCapturePath;
 
@@ -361,7 +362,8 @@ void R_Register(void)
 
 	// bindless textures for the 2D path, so 2D draws batch across textures
 	// (0 = one descriptor set per image as before; read at vid_restart)
-	r_vkBindless = ri.Cvar_Get("r_vkBindless", "1", 0);
+	r_vkBindless    = ri.Cvar_Get("r_vkBindless", "1", 0);
+	r_softParticles = ri.Cvar_Get("r_softParticles", "0", CVAR_ARCHIVE_ND);
 
 	// debug: dump the 200th frame after renderer start to r_vkCapturePath
 	// (stalls that frame for the readback, keep it off when benchmarking)

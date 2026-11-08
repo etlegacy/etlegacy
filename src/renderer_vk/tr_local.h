@@ -1816,6 +1816,10 @@ typedef struct shaderCommands_s
 	/// in the uniform arena at vkFoliageCullOffset
 	qboolean vkFoliage;
 	unsigned int vkFoliageCullOffset;
+	/// sprites and polys, drawn as soft particles (r_softParticles), unless the
+	/// batch also has another kind of surface (vkNotSoft)
+	qboolean vkSoft;
+	qboolean vkNotSoft;
 	int vkNumFoliageDraws;
 	vkFoliageDraw_t vkFoliageDraws[VK_MAX_FOLIAGE_DRAWS];
 } shaderCommands_t;

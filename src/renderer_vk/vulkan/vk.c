@@ -161,6 +161,7 @@ typedef struct
 #define VK_VERTS_MD3_BL           10 // as VK_VERTS_MD3, merged model batch: no vertex streams (tr3d_md3_bl.vert reads the mesh buffer)
 #define VK_VERTS_FOLIAGE          13 // static buffer + foliage instance buffer (vkFoliageInstance_t), culled in tr3d_foliage.vert
 #define VK_VERTS_FOLIAGE_FOG      14 // as VK_VERTS_FOLIAGE, fog pass: fog texcoords from push constants (tr3d_foliage_fog.vert)
+#define VK_VERTS_SOFT             15 // as VK_VERTS_ARENA, soft particles: tr3d_soft(_ms).frag, the view's depth in set 1
 #define VK_VERTS_MD3              7 // mesh buffer: frame, oldframe (md3XyzNormal_t), texcoords, MDC compressed frame, oldframe; tr3d_md3.vert, normal tables in set 1
 
 // MD3/MDC frames + texcoords + triangles of every loaded model (VK_WriteMeshData)
@@ -322,6 +323,8 @@ typedef struct
 	float overbrightScale;
 
 	VkRenderPass renderPass;
+	VkRenderPass renderPassKeepDepth;                      // renderPass, storing depth for the soft particle copy
+	VkRenderPass renderPassResume;                         // renderPass continued after that copy (all attachments loaded)
 	VkCommandPool commandPool;
 	VkCommandBuffer commandBuffer;                         // current frame slot's (alias)
 	VkCommandBuffer commandBuffers[VK_FRAMES_IN_FLIGHT];
@@ -334,6 +337,17 @@ typedef struct
 	VkImage depthImage;
 	VkDeviceMemory depthImageMemory;
 	VkImageView depthImageView;
+
+	// Soft particles (r_softParticles): the view's depth, copied before the
+	// first soft particle draw, sampled by tr3d_soft(_ms).frag
+	qboolean softDepthSupported;                           // the depth format can be sampled
+	VkImage softDepthImage;
+	VkDeviceMemory softDepthMemory;
+	VkImageView softDepthView;
+	VkSampler softDepthSampler;
+	VkDescriptorSet softDepthDescriptor;
+	qboolean frameKeepsDepth;                              // this frame's render pass stores depth (renderPassKeepDepth)
+	qboolean softDepthCopied;                              // the current view's depth is in softDepthImage
 
 	VkSemaphore imageAvailableSemaphore;                   // current aliases, set in VK_BeginFrame()
 	VkSemaphore renderFinishedSemaphore;
@@ -665,6 +679,8 @@ typedef struct
 	VkShaderModule sceneLMDlightFragModule;
 	VkShaderModule scene2StageVertModule;                  // VK_VERTS_TWOSTAGE
 	VkShaderModule scene2StageFragModule;
+	VkShaderModule sceneSoftFragModule;
+	VkShaderModule sceneSoftMSFragModule;
 
 	qboolean initialized;
 	uint32_t currentImageIndex;
@@ -1693,6 +1709,144 @@ static void VK_CreateModelBatchResources(void);
  * sized to match the scene targets (vk.sceneExtent). Recreated alongside
  * the swapchain on resize (see VK_ResizeSwapchain).
  */
+/**
+ * @brief Creates the copy of the depth buffer that soft particles read, with
+ * the same format and sample count as the depth buffer (a depth copy needs
+ * both to match). Without sampling support for the format soft particles
+ * stay off; nothing else depends on it.
+ */
+static void VK_CreateSoftDepthResources(void)
+{
+	VkFormatProperties    props;
+	VkImageCreateInfo     imageInfo;
+	VkMemoryRequirements  memRequirements;
+	VkMemoryAllocateInfo  allocInfo;
+	VkImageViewCreateInfo viewInfo;
+	VkSamplerCreateInfo   samplerInfo;
+
+	vk.softDepthSupported = qfalse;
+
+	vkGetPhysicalDeviceFormatProperties(vk.physicalDevice, vk.depthFormat, &props);
+	if (!(props.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT) ||
+	    !(props.optimalTilingFeatures & VK_FORMAT_FEATURE_TRANSFER_DST_BIT))
+	{
+		Ren_Print("Vulkan: soft particles unavailable, the depth format can't be sampled\n");
+		return;
+	}
+
+	Com_Memset(&imageInfo, 0, sizeof(imageInfo));
+	imageInfo.sType         = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	imageInfo.imageType     = VK_IMAGE_TYPE_2D;
+	imageInfo.extent.width  = vk.sceneExtent.width;
+	imageInfo.extent.height = vk.sceneExtent.height;
+	imageInfo.extent.depth  = 1;
+	imageInfo.mipLevels     = 1;
+	imageInfo.arrayLayers   = 1;
+	imageInfo.format        = vk.depthFormat;
+	imageInfo.tiling        = VK_IMAGE_TILING_OPTIMAL;
+	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	imageInfo.usage         = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+	imageInfo.samples       = vk.sampleCount;
+	imageInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
+
+	if (!VK_CheckResult(vkCreateImage(vk.device, &imageInfo, NULL, &vk.softDepthImage), "vkCreateImage(soft depth)"))
+	{
+		return;
+	}
+
+	vkGetImageMemoryRequirements(vk.device, vk.softDepthImage, &memRequirements);
+
+	Com_Memset(&allocInfo, 0, sizeof(allocInfo));
+	allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize  = memRequirements.size;
+	allocInfo.memoryTypeIndex = VK_FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+	if (!VK_CheckResult(vkAllocateMemory(vk.device, &allocInfo, NULL, &vk.softDepthMemory), "vkAllocateMemory(soft depth)"))
+	{
+		return;
+	}
+
+	vkBindImageMemory(vk.device, vk.softDepthImage, vk.softDepthMemory, 0);
+
+	// depth only: a sampled view may have only one aspect
+	Com_Memset(&viewInfo, 0, sizeof(viewInfo));
+	viewInfo.sType                       = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	viewInfo.image                       = vk.softDepthImage;
+	viewInfo.viewType                    = VK_IMAGE_VIEW_TYPE_2D;
+	viewInfo.format                      = vk.depthFormat;
+	viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+	viewInfo.subresourceRange.levelCount = 1;
+	viewInfo.subresourceRange.layerCount = 1;
+
+	if (!VK_CheckResult(vkCreateImageView(vk.device, &viewInfo, NULL, &vk.softDepthView), "vkCreateImageView(soft depth)"))
+	{
+		return;
+	}
+
+	// read with texelFetch only, so the filter doesn't matter
+	Com_Memset(&samplerInfo, 0, sizeof(samplerInfo));
+	samplerInfo.sType        = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+	samplerInfo.magFilter    = VK_FILTER_NEAREST;
+	samplerInfo.minFilter    = VK_FILTER_NEAREST;
+	samplerInfo.mipmapMode   = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+	samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+	samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+	samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+	samplerInfo.maxLod       = 0.0f;
+
+	if (!VK_CheckResult(vkCreateSampler(vk.device, &samplerInfo, NULL, &vk.softDepthSampler), "vkCreateSampler(soft depth)"))
+	{
+		return;
+	}
+
+	vk.softDepthSupported = qtrue;
+}
+
+/**
+ * @brief Points the soft particle descriptor set at the depth copy, on first
+ * use: the descriptor pool doesn't exist yet when the depth buffer is first
+ * created
+ */
+static qboolean VK_SoftDepthDescriptor(void)
+{
+	VkDescriptorSetAllocateInfo dsAllocInfo;
+	VkDescriptorImageInfo       imageDescInfo;
+	VkWriteDescriptorSet        writeSet;
+
+	if (vk.softDepthDescriptor != VK_NULL_HANDLE)
+	{
+		return qtrue;
+	}
+
+	Com_Memset(&dsAllocInfo, 0, sizeof(dsAllocInfo));
+	dsAllocInfo.sType              = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	dsAllocInfo.descriptorPool     = vk.uiDescriptorPool;
+	dsAllocInfo.descriptorSetCount = 1;
+	dsAllocInfo.pSetLayouts        = &vk.uiDescriptorSetLayout;
+
+	if (!VK_CheckResult(vkAllocateDescriptorSets(vk.device, &dsAllocInfo, &vk.softDepthDescriptor), "vkAllocateDescriptorSets(soft depth)"))
+	{
+		return qfalse;
+	}
+
+	Com_Memset(&imageDescInfo, 0, sizeof(imageDescInfo));
+	imageDescInfo.sampler     = vk.softDepthSampler;
+	imageDescInfo.imageView   = vk.softDepthView;
+	imageDescInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+	Com_Memset(&writeSet, 0, sizeof(writeSet));
+	writeSet.sType           = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	writeSet.dstSet          = vk.softDepthDescriptor;
+	writeSet.dstBinding      = 0;
+	writeSet.descriptorCount = 1;
+	writeSet.descriptorType  = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	writeSet.pImageInfo      = &imageDescInfo;
+
+	vkUpdateDescriptorSets(vk.device, 1, &writeSet, 0, NULL);
+
+	return qtrue;
+}
+
 static qboolean VK_CreateDepthResources(void)
 {
 	VkImageCreateInfo     imageInfo;
@@ -1734,7 +1888,7 @@ static qboolean VK_CreateDepthResources(void)
 	imageInfo.format        = vk.depthFormat;
 	imageInfo.tiling        = VK_IMAGE_TILING_OPTIMAL;
 	imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	imageInfo.usage         = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+	imageInfo.usage         = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
 	imageInfo.samples       = vk.sampleCount;
 	imageInfo.sharingMode   = VK_SHARING_MODE_EXCLUSIVE;
 
@@ -1770,6 +1924,8 @@ static qboolean VK_CreateDepthResources(void)
 	{
 		return qfalse;
 	}
+
+	VK_CreateSoftDepthResources();
 
 	return qtrue;
 }
@@ -1990,6 +2146,30 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	renderPassInfo.pDependencies   = dependencies;
 
 	if (!VK_CheckResult(vkCreateRenderPass(vk.device, &renderPassInfo, NULL, &vk.renderPass), "vkCreateRenderPass"))
+	{
+		return qfalse;
+	}
+
+	// Soft particles: a frame with r_softParticles on begins with a pass that
+	// keeps depth and stencil, so that the frame can end the pass, copy the
+	// depth (VK_SoftDepthCopy) and continue in a pass that loads everything.
+	// Both are compatible with vk.renderPass, so the pipelines work in all three.
+	attachments[1].storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
+	attachments[1].stencilStoreOp = vk.depthHasStencil ? VK_ATTACHMENT_STORE_OP_STORE : VK_ATTACHMENT_STORE_OP_DONT_CARE;
+
+	if (!VK_CheckResult(vkCreateRenderPass(vk.device, &renderPassInfo, NULL, &vk.renderPassKeepDepth), "vkCreateRenderPass(keep depth)"))
+	{
+		return qfalse;
+	}
+
+	attachments[1].loadOp        = VK_ATTACHMENT_LOAD_OP_LOAD;
+	attachments[1].stencilLoadOp = vk.depthHasStencil ? VK_ATTACHMENT_LOAD_OP_LOAD : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	attachments[1].initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	// the dependencies stay those of vk.renderPass, as compatible passes must
+	// have the same: its external dependency orders the first part's color
+	// writes before this part, and the depth copy has its own barriers
+
+	if (!VK_CheckResult(vkCreateRenderPass(vk.device, &renderPassInfo, NULL, &vk.renderPassResume), "vkCreateRenderPass(resume)"))
 	{
 		return qfalse;
 	}
@@ -4065,6 +4245,8 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 	vk.sceneLMDlightFragModule       = VK_CreateShaderModule("tr3d_lm_dlight.frag");
 	vk.scene2StageVertModule         = VK_CreateShaderModule("tr3d_2stage.vert");
 	vk.scene2StageFragModule         = VK_CreateShaderModule("tr3d_2stage.frag");
+	vk.sceneSoftFragModule           = VK_CreateShaderModule("tr3d_soft.frag");
+	vk.sceneSoftMSFragModule         = VK_CreateShaderModule("tr3d_soft_ms.frag");
 
 	if (vk.sceneVertModule == VK_NULL_HANDLE || vk.sceneFragModule == VK_NULL_HANDLE ||
 	    vk.sceneLMVertModule == VK_NULL_HANDLE || vk.sceneLMFragModule == VK_NULL_HANDLE ||
@@ -4072,6 +4254,7 @@ static qboolean VK_CreateScenePipelineLayouts(void)
 	    vk.sceneDiffuseVertModule == VK_NULL_HANDLE || vk.sceneSkinVertModule == VK_NULL_HANDLE ||
 	    vk.sceneLMStaticDlightVertModule == VK_NULL_HANDLE || vk.sceneLMDlightFragModule == VK_NULL_HANDLE ||
 	    vk.scene2StageVertModule == VK_NULL_HANDLE || vk.scene2StageFragModule == VK_NULL_HANDLE ||
+	    vk.sceneSoftFragModule == VK_NULL_HANDLE || vk.sceneSoftMSFragModule == VK_NULL_HANDLE ||
 	    vk.sceneMD3VertModule == VK_NULL_HANDLE || vk.sceneFoliageVertModule == VK_NULL_HANDLE ||
 	    vk.sceneFoliageFogVertModule == VK_NULL_HANDLE)
 	{
@@ -4208,6 +4391,10 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	{
 		stages[0].module = (vertexSource == VK_VERTS_FOLIAGE) ? vk.sceneFoliageVertModule : vk.sceneFoliageFogVertModule;
 	}
+	else if (vertexSource == VK_VERTS_SOFT)
+	{
+		stages[0].module = vk.sceneVertModule;
+	}
 	else if (vertexSource != VK_VERTS_ARENA)
 	{
 		stages[0].module = lightmapped ? vk.sceneLMStaticVertModule : vk.sceneStaticVertModule;
@@ -4219,7 +4406,8 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	stages[0].pName  = "main";
 	stages[1].sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
 	stages[1].stage  = VK_SHADER_STAGE_FRAGMENT_BIT;
-	stages[1].module = (vertexSource == VK_VERTS_STATIC_DLIGHT) ? vk.sceneLMDlightFragModule :
+	stages[1].module = (vertexSource == VK_VERTS_SOFT) ? ((vk.sampleCount != VK_SAMPLE_COUNT_1_BIT) ? vk.sceneSoftMSFragModule : vk.sceneSoftFragModule) :
+	                   (vertexSource == VK_VERTS_STATIC_DLIGHT) ? vk.sceneLMDlightFragModule :
 	                   (vertexSource == VK_VERTS_TWOSTAGE) ? vk.scene2StageFragModule :
 	                   (vertexSource == VK_VERTS_STATIC_BL || vertexSource == VK_VERTS_STATIC_LIGHTMAP_BL) ?
 	                   (lightmapped ? vk.sceneLMBLFragModule : vk.sceneBLFragModule) :
@@ -4375,7 +4563,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 		vertexAttributes[3].offset   = offsetof(vk3DVertexN_t, normal);
 		attributeCount               = 4;
 	}
-	else if (vertexSource != VK_VERTS_ARENA && !lightmapped)
+	else if (vertexSource != VK_VERTS_ARENA && vertexSource != VK_VERTS_SOFT && !lightmapped)
 	{
 		// static world buffer read as single-texture vertices
 		vertexBindings[0].stride = sizeof(vk3DVertexLM_t);
@@ -4561,6 +4749,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	                                    vertexSource == VK_VERTS_FOLIAGE || vertexSource == VK_VERTS_FOLIAGE_FOG) ? vk.skinPipelineLayout :
 	                                   (vertexSource == VK_VERTS_MD3_BL || vertexSource == VK_VERTS_SKIN_BL) ? vk.sceneMD3BLPipelineLayout :
 	                                   (vertexSource == VK_VERTS_STATIC_DLIGHT) ? vk.staticDlightPipelineLayout :
+	                                   (vertexSource == VK_VERTS_SOFT) ? vk.sceneLMPipelineLayout :
 	                                   (vertexSource == VK_VERTS_STATIC_BL || vertexSource == VK_VERTS_STATIC_LIGHTMAP_BL ||
 	                                    vertexSource == VK_VERTS_STATIC_FOG_BL) ? vk.sceneBindlessPipelineLayout :
 	                                   (lightmapped ? vk.sceneLMPipelineLayout : vk.scenePipelineLayout);
@@ -4838,6 +5027,43 @@ static void VK_DestroySceneTargets(void)
 	{
 		vkDestroyRenderPass(vk.device, vk.renderPass, NULL);
 		vk.renderPass = VK_NULL_HANDLE;
+	}
+	if (vk.renderPassKeepDepth != VK_NULL_HANDLE)
+	{
+		vkDestroyRenderPass(vk.device, vk.renderPassKeepDepth, NULL);
+		vk.renderPassKeepDepth = VK_NULL_HANDLE;
+	}
+	if (vk.renderPassResume != VK_NULL_HANDLE)
+	{
+		vkDestroyRenderPass(vk.device, vk.renderPassResume, NULL);
+		vk.renderPassResume = VK_NULL_HANDLE;
+	}
+
+	vk.softDepthSupported = qfalse;
+	if (vk.softDepthDescriptor != VK_NULL_HANDLE)
+	{
+		vkFreeDescriptorSets(vk.device, vk.uiDescriptorPool, 1, &vk.softDepthDescriptor);
+		vk.softDepthDescriptor = VK_NULL_HANDLE;
+	}
+	if (vk.softDepthSampler != VK_NULL_HANDLE)
+	{
+		vkDestroySampler(vk.device, vk.softDepthSampler, NULL);
+		vk.softDepthSampler = VK_NULL_HANDLE;
+	}
+	if (vk.softDepthView != VK_NULL_HANDLE)
+	{
+		vkDestroyImageView(vk.device, vk.softDepthView, NULL);
+		vk.softDepthView = VK_NULL_HANDLE;
+	}
+	if (vk.softDepthImage != VK_NULL_HANDLE)
+	{
+		vkDestroyImage(vk.device, vk.softDepthImage, NULL);
+		vk.softDepthImage = VK_NULL_HANDLE;
+	}
+	if (vk.softDepthMemory != VK_NULL_HANDLE)
+	{
+		vkFreeMemory(vk.device, vk.softDepthMemory, NULL);
+		vk.softDepthMemory = VK_NULL_HANDLE;
 	}
 
 	// Offscreen scene target + present pass resources
@@ -5472,6 +5698,14 @@ void VK_Shutdown(void)
 		{
 			vkDestroyShaderModule(vk.device, vk.scene2StageFragModule, NULL);
 		}
+		if (vk.sceneSoftFragModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneSoftFragModule, NULL);
+		}
+		if (vk.sceneSoftMSFragModule != VK_NULL_HANDLE)
+		{
+			vkDestroyShaderModule(vk.device, vk.sceneSoftMSFragModule, NULL);
+		}
 		if (vk.boneSetLayout != VK_NULL_HANDLE)
 		{
 			vkDestroyDescriptorSetLayout(vk.device, vk.boneSetLayout, NULL);
@@ -5938,8 +6172,11 @@ void VK_BeginFrame(void)
 	clearValues[1].depthStencil.stencil = 0;
 
 	Com_Memset(&renderPassInfo, 0, sizeof(renderPassInfo));
-	renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassInfo.renderPass        = vk.renderPass;
+	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	vk.frameKeepsDepth   = (r_softParticles->integer && vk.softDepthSupported) ? qtrue : qfalse;
+	vk.softDepthCopied   = qfalse;
+
+	renderPassInfo.renderPass        = vk.frameKeepsDepth ? vk.renderPassKeepDepth : vk.renderPass;
 	renderPassInfo.framebuffer       = vk.sceneFramebuffer; // Offscreen scene target
 	renderPassInfo.renderArea.extent = vk.sceneExtent;
 	renderPassInfo.clearValueCount   = 2;
@@ -8811,6 +9048,161 @@ static void VK_Draw3DDiffuse(shaderCommands_t *input, const glIndex_t *indexes, 
  * input->svars.texcoords[0] and input->svars.colors (populated by
  * ComputeColors()/ComputeTexCoords() in tr_shade.c).
  */
+// soft particles: how far in front of the scene a particle fades out, and
+// where it fades in from the camera (world units). The camera fade is short:
+// inside a smoke grenade's cloud a longer one (48) made the smoke see-through.
+#define VK_SOFT_PARTICLE_DEPTH      24.0f
+#define VK_SOFT_PARTICLE_NEAR_START 4.0f
+#define VK_SOFT_PARTICLE_NEAR_FADE  16.0f
+
+/**
+ * @brief How a soft particle draw fades, from its blend mode, or -1 for a
+ * draw that isn't drawn soft: 0 scales alpha (alpha blending), 1 scales the
+ * whole color (additive and premultiplied blends), 2 fades the color to white
+ * (multiplying blends, where white changes nothing)
+ */
+static int VK_SoftParticleMode(const shaderCommands_t *input, unsigned long stateBits)
+{
+	const unsigned long src = stateBits & GLS_SRCBLEND_BITS;
+	const unsigned long dst = stateBits & GLS_DSTBLEND_BITS;
+
+	// sprites and polys only, in the main view (a portal or mirror view has
+	// its own depth, and a clip plane), with their real depth range
+	if (!input->vkSoft || input->vkNotSoft || !r_softParticles->integer || !vk.frameKeepsDepth || backEnd.projection2D ||
+	    backEnd.viewParms.isPortal || vk.clipPlaneEnabled || (stateBits & GLS_DEPTHMASK_TRUE))
+	{
+		return -1;
+	}
+
+	if (src == GLS_SRCBLEND_SRC_ALPHA)
+	{
+		return 0;
+	}
+	if (src == GLS_SRCBLEND_ONE &&
+	    (dst == GLS_DSTBLEND_ONE || dst == GLS_DSTBLEND_ONE_MINUS_SRC_COLOR || dst == GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA))
+	{
+		return 1;
+	}
+	if ((src == GLS_SRCBLEND_DST_COLOR && dst == GLS_DSTBLEND_ZERO) || (src == GLS_SRCBLEND_ZERO && dst == GLS_DSTBLEND_SRC_COLOR))
+	{
+		return 2;
+	}
+
+	return -1;
+}
+
+/**
+ * @brief The soft particle push constants after the scene ones: the terms
+ * that turn a reversed-Z depth back into a distance (distance = x / (depth + y),
+ * from the projection set by VK_SetProjectionMatrix()), the fade distances
+ * and the fade mode
+ */
+static void VK_FillSoftParticleConstants(float *pushConstants, int mode)
+{
+	pushConstants[0] = vk.projMatrix[14];
+	pushConstants[1] = vk.projMatrix[10];
+	pushConstants[2] = 1.0f / VK_SOFT_PARTICLE_DEPTH;
+	pushConstants[3] = (float)mode;
+	pushConstants[4] = VK_SOFT_PARTICLE_NEAR_START;
+	pushConstants[5] = 1.0f / VK_SOFT_PARTICLE_NEAR_FADE;
+	pushConstants[6] = 0.0f;
+	pushConstants[7] = 0.0f;
+}
+
+/**
+ * @brief Copies the view's depth for the soft particles drawn after it, once
+ * per view: the render pass is ended, the depth copied into vk.softDepthImage
+ * and the pass continued with everything loaded (vk.renderPassResume)
+ * @return qfalse if soft particles can't be drawn now
+ */
+static qboolean VK_SoftDepthCopy(void)
+{
+	VkImageMemoryBarrier  barriers[2];
+	VkImageCopy           region;
+	VkRenderPassBeginInfo renderPassInfo;
+
+	if (vk.softDepthCopied)
+	{
+		return qtrue;
+	}
+	if (!vk.frameKeepsDepth || !vk.softDepthSupported || !vk.inFrame || !VK_SoftDepthDescriptor())
+	{
+		return qfalse;
+	}
+
+	VK_Flush2D(); // pending batches belong before the copy
+
+	vkCmdEndRenderPass(vk.commandBuffer);
+
+	Com_Memset(barriers, 0, sizeof(barriers));
+	barriers[0].sType                       = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	barriers[0].srcAccessMask               = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+	barriers[0].dstAccessMask               = VK_ACCESS_TRANSFER_READ_BIT;
+	barriers[0].oldLayout                   = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	barriers[0].newLayout                   = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+	barriers[0].srcQueueFamilyIndex         = VK_QUEUE_FAMILY_IGNORED;
+	barriers[0].dstQueueFamilyIndex         = VK_QUEUE_FAMILY_IGNORED;
+	barriers[0].image                       = vk.depthImage;
+	barriers[0].subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | (vk.depthHasStencil ? VK_IMAGE_ASPECT_STENCIL_BIT : 0);
+	barriers[0].subresourceRange.levelCount = 1;
+	barriers[0].subresourceRange.layerCount = 1;
+	// the earlier contents (an earlier view's, read by its particles) are replaced
+	barriers[1]               = barriers[0];
+	barriers[1].srcAccessMask = 0;
+	barriers[1].dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+	barriers[1].oldLayout     = VK_IMAGE_LAYOUT_UNDEFINED;
+	barriers[1].newLayout     = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	barriers[1].image         = vk.softDepthImage;
+
+	vkCmdPipelineBarrier(vk.commandBuffer,
+	                     VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+	                     VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, NULL, 0, NULL, 2, barriers);
+
+	Com_Memset(&region, 0, sizeof(region));
+	region.srcSubresource.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+	region.srcSubresource.layerCount = 1;
+	region.dstSubresource.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+	region.dstSubresource.layerCount = 1;
+	region.extent.width              = vk.sceneExtent.width;
+	region.extent.height             = vk.sceneExtent.height;
+	region.extent.depth              = 1;
+
+	vkCmdCopyImage(vk.commandBuffer, vk.depthImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+	               vk.softDepthImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+	barriers[0].srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+	barriers[0].dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+	barriers[0].oldLayout     = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+	barriers[0].newLayout     = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	barriers[1].srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+	barriers[1].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+	barriers[1].oldLayout     = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	barriers[1].newLayout     = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+	vkCmdPipelineBarrier(vk.commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT,
+	                     VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+	                     0, 0, NULL, 0, NULL, 2, barriers);
+
+	Com_Memset(&renderPassInfo, 0, sizeof(renderPassInfo));
+	renderPassInfo.sType             = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	renderPassInfo.renderPass        = vk.renderPassResume;
+	renderPassInfo.framebuffer       = vk.sceneFramebuffer;
+	renderPassInfo.renderArea.extent = vk.sceneExtent;
+
+	vkCmdBeginRenderPass(vk.commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+	vk.softDepthCopied = qtrue;
+	return qtrue;
+}
+
+/**
+ * @brief A new view begins: its soft particles need its own depth
+ */
+void VK_SoftDepthNewView(void)
+{
+	vk.softDepthCopied = qfalse;
+}
+
 void VK_Draw3D(shaderCommands_t *input, struct image_s *image, unsigned long stateBits, int cullType)
 {
 	VK_Draw3DIndexes(input, input->indexes, input->numIndexes, image, stateBits, cullType);
@@ -8827,9 +9219,10 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 	VkDeviceSize    vertexBytes, indexBytes;
 	vk3DVertex_t    *dstVerts;
 	uint32_t        *dstIndexes;
-	float           pushConstants[48];
+	float           pushConstants[56];
 	VkPipeline      pipeline;
 	VkDescriptorSet descriptorSet;
+	int             softMode;
 
 	if (!vk.initialized || !input || (input->numVertexes == 0 && !input->vkStatic && !input->vkSkin && !input->vkMesh && !input->vkFoliage) ||
 	    numIndexes == 0)
@@ -8878,7 +9271,14 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 		return;
 	}
 
-	pipeline = VK_GetScenePipeline(stateBits, VK_MirrorCullType(cullType), qfalse, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE);
+	softMode = VK_SoftParticleMode(input, stateBits);
+	if (softMode >= 0 && !VK_SoftDepthCopy())
+	{
+		softMode = -1;
+	}
+
+	pipeline = VK_GetScenePipelineEx(stateBits, VK_MirrorCullType(cullType), qfalse, VK_ShaderPolygonOffset(input), VK_SPECIAL_NONE,
+	                                 softMode >= 0 ? VK_VERTS_SOFT : VK_VERTS_ARENA);
 	if (pipeline == VK_NULL_HANDLE)
 	{
 		return;
@@ -8925,10 +9325,25 @@ void VK_Draw3DIndexes(shaderCommands_t *input, const glIndex_t *indexes, int num
 	VK_BindPipelineCached(pipeline);
 
 	VK_FillScenePushConstants(pushConstants, stateBits, 0.0f);
-	VK_PushConstantsCached(vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, sizeof(pushConstants));
 
-	descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
-	VK_BindDescriptorSetsCached(vk.scenePipelineLayout, 1, &descriptorSet);
+	if (softMode >= 0)
+	{
+		VkDescriptorSet sets[2];
+
+		VK_FillSoftParticleConstants(pushConstants + 48, softMode);
+		VK_PushConstantsCached(vk.sceneLMPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, 56 * sizeof(float));
+
+		sets[0] = (VkDescriptorSet)image->vkDescriptorSet;
+		sets[1] = vk.softDepthDescriptor;
+		VK_BindDescriptorSetsCached(vk.sceneLMPipelineLayout, 2, sets);
+	}
+	else
+	{
+		VK_PushConstantsCached(vk.scenePipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, pushConstants, 48 * sizeof(float));
+
+		descriptorSet = (VkDescriptorSet)image->vkDescriptorSet;
+		VK_BindDescriptorSetsCached(vk.scenePipelineLayout, 1, &descriptorSet);
+	}
 
 	VK_BindArenaBuffers(vk.sceneVertexArenaBuffer, vk.sceneIndexArenaBuffer);
 	vkCmdDrawIndexed(vk.commandBuffer, (uint32_t)numIndexes, 1, (uint32_t)(vk.sceneIndexArenaOffset / sizeof(uint32_t)), (int32_t)(vk.sceneVertexArenaOffset / sizeof(vk3DVertex_t)), 0);

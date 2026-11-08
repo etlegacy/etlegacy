@@ -69,6 +69,8 @@ void RB_BeginSurface(shader_t *shader, int fogNum)
 	tess.vkMesh            = qfalse;
 	tess.vkIndirect        = qfalse;
 	tess.vkFoliage         = qfalse;
+	tess.vkSoft            = qfalse;
+	tess.vkNotSoft         = qfalse;
 	tess.vkEnvOffset       = 0;
 	tess.vkNumFoliageDraws = 0;
 	tess.vkSurfaceSerial++;

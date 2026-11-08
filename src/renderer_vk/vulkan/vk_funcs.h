@@ -84,6 +84,7 @@
 		X(vkCmdBindVertexBuffers) \
 		X(vkCmdClearAttachments) \
 		X(vkCmdClearColorImage) \
+		X(vkCmdCopyImage) \
 		X(vkCmdCopyBufferToImage) \
 		X(vkCmdCopyImageToBuffer) \
 		X(vkCmdDraw) \

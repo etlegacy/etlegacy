@@ -273,6 +273,7 @@ void RB_BeginDrawingView(void)
 	{
 		VK_ClearSceneDepth();
 	}
+	VK_SoftDepthNewView();
 
 	// color clears (r_fastsky, fog clearscreen, portal sky fog, ...) use
 	// the color last given to VK_SetClearColor() above
@@ -347,6 +348,24 @@ void RB_BeginDrawingView(void)
  * @param[in] drawSurfs
  * @param[in] numDrawSurfs
  */
+/**
+ * @brief Notes whether the batch can be drawn as soft particles: sprites and
+ * polys (smoke, dust, flames, ...) with their real depth range
+ * @param[in] surface
+ * @param[in] depthRange the entity's depth range is hacked (RF_DEPTHHACK)
+ */
+static void RB_MarkSoftSurface(const surfaceType_t *surface, qboolean depthRange)
+{
+	if (!depthRange && (*surface == SF_POLY || (*surface == SF_ENTITY && backEnd.currentEntity->e.reType == RT_SPRITE)))
+	{
+		tess.vkSoft = qtrue;
+	}
+	else
+	{
+		tess.vkNotSoft = qtrue;
+	}
+}
+
 void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 {
 	shader_t   *shader, *oldShader;
@@ -380,6 +399,7 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 		if (drawSurf->sort == oldSort)
 		{
 			// fast path, same as previous sort
+			RB_MarkSoftSurface(drawSurf->surface, depthRange);
 			rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
 			continue;
 		}
@@ -467,6 +487,7 @@ void RB_RenderDrawSurfList(drawSurf_t *drawSurfs, int numDrawSurfs)
 		}
 
 		// add the triangles for this surface
+		RB_MarkSoftSurface(drawSurf->surface, depthRange);
 		rb_surfaceTable[*drawSurf->surface] (drawSurf->surface);
 	}
 

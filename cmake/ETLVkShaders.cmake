@@ -38,6 +38,8 @@ set(VK_SHADER_NAMES
 	"tr3d_static_fog_bl.vert.glsl"
 	"tr3d_foliage.vert.glsl"
 	"tr3d_foliage_fog.vert.glsl"
+	"tr3d_soft.frag.glsl"
+	"tr3d_soft_ms.frag.glsl"
 )
 
 # etl_vk_shader_stage(<file name> <stage var>)
