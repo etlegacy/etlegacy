@@ -53,6 +53,8 @@
  */
 void RB_CheckOverflow(int verts, int indexes)
 {
+	qboolean softFlags[2];
+
 	if (tess.vkStatic || tess.vkSkin || tess.vkMesh || tess.vkFoliage)
 	{
 		RB_EndStaticBatch();
@@ -62,6 +64,9 @@ void RB_CheckOverflow(int verts, int indexes)
 	{
 		return;
 	}
+
+	softFlags[0] = tess.vkSoft;
+	softFlags[1] = tess.vkNotSoft;
 
 	RB_EndSurface();
 
@@ -75,6 +80,10 @@ void RB_CheckOverflow(int verts, int indexes)
 	}
 
 	RB_BeginSurface(tess.shader, tess.fogNum);
+
+	// the rest of the same surfaces
+	tess.vkSoft    = softFlags[0];
+	tess.vkNotSoft = softFlags[1];
 }
 
 /*

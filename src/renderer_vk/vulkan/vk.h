@@ -184,6 +184,7 @@ void VK_SetDepthRange(float minDepth, float maxDepth);
  * viewport rect (renderer1's per-view glClear(GL_DEPTH_BUFFER_BIT)).
  */
 void VK_ClearSceneDepth(void);
+void VK_SoftDepthNewView(void);
 
 /**
  * @brief Color clear with the last glClearColor() value, over
