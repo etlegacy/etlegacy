@@ -290,8 +290,17 @@ typedef enum
 	CG_CMDBACKUP_EXT,
 	CG_MATCHPAUSED,
 	CG_CVAR_SET_DESCRIPTION,
+	CG_DEMO_TOOLS,              ///< "trap_DemoTools_Legacy": (int requested version) -> provided version or -1; enables the demo tools (pause, rewind) for the mod
 
 } cgameImport_t;
+
+/**
+ * @brief The version of the engine's demo tools (pause, rewind, rewind points)
+ * for mods: a cgame calls the CG_DEMO_TOOLS extension trap with the version
+ * it supports; the engine answers with the version it provides (or -1) and
+ * enables the tools for that mod only when they match.
+ */
+#define CG_DEMO_TOOLS_VERSION 1
 
 /**
  * @enum cgameExport_t

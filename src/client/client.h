@@ -841,4 +841,9 @@ void DB_UpdateFavorite(const char *profile, const char *address);
 void DB_LoadFavorites(const char *profile);
 #endif
 
+
+qboolean CL_CgameDemoToolsSupported(void);
+void CL_DemoToolsActivated(void);
+void CL_AllocateDemoPoints(void);
+
 #endif // #ifndef INCLUDE_CLIENT_H
