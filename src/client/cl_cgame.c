@@ -47,10 +47,26 @@ static ext_trap_keys_t cg_extensionTraps[] =
 	{ "trap_CmdBackup_Ext_Legacy",      CG_CMDBACKUP_EXT,        qfalse },
 	{ "trap_MatchPaused_Legacy",        CG_MATCHPAUSED,          qfalse },
 	{ "trap_CvarSetDescription_Legacy", CG_CVAR_SET_DESCRIPTION, qfalse },
+	{ "trap_DemoTools_Legacy",          CG_DEMO_TOOLS,           qfalse },
 	{ NULL,                             -1,                      qfalse }
 };
 
 extern botlib_export_t *botlib_export;
+
+/// the demo tools version the running cgame asked for and got (0: none)
+static int cl_cgameDemoToolsVersion = 0;
+
+/**
+ * @brief Whether the running mod handles the demo tools (pause, rewind):
+ * the legacy mod, or a cgame that fetched "trap_DemoTools_Legacy" and called
+ * it with the version the engine provides (CG_DEMO_TOOLS_VERSION); such a
+ * cgame must cope with the server time going backwards in demos.
+ * @return
+ */
+qboolean CL_CgameDemoToolsSupported(void)
+{
+	return (IS_DEFAULT_MOD || (VM_Ext_IsActive(CG_DEMO_TOOLS) && cl_cgameDemoToolsVersion == CG_DEMO_TOOLS_VERSION)) ? qtrue : qfalse;
+}
 
 void Key_GetBindingBuf(int keynum, char *buf, int buflen);
 void Key_KeynumToStringBuf(int keynum, char *buf, int buflen);
@@ -1132,6 +1148,17 @@ intptr_t CL_CgameSystemCalls(intptr_t *args)
 	case CG_CVAR_SET_DESCRIPTION:
 		return Cvar_SetDescriptionByName(VMA(1), VMA(2));
 
+	case CG_DEMO_TOOLS:
+		// the mod asks for a version of the demo tools: enable them only if
+		// we provide exactly that version
+		if (args[1] == CG_DEMO_TOOLS_VERSION)
+		{
+			cl_cgameDemoToolsVersion = CG_DEMO_TOOLS_VERSION;
+			CL_DemoToolsActivated();
+			return CG_DEMO_TOOLS_VERSION;
+		}
+		return -1;
+
 	default:
 		Com_Error(ERR_DROP, "Bad cgame system trap: %ld", (long int) args[0]);
 		break;
@@ -1270,6 +1297,7 @@ void CL_InitCGame(void)
 
 	// mark all extensions as inactive
 	VM_Ext_ResetActive();
+	cl_cgameDemoToolsVersion = 0;
 
 	// load the dll
 	cgvm = VM_Create("cgame", qtrue, CL_CgameSystemCalls, VMI_NATIVE);

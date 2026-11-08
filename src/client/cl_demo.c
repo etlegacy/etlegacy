@@ -480,7 +480,7 @@ static void CL_RewindDemo(double wantedTime)
 	int             i;
 	rewindBackups_t *rb;
 
-	if (!IS_DEFAULT_MOD)
+	if (!CL_CgameDemoToolsSupported())
 	{
 		Com_FuncPrinf("Rewind is only supported on %s mod, sorry\n", DEFAULT_MODGAME);
 		return;
@@ -922,12 +922,25 @@ void CL_FreeDemoPoints(void)
 }
 
 /**
+ * @brief A mod switched the demo tools on (the CG_DEMO_TOOLS trap with a
+ * matching version, while its cgame starts): rewind points are recorded
+ * from the demo's first snapshot on
+ */
+void CL_DemoToolsActivated(void)
+{
+	if (clc.demo.playing && !rewindBackups)
+	{
+		CL_AllocateDemoPoints();
+	}
+}
+
+/**
  * @brief CL_AllocateDemoPoints
  */
 void CL_AllocateDemoPoints(void)
 {
 	// only legacy mod supports rewinding, don't try to allocate anything if we're not running it
-	if (!IS_DEFAULT_MOD)
+	if (!CL_CgameDemoToolsSupported())
 	{
 		return;
 	}
@@ -1962,7 +1975,7 @@ void CL_PauseDemo_f(void)
 		return;
 	}
 
-	if (!IS_DEFAULT_MOD)
+	if (!CL_CgameDemoToolsSupported())
 	{
 		Com_FuncPrinf("Demo pausing is only supported on %s mod, sorry\n", DEFAULT_MODGAME);
 		return;
