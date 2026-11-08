@@ -1489,6 +1489,10 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 		createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	}
 
+#ifdef __ANDROID__
+	caps.currentTransform = VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR;
+#endif
+
 	createInfo.preTransform   = caps.currentTransform;
 	createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 	createInfo.presentMode    = presentMode;
