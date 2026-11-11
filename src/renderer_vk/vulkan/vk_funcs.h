@@ -144,6 +144,53 @@
 		X(vkResetFences) \
 		X(vkUnmapMemory) \
 		X(vkUpdateDescriptorSets) \
-		X(vkWaitForFences)
+		X(vkWaitForFences) \
+		X(vkAntiLagUpdateAMD)
+
+// fallback definitions for Vulkan SDK headers < 1.3.291
+#ifndef VK_AMD_anti_lag
+#define VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ANTI_LAG_FEATURES_AMD ((VkStructureType)1000476000)
+#define VK_STRUCTURE_TYPE_ANTI_LAG_DATA_AMD ((VkStructureType)1000476001)
+#define VK_STRUCTURE_TYPE_ANTI_LAG_PRESENTATION_INFO_AMD ((VkStructureType)1000476002)
+
+typedef enum VkAntiLagModeAMD
+{
+	VK_ANTI_LAG_MODE_DRIVER_CONTROL_AMD = 0,
+	VK_ANTI_LAG_MODE_ON_AMD             = 1,
+	VK_ANTI_LAG_MODE_OFF_AMD            = 2
+} VkAntiLagModeAMD;
+
+typedef enum VkAntiLagStageAMD
+{
+	VK_ANTI_LAG_STAGE_INPUT_AMD   = 0,
+	VK_ANTI_LAG_STAGE_PRESENT_AMD = 1
+} VkAntiLagStageAMD;
+
+typedef struct VkPhysicalDeviceAntiLagFeaturesAMD
+{
+	VkStructureType sType;
+	void            *pNext;
+	VkBool32        antiLag;
+} VkPhysicalDeviceAntiLagFeaturesAMD;
+
+typedef struct VkAntiLagPresentationInfoAMD
+{
+	VkStructureType   sType;
+	void              *pNext;
+	VkAntiLagStageAMD stage;
+	uint64_t          frameIndex;
+} VkAntiLagPresentationInfoAMD;
+
+typedef struct VkAntiLagDataAMD
+{
+	VkStructureType                    sType;
+	const void                         *pNext;
+	VkAntiLagModeAMD                   mode;
+	uint32_t                           maxFPS;
+	const VkAntiLagPresentationInfoAMD *pPresentationInfo;
+} VkAntiLagDataAMD;
+
+typedef void (VKAPI_PTR *PFN_vkAntiLagUpdateAMD)(VkDevice device, const VkAntiLagDataAMD *pData);
+#endif
 
 #endif // VK_FUNCS_H
