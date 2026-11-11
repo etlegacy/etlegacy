@@ -164,6 +164,7 @@ cvar_t *r_vkGpuVertex;
 cvar_t *r_vkBindless;
 cvar_t *r_vkCaptureFrame200;
 cvar_t *r_vkCapturePath;
+cvar_t *r_vkAntiLag;
 
 /**
  * @brief R_Register
@@ -368,6 +369,9 @@ void R_Register(void)
 	r_vkCaptureFrame200 = ri.Cvar_Get("r_vkCaptureFrame200", "0", 0);
 	// PPM file it writes, relative to the working directory unless absolute
 	r_vkCapturePath = ri.Cvar_Get("r_vkCapturePath", "vk_capture.ppm", 0);
+
+	// AMD Anti-Lag frame pacing (0 = off, 1 = on)
+	r_vkAntiLag = ri.Cvar_Get("r_vkAntiLag", "1", CVAR_ARCHIVE_ND);
 
 	// make sure all the commands added here are also
 	// removed in R_Shutdown

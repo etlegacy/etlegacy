@@ -632,6 +632,8 @@ typedef struct
 	qboolean presentThrottle;                              // see VK_PresentDue()
 	double lastPresentTime;                                // msec, VK_PresentClock()
 	double presentInterval;                                // msec between presents, adapted by VK_PresentWaited()
+
+	qboolean antiLag;                                      // VK_AMD_anti_lag supported by hardware
 } vkContext_t;
 
 static vkContext_t vk;
@@ -750,9 +752,17 @@ static qboolean VK_LoadDeviceFunctions(void)
 {
 #define VK_LOAD_FUNC(name) \
 		name = (PFN_ ## name)vkGetDeviceProcAddr(vk.device, #name); \
-		if (!name) { Ren_Print("Vulkan: failed to load %s\n", #name); return qfalse; }
+		if (!name && strcmp(#name, "vkAntiLagUpdateAMD") != 0) { \
+			Ren_Print("Vulkan: failed to load %s\n", #name); \
+			return qfalse; \
+		}
 	VK_DEVICE_FUNCS(VK_LOAD_FUNC)
 #undef VK_LOAD_FUNC
+
+	if (vk.antiLag && vkAntiLagUpdateAMD != NULL)
+	{
+		Ren_Print("Vulkan: VK_AMD_anti_lag loaded\n");
+	}
 
 	return qtrue;
 }
@@ -1168,19 +1178,20 @@ static qboolean VK_PickPhysicalDeviceAndQueues(void)
 
 static qboolean VK_CreateLogicalDevice(void)
 {
-	float                            queuePriority = 1.0f;
-	VkDeviceQueueCreateInfo          queueCreateInfos[2];
-	uint32_t                         queueCreateInfoCount = 0;
-	VkPhysicalDeviceFeatures         deviceFeatures;
-	VkPhysicalDeviceVulkan12Features features12;
-	VkDeviceCreateInfo               createInfo;
-	const char                       *deviceExtensions[3] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, NULL, NULL };
-	uint32_t                         deviceExtensionCount = 1;
-	uint32_t                         availableExtCount = 0, i;
-	VkExtensionProperties            *availableExt;
-	qboolean                         hasDeviceFault = qfalse;
+	float                              queuePriority = 1.0f;
+	VkDeviceQueueCreateInfo            queueCreateInfos[2];
+	uint32_t                           queueCreateInfoCount = 0;
+	VkPhysicalDeviceFeatures           deviceFeatures;
+	VkPhysicalDeviceVulkan12Features   features12;
+	VkDeviceCreateInfo                 createInfo;
+	const char                         *deviceExtensions[4] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, NULL, NULL, NULL };
+	uint32_t                           deviceExtensionCount = 1;
+	uint32_t                           availableExtCount = 0, i;
+	VkExtensionProperties              *availableExt;
+	qboolean                           hasDeviceFault = qfalse;
+	VkPhysicalDeviceAntiLagFeaturesAMD antiLagFeatures;
 #ifdef VK_EXT_device_fault
-	VkPhysicalDeviceFaultFeaturesEXT faultFeatures;
+	VkPhysicalDeviceFaultFeaturesEXT   faultFeatures;
 #endif
 
 	Com_Memset(queueCreateInfos, 0, sizeof(queueCreateInfos));
@@ -1259,11 +1270,22 @@ static qboolean VK_CreateLogicalDevice(void)
 		availableExt = malloc(availableExtCount * sizeof(VkExtensionProperties));
 		if (availableExt && vkEnumerateDeviceExtensionProperties(vk.physicalDevice, NULL, &availableExtCount, availableExt) == VK_SUCCESS)
 		{
+			qboolean haveAntiLagKHR = qfalse;
+			qboolean haveAntiLagAMD = qfalse;
+
 			for (i = 0; i < availableExtCount; i++)
 			{
 				if (!strcmp(availableExt[i].extensionName, "VK_KHR_portability_subset"))
 				{
 					deviceExtensions[deviceExtensionCount++] = "VK_KHR_portability_subset";
+				}
+				else if (!strcmp(availableExt[i].extensionName, "VK_KHR_amd_anti_lag"))
+				{
+					haveAntiLagKHR = qtrue;
+				}
+				else if (!strcmp(availableExt[i].extensionName, "VK_AMD_anti_lag"))
+				{
+					haveAntiLagAMD = qtrue;
 				}
 #ifdef VK_EXT_device_fault
 				else if (!strcmp(availableExt[i].extensionName, VK_EXT_DEVICE_FAULT_EXTENSION_NAME))
@@ -1271,6 +1293,14 @@ static qboolean VK_CreateLogicalDevice(void)
 					hasDeviceFault = qtrue;
 				}
 #endif
+			}
+
+			// opt-in AMD Anti-Lag extension
+			if ((haveAntiLagKHR || haveAntiLagAMD) && deviceExtensionCount < ARRAY_LEN(deviceExtensions))
+			{
+				deviceExtensions[deviceExtensionCount++] = haveAntiLagKHR ? "VK_KHR_amd_anti_lag" : "VK_AMD_anti_lag";
+				vk.antiLag                               = qtrue;
+				Ren_Print("Vulkan: Anti-Lag hardware capability detected inside the driver layer.\n");
 			}
 		}
 		if (availableExt)
@@ -1363,6 +1393,16 @@ static qboolean VK_CreateLogicalDevice(void)
 		}
 	}
 #endif
+
+	// enable VK_AMD_anti_lag feature
+	if (vk.antiLag)
+	{
+		Com_Memset(&antiLagFeatures, 0, sizeof(antiLagFeatures));
+		antiLagFeatures.sType   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ANTI_LAG_FEATURES_AMD;
+		antiLagFeatures.pNext   = (void *)createInfo.pNext;
+		antiLagFeatures.antiLag = VK_TRUE;
+		createInfo.pNext        = &antiLagFeatures;
+	}
 
 	createInfo.pQueueCreateInfos       = queueCreateInfos;
 	createInfo.queueCreateInfoCount    = queueCreateInfoCount;
@@ -5775,6 +5815,24 @@ void VK_BeginFrame(void)
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	vkBeginCommandBuffer(vk.commandBuffer, &beginInfo);
 
+	if (vk.antiLag && vkAntiLagUpdateAMD != NULL)
+	{
+		VkAntiLagPresentationInfoAMD pInfo;
+		VkAntiLagDataAMD             data;
+
+		Com_Memset(&pInfo, 0, sizeof(pInfo));
+		pInfo.sType      = VK_STRUCTURE_TYPE_ANTI_LAG_PRESENTATION_INFO_AMD;
+		pInfo.frameIndex = (uint64_t)vk.frameCount;
+		pInfo.stage      = VK_ANTI_LAG_STAGE_INPUT_AMD;
+
+		Com_Memset(&data, 0, sizeof(data));
+		data.sType             = VK_STRUCTURE_TYPE_ANTI_LAG_DATA_AMD;
+		data.mode              = (r_vkAntiLag && r_vkAntiLag->integer) ? VK_ANTI_LAG_MODE_ON_AMD : VK_ANTI_LAG_MODE_OFF_AMD;
+		data.pPresentationInfo = &pInfo;
+
+		vkAntiLagUpdateAMD(vk.device, &data);
+	}
+
 	// the persistent color target(s) start out undefined: clear to black
 	// once and move them into the layout the main render pass loads from
 	if (vk.sceneColorNeedsInit)
@@ -6300,6 +6358,24 @@ void VK_EndFrame(void)
 	if (present && !vk.restartPending)
 	{
 		VkResult result;
+
+		if (vk.antiLag && vkAntiLagUpdateAMD != NULL && r_vkAntiLag && r_vkAntiLag->integer)
+		{
+			VkAntiLagPresentationInfoAMD pInfo;
+			VkAntiLagDataAMD             data;
+
+			Com_Memset(&pInfo, 0, sizeof(pInfo));
+			pInfo.sType      = VK_STRUCTURE_TYPE_ANTI_LAG_PRESENTATION_INFO_AMD;
+			pInfo.frameIndex = (uint64_t)vk.frameCount;
+			pInfo.stage      = VK_ANTI_LAG_STAGE_PRESENT_AMD;
+
+			Com_Memset(&data, 0, sizeof(data));
+			data.sType             = VK_STRUCTURE_TYPE_ANTI_LAG_DATA_AMD;
+			data.mode              = VK_ANTI_LAG_MODE_ON_AMD;
+			data.pPresentationInfo = &pInfo;
+
+			vkAntiLagUpdateAMD(vk.device, &data);
+		}
 
 		Com_Memset(&presentInfo, 0, sizeof(presentInfo));
 		presentInfo.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
