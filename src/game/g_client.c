@@ -778,8 +778,7 @@ void SetClientViewAngle(gentity_t *ent, const vec3_t angle)
 		cmdAngle                        = ANGLE2SHORT(angle[i]);
 		ent->client->ps.delta_angles[i] = cmdAngle - ent->client->pers.cmd.angles[i];
 	}
-	VectorCopy(angle, ent->s.angles);
-	VectorCopy(ent->s.angles, ent->client->ps.viewangles);
+	VectorCopy(angle, ent->client->ps.viewangles);
 }
 
 /**
@@ -3047,7 +3046,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 		spawnPoint = ent;
 		VectorCopy(ent->r.currentOrigin, spawn_origin);
 		spawn_origin[2] += 9;   // spawns seem to be sunk into ground?
-		VectorCopy(ent->s.angles, spawn_angles);
+		VectorCopy(client->ps.viewangles, spawn_angles);
 	}
 	else
 	{
