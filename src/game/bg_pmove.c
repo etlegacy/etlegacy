@@ -3641,6 +3641,7 @@ static void PM_Weapon(void)
 	// can't shoot while prone and moving
 	if ((pm->ps->eFlags & EF_PRONE_MOVING) && !delayedFire)
 	{
+		pm->ps->weaponstate = WEAPON_READY;
 		PM_ContinueWeaponAnim(PM_IdleAnimForWeapon(pm->ps->weapon));
 		return;
 	}
