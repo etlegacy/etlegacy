@@ -889,7 +889,7 @@ void CG_ShaderStateChanged(void)
 			o = strstr(t, "@");
 			if (o)
 			{
-				Q_strncpyz(timeOffset, t, MIN(o - t + 1, sizeof(timeOffset)));
+				Q_strncpyz(timeOffset, t, (int)MIN(o - t + 1, sizeof(timeOffset)));
 				o++;
 				trap_R_RemapShader(cgs.gameShaderNames[atoi(originalShader)],
 				                   cgs.gameShaderNames[atoi(newShader)],
@@ -2867,7 +2867,7 @@ static void CG_scores_cmd(void)
 			char s[MAX_STRING_CHARS];
 
 			CG_cleanName(cgs.scores[i], s, sizeof(s), qtrue);
-			trap_FS_Write(s, strlen(s), cgs.dumpStatsFile);
+			trap_FS_Write(s, (int)strlen(s), cgs.dumpStatsFile);
 		}
 	}
 
@@ -2880,7 +2880,7 @@ static void CG_scores_cmd(void)
 		         ct.tm_hour, ct.tm_min, ct.tm_sec,
 		         ct.tm_mday, aMonths[ct.tm_mon], 1900 + ct.tm_year);
 
-		trap_FS_Write(str, strlen(str), cgs.dumpStatsFile);
+		trap_FS_Write(str, (int)strlen(str), cgs.dumpStatsFile);
 
 		CG_Printf("[cgnotify]\n^3>>> Stats recorded to: ^7%s\n\n", cgs.dumpStatsFileName);
 		trap_FS_FCloseFile(cgs.dumpStatsFile);
@@ -2903,7 +2903,7 @@ static void CG_printFile(const char *str)
 		char s[MAX_STRING_CHARS];
 
 		CG_cleanName(str, s, sizeof(s), qtrue);
-		trap_FS_Write(s, strlen(s), cgs.dumpStatsFile);
+		trap_FS_Write(s, (int)strlen(s), cgs.dumpStatsFile);
 	}
 }
 

@@ -663,7 +663,7 @@ void CG_SetupDlightstyles(void)
 		cent->dl_oldframe = cent->dl_frame - 1;
 		if (cent->dl_oldframe < 0)
 		{
-			cent->dl_oldframe = strlen(cent->dl_stylestring);
+			cent->dl_oldframe = (int)strlen(cent->dl_stylestring);
 		}
 
 		token          = COM_Parse(&str); // sound id
@@ -1651,8 +1651,8 @@ const char *CG_ConfigString(int index)
  */
 int CG_ConfigStringCopy(int index, char *buff, size_t buffsize)
 {
-	Q_strncpyz(buff, CG_ConfigString(index), buffsize);
-	return strlen(buff);
+	Q_strncpyz(buff, CG_ConfigString(index), (int)buffsize);
+	return (int)strlen(buff);
 }
 
 //==================================================================

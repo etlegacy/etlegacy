@@ -181,7 +181,7 @@ static void CON_ResizeWindowsCon(int cx, int cy)
  * @param[in] lParam
  * @return
  */
-static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+static LRESULT WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	char            *cmdString;
 	static qboolean s_timePolarity;
@@ -221,7 +221,7 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		if ((com_dedicated && com_dedicated->integer))
 		{
 			cmdString = CopyString("quit");
-			Com_QueueEvent(0, SE_CONSOLE, 0, 0, strlen(cmdString) + 1, cmdString);
+			Com_QueueEvent(0, SE_CONSOLE, 0, 0, (int)sizeof("quit"), cmdString);
 		}
 		else if (s_wcd.quitOnClose)
 		{
@@ -238,7 +238,7 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		{
 			SetBkColor((HDC)wParam, COLOR_BCK_NORMAL);
 			SetTextColor((HDC)wParam, COLOR_TEXT_NORMAL);
-			return (long)s_wcd.hbrEditBackground;
+			return (LRESULT)(LONG_PTR)s_wcd.hbrEditBackground;
 		}
 		else if ((HWND)lParam == s_wcd.hwndErrorBox)
 		{
@@ -252,7 +252,7 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 				SetTextColor((HDC)wParam, COLOR_TEXT_ERROR2);
 			}
 
-			return (long)s_wcd.hbrErrorBackground;
+			return (LRESULT)(LONG_PTR)s_wcd.hbrErrorBackground;
 		}
 		break;
 	case WM_CTLCOLOREDIT:
@@ -261,7 +261,7 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			SetBkColor((HDC)wParam, COLOR_BCK_NORMAL);
 			SetTextColor((HDC)wParam, COLOR_TEXT_EDIT);
 
-			return (long)s_wcd.hbrEditBackground;
+			return (LRESULT)(LONG_PTR)s_wcd.hbrEditBackground;
 		}
 		break;
 	case WM_COMMAND:
@@ -279,7 +279,7 @@ static LONG WINAPI ConWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 			else
 			{
 				cmdString = CopyString("quit");
-				Com_QueueEvent(0, SE_CONSOLE, 0, 0, strlen(cmdString) + 1, cmdString);
+				Com_QueueEvent(0, SE_CONSOLE, 0, 0, (int)sizeof("quit"), cmdString);
 			}
 		}
 		else if (wParam == CLEAR_ID)
@@ -505,13 +505,13 @@ static void Win_CompleteCommand(qboolean showMatches)
 				Win_ConcatRemaining(temp.buffer, win_completionString);
 			}
 
-			edit->cursor = Q_UTF8_Strlen(edit->buffer);
+			edit->cursor = (int)Q_UTF8_Strlen(edit->buffer);
 		}
 		else
 		{
 			// multiple matches, complete to shortest
 			Com_sprintf(edit->buffer, sizeof(edit->buffer), "%s", win_currentMatch);
-			win_acLength = edit->cursor = Q_UTF8_Strlen(edit->buffer);
+			win_acLength = edit->cursor = (int)Q_UTF8_Strlen(edit->buffer);
 			Win_ConcatRemaining(temp.buffer, win_completionString);
 			showMatches = qtrue;
 		}
@@ -537,14 +537,14 @@ static void Win_CompleteCommand(qboolean showMatches)
 
 		// and print it
 		Com_sprintf(edit->buffer, sizeof(edit->buffer), "%s", win_currentMatch);
-		edit->cursor = Q_UTF8_Strlen(edit->buffer);
+		edit->cursor = (int)Q_UTF8_Strlen(edit->buffer);
 		Win_ConcatRemaining(temp.buffer, lastMatch);
 	}
 
 	// hijack it
 	if (win_matchCount == 1)
 	{
-		win_acLength = Q_UTF8_Strlen(win_currentMatch);
+		win_acLength = (int)Q_UTF8_Strlen(win_currentMatch);
 	}
 
 	// run through again, printing matches
@@ -621,7 +621,7 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		Sys_WideCharArrayToString(w_buffer, win_consoleField.buffer, ARRAY_LEN(win_consoleField.buffer));
 
 		SendMessage(s_wcd.hwndInputLine, EM_GETSEL, (WPARAM) NULL, (LPARAM) &win_consoleField.cursor);
-		win_consoleField.widthInChars = Q_UTF8_Strlen(win_consoleField.buffer);
+		win_consoleField.widthInChars = (int)Q_UTF8_Strlen(win_consoleField.buffer);
 		win_consoleField.scroll       = 0;
 
 		// handle enter key
@@ -671,7 +671,7 @@ LONG WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #endif
 
 			SetWindowText(s_wcd.hwndInputLine, win_consoleField.buffer);
-			win_consoleField.widthInChars = Q_UTF8_Strlen(win_consoleField.buffer);
+			win_consoleField.widthInChars = (int)Q_UTF8_Strlen(win_consoleField.buffer);
 			SendMessage(s_wcd.hwndInputLine, EM_SETSEL, win_consoleField.cursor, win_consoleField.cursor);
 
 			return 0;

@@ -3595,7 +3595,7 @@ qboolean S_AL_Init(soundInterface_t *si)
 		if (devicelist)
 		{
 			// dump a list of available devices to a cvar for the user to see.
-			while ((curlen = strlen(devicelist)))
+			while ((curlen = (int)strlen(devicelist)))
 			{
 				Q_strcat(devicenames, sizeof(devicenames), devicelist);
 				Q_strcat(devicenames, sizeof(devicenames), "\n");

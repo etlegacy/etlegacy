@@ -222,7 +222,7 @@ void SV_CL_ParseGamestate(msg_t *msg)
 				Com_Error(ERR_DROP, "SV_CL_ParseGamestate: configstring < 0 or configstring >= MAX_CONFIGSTRINGS");
 			}
 			s   = MSG_ReadBigString(msg);
-			len = strlen(s);
+			len = (int)strlen(s);
 
 			if (len + 1 + svcl.gameState.dataCount > MAX_GAMESTATE_CHARS)
 			{
@@ -1340,7 +1340,7 @@ void SV_CL_ParseServerMessageIntoQueue(msg_t *msg, int headerBytes)
 			index                             = seq & (MAX_RELIABLE_COMMANDS - 1);
 			Q_strncpyz(svclc.serverCommandsLatest[index], s, sizeof(svclc.serverCommandsLatest[index]));
 
-			size                                                             = strlen(s) + 1;
+			size                                                             = (int)strlen(s) + 1;
 			currentMessage->serverCommands[currentMessage->numServerCommand] = SV_CL_Allocate(size);
 			Q_strncpyz(currentMessage->serverCommands[currentMessage->numServerCommand], s, size);
 

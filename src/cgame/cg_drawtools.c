@@ -1686,7 +1686,7 @@ static char *CG_getBindKeyName(const char *cmd, char *buf, size_t len)
 
 	for (j = 0; j < 256; j++)
 	{
-		trap_Key_GetBindingBuf(j, buf, len);
+		trap_Key_GetBindingBuf(j, buf, (int)len);
 		if (*buf == 0)
 		{
 			continue;
@@ -1700,7 +1700,7 @@ static char *CG_getBindKeyName(const char *cmd, char *buf, size_t len)
 		}
 	}
 
-	Q_strncpyz(buf, va("(%s)", cmd), len);
+	Q_strncpyz(buf, va("(%s)", cmd), (int)len);
 	return(buf);
 }
 

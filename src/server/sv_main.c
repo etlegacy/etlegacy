@@ -760,7 +760,7 @@ static void SVC_Status(const netadr_t *from, qboolean force)
 			ps = SV_GameClientNum(i);
 			Com_sprintf(player, sizeof(player), "%i %i \"%s\"\n",
 			            ps->persistant[PERS_SCORE], cl->ping, cl->name);
-			playerLength = strlen(player);
+			playerLength = (unsigned int)strlen(player);
 			if (statusLength + playerLength >= sizeof(status))
 			{
 				break;      // can't hold any more

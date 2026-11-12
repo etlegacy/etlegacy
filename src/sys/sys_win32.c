@@ -57,6 +57,7 @@
 #include <shlobj.h> // for SHGetFolderPath
 #include <psapi.h>
 #include <setjmp.h>
+#include <limits.h>
 
 #if defined(LEGACY_DUMP_MEMLEAKS)
 #include <crtdbg.h>
@@ -71,12 +72,12 @@ static char homePath[MAX_OSPATH] = { 0 };
 size_t Sys_WideCharArrayToString(wchar_t *array, char *buffer, size_t len)
 {
 	size_t length = WideCharToMultiByte(CP_UTF8, 0, array, -1, NULL, 0, NULL, NULL);
-	if (length > len)
+	if (length > len || len > INT_MAX)
 	{
 		return -1;
 	}
 
-	WideCharToMultiByte(CP_UTF8, 0, array, -1, buffer, len, NULL, NULL);
+	WideCharToMultiByte(CP_UTF8, 0, array, -1, buffer, (int)len, NULL, NULL);
 	return strlen(buffer);
 }
 
@@ -92,12 +93,12 @@ size_t Sys_StringToWideCharArray(const char *string, wchar_t *output, size_t len
 	size_t length = 0;
 
 	length = MultiByteToWideChar(CP_UTF8, 0, string, -1, NULL, 0);
-	if (length > len)
+	if (length > len || len > INT_MAX)
 	{
 		return -1;
 	}
 
-	MultiByteToWideChar(CP_UTF8, 0, string, -1, output, length);
+	MultiByteToWideChar(CP_UTF8, 0, string, -1, output, (int)length);
 	return length;
 }
 
@@ -1013,7 +1014,7 @@ void Sys_CreateConsoleWindow(void)
 {
 #ifndef DEDICATED
 	int                        hConHandle;
-	long                       lStdHandle;
+	intptr_t                   lStdHandle;
 	CONSOLE_SCREEN_BUFFER_INFO coninfo;
 	FILE                       *fp;
 
@@ -1041,14 +1042,14 @@ void Sys_CreateConsoleWindow(void)
 	}
 
 	// redirect unbuffered STDOUT to the console
-	lStdHandle = (long)(GetStdHandle(STD_OUTPUT_HANDLE));
+	lStdHandle = (intptr_t)GetStdHandle(STD_OUTPUT_HANDLE);
 	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
 	fp         = _fdopen(hConHandle, "w");
 	*stdout    = *fp;
 	setvbuf(stdout, NULL, _IONBF, 0);
 
 	// redirect unbuffered STDIN to the console
-	lStdHandle = (long)(GetStdHandle(STD_INPUT_HANDLE));
+	lStdHandle = (intptr_t)GetStdHandle(STD_INPUT_HANDLE);
 	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
 	fp         = _fdopen(hConHandle, "r");
 	*stdin     = *fp;
@@ -1056,7 +1057,7 @@ void Sys_CreateConsoleWindow(void)
 	setvbuf(stdin, NULL, _IONBF, 0);
 
 	// redirect unbuffered STDERR to the console
-	lStdHandle = (long)(GetStdHandle(STD_ERROR_HANDLE));
+	lStdHandle = (intptr_t)GetStdHandle(STD_ERROR_HANDLE);
 	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
 	fp         = _fdopen(hConHandle, "w");
 	*stderr    = *fp;

@@ -1100,7 +1100,7 @@ int Sys_ParseArgsConsumeSubarg(int argc, char **argv, int *i, char **dest)
 	// we support consuming args that want to start with '+' as long as it's escaped via '\+' tho
 	else if (argv[*i][0] == '\\' && argv[*i][1] == '+')
 	{
-		Q_strncpyz(&argv[*i][0], &argv[*i][1], strlen(argv[*i]));
+		Q_strncpyz(&argv[*i][0], &argv[*i][1], (int)strlen(argv[*i]));
 	}
 
 	*dest    = argv[*i];
@@ -1192,28 +1192,28 @@ void Sys_BuildCommandLine(int argc, char **argv, char *buffer, size_t bufferSize
 			// Allow URIs to be passed without +connect
 			if (!Q_stricmpn(argv[i], "et://", 5) && Q_stricmpn(argv[i - 1], "+connect", 8))
 			{
-				Q_strcat(buffer, bufferSize, "+connect ");
+				Q_strcat(buffer, (int)bufferSize, "+connect ");
 			}
 
 			// Allow demo files to be passed without +demo for playback
 			if (FS_IsDemoExt(argv[i], -1) && Q_stricmpn(argv[i - 1], "+demo", 5) && Q_stricmpn(argv[i - 1], "+record", 7))
 			{
-				Q_strcat(buffer, bufferSize, "+demo dirty ");
+				Q_strcat(buffer, (int)bufferSize, "+demo dirty ");
 			}
 
 			if (containsSpaces)
 			{
-				Q_strcat(buffer, bufferSize, "\"");
+				Q_strcat(buffer, (int)bufferSize, "\"");
 			}
 
-			Q_strcat(buffer, bufferSize, argv[i]);
+			Q_strcat(buffer, (int)bufferSize, argv[i]);
 
 			if (containsSpaces)
 			{
-				Q_strcat(buffer, bufferSize, "\"");
+				Q_strcat(buffer, (int)bufferSize, "\"");
 			}
 
-			Q_strcat(buffer, bufferSize, " ");
+			Q_strcat(buffer, (int)bufferSize, " ");
 		}
 	}
 }

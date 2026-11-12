@@ -3916,7 +3916,7 @@ static ID_INLINE void CG_HUD_LoadByName(const char *name)
 		return;
 	}
 
-	len = strlen(name);
+	len = (int)strlen(name);
 
 	if (MAX_QPATH <= len)
 	{

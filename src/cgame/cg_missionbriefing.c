@@ -434,7 +434,7 @@ void CG_LocateCampaign(void)
 	dirptr  = dirlist;
 	for (i = 0; i < numdirs; i++, dirptr += dirlen + 1)
 	{
-		dirlen = strlen(dirptr);
+		dirlen = (int)strlen(dirptr);
 		Q_strncpyz(filename, "scripts/", MAX_QPATH);
 		Q_strcat(filename, MAX_QPATH, dirptr);
 		if (CG_FindCampaignInFile(filename, cgs.currentCampaign, &cgs.campaignData))

@@ -1560,7 +1560,7 @@ static void ClientCleanName(const char *in, char *out, size_t outSize)
 	// don't allow empty names
 	if (*p == 0 || colorlessLen == 0)
 	{
-		Q_strncpyz(p, "UnnamedPlayer", outSize);
+		Q_strncpyz(p, "UnnamedPlayer", (int)outSize);
 	}
 }
 
@@ -1615,7 +1615,7 @@ const char *GetParsedIP(const char *ipadd)
 char *CheckUserinfo(int clientNum, char *userinfo)
 {
 	char         *value;
-	unsigned int length = strlen(userinfo);
+	unsigned int length = (unsigned int)strlen(userinfo);
 	int          i, slashCount = 0, count = 0;
 
 	if (length < 1)

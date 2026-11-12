@@ -261,7 +261,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 			rd_flush(rd_buffer);
 			*rd_buffer = 0;
 		}
-		Q_strcat(rd_buffer, rd_buffersize, msg);
+		Q_strcat(rd_buffer, (int)rd_buffersize, msg);
 		// only flush the rcon buffer when it's necessary, avoid fragmenting
 		//rd_flush(rd_buffer);
 		//*rd_buffer = 0;
@@ -326,7 +326,7 @@ void QDECL Com_Printf(const char *fmt, ...)
 
 		if (logfile && FS_Initialized())
 		{
-			FS_Write(msg, strlen(msg), logfile);
+			FS_Write(msg, (int)strlen(msg), logfile);
 		}
 	}
 
@@ -1388,7 +1388,7 @@ void Z_LogZoneHeap(memzone_t *zone, const char *name)
 	}
 	size = allocSize = numBlocks = 0;
 	Com_sprintf(buf, sizeof(buf), "\r\n================\r\n%s log\r\n================\r\n", name);
-	FS_Write(buf, strlen(buf), logfile);
+	FS_Write(buf, (int)strlen(buf), logfile);
 	for (block = zone->blocklist.next ; block->next != &zone->blocklist; block = block->next)
 	{
 		if (block->tag)
@@ -1409,7 +1409,7 @@ void Z_LogZoneHeap(memzone_t *zone, const char *name)
 			}
 			dump[j] = '\0';
 			Com_sprintf(buf, sizeof(buf), "size = %8d: %s, line: %d (%s) [%s]\r\n", block->d.allocSize, block->d.file, block->d.line, block->d.label, dump);
-			FS_Write(buf, strlen(buf), logfile);
+			FS_Write(buf, (int)strlen(buf), logfile);
 			allocSize += block->d.allocSize;
 #endif
 			size += block->size;
@@ -1423,9 +1423,9 @@ void Z_LogZoneHeap(memzone_t *zone, const char *name)
 	allocSize = numBlocks * sizeof(memblock_t);   // + 32 bit alignment
 #endif
 	Com_sprintf(buf, sizeof(buf), "%d %s memory in %d blocks\r\n", size, name, numBlocks);
-	FS_Write(buf, strlen(buf), logfile);
+	FS_Write(buf, (int)strlen(buf), logfile);
 	Com_sprintf(buf, sizeof(buf), "%d %s memory overhead\r\n", size - allocSize, name);
-	FS_Write(buf, strlen(buf), logfile);
+	FS_Write(buf, (int)strlen(buf), logfile);
 }
 
 /**
@@ -1491,7 +1491,7 @@ char *CopyString(const char *in)
 			return ((char *)&numberstring[in[0] - '0']) + sizeof(memblock_t);
 		}
 	}
-	len = strlen(in) + 1;
+	len = (int)strlen(in) + 1;
 	out = S_Malloc(len);
 	Q_strncpyz(out, in, len);
 	return out;

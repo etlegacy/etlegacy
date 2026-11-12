@@ -35,6 +35,8 @@
 
 #include "q_shared.h"
 
+#include <limits.h>
+
 /**
  * @brief Com_PowerOf2
  * @param[in] x
@@ -209,7 +211,7 @@ void COM_StripFilename(const char *in, char *out)
 {
 	char *end;
 
-	Q_strncpyz(out, in, strlen(in) + 1);
+	Q_strncpyz(out, in, (int)strlen(in) + 1);
 	end  = COM_SkipPath(out);
 	*end = 0;
 }
@@ -230,7 +232,7 @@ void COM_DefaultExtension(char *path, size_t maxSize, const char *extension)
 	}
 	else
 	{
-		Q_strcat(path, maxSize, extension);
+		Q_strcat(path, (int)maxSize, extension);
 	}
 }
 
@@ -1547,10 +1549,12 @@ void Q_SafeNetString(char *string, size_t len, qboolean strip)
 int Q_vsnprintf(char *str, size_t size, const char *format, va_list args)
 {
 	int retval;
+	int maxSize = size > INT_MAX ? INT_MAX : (int)size;
 
-	retval = _vsnprintf(str, size, format, args);
+	// The Microsoft formatter accepts an int buffer size.
+	retval = _vsnprintf(str, maxSize, format, args);
 
-	if (retval < 0 || retval == size)
+	if (retval < 0 || retval == maxSize)
 	{
 		// Microsoft doesn't adhere to the C99 standard of vsnprintf,
 		// which states that the return value must be the number of
@@ -1559,8 +1563,8 @@ int Q_vsnprintf(char *str, size_t size, const char *format, va_list args)
 		// Obviously we cannot determine that value from Microsoft's
 		// implementation, so we have no choice but to return size.
 
-		str[size - 1] = '\0';
-		return size;
+		str[maxSize - 1] = '\0';
+		return maxSize;
 	}
 
 	return retval;
@@ -1788,7 +1792,7 @@ void Q_strcat_f(char *dest, int size, const char *src, const char *func, const c
 	// we want to use the actual function here and pass the arguments to that,
 	// otherwise this gives no useful debug info as the func will be Q_strcat_f,
 	// which doesn't tell where this call originated from
-	Q_strncpyz_f(dest + l1, src, size - l1, func, file, line);
+	Q_strncpyz_f(dest + l1, src, size - (int)l1, func, file, line);
 }
 
 /**
@@ -3215,7 +3219,7 @@ char *Com_ScaleNumberPerThousand(float value, unsigned int decimalCount, unsigne
 int ExtractInt(const char *src)
 {
 	unsigned int i;
-	unsigned int srclen = strlen(src) + 1;
+	unsigned int srclen = (unsigned int)strlen(src) + 1;
 	int          destIx = 0;
 	char         *tmp   = Com_Allocate(srclen);
 	int          result = 0;

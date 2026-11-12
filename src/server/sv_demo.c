@@ -2390,8 +2390,8 @@ void SV_DemoSupport(const char *commands)
 
 			Q_strncpyz(gameCommands[gameCommandsCount].commandToSave, key, MAX_QPATH);
 			Q_strncpyz(gameCommands[gameCommandsCount].commandToSend, value, MAX_QPATH);
-			gameCommands[gameCommandsCount].commandToSaveLength = strlen(key);
-			gameCommands[gameCommandsCount].commandToSendLength = strlen(value);
+			gameCommands[gameCommandsCount].commandToSaveLength = (int)strlen(key);
+			gameCommands[gameCommandsCount].commandToSendLength = (int)strlen(value);
 			gameCommandsCount++;
 		}
 	}

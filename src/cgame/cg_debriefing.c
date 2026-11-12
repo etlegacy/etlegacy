@@ -1063,7 +1063,7 @@ qboolean CG_MapVoteList_KeyDown(panel_button_t *button, int key)
 
 			descriptionScroll.init = 0;
 			Q_strncpyz(descriptionScroll.text, cgs.dbMapDescription[pos], sizeof(descriptionScroll.text));
-			descriptionScroll.length = strlen(descriptionScroll.text);
+			descriptionScroll.length = (int)strlen(descriptionScroll.text);
 		}
 
 		return qtrue;
@@ -1599,7 +1599,7 @@ void CG_Debriefing_ChatEdit_Draw(panel_button_t *button)
 		break;
 	}
 
-	CG_Text_PaintWithCursor_Ext(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, *color, buffer + (button->data[2] <= offset ? button->data[2] : offset), button->data[2] <= offset ? 0 : button->data[2] - offset, trap_Key_GetOverstrikeMode() ? "_" : "|", offset ? Q_UTF8_Strlen(buffer + offset) : 0, button->font->style, button->font->font);
+	CG_Text_PaintWithCursor_Ext(button->rect.x, button->rect.y + button->rect.h, button->font->scalex, *color, buffer + (button->data[2] <= offset ? button->data[2] : offset), button->data[2] <= offset ? 0 : button->data[2] - offset, trap_Key_GetOverstrikeMode() ? "_" : "|", offset ? (int)Q_UTF8_Strlen(buffer + offset) : 0, button->font->style, button->font->font);
 }
 
 /**
@@ -2354,11 +2354,11 @@ void CG_Debriefing_ParseAwards(void)
 
 		if (clientNum >= 0 && clientNum < MAX_CLIENTS)
 		{
-			Q_strncpyz(s, va("%s", cgs.clientinfo[clientNum].name), size);
+			Q_strncpyz(s, va("%s", cgs.clientinfo[clientNum].name), (int)size);
 		}
 		else
 		{
-			Q_strncpyz(s, "", size);
+			Q_strncpyz(s, "", (int)size);
 		}
 
 		len = strlen(s);
@@ -2376,10 +2376,10 @@ void CG_Debriefing_ParseAwards(void)
 			// 32 is the max chars that can fit before name overlaps with scroll bar
 			if (len + lenVal > 32)
 			{
-				Q_TruncateStr(s, 32 - lenVal);
+				Q_TruncateStr(s, (int)(32 - lenVal));
 			}
 
-			Q_strcat(s, size, val);
+			Q_strcat(s, (int)size, val);
 		}
 
 		// award

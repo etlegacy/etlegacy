@@ -686,7 +686,7 @@ int PC_ExpandBuiltinDefine(source_t *source, token_t *deftoken, define_t *define
 	{
 		Q_strncpyz(token->string, source->scriptstack->filename, sizeof(token->string));
 		token->type    = TT_NAME;
-		token->subtype = strlen(token->string);
+		token->subtype = (int)strlen(token->string);
 		*firsttoken    = token;
 		*lasttoken     = token;
 		break;
@@ -701,7 +701,7 @@ int PC_ExpandBuiltinDefine(source_t *source, token_t *deftoken, define_t *define
 		Q_strcat(token->string, sizeof(token->string), "\"");
 		//Com_Dealloc(curtime);
 		token->type    = TT_NAME;
-		token->subtype = strlen(token->string);
+		token->subtype = (int)strlen(token->string);
 		*firsttoken    = token;
 		*lasttoken     = token;
 		break;
@@ -1217,7 +1217,7 @@ int PC_Directive_define(source_t *source)
 		}
 	}
 	// allocate define
-	define = (define_t *) GetMemory(sizeof(define_t) + strlen(token.string) + 1);
+	define = (define_t *) GetMemory((unsigned long)(sizeof(define_t) + strlen(token.string) + 1));
 	Com_Memset(define, 0, sizeof(define_t));
 	define->name = (char *) define + sizeof(define_t);
 	Q_strcpy(define->name, token.string);
@@ -1488,7 +1488,7 @@ define_t *PC_CopyDefine(source_t *source, define_t *define)
 	define_t *newdefine;
 	token_t  *token, *newtoken, *lasttoken;
 	(void)source;
-	newdefine = (define_t *) GetMemory(sizeof(define_t) + strlen(define->name) + 1);
+	newdefine = (define_t *) GetMemory((unsigned long)(sizeof(define_t) + strlen(define->name) + 1));
 	// copy the define name
 	newdefine->name = (char *) newdefine + sizeof(define_t);
 	Q_strcpy(newdefine->name, define->name);

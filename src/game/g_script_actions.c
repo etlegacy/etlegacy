@@ -5040,7 +5040,7 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 		case F_INT:
 			valueInt = Q_atoi(value);
 			// find all entities with the given key/value..
-			while ((found = G_FindInt(found, fields[i].ofs, valueInt)) != NULL)
+			while ((found = G_FindInt(found, (int)fields[i].ofs, valueInt)) != NULL)
 			{
 				pass[found->s.number]++;
 			}
@@ -5048,7 +5048,7 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 
 		case F_FLOAT:
 			valueFloat = Q_atof(value);
-			while ((found = G_FindFloat(found, fields[i].ofs, valueFloat)) != NULL)
+			while ((found = G_FindFloat(found, (int)fields[i].ofs, valueFloat)) != NULL)
 			{
 				pass[found->s.number]++;
 			}
@@ -5064,7 +5064,7 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 
 		case F_VECTOR:
 			Q_sscanf(value, "%f %f %f", &valueVector[0], &valueVector[1], &valueVector[2]);
-			while ((found = G_FindVector(found, fields[i].ofs, valueVector)) != NULL)
+			while ((found = G_FindVector(found, (int)fields[i].ofs, valueVector)) != NULL)
 			{
 				pass[found->s.number]++;
 			}
@@ -5074,7 +5074,7 @@ qboolean G_ScriptAction_Delete(gentity_t *ent, char *params)
 			valueVector[0] = 0;
 			valueVector[1] = Q_atof(value);
 			valueVector[2] = 0;
-			while ((found = G_FindVector(found, fields[i].ofs, valueVector)) != NULL)
+			while ((found = G_FindVector(found, (int)fields[i].ofs, valueVector)) != NULL)
 			{
 				pass[found->s.number]++;
 			}

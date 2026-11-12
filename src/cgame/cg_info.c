@@ -1239,7 +1239,7 @@ void CG_GameStatsDraw(void)
 
 				// get skill levels from game stats string
 				// this have to be the first number occurrence in the string to work
-				index = strcspn(gs->strSkillz[i], "0123456789");
+				index = (int)strcspn(gs->strSkillz[i], "0123456789");
 				skill = gs->strSkillz[i][index];
 
 				x += 90;

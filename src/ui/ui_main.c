@@ -322,7 +322,7 @@ int Text_Width_Ext(const char *text, float scale, int limit, fontHelper_t *font)
 	if (text)
 	{
 		int count = 0;
-		int len   = Q_UTF8_Strlen(text);
+		int len   = (int)Q_UTF8_Strlen(text);
 
 		if (limit > 0 && len > limit)
 		{
@@ -380,7 +380,7 @@ int Multiline_Text_Width(const char *text, float scale, int limit)
 
 	if (text)
 	{
-		int len   = Q_UTF8_Strlen(text);
+		int len   = (int)Q_UTF8_Strlen(text);
 		int count = 0;
 
 		if (limit > 0 && len > limit)
@@ -451,7 +451,7 @@ int Text_Height_Ext(const char *text, float scale, int limit, fontHelper_t *font
 	if (text)
 	{
 		int count = 0;
-		int len   = Q_UTF8_Strlen(text);
+		int len   = (int)Q_UTF8_Strlen(text);
 
 		if (limit > 0 && len > limit)
 		{
@@ -517,7 +517,7 @@ int Multiline_Text_Height(const char *text, float scale, int limit)
 	if (text)
 	{
 		int count = 0;
-		int len   = Q_UTF8_Strlen(text);
+		int len   = (int)Q_UTF8_Strlen(text);
 
 		if (limit > 0 && len > limit)
 		{
@@ -622,7 +622,7 @@ void Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t color, 
 	if (text)
 	{
 		const char *s             = text;
-		int        len            = Q_UTF8_Strlen(text);
+		int        len            = (int)Q_UTF8_Strlen(text);
 		int        count          = 0;
 		qboolean   is_accelerator = qfalse;
 
@@ -745,7 +745,7 @@ void Text_PaintWithCursor_Ext(float x, float y, float scale, vec4_t color, const
 	if (text)
 	{
 		float      yadj;
-		int        len   = Q_UTF8_Strlen(text);
+		int        len   = (int)Q_UTF8_Strlen(text);
 		int        count = 0;
 		const char *s    = text;
 
@@ -868,7 +868,7 @@ static void Text_Paint_LimitX(float *maxX, float x, float y, float scale, vec4_t
 		const char *s       = text;
 		float      max      = *maxX;
 		float      useScale = scale * Q_UTF8_GlyphScale(font);
-		int        len      = Q_UTF8_Strlen(text);
+		int        len      = (int)Q_UTF8_Strlen(text);
 		int        count    = 0;
 
 		trap_R_SetColor(color);
@@ -943,7 +943,7 @@ static void Text_Paint_LimitY(float *maxY, float x, float y, float scale, vec4_t
 		const char *s       = text;
 		float      max      = *maxY;
 		float      useScale = scale * Q_UTF8_GlyphScale(font);
-		int        len      = Q_UTF8_Strlen(text);
+		int        len      = (int)Q_UTF8_Strlen(text);
 		int        count    = 0;
 		float      newX     = x;
 		int        height   = Text_Height_Ext(text, useScale, 0, font);
@@ -2240,7 +2240,7 @@ void UI_DrawCampaignDescription(rectDef_t *rect, float scale, vec4_t color, floa
 			*s = '\n';
 		}
 
-		scroll.length = strlen(scroll.text);
+		scroll.length = (int)strlen(scroll.text);
 
 		BG_FitTextToWidth_Ext(scroll.text, scale, rect->w, sizeof(scroll.text), font);
 	}
@@ -5845,7 +5845,7 @@ void UI_RunMenuScript(char **args)
 
 			if (trap_FS_FOpenFile(va("profiles/%s/profile.dat", buff), &f, FS_WRITE) >= 0)
 			{
-				trap_FS_Write(va("\"%s\"", ui_profile.string), strlen(ui_profile.string) + 2, f);
+				trap_FS_Write(va("\"%s\"", ui_profile.string), (int)strlen(ui_profile.string) + 2, f);
 				trap_FS_FCloseFile(f);
 			}
 			trap_Cvar_Set("name", ui_profile.string);
@@ -5879,7 +5879,7 @@ void UI_RunMenuScript(char **args)
 
 			if (trap_FS_FOpenFile(DEFAULT_PROFILE_DAT, &f, FS_WRITE) >= 0)
 			{
-				trap_FS_Write(va("\"%s\"", cl_defaultProfile.string), strlen(cl_defaultProfile.string) + 2, f);
+				trap_FS_Write(va("\"%s\"", cl_defaultProfile.string), (int)strlen(cl_defaultProfile.string) + 2, f);
 				trap_FS_FCloseFile(f);
 			}
 		}
@@ -5902,7 +5902,7 @@ void UI_RunMenuScript(char **args)
 					trap_Cvar_Set("cl_defaultProfile", cl_profile.string);
 					if (trap_FS_FOpenFile(DEFAULT_PROFILE_DAT, &f, FS_WRITE) >= 0)
 					{
-						trap_FS_Write(va("\"%s\"", cl_profile.string), strlen(cl_profile.string) + 2, f);
+						trap_FS_Write(va("\"%s\"", cl_profile.string), (int)strlen(cl_profile.string) + 2, f);
 						trap_FS_FCloseFile(f);
 					}
 				}
@@ -5932,7 +5932,7 @@ void UI_RunMenuScript(char **args)
 
 			if (trap_FS_FOpenFile(va("profiles/%s/profile.dat", buff), &f, FS_WRITE) >= 0)
 			{
-				trap_FS_Write(va("\"%s\"", ui_renameprofileto), strlen(ui_renameprofileto) + 2, f);
+				trap_FS_Write(va("\"%s\"", ui_renameprofileto), (int)strlen(ui_renameprofileto) + 2, f);
 				trap_FS_FCloseFile(f);
 			}
 
@@ -5983,7 +5983,7 @@ void UI_RunMenuScript(char **args)
 					trap_Cvar_Set("cl_defaultProfile", buff);
 					if (trap_FS_FOpenFile(DEFAULT_PROFILE_DAT, &f, FS_WRITE) >= 0)
 					{
-						trap_FS_Write(va("\"%s\"", buff), strlen(buff) + 2, f);
+						trap_FS_Write(va("\"%s\"", buff), (int)strlen(buff) + 2, f);
 						trap_FS_FCloseFile(f);
 					}
 				}
@@ -6704,11 +6704,11 @@ static void UI_BuildServerDisplayList(qboolean force)
 
 	// do motd updates here too
 	trap_Cvar_VariableStringBuffer("com_motdString", uiInfo.serverStatus.motd.text, sizeof(uiInfo.serverStatus.motd.text));
-	len = Q_UTF8_Strlen(uiInfo.serverStatus.motd.text);
+	len = (int)Q_UTF8_Strlen(uiInfo.serverStatus.motd.text);
 	if (len == 0)
 	{
 		Q_strncpyz(uiInfo.serverStatus.motd.text, va("ET: Legacy - Version: %s", ETLEGACY_VERSION), sizeof(uiInfo.serverStatus.motd.text));
-		len = Q_UTF8_Strlen(uiInfo.serverStatus.motd.text);
+		len = (int)Q_UTF8_Strlen(uiInfo.serverStatus.motd.text);
 	}
 	if (len != uiInfo.serverStatus.motd.length)
 	{
@@ -7392,9 +7392,9 @@ static int UI_GetServerStatusInfo(const char *serverAddress, serverStatusInfo_t 
 				}
 				*p++ = '\0';
 				name = p;
-				Com_sprintf(&info->pings[len], sizeof(info->pings) - len, "%d", i);
+				Com_sprintf(&info->pings[len], (unsigned int)(sizeof(info->pings) - len), "%d", i);
 				info->lines[info->numLines][0] = &info->pings[len];
-				len                           += strlen(&info->pings[len]) + 1;
+				len                           += (int)strlen(&info->pings[len]) + 1;
 				info->lines[info->numLines][1] = score;
 				info->lines[info->numLines][2] = ping;
 				info->lines[info->numLines][3] = name;
@@ -9214,13 +9214,13 @@ void UI_ReadableSize(char *buf, int bufsize, int value)
 	if (value > 1024 * 1024 * 1024)     // gigs
 	{
 		Com_sprintf(buf, bufsize, "%d", value / (1024 * 1024 * 1024));
-		Com_sprintf(buf + strlen(buf), bufsize - strlen(buf), ".%02d GB",
+		Com_sprintf(buf + strlen(buf), (unsigned int)(bufsize - strlen(buf)), ".%02d GB",
 		            (value % (1024 * 1024 * 1024)) * 100 / (1024 * 1024 * 1024));
 	}
 	else if (value > 1024 * 1024)       // megs
 	{
 		Com_sprintf(buf, bufsize, "%d", value / (1024 * 1024));
-		Com_sprintf(buf + strlen(buf), bufsize - strlen(buf), ".%02d MB",
+		Com_sprintf(buf + strlen(buf), (unsigned int)(bufsize - strlen(buf)), ".%02d MB",
 		            (value % (1024 * 1024)) * 100 / (1024 * 1024));
 	}
 	else if (value > 1024)       // kilos

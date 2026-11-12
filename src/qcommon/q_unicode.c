@@ -430,9 +430,9 @@ void Q_UTF8_Move(char *buffer, size_t dstOffset, size_t srcOffset, size_t size)
 		return;
 	}
 
-	byteOffset1 = Q_UTF8_ByteOffset(buffer, dstOffset);
-	byteOffset2 = Q_UTF8_ByteOffset(buffer, srcOffset);
-	byteSize    = Q_UTF8_ByteOffset(&buffer[byteOffset2], size);
+	byteOffset1 = Q_UTF8_ByteOffset(buffer, (int)dstOffset);
+	byteOffset2 = Q_UTF8_ByteOffset(buffer, (int)srcOffset);
+	byteSize    = Q_UTF8_ByteOffset(&buffer[byteOffset2], (int)size);
 
 	if (!byteSize)
 	{
@@ -899,7 +899,7 @@ static qboolean Q_EncodeUnicodeChar(const char *str, char *toStr, const size_t m
 		return qfalse;
 	}
 
-	Q_strncpyz(&toStr[*l], buffer, maxSize - *l);
+	Q_strncpyz(&toStr[*l], buffer, (int)(maxSize - *l));
 	*l += (bufferLen - 1);
 
 	return qtrue;
@@ -1048,9 +1048,9 @@ size_t Q_UnescapeUnicode(char *fromStr, char *toStr, const size_t maxSize)
  */
 size_t Q_EscapeUnicodeInPlace(char *string, const size_t size)
 {
-	char   *tmpOutput = Com_Allocate(sizeof(char) * size);
+	char   *tmpOutput = Com_Allocate((int)(sizeof(char) * size));
 	size_t len        = Q_EscapeUnicode(string, tmpOutput, size);
-	Q_strncpyz(string, tmpOutput, size);
+	Q_strncpyz(string, tmpOutput, (int)size);
 	Com_Dealloc(tmpOutput);
 	return len;
 }
@@ -1063,9 +1063,9 @@ size_t Q_EscapeUnicodeInPlace(char *string, const size_t size)
  */
 size_t Q_UnescapeUnicodeInPlace(char *string, const size_t size)
 {
-	char   *tmpOutput = Com_Allocate(sizeof(char) * size);
+	char   *tmpOutput = Com_Allocate((int)(sizeof(char) * size));
 	size_t len        = Q_UnescapeUnicode(string, tmpOutput, size);
-	Q_strncpyz(string, tmpOutput, size);
+	Q_strncpyz(string, tmpOutput, (int)size);
 	Com_Dealloc(tmpOutput);
 	return len;
 }

@@ -978,7 +978,7 @@ void  Menus_Activate(menuDef_t *menu)
 			continue;
 		}
 
-		len = Q_UTF8_Strlen(s);
+		len = (int)Q_UTF8_Strlen(s);
 
 		while (s && *s && count < len)
 		{

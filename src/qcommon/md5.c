@@ -364,7 +364,7 @@ static char *CalculateMD5ForSeed(const char *key, int seed)
 	unsigned char     digest[16];
 
 	MD5InitSeed(&ctx, seed);
-	MD5Update(&ctx, ( const byte * ) key, strlen(key));
+	MD5Update(&ctx, ( const byte * ) key, (unsigned int)strlen(key));
 	MD5Final(&ctx, digest);
 
 	for (i = 0; i < 16; i++)

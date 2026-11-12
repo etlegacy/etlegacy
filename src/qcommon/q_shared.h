@@ -962,7 +962,7 @@ void Q_EscapeColorCodes(char *string, char escapeColor);
 // formatting, when a string has color codes in it
 static ID_INLINE int Q_CountPaddingWithColor(const char *string, int targetPadding)
 {
-	return targetPadding + strlen(string) - Q_PrintStrlen(string);
+	return targetPadding + (int)strlen(string) - Q_PrintStrlen(string);
 }
 
 /// removes color sequences from string using multiple passes

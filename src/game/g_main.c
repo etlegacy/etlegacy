@@ -2573,7 +2573,7 @@ void BeginIntermission(void)
 			for (i = 0; i < maxMaps; ++i)
 			{
 				// check for excluded maps..
-				Q_strncpyz(str, bspptrTmp, strlen(bspptrTmp) + 1);
+				Q_strncpyz(str, bspptrTmp, (int)strlen(bspptrTmp) + 1);
 				Q_strncpyz(str, Q_StrReplace(str, ".bsp", ""), sizeof(str));
 				if (strstr(g_excludedMaps.string, va(":%s:", str)))
 				{
@@ -2633,7 +2633,7 @@ void BeginIntermission(void)
 					}
 				}
 				shuffled[r] = qtrue;
-				Q_strncpyz(bspptrTmp, shuffledNames[r], strlen(shuffledNames[r]) + 1);
+				Q_strncpyz(bspptrTmp, shuffledNames[r], (int)strlen(shuffledNames[r]) + 1);
 				bspptrTmp += strlen(shuffledNames[r]) + 1;
 			}
 		}
@@ -2649,7 +2649,7 @@ void BeginIntermission(void)
 
 		for (i = 0; i < level.mapVoteNumMaps; i++, bspptr += len + 1)
 		{
-			len = strlen(bspptr);
+			len = (int)strlen(bspptr);
 
 			// for checking buffer overflow access..
 			// Function trap_FS_GetFileList() can return a greater number of BSP-files found on the server
@@ -2663,7 +2663,7 @@ void BeginIntermission(void)
 			}
 
 			// replace via some temporary string
-			Q_strncpyz(str, bspptr, strlen(bspptr) + 1);
+			Q_strncpyz(str, bspptr, (int)strlen(bspptr) + 1);
 			Q_strncpyz(str, Q_StrReplace(str, ".bsp", ""), sizeof(str));
 			Q_strncpyz(level.mapvoteinfo[i].bspName, str, sizeof(level.mapvoteinfo[0].bspName));
 
@@ -2987,7 +2987,7 @@ void QDECL G_LogPrintf(const char *fmt, ...)
 		Com_sprintf(string, sizeof(string), "%8i ", level.time);
 	}
 
-	l = strlen(string);
+	l = (int)strlen(string);
 
 	va_start(argptr, fmt);
 	Q_vsnprintf(string + l, sizeof(string) - l, fmt, argptr);
@@ -3003,7 +3003,7 @@ void QDECL G_LogPrintf(const char *fmt, ...)
 		return;
 	}
 
-	trap_FS_Write(string, strlen(string), level.logFile);
+	trap_FS_Write(string, (int)strlen(string), level.logFile);
 }
 
 void QDECL G_LogPrintf(const char *fmt, ...) _attribute((format(printf, 1, 2)));
