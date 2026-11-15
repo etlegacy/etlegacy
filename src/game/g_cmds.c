@@ -777,16 +777,18 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 			}
 			else
 			{
-				trap_SendServerCommand(ent - g_entities, va("print \"give skill <skill_no>: No valid skill '%i' (0-6).\n\"", skill));
+				trap_SendServerCommand(ent - g_entities, va("print \"give medal <skill_no>: No valid skill '%i' (0-6).\n\"", skill));
 			}
 		}
 		else
 		{
+			// give 1 medal of each
 			for (skill = SK_BATTLE_SENSE; skill < SK_NUM_SKILLS; skill++)
 			{
 				++ent->client->sess.medals[skill];
-				ClientUserinfoChanged(ent - g_entities);
 			}
+
+			ClientUserinfoChanged(ent - g_entities);
 		}
 		return;
 	}
