@@ -766,15 +766,28 @@ void Cmd_Give_f(gentity_t *ent, unsigned int dwCommand, int value)
 	{
 		int skill;
 
-		for (skill = SK_BATTLE_SENSE; skill < SK_NUM_SKILLS; skill++)
+		if (amount)
 		{
-			if (!ent->client->sess.medals[skill])
+			skill = (skillType_t)amount; // Change amount to skill, so that we can use amount properly
+
+			if (skill >= SK_BATTLE_SENSE && skill < SK_NUM_SKILLS)
 			{
-				ent->client->sess.medals[skill] = 1;
-				break; // add 1 medal, not all at once..
+				++ent->client->sess.medals[skill];
+				ClientUserinfoChanged(ent - g_entities);
+			}
+			else
+			{
+				trap_SendServerCommand(ent - g_entities, va("print \"give skill <skill_no>: No valid skill '%i' (0-6).\n\"", skill));
 			}
 		}
-		ClientUserinfoChanged(ent - g_entities);
+		else
+		{
+			for (skill = SK_BATTLE_SENSE; skill < SK_NUM_SKILLS; skill++)
+			{
+				++ent->client->sess.medals[skill];
+				ClientUserinfoChanged(ent - g_entities);
+			}
+		}
 		return;
 	}
 	if (give_all || Q_stricmpn(name, "health", 6) == 0 || Q_stricmpn(name, "hp", 2) == 0)
