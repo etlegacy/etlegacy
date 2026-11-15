@@ -297,6 +297,8 @@ static ID_INLINE float idSqrt(float x)
 #define CPUSTRING   "linux-arm"
 #elif defined __aarch64__
 #define CPUSTRING   "linux-aarch64"
+#elif defined ARCH_STRING
+#define CPUSTRING   "linux-" ARCH_STRING
 #else
 #define CPUSTRING   "linux-other"
 #endif
