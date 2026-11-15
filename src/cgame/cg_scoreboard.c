@@ -93,7 +93,7 @@ qboolean CG_DrawFlag(float x, float y, float fade, int clientNum)
 
 		float alpha[4] = { 1.f, 1.f, 1.f, fade };
 		float x1       = (float)((client_flag * flag_size) % all_flags);
-		float y1       = (float)(floor((client_flag * flag_size) / all_flags) * flag_size);
+		float y1       = floorf((client_flag * flag_size) / (float)all_flags) * flag_size;
 		float x2       = x1 + flag_size;
 		float y2       = y1 + flag_size;
 
@@ -229,8 +229,8 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			}
 		}
 
-		flagX1 = SCREEN_WIDTH / 2 + cgs.wideXoffset - 5 - (flagSizeX + cgs.wideXoffset);      // left flag
-		flagX2 = SCREEN_WIDTH / 2 + 5;
+		flagX1 = SCREEN_WIDTH * 0.5f + cgs.wideXoffset - 5.f - (flagSizeX + cgs.wideXoffset);      // left flag
+		flagX2 = SCREEN_WIDTH * 0.5f + 5.f;
 
 		if (flagshader)
 		{                                              // right flag
@@ -257,7 +257,15 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 	// mission time & reinforce time
 	else
 	{
-		int msec, mins, seconds, tens, w, rmsec, rmins, rseconds, rtens;
+		float w;
+		int   msec     = 0;
+		int   mins     = 0;
+		int   seconds  = 0;
+		int   tens     = 0;
+		int   rmsec    = 0;
+		int   rmins    = 0;
+		int   rseconds = 0;
+		int   rtens    = 0;
 
 		CG_FillRect(x - 5, y - 2, width + 5, 34, SB_bg);
 		CG_DrawRect_FixedBorder(x - 5, y - 2, width + 5, 34, 1, SB_border);
@@ -281,10 +289,6 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 			rseconds -= rmins * 60;
 			rtens     = rseconds / 10;
 			rseconds -= rtens * 10;
-		}
-		else
-		{
-			msec = mins = tens = seconds = rmsec = rmins = rtens = rseconds = 0;
 		}
 
 		if (cgs.gamestate == GS_PLAYING)
@@ -598,14 +602,12 @@ static int WM_DrawClientScore_PlayerIcons(int x, int y, const clientInfo_t *ci, 
 	if (score->respawnsLeft == -2 || (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team && cgs.clientinfo[score->client].health == -1))
 	{
 		CG_DrawPic(x - 1, y - 9, 10, 10, cgs.media.scoreEliminatedShader);
-		x += 12;
 		drawnIcons++;
 	}
 	else if (cgs.clientinfo[cg.clientNum].team != TEAM_SPECTATOR && ci->team == cgs.clientinfo[cg.clientNum].team
 	         && cgs.clientinfo[score->client].health == 0 && cgs.gamestate != GS_INTERMISSION)
 	{
 		CG_DrawPic(x - 1, y - 9, 10, 10, cgs.media.medicIcon);
-		x += 12;
 		drawnIcons++;
 	}
 
@@ -783,7 +785,7 @@ static void WM_DrawClientScore_Player(int x, int y, float scaleX, float scaleY, 
 	}
 
 	// allow MV clients see the class of its merged client's on the scoreboard
-	if (cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_INTERMISSION
+	if ((team_t)cg.snap->ps.persistant[PERS_TEAM] == ci->team || cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR || cgs.clientinfo[cg.clientNum].team == TEAM_SPECTATOR || cg.snap->ps.pm_type == PM_INTERMISSION
 		#ifdef FEATURE_MULTIVIEW
 	    || CG_mvMergedClientLocate(score->client)
 #endif
@@ -912,28 +914,20 @@ static void WM_DrawClientScore_Small(int x, int y, score_t *score, float fade, q
 
 /**
  * @brief WM_DrawInfoLine
- * @param x - unused
+ * @param[in] x
  * @param[in] y
  * @param fade - unused
  * @return
  */
 static int WM_DrawInfoLine(int x, int y, float fade)
 {
-	int        w, defender, winner;
+	float      w = 360.f;
 	const char *s;
 
 	if (cg.snap->ps.pm_type != PM_INTERMISSION)
 	{
 		return y;
 	}
-
-	w = 360;
-
-	s        = CG_ConfigString(CS_MULTI_INFO);
-	defender = Q_atoi(Info_ValueForKey(s, "d")); // defender
-
-	s      = CG_ConfigString(CS_MULTI_MAPWINNER);
-	winner = Q_atoi(Info_ValueForKey(s, "w"));
 
 	if (cgs.currentRound)
 	{
@@ -942,6 +936,15 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 	}
 	else
 	{
+		int defender;
+		int winner;
+
+		s        = CG_ConfigString(CS_MULTI_INFO);
+		defender = Q_atoi(Info_ValueForKey(s, "d"));
+
+		s      = CG_ConfigString(CS_MULTI_MAPWINNER);
+		winner = Q_atoi(Info_ValueForKey(s, "w"));
+
 		// second round
 		if (!defender)
 		{
@@ -969,12 +972,12 @@ static int WM_DrawInfoLine(int x, int y, float fade)
 		s = CG_TranslateString(s);
 	}
 
-	CG_FillRect(Ccg_WideX(320) - w / 2, y, w, 20, SB_bg2);
-	CG_DrawRect_FixedBorder(Ccg_WideX(320) - w / 2, y, w, 20, 1, SB_border);
+	CG_FillRect(Ccg_WideX(x) - w * 0.5f, y, w, 20, SB_bg2);
+	CG_DrawRect_FixedBorder(Ccg_WideX(x) - w * 0.5f, y, w, 20, 1, SB_border);
 
 	w = CG_Text_Width_Ext(s, 0.25f, 0, FONT_HEADER);
 
-	CG_Text_Paint_Ext(Ccg_WideX(320) - w * 0.5f, y + 15, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
+	CG_Text_Paint_Ext(Ccg_WideX(x) - w * 0.5f, y + 15, 0.25f, 0.25f, SB_text, s, 0, 0, 0, FONT_HEADER);
 
 	return y + INFO_LINE_HEIGHT + 6;
 }
@@ -1349,7 +1352,7 @@ qboolean CG_DrawScoreboard(void)
 
 	if (cgs.gametype == GT_WOLF_STOPWATCH && cg.snap->ps.pm_type == PM_INTERMISSION)
 	{
-		y = WM_DrawInfoLine(x, 155, fade);
+		y = WM_DrawInfoLine(320, 155, fade);
 
 		maxrows    = 8;
 		absmaxrows = 10;
@@ -1406,7 +1409,7 @@ qboolean CG_DrawScoreboard(void)
 		s = va(CG_TranslateString("%s - Press double-%s quickly to switch scoreboard"), s3, s2);
 
 		w = CG_Text_Width_Ext(s, fontScale, 0, &cgs.media.limboFont2);
-		x = Ccg_WideX(SCREEN_WIDTH / 2) - w / 2;
+		x = Ccg_WideX(SCREEN_WIDTH * 0.5f) - w * 0.5f;
 		y = 450;
 		CG_Text_Paint_Ext(x, y, fontScale, fontScale, colorWhite, s, 0, 0, ITEM_TEXTSTYLE_SHADOWED, &cgs.media.limboFont2);
 	}
