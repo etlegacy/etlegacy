@@ -327,13 +327,12 @@ void CG_NewClientInfo(int clientNum)
 	if (*v)
 	{
 		int  i;
-		char buf[2];
+		char *token;
 
-		buf[1] = '\0';
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
-			buf[0]            = *v;
-			newInfo.medals[i] = Q_atoi(buf);
+			token             = COM_Parse(&v);
+			newInfo.medals[i] = Q_atoi(token);
 			v++;
 		}
 	}
