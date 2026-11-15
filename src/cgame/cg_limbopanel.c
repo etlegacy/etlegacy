@@ -64,6 +64,7 @@ typedef enum counterType_e
 	COUNTER_TYPE_SKILL,
 	COUNTER_TYPE_CLOCK,
 	COUNTER_TYPE_STATS,
+	COUNTER_TYPE_MEDAL,
 	COUNTER_TYPE_MAX,
 }counterType_t;
 
@@ -194,6 +195,18 @@ static panel_button_t rightLimboPannel =
 			NULL,                      /* keyDown    */                  \
 			NULL,                      /* keyUp  */                  \
 			CG_LimboPanel_RenderMedal,              \
+			NULL,                                   \
+			0,                                   \
+		}; \
+		static panel_button_t medalCounter ## number = {         \
+			NULL,                                   \
+			NULL,                                   \
+			{ MEDAL_PIC_X + MEDAL_PIC_GAP + ((number) * (MEDAL_PIC_GAP + MEDAL_PIC_WIDTH)) + 1,119,                                                                               20, 8 }, \
+			{ COUNTER_TYPE_MEDAL,        number,                                                                            0,  0, 0, 0, 0, 0},        \
+			NULL,                        /* font       */              \
+			NULL,                        /* keyDown    */                  \
+			NULL,                        /* keyUp  */                  \
+			CG_LimboPanel_RenderCounter,              \
 			NULL,                                   \
 			0,                                   \
 		}
@@ -1044,7 +1057,8 @@ static panel_button_t *limboPanelButtons[] =
 	&filterButton5,           &filterButton6,             &filterButton7,         &filterButton8,
 	&filterTitleText,
 
-	&medalPic0,               &medalPic1,                 &medalPic2,             &medalPic3,     &medalPic4,    &medalPic5,&medalPic6,
+	&medalPic0,               &medalPic1,                 &medalPic2,             &medalPic3,     &medalPic4,    &medalPic5,      &medalPic6,
+	&medalCounter0,           &medalCounter1,             &medalCounter2,         &medalCounter3, &medalCounter4,&medalCounter5,  &medalCounter6,
 
 	&teamCounter0,            &teamCounter1,              &teamCounter2,
 	&teamCounterLight0,       &teamCounterLight1,         &teamCounterLight2,
@@ -2702,7 +2716,10 @@ void CG_LimboPanel_RenderCounterNumber(float x, float y, float w, float h, float
 	float numberE = (((numbuttons - 1) - number) + 1) * (1.f / numbuttons);
 
 	CG_AdjustFrom640(&x, &y, &w, &h);
-	trap_R_DrawStretchPic(x, y, w, h, 0, 0, 1, 1, shaderBack);
+	if (shaderBack)
+	{
+		trap_R_DrawStretchPic(x, y, w, h, 0, 0, 1, 1, shaderBack);
+	}
 	trap_R_DrawStretchPic(x, y, w, h, 0, numberS, 1, numberE, shaderRoll);
 }
 
@@ -2833,6 +2850,8 @@ int CG_LimboPanel_RenderCounter_ValueForButton(panel_button_t *button)
 			break;
 		}
 		return 0;
+	case COUNTER_TYPE_MEDAL:
+		return cgs.clientinfo[cg.clientNum].medals[button->data[1]];
 	default:
 		break;
 	}
@@ -2853,6 +2872,7 @@ static float CG_LimboPanel_RenderCounter_RollTimeForButton(panel_button_t *butto
 	case COUNTER_TYPE_CLASS:
 	case COUNTER_TYPE_TEAM:
 	case COUNTER_TYPE_XP:
+	case COUNTER_TYPE_MEDAL:
 	{
 		const float diff = abs(button->data[3] - value);
 		if (diff > 0)
@@ -2916,12 +2936,6 @@ int CG_LimboPanel_RenderCounter_NumRollers(panel_button_t *button)
 	case COUNTER_TYPE_CLOCK:
 	case COUNTER_TYPE_RESPAWN_TIME:
 		return 2;
-	case COUNTER_TYPE_SKILL:
-		if (cg_gameType.integer == GT_WOLF_LMS /*|| CG_LimboPanel_GetTeam() == TEAM_SPECTATOR*/)
-		{
-			return 0;
-		}
-		return 4;
 	case COUNTER_TYPE_STATS:
 		switch (button->data[1])
 		{
@@ -2934,7 +2948,9 @@ int CG_LimboPanel_RenderCounter_NumRollers(panel_button_t *button)
 			break;
 		}
 		break;
+	case COUNTER_TYPE_SKILL:
 	case COUNTER_TYPE_XP:
+	case COUNTER_TYPE_MEDAL:
 		if (cg_gameType.integer == GT_WOLF_LMS)
 		{
 			return 0;
@@ -2958,6 +2974,7 @@ qboolean CG_LimboPanel_RenderCounter_CountsDown(panel_button_t *button)
 	{
 	case COUNTER_TYPE_SKILL:
 	case COUNTER_TYPE_XP:
+	case COUNTER_TYPE_MEDAL:
 		return qfalse;
 	default:
 		break;
@@ -3011,12 +3028,13 @@ qboolean CG_LimboPanel_RenderCounter_StartSet(panel_button_t *button)
  */
 void CG_LimboPanel_RenderMedal(panel_button_t *button)
 {
-	if (cg_gameType.integer == GT_WOLF || cg_gameType.integer == GT_WOLF_MAPVOTE)
+	if (cg_gameType.integer == GT_WOLF)
 	{
 		return;
 	}
 
 	CG_DrawPic(button->rect.x, button->rect.y, button->rect.w, button->rect.h, cgs.media.medal_back);
+
 	if (cgs.clientinfo[cg.clientNum].medals[button->data[0]])
 	{
 		CG_DrawPic(button->rect.x - 2, button->rect.y, button->rect.w + 4, button->rect.h, cgs.media.medals[button->data[0]]);
@@ -3057,6 +3075,11 @@ void CG_LimboPanel_RenderCounter_GetShaders(panel_button_t *button, qhandle_t *s
 		*shaderRoll = cgs.media.limboStar_roll;
 		*numimages  = 2;
 		return;
+	case COUNTER_TYPE_MEDAL:
+		*shaderBack = 0;    // no back
+		*shaderRoll = cgs.media.limboNumber_roll;
+		*numimages  = 10;
+		break;
 	default:
 		*shaderBack = cgs.media.limboNumber_back;
 		*shaderRoll = cgs.media.limboNumber_roll;
@@ -3289,6 +3312,12 @@ void CG_LimboPanel_RenderCounter(panel_button_t *button)
 	{
 		for (i = num - 1; i >= 0; i--)
 		{
+			if (button->data[0] == COUNTER_TYPE_MEDAL)
+			{
+				vec4_t clrBck = { 0.0f, 0.0f, 0.0f, 0.75f };
+				CG_FillRect(x, button->rect.y, w, button->rect.h, clrBck);
+			}
+
 			CG_LimboPanel_RenderCounterNumber(x, button->rect.y, w, button->rect.h, count[i], shaderBack, shaderRoll, numimages);
 
 			x += w + button->data[6];
