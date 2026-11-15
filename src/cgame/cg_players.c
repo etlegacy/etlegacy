@@ -328,10 +328,11 @@ void CG_NewClientInfo(int clientNum)
 	{
 		int  i;
 		char *token;
+		char *str = (char *)v;
 
 		for (i = 0; i < SK_NUM_SKILLS; i++)
 		{
-			token             = COM_Parse(&v);
+			token             = COM_Parse(&str);
 			newInfo.medals[i] = Q_atoi(token);
 			v++;
 		}
