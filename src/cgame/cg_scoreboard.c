@@ -120,7 +120,7 @@ int WM_DrawObjectives(int x, int y, int width, float fade)
 	const char *s;
 	const char *t;
 
-	if (cg.snap->ps.pm_type == PM_INTERMISSION)
+	if (cgs.gamestate == GS_INTERMISSION)
 	{
 		static qhandle_t alliesFlag = 0;
 		static qhandle_t textAllies = 0;
@@ -975,7 +975,7 @@ static int WM_DrawInfoLine(int x, int y)
 	const char *s;
 	vec4_t     color;
 
-	if (cg.snap->ps.pm_type != PM_INTERMISSION)
+	if (cgs.gamestate != GS_INTERMISSION)
 	{
 		return y;
 	}
@@ -1381,20 +1381,18 @@ qboolean CG_DrawScoreboard(void)
 	x       += cgs.wideXoffset;
 	x_right += cgs.wideXoffset;
 
-	// don't draw anything if the menu or console is up
 	if (cg_paused.integer)
 	{
 		return qfalse;
 	}
 
-	// don't draw scoreboard during death while warmup up
-	// also for pesky scoreboards in demos
-	if ((cg.warmup || (cg.demoPlayback && cg.snap->ps.pm_type != PM_INTERMISSION)) && !cg.showScores)
+	// instant fade out scoreboard if no show requested anymore
+	if ((cg.demoPlayback && cgs.gamestate == GS_INTERMISSION) && !cg.showScores)
 	{
 		return qfalse;
 	}
 
-	if (cg.showScores || cg.predictedPlayerState.pm_type == PM_INTERMISSION)
+	if (cg.showScores || cgs.gamestate == GS_INTERMISSION)
 	{
 		fade = 1.0f;
 	}
@@ -1409,7 +1407,7 @@ qboolean CG_DrawScoreboard(void)
 		fade = fadeColor[3];
 	}
 
-	if (cg.predictedPlayerState.pm_type != PM_INTERMISSION)
+	if (cgs.gamestate != GS_INTERMISSION)
 	{
 		// keep drawing crossair
 		CG_DrawCrosshair(&CG_GetActiveHUD()->crosshair);
@@ -1417,14 +1415,14 @@ qboolean CG_DrawScoreboard(void)
 
 	y = WM_DrawObjectives(x, y, width, fade);
 
-	if (cgs.gametype == GT_WOLF_STOPWATCH && cg.snap->ps.pm_type == PM_INTERMISSION)
+	if (cgs.gametype == GT_WOLF_STOPWATCH && cgs.gamestate == GS_INTERMISSION)
 	{
 		y = WM_DrawInfoLine(320, 155);
 
 		maxrows    = 8;
 		absmaxrows = 10;
 	}
-	else if (cg.snap->ps.pm_type == PM_INTERMISSION)
+	else if (cgs.gamestate == GS_INTERMISSION)
 	{
 		maxrows    = 9;
 		absmaxrows = 16;
@@ -1441,7 +1439,7 @@ qboolean CG_DrawScoreboard(void)
 		);
 	players_without_specs_exceed_limit = cg.teamPlayers[TEAM_AXIS] > maxrows || cg.teamPlayers[TEAM_ALLIES] > maxrows;
 
-	if ((cg.snap->ps.pm_type != PM_INTERMISSION && players_with_specs_exceed_limit) || players_without_specs_exceed_limit)
+	if ((cgs.gamestate != GS_INTERMISSION && players_with_specs_exceed_limit) || players_without_specs_exceed_limit)
 	{
 		maxrows        = absmaxrows;
 		use_mini_chars = qtrue;
@@ -1458,10 +1456,10 @@ qboolean CG_DrawScoreboard(void)
 	    ))
 	{
 		vec4_t color;
-		
+
 		Vector4Copy(colorWhite, color);
 		color[3] *= fade;
-	
+
 		s2 = Binding_FromName("+scores");
 		if (!Q_stricmp(s2, "(+scores)"))
 		{
