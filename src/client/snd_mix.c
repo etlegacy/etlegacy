@@ -38,8 +38,14 @@
 #if idppc_altivec && !defined(__APPLE__)
 #include <altivec.h>
 #endif
+// older compilers have VSX but only the vec_vsx_* names for unaligned access
+#if defined(__VSX__) && !defined(vec_xl)
+#define vec_xl vec_vsx_ld
+#define vec_xst vec_vsx_st
+#endif
 
-static portable_samplepair_t paintbuffer[PAINTBUFFER_SIZE];
+// the AltiVec mixer only takes its vector path on 16-byte aligned output
+static portable_samplepair_t paintbuffer[PAINTBUFFER_SIZE] QALIGN(16);
 static int                   snd_vol;
 
 int   *snd_p;
@@ -261,6 +267,7 @@ CHANNEL MIXING
 #if idppc_altivec
 /**
  * @brief S_PaintChannelFrom16_altivec
+ * @note Only for the cases S_PaintChannelFrom16 sends here
  * @param[in] ch
  * @param[in] sc
  * @param[in] count
@@ -269,32 +276,25 @@ CHANNEL MIXING
  */
 static void S_PaintChannelFrom16_altivec(channel_t *ch, const sfx_t *sc, int count, int sampleOffset, int bufferOffset)
 {
-	int                   data, aoff, boff;
+	int                   data;
 	int                   leftvol, rightvol;
-	int                   i, j;
+	int                   i;
 	portable_samplepair_t *samp = &paintbuffer[bufferOffset];
 	sndBuffer             *chunk;
 	short                 *samples;
-	float                 ooff, fdata[2], fdiv, fleftvol, frightvol;
-
-	if (sc->soundChannels <= 0)
-	{
-		return;
-	}
+	vector signed short   volume_vec;
+	vector unsigned int   volume_shift;
+	int                   vectorCount, samplesLeft, chunkSamplesLeft;
+#if defined(__VSX__)
+	// vec_xl and vec_xst take any alignment
+	const unsigned long alignMask = 0;
+#else
+	const unsigned long alignMask = 0xf;
+#endif
 
 	if (ch->doppler)
 	{
 		sampleOffset = sampleOffset * ch->oldDopplerScale;
-	}
-
-	if (sc->soundChannels == 2)
-	{
-		sampleOffset *= sc->soundChannels;
-
-		if (sampleOffset & 1)
-		{
-			sampleOffset &= ~1;
-		}
 	}
 
 	chunk = sc->soundData;
@@ -308,171 +308,151 @@ static void S_PaintChannelFrom16_altivec(channel_t *ch, const sfx_t *sc, int cou
 		}
 	}
 
-	if (!ch->doppler || ch->dopplerScale == 1.0f)
+	leftvol  = ch->leftvol * snd_vol;
+	rightvol = ch->rightvol * snd_vol;
+	samples  = chunk->sndChunk;
+#if defined(__VSX__)
 	{
-		vector signed short volume_vec;
-		vector unsigned int volume_shift;
-		int                 vectorCount, samplesLeft, chunkSamplesLeft;
-		leftvol                   = ch->leftvol * snd_vol;
-		rightvol                  = ch->rightvol * snd_vol;
-		samples                   = chunk->sndChunk;
-		((short *)&volume_vec)[0] = leftvol;
-		((short *)&volume_vec)[1] = leftvol;
-		((short *)&volume_vec)[4] = leftvol;
-		((short *)&volume_vec)[5] = leftvol;
-		((short *)&volume_vec)[2] = rightvol;
-		((short *)&volume_vec)[3] = rightvol;
-		((short *)&volume_vec)[6] = rightvol;
-		((short *)&volume_vec)[7] = rightvol;
-		volume_shift              = vec_splat_u32(8);
-		i                         = 0;
+		// {L, L, R, R, L, L, R, R}, interleaved with vec_perm so it is endian-safe
+		vector signed short  vl          = vec_splats((short)leftvol);
+		vector signed short  vr          = vec_splats((short)rightvol);
+		vector unsigned char volume_perm =
+			VECCONST_UINT8(0, 1, 2, 3, 16, 17, 18, 19, 4, 5, 6, 7, 20, 21, 22, 23);
 
-		while (i < count)
-		{
-			/* Try to align destination to 16-byte boundary */
-			while (i < count && (((unsigned long)&samp[i] & 0x1f) || ((count - i) < 8) || ((SND_CHUNK_SIZE - sampleOffset) < 8)))
-			{
-				data          = samples[sampleOffset++];
-				samp[i].left += (data * leftvol) >> 8;
-				if (sc->soundChannels == 2)
-				{
-					data = samples[sampleOffset++];
-				}
-				samp[i].right += (data * rightvol) >> 8;
-
-				if (sampleOffset == SND_CHUNK_SIZE)
-				{
-					chunk        = chunk->next;
-					samples      = chunk->sndChunk;
-					sampleOffset = 0;
-				}
-				i++;
-			}
-			/* Destination is now aligned.  Process as many 8-sample
-			   chunks as we can before we run out of room from the current
-			   sound chunk.  We do 8 per loop to avoid extra source data reads. */
-			samplesLeft      = count - i;
-			chunkSamplesLeft = SND_CHUNK_SIZE - sampleOffset;
-			if (samplesLeft > chunkSamplesLeft)
-			{
-				samplesLeft = chunkSamplesLeft;
-			}
-
-			vectorCount = samplesLeft / 8;
-
-			if (vectorCount)
-			{
-				vector unsigned char tmp;
-				vector short         s0, s1, sampleData0, sampleData1;
-				vector signed int    merge0, merge1;
-				vector signed int    d0, d1, d2, d3;
-				vector unsigned char samplePermute0 =
-					VECCONST_UINT8(0, 1, 4, 5, 0, 1, 4, 5, 2, 3, 6, 7, 2, 3, 6, 7);
-				vector unsigned char samplePermute1 =
-					VECCONST_UINT8(8, 9, 12, 13, 8, 9, 12, 13, 10, 11, 14, 15, 10, 11, 14, 15);
-				vector unsigned char loadPermute0, loadPermute1;
-
-				// Rather than permute the vectors after we load them to do the sample
-				// replication and rearrangement, we permute the alignment vector so
-				// we do everything in one step below and avoid data shuffling.
-				tmp          = vec_lvsl(0, &samples[sampleOffset]);
-				loadPermute0 = vec_perm(tmp, tmp, samplePermute0);
-				loadPermute1 = vec_perm(tmp, tmp, samplePermute1);
-
-				s0 = *(vector short *)&samples[sampleOffset];
-				while (vectorCount)
-				{
-					/* Load up source (16-bit) sample data */
-					s1 = *(vector short *)&samples[sampleOffset + 7];
-
-					/* Load up destination sample data */
-					d0 = *(vector signed int *)&samp[i];
-					d1 = *(vector signed int *)&samp[i + 2];
-					d2 = *(vector signed int *)&samp[i + 4];
-					d3 = *(vector signed int *)&samp[i + 6];
-
-					sampleData0 = vec_perm(s0, s1, loadPermute0);
-					sampleData1 = vec_perm(s0, s1, loadPermute1);
-
-					merge0 = vec_mule(sampleData0, volume_vec);
-					merge0 = vec_sra(merge0, volume_shift);   /* Shift down to proper range */
-
-					merge1 = vec_mulo(sampleData0, volume_vec);
-					merge1 = vec_sra(merge1, volume_shift);
-
-					d0 = vec_add(merge0, d0);
-					d1 = vec_add(merge1, d1);
-
-					merge0 = vec_mule(sampleData1, volume_vec);
-					merge0 = vec_sra(merge0, volume_shift);   /* Shift down to proper range */
-
-					merge1 = vec_mulo(sampleData1, volume_vec);
-					merge1 = vec_sra(merge1, volume_shift);
-
-					d2 = vec_add(merge0, d2);
-					d3 = vec_add(merge1, d3);
-
-					/* Store destination sample data */
-					*(vector signed int *)&samp[i]     = d0;
-					*(vector signed int *)&samp[i + 2] = d1;
-					*(vector signed int *)&samp[i + 4] = d2;
-					*(vector signed int *)&samp[i + 6] = d3;
-
-					i += 8;
-					vectorCount--;
-					s0            = s1;
-					sampleOffset += 8;
-				}
-				if (sampleOffset == SND_CHUNK_SIZE)
-				{
-					chunk        = chunk->next;
-					samples      = chunk->sndChunk;
-					sampleOffset = 0;
-				}
-			}
-		}
+		volume_vec = (vector signed short)vec_perm(vl, vr, volume_perm);
 	}
-	else
+#else
+	((short *)&volume_vec)[0] = leftvol;
+	((short *)&volume_vec)[1] = leftvol;
+	((short *)&volume_vec)[4] = leftvol;
+	((short *)&volume_vec)[5] = leftvol;
+	((short *)&volume_vec)[2] = rightvol;
+	((short *)&volume_vec)[3] = rightvol;
+	((short *)&volume_vec)[6] = rightvol;
+	((short *)&volume_vec)[7] = rightvol;
+#endif
+	volume_shift = vec_splat_u32(8);
+	i            = 0;
+
+	while (i < count)
 	{
-		fleftvol  = ch->leftvol * snd_vol;
-		frightvol = ch->rightvol * snd_vol;
-
-		ooff    = sampleOffset;
-		samples = chunk->sndChunk;
-
-		for (i = 0 ; i < count ; i++)
+		/* Mix in scalar code until the destination is aligned (when that matters)
+		   and there are 8 samples left in both the output and the sound chunk */
+		while (i < count && (((unsigned long)&samp[i] & alignMask) || ((count - i) < 8) || ((SND_CHUNK_SIZE - sampleOffset) < 8)))
 		{
+			data           = samples[sampleOffset++];
+			samp[i].left  += (data * leftvol) >> 8;
+			samp[i].right += (data * rightvol) >> 8;
 
-			aoff     = ooff;
-			ooff     = ooff + ch->dopplerScale * sc->soundChannels;
-			boff     = ooff;
-			fdata[0] = fdata[1] = 0;
-			for (j = aoff; j < boff; j += sc->soundChannels)
+			if (sampleOffset == SND_CHUNK_SIZE)
 			{
-				if (j == SND_CHUNK_SIZE)
-				{
-					chunk = chunk->next;
-					if (!chunk)
-					{
-						chunk = sc->soundData;
-					}
-					samples = chunk->sndChunk;
-					ooff   -= SND_CHUNK_SIZE;
-				}
-				if (sc->soundChannels == 2)
-				{
-					fdata[0] += samples[j & (SND_CHUNK_SIZE - 1)];
-					fdata[1] += samples[(j + 1) & (SND_CHUNK_SIZE - 1)];
-				}
-				else
-				{
-					fdata[0] += samples[j & (SND_CHUNK_SIZE - 1)];
-					fdata[1] += samples[j & (SND_CHUNK_SIZE - 1)];
-				}
+				chunk        = chunk->next;
+				samples      = chunk->sndChunk;
+				sampleOffset = 0;
 			}
-			fdiv           = 256 * (boff - aoff) / sc->soundChannels;
-			samp[i].left  += (fdata[0] * fleftvol) / fdiv;
-			samp[i].right += (fdata[1] * frightvol) / fdiv;
+			i++;
+		}
+		/* Process as many 8-sample chunks as we can before we run out of
+		   room from the current sound chunk.  We do 8 per loop to avoid
+		   extra source data reads. */
+		samplesLeft      = count - i;
+		chunkSamplesLeft = SND_CHUNK_SIZE - sampleOffset;
+		if (samplesLeft > chunkSamplesLeft)
+		{
+			samplesLeft = chunkSamplesLeft;
+		}
+
+		vectorCount = samplesLeft / 8;
+
+		if (vectorCount)
+		{
+			vector short         s0, sampleData0, sampleData1;
+			vector signed int    merge0, merge1;
+			vector signed int    d0, d1, d2, d3;
+			vector unsigned char samplePermute0 =
+				VECCONST_UINT8(0, 1, 4, 5, 0, 1, 4, 5, 2, 3, 6, 7, 2, 3, 6, 7);
+			vector unsigned char samplePermute1 =
+				VECCONST_UINT8(8, 9, 12, 13, 8, 9, 12, 13, 10, 11, 14, 15, 10, 11, 14, 15);
+#if !defined(__VSX__)
+			vector short         s1;
+			vector unsigned char tmp, loadPermute0, loadPermute1;
+
+			// Rather than permute the vectors after we load them to do the sample
+			// replication and rearrangement, we permute the alignment vector so
+			// we do everything in one step below and avoid data shuffling.
+			tmp          = vec_lvsl(0, &samples[sampleOffset]);
+			loadPermute0 = vec_perm(tmp, tmp, samplePermute0);
+			loadPermute1 = vec_perm(tmp, tmp, samplePermute1);
+#endif
+
+			while (vectorCount)
+			{
+				/* Load up source (16-bit) and destination sample data,
+				   duplicating each source sample for left and right */
+#if defined(__VSX__)
+				s0          = vec_xl(0, &samples[sampleOffset]);
+				sampleData0 = vec_perm(s0, s0, samplePermute0);
+				sampleData1 = vec_perm(s0, s0, samplePermute1);
+
+				d0 = vec_xl(0, (int *)&samp[i]);
+				d1 = vec_xl(0, (int *)&samp[i + 2]);
+				d2 = vec_xl(0, (int *)&samp[i + 4]);
+				d3 = vec_xl(0, (int *)&samp[i + 6]);
+#else
+				// the two 16-byte blocks that hold the 8 samples, which are
+				// the same block when the source is aligned
+				s0          = *(vector short *)&samples[sampleOffset];
+				s1          = *(vector short *)&samples[sampleOffset + 7];
+				sampleData0 = vec_perm(s0, s1, loadPermute0);
+				sampleData1 = vec_perm(s0, s1, loadPermute1);
+
+				d0 = *(vector signed int *)&samp[i];
+				d1 = *(vector signed int *)&samp[i + 2];
+				d2 = *(vector signed int *)&samp[i + 4];
+				d3 = *(vector signed int *)&samp[i + 6];
+#endif
+
+				merge0 = vec_mule(sampleData0, volume_vec);
+				merge0 = vec_sra(merge0, volume_shift);   /* Shift down to proper range */
+
+				merge1 = vec_mulo(sampleData0, volume_vec);
+				merge1 = vec_sra(merge1, volume_shift);
+
+				d0 = vec_add(merge0, d0);
+				d1 = vec_add(merge1, d1);
+
+				merge0 = vec_mule(sampleData1, volume_vec);
+				merge0 = vec_sra(merge0, volume_shift);   /* Shift down to proper range */
+
+				merge1 = vec_mulo(sampleData1, volume_vec);
+				merge1 = vec_sra(merge1, volume_shift);
+
+				d2 = vec_add(merge0, d2);
+				d3 = vec_add(merge1, d3);
+
+				/* Store destination sample data */
+#if defined(__VSX__)
+				vec_xst(d0, 0, (int *)&samp[i]);
+				vec_xst(d1, 0, (int *)&samp[i + 2]);
+				vec_xst(d2, 0, (int *)&samp[i + 4]);
+				vec_xst(d3, 0, (int *)&samp[i + 6]);
+#else
+				*(vector signed int *)&samp[i]     = d0;
+				*(vector signed int *)&samp[i + 2] = d1;
+				*(vector signed int *)&samp[i + 4] = d2;
+				*(vector signed int *)&samp[i + 6] = d3;
+#endif
+
+				i += 8;
+				vectorCount--;
+				sampleOffset += 8;
+			}
+			if (sampleOffset == SND_CHUNK_SIZE)
+			{
+				chunk        = chunk->next;
+				samples      = chunk->sndChunk;
+				sampleOffset = 0;
+			}
 		}
 	}
 }
@@ -604,7 +584,11 @@ static void S_PaintChannelFrom16_scalar(channel_t *ch, const sfx_t *sc, int coun
 static void S_PaintChannelFrom16(channel_t *ch, const sfx_t *sc, int count, int sampleOffset, int bufferOffset)
 {
 #if idppc_altivec
-	if (com_altivec->integer)
+	// the AltiVec mixer only handles mono sounds that need no doppler resampling,
+	// at volumes that fit its signed 16-bit multiplies
+	if (com_altivec->integer && sc->soundChannels == 1
+	    && (!ch->doppler || ch->dopplerScale == 1.0f)
+	    && ch->leftvol * snd_vol <= 32767 && ch->rightvol * snd_vol <= 32767)
 	{
 		// must be in a seperate function or G3 systems will crash.
 		S_PaintChannelFrom16_altivec(ch, sc, count, sampleOffset, bufferOffset);
