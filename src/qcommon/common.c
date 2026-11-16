@@ -3625,10 +3625,19 @@ void Com_Frame(void)
 				minUsec = 1000;
 			}
 
-			// fallback to com_maxfps
+			// fallback to com_maxfps (unless Vulkan Anti-Lag mode 2 offloads pacing to the driver)
 			if (minUsec == 0)
 			{
-				minUsec = 1000000 / com_maxfps->integer;
+#ifndef DEDICATED
+				if (CL_AntiLagActive())
+				{
+					minUsec = 1000;
+				}
+				else
+#endif
+				{
+					minUsec = 1000000 / com_maxfps->integer;
+				}
 			}
 
 			timeVal = com_frameTimeUS - lastTimeUS;

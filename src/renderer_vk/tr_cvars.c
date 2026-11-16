@@ -165,6 +165,10 @@ cvar_t *r_vkBindless;
 cvar_t *r_softParticles;
 cvar_t *r_vkCaptureFrame200;
 cvar_t *r_vkCapturePath;
+cvar_t *r_vkAntiLag;
+cvar_t *r_vkAntiLagStats;
+cvar_t *r_vkAntiLagBackend;
+
 
 /**
  * @brief R_Register
@@ -370,6 +374,14 @@ void R_Register(void)
 	r_vkCaptureFrame200 = ri.Cvar_Get("r_vkCaptureFrame200", "0", 0);
 	// PPM file it writes, relative to the working directory unless absolute
 	r_vkCapturePath = ri.Cvar_Get("r_vkCapturePath", "vk_capture.ppm", 0);
+
+	// Anti-Lag frame pacing (0 = off, 1 = on, 2 = on + driver maxFPS limiter)
+	r_vkAntiLag        = ri.Cvar_Get("r_vkAntiLag", "1", CVAR_ARCHIVE_ND);
+	r_vkAntiLagStats   = ri.Cvar_Get("r_vkAntiLagStats", "0", 0);
+	r_vkAntiLagBackend = ri.Cvar_Get("r_vkAntiLagBackend", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
+	ri.Cvar_SetDescription(r_vkAntiLag, "Enables Anti-Lag frame pacing (0 = off, 1 = on, 2 = on + driver maxFPS limiter)");
+	ri.Cvar_SetDescription(r_vkAntiLagStats, "Prints periodic Anti-Lag input-to-present latency statistics in milliseconds (0 = off, 1 = on)");
+	ri.Cvar_SetDescription(r_vkAntiLagBackend, "Anti-Lag backend selection (0 = auto, 1 = VK_NV_low_latency2 [NVIDIA], 2 = VK_KHR_amd_anti_lag / VK_AMD_anti_lag [AMD])");
 
 	// make sure all the commands added here are also
 	// removed in R_Shutdown

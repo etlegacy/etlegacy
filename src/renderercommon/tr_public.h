@@ -166,6 +166,9 @@ typedef struct
 	int (*AnimFrameRate)(qhandle_t hAnim);
 #endif
 
+	void (*AntiLagInput)(void);
+	qboolean (*AntiLagActive)(void);
+
 } refexport_t;
 
 /**

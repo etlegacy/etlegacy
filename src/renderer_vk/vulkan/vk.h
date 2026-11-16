@@ -72,6 +72,18 @@ qboolean VK_ResizeSwapchain(int width, int height);
 qboolean VK_SetSceneSize(int width, int height);
 
 /**
+ * @brief Signals VK_AMD_anti_lag right before input polling so the driver
+ * paces the CPU prior to reading mouse and keyboard events.
+ */
+void VK_AntiLagInput(void);
+
+/**
+ * @brief Returns qtrue when VK_AMD_anti_lag is supported by the hardware and
+ * actively enforcing the com_maxfps limit (r_vkAntiLag == 2).
+ */
+qboolean VK_AntiLagIsPacingFPS(void);
+
+/**
  * @brief Acquires the next swapchain image and begins recording the
  * primary command buffer for this frame, starting the render pass with a
  * clear-to-black (or r_clear colored) attachment load.

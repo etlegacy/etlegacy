@@ -145,6 +145,172 @@
 		X(vkResetFences) \
 		X(vkUnmapMemory) \
 		X(vkUpdateDescriptorSets) \
-		X(vkWaitForFences)
+		X(vkWaitForFences) \
+		X(vkWaitSemaphores) \
+		X(vkAntiLagUpdateAMD) \
+		X(vkSetLatencySleepModeNV) \
+		X(vkLatencySleepNV) \
+		X(vkSetLatencyMarkerNV) \
+		X(vkGetLatencyTimingsNV)
+
+// fallback definitions for Vulkan SDK headers < 1.3.291
+#ifndef VK_AMD_anti_lag
+#define VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ANTI_LAG_FEATURES_AMD ((VkStructureType)1000476000)
+#define VK_STRUCTURE_TYPE_ANTI_LAG_DATA_AMD ((VkStructureType)1000476001)
+#define VK_STRUCTURE_TYPE_ANTI_LAG_PRESENTATION_INFO_AMD ((VkStructureType)1000476002)
+
+typedef enum VkAntiLagModeAMD
+{
+	VK_ANTI_LAG_MODE_DRIVER_CONTROL_AMD = 0,
+	VK_ANTI_LAG_MODE_ON_AMD             = 1,
+	VK_ANTI_LAG_MODE_OFF_AMD            = 2
+} VkAntiLagModeAMD;
+
+typedef enum VkAntiLagStageAMD
+{
+	VK_ANTI_LAG_STAGE_INPUT_AMD   = 0,
+	VK_ANTI_LAG_STAGE_PRESENT_AMD = 1
+} VkAntiLagStageAMD;
+
+typedef struct VkPhysicalDeviceAntiLagFeaturesAMD
+{
+	VkStructureType sType;
+	void            *pNext;
+	VkBool32        antiLag;
+} VkPhysicalDeviceAntiLagFeaturesAMD;
+
+typedef struct VkAntiLagPresentationInfoAMD
+{
+	VkStructureType   sType;
+	void              *pNext;
+	VkAntiLagStageAMD stage;
+	uint64_t          frameIndex;
+} VkAntiLagPresentationInfoAMD;
+
+typedef struct VkAntiLagDataAMD
+{
+	VkStructureType                    sType;
+	const void                         *pNext;
+	VkAntiLagModeAMD                   mode;
+	uint32_t                           maxFPS;
+	const VkAntiLagPresentationInfoAMD *pPresentationInfo;
+} VkAntiLagDataAMD;
+
+typedef void (VKAPI_PTR *PFN_vkAntiLagUpdateAMD)(VkDevice device, const VkAntiLagDataAMD *pData);
+#endif
+
+// fallback definitions for VK_NV_low_latency2 (Revision 3)
+#ifndef VK_NV_low_latency2
+#define VK_NV_LOW_LATENCY_2_EXTENSION_NAME "VK_NV_low_latency2"
+#define VK_STRUCTURE_TYPE_SWAPCHAIN_LATENCY_CREATE_INFO_NV ((VkStructureType)1000505000)
+#define VK_STRUCTURE_TYPE_LATENCY_SLEEP_MODE_INFO_NV ((VkStructureType)1000505001)
+#define VK_STRUCTURE_TYPE_LATENCY_SLEEP_INFO_NV ((VkStructureType)1000505002)
+#define VK_STRUCTURE_TYPE_SET_LATENCY_MARKER_INFO_NV ((VkStructureType)1000505003)
+#define VK_STRUCTURE_TYPE_GET_LATENCY_MARKER_INFO_NV ((VkStructureType)1000505004)
+#define VK_STRUCTURE_TYPE_LATENCY_TIMINGS_FRAME_REPORT_NV ((VkStructureType)1000505005)
+#define VK_STRUCTURE_TYPE_LATENCY_SUBMISSION_PRESENT_ID_NV ((VkStructureType)1000505006)
+#define VK_STRUCTURE_TYPE_LATENCY_SURFACE_CAPABILITIES_NV ((VkStructureType)1000505008)
+
+typedef enum VkLatencyMarkerNV
+{
+	VK_LATENCY_MARKER_SIMULATION_START_NV               = 0,
+	VK_LATENCY_MARKER_SIMULATION_END_NV                 = 1,
+	VK_LATENCY_MARKER_RENDERSUBMIT_START_NV             = 2,
+	VK_LATENCY_MARKER_RENDERSUBMIT_END_NV               = 3,
+	VK_LATENCY_MARKER_PRESENT_START_NV                  = 4,
+	VK_LATENCY_MARKER_PRESENT_END_NV                    = 5,
+	VK_LATENCY_MARKER_INPUT_SAMPLE_NV                   = 6,
+	VK_LATENCY_MARKER_TRIGGER_FLASH_NV                  = 7,
+	VK_LATENCY_MARKER_OUT_OF_BAND_RENDERSUBMIT_START_NV = 8,
+	VK_LATENCY_MARKER_OUT_OF_BAND_RENDERSUBMIT_END_NV   = 9,
+	VK_LATENCY_MARKER_OUT_OF_BAND_PRESENT_START_NV      = 10,
+	VK_LATENCY_MARKER_OUT_OF_BAND_PRESENT_END_NV        = 11
+} VkLatencyMarkerNV;
+
+typedef struct VkSwapchainLatencyCreateInfoNV
+{
+	VkStructureType sType;
+	const void      *pNext;
+	VkBool32        latencyModeEnable;
+} VkSwapchainLatencyCreateInfoNV;
+
+typedef struct VkLatencySleepModeInfoNV
+{
+	VkStructureType sType;
+	const void      *pNext;
+	VkBool32        lowLatencyMode;
+	VkBool32        lowLatencyBoost;
+	uint32_t        minimumIntervalUs;
+} VkLatencySleepModeInfoNV;
+
+typedef struct VkLatencySleepInfoNV
+{
+	VkStructureType sType;
+	const void      *pNext;
+	VkSemaphore     signalSemaphore;
+	uint64_t        value;
+} VkLatencySleepInfoNV;
+
+typedef struct VkSetLatencyMarkerInfoNV
+{
+	VkStructureType   sType;
+	const void        *pNext;
+	uint64_t          presentID;
+	VkLatencyMarkerNV marker;
+} VkSetLatencyMarkerInfoNV;
+
+typedef struct VkLatencySubmissionPresentIdNV
+{
+	VkStructureType sType;
+	const void      *pNext;
+	uint64_t        presentID;
+} VkLatencySubmissionPresentIdNV;
+
+typedef struct VkLatencyTimingsFrameReportNV
+{
+	VkStructureType sType;
+	void            *pNext;
+	uint64_t        presentID;
+	uint64_t        inputSampleTimeUs;
+	uint64_t        simStartTimeUs;
+	uint64_t        simEndTimeUs;
+	uint64_t        renderSubmitStartTimeUs;
+	uint64_t        renderSubmitEndTimeUs;
+	uint64_t        presentStartTimeUs;
+	uint64_t        presentEndTimeUs;
+	uint64_t        driverStartTimeUs;
+	uint64_t        driverEndTimeUs;
+	uint64_t        osRenderQueueStartTimeUs;
+	uint64_t        osRenderQueueEndTimeUs;
+	uint64_t        gpuRenderStartTimeUs;
+	uint64_t        gpuRenderEndTimeUs;
+} VkLatencyTimingsFrameReportNV;
+
+typedef struct VkGetLatencyMarkerInfoNV
+{
+	VkStructureType               sType;
+	const void                    *pNext;
+	uint32_t                      timingCount;
+	VkLatencyTimingsFrameReportNV *pTimings;
+} VkGetLatencyMarkerInfoNV;
+
+typedef VkResult (VKAPI_PTR *PFN_vkSetLatencySleepModeNV)(VkDevice device, VkSwapchainKHR swapchain, const VkLatencySleepModeInfoNV *pSleepModeInfo);
+typedef VkResult (VKAPI_PTR *PFN_vkLatencySleepNV)(VkDevice device, VkSwapchainKHR swapchain, const VkLatencySleepInfoNV *pSleepInfo);
+typedef void (VKAPI_PTR *PFN_vkSetLatencyMarkerNV)(VkDevice device, VkSwapchainKHR swapchain, const VkSetLatencyMarkerInfoNV *pLatencyMarkerInfo);
+typedef void (VKAPI_PTR *PFN_vkGetLatencyTimingsNV)(VkDevice device, VkSwapchainKHR swapchain, VkGetLatencyMarkerInfoNV *pLatencyMarkerInfo);
+#endif
+
+// fallback definitions for VK_KHR_present_id if headers are older than 1.2.184
+#ifndef VK_KHR_present_id
+#define VK_KHR_PRESENT_ID_EXTENSION_NAME "VK_KHR_present_id"
+#define VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_ID_FEATURES_KHR ((VkStructureType)1000294000)
+
+typedef struct VkPhysicalDevicePresentIdFeaturesKHR
+{
+	VkStructureType sType;
+	void            *pNext;
+	VkBool32        presentId;
+} VkPhysicalDevicePresentIdFeaturesKHR;
+#endif
 
 #endif // VK_FUNCS_H
