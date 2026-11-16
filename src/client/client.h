@@ -482,6 +482,7 @@ int CL_GetPingQueueCount(void);
 
 void CL_ShutdownRef(void);
 void CL_InitRef(void);
+qboolean CL_AntiLagActive(void);
 int CL_ServerStatus(const char *serverAddress, char *serverStatusString, size_t maxLen);
 
 void CL_AddToLimboChat(const char *str);

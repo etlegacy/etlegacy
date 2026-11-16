@@ -83,6 +83,9 @@ extern cvar_t *r_vkBindless;
 extern cvar_t *r_softParticles;
 extern cvar_t *r_vkCaptureFrame200;
 extern cvar_t *r_vkCapturePath;
+extern cvar_t *r_vkAntiLag;
+extern cvar_t *r_vkAntiLagStats;
+extern cvar_t *r_vkAntiLagBackend;
 
 extern cvar_t *r_screenshotFormat;
 extern cvar_t *r_screenshotJpegQuality;

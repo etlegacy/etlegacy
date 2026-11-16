@@ -38,7 +38,10 @@
 #include <vulkan/vulkan.h>
 #include <string.h>
 #include <stdlib.h>
-#ifdef __APPLE__
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#else
 #include <time.h>
 #endif
 
@@ -685,6 +688,21 @@ typedef struct
 	qboolean initialized;
 	uint32_t currentImageIndex;
 	vkPresentPacing_t pacing;
+
+	qboolean antiLag;                                      // VK_AMD_anti_lag supported by hardware
+	qboolean antiLagActiveState;                           // tracks whether Anti-Lag was last set to ON in the driver
+	cvar_t   *comMaxFps;                                   // cached com_maxfps pointer for r_vkAntiLag 2
+	uint64_t antiLagFrameIndex;                            // incremented in VK_AntiLagInput(), paired with PRESENT_AMD
+	double   antiLagInputStartMs;                          // monotonic timestamp after INPUT_AMD pacing (ms)
+	double   antiLagFrameLatencyMs;                        // EMA-smoothed input-to-present latency (ms)
+	int      antiLagLastPrintTime;                         // throttle timestamp for r_vkAntiLagStats output
+
+	qboolean    nvLowLatency2;                             // VK_NV_low_latency2 supported by hardware/layer
+	qboolean    nvFramePaced;                              // true if VK_AntiLagInput() started Reflex markers for this frame
+	VkSemaphore nvLatencySemaphore;                        // timeline semaphore signaled by vkLatencySleepNV
+	uint64_t    nvLatencySleepValue;                       // monotonically increasing timeline semaphore value
+	uint32_t    nvLastMinimumIntervalUs;                   // cached minimumIntervalUs to avoid redundant vkSetLatencySleepModeNV calls
+	qboolean    nvLastLowLatencyMode;                      // cached lowLatencyMode state
 } vkContext_t;
 
 static vkContext_t vk;
@@ -803,9 +821,43 @@ static qboolean VK_LoadDeviceFunctions(void)
 {
 #define VK_LOAD_FUNC(name) \
 		name = (PFN_ ## name)vkGetDeviceProcAddr(vk.device, #name); \
-		if (!name) { Ren_Print("Vulkan: failed to load %s\n", #name); return qfalse; }
+		if (!name && \
+		    strcmp(#name, "vkAntiLagUpdateAMD") != 0 && \
+		    strcmp(#name, "vkSetLatencySleepModeNV") != 0 && \
+		    strcmp(#name, "vkLatencySleepNV") != 0 && \
+		    strcmp(#name, "vkSetLatencyMarkerNV") != 0 && \
+		    strcmp(#name, "vkGetLatencyTimingsNV") != 0 && \
+		    strcmp(#name, "vkWaitSemaphores") != 0) { \
+			Ren_Print("Vulkan: failed to load %s\n", #name); \
+			return qfalse; \
+		}
 	VK_DEVICE_FUNCS(VK_LOAD_FUNC)
 #undef VK_LOAD_FUNC
+
+	if (vk.nvLowLatency2)
+	{
+		if (vkSetLatencySleepModeNV != NULL && vkLatencySleepNV != NULL && vkSetLatencyMarkerNV != NULL)
+		{
+			Ren_Print("Vulkan: Anti-Lag: %s (NVIDIA) initialized.\n", VK_NV_LOW_LATENCY_2_EXTENSION_NAME);
+		}
+		else
+		{
+			Ren_Warning("Vulkan: Anti-Lag: %s enabled, but required entry points are missing; disabling.\n", VK_NV_LOW_LATENCY_2_EXTENSION_NAME);
+			vk.nvLowLatency2 = qfalse;
+		}
+	}
+	else if (vk.antiLag)
+	{
+		if (vkAntiLagUpdateAMD != NULL)
+		{
+			Ren_Print("Vulkan: Anti-Lag: AMD backend initialized.\n");
+		}
+		else
+		{
+			Ren_Warning("Vulkan: Anti-Lag: AMD extension enabled, but vkAntiLagUpdateAMD is missing; disabling.\n");
+			vk.antiLag = qfalse;
+		}
+	}
 
 	return qtrue;
 }
@@ -1221,20 +1273,22 @@ static qboolean VK_PickPhysicalDeviceAndQueues(void)
 
 static qboolean VK_CreateLogicalDevice(void)
 {
-	float                            queuePriority = 1.0f;
-	VkDeviceQueueCreateInfo          queueCreateInfos[2];
-	uint32_t                         queueCreateInfoCount = 0;
-	VkPhysicalDeviceFeatures         deviceFeatures;
-	VkPhysicalDeviceVulkan12Features features12;
-	VkDeviceCreateInfo               createInfo;
-	const char                       *deviceExtensions[4] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, NULL, NULL, NULL };
-	uint32_t                         deviceExtensionCount = 1;
-	qboolean                         hasDisplayTiming     = qfalse;
-	uint32_t                         availableExtCount = 0, i;
-	VkExtensionProperties            *availableExt;
-	qboolean                         hasDeviceFault = qfalse;
+	float                                queuePriority = 1.0f;
+	VkDeviceQueueCreateInfo              queueCreateInfos[2];
+	uint32_t                             queueCreateInfoCount = 0;
+	VkPhysicalDeviceFeatures             deviceFeatures;
+	VkPhysicalDeviceVulkan12Features     features12;
+	VkPhysicalDeviceAntiLagFeaturesAMD   antiLagFeatures;
+	VkPhysicalDevicePresentIdFeaturesKHR presentIdFeatures;
+	VkDeviceCreateInfo                   createInfo;
+	const char                           *deviceExtensions[8] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+	uint32_t                             deviceExtensionCount = 1;
+	qboolean                             hasDisplayTiming     = qfalse;
+	uint32_t                             availableExtCount = 0, i;
+	VkExtensionProperties                *availableExt;
+	qboolean                             hasDeviceFault = qfalse;
 #ifdef VK_EXT_device_fault
-	VkPhysicalDeviceFaultFeaturesEXT faultFeatures;
+	VkPhysicalDeviceFaultFeaturesEXT     faultFeatures;
 #endif
 
 	Com_Memset(queueCreateInfos, 0, sizeof(queueCreateInfos));
@@ -1313,6 +1367,15 @@ static qboolean VK_CreateLogicalDevice(void)
 		availableExt = malloc(availableExtCount * sizeof(VkExtensionProperties));
 		if (availableExt && vkEnumerateDeviceExtensionProperties(vk.physicalDevice, NULL, &availableExtCount, availableExt) == VK_SUCCESS)
 		{
+			qboolean    haveAntiLagKHR   = qfalse;
+			qboolean    haveAntiLagAMD   = qfalse;
+			qboolean    havePresentId    = qfalse;
+			qboolean    haveNvLowLatency = qfalse;
+			int         backendPref      = r_vkAntiLagBackend ? r_vkAntiLagBackend->integer : 0;
+			const char *antiLagExt;
+			qboolean    canUseReflex;
+			qboolean    canUseAntiLag;
+
 			for (i = 0; i < availableExtCount; i++)
 			{
 				if (!strcmp(availableExt[i].extensionName, "VK_KHR_portability_subset"))
@@ -1326,6 +1389,22 @@ static qboolean VK_CreateLogicalDevice(void)
 					hasDisplayTiming                         = qtrue;
 				}
 #endif
+				else if (!strcmp(availableExt[i].extensionName, "VK_KHR_amd_anti_lag"))
+				{
+					haveAntiLagKHR = qtrue;
+				}
+				else if (!strcmp(availableExt[i].extensionName, "VK_AMD_anti_lag"))
+				{
+					haveAntiLagAMD = qtrue;
+				}
+				else if (!strcmp(availableExt[i].extensionName, VK_KHR_PRESENT_ID_EXTENSION_NAME))
+				{
+					havePresentId = qtrue;
+				}
+				else if (!strcmp(availableExt[i].extensionName, VK_NV_LOW_LATENCY_2_EXTENSION_NAME))
+				{
+					haveNvLowLatency = qtrue;
+				}
 #ifdef VK_EXT_device_fault
 				else if (!strcmp(availableExt[i].extensionName, VK_EXT_DEVICE_FAULT_EXTENSION_NAME))
 				{
@@ -1333,6 +1412,56 @@ static qboolean VK_CreateLogicalDevice(void)
 				}
 #endif
 			}
+
+			antiLagExt    = haveAntiLagKHR ? "VK_KHR_amd_anti_lag" : "VK_AMD_anti_lag";
+			canUseReflex  = (havePresentId && haveNvLowLatency &&
+                 deviceExtensionCount + 2 <= ARRAY_LEN(deviceExtensions)) ? qtrue : qfalse;
+			canUseAntiLag = ((haveAntiLagKHR || haveAntiLagAMD) &&
+                 deviceExtensionCount < ARRAY_LEN(deviceExtensions)) ? qtrue : qfalse;
+
+			vk.nvLowLatency2 = qfalse;
+			vk.antiLag       = qfalse;
+
+			// Report Anti-Lag extensions exposed by the driver/layers
+			if (canUseReflex && canUseAntiLag)
+			{
+				Ren_Print("Vulkan: Anti-Lag: supported extensions: %s (NVIDIA), %s (AMD)\n",
+				          VK_NV_LOW_LATENCY_2_EXTENSION_NAME, antiLagExt);
+			}
+			else if (canUseReflex)
+			{
+				Ren_Print("Vulkan: Anti-Lag: supported extension: %s (NVIDIA)\n",
+				          VK_NV_LOW_LATENCY_2_EXTENSION_NAME);
+			}
+			else if (canUseAntiLag)
+			{
+				Ren_Print("Vulkan: Anti-Lag: supported extension: %s (AMD)\n", antiLagExt);
+			}
+
+			// Select and enable the Anti-Lag backend according to r_vkAntiLagBackend:
+			//   0 = Auto (prefer VK_NV_low_latency2, fallback to VK_AMD_anti_lag)
+			//   1 = Force VK_NV_low_latency2 (NVIDIA)
+			//   2 = Force VK_AMD_anti_lag / VK_KHR_amd_anti_lag (AMD)
+			if (canUseReflex && (backendPref == 0 || backendPref == 1))
+			{
+				deviceExtensions[deviceExtensionCount++] = VK_KHR_PRESENT_ID_EXTENSION_NAME;
+				deviceExtensions[deviceExtensionCount++] = VK_NV_LOW_LATENCY_2_EXTENSION_NAME;
+				vk.nvLowLatency2 = qtrue;
+				Ren_Print("Vulkan: Anti-Lag: using %s (%s)\n", VK_NV_LOW_LATENCY_2_EXTENSION_NAME,
+				          backendPref == 1 ? "forced" : "auto");
+			}
+			else if (canUseAntiLag && (backendPref == 0 || backendPref == 2))
+			{
+				deviceExtensions[deviceExtensionCount++] = antiLagExt;
+				vk.antiLag                               = qtrue;
+				Ren_Print("Vulkan: Anti-Lag: using %s (%s)\n", antiLagExt,
+				          backendPref == 2 ? "forced" : "auto");
+			}
+			else if (backendPref == 1 || backendPref == 2)
+			{
+				Ren_Warning("Vulkan: Anti-Lag: requested r_vkAntiLagBackend %d is not supported by current device/layers.\n", backendPref);
+			}
+
 		}
 		if (availableExt)
 		{
@@ -1393,9 +1522,55 @@ static qboolean VK_CreateLogicalDevice(void)
 	}
 	Ren_Print("Vulkan: bindless textures %s\n", vk.bindless ? "on (2D batching)" : "off");
 
+	if (vk.nvLowLatency2)
+	{
+		qboolean hasTimelineSemaphore = qfalse;
+
+		if (vk.instanceVersion >= VK_API_VERSION_1_2)
+		{
+			PFN_vkGetPhysicalDeviceFeatures2 getFeatures2 = (PFN_vkGetPhysicalDeviceFeatures2)vkGetInstanceProcAddr(vk.instance, "vkGetPhysicalDeviceFeatures2");
+			VkPhysicalDeviceProperties       props;
+
+			vkGetPhysicalDeviceProperties(vk.physicalDevice, &props);
+			if (getFeatures2 && props.apiVersion >= VK_API_VERSION_1_2)
+			{
+				VkPhysicalDeviceVulkan12Features supported12;
+				VkPhysicalDeviceFeatures2        features2;
+
+				Com_Memset(&supported12, 0, sizeof(supported12));
+				supported12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+				Com_Memset(&features2, 0, sizeof(features2));
+				features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+				features2.pNext = &supported12;
+				getFeatures2(vk.physicalDevice, &features2);
+
+				if (supported12.timelineSemaphore)
+				{
+					features12.timelineSemaphore = VK_TRUE;
+					hasTimelineSemaphore         = qtrue;
+				}
+			}
+		}
+
+		if (!hasTimelineSemaphore)
+		{
+			Ren_Warning("Vulkan: Anti-Lag: Vulkan 1.2 timelineSemaphore not supported; disabling %s.\n", VK_NV_LOW_LATENCY_2_EXTENSION_NAME);
+			vk.nvLowLatency2 = qfalse;
+		}
+	}
+
 	Com_Memset(&createInfo, 0, sizeof(createInfo));
 	createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-	createInfo.pNext = vk.bindless ? &features12 : NULL;
+	createInfo.pNext = (vk.bindless || features12.timelineSemaphore) ? &features12 : NULL;
+
+	if (vk.nvLowLatency2)
+	{
+		Com_Memset(&presentIdFeatures, 0, sizeof(presentIdFeatures));
+		presentIdFeatures.sType     = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PRESENT_ID_FEATURES_KHR;
+		presentIdFeatures.pNext     = (void *)createInfo.pNext;
+		presentIdFeatures.presentId = VK_TRUE;
+		createInfo.pNext            = &presentIdFeatures;
+	}
 
 #ifdef VK_EXT_device_fault
 	// fault details after a lost device (VK_LogDeviceFault)
@@ -1425,6 +1600,16 @@ static qboolean VK_CreateLogicalDevice(void)
 	}
 #endif
 
+	// enable VK_AMD_anti_lag feature
+	if (vk.antiLag)
+	{
+		Com_Memset(&antiLagFeatures, 0, sizeof(antiLagFeatures));
+		antiLagFeatures.sType   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ANTI_LAG_FEATURES_AMD;
+		antiLagFeatures.pNext   = (void *)createInfo.pNext;
+		antiLagFeatures.antiLag = VK_TRUE;
+		createInfo.pNext        = &antiLagFeatures;
+	}
+
 	createInfo.pQueueCreateInfos       = queueCreateInfos;
 	createInfo.queueCreateInfoCount    = queueCreateInfoCount;
 	createInfo.pEnabledFeatures        = &deviceFeatures;
@@ -1439,6 +1624,28 @@ static qboolean VK_CreateLogicalDevice(void)
 
 	vkGetDeviceQueue(vk.device, vk.graphicsQueueFamily, 0, &vk.graphicsQueue);
 	vkGetDeviceQueue(vk.device, vk.presentQueueFamily, 0, &vk.presentQueue);
+
+	if (vk.nvLowLatency2)
+	{
+		VkSemaphoreTypeCreateInfo timelineInfo;
+		VkSemaphoreCreateInfo     semInfo;
+
+		Com_Memset(&timelineInfo, 0, sizeof(timelineInfo));
+		timelineInfo.sType         = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO;
+		timelineInfo.semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE;
+		timelineInfo.initialValue  = 0;
+
+		Com_Memset(&semInfo, 0, sizeof(semInfo));
+		semInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+		semInfo.pNext = &timelineInfo;
+
+		if (!VK_CheckResult(vkCreateSemaphore(vk.device, &semInfo, NULL, &vk.nvLatencySemaphore), "vkCreateSemaphore(timeline)"))
+		{
+			vk.nvLowLatency2 = qfalse;
+		}
+		vk.nvLatencySleepValue     = 0;
+		vk.nvLastMinimumIntervalUs = UINT32_MAX;
+	}
 
 #ifdef VK_EXT_device_fault
 	vk.getDeviceFaultInfo = hasDeviceFault ? (PFN_vkGetDeviceFaultInfoEXT)vkGetDeviceProcAddr(vk.device, "vkGetDeviceFaultInfoEXT") : NULL;
@@ -1513,14 +1720,15 @@ static qboolean VK_PresentWantsClock(void)
 
 static qboolean VK_CreateSwapchainAndViews(int width, int height)
 {
-	VkSurfaceCapabilitiesKHR caps;
-	VkSurfaceFormatKHR       formats[32];
-	uint32_t                 formatCount = 32;
-	VkPresentModeKHR         presentMode = VK_PRESENT_MODE_FIFO_KHR; // vsynced, always supported
-	VkExtent2D               extent;
-	VkSwapchainCreateInfoKHR createInfo;
-	uint32_t                 i;
-	uint32_t                 queueFamilyIndices[2];
+	VkSurfaceCapabilitiesKHR       caps;
+	VkSurfaceFormatKHR             formats[32];
+	uint32_t                       formatCount = 32;
+	VkPresentModeKHR               presentMode = VK_PRESENT_MODE_FIFO_KHR; // vsynced, always supported
+	VkExtent2D                     extent;
+	VkSwapchainCreateInfoKHR       createInfo;
+	VkSwapchainLatencyCreateInfoNV latencyCreateInfo;
+	uint32_t                       i;
+	uint32_t                       queueFamilyIndices[2];
 
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vk.physicalDevice, vk.surface, &caps);
 
@@ -1630,6 +1838,15 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 	createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 	createInfo.presentMode    = presentMode;
 	createInfo.clipped        = VK_TRUE;
+
+	if (vk.nvLowLatency2)
+	{
+		Com_Memset(&latencyCreateInfo, 0, sizeof(latencyCreateInfo));
+		latencyCreateInfo.sType             = VK_STRUCTURE_TYPE_SWAPCHAIN_LATENCY_CREATE_INFO_NV;
+		latencyCreateInfo.pNext             = createInfo.pNext;
+		latencyCreateInfo.latencyModeEnable = VK_TRUE;
+		createInfo.pNext                    = &latencyCreateInfo;
+	}
 
 	if (!VK_CheckResult(vkCreateSwapchainKHR(vk.device, &createInfo, NULL, &vk.swapchain), "vkCreateSwapchainKHR"))
 	{
@@ -5410,6 +5627,7 @@ qboolean VK_Init(int width, int height)
 	}
 
 	glConfig.maxTextureSize = (int)props.limits.maxImageDimension2D;
+	vk.comMaxFps            = ri.Cvar_Get("com_maxfps", "125", CVAR_ARCHIVE);
 
 	vk.initialized = qtrue;
 
@@ -5827,6 +6045,14 @@ void VK_Shutdown(void)
 	{
 		vkDestroyCommandPool(vk.device, vk.commandPool, NULL);
 	}
+	if (vk.nvLatencySemaphore != VK_NULL_HANDLE)
+	{
+		vkDestroySemaphore(vk.device, vk.nvLatencySemaphore, NULL);
+		vk.nvLatencySemaphore = VK_NULL_HANDLE;
+	}
+	vk.antiLagActiveState  = qfalse;
+	vk.antiLagInputStartMs = 0.0;
+
 	if (vk.device != VK_NULL_HANDLE)
 	{
 		vkDestroyDevice(vk.device, NULL);
@@ -6071,6 +6297,176 @@ static void VK_InitSceneColorImage(VkImage image, VkImageLayout finalLayout, VkA
 	barrier.dstAccessMask = dstAccess;
 	vkCmdPipelineBarrier(vk.commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, dstStage,
 	                     0, 0, NULL, 0, NULL, 1, &barrier);
+}
+
+/**
+ * @brief High-resolution monotonic clock in milliseconds for Anti-Lag latency
+ * telemetry (r_vkAntiLagStats).
+ */
+static double VK_AntiLagClockMs(void)
+{
+#if defined(_WIN32)
+	static double freqMs = 0.0;
+	LARGE_INTEGER counter;
+
+	if (freqMs == 0.0)
+	{
+		LARGE_INTEGER freq;
+		QueryPerformanceFrequency(&freq);
+		freqMs = 1000.0 / (double)freq.QuadPart;
+	}
+	QueryPerformanceCounter(&counter);
+	return (double)counter.QuadPart * freqMs;
+#else
+	struct timespec ts;
+
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	return (double)ts.tv_sec * 1000.0 + (double)ts.tv_nsec / 1000000.0;
+#endif
+}
+
+/**
+ * @brief Returns the target framerate for VK_AMD_anti_lag's driver-side
+ * limiter when r_vkAntiLag is set to 2, or 0 to disable driver FPS limiting.
+ */
+static uint32_t VK_GetAntiLagMaxFPS(void)
+{
+	if (r_vkAntiLag && r_vkAntiLag->integer == 2 && vk.comMaxFps && vk.comMaxFps->integer > 0)
+	{
+		return (uint32_t)vk.comMaxFps->integer;
+	}
+
+	return 0;
+}
+
+/**
+ * @brief Returns qtrue when VK_AMD_anti_lag is supported by the hardware and
+ * actively enforcing the com_maxfps limit (r_vkAntiLag == 2).
+ */
+qboolean VK_AntiLagIsPacingFPS(void)
+{
+	qboolean hwReady = ((vk.antiLag && vkAntiLagUpdateAMD != NULL) ||
+	                    (vk.nvLowLatency2 && vkLatencySleepNV != NULL)) ? qtrue : qfalse;
+
+	return (vk.initialized && !vk.restartPending && hwReady &&
+	        r_vkAntiLag && r_vkAntiLag->integer == 2 &&
+	        vk.comMaxFps && vk.comMaxFps->integer > 0) ? qtrue : qfalse;
+}
+
+/**
+ * @brief Marks the input stage for VK_NV_low_latency2 / VK_AMD_anti_lag
+ * immediately before client input polling so the driver paces the CPU
+ * before sampling mouse/keyboard.
+ */
+void VK_AntiLagInput(void)
+{
+	if (!vk.initialized || vk.restartPending)
+	{
+		return;
+	}
+
+	vk.antiLagFrameIndex++;
+
+	if (vk.nvLowLatency2 && vkSetLatencySleepModeNV != NULL && vkLatencySleepNV != NULL && vk.swapchain != VK_NULL_HANDLE)
+	{
+		qboolean wantEnabled       = (r_vkAntiLag && r_vkAntiLag->integer > 0) ? qtrue : qfalse;
+		uint32_t maxFps            = VK_GetAntiLagMaxFPS();
+		uint32_t minimumIntervalUs = (wantEnabled && maxFps > 0) ? (1000000U / maxFps) : 0U;
+
+		vk.nvFramePaced = qfalse;
+
+		if (wantEnabled != vk.antiLagActiveState || minimumIntervalUs != vk.nvLastMinimumIntervalUs)
+		{
+			VkLatencySleepModeInfoNV modeInfo;
+
+			Com_Memset(&modeInfo, 0, sizeof(modeInfo));
+			modeInfo.sType             = VK_STRUCTURE_TYPE_LATENCY_SLEEP_MODE_INFO_NV;
+			modeInfo.lowLatencyMode    = wantEnabled ? VK_TRUE : VK_FALSE;
+			modeInfo.lowLatencyBoost   = wantEnabled ? VK_TRUE : VK_FALSE;
+			modeInfo.minimumIntervalUs = minimumIntervalUs;
+
+			vkSetLatencySleepModeNV(vk.device, vk.swapchain, &modeInfo);
+			vk.antiLagActiveState      = wantEnabled;
+			vk.nvLastMinimumIntervalUs = minimumIntervalUs;
+		}
+
+		if (wantEnabled && vk.nvLatencySemaphore != VK_NULL_HANDLE && vkWaitSemaphores != NULL)
+		{
+			VkLatencySleepInfoNV     sleepInfo;
+			VkSemaphoreWaitInfo      waitInfo;
+			VkSetLatencyMarkerInfoNV markerInfo;
+			uint64_t                 signalVal = ++vk.nvLatencySleepValue;
+
+			Com_Memset(&sleepInfo, 0, sizeof(sleepInfo));
+			sleepInfo.sType           = VK_STRUCTURE_TYPE_LATENCY_SLEEP_INFO_NV;
+			sleepInfo.signalSemaphore = vk.nvLatencySemaphore;
+			sleepInfo.value           = signalVal;
+
+			if (vkLatencySleepNV(vk.device, vk.swapchain, &sleepInfo) == VK_SUCCESS)
+			{
+				Com_Memset(&waitInfo, 0, sizeof(waitInfo));
+				waitInfo.sType          = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO;
+				waitInfo.semaphoreCount = 1;
+				waitInfo.pSemaphores    = &vk.nvLatencySemaphore;
+				waitInfo.pValues        = &signalVal;
+
+				vkWaitSemaphores(vk.device, &waitInfo, 1000000000ULL);
+			}
+
+			if (vkSetLatencyMarkerNV != NULL)
+			{
+				Com_Memset(&markerInfo, 0, sizeof(markerInfo));
+				markerInfo.sType     = VK_STRUCTURE_TYPE_SET_LATENCY_MARKER_INFO_NV;
+				markerInfo.presentID = vk.antiLagFrameIndex;
+				markerInfo.marker    = VK_LATENCY_MARKER_SIMULATION_START_NV;
+				vkSetLatencyMarkerNV(vk.device, vk.swapchain, &markerInfo);
+
+				markerInfo.marker = VK_LATENCY_MARKER_INPUT_SAMPLE_NV;
+				vkSetLatencyMarkerNV(vk.device, vk.swapchain, &markerInfo);
+
+				vk.nvFramePaced = qtrue;
+			}
+		}
+	}
+	else if (vk.antiLag && vkAntiLagUpdateAMD != NULL)
+	{
+		qboolean wantEnabled = (r_vkAntiLag && r_vkAntiLag->integer > 0) ? qtrue : qfalse;
+
+		if (wantEnabled || vk.antiLagActiveState)
+		{
+			VkAntiLagPresentationInfoAMD pInfo;
+			VkAntiLagDataAMD             data;
+
+			Com_Memset(&data, 0, sizeof(data));
+			data.sType = VK_STRUCTURE_TYPE_ANTI_LAG_DATA_AMD;
+
+			if (wantEnabled)
+			{
+				Com_Memset(&pInfo, 0, sizeof(pInfo));
+				pInfo.sType      = VK_STRUCTURE_TYPE_ANTI_LAG_PRESENTATION_INFO_AMD;
+				pInfo.frameIndex = vk.antiLagFrameIndex;
+				pInfo.stage      = VK_ANTI_LAG_STAGE_INPUT_AMD;
+
+				data.mode              = VK_ANTI_LAG_MODE_ON_AMD;
+				data.maxFPS            = VK_GetAntiLagMaxFPS();
+				data.pPresentationInfo = &pInfo;
+			}
+			else
+			{
+				data.mode              = VK_ANTI_LAG_MODE_OFF_AMD;
+				data.maxFPS            = 0;
+				data.pPresentationInfo = NULL;
+			}
+
+			vkAntiLagUpdateAMD(vk.device, &data);
+			vk.antiLagActiveState = wantEnabled;
+		}
+	}
+
+	if (r_vkAntiLagStats && r_vkAntiLagStats->integer)
+	{
+		vk.antiLagInputStartMs = VK_AntiLagClockMs();
+	}
 }
 
 void VK_BeginFrame(void)
@@ -6836,14 +7232,40 @@ void VK_EndFrame(void)
 	{
 		VkResult result;
 
+		VkLatencySubmissionPresentIdNV nvSubmitPresentId;
+		VkSetLatencyMarkerInfoNV       nvMarker;
+		qboolean                       nvFrameActive = (vk.nvFramePaced && vkSetLatencyMarkerNV != NULL) ? qtrue : qfalse;
+
 		submitInfo.waitSemaphoreCount   = present ? 1 : 0;
 		submitInfo.pWaitSemaphores      = &vk.imageAvailableSemaphore;
 		submitInfo.pWaitDstStageMask    = &waitStage;
 		submitInfo.signalSemaphoreCount = present ? 1 : 0;
 		submitInfo.pSignalSemaphores    = &vk.renderFinishedSemaphore;
 
+		if (nvFrameActive)
+		{
+			Com_Memset(&nvSubmitPresentId, 0, sizeof(nvSubmitPresentId));
+			nvSubmitPresentId.sType     = VK_STRUCTURE_TYPE_LATENCY_SUBMISSION_PRESENT_ID_NV;
+			nvSubmitPresentId.pNext     = submitInfo.pNext;
+			nvSubmitPresentId.presentID = vk.antiLagFrameIndex;
+			submitInfo.pNext            = &nvSubmitPresentId;
+
+			Com_Memset(&nvMarker, 0, sizeof(nvMarker));
+			nvMarker.sType     = VK_STRUCTURE_TYPE_SET_LATENCY_MARKER_INFO_NV;
+			nvMarker.presentID = vk.antiLagFrameIndex;
+			nvMarker.marker    = VK_LATENCY_MARKER_RENDERSUBMIT_START_NV;
+			vkSetLatencyMarkerNV(vk.device, vk.swapchain, &nvMarker);
+		}
+
 		vkResetFences(vk.device, 1, &vk.inFlightFence);
 		result = vkQueueSubmit(vk.graphicsQueue, 1, &submitInfo, vk.inFlightFence);
+
+		if (nvFrameActive)
+		{
+			nvMarker.marker = VK_LATENCY_MARKER_RENDERSUBMIT_END_NV;
+			vkSetLatencyMarkerNV(vk.device, vk.swapchain, &nvMarker);
+		}
+
 		VK_CheckDeviceLost(result, "vkQueueSubmit(frame)");
 		vk.fenceSubmitted[vk.frameIndex] = (result == VK_SUCCESS) ? qtrue : qfalse;
 	}
@@ -6854,6 +7276,112 @@ void VK_EndFrame(void)
 		VkResult                 result;
 		VkPresentTimeGOOGLE      presentTime;
 		VkPresentTimesInfoGOOGLE presentTimes;
+
+		if (vk.antiLag && vkAntiLagUpdateAMD != NULL && r_vkAntiLag && r_vkAntiLag->integer)
+		{
+			VkAntiLagPresentationInfoAMD pInfo;
+			VkAntiLagDataAMD             data;
+
+			Com_Memset(&pInfo, 0, sizeof(pInfo));
+			pInfo.sType      = VK_STRUCTURE_TYPE_ANTI_LAG_PRESENTATION_INFO_AMD;
+			pInfo.frameIndex = vk.antiLagFrameIndex;
+			pInfo.stage      = VK_ANTI_LAG_STAGE_PRESENT_AMD;
+
+			Com_Memset(&data, 0, sizeof(data));
+			data.sType             = VK_STRUCTURE_TYPE_ANTI_LAG_DATA_AMD;
+			data.mode              = VK_ANTI_LAG_MODE_ON_AMD;
+			data.maxFPS            = VK_GetAntiLagMaxFPS();
+			data.pPresentationInfo = &pInfo;
+
+			vkAntiLagUpdateAMD(vk.device, &data);
+		}
+
+		if (r_vkAntiLagStats && r_vkAntiLagStats->integer && vk.antiLagInputStartMs > 0.0)
+		{
+			double sampleMs = VK_AntiLagClockMs() - vk.antiLagInputStartMs;
+			int    now      = ri.Milliseconds();
+
+			vk.antiLagInputStartMs = 0.0;
+
+			if (vk.antiLagFrameLatencyMs <= 0.0)
+			{
+				vk.antiLagFrameLatencyMs = sampleMs;
+			}
+			else
+			{
+				vk.antiLagFrameLatencyMs = vk.antiLagFrameLatencyMs * 0.90 + sampleMs * 0.10;
+			}
+
+			if (now - vk.antiLagLastPrintTime >= 500)
+			{
+				uint32_t    maxFps      = VK_GetAntiLagMaxFPS();
+				const char *backend     = vk.nvLowLatency2 ? "Reflex" : (vk.antiLag ? "AMD" : "None");
+				double      gpuRenderMs = -1.0;
+				double      totalPipeMs = -1.0;
+
+				vk.antiLagLastPrintTime = now;
+
+				if (vk.nvLowLatency2 && vkGetLatencyTimingsNV != NULL && vk.swapchain != VK_NULL_HANDLE)
+				{
+					VkLatencyTimingsFrameReportNV reports[64];
+					VkGetLatencyMarkerInfoNV      markerInfo;
+					uint32_t                      r;
+
+					Com_Memset(reports, 0, sizeof(reports));
+					for (r = 0; r < ARRAY_LEN(reports); r++)
+					{
+						reports[r].sType = VK_STRUCTURE_TYPE_LATENCY_TIMINGS_FRAME_REPORT_NV;
+					}
+
+					Com_Memset(&markerInfo, 0, sizeof(markerInfo));
+					markerInfo.sType       = VK_STRUCTURE_TYPE_GET_LATENCY_MARKER_INFO_NV;
+					markerInfo.timingCount = ARRAY_LEN(reports);
+					markerInfo.pTimings    = reports;
+
+					vkGetLatencyTimingsNV(vk.device, vk.swapchain, &markerInfo);
+
+					if (markerInfo.timingCount > 0)
+					{
+						const VkLatencyTimingsFrameReportNV *latest = &reports[markerInfo.timingCount - 1];
+
+						if (latest->gpuRenderEndTimeUs >= latest->gpuRenderStartTimeUs)
+						{
+							gpuRenderMs = (double)(latest->gpuRenderEndTimeUs - latest->gpuRenderStartTimeUs) / 1000.0;
+						}
+						if (latest->presentEndTimeUs >= latest->inputSampleTimeUs && latest->inputSampleTimeUs > 0)
+						{
+							totalPipeMs = (double)(latest->presentEndTimeUs - latest->inputSampleTimeUs) / 1000.0;
+						}
+					}
+				}
+
+				if ((!vk.antiLag && !vk.nvLowLatency2) || !r_vkAntiLag || r_vkAntiLag->integer <= 0)
+				{
+					Ren_Print("Vulkan: Anti-Lag [%s | OFF] input-to-present: %.2f ms\n", backend, vk.antiLagFrameLatencyMs);
+				}
+				else if (totalPipeMs >= 0.0 && gpuRenderMs >= 0.0)
+				{
+					if (maxFps > 0)
+					{
+						Ren_Print("Vulkan: Anti-Lag [%s | ON, maxFPS: %u] cpu: %.2f ms | gpu: %.2f ms | total: %.2f ms\n",
+						          backend, maxFps, vk.antiLagFrameLatencyMs, gpuRenderMs, totalPipeMs);
+					}
+					else
+					{
+						Ren_Print("Vulkan: Anti-Lag [%s | ON] cpu: %.2f ms | gpu: %.2f ms | total: %.2f ms\n",
+						          backend, vk.antiLagFrameLatencyMs, gpuRenderMs, totalPipeMs);
+					}
+				}
+				else if (maxFps > 0)
+				{
+					Ren_Print("Vulkan: Anti-Lag [%s | ON, maxFPS: %u] input-to-present: %.2f ms\n", backend, maxFps, vk.antiLagFrameLatencyMs);
+				}
+				else
+				{
+					Ren_Print("Vulkan: Anti-Lag [%s | ON] input-to-present: %.2f ms\n", backend, vk.antiLagFrameLatencyMs);
+				}
+			}
+		}
 
 		Com_Memset(&presentInfo, 0, sizeof(presentInfo));
 		presentInfo.sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -6878,7 +7406,27 @@ void VK_EndFrame(void)
 			presentInfo.pNext           = &presentTimes;
 		}
 
-		result = vkQueuePresentKHR(vk.presentQueue, &presentInfo);
+		if (vk.nvFramePaced && vkSetLatencyMarkerNV != NULL)
+		{
+			VkSetLatencyMarkerInfoNV nvPresentMarker;
+
+			Com_Memset(&nvPresentMarker, 0, sizeof(nvPresentMarker));
+			nvPresentMarker.sType     = VK_STRUCTURE_TYPE_SET_LATENCY_MARKER_INFO_NV;
+			nvPresentMarker.presentID = vk.antiLagFrameIndex;
+			nvPresentMarker.marker    = VK_LATENCY_MARKER_PRESENT_START_NV;
+			vkSetLatencyMarkerNV(vk.device, vk.swapchain, &nvPresentMarker);
+
+			result = vkQueuePresentKHR(vk.presentQueue, &presentInfo);
+
+			nvPresentMarker.marker = VK_LATENCY_MARKER_PRESENT_END_NV;
+			vkSetLatencyMarkerNV(vk.device, vk.swapchain, &nvPresentMarker);
+		}
+		else
+		{
+			result = vkQueuePresentKHR(vk.presentQueue, &presentInfo);
+		}
+		vk.nvFramePaced = qfalse;
+
 		VK_CheckDeviceLost(result, "vkQueuePresentKHR");
 		VK_CheckSurfaceLost(result, "vkQueuePresentKHR");
 		if (result == VK_ERROR_OUT_OF_DATE_KHR || (result == VK_SUBOPTIMAL_KHR && VK_SwapchainSizeChanged()))

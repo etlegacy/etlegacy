@@ -2543,6 +2543,15 @@ static void CL_FrameHandleVideo(int *msec)
 }
 
 /**
+ * @brief CL_AntiLagActive
+ * @return qtrue if the active renderer is pacing frames via VK_AMD_anti_lag mode 2
+ */
+qboolean CL_AntiLagActive(void)
+{
+	return (re.AntiLagActive && re.AntiLagActive()) ? qtrue : qfalse;
+}
+
+/**
  * @brief CL_Frame
  * @param[in] msec
  */
@@ -2592,6 +2601,11 @@ void CL_Frame(int msec)
 
 	// let the download system run its loop quick if there are open sockets
 	Com_WebDownloadLoop();
+
+	if (re.AntiLagInput)
+	{
+		re.AntiLagInput();
+	}
 
 	// send intentions now
 	CL_SendCmd();

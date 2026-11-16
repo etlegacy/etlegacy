@@ -893,8 +893,10 @@ refexport_t *GetRefAPI(int apiVersion, refimport_t *rimp)
 	re.SetWorldVisData     = RE_SetWorldVisData;
 	re.EndRegistration     = RE_EndRegistration;
 
-	re.BeginFrame = RE_BeginFrame;
-	re.EndFrame   = RE_EndFrame;
+	re.BeginFrame    = RE_BeginFrame;
+	re.EndFrame      = RE_EndFrame;
+	re.AntiLagInput  = VK_AntiLagInput;
+	re.AntiLagActive = VK_AntiLagIsPacingFPS;
 
 	re.MarkFragments = R_MarkFragments;
 	re.ProjectDecal  = RE_ProjectDecal;
