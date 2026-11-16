@@ -2,7 +2,7 @@
 Type=Application
 Name=ET: Legacy @BIN_DESCRIBE@
 GenericName=World War II first-person shooter
-Comment=World War II first-person shooter
+Comment=Team-based multiplayer game based on Wolfenstein: Enemy Territory
 Icon=etl
 Exec=etl@BIN_SUFFIX@ +connect %u
 Terminal=false

@@ -14,8 +14,15 @@ PROJECTDIR="${_SRC}/project"
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
     MODMAIN="${HOME}/Library/Application Support/etlegacy/etmain"
-else
+elif [ -d "${HOME}/.etlegacy" ]; then
+    # legacy home path, still preferred by the engine when it exists
     MODMAIN="${HOME}/.etlegacy/etmain"
+else
+    # XDG base directory specification, a relative XDG_DATA_HOME is invalid
+    case "${XDG_DATA_HOME}" in
+        /*) MODMAIN="${XDG_DATA_HOME}/etlegacy/etmain" ;;
+        *) MODMAIN="${HOME}/.local/share/etlegacy/etmain" ;;
+    esac
 fi
 
 ETLEGACY_MIRROR="https://mirror.etlegacy.com/etmain/"
@@ -43,6 +50,13 @@ echo "ET: Legacy version: ${ETLEGACY_VERSION}"
 
 INSTALL_PREFIX=${HOME}/etlegacy
 
+# By default everything is installed in a single relocatable directory, which is also
+# what the release packages are made of. On Linux --fhs selects the FHS layout instead,
+# with the per-user XDG prefix (~/.local) as default prefix:
+#   <prefix>/bin, <prefix>/lib/etlegacy, <prefix>/share
+portable_install=true
+PREFIX_FROM_USER=
+
 # Set this to false to disable colors
 color=true
 
@@ -63,8 +77,8 @@ cmake_args=()
 # Command that can be run
 # first array has the cmd names which can be given
 # second array holds the functions which match the cmd names
-easy_keys=(clean build generate package install download crust release project updatelicense watch _watch help)
-easy_cmd=(run_clean run_build run_generate run_package run_install run_download run_uncrustify run_release run_project run_license_year_udpate run_watch run_watch_progress print_help)
+easy_keys=(clean build generate package install uninstall download crust release project updatelicense watch _watch help)
+easy_cmd=(run_clean run_build run_generate run_package run_install run_uninstall run_download run_uncrustify run_release run_project run_license_year_udpate run_watch run_watch_progress print_help)
 easy_count=$((${#easy_keys[*]} - 1))
 
 check_exit() {
@@ -299,7 +313,10 @@ parse_commandline() {
         elif [[ $var == --build=* ]]; then
             BUILDDIR=$(echo "$var" | cut -d'=' -f 2)
             einfo "Will use build dir of: ${BUILDDIR}"
+        elif [ "$var" = "--fhs" ]; then
+            portable_install=false
         elif [[ $var == --prefix=* ]]; then
+            PREFIX_FROM_USER=1
             INSTALL_PREFIX=$(echo "$var" | cut -d'=' -f 2)
             einfo "Will use installation dir of: ${INSTALL_PREFIX}"
         elif [[ $var == --osx=* ]]; then
@@ -691,7 +708,7 @@ generate_configuration() {
                 einfo "Building for macOS architecture(s): ${MACOS_ARCHITECTURES}"
             fi
 
-        else
+        elif $portable_install || [ "${PLATFORMSYS}" != "Linux" ]; then
             PREFIX=${INSTALL_PREFIX}
             cmake_args+=(
                 "-DCMAKE_INSTALL_PREFIX=${PREFIX}"
@@ -699,6 +716,15 @@ generate_configuration() {
                 "-DINSTALL_DEFAULT_SHAREDIR=."
                 "-DINSTALL_DEFAULT_BINDIR=."
                 "-DINSTALL_DEFAULT_BASEDIR=."
+            )
+        else
+            PREFIX=${INSTALL_PREFIX}
+            cmake_args+=(
+                "-DCMAKE_INSTALL_PREFIX=${PREFIX}"
+                "-DINSTALL_DEFAULT_BINDIR=bin"
+                "-DINSTALL_DEFAULT_SHAREDIR=share"
+                "-DINSTALL_DEFAULT_MODDIR=lib/etlegacy"
+                "-DINSTALL_DEFAULT_BASEDIR=${PREFIX}/lib/etlegacy"
             )
         fi
     fi
@@ -928,6 +954,9 @@ create_osx_dmg() {
 run_package() {
     einfo "Package..."
     cd "${BUILDDIR}"
+    if detect_installed_layout; then
+        ewarning "${BUILDDIR} is configured for the FHS layout, the package will not be relocatable"
+    fi
     # check_exit "make package"
     # calling cpack directly we are not checking the build output anymore
     check_exit "cpack"
@@ -937,10 +966,56 @@ run_package() {
     fi
 }
 
+# The install layout is the one the build directory was configured with: the command line
+# only takes effect on build and generate. Sets INSTALLED_PREFIX and succeeds for an FHS tree.
+detect_installed_layout() {
+    local cache="${BUILDDIR}/CMakeCache.txt"
+
+    [ "${PLATFORMSYS}" = "Linux" ] && [ -f "${cache}" ] || return 1
+    grep -q '^INSTALL_DEFAULT_MODDIR:[A-Z]*=lib/etlegacy$' "${cache}" || return 1
+    INSTALLED_PREFIX=$(sed -n 's/^CMAKE_INSTALL_PREFIX:[A-Z]*=//p' "${cache}")
+}
+
+# Refresh the desktop caches so the menu entry, icon and et:// handler show up
+# without logging out. Skipped when staging into a DESTDIR.
+update_desktop_caches() {
+    [ -z "${DESTDIR}" ] || return 0
+
+    local share="${INSTALLED_PREFIX}/share"
+
+    if command -v update-desktop-database &>/dev/null; then
+        update-desktop-database -q "${share}/applications" 2>/dev/null
+    fi
+    if command -v update-mime-database &>/dev/null; then
+        update-mime-database "${share}/mime" 2>/dev/null
+    fi
+    if command -v gtk-update-icon-cache &>/dev/null && [ -f "${share}/icons/hicolor/index.theme" ]; then
+        gtk-update-icon-cache -q -t -f "${share}/icons/hicolor" 2>/dev/null
+    fi
+    return 0
+}
+
 run_install() {
     einfo "Install..."
     cd "${BUILDDIR}"
     check_exit "make install"
+
+    if detect_installed_layout; then
+        update_desktop_caches
+        case ":${PATH}:" in
+            *":${INSTALLED_PREFIX}/bin:"*) ;;
+            *) ewarning "${INSTALLED_PREFIX}/bin is not in PATH, add it to start etl from a shell or the menu entry" ;;
+        esac
+        einfo "Installed to ${INSTALLED_PREFIX}, remove it with: ./easybuild.sh uninstall"
+    fi
+}
+
+run_uninstall() {
+    einfo "Uninstall..."
+    cd "${BUILDDIR}"
+    check_exit "make uninstall"
+    detect_installed_layout && update_desktop_caches
+    return 0
 }
 
 run_watch_progress() {
@@ -1033,7 +1108,8 @@ print_help() {
     ehead "build - run the build process"
     ehead "generate - generate the build files"
     ehead "package - run the package process"
-    ehead "install - install the game into the system"
+    ehead "install - install the game"
+    ehead "uninstall - remove the files recorded by the last install"
     ehead "download - download assets"
     ehead "crust - run the uncrustify to the source"
     ehead "project - generate the project files for your platform"
@@ -1046,6 +1122,7 @@ print_help() {
     ehead "-64, -32, -debug, -clang, -lsp, -nodb -nor2, -nodynamic, -nossl, -systemlibs"
     ehead "-noextra, -noupdate, -mod, -server, -ninja, -nopk3, -lsp"
     ehead "--build=*, --prefix=*, --osx=* --osx-arc=*"
+    ehead "--fhs (Linux: bin, lib and share layout, default prefix ~/.local)"
     ehead "--silent -etpub -jaymod -nq"
     echo
 }
@@ -1054,6 +1131,15 @@ start_script() {
     setup_sensible_defaults
 
     parse_commandline "$@"
+
+    if ! $portable_install; then
+        if [ "$(uname -s)" != "Linux" ]; then
+            ewarning "--fhs is only supported on Linux, ignoring it"
+            portable_install=true
+        elif [ -z "${PREFIX_FROM_USER}" ]; then
+            INSTALL_PREFIX=${HOME}/.local
+        fi
+    fi
 
     #CMD_ARGS="${@:2}"
     #CMD_ARGS=$@

@@ -3,8 +3,6 @@
 #-----------------------------------------------------------------
 
 # Taken from http://www.cmake.org/Wiki/CMake_FAQ#Can_I_do_.22make_uninstall.22_with_CMake.3F
-cmake_policy(SET CMP0007 OLD) # ignore empty list item in list
-
 if (NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
 		message(FATAL_ERROR "Cannot find install manifest: \"@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt\"")
 endif(NOT EXISTS "@CMAKE_CURRENT_BINARY_DIR@/install_manifest.txt")
@@ -27,3 +25,42 @@ foreach (file ${files})
 		message(STATUS "File \"$ENV{DESTDIR}${file}\" does not exist.")
 	endif (EXISTS "$ENV{DESTDIR}${file}")
 endforeach(file)
+
+# The mod directory belongs entirely to ET: Legacy and may contain empty directories which
+# are created by the install but are not listed in the manifest (e.g. the Omni-bot logs).
+# Drop it if nothing but empty directories remains in it. The prefix itself is kept.
+set(moddir "@INSTALL_DEFAULT_MODDIR@")
+if (NOT moddir STREQUAL "." AND NOT IS_ABSOLUTE "${moddir}")
+	set(moddir "$ENV{DESTDIR}@CMAKE_INSTALL_PREFIX@/${moddir}")
+	if (IS_DIRECTORY "${moddir}")
+		file(GLOB_RECURSE remaining LIST_DIRECTORIES false "${moddir}/*")
+		if (NOT remaining)
+			message(STATUS "Removing empty directory \"${moddir}\"")
+			file(REMOVE_RECURSE "${moddir}")
+		endif()
+	endif()
+endif()
+
+# Remove the directories left empty by the removal above, deepest first. Only the ones
+# below the install prefix are considered and the prefix itself is always kept.
+set(dirs "")
+foreach (file ${files})
+	get_filename_component(dir "${file}" DIRECTORY)
+	string(FIND "${dir}/" "@CMAKE_INSTALL_PREFIX@/" in_prefix)
+	while (in_prefix EQUAL 0 AND NOT dir STREQUAL "@CMAKE_INSTALL_PREFIX@")
+		list(APPEND dirs "${dir}")
+		get_filename_component(dir "${dir}" DIRECTORY)
+		string(FIND "${dir}/" "@CMAKE_INSTALL_PREFIX@/" in_prefix)
+	endwhile()
+endforeach(file)
+
+list(REMOVE_DUPLICATES dirs)
+list(SORT dirs)
+list(REVERSE dirs)
+foreach (dir ${dirs})
+	file(GLOB children "$ENV{DESTDIR}${dir}/*")
+	if (IS_DIRECTORY "$ENV{DESTDIR}${dir}" AND NOT children)
+		message(STATUS "Removing empty directory \"$ENV{DESTDIR}${dir}\"")
+		file(REMOVE_RECURSE "$ENV{DESTDIR}${dir}")
+	endif()
+endforeach(dir)
