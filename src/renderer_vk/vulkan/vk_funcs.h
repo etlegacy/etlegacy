@@ -137,6 +137,7 @@
 		X(vkGetDeviceQueue) \
 		X(vkGetImageMemoryRequirements) \
 		X(vkGetSwapchainImagesKHR) \
+		X(vkInvalidateMappedMemoryRanges) \
 		X(vkMapMemory) \
 		X(vkQueuePresentKHR) \
 		X(vkQueueSubmit) \

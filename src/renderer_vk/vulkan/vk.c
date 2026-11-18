@@ -479,6 +479,7 @@ typedef struct
 	VkDeviceMemory captureMemory;
 	VkDeviceSize captureSize;
 	void *captureMapped;
+	qboolean captureCoherent;                          // else invalidate before reading
 	qboolean captureRequested;
 	qboolean captureReady;
 	uint32_t captureWidth;
@@ -2453,10 +2454,9 @@ static qboolean VK_CreateCommandObjects(void)
 
 /**
  * @brief Finds a device memory type index matching both the given
- * memory-type bitmask (from a VkMemoryRequirements) and the requested
- * property flags (host-visible, device-local, ...).
+ * memory-type bitmask and property flags; qfalse if there is none.
  */
-static uint32_t VK_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
+static qboolean VK_TryFindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties, uint32_t *index)
 {
 	VkPhysicalDeviceMemoryProperties memProperties;
 	uint32_t                         i;
@@ -2467,8 +2467,26 @@ static uint32_t VK_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags pro
 	{
 		if ((typeFilter & (1u << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
 		{
-			return i;
+			*index = i;
+			return qtrue;
 		}
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief Finds a device memory type index matching both the given
+ * memory-type bitmask (from a VkMemoryRequirements) and the requested
+ * property flags (host-visible, device-local, ...).
+ */
+static uint32_t VK_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
+{
+	uint32_t index;
+
+	if (VK_TryFindMemoryType(typeFilter, properties, &index))
+	{
+		return index;
 	}
 
 	Ren_Print("Vulkan: failed to find a suitable memory type\n");
@@ -2476,14 +2494,18 @@ static uint32_t VK_FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags pro
 }
 
 /**
- * @brief Allocates a VkBuffer + backing VkDeviceMemory pair with the given
- * usage/property flags.
+ * @brief Allocates a VkBuffer + backing VkDeviceMemory pair, from a memory
+ * type with the preferred property flags if the buffer can use one,
+ * otherwise from one with the required flags. *chosen (optional) gets the
+ * flags of the memory type used.
  */
-static qboolean VK_CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer *buffer, VkDeviceMemory *memory)
+static qboolean VK_CreateBufferPreferred(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags preferred, VkMemoryPropertyFlags properties,
+                                         VkBuffer *buffer, VkDeviceMemory *memory, VkMemoryPropertyFlags *chosen)
 {
-	VkBufferCreateInfo   bufferInfo;
-	VkMemoryRequirements memRequirements;
-	VkMemoryAllocateInfo allocInfo;
+	VkPhysicalDeviceMemoryProperties memProperties;
+	VkBufferCreateInfo               bufferInfo;
+	VkMemoryRequirements             memRequirements;
+	VkMemoryAllocateInfo             allocInfo;
 
 	Com_Memset(&bufferInfo, 0, sizeof(bufferInfo));
 	bufferInfo.sType       = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -2499,9 +2521,17 @@ static qboolean VK_CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkM
 	vkGetBufferMemoryRequirements(vk.device, *buffer, &memRequirements);
 
 	Com_Memset(&allocInfo, 0, sizeof(allocInfo));
-	allocInfo.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	allocInfo.allocationSize  = memRequirements.size;
-	allocInfo.memoryTypeIndex = VK_FindMemoryType(memRequirements.memoryTypeBits, properties);
+	allocInfo.sType          = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = memRequirements.size;
+	if (!VK_TryFindMemoryType(memRequirements.memoryTypeBits, preferred, &allocInfo.memoryTypeIndex))
+	{
+		allocInfo.memoryTypeIndex = VK_FindMemoryType(memRequirements.memoryTypeBits, properties);
+	}
+	if (chosen)
+	{
+		vkGetPhysicalDeviceMemoryProperties(vk.physicalDevice, &memProperties);
+		*chosen = memProperties.memoryTypes[allocInfo.memoryTypeIndex].propertyFlags;
+	}
 
 	if (!VK_CheckResult(vkAllocateMemory(vk.device, &allocInfo, NULL, memory), "vkAllocateMemory"))
 	{
@@ -2513,6 +2543,15 @@ static qboolean VK_CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkM
 	vkBindBufferMemory(vk.device, *buffer, *memory, 0);
 
 	return qtrue;
+}
+
+/**
+ * @brief Allocates a VkBuffer + backing VkDeviceMemory pair with the given
+ * usage/property flags.
+ */
+static qboolean VK_CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer *buffer, VkDeviceMemory *memory)
+{
+	return VK_CreateBufferPreferred(size, usage, properties, properties, buffer, memory, NULL);
 }
 
 /**
@@ -6242,7 +6281,8 @@ static void VK_DebugWriteCapturePPM(const char *path)
  */
 static qboolean VK_EnsureCaptureBuffer(void)
 {
-	VkDeviceSize size = (VkDeviceSize)vk.swapchainExtent.width * vk.swapchainExtent.height * 4;
+	VkDeviceSize          size = (VkDeviceSize)vk.swapchainExtent.width * vk.swapchainExtent.height * 4;
+	VkMemoryPropertyFlags flags;
 
 	if (vk.captureBuffer != VK_NULL_HANDLE && vk.captureSize == size)
 	{
@@ -6259,16 +6299,23 @@ static qboolean VK_EnsureCaptureBuffer(void)
 		vk.captureMapped = NULL;
 	}
 
-	if (!VK_CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-	                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-	                     &vk.captureBuffer, &vk.captureMemory))
+	// the CPU reads the whole frame back: uncached (write-combined) memory,
+	// the first host-visible type on most discrete GPUs, makes every load
+	// a slow uncached read, and a screenshot then stalls the game for up
+	// to a second
+	if (!VK_CreateBufferPreferred(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+	                              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT,
+	                              VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+	                              &vk.captureBuffer, &vk.captureMemory, &flags))
 	{
 		vk.captureBuffer = VK_NULL_HANDLE;
 		return qfalse;
 	}
 
 	vkMapMemory(vk.device, vk.captureMemory, 0, size, 0, &vk.captureMapped);
-	vk.captureSize = size;
+	vk.captureSize     = size;
+	vk.captureCoherent = (flags & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) != 0;
+	Ren_Developer("Vulkan: capture buffer in %s memory\n", (flags & VK_MEMORY_PROPERTY_HOST_CACHED_BIT) ? "cached" : "uncached");
 
 	return qtrue;
 }
@@ -6551,6 +6598,8 @@ void VK_ReadCapturedFrameRGB(byte *dst, int width, int height, int padlen)
 {
 	const byte *src = (const byte *)vk.captureMapped;
 	qboolean   bgra = (vk.captureFormat == VK_FORMAT_B8G8R8A8_UNORM || vk.captureFormat == VK_FORMAT_B8G8R8A8_SRGB);
+	size_t     rowSize;
+	byte       *rowCopy;
 	int        x, y;
 
 	if (!vk.captureReady || !src)
@@ -6567,11 +6616,18 @@ void VK_ReadCapturedFrameRGB(byte *dst, int width, int height, int padlen)
 		height = (int)vk.captureHeight;
 	}
 
+	// each row is copied out of the mapped memory in one block before the
+	// per-byte swizzle, which would be slow on uncached memory (the fallback
+	// when the device has no cached host-visible memory)
+	rowSize = (size_t)width * 4;
+	rowCopy = ri.Hunk_AllocateTempMemory(rowSize);
+
 	for (y = 0; y < height; y++)
 	{
 		// GL row 0 is the bottom of the image, Vulkan row 0 the top
-		const byte *row = src + (size_t)(vk.captureHeight - 1 - y) * vk.captureWidth * 4;
+		const byte *row = rowCopy;
 
+		Com_Memcpy(rowCopy, src + (size_t)(vk.captureHeight - 1 - y) * vk.captureWidth * 4, rowSize);
 		for (x = 0; x < width; x++, row += 4)
 		{
 			*dst++ = bgra ? row[2] : row[0];
@@ -6580,6 +6636,8 @@ void VK_ReadCapturedFrameRGB(byte *dst, int width, int height, int padlen)
 		}
 		dst += padlen;
 	}
+
+	ri.Hunk_FreeTempMemory(rowCopy);
 }
 
 /**
@@ -6713,6 +6771,7 @@ void VK_EndFrame(void)
 	if (captureThisFrame)
 	{
 		VkImageMemoryBarrier barrier;
+		VkMemoryBarrier      hostBarrier;
 		VkBufferImageCopy    region;
 
 		Com_Memset(&barrier, 0, sizeof(barrier));
@@ -6738,6 +6797,14 @@ void VK_EndFrame(void)
 		region.imageExtent.depth           = 1;
 		vkCmdCopyImageToBuffer(presentCB, vk.swapchainImages[vk.currentImageIndex], VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 		                       vk.captureBuffer, 1, &region);
+
+		// make the copy visible to the CPU reads after the fence wait
+		Com_Memset(&hostBarrier, 0, sizeof(hostBarrier));
+		hostBarrier.sType         = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+		hostBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		hostBarrier.dstAccessMask = VK_ACCESS_HOST_READ_BIT;
+		vkCmdPipelineBarrier(presentCB, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_HOST_BIT,
+		                     0, 1, &hostBarrier, 0, NULL, 0, NULL);
 
 		barrier.oldLayout     = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
 		barrier.newLayout     = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
@@ -6895,6 +6962,16 @@ void VK_EndFrame(void)
 	{
 		// the fence stays signaled, so VK_BeginFrame()'s wait returns at once
 		VK_WaitForFence(vk.inFlightFence, "vkWaitForFences(capture)");
+		if (!vk.captureCoherent)
+		{
+			VkMappedMemoryRange range;
+
+			Com_Memset(&range, 0, sizeof(range));
+			range.sType  = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+			range.memory = vk.captureMemory;
+			range.size   = VK_WHOLE_SIZE;
+			vkInvalidateMappedMemoryRanges(vk.device, 1, &range);
+		}
 		vk.captureWidth  = vk.swapchainExtent.width;
 		vk.captureHeight = vk.swapchainExtent.height;
 		vk.captureFormat = vk.swapchainFormat;
