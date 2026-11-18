@@ -1186,6 +1186,7 @@ typedef struct
 	int time;                               ///< this is the time value that the client
 	///< is rendering at.
 	int oldTime;                            ///< time at last frame, used for missile trails and prediction checking
+	int pmTime;                             ///< popup message clock: cg.time advance without the paused match time
 
 	int physicsTime;                        ///< either cg.snap->time or cg.nextSnap->time
 
