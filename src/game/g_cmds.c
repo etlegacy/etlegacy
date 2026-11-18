@@ -3457,9 +3457,10 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 	{
 		level.voteInfo.voteTime = level.warmupTime - VOTE_TIME;
 	}
-	else if (g_gamestate.integer == GS_PLAYING && (level.startTime + (g_timelimit.value * 60000) - level.time < VOTE_TIME))
+	else if (g_gamestate.integer == GS_PLAYING && g_timelimit.value != 0.f && (level.startTime + level.timeDelta + (g_timelimit.value * 60000) - level.time < VOTE_TIME))
 	{
-		level.voteInfo.voteTime = level.startTime + (g_timelimit.value * 60000) - VOTE_TIME;
+		// timeDelta is the total match pause time, level.time keeps running during a pause
+		level.voteInfo.voteTime = level.startTime + level.timeDelta + (g_timelimit.value * 60000) - VOTE_TIME;
 	}
 	else
 	{
