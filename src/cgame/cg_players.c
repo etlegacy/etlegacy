@@ -3339,7 +3339,9 @@ void CG_ResetPlayerEntity(centity_t *cent)
 		cent->pe.torso.pitchAngle = cent->rawAngles[PITCH];
 		cent->pe.torso.pitching   = qfalse;
 
-		if (!cgs.clientinfo[cg.clientNum].shoutcaster)
+		// teammates' health is sent by the server (fireteam bitstream, tinfo) only when it changes,
+		// so assuming full health here would show a wrong value until their next change
+		if (!cgs.clientinfo[cg.clientNum].shoutcaster && ci->team != cgs.clientinfo[cg.clientNum].team)
 		{
 			ci->health = CG_GetPlayerMaxHealth(ci->clientNum, ci->cls, ci->team);
 		}
