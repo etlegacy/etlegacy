@@ -81,8 +81,6 @@ extern cvar_t *r_vkModelBatch;
 extern cvar_t *r_vkGpuVertex;
 extern cvar_t *r_vkBindless;
 extern cvar_t *r_softParticles;
-extern cvar_t *r_vkCaptureFrame200;
-extern cvar_t *r_vkCapturePath;
 
 extern cvar_t *r_screenshotFormat;
 extern cvar_t *r_screenshotJpegQuality;

@@ -6226,56 +6226,6 @@ void VK_BeginFrame(void)
 }
 
 /**
- * @brief Debug capture: writes the frame VK_EndFrame() just copied into the
- * capture buffer to a PPM file for offline visual inspection (our own
- * rendered image, not the user's display).
- */
-static void VK_DebugWriteCapturePPM(const char *path)
-{
-	const byte *src = (const byte *)vk.captureMapped;
-	qboolean   bgra = (vk.captureFormat == VK_FORMAT_B8G8R8A8_UNORM || vk.captureFormat == VK_FORMAT_B8G8R8A8_SRGB);
-	byte       *row;
-	FILE       *f;
-	uint32_t   x, y;
-
-	if (!src)
-	{
-		return;
-	}
-
-	row = malloc((size_t)vk.captureWidth * 3);
-	f   = fopen(path, "wb");
-	if (!row || !f)
-	{
-		free(row);
-		if (f)
-		{
-			fclose(f);
-		}
-		Ren_Print("VK_DebugWriteCapturePPM: could not write %s\n", path);
-		return;
-	}
-
-	fprintf(f, "P6\n%u %u\n255\n", vk.captureWidth, vk.captureHeight);
-	for (y = 0; y < vk.captureHeight; y++)
-	{
-		const byte *p = src + (size_t)y * vk.captureWidth * 4;
-
-		for (x = 0; x < vk.captureWidth; x++, p += 4)
-		{
-			row[x * 3 + 0] = bgra ? p[2] : p[0];
-			row[x * 3 + 1] = p[1];
-			row[x * 3 + 2] = bgra ? p[0] : p[2];
-		}
-		fwrite(row, 3, vk.captureWidth, f);
-	}
-	fclose(f);
-	free(row);
-
-	Ren_Print("VK_DebugWriteCapturePPM: wrote %s\n", path);
-}
-
-/**
  * @brief (re)creates the persistently mapped capture buffer
  * for the current swapchain size.
  */
@@ -6654,9 +6604,7 @@ void VK_EndFrame(void)
 	VkCommandBuffer      presentCB;
 	VkSubmitInfo         submitInfo;
 	VkPresentInfoKHR     presentInfo;
-	VkPipelineStageFlags waitStage         = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	static int           debugFrameCount   = 0;
-	const char           *debugCapturePath = NULL;
+	VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 	qboolean             captureThisFrame;
 	qboolean             present, splitPresent;
 
@@ -6669,15 +6617,7 @@ void VK_EndFrame(void)
 
 	vkCmdEndRenderPass(vk.commandBuffer);
 
-	// debug capture of frame 200 (r_vkCaptureFrame200). It shares the
-	// screenshot capture below and is skipped while a captured screenshot
-	// frame is still unread.
-	debugFrameCount++;
-	if (debugFrameCount == 200 && r_vkCaptureFrame200->integer && !vk.captureReady)
-	{
-		debugCapturePath = r_vkCapturePath->string;
-	}
-	captureThisFrame = (vk.captureRequested || debugCapturePath) && VK_EnsureCaptureBuffer();
+	captureThisFrame = vk.captureRequested && VK_EnsureCaptureBuffer();
 
 	// a captured frame is read from the swapchain image, so it is always presented
 	present = (captureThisFrame || VK_PresentDue()) && !vk.swapchainStale && !vk.restartPending;
@@ -6972,21 +6912,11 @@ void VK_EndFrame(void)
 			range.size   = VK_WHOLE_SIZE;
 			vkInvalidateMappedMemoryRanges(vk.device, 1, &range);
 		}
-		vk.captureWidth  = vk.swapchainExtent.width;
-		vk.captureHeight = vk.swapchainExtent.height;
-		vk.captureFormat = vk.swapchainFormat;
-
-		if (debugCapturePath)
-		{
-			VK_DebugWriteCapturePPM(debugCapturePath);
-		}
-
-		// a debug-only capture must not hand a frame to a later screenshot
-		if (vk.captureRequested)
-		{
-			vk.captureReady     = qtrue;
-			vk.captureRequested = qfalse;
-		}
+		vk.captureWidth     = vk.swapchainExtent.width;
+		vk.captureHeight    = vk.swapchainExtent.height;
+		vk.captureFormat    = vk.swapchainFormat;
+		vk.captureReady     = qtrue;
+		vk.captureRequested = qfalse;
 	}
 }
 
