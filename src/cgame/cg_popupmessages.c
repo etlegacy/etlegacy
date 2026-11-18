@@ -217,13 +217,13 @@ void CG_UpdatePMList(pmListItem_t **waitingList, pmListItem_t **oldList, int tim
 	{
 		int t = listItem->time + time;
 
-		if (cg.time > t)
+		if (cg.pmTime > t)
 		{
 			if (listItem->next)
 			{
 				// there's another item waiting to come on, so move to old list
 				*waitingList         = listItem->next;
-				(*waitingList)->time = cg.time; // set time we popped up at
+				(*waitingList)->time = cg.pmTime; // set time we popped up at
 
 				if (oldList)
 				{
@@ -241,7 +241,7 @@ void CG_UpdatePMList(pmListItem_t **waitingList, pmListItem_t **oldList, int tim
 			}
 			else
 			{
-				if (cg.time > t + stayTime + fadeTime)
+				if (cg.pmTime > t + stayTime + fadeTime)
 				{
 					// we're gone completely
 					*waitingList    = NULL;
@@ -261,7 +261,7 @@ void CG_UpdatePMList(pmListItem_t **waitingList, pmListItem_t **oldList, int tim
 	{
 		int t = listItem->time + stayTime + fadeTime + time;
 
-		if (cg.time > t)
+		if (cg.pmTime > t)
 		{
 			// nuke this, and everything below it (though there shouldn't BE anything below us anyway)
 			pmListItem_t *next;
@@ -515,7 +515,7 @@ void CG_AddPMItemEx(popupMessageType_t type, const char *message, const char *me
 	if (!cg_pmWaitingList[stackNum])
 	{
 		cg_pmWaitingList[stackNum] = listItem;
-		listItem->time             = cg.time;
+		listItem->time             = cg.pmTime;
 	}
 	else
 	{
@@ -611,7 +611,7 @@ void CG_AddPMItemBig(popupMessageBigType_t type, const char *message, qhandle_t 
 	if (!cg_pmWaitingListBig)
 	{
 		cg_pmWaitingListBig = listItem;
-		listItem->time      = cg.time;
+		listItem->time      = cg.pmTime;
 
 		CG_PMItemBigSound(listItem);
 	}
@@ -685,7 +685,7 @@ void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const ch
 					Q_strncpyz(listItem->message2, va("%s (x%d)", message2, ++listItem->count), sizeof(cg_pmStackXP[0].message2));
 				}
 
-				listItem->time = cg.time;
+				listItem->time = cg.pmTime;
 
 				return;
 			}
@@ -757,7 +757,7 @@ void CG_AddPMItemXP(popupMessageXPGainType_t type, const char *message, const ch
 	if (!cg_pmWaitingListXP)
 	{
 		cg_pmWaitingListXP = listItem;
-		listItem->time     = cg.time;
+		listItem->time     = cg.pmTime;
 	}
 	else
 	{
@@ -802,9 +802,9 @@ static qboolean CG_DrawPMItems(hudComponent_t *comp, pmListItem_t *listItem, flo
 	scale = CG_ComputeScale(comp /*lineHeight, comp->scale, &cgs.media.limboFont2*/);
 
 	t = listItem->time + time + stayTime;
-	if (cg.time > t)
+	if (cg.pmTime > t)
 	{
-		colorText[3] *= 1 - ((cg.time - t) / (float)fadeTime);
+		colorText[3] *= 1 - ((cg.pmTime - t) / (float)fadeTime);
 	}
 
 	Q_strncpyz(buffer, CG_TranslateString(listItem->message), sizeof(buffer));
@@ -1010,9 +1010,9 @@ void CG_DrawPMItemsBig(hudComponent_t *comp)
 	Vector4Copy(comp->colorBorder, colorBorder);
 	t = cg_pmWaitingListBig->time + comp->feedTime + comp->feedStayTime;
 
-	if (cg.time > t)
+	if (cg.pmTime > t)
 	{
-		float fade = comp->feedFadeTime ? 1 - ((cg.time - t) / comp->feedFadeTime) : 0;
+		float fade = comp->feedFadeTime ? 1 - ((cg.pmTime - t) / comp->feedFadeTime) : 0;
 
 		colorText[3]       *= fade;
 		colorBackground[3] *= fade;
@@ -1100,10 +1100,10 @@ static qboolean CG_DrawPMXPItems(hudComponent_t *comp, pmListItem_t *listItem, f
 
 	// fadeout
 	t = listItem->time + time + stayTime;
-	if (cg.time > t)
+	if (cg.pmTime > t)
 	{
-		colorText[3]  *= 1 - ((cg.time - t) / (float)fadeTime);
-		colorText2[3] *= 1 - ((cg.time - t) / (float)fadeTime);
+		colorText[3]  *= 1 - ((cg.pmTime - t) / (float)fadeTime);
+		colorText2[3] *= 1 - ((cg.pmTime - t) / (float)fadeTime);
 	}
 
 	Q_strncpyz(buffer, XPGainNumber, sizeof(buffer));

@@ -2497,6 +2497,11 @@ void CG_DrawActiveFrame(int serverTime, qboolean demoPlayback)
 		cg.frametime = 0;
 	}
 
+	if (!cgs.matchPaused)
+	{
+		cg.pmTime += cg.frametime;
+	}
+
 #ifdef FAKELAG
 	cg.time -= snapshotDelayTime;
 #endif // FAKELAG
