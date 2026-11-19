@@ -1162,7 +1162,13 @@ static qboolean VK_CreateInstance(void)
 
 static qboolean VK_PickPhysicalDeviceAndQueues(void)
 {
+	// the largest push constant block: the scene pipelines' (the UI, gamma
+	// and compute blocks are smaller). Vulkan only guarantees 128 bytes, and
+	// on a device below this every scene pipeline is invalid: drivers fail
+	// to create them (VK_ERROR_UNKNOWN on Android) and the 3D view stays empty
+	const uint32_t   pushConstantsNeeded = sizeof(float) * VK_SCENE_PUSH_FLOATS;
 	uint32_t         deviceCount = 0, i, q;
+	uint32_t         pushConstantsSkipped = 0;
 	VkPhysicalDevice devices[16];
 	VkBool32         presentSupport;
 
@@ -1178,12 +1184,23 @@ static qboolean VK_PickPhysicalDeviceAndQueues(void)
 	}
 	vkEnumeratePhysicalDevices(vk.instance, &deviceCount, devices);
 
-	// pick the first device that has both a graphics and a present queue
+	// pick the first device that has both a graphics and a present queue and
+	// enough push constant space
 	for (i = 0; i < deviceCount; i++)
 	{
-		uint32_t                queueFamilyCount = 0;
-		VkQueueFamilyProperties queueFamilies[32];
-		int                     graphicsFamily = -1, presentFamily = -1;
+		uint32_t                   queueFamilyCount = 0;
+		VkQueueFamilyProperties    queueFamilies[32];
+		VkPhysicalDeviceProperties props;
+		int                        graphicsFamily = -1, presentFamily = -1;
+
+		vkGetPhysicalDeviceProperties(devices[i], &props);
+		if (props.limits.maxPushConstantsSize < pushConstantsNeeded)
+		{
+			Ren_Warning("Vulkan: skipping %s: it allows %u bytes of push constants, the renderer needs %u\n",
+			            props.deviceName, props.limits.maxPushConstantsSize, pushConstantsNeeded);
+			pushConstantsSkipped++;
+			continue;
+		}
 
 		vkGetPhysicalDeviceQueueFamilyProperties(devices[i], &queueFamilyCount, NULL);
 		if (queueFamilyCount > 32)
@@ -1216,7 +1233,15 @@ static qboolean VK_PickPhysicalDeviceAndQueues(void)
 		}
 	}
 
-	Ren_Print("Vulkan: no suitable physical device (graphics+present queue) found\n");
+	if (pushConstantsSkipped)
+	{
+		Ren_Warning("Vulkan: no suitable GPU: the Vulkan renderer needs %u bytes of push constants, "
+		            "more than this GPU allows; use an OpenGL renderer\n", pushConstantsNeeded);
+	}
+	else
+	{
+		Ren_Print("Vulkan: no suitable physical device (graphics+present queue) found\n");
+	}
 	return qfalse;
 }
 
