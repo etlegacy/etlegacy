@@ -3424,6 +3424,47 @@ static void CG_HudEditor_ResizeMove(float x, float y)
 		comp->location.h = MAX(edge - r->y, RESIZE_MIN);
 	}
 
+	// shift keeps the width / height ratio: a corner follows the side that changed more, an edge
+	// resizes the other side around its middle
+	if ((trap_Key_IsDown(K_LSHIFT) || trap_Key_IsDown(K_RSHIFT)) && r->w > 0.f && r->h > 0.f)
+	{
+		int   horiz = resizeEdges & (RESIZE_LEFT | RESIZE_RIGHT);
+		int   vert  = resizeEdges & (RESIZE_TOP | RESIZE_BOTTOM);
+		float sw    = comp->location.w / r->w;
+		float sh    = comp->location.h / r->h;
+		float scale = (horiz && vert) ? MAX(sw, sh) : (horiz ? sw : sh);
+
+		scale            = MAX(scale, RESIZE_MIN / MIN(r->w, r->h));
+		comp->location.w = r->w * scale;
+		comp->location.h = r->h * scale;
+
+		if (resizeEdges & RESIZE_LEFT)
+		{
+			comp->location.x = r->x + r->w - comp->location.w;
+		}
+		else if (resizeEdges & RESIZE_RIGHT)
+		{
+			comp->location.x = r->x;
+		}
+		else
+		{
+			comp->location.x = r->x + (r->w - comp->location.w) * .5f;
+		}
+
+		if (resizeEdges & RESIZE_TOP)
+		{
+			comp->location.y = r->y + r->h - comp->location.h;
+		}
+		else if (resizeEdges & RESIZE_BOTTOM)
+		{
+			comp->location.y = r->y;
+		}
+		else
+		{
+			comp->location.y = r->y + (r->h - comp->location.h) * .5f;
+		}
+	}
+
 	CG_HudEditor_SetModified();
 	CG_HudEditorUpdateFields(lastFocusComponent);
 }
@@ -4077,6 +4118,7 @@ static void CG_HudEditor_HelpDraw(void)
 		{
 			{ "MOUSE1 drag",         "move a comp"                            },
 			{ "MOUSE1 drag handle",  "resize the selected comp"               },
+			{ "+ K_SHIFT",           "keep the width / height ratio"          },
 			{ NULL,                  NULL                                     },
 			{ "K_DOWN",              "move down by 1px"                       },
 			{ "K_LEFT",              "move left by 1px"                       },
