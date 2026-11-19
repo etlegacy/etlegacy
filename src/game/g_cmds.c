@@ -1716,12 +1716,14 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 
 			if (ft)
 			{
-				trap_SendServerCommand(ent - g_entities, "aftj -1");
+				ent->client->pers.popupId[POPUP_AFTJ] = G_NextPopupId();
+				trap_SendServerCommand(ent - g_entities, va("aftj -1 %i", ent->client->pers.popupId[POPUP_AFTJ]));
 				ent->client->pers.autofireteamJoinEndTime = level.time + 20500;
 			}
 			else
 			{
-				trap_SendServerCommand(ent - g_entities, "aftc -1");
+				ent->client->pers.popupId[POPUP_AFTC] = G_NextPopupId();
+				trap_SendServerCommand(ent - g_entities, va("aftc -1 %i", ent->client->pers.popupId[POPUP_AFTC]));
 				ent->client->pers.autofireteamCreateEndTime = level.time + 20500;
 			}
 			break;
@@ -3501,7 +3503,8 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 			Q_strcat(voteDesc, sizeof(voteDesc), ")");
 		}
 		trap_SetConfigstring(CS_VOTE_STRING, voteDesc);
-		trap_SetConfigstring(CS_VOTE_TIME, va("%i", level.voteInfo.voteTime));
+		level.voteInfo.voteId = G_NextPopupId();
+		trap_SetConfigstring(CS_VOTE_TIME, va("%i %i", level.voteInfo.voteTime, level.voteInfo.voteId));
 	}
 
 	return qtrue;
@@ -3541,17 +3544,92 @@ qboolean G_FindFreeComplainIP(gclient_t *cl, ipFilter_t *ip)
 }
 
 /**
- * @brief Cmd_Vote_f
+ * @brief G_NextPopupId hands out the id that ties a prompt or vote on a client to its answer
+ * @return a running id, 1-255 (0 means no id)
+ */
+int G_NextPopupId(void)
+{
+	level.popupSeq = level.popupSeq % 255 + 1;
+	return level.popupSeq;
+}
+
+/**
+ * @brief G_PopupKindForId finds the pending prompt or vote of the client that has the given id
+ * @param[in] ent
+ * @param[in] id
+ * @return the kind, POPUP_ANY if nothing pending has that id (a stale answer)
+ */
+static popupKind_t G_PopupKindForId(gentity_t *ent, int id)
+{
+	gclient_t *cl = ent->client;
+
+	if (level.voteInfo.voteTime && level.voteInfo.voteId == id)
+	{
+		return POPUP_VOTE;
+	}
+	if (cl->pers.popupId[POPUP_COMPLAINT] == id && cl->pers.complaintEndTime > level.time)
+	{
+		return POPUP_COMPLAINT;
+	}
+	if (cl->pers.popupId[POPUP_APPLICATION] == id && cl->pers.applicationEndTime > level.time)
+	{
+		return POPUP_APPLICATION;
+	}
+	if (cl->pers.popupId[POPUP_INVITATION] == id && cl->pers.invitationEndTime > level.time)
+	{
+		return POPUP_INVITATION;
+	}
+	if (cl->pers.popupId[POPUP_PROPOSITION] == id && cl->pers.propositionEndTime > level.time)
+	{
+		return POPUP_PROPOSITION;
+	}
+	if (cl->pers.popupId[POPUP_AFT] == id && cl->pers.autofireteamEndTime > level.time)
+	{
+		return POPUP_AFT;
+	}
+	if (cl->pers.popupId[POPUP_AFTC] == id && cl->pers.autofireteamCreateEndTime > level.time)
+	{
+		return POPUP_AFTC;
+	}
+	if (cl->pers.popupId[POPUP_AFTJ] == id && cl->pers.autofireteamJoinEndTime > level.time)
+	{
+		return POPUP_AFTJ;
+	}
+
+	return POPUP_ANY;
+}
+
+/**
+ * @brief Cmd_Vote_f answers the pending prompt or vote. 'vote yes|no <id>' goes to the popup
+ * with that id (and is ignored when it is gone), without an id the first pending prompt
+ * takes the answer, then the vote.
  * @param[in,out] ent
  * @param dwCommand - unused
  * @param value    - unused
  */
 void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char msg[64];
+	char        msg[64];
+	popupKind_t kind = POPUP_ANY;
 
+	if (trap_Argc() > 2)
+	{
+		int id;
+
+		trap_Argv(2, msg, sizeof(msg));
+		id = Q_atoi(msg);
+
+		if (id > 0)
+		{
+			kind = G_PopupKindForId(ent, id);
+			if (kind == POPUP_ANY)
+			{
+				return;
+			}
+		}
+	}
 	// Complaints supercede voting (and share command)
-	if (ent->client->pers.complaintEndTime > level.time && g_gamestate.integer == GS_PLAYING && g_complaintlimit.integer)
+	if ((kind == POPUP_ANY || kind == POPUP_COMPLAINT) && ent->client->pers.complaintEndTime > level.time && g_gamestate.integer == GS_PLAYING && g_complaintlimit.integer)
 	{
 		gentity_t *other = &g_entities[ent->client->pers.complaintClient];
 		gclient_t *cl    = other->client;
@@ -3615,7 +3693,7 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 		return;
 	}
 
-	if (ent->client->pers.applicationEndTime > level.time)
+	if ((kind == POPUP_ANY || kind == POPUP_APPLICATION) && ent->client->pers.applicationEndTime > level.time)
 	{
 		gclient_t *cl = g_entities[ent->client->pers.applicationClient].client;
 
@@ -3632,14 +3710,14 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 		if (tolower(msg[0]) == 'y' || msg[0] == '1')
 		{
-			trap_SendServerCommand(ent - g_entities, "application -4");
+			trap_SendServerCommand(ent - g_entities, "application -4 1");
 			trap_SendServerCommand(ent->client->pers.applicationClient, "application -3");
 
 			G_AddClientToFireteam(ent->client->pers.applicationClient, ent - g_entities);
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "application -4");
+			trap_SendServerCommand(ent - g_entities, "application -4 0");
 			trap_SendServerCommand(ent->client->pers.applicationClient, "application -2");
 		}
 
@@ -3649,10 +3727,13 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 		return;
 	}
 
-	ent->client->pers.applicationEndTime = 0;
-	ent->client->pers.applicationClient  = -1;
+	if (kind == POPUP_ANY)
+	{
+		ent->client->pers.applicationEndTime = 0;
+		ent->client->pers.applicationClient  = -1;
+	}
 
-	if (ent->client->pers.invitationEndTime > level.time)
+	if ((kind == POPUP_ANY || kind == POPUP_INVITATION) && ent->client->pers.invitationEndTime > level.time)
 	{
 		gclient_t *cl = g_entities[ent->client->pers.invitationClient].client;
 
@@ -3669,14 +3750,14 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 		if (tolower(msg[0]) == 'y' || msg[0] == '1')
 		{
-			trap_SendServerCommand(ent - g_entities, "invitation -4");
+			trap_SendServerCommand(ent - g_entities, "invitation -4 1");
 			trap_SendServerCommand(ent->client->pers.invitationClient, "invitation -3");
 
 			G_AddClientToFireteam(ent - g_entities, ent->client->pers.invitationClient);
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "invitation -4");
+			trap_SendServerCommand(ent - g_entities, "invitation -4 0");
 			trap_SendServerCommand(ent->client->pers.invitationClient, "invitation -2");
 		}
 
@@ -3686,10 +3767,13 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 		return;
 	}
 
-	ent->client->pers.invitationEndTime = 0;
-	ent->client->pers.invitationClient  = -1;
+	if (kind == POPUP_ANY)
+	{
+		ent->client->pers.invitationEndTime = 0;
+		ent->client->pers.invitationClient  = -1;
+	}
 
-	if (ent->client->pers.propositionEndTime > level.time)
+	if ((kind == POPUP_ANY || kind == POPUP_PROPOSITION) && ent->client->pers.propositionEndTime > level.time)
 	{
 		gclient_t *cl = g_entities[ent->client->pers.propositionClient].client;
 
@@ -3706,14 +3790,14 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 		if (tolower(msg[0]) == 'y' || msg[0] == '1')
 		{
-			trap_SendServerCommand(ent - g_entities, "proposition -4");
+			trap_SendServerCommand(ent - g_entities, "proposition -4 1");
 			trap_SendServerCommand(ent->client->pers.propositionClient2, "proposition -3");
 
 			G_InviteToFireTeam(ent - g_entities, ent->client->pers.propositionClient);
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "proposition -4");
+			trap_SendServerCommand(ent - g_entities, "proposition -4 0");
 			trap_SendServerCommand(ent->client->pers.propositionClient2, "proposition -2");
 		}
 
@@ -3724,7 +3808,7 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 		return;
 	}
 
-	if (ent->client->pers.autofireteamEndTime > level.time)
+	if ((kind == POPUP_ANY || kind == POPUP_AFT) && ent->client->pers.autofireteamEndTime > level.time)
 	{
 		fireteamData_t *ft;
 
@@ -3732,7 +3816,7 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 		if (tolower(msg[0]) == 'y' || msg[0] == '1')
 		{
-			trap_SendServerCommand(ent - g_entities, "aft -2");
+			trap_SendServerCommand(ent - g_entities, "aft -2 1");
 
 			if (G_IsFireteamLeader(ent - g_entities, &ft))
 			{
@@ -3742,7 +3826,7 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "aft -2");
+			trap_SendServerCommand(ent - g_entities, "aft -2 0");
 		}
 
 		ent->client->pers.autofireteamEndTime = 0;
@@ -3750,19 +3834,19 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 		return;
 	}
 
-	if (ent->client->pers.autofireteamCreateEndTime > level.time)
+	if ((kind == POPUP_ANY || kind == POPUP_AFTC) && ent->client->pers.autofireteamCreateEndTime > level.time)
 	{
 		trap_Argv(1, msg, sizeof(msg));
 
 		if (tolower(msg[0]) == 'y' || msg[0] == '1')
 		{
-			trap_SendServerCommand(ent - g_entities, "aftc -2");
+			trap_SendServerCommand(ent - g_entities, "aftc -2 1");
 
 			G_RegisterFireteam(ent - g_entities);
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "aftc -2");
+			trap_SendServerCommand(ent - g_entities, "aftc -2 0");
 		}
 
 		ent->client->pers.autofireteamCreateEndTime = 0;
@@ -3770,7 +3854,7 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 		return;
 	}
 
-	if (ent->client->pers.autofireteamJoinEndTime > level.time)
+	if ((kind == POPUP_ANY || kind == POPUP_AFTJ) && ent->client->pers.autofireteamJoinEndTime > level.time)
 	{
 		trap_Argv(1, msg, sizeof(msg));
 
@@ -3778,7 +3862,7 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 		{
 			fireteamData_t *ft;
 
-			trap_SendServerCommand(ent - g_entities, "aftj -2");
+			trap_SendServerCommand(ent - g_entities, "aftj -2 1");
 
 
 			ft = G_FindFreePublicFireteam(ent->client->sess.sessionTeam);
@@ -3789,7 +3873,7 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "aftj -2");
+			trap_SendServerCommand(ent - g_entities, "aftj -2 0");
 		}
 
 		ent->client->pers.autofireteamCreateEndTime = 0;
@@ -3797,13 +3881,16 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 		return;
 	}
 
-	ent->client->pers.propositionEndTime = 0;
-	ent->client->pers.propositionClient  = -1;
-	ent->client->pers.propositionClient2 = -1;
+	if (kind == POPUP_ANY)
+	{
+		ent->client->pers.propositionEndTime = 0;
+		ent->client->pers.propositionClient  = -1;
+		ent->client->pers.propositionClient2 = -1;
 
-	// Reset this ent's complainEndTime so they can't send multiple complaints
-	ent->client->pers.complaintEndTime = -1;
-	ent->client->pers.complaintClient  = -1;
+		// Reset this ent's complainEndTime so they can't send multiple complaints
+		ent->client->pers.complaintEndTime = -1;
+		ent->client->pers.complaintClient  = -1;
+	}
 
 	if (!level.voteInfo.voteTime)
 	{

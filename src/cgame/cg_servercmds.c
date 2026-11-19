@@ -387,6 +387,18 @@ void CG_ParseModInfo(void)
 }
 
 /**
+ * @brief CG_ParseVoteTime reads the vote start time and the popup id of the vote from CS_VOTE_TIME ("<time> <id>")
+ * @param[in] str
+ */
+static void CG_ParseVoteTime(const char *str)
+{
+	const char *space = strchr(str, ' ');
+
+	cgs.voteTime = Q_atoi(str);
+	cgs.voteId   = space ? Q_atoi(space + 1) : 0;
+}
+
+/**
  * @brief CG_ParseWarmup
  */
 static void CG_ParseWarmup(void)
@@ -842,9 +854,9 @@ void CG_SetConfigValues(void)
 	// you have nothing to use if another 'Match Reset' vote is called
 	// (no update will be sent because the string will be the same.)
 
-	cgs.voteTime = Q_atoi(CG_ConfigString(CS_VOTE_TIME));
-	cgs.voteYes  = Q_atoi(CG_ConfigString(CS_VOTE_YES));
-	cgs.voteNo   = Q_atoi(CG_ConfigString(CS_VOTE_NO));
+	CG_ParseVoteTime(CG_ConfigString(CS_VOTE_TIME));
+	cgs.voteYes = Q_atoi(CG_ConfigString(CS_VOTE_YES));
+	cgs.voteNo  = Q_atoi(CG_ConfigString(CS_VOTE_NO));
 	Q_strncpyz(cgs.voteString, CG_ConfigString(CS_VOTE_STRING), sizeof(cgs.voteString));
 
 	cg.teamFirstBlood = Q_atoi(CG_ConfigString(CS_FIRSTBLOOD));
@@ -1024,7 +1036,8 @@ static void CG_ConfigStringModified(void)
 		cgs.intermissionStartTime = Q_atoi(CG_ConfigString(num));
 		break;
 	case CS_VOTE_TIME:
-		cgs.voteTime     = Q_atoi(CG_ConfigString(num));
+		CG_ParseVoteTime(CG_ConfigString(num));
+		cgs.voteFake     = qfalse;
 		cgs.voteModified = qtrue;
 		break;
 	case CS_VOTE_YES:
@@ -1467,6 +1480,7 @@ static void CG_MapRestart(void)
 	cg.mapRestart          = qtrue;
 	cg.timelimitWarnings   = 0;
 	cgs.voteTime           = 0;
+	cgs.voteFake           = qfalse;
 	cgs.dumpStatsTime      = 0;
 
 	CG_StartMusic();
@@ -3450,55 +3464,115 @@ static void CG_ServerCommand(void)
 	case APPLICATION_HASH:                                         //  "application"
 		cgs.applicationEndTime = cg.time + 20000;
 		cgs.applicationClient  = Q_atoi(CG_Argv(1));
+		if (cgs.applicationClient >= 0)
+		{
+			cgs.applicationId = Q_atoi(CG_Argv(2));
+		}
 
 		if (cgs.applicationClient < 0)
 		{
 			cgs.applicationEndTime = cg.time + 10000;
+
+			if (cgs.applicationClient == -4)
+			{
+				cgs.promptReplyTime = cg.time;
+				cgs.promptReplyYes  = trap_Argc() > 2 ? Q_atoi(CG_Argv(2)) : -1;
+			}
 		}
 		return;
 	case INVITATION_HASH:                                          // "invitation"
 		cgs.invitationEndTime = cg.time + 20000;
 		cgs.invitationClient  = Q_atoi(CG_Argv(1));
+		if (cgs.invitationClient >= 0)
+		{
+			cgs.invitationId = Q_atoi(CG_Argv(2));
+		}
 
 		if (cgs.invitationClient < 0)
 		{
 			cgs.invitationEndTime = cg.time + 10000;
+
+			if (cgs.invitationClient == -4)
+			{
+				cgs.promptReplyTime = cg.time;
+				cgs.promptReplyYes  = trap_Argc() > 2 ? Q_atoi(CG_Argv(2)) : -1;
+			}
 		}
 		return;
 	case PROPOSITION_HASH:                                        // "proposition"
 		cgs.propositionEndTime = cg.time + 20000;
 		cgs.propositionClient  = Q_atoi(CG_Argv(1));
 		cgs.propositionClient2 = Q_atoi(CG_Argv(2));
+		if (cgs.propositionClient >= 0)
+		{
+			cgs.propositionId = Q_atoi(CG_Argv(3));
+		}
 
 		if (cgs.propositionClient < 0)
 		{
 			cgs.propositionEndTime = cg.time + 10000;
+
+			if (cgs.propositionClient == -4)
+			{
+				cgs.promptReplyTime = cg.time;
+				cgs.promptReplyYes  = trap_Argc() > 2 ? Q_atoi(CG_Argv(2)) : -1;
+			}
 		}
 		return;
 	case AFT_HASH:                                                // "aft"
 		cgs.autoFireteamEndTime = cg.time + 20000;
 		cgs.autoFireteamNum     = Q_atoi(CG_Argv(1));
+		if (cgs.autoFireteamNum == -1)
+		{
+			cgs.autoFireteamId = Q_atoi(CG_Argv(2));
+		}
 
 		if (cgs.autoFireteamNum < -1)
 		{
+			if (cgs.autoFireteamNum == -2)
+			{
+				cgs.promptReplyTime = cg.time;
+				cgs.promptReplyYes  = trap_Argc() > 2 ? Q_atoi(CG_Argv(2)) : -1;
+			}
+
 			cgs.autoFireteamEndTime = cg.time + 10000;
 		}
 		return;
 	case AFTC_HASH:                                              // "aftc"
 		cgs.autoFireteamCreateEndTime = cg.time + 20000;
 		cgs.autoFireteamCreateNum     = Q_atoi(CG_Argv(1));
+		if (cgs.autoFireteamCreateNum == -1)
+		{
+			cgs.autoFireteamCreateId = Q_atoi(CG_Argv(2));
+		}
 
 		if (cgs.autoFireteamCreateNum < -1)
 		{
+			if (cgs.autoFireteamCreateNum == -2)
+			{
+				cgs.promptReplyTime = cg.time;
+				cgs.promptReplyYes  = trap_Argc() > 2 ? Q_atoi(CG_Argv(2)) : -1;
+			}
+
 			cgs.autoFireteamCreateEndTime = cg.time + 10000;
 		}
 		return;
 	case AFTJ_HASH:                                              // "aftj"
 		cgs.autoFireteamJoinEndTime = cg.time + 20000;
 		cgs.autoFireteamJoinNum     = Q_atoi(CG_Argv(1));
+		if (cgs.autoFireteamJoinNum == -1)
+		{
+			cgs.autoFireteamJoinId = Q_atoi(CG_Argv(2));
+		}
 
 		if (cgs.autoFireteamJoinNum < -1)
 		{
+			if (cgs.autoFireteamJoinNum == -2)
+			{
+				cgs.promptReplyTime = cg.time;
+				cgs.promptReplyYes  = trap_Argc() > 2 ? Q_atoi(CG_Argv(2)) : -1;
+			}
+
 			cgs.autoFireteamJoinEndTime = cg.time + 10000;
 		}
 		return;
@@ -3506,17 +3580,28 @@ static void CG_ServerCommand(void)
 	case COMPLAINT_HASH:                                       // "complaint"
 		if (cgs.gamestate == GS_PLAYING)
 		{
-			if (!(CG_GetActiveHUD()->votetext.style & 1))
-			{
-				trap_SendClientCommand("vote no");
-			}
-
 			cgs.complaintEndTime = cg.time + 20000;
 			cgs.complaintClient  = Q_atoi(CG_Argv(1));
+			if (cgs.complaintClient >= 0)
+			{
+				cgs.complaintId = Q_atoi(CG_Argv(2));
+
+				if (!(CG_GetActiveHUD()->votetext.style & 1))
+				{
+					trap_SendClientCommand(va("vote no %i", cgs.complaintId));
+				}
+			}
 
 			if (cgs.complaintClient < 0)
 			{
 				cgs.complaintEndTime = cg.time + 10000;
+
+				// -1 filed, -2 dismissed: the answer to the prompt
+				if (cgs.complaintClient == -1 || cgs.complaintClient == -2)
+				{
+					cgs.promptReplyTime = cg.time;
+					cgs.promptReplyYes  = cgs.complaintClient == -1;
+				}
 			}
 		}
 		return;

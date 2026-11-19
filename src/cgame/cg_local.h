@@ -2541,6 +2541,10 @@ typedef struct cgs_s
 	int voteTime;
 	int voteYes;
 	int voteNo;
+	qboolean voteFakeVoted;                         ///< fakevote: pretend the player has voted
+	int voteAnswerTime;                             ///< when the player last answered the vote
+	qboolean voteAnswerYes;                         ///< the answer given at voteAnswerTime
+	qboolean voteFake;                              ///< local test vote: never expires, not from the server
 	qboolean voteModified;                          ///< beep whenever changed
 	char voteString[MAX_STRING_TOKENS];
 
@@ -2646,6 +2650,17 @@ typedef struct cgs_s
 
 	int autoFireteamJoinEndTime;
 	int autoFireteamJoinNum;
+	int promptReplyTime;                            ///< when the server confirmed the answer to a fireteam prompt
+	int promptReplyYes;                             ///< the answer: 1 yes, 0 no, -1 unknown
+	// popup ids from the server (0 = none), returned with the answer: 'vote yes <id>'
+	int voteId;
+	int complaintId;
+	int applicationId;
+	int invitationId;
+	int propositionId;
+	int autoFireteamId;
+	int autoFireteamCreateId;
+	int autoFireteamJoinId;
 
 	qboolean autoMapExpanded;
 	int autoMapExpandTime;
@@ -4379,6 +4394,7 @@ void CG_DrawNewCompass(hudComponent_t *comp);
 void CG_DrawFireTeamOverlay(hudComponent_t *comp);
 void CG_DrawPM(hudComponent_t *comp);
 void CG_DrawVote(hudComponent_t *comp);
+int CG_PopupFocus(qboolean *isVote);
 void CG_DrawSpectatorMessage(hudComponent_t *comp);
 void CG_DrawLimboMessage(hudComponent_t *comp);
 void CG_DrawFollow(hudComponent_t *comp);

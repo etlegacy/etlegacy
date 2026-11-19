@@ -395,6 +395,31 @@ void CG_ScoresUp_f(void)
 }
 
 /**
+ * @brief CG_FakeVote_f starts a local vote popup that runs like a real vote (slides in, counts down, shows the result
+ * and slides out when it times out or is ended), for testing the layout.
+ * Usage: fakevote [text] [yes] [no] [voted] - without arguments or with 'off' it ends the vote early.
+ * While it runs, 'vote yes' / 'vote no' (and their keys) answer it locally like a normal vote.
+ */
+static void CG_FakeVote_f(void)
+{
+	if (trap_Argc() < 2 || !Q_stricmp(CG_Argv(1), "off"))
+	{
+		// the popup shows the result and slides out
+		cgs.voteTime = 0;
+		cgs.voteFake = qfalse;
+		return;
+	}
+
+	Q_strncpyz(cgs.voteString, CG_Argv(1), sizeof(cgs.voteString));
+	cgs.voteYes       = trap_Argc() > 2 ? Q_atoi(CG_Argv(2)) : 0;
+	cgs.voteNo        = trap_Argc() > 3 ? Q_atoi(CG_Argv(3)) : 0;
+	cgs.voteTime      = cg.time;
+	cgs.voteFake      = qtrue;
+	cgs.voteFakeVoted = trap_Argc() > 4 && Q_atoi(CG_Argv(4));
+	cgs.voteModified  = qtrue;
+}
+
+/**
  * @brief CG_Fade_f
  */
 static void CG_Fade_f(void)
@@ -3517,6 +3542,7 @@ static consoleCommand_t commands[] =
 	{ "weapon",                 CG_Weapon_f                  },
 	{ "weaponbank",             CG_WeaponBank_f              },
 	{ "fade",                   CG_Fade_f                    },
+	{ "fakevote",               CG_FakeVote_f                },
 
 	{ "mp_QuickMessage",        CG_QuickMessage_f            },
 	{ "mp_fireteammsg",         CG_QuickFireteams_f          },
@@ -3872,6 +3898,7 @@ qboolean CG_ConsoleCommand(void)
 {
 	const char   *cmd;
 	unsigned int i;
+	char         cmdBuf[MAX_TOKEN_CHARS];
 
 	// don't allow console commands until a snapshot is present
 	if (!cg.snap)
@@ -3879,7 +3906,48 @@ qboolean CG_ConsoleCommand(void)
 		return qfalse;
 	}
 
-	cmd = CG_Argv(0);
+	// CG_Argv() returns one shared buffer, keep the command name
+	Q_strncpyz(cmdBuf, CG_Argv(0), sizeof(cmdBuf));
+	cmd = cmdBuf;
+
+	if (!Q_stricmp(cmd, "vote") && trap_Argc() > 1 && (!Q_stricmp(CG_Argv(1), "yes") || !Q_stricmp(CG_Argv(1), "no")))
+	{
+		qboolean isVote;
+		qboolean yes = !Q_stricmp(CG_Argv(1), "yes");
+		int      id  = CG_PopupFocus(&isVote);
+
+		// remember the answer so the vote popup can highlight it before it shrinks
+		if (isVote)
+		{
+			cgs.voteAnswerTime = cg.time;
+			cgs.voteAnswerYes  = yes;
+		}
+
+		// the answer carries the id of the popup it is for, so it can't land on another one
+		if (trap_Argc() == 2 && id && !(isVote && cgs.voteFake))
+		{
+			trap_SendClientCommand(va("vote %s %i", yes ? "yes" : "no", id));
+			return qtrue;
+		}
+	}
+
+	// a fake vote takes the player's answer locally instead of sending it to the server
+	if (cgs.voteFake && cgs.voteTime && !cgs.voteFakeVoted && !Q_stricmp(cmd, "vote") && trap_Argc() > 1)
+	{
+		if (!Q_stricmp(CG_Argv(1), "yes") || !Q_stricmp(CG_Argv(1), "no"))
+		{
+			if (!Q_stricmp(CG_Argv(1), "yes"))
+			{
+				cgs.voteYes++;
+			}
+			else
+			{
+				cgs.voteNo++;
+			}
+			cgs.voteFakeVoted = qtrue;
+			return qtrue;
+		}
+	}
 
 	for (i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
 	{

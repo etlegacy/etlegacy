@@ -2600,6 +2600,594 @@ static void CG_GetBindingKeyForVote(char *str1, char *str2)
 	Q_strncpyz(str2, Binding_FromName("vote no"), 32);
 }
 
+#define VOTE_PANEL_MAX_LINES 4
+#define VOTE_PANEL_MINI_ALPHA .55f
+#define VOTE_PANEL_MINI_MS 200
+#define VOTE_ANSWER_HOLD_MS 600
+
+static struct
+{
+	int voteTime;
+	int openTime;
+	int closeTime;
+	qboolean shown;
+	char text[256];
+	int sec;
+	int yes;
+	int no;
+	float frac;
+} voteAnim;
+
+static struct
+{
+	qboolean active;
+	int since;
+	int lastDraw;
+	int voteTime;
+} miniAnim;
+
+static float    panelTop, panelBottom; ///< extent of the panel drawn last, so a waiting vote can stack under it
+static float    voteStackY;            ///< top of the vote panel when it is stacked under a prompt
+static qboolean voteStacked;           ///< draw the vote compact and at voteStackY, because a prompt has the focus
+static qboolean voteForceVoted; ///< draw the panel as if the player had voted (result display after a vote ended)
+
+/**
+ * @brief CG_DrawVotePanel draws a compact vote box: title and timer, wrapped vote text,
+ * yes/no counts with their keys and a bar with the remaining time
+ * @param[in] comp
+ * @param[in] titleIn header text
+ * @param[in] text body text, wrapped to the panel width
+ * @param[in] sec seconds left
+ * @param[in] frac remaining time, 0..1
+ * @param[in] counts qtrue for a real vote with counts, qfalse for a plain yes/no prompt
+ * @param[in] keyYes
+ * @param[in] keyNo
+ * @param[in] answer -1 for none, otherwise the chosen answer (1 yes, 0 no) which is highlighted
+ * @param[in] slideT 0..1, how far the panel has slid out towards the closest window border
+ */
+static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const char *text, int sec, float frac, qboolean counts, const char *keyYes, const char *keyNo, int answer, float slideT)
+{
+	vec4_t       colBg    = { 0.08f, 0.08f, 0.08f, 0.8f };
+	vec4_t       colHead  = { 0.f, 0.f, 0.f, 0.45f };
+	vec4_t       colYes   = { 0.35f, 0.85f, 0.35f, 1.f };
+	vec4_t       colNo    = { 0.9f, 0.3f, 0.3f, 1.f };
+	vec4_t       colDim   = { 0.7f, 0.7f, 0.7f, 1.f };
+	vec4_t       colWhite = { 1.f, 1.f, 1.f, 1.f };
+	vec4_t       colTrack = { 1.f, 1.f, 1.f, 0.15f };
+	fontHelper_t *font    = &cgs.media.limboFont2;
+	float        scale    = CG_ComputeScale(comp);
+	float        lineH    = CG_Text_Height_Ext("A", scale, 0, font);
+	float        pad      = lineH * .6f;
+	float        rowH     = lineH + pad;
+	float        w        = MIN(comp->location.w, 240.f * cgs.screenXScale);
+	float        x = comp->location.x, y = comp->location.y;
+	float        innerW = w - pad * 2.f;
+	float        h, headH, barH, tw, gap;
+	char         wrapped[MAX_STRING_TOKENS * 2];
+	const char   *line, *end, *footer = NULL;
+	vec4_t       colMain, colBorder;
+	qboolean     mini;
+	float        miniT = 0.f;
+	qboolean     hold  = qfalse;
+	int          numLines = 1, i, len;
+	qboolean     voted   = (cg.snap->ps.eFlags & EF_VOTED) != 0 || (cgs.voteFake && cgs.voteFakeVoted) || voteForceVoted;
+	qboolean     canVote = cgs.clientinfo[cg.clientNum].team == TEAM_AXIS || cgs.clientinfo[cg.clientNum].team == TEAM_ALLIES;
+
+	Vector4Copy(comp->colorMain, colMain);
+	Vector4Copy(comp->colorBorder, colBorder);
+	// the answer just given is shown highlighted for a moment before the panel shrinks
+	if (counts && canVote && voted && !voteForceVoted && cgs.voteAnswerTime && cg.time - cgs.voteAnswerTime >= 0 && cg.time - cgs.voteAnswerTime < VOTE_ANSWER_HOLD_MS)
+	{
+		hold   = qtrue;
+		answer = cgs.voteAnswerYes ? 1 : 0;
+	}
+	mini = voteStacked || (counts && canVote && voted && !hold);
+
+	// once the player has voted the panel shrinks, over a few frames, to the header, one line
+	// of the vote text and the yes/no balance, and gets more transparent
+	if (voteStacked)
+	{
+		miniT = 1.f;
+	}
+	else if (mini)
+	{
+		// a panel that stays hidden for a while (scoreboard) comes back already shrunk
+		if (!miniAnim.active || miniAnim.voteTime != voteAnim.voteTime)
+		{
+			miniAnim.since = cg.time;
+		}
+		miniAnim.voteTime = voteAnim.voteTime;
+		miniT             = Com_Clamp(0.f, 1.f, (cg.time - miniAnim.since) / (float)VOTE_PANEL_MINI_MS);
+		miniT             = miniT * miniT * (3.f - 2.f * miniT);
+	}
+	if (counts && !voteStacked)
+	{
+		miniAnim.active   = mini;
+		miniAnim.lastDraw = cg.time;
+	}
+
+	if (miniT > 0.f)
+	{
+		float a = 1.f + (VOTE_PANEL_MINI_ALPHA - 1.f) * miniT;
+
+		colBg[3]     *= a;
+		colHead[3]   *= a;
+		colMain[3]   *= a;
+		colBorder[3] *= a;
+		colDim[3]    *= a;
+		colYes[3]    *= a;
+		colNo[3]     *= a;
+		colTrack[3]  *= a;
+		colWhite[3]  *= a;
+	}
+
+	CG_WordWrapString(text, CG_MaxCharsForWidth(text, scale, font, innerW), wrapped, sizeof(wrapped), &numLines);
+	if (!wrapped[0])
+	{
+		Q_strncpyz(wrapped, text, sizeof(wrapped));
+	}
+	numLines = MIN(numLines, VOTE_PANEL_MAX_LINES);
+
+	if (miniT > 0.f)
+	{
+		// the width goes to what the content needs: header, the one text line and the counts
+		char  buf[MAX_STRING_TOKENS];
+		float need;
+
+		end = strchr(wrapped, '\n');
+		Q_strncpyz(buf, wrapped, end ? MIN((int)(end - wrapped) + 1, (int)sizeof(buf)) : (int)sizeof(buf));
+
+		need   = CG_Text_Width_Ext_Float(titleIn, scale, 0, font) + CG_Text_Width_Ext_Float("  99s", scale, 0, font);
+		need   = MAX(need, CG_Text_Width_Ext_Float(buf, scale, 0, font));
+		need   = MAX(need, CG_Text_Width_Ext_Float(va("%s  %i   %i  %s", CG_TranslateString("YES"), cgs.voteYes, cgs.voteNo, CG_TranslateString("NO")), scale, 0, font));
+		need   = MIN(w, need + pad * 2.f);
+		w     += (need - w) * miniT;
+		innerW = w - pad * 2.f;
+	}
+
+	barH  = MAX(3.f, lineH * .3f);
+	headH = rowH * 1.3f;
+	gap   = pad * .4f;
+	h     = headH + gap * 2.f + barH + (1.f + (numLines - 1) * (1.f - miniT)) * (lineH * 1.6f) + pad + rowH + barH * 1.5f + gap * 2.f;
+
+	if (voteStacked)
+	{
+		y = voteStackY;
+		if (y + h > SCREEN_HEIGHT)
+		{
+			// no room below the prompt: go above it
+			y = panelTop - 4.f - h;
+		}
+	}
+	panelTop    = y;
+	panelBottom = y + h;
+
+	if (slideT > 0.f)
+	{
+		float left = x, right = Ccg_WideX(SCREEN_WIDTH) - (x + w), top = y, bottom = SCREEN_HEIGHT - (y + h);
+		float t = slideT * slideT;
+
+		if (MIN(left, right) <= MIN(top, bottom))
+		{
+			x += left <= right ? -(left + w) * t : (right + w) * t;
+		}
+		else
+		{
+			y += top <= bottom ? -(top + h) * t : (bottom + h) * t;
+		}
+	}
+
+	CG_FillRect(x, y, w, h, colBg);
+	CG_FillRect(x, y, w, headH, colHead);
+	CG_DrawRect_FixedBorder(x, y, w, h, 1, colBorder);
+
+	CG_Text_Paint_Ext(x + pad, y + (headH + lineH) * .5f, scale, scale, colMain, titleIn, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+	line = va("%is", sec);
+	tw   = CG_Text_Width_Ext_Float(line, scale, 0, font);
+	CG_Text_Paint_Ext(x + w - pad - tw, y + (headH + lineH) * .5f, scale, scale, colDim, line, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+
+	// time bar under the header, drains to the left
+	CG_FillRect(x + pad, y + headH + gap, innerW, barH, colTrack);
+	CG_FillRect(x + pad, y + headH + gap, innerW * frac, barH, colMain);
+	y += headH + gap * 2.f + barH;
+
+	// wrapped text, at most VOTE_PANEL_MAX_LINES lines (the last one is cut)
+	line = wrapped;
+	y   += pad * .5f;
+	for (i = 0; i < numLines && *line; i++)
+	{
+		end = strchr(line, '\n');
+		len = end ? (int)(end - line) : (int)strlen(line);
+		{
+			char   buf[MAX_STRING_TOKENS];
+			vec4_t col;
+
+			// the lines after the first one fade out while the panel shrinks
+			Vector4Copy(colWhite, col);
+			if (i > 0)
+			{
+				col[3] *= MAX(0.f, 1.f - 2.f * miniT);
+			}
+			Q_strncpyz(buf, line, MIN(len + 1, (int)sizeof(buf)));
+			CG_Text_Paint_Ext(x + pad, y + lineH, scale, scale, col, buf, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+		}
+		y   += lineH * 1.6f * (i > 0 ? 1.f - miniT : 1.f);
+		line = end ? end + 1 : line + len;
+	}
+	y += pad * .5f;
+
+	if (counts && !canVote)
+	{
+		footer = va("%s  Y:%i N:%i", va(CG_TranslateString("Can't vote as %s"), cgs.clientinfo[cg.clientNum].shoutcaster ? "Shoutcaster" : "Spectator"), cgs.voteYes, cgs.voteNo);
+		CG_Text_Paint_Ext(x + pad, y + lineH + pad * .5f, scale, scale, colDim, footer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+	}
+	else if (!voteStacked && (!counts || !voted || hold))
+	{
+		vec4_t cy, cn, hl;
+
+		Vector4Copy(colYes, cy);
+		Vector4Copy(colNo, cn);
+		if (answer >= 0)
+		{
+			// the chosen answer gets a background, the other one dims
+			(answer ? cn : cy)[3] = .3f;
+		}
+
+		footer = counts ? va("[%s] %s  %i", keyYes, CG_TranslateString("YES"), cgs.voteYes) : va("[%s] %s", keyYes, CG_TranslateString("YES"));
+		tw     = CG_Text_Width_Ext_Float(footer, scale, 0, font);
+		if (answer == 1)
+		{
+			Vector4Set(hl, colYes[0], colYes[1], colYes[2], .3f);
+			CG_FillRect(x + pad * .5f, y + pad * .3f, tw + pad, lineH + pad * .6f, hl);
+		}
+		CG_Text_Paint_Ext(x + pad, y + lineH + pad * .5f, scale, scale, cy, footer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+		footer = counts ? va("[%s] %s  %i", keyNo, CG_TranslateString("NO"), cgs.voteNo) : va("[%s] %s", keyNo, CG_TranslateString("NO"));
+		tw     = CG_Text_Width_Ext_Float(footer, scale, 0, font);
+		if (answer == 0)
+		{
+			Vector4Set(hl, colNo[0], colNo[1], colNo[2], .3f);
+			CG_FillRect(x + w - pad * 1.5f - tw, y + pad * .3f, tw + pad, lineH + pad * .6f, hl);
+		}
+		CG_Text_Paint_Ext(x + w - pad - tw, y + lineH + pad * .5f, scale, scale, cn, footer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+	}
+
+	// after voting (or as a spectator) show the split between yes and no, the leader brighter
+	if (counts && ((voted && !hold) || !canVote || voteStacked))
+	{
+		float  total = (float)(cgs.voteYes + cgs.voteNo);
+		float  yesW  = total > 0 ? innerW * cgs.voteYes / total : innerW * .5f;
+		float  by    = y + lineH + pad;
+		vec4_t cy, cn;
+
+		Vector4Copy(colYes, cy);
+		Vector4Copy(colNo, cn);
+		if (cgs.voteYes < cgs.voteNo)
+		{
+			cy[3] = .45f;
+		}
+		else if (cgs.voteNo < cgs.voteYes)
+		{
+			cn[3] = .45f;
+		}
+
+		if (canVote)
+		{
+			footer = va("%s  %i", CG_TranslateString("YES"), cgs.voteYes);
+			CG_Text_Paint_Ext(x + pad, y + lineH + pad * .5f, scale, scale, cy, footer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+			footer = va("%i  %s", cgs.voteNo, CG_TranslateString("NO"));
+			tw     = CG_Text_Width_Ext_Float(footer, scale, 0, font);
+			CG_Text_Paint_Ext(x + w - pad - tw, y + lineH + pad * .5f, scale, scale, cn, footer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+		}
+		CG_FillRect(x + pad, by, innerW, barH * 1.5f, colTrack);
+		CG_FillRect(x + pad, by, yesW, barH * 1.5f, cy);
+		CG_FillRect(x + pad + yesW, by, innerW - yesW, barH * 1.5f, cn);
+	}
+}
+
+static struct
+{
+	char title[32];
+	char text[256];
+	int sec;
+	float frac;
+} promptLast;
+
+/**
+ * @brief CG_DrawPromptPanel draws a yes/no prompt (fireteam, complaint) as a vote panel
+ * @param[in] comp
+ * @param[in] title
+ * @param[in] text
+ * @param[in] endTime
+ */
+static void CG_DrawVoteQueued(hudComponent_t *comp);
+
+static void CG_DrawPromptPanel(hudComponent_t *comp, const char *title, const char *text, int endTime)
+{
+	static int lastEnd, lastStart;
+
+	char  str1[32], str2[32];
+	float frac;
+
+	// the prompts have different lengths, so remember when this one started
+	if (endTime != lastEnd)
+	{
+		lastEnd   = endTime;
+		lastStart = cg.time;
+	}
+	frac = Com_Clamp(0.f, 1.f, (endTime - cg.time) / (float)MAX(endTime - lastStart, 1));
+
+	Q_strncpyz(promptLast.title, title, sizeof(promptLast.title));
+	Q_strncpyz(promptLast.text, text, sizeof(promptLast.text));
+	promptLast.sec  = (endTime - cg.time + 999) / 1000;
+	promptLast.frac = frac;
+
+	CG_GetBindingKeyForVote(str1, str2);
+	CG_DrawVotePanel(comp, title, text, promptLast.sec, frac, qfalse, str1, str2, -1, 0.f);
+	CG_DrawVoteQueued(comp);
+}
+
+#define PROMPT_REPLY_FLASH 700
+#define PROMPT_REPLY_SLIDE 300
+
+/**
+ * @brief CG_DrawPromptReply keeps the answered prompt on screen for a moment with the
+ * chosen answer highlighted, then slides it out towards the closest window border
+ * @param[in] comp
+ * @return qtrue if the panel was drawn
+ */
+static qboolean CG_DrawPromptReply(hudComponent_t *comp)
+{
+	char  str1[32], str2[32];
+	int   elapsed = cg.time - cgs.promptReplyTime;
+	float slide   = 0.f;
+
+	if (!cgs.promptReplyTime || elapsed < 0 || elapsed >= PROMPT_REPLY_FLASH + PROMPT_REPLY_SLIDE || !promptLast.text[0])
+	{
+		return qfalse;
+	}
+
+	if (elapsed > PROMPT_REPLY_FLASH)
+	{
+		slide = (elapsed - PROMPT_REPLY_FLASH) / (float)PROMPT_REPLY_SLIDE;
+	}
+
+	CG_GetBindingKeyForVote(str1, str2);
+	CG_DrawVotePanel(comp, promptLast.title, promptLast.text, promptLast.sec, promptLast.frac, qfalse, str1, str2, cgs.promptReplyYes, slide);
+	CG_DrawVoteQueued(comp);
+	return qtrue;
+}
+
+#define VOTE_OPEN_MS 250
+#define VOTE_CLOSE_HOLD 1500
+#define VOTE_CLOSE_SLIDE 300
+
+
+/**
+ * @brief CG_DrawVoteAnimated draws the running vote panel, sliding it in from the closest
+ * window border when the vote starts, and remembers it for CG_DrawVoteClosing
+ */
+static void CG_DrawVoteAnimated(hudComponent_t *comp, const char *title, const char *text, int sec, float frac, const char *key1, const char *key2)
+{
+	float slide = 0.f;
+
+	if (!voteAnim.shown || voteAnim.voteTime != cgs.voteTime)
+	{
+		voteAnim.voteTime = cgs.voteTime;
+		voteAnim.openTime = cg.time;
+	}
+	voteAnim.closeTime = 0;
+	voteAnim.shown     = qtrue;
+
+	if (cg.time - voteAnim.openTime < VOTE_OPEN_MS)
+	{
+		slide = 1.f - (cg.time - voteAnim.openTime) / (float)VOTE_OPEN_MS;
+	}
+
+	Q_strncpyz(voteAnim.text, text, sizeof(voteAnim.text));
+	voteAnim.sec  = sec;
+	voteAnim.yes  = cgs.voteYes;
+	voteAnim.no   = cgs.voteNo;
+	voteAnim.frac = frac;
+
+	CG_DrawVotePanel(comp, title, text, sec, frac, qtrue, key1, key2, -1, slide);
+}
+
+/**
+ * @brief CG_DrawVoteClosing keeps an ended vote (passed, failed, cancelled or timed out)
+ * on screen for a moment showing the result, then slides it out
+ * @return qtrue if the panel was drawn
+ */
+static qboolean CG_DrawVoteClosing(hudComponent_t *comp)
+{
+	char  key1[32], key2[32];
+	int   elapsed, yes, no;
+	float slide = 0.f;
+
+	if (voteAnim.shown)
+	{
+		voteAnim.shown     = qfalse;
+		voteAnim.closeTime = cg.time;
+	}
+
+	if (!voteAnim.closeTime)
+	{
+		return qfalse;
+	}
+
+	elapsed = cg.time - voteAnim.closeTime;
+	if (elapsed >= VOTE_CLOSE_HOLD + VOTE_CLOSE_SLIDE)
+	{
+		voteAnim.closeTime = 0;
+		return qfalse;
+	}
+
+	if (elapsed > VOTE_CLOSE_HOLD)
+	{
+		slide = (elapsed - VOTE_CLOSE_HOLD) / (float)VOTE_CLOSE_SLIDE;
+	}
+
+	yes            = cgs.voteYes;
+	no             = cgs.voteNo;
+	cgs.voteYes    = voteAnim.yes;
+	cgs.voteNo     = voteAnim.no;
+	voteForceVoted = qtrue;
+	CG_GetBindingKeyForVote(key1, key2);
+	CG_DrawVotePanel(comp, voteAnim.yes > voteAnim.no ? "VOTE PASSED" : "VOTE FAILED", voteAnim.text, voteAnim.sec, voteAnim.frac, qtrue, key1, key2, -1, slide);
+	voteForceVoted = qfalse;
+	cgs.voteYes    = yes;
+	cgs.voteNo     = no;
+	return qtrue;
+}
+
+/**
+ * @brief CG_DrawVoteRunning draws the running vote
+ * @param[in] comp
+ * @param[in] stacked qtrue when a prompt has the focus: the vote is drawn compact under it
+ */
+static void CG_DrawVoteRunning(hudComponent_t *comp, qboolean stacked)
+{
+	const char *str = NULL;
+	char       str1[32], str2[32];
+	int        sec;
+
+	CG_GetBindingKeyForVote(str1, str2);
+
+	// play a talk beep whenever it is modified
+	if (cgs.voteModified)
+	{
+		cgs.voteModified = qfalse;
+	}
+
+	sec = (VOTE_TIME - (cg.time - cgs.voteTime)) / 1000;
+	if (sec < 0)
+	{
+		// expired votetime
+		cgs.voteTime = 0;
+		if (stacked)
+		{
+			// the prompt on screen keeps running
+			return;
+		}
+		cgs.complaintEndTime          = 0;
+		cgs.applicationEndTime        = 0;
+		cgs.propositionEndTime        = 0;
+		cgs.invitationEndTime         = 0;
+		cgs.autoFireteamEndTime       = 0;
+		cgs.autoFireteamCreateEndTime = 0;
+		cgs.autoFireteamJoinEndTime   = 0;
+		//sec = 0;
+		return;
+	}
+
+	if (!Q_stricmpn(cgs.voteString, "kick", 4))
+	{
+		if (strlen(cgs.voteString) > 5)
+		{
+			int  nameindex;
+			char buffer[128];
+
+			Q_strncpyz(buffer, cgs.voteString + 5, sizeof(buffer));
+			Q_CleanStr(buffer);
+
+			for (nameindex = 0; nameindex < MAX_CLIENTS; nameindex++)
+			{
+				if (!cgs.clientinfo[nameindex].infoValid)
+				{
+					continue;
+				}
+
+				if (!Q_stricmp(cgs.clientinfo[nameindex].cleanname, buffer))
+				{
+					if (cgs.clientinfo[nameindex].team != TEAM_SPECTATOR && cgs.clientinfo[nameindex].team != cgs.clientinfo[cg.clientNum].team)
+					{
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	{
+		char title[32];
+		int  n;
+
+		// the vote type (first word of the vote string) is the title
+		Q_strncpyz(title, va("VOTE %s", cgs.voteString), sizeof(title));
+		for (n = 5; title[n] && title[n] != ' '; n++)
+		{
+			title[n] = toupper((unsigned char)title[n]);
+		}
+		title[n] = 0;
+
+		str  = cgs.voteString + strcspn(cgs.voteString, " ");
+		str += *str == ' ';
+		CG_DrawVoteAnimated(comp, title, *str ? str : cgs.voteString, sec,
+		                    Com_Clamp(0.f, 1.f, 1.f - (cg.time - cgs.voteTime) / (float)VOTE_TIME),
+		                    str1, str2);
+	}
+}
+
+/**
+ * @brief CG_DrawVoteQueued draws a running vote that waits for the prompt on screen
+ * as a compact panel under it
+ * @param[in] comp
+ */
+static void CG_DrawVoteQueued(hudComponent_t *comp)
+{
+	if (!cgs.voteTime)
+	{
+		return;
+	}
+
+	voteStackY  = panelBottom + 4.f;
+	voteStacked = qtrue;
+	CG_DrawVoteRunning(comp, qtrue);
+	voteStacked = qfalse;
+}
+
+/**
+ * @brief CG_PopupFocus finds the popup an answer ('vote yes|no') goes to: the first of the
+ * prompts shown by CG_DrawVote(), in the same order, then the running vote.
+ * @param[out] isVote set to qtrue when the popup is the vote
+ * @return the popup id from the server, 0 when there is none
+ */
+int CG_PopupFocus(qboolean *isVote)
+{
+	*isVote = qfalse;
+
+	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && (CG_GetActiveHUD()->votetext.style & 1) && cgs.complaintClient >= 0)
+	{
+		return cgs.complaintId;
+	}
+	if (cgs.applicationEndTime > cg.time && cgs.applicationClient >= 0)
+	{
+		return cgs.applicationId;
+	}
+	if (cgs.propositionEndTime > cg.time && cgs.propositionClient >= 0)
+	{
+		return cgs.propositionId;
+	}
+	if (cgs.invitationEndTime > cg.time && cgs.invitationClient >= 0)
+	{
+		return cgs.invitationId;
+	}
+	if (cgs.autoFireteamEndTime > cg.time && cgs.autoFireteamNum == -1)
+	{
+		return cgs.autoFireteamId;
+	}
+	if (cgs.autoFireteamCreateEndTime > cg.time && cgs.autoFireteamCreateNum == -1)
+	{
+		return cgs.autoFireteamCreateId;
+	}
+	if (cgs.autoFireteamJoinEndTime > cg.time && cgs.autoFireteamJoinNum == -1)
+	{
+		return cgs.autoFireteamJoinId;
+	}
+
+	*isVote = cgs.voteTime != 0;
+	return cgs.voteTime ? cgs.voteId : 0;
+}
+
 /**
  * @brief CG_DrawVote
  */
@@ -2610,187 +3198,78 @@ void CG_DrawVote(hudComponent_t *comp)
 
 	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && (comp->style & 1) && cgs.complaintClient >= 0)
 	{
-		CG_GetBindingKeyForVote(str1, str2);
-
-		str = va("%s\n%s",
-		         va(CG_TranslateString("File complaint against ^7%s^* for %s?"),
-		            cgs.clientinfo[cgs.complaintClient].name,
-		            (cgs.complaintClient == CG_LastAttacker()) ? "team-killing" : "team-bleeding"),
-		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
-
-		CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
+		CG_DrawPromptPanel(comp, CG_TranslateString("COMPLAINT"),
+		                   va(CG_TranslateString("File complaint against ^7%s^* for %s?"),
+		                      cgs.clientinfo[cgs.complaintClient].name,
+		                      (cgs.complaintClient == CG_LastAttacker()) ? "team-killing" : "team-bleeding"),
+		                   cgs.complaintEndTime);
 		return;
 	}
 
 	if (cgs.applicationEndTime > cg.time && cgs.applicationClient >= 0)
 	{
-		CG_GetBindingKeyForVote(str1, str2);
-
-		str = va("%s\n%s",
-		         va(CG_TranslateString("Accept ^7%s^*'s application to join your fireteam?"), cgs.clientinfo[cgs.applicationClient].name),
-		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
-
-		CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
+		CG_DrawPromptPanel(comp, CG_TranslateString("FIRETEAM"),
+		                   va(CG_TranslateString("Accept ^7%s^*'s application to join your fireteam?"), cgs.clientinfo[cgs.applicationClient].name),
+		                   cgs.applicationEndTime);
 		return;
 	}
 
 	if (cgs.propositionEndTime > cg.time && cgs.propositionClient >= 0)
 	{
-		CG_GetBindingKeyForVote(str1, str2);
-
-		str = va("%s\n%s",
-		         va(CG_TranslateString("Accept ^7%s^*'s proposition to invite ^7%s^* to join your fireteam?"), cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name),
-		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
-
-		CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
+		CG_DrawPromptPanel(comp, CG_TranslateString("FIRETEAM"),
+		                   va(CG_TranslateString("Accept ^7%s^*'s proposition to invite ^7%s^* to join your fireteam?"), cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name),
+		                   cgs.propositionEndTime);
 		return;
 	}
 
 	if (cgs.invitationEndTime > cg.time && cgs.invitationClient >= 0)
 	{
-		CG_GetBindingKeyForVote(str1, str2);
-
-		str = va("%s\n%s",
-		         va(CG_TranslateString("Accept ^7%s^*'s invitation to join their fireteam?"), cgs.clientinfo[cgs.invitationClient].name),
-		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
-
-		CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
-
+		CG_DrawPromptPanel(comp, CG_TranslateString("FIRETEAM"),
+		                   va(CG_TranslateString("Accept ^7%s^*'s invitation to join their fireteam?"), cgs.clientinfo[cgs.invitationClient].name),
+		                   cgs.invitationEndTime);
 		return;
 	}
 
 	if (cgs.autoFireteamEndTime > cg.time && cgs.autoFireteamNum == -1)
 	{
-		CG_GetBindingKeyForVote(str1, str2);
-
-		str = va("%s\n%s",
-		         CG_TranslateString("Make Fireteam private?"),
-		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
-
-		CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
-
+		CG_DrawPromptPanel(comp, CG_TranslateString("FIRETEAM"), CG_TranslateString("Make Fireteam private?"), cgs.autoFireteamEndTime);
 		return;
 	}
 
 	if (cgs.autoFireteamCreateEndTime > cg.time && cgs.autoFireteamCreateNum == -1)
 	{
-		CG_GetBindingKeyForVote(str1, str2);
-
-		str = va("%s\n%s",
-		         CG_TranslateString("Create a Fireteam?"),
-		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
-
-		CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
+		CG_DrawPromptPanel(comp, CG_TranslateString("FIRETEAM"), CG_TranslateString("Create a Fireteam?"), cgs.autoFireteamCreateEndTime);
 		return;
 	}
 
 	if (cgs.autoFireteamJoinEndTime > cg.time && cgs.autoFireteamJoinNum == -1)
 	{
-		CG_GetBindingKeyForVote(str1, str2);
-
-		str = va("%s\n%s",
-		         CG_TranslateString("Join a Fireteam?"),
-		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
-
-		CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
+		CG_DrawPromptPanel(comp, CG_TranslateString("FIRETEAM"), CG_TranslateString("Join a Fireteam?"), cgs.autoFireteamJoinEndTime);
 		return;
 	}
 
 	if (cgs.voteTime)
 	{
-		int sec;
+		CG_DrawVoteRunning(comp, qfalse);
+		return;
+	}
 
-		CG_GetBindingKeyForVote(str1, str2);
-
-		// play a talk beep whenever it is modified
-		if (cgs.voteModified)
-		{
-			cgs.voteModified = qfalse;
-		}
-
-		sec = (VOTE_TIME - (cg.time - cgs.voteTime)) / 1000;
-		if (sec < 0)
-		{
-			// expired votetime
-			cgs.voteTime                  = 0;
-			cgs.complaintEndTime          = 0;
-			cgs.applicationEndTime        = 0;
-			cgs.propositionEndTime        = 0;
-			cgs.invitationEndTime         = 0;
-			cgs.autoFireteamEndTime       = 0;
-			cgs.autoFireteamCreateEndTime = 0;
-			cgs.autoFireteamJoinEndTime   = 0;
-			//sec = 0;
-			return;
-		}
-
-		if (!Q_stricmpn(cgs.voteString, "kick", 4))
-		{
-			if (strlen(cgs.voteString) > 5)
-			{
-				int  nameindex;
-				char buffer[128];
-
-				Q_strncpyz(buffer, cgs.voteString + 5, sizeof(buffer));
-				Q_CleanStr(buffer);
-
-				for (nameindex = 0; nameindex < MAX_CLIENTS; nameindex++)
-				{
-					if (!cgs.clientinfo[nameindex].infoValid)
-					{
-						continue;
-					}
-
-					if (!Q_stricmp(cgs.clientinfo[nameindex].cleanname, buffer))
-					{
-						if (cgs.clientinfo[nameindex].team != TEAM_SPECTATOR && cgs.clientinfo[nameindex].team != cgs.clientinfo[cg.clientNum].team)
-						{
-							return;
-						}
-					}
-				}
-			}
-		}
-
-		if (!(cg.snap->ps.eFlags & EF_VOTED))
-		{
-			if (cgs.clientinfo[cg.clientNum].team != TEAM_AXIS && cgs.clientinfo[cg.clientNum].team != TEAM_ALLIES)
-			{
-				str = va("%s\n^*%s\n%s", va(CG_TranslateString("VOTE(%i): %s"), sec, cgs.voteString),
-				         va(CG_TranslateString("YES:%i, NO:%i"), cgs.voteYes, cgs.voteNo),
-				         va(CG_TranslateString("Can't vote as %s"), cgs.clientinfo[cg.clientNum].shoutcaster ? "Shoutcaster" : "Spectator"));
-
-				CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
-			}
-			else
-			{
-				str = va("%s\n^*%s",
-				         va(CG_TranslateString("VOTE(%i): %s"), sec, cgs.voteString),
-				         va(CG_TranslateString("YES(%s):%i, NO(%s):%i"), str1, cgs.voteYes, str2, cgs.voteNo));
-
-				CG_DrawCompMultilineText(comp, str,
-				                         comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
-			}
-		}
-		else
-		{
-			str = va("%s\n^*%s",
-			         va(CG_TranslateString("YOU VOTED ON: %s"), cgs.voteString),
-			         va(CG_TranslateString("Y:%i, N:%i"), cgs.voteYes, cgs.voteNo));
-
-			CG_DrawCompMultilineText(comp, str,
-			                         comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
-		}
-
+	if (CG_DrawVoteClosing(comp))
+	{
 		return;
 	}
 
 	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && (comp->style & 1) && cgs.complaintClient < 0)
 	{
+		if (cgs.complaintClient == -1 || cgs.complaintClient == -2)
+		{
+			// the answer to the complaint prompt, shown on the prompt panel
+			CG_DrawPromptReply(comp);
+			return;
+		}
+
 		switch (cgs.complaintClient)
 		{
-		case -1: str = CG_TranslateString("Your complaint has been filed"); break;
-		case -2: str = CG_TranslateString("Complaint dismissed"); break;
 		case -3: str = CG_TranslateString("Server Host cannot be complained against"); break;
 		case -4: str = CG_TranslateString(va("You were %s by the Server Host", (cgs.complaintClient == CG_LastAttacker()) ? "team-killed" : "team-bled")); break;
 		case -5: str = CG_TranslateString(va("You were %s by a bot.", (cgs.complaintClient == CG_LastAttacker()) ? "team-killed" : "team-bled")); break;
@@ -2807,12 +3286,17 @@ void CG_DrawVote(hudComponent_t *comp)
 
 	if (cgs.applicationEndTime > cg.time && cgs.applicationClient < 0)
 	{
+		if (cgs.applicationClient == -4)
+		{
+			CG_DrawPromptReply(comp);
+			return;
+		}
+
 		switch (cgs.applicationClient)
 		{
 		case -1: str = CG_TranslateString("Your application has been submitted"); break;
 		case -2: str = CG_TranslateString("Your application failed"); break;
 		case -3: str = CG_TranslateString("Your application has been approved"); break;
-		case -4: str = CG_TranslateString("Your application reply has been sent"); break;
 		default: break;
 		}
 
@@ -2825,12 +3309,17 @@ void CG_DrawVote(hudComponent_t *comp)
 
 	if (cgs.propositionEndTime > cg.time && cgs.propositionClient < 0)
 	{
+		if (cgs.propositionClient == -4)
+		{
+			CG_DrawPromptReply(comp);
+			return;
+		}
+
 		switch (cgs.propositionClient)
 		{
 		case -1: str = CG_TranslateString("Your proposition has been submitted"); break;
 		case -2: str = CG_TranslateString("Your proposition was rejected"); break;
 		case -3: str = CG_TranslateString("Your proposition was accepted"); break;
-		case -4: str = CG_TranslateString("Your proposition reply has been sent"); break;
 		default: break;
 		}
 
@@ -2843,12 +3332,17 @@ void CG_DrawVote(hudComponent_t *comp)
 
 	if (cgs.invitationEndTime > cg.time && cgs.invitationClient < 0)
 	{
+		if (cgs.invitationClient == -4)
+		{
+			CG_DrawPromptReply(comp);
+			return;
+		}
+
 		switch (cgs.invitationClient)
 		{
 		case -1: str = CG_TranslateString("Your invitation has been submitted"); break;
 		case -2: str = CG_TranslateString("Your invitation was rejected"); break;
 		case -3: str = CG_TranslateString("Your invitation was accepted"); break;
-		case -4: str = CG_TranslateString("Your invitation reply has been sent"); break;
 		default: break;
 		}
 
@@ -2866,7 +3360,7 @@ void CG_DrawVote(hudComponent_t *comp)
 
 	if ((cgs.autoFireteamEndTime > cg.time && cgs.autoFireteamNum == -2) || (cgs.autoFireteamCreateEndTime > cg.time && cgs.autoFireteamCreateNum == -2) || (cgs.autoFireteamJoinEndTime > cg.time && cgs.autoFireteamJoinNum == -2))
 	{
-		CG_DrawCompMultilineText(comp, CG_TranslateString("Response Sent"), comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
+		CG_DrawPromptReply(comp);
 		return;
 	}
 }

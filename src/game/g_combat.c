@@ -370,11 +370,14 @@ qboolean G_CheckComplaint(gentity_t *self, gentity_t *inflictor, gentity_t *atta
 					    !((meansOfDeath == MOD_ARTY || meansOfDeath == MOD_AIRSTRIKE) && (g_disableComplaints.integer & TKFL_AIRSTRIKE)) &&
 					    !((meansOfDeath == MOD_MORTAR || meansOfDeath == MOD_MORTAR2) && (g_disableComplaints.integer & TKFL_MORTAR)))
 					{
-						trap_SendServerCommand(self - g_entities, va("complaint %i", attacker->s.number));
+						int popupId = G_NextPopupId();
+
+						trap_SendServerCommand(self - g_entities, va("complaint %i %i", attacker->s.number, popupId));
 						if (meansOfDeath != MOD_DYNAMITE || !(inflictor->etpro_misc_1 & 1))   // do not allow complain when tked / tbed by dynamite on objective
 						{
-							self->client->pers.complaintClient  = attacker->s.clientNum;
-							self->client->pers.complaintEndTime = level.time + 20500;
+							self->client->pers.popupId[POPUP_COMPLAINT] = popupId;
+							self->client->pers.complaintClient          = attacker->s.clientNum;
+							self->client->pers.complaintEndTime         = level.time + 20500;
 
 							return qtrue;
 						}

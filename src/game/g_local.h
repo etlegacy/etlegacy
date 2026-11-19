@@ -758,6 +758,25 @@ typedef struct ipFilter_s
 #define MAX_COMPLAINTIPS 5
 
 /**
+ * @enum popupKind_t
+ * @brief The prompts and votes a client can answer with 'vote yes|no <id>'
+ */
+typedef enum
+{
+	POPUP_ANY,              ///< no id given: the answer goes to the first pending prompt, then to the vote
+	POPUP_COMPLAINT,
+	POPUP_APPLICATION,
+	POPUP_INVITATION,
+	POPUP_PROPOSITION,
+	POPUP_AFT,
+	POPUP_AFTC,
+	POPUP_AFTJ,
+	POPUP_VOTE,
+
+	POPUP_NUM
+} popupKind_t;
+
+/**
  * @struct clientPersistant_t
  * @brief Client data that stays across multiple respawns, but is cleared
  * on each level change or team change at ClientBegin()
@@ -810,6 +829,8 @@ typedef struct
 	int autofireteamEndTime;
 	int autofireteamCreateEndTime;
 	int autofireteamJoinEndTime;
+
+	byte popupId[POPUP_NUM];            ///< id of the pending prompt of each kind, sent with the prompt and returned with the answer
 
 	playerStats_t playerStats;
 
@@ -1134,6 +1155,7 @@ typedef struct voteInfo_s
 {
 	char voteString[MAX_STRING_CHARS];
 	int voteTime;                       ///< level.time vote was called
+	int voteId;                         ///< popup id of the vote, see G_NextPopupId()
 	int voteYes;
 	int voteNo;
 	int numVotingClients;               ///< set by CalculateRanks
@@ -1247,6 +1269,7 @@ typedef struct level_locals_s
 
 	// voting
 	voteInfo_t voteInfo;
+	int popupSeq;                               ///< last popup id handed out
 	int numTeamClients[2];
 	int numVotingTeamClients[2];
 
@@ -1464,6 +1487,7 @@ void G_ParseField(const char *key, const char *value, gentity_t *ent);
 // g_cmds.c
 void Cmd_Score_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value);
+int G_NextPopupId(void);
 void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value);

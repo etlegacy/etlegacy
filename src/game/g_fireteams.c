@@ -402,7 +402,8 @@ void G_RegisterFireteam(int entityNum)
 	case 1:
 		ft->priv = qfalse;
 
-		trap_SendServerCommand(entityNum, "aft -1");
+		leader->client->pers.popupId[POPUP_AFT] = G_NextPopupId();
+		trap_SendServerCommand(entityNum, va("aft -1 %i", leader->client->pers.popupId[POPUP_AFT]));
 		leader->client->pers.autofireteamEndTime = level.time + 20500;
 		break;
 	case 2:
@@ -715,7 +716,8 @@ void G_InviteToFireTeam(int entityNum, int otherEntityNum)
 			return;
 		}
 
-		trap_SendServerCommand(otherEntityNum, va("invitation %i", entityNum));
+		g_entities[otherEntityNum].client->pers.popupId[POPUP_INVITATION] = G_NextPopupId();
+		trap_SendServerCommand(otherEntityNum, va("invitation %i %i", entityNum, g_entities[otherEntityNum].client->pers.popupId[POPUP_INVITATION]));
 		g_entities[otherEntityNum].client->pers.invitationClient  = entityNum;
 		g_entities[otherEntityNum].client->pers.invitationEndTime = level.time + 20500;
 	}
@@ -903,7 +905,8 @@ void G_ApplyToFireTeam(int entityNum, int fireteamNum)
 		return;
 	}
 
-	trap_SendServerCommand(leader - g_entities, va("application %i", entityNum));
+	leader->client->pers.popupId[POPUP_APPLICATION] = G_NextPopupId();
+	trap_SendServerCommand(leader - g_entities, va("application %i %i", entityNum, leader->client->pers.popupId[POPUP_APPLICATION]));
 	leader->client->pers.applicationClient  = entityNum;
 	leader->client->pers.applicationEndTime = level.time + 20000;
 }
@@ -971,7 +974,8 @@ void G_ProposeFireTeamPlayer(int entityNum, int otherEntityNum)
 		return;
 	}
 
-	trap_SendServerCommand(leader - g_entities, va("proposition %i %i", otherEntityNum, entityNum));
+	leader->client->pers.popupId[POPUP_PROPOSITION] = G_NextPopupId();
+	trap_SendServerCommand(leader - g_entities, va("proposition %i %i %i", otherEntityNum, entityNum, leader->client->pers.popupId[POPUP_PROPOSITION]));
 	leader->client->pers.propositionClient  = otherEntityNum;
 	leader->client->pers.propositionClient2 = entityNum;
 	leader->client->pers.propositionEndTime = level.time + 20000;
