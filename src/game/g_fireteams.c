@@ -402,9 +402,7 @@ void G_RegisterFireteam(int entityNum)
 	case 1:
 		ft->priv = qfalse;
 
-		leader->client->pers.popupId[POPUP_AFT] = G_NextPopupId();
-		trap_SendServerCommand(entityNum, va("aft -1 %i", leader->client->pers.popupId[POPUP_AFT]));
-		leader->client->pers.autofireteamEndTime = level.time + 20500;
+		G_PromptAdd(entityNum, POPUP_AFT, -1, -1, 0);
 		break;
 	case 2:
 	default:
@@ -416,6 +414,8 @@ void G_RegisterFireteam(int entityNum)
 	Bot_Event_FireTeamCreated(entityNum, ft->ident);
 	Bot_Event_JoinedFireTeam(leader - g_entities, leader);
 #endif
+
+	G_PromptJoinedFireteam(entityNum, entityNum);
 
 	G_UpdateFireteamConfigString(ft);
 }
@@ -484,6 +484,8 @@ void G_AddClientToFireteam(int entityNum, int leaderNum)
 #ifdef FEATURE_OMNIBOT
 			Bot_Event_JoinedFireTeam(entityNum, &g_entities[leaderNum]);
 #endif
+
+			G_PromptJoinedFireteam(entityNum, leaderNum);
 
 			G_UpdateFireteamConfigString(ft);
 
@@ -709,17 +711,15 @@ void G_InviteToFireTeam(int entityNum, int otherEntityNum)
 	}
 	else
 	{
-		trap_SendServerCommand(entityNum, va("invitation -1"));
-
-		if (COM_BitCheck(g_entities[otherEntityNum].client->sess.ignoreClients, entityNum))
+		// an ignored invitation looks sent too
+		if (!COM_BitCheck(g_entities[otherEntityNum].client->sess.ignoreClients, entityNum) &&
+		    !G_PromptAdd(otherEntityNum, POPUP_INVITATION, entityNum, -1, 0))
 		{
+			G_ClientPrint(entityNum, "The other player has too many pending requests, try again later");
 			return;
 		}
 
-		g_entities[otherEntityNum].client->pers.popupId[POPUP_INVITATION] = G_NextPopupId();
-		trap_SendServerCommand(otherEntityNum, va("invitation %i %i", entityNum, g_entities[otherEntityNum].client->pers.popupId[POPUP_INVITATION]));
-		g_entities[otherEntityNum].client->pers.invitationClient  = entityNum;
-		g_entities[otherEntityNum].client->pers.invitationEndTime = level.time + 20500;
+		trap_SendServerCommand(entityNum, va("invitation -1"));
 	}
 
 #ifdef FEATURE_OMNIBOT
@@ -898,17 +898,15 @@ void G_ApplyToFireTeam(int entityNum, int fireteamNum)
 	// DEBUG
 	//G_AddClientToFireteam( entityNum, ft->joinOrder[0] );
 
-	trap_SendServerCommand(entityNum, va("application -1"));
-
-	if (COM_BitCheck(leader->client->sess.ignoreClients, entityNum))
+	// an ignored application looks sent too
+	if (!COM_BitCheck(leader->client->sess.ignoreClients, entityNum) &&
+	    !G_PromptAdd(leader - g_entities, POPUP_APPLICATION, entityNum, -1, 0))
 	{
+		G_ClientPrint(entityNum, "The fireteam leader has too many pending requests, try again later");
 		return;
 	}
 
-	leader->client->pers.popupId[POPUP_APPLICATION] = G_NextPopupId();
-	trap_SendServerCommand(leader - g_entities, va("application %i %i", entityNum, leader->client->pers.popupId[POPUP_APPLICATION]));
-	leader->client->pers.applicationClient  = entityNum;
-	leader->client->pers.applicationEndTime = level.time + 20000;
+	trap_SendServerCommand(entityNum, va("application -1"));
 }
 
 /**
@@ -967,18 +965,20 @@ void G_ProposeFireTeamPlayer(int entityNum, int otherEntityNum)
 		G_Error("G_ProposeFireTeamPlayer: invalid client\n");
 	}
 
-	trap_SendServerCommand(entityNum, va("proposition -1"));
-
 	if (COM_BitCheck(leader->client->sess.ignoreClients, entityNum))
 	{
+		// an ignored proposition looks sent too
+		trap_SendServerCommand(entityNum, va("proposition -1"));
 		return;
 	}
 
-	leader->client->pers.popupId[POPUP_PROPOSITION] = G_NextPopupId();
-	trap_SendServerCommand(leader - g_entities, va("proposition %i %i %i", otherEntityNum, entityNum, leader->client->pers.popupId[POPUP_PROPOSITION]));
-	leader->client->pers.propositionClient  = otherEntityNum;
-	leader->client->pers.propositionClient2 = entityNum;
-	leader->client->pers.propositionEndTime = level.time + 20000;
+	if (!G_PromptAdd(leader - g_entities, POPUP_PROPOSITION, otherEntityNum, entityNum, 0))
+	{
+		G_ClientPrint(entityNum, "The fireteam leader has too many pending requests, try again later");
+		return;
+	}
+
+	trap_SendServerCommand(entityNum, va("proposition -1"));
 
 #ifdef FEATURE_OMNIBOT
 	Bot_Event_FireTeam_Proposal(leader - g_entities, otherEntityNum);

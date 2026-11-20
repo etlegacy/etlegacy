@@ -2515,6 +2515,21 @@ typedef struct sortedVotedMapByTotal_s
  * be cleared when a tournement restart is done, allowing
  * all clients to begin playing instantly
  */
+/**
+ * @struct cgPrompt_t
+ * @brief A yes/no prompt from the server (complaint, fireteam request), see CG_PromptAdd()
+ */
+typedef struct
+{
+	int kind;               ///< popupKind_t, POPUP_ANY = free slot
+	int id;                 ///< returned with the answer
+	int from;               ///< the client it is about
+	int from2;              ///< proposition: the player who proposed
+	int startTime;          ///< cg.time it arrived
+	int endTime;            ///< cg.time it expires
+	int seq;                ///< order it arrived in
+} cgPrompt_t;
+
 typedef struct cgs_s
 {
 	gameState_t currentGameState;                   ///< gameState from server
@@ -2632,6 +2647,8 @@ typedef struct cgs_s
 	int ccLayerCeils[MAX_COMMANDMAP_LAYERS];
 	float ccZoomFactor;
 
+	// the state of the player's own fireteam request (shown for a moment):
+	// -1 sent, -2 rejected, -3 accepted
 	int invitationClient;
 	int invitationEndTime;
 
@@ -2639,28 +2656,14 @@ typedef struct cgs_s
 	int applicationEndTime;
 
 	int propositionClient;
-	int propositionClient2;
 	int propositionEndTime;
 
-	int autoFireteamEndTime;
-	int autoFireteamNum;
+	cgPrompt_t prompts[MAX_PENDING_PROMPTS];        ///< yes/no prompts waiting for the player's answer
+	int promptSeq;                                  ///< counts the prompts received, for their order
+	int promptReplyTime;                            ///< when the server confirmed the answer to the prompt on screen
+	int promptReplyYes;                             ///< the answer: 1 yes, 0 no
 
-	int autoFireteamCreateEndTime;
-	int autoFireteamCreateNum;
-
-	int autoFireteamJoinEndTime;
-	int autoFireteamJoinNum;
-	int promptReplyTime;                            ///< when the server confirmed the answer to a fireteam prompt
-	int promptReplyYes;                             ///< the answer: 1 yes, 0 no, -1 unknown
-	// popup ids from the server (0 = none), returned with the answer: 'vote yes <id>'
-	int voteId;
-	int complaintId;
-	int applicationId;
-	int invitationId;
-	int propositionId;
-	int autoFireteamId;
-	int autoFireteamCreateId;
-	int autoFireteamJoinId;
+	int voteId;                                     ///< popup id of the vote, returned with the answer: 'vote yes <id>'
 
 	qboolean autoMapExpanded;
 	int autoMapExpandTime;
@@ -4394,7 +4397,10 @@ void CG_DrawNewCompass(hudComponent_t *comp);
 void CG_DrawFireTeamOverlay(hudComponent_t *comp);
 void CG_DrawPM(hudComponent_t *comp);
 void CG_DrawVote(hudComponent_t *comp);
-int CG_PopupFocus(qboolean *isVote);
+int CG_PopupFocus(int *kind);
+void CG_PromptAdd(int id, int kind, int from, int from2, int msLeft);
+void CG_PromptClose(int id, int answer);
+void CG_PromptClearAll(void);
 void CG_DrawSpectatorMessage(hudComponent_t *comp);
 void CG_DrawLimboMessage(hudComponent_t *comp);
 void CG_DrawFollow(hudComponent_t *comp);

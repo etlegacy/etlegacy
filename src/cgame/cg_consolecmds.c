@@ -3912,19 +3912,25 @@ qboolean CG_ConsoleCommand(void)
 
 	if (!Q_stricmp(cmd, "vote") && trap_Argc() > 1 && (!Q_stricmp(CG_Argv(1), "yes") || !Q_stricmp(CG_Argv(1), "no")))
 	{
-		qboolean isVote;
+		int      kind;
 		qboolean yes = !Q_stricmp(CG_Argv(1), "yes");
-		int      id  = CG_PopupFocus(&isVote);
+		int      id  = CG_PopupFocus(&kind);
+
+		if (trap_Argc() == 2 && id < 0)
+		{
+			// an answered prompt is still on screen: the popup behind it isn't shown yet
+			return qtrue;
+		}
 
 		// remember the answer so the vote popup can highlight it before it shrinks
-		if (isVote)
+		if (kind == POPUP_VOTE)
 		{
 			cgs.voteAnswerTime = cg.time;
 			cgs.voteAnswerYes  = yes;
 		}
 
 		// the answer carries the id of the popup it is for, so it can't land on another one
-		if (trap_Argc() == 2 && id && !(isVote && cgs.voteFake))
+		if (trap_Argc() == 2 && id > 0 && !(kind == POPUP_VOTE && cgs.voteFake))
 		{
 			trap_SendClientCommand(va("vote %s %i", yes ? "yes" : "no", id));
 			return qtrue;

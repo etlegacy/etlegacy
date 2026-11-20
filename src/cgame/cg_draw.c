@@ -2631,6 +2631,175 @@ static float    voteStackY;            ///< top of the vote panel when it is sta
 static qboolean voteStacked;           ///< draw the vote compact and at voteStackY, because a prompt has the focus
 static qboolean voteForceVoted; ///< draw the panel as if the player had voted (result display after a vote ended)
 
+// votetext HUD component styles
+#define VOTE_STYLE_COMPLAINT 1 ///< show complaint popups
+
+#define PROMPT_REPLY_FLASH 700
+#define PROMPT_REPLY_SLIDE 300
+
+static struct
+{
+	int id;
+	char title[32];
+	char text[256];
+	int sec;
+	float frac;
+} promptLast; ///< the prompt drawn last, kept on screen with the answer, see CG_DrawPromptReply()
+
+/**
+ * @brief CG_PromptClearAll drops all prompts (map restart)
+ */
+void CG_PromptClearAll(void)
+{
+	Com_Memset(cgs.prompts, 0, sizeof(cgs.prompts));
+	cgs.promptReplyTime = 0;
+}
+
+/**
+ * @brief CG_PromptAdd adds a prompt from the server, or updates the one with the same id (its
+ * timer starts when it comes to the front)
+ * @param[in] id
+ * @param[in] kind
+ * @param[in] from
+ * @param[in] from2
+ * @param[in] msLeft
+ */
+void CG_PromptAdd(int id, int kind, int from, int from2, int msLeft)
+{
+	cgPrompt_t *p = NULL;
+	int        i;
+
+	if (kind <= POPUP_ANY || kind > POPUP_AFTJ || id <= 0)
+	{
+		return;
+	}
+
+	if (kind == POPUP_COMPLAINT)
+	{
+		if (cgs.gamestate != GS_PLAYING || cg.demoPlayback)
+		{
+			return;
+		}
+
+		// the HUD doesn't show complaints: decline right away
+		if (!(CG_GetActiveHUD()->votetext.style & VOTE_STYLE_COMPLAINT))
+		{
+			trap_SendClientCommand(va("vote no %i", id));
+			return;
+		}
+	}
+
+	for (i = 0; i < MAX_PENDING_PROMPTS; i++)
+	{
+		if (cgs.prompts[i].kind != POPUP_ANY && cgs.prompts[i].id == id)
+		{
+			// same prompt, new end time
+			p = &cgs.prompts[i];
+			break;
+		}
+	}
+
+	if (!p)
+	{
+		for (i = 0; i < MAX_PENDING_PROMPTS; i++)
+		{
+			if (cgs.prompts[i].kind == POPUP_ANY || cgs.prompts[i].endTime <= cg.time)
+			{
+				p = &cgs.prompts[i];
+				break;
+			}
+		}
+
+		if (!p)
+		{
+			// the server keeps as many: the oldest one is gone there
+			p = &cgs.prompts[0];
+			for (i = 1; i < MAX_PENDING_PROMPTS; i++)
+			{
+				if (cgs.prompts[i].seq < p->seq)
+				{
+					p = &cgs.prompts[i];
+				}
+			}
+		}
+
+		p->seq = ++cgs.promptSeq;
+	}
+
+	p->kind      = kind;
+	p->id        = id;
+	p->from      = from;
+	p->from2     = from2;
+	p->startTime = cg.time;
+	p->endTime   = cg.time + msLeft;
+}
+
+/**
+ * @brief CG_PromptClose removes a prompt. When it is the prompt on screen and was answered, it
+ * stays there for a moment with the answer highlighted.
+ * @param[in] id
+ * @param[in] answer 1 yes, 0 no, -1 withdrawn
+ */
+void CG_PromptClose(int id, int answer)
+{
+	int i;
+
+	for (i = 0; i < MAX_PENDING_PROMPTS; i++)
+	{
+		if (cgs.prompts[i].kind != POPUP_ANY && cgs.prompts[i].id == id)
+		{
+			cgs.prompts[i].kind = POPUP_ANY;
+			break;
+		}
+	}
+
+	if (answer >= 0 && promptLast.id == id && promptLast.text[0])
+	{
+		cgs.promptReplyTime = cg.time;
+		cgs.promptReplyYes  = answer;
+	}
+}
+
+/**
+ * @brief CG_PromptFront
+ * @return the prompt shown first: the oldest one, whose timer runs (the ones behind it wait;
+ * the server uses the same order), NULL if none is pending
+ */
+static cgPrompt_t *CG_PromptFront(void)
+{
+	cgPrompt_t *best = NULL;
+	int        i;
+
+	for (i = 0; i < MAX_PENDING_PROMPTS; i++)
+	{
+		cgPrompt_t *p = &cgs.prompts[i];
+
+		if (p->kind == POPUP_ANY || p->endTime <= cg.time)
+		{
+			continue;
+		}
+
+		if (!best || p->seq < best->seq)
+		{
+			best = p;
+		}
+	}
+
+	return best;
+}
+
+/**
+ * @brief CG_PromptReplyActive
+ * @return qtrue while an answered prompt is still on screen
+ */
+static qboolean CG_PromptReplyActive(void)
+{
+	int elapsed = cg.time - cgs.promptReplyTime;
+
+	return cgs.promptReplyTime && elapsed >= 0 && elapsed < PROMPT_REPLY_FLASH + PROMPT_REPLY_SLIDE && promptLast.text[0];
+}
+
+
 /**
  * @brief CG_DrawVotePanel draws a compact vote box: title and timer, wrapped vote text,
  * yes/no counts with their keys and a bar with the remaining time
@@ -2884,50 +3053,75 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 	}
 }
 
-static struct
+/**
+ * @brief CG_PromptText
+ * @param[in] p
+ * @param[out] title
+ * @param[out] text
+ */
+static void CG_PromptText(const cgPrompt_t *p, const char **title, const char **text)
 {
-	char title[32];
-	char text[256];
-	int sec;
-	float frac;
-} promptLast;
+	switch (p->kind)
+	{
+	case POPUP_COMPLAINT:
+		*title = CG_TranslateString("COMPLAINT");
+		*text  = va(CG_TranslateString("File complaint against ^7%s^* for %s?"), cgs.clientinfo[p->from].name,
+		            (p->from == CG_LastAttacker()) ? "team-killing" : "team-bleeding");
+		break;
+	case POPUP_APPLICATION:
+		*title = CG_TranslateString("FIRETEAM");
+		*text  = va(CG_TranslateString("Accept ^7%s^*'s application to join your fireteam?"), cgs.clientinfo[p->from].name);
+		break;
+	case POPUP_PROPOSITION:
+		*title = CG_TranslateString("FIRETEAM");
+		*text  = va(CG_TranslateString("Accept ^7%s^*'s proposition to invite ^7%s^* to join your fireteam?"), cgs.clientinfo[p->from2].name, cgs.clientinfo[p->from].name);
+		break;
+	case POPUP_INVITATION:
+		*title = CG_TranslateString("FIRETEAM");
+		*text  = va(CG_TranslateString("Accept ^7%s^*'s invitation to join their fireteam?"), cgs.clientinfo[p->from].name);
+		break;
+	case POPUP_AFT:
+		*title = CG_TranslateString("FIRETEAM");
+		*text  = CG_TranslateString("Make Fireteam private?");
+		break;
+	case POPUP_AFTC:
+		*title = CG_TranslateString("FIRETEAM");
+		*text  = CG_TranslateString("Create a Fireteam?");
+		break;
+	case POPUP_AFTJ:
+	default:
+		*title = CG_TranslateString("FIRETEAM");
+		*text  = CG_TranslateString("Join a Fireteam?");
+		break;
+	}
+}
 
 /**
- * @brief CG_DrawPromptPanel draws a yes/no prompt (fireteam, complaint) as a vote panel
+ * @brief CG_DrawPromptPanel draws the prompt with the focus (fireteam, complaint) as a vote panel
  * @param[in] comp
- * @param[in] title
- * @param[in] text
- * @param[in] endTime
+ * @param[in] p
  */
 static void CG_DrawVoteQueued(hudComponent_t *comp);
 
-static void CG_DrawPromptPanel(hudComponent_t *comp, const char *title, const char *text, int endTime)
+static void CG_DrawPromptPanel(hudComponent_t *comp, const cgPrompt_t *p)
 {
-	static int lastEnd, lastStart;
+	char       str1[32], str2[32];
+	const char *title, *text;
+	float      frac;
 
-	char  str1[32], str2[32];
-	float frac;
+	CG_PromptText(p, &title, &text);
+	frac = Com_Clamp(0.f, 1.f, (p->endTime - cg.time) / (float)MAX(p->endTime - p->startTime, 1));
 
-	// the prompts have different lengths, so remember when this one started
-	if (endTime != lastEnd)
-	{
-		lastEnd   = endTime;
-		lastStart = cg.time;
-	}
-	frac = Com_Clamp(0.f, 1.f, (endTime - cg.time) / (float)MAX(endTime - lastStart, 1));
-
+	promptLast.id = p->id;
 	Q_strncpyz(promptLast.title, title, sizeof(promptLast.title));
 	Q_strncpyz(promptLast.text, text, sizeof(promptLast.text));
-	promptLast.sec  = (endTime - cg.time + 999) / 1000;
+	promptLast.sec  = (p->endTime - cg.time + 999) / 1000;
 	promptLast.frac = frac;
 
 	CG_GetBindingKeyForVote(str1, str2);
-	CG_DrawVotePanel(comp, title, text, promptLast.sec, frac, qfalse, str1, str2, -1, 0.f);
+	CG_DrawVotePanel(comp, promptLast.title, promptLast.text, promptLast.sec, frac, qfalse, str1, str2, -1, 0.f);
 	CG_DrawVoteQueued(comp);
 }
-
-#define PROMPT_REPLY_FLASH 700
-#define PROMPT_REPLY_SLIDE 300
 
 /**
  * @brief CG_DrawPromptReply keeps the answered prompt on screen for a moment with the
@@ -2941,7 +3135,7 @@ static qboolean CG_DrawPromptReply(hudComponent_t *comp)
 	int   elapsed = cg.time - cgs.promptReplyTime;
 	float slide   = 0.f;
 
-	if (!cgs.promptReplyTime || elapsed < 0 || elapsed >= PROMPT_REPLY_FLASH + PROMPT_REPLY_SLIDE || !promptLast.text[0])
+	if (!CG_PromptReplyActive())
 	{
 		return qfalse;
 	}
@@ -3063,19 +3257,6 @@ static void CG_DrawVoteRunning(hudComponent_t *comp, qboolean stacked)
 	{
 		// expired votetime
 		cgs.voteTime = 0;
-		if (stacked)
-		{
-			// the prompt on screen keeps running
-			return;
-		}
-		cgs.complaintEndTime          = 0;
-		cgs.applicationEndTime        = 0;
-		cgs.propositionEndTime        = 0;
-		cgs.invitationEndTime         = 0;
-		cgs.autoFireteamEndTime       = 0;
-		cgs.autoFireteamCreateEndTime = 0;
-		cgs.autoFireteamJoinEndTime   = 0;
-		//sec = 0;
 		return;
 	}
 
@@ -3146,105 +3327,113 @@ static void CG_DrawVoteQueued(hudComponent_t *comp)
 }
 
 /**
- * @brief CG_PopupFocus finds the popup an answer ('vote yes|no') goes to: the first of the
- * prompts shown by CG_DrawVote(), in the same order, then the running vote.
- * @param[out] isVote set to qtrue when the popup is the vote
- * @return the popup id from the server, 0 when there is none
+ * @brief CG_PopupFocus finds the popup an answer ('vote yes|no') goes to: the prompt on screen,
+ * else the running vote
+ * @param[out] kind POPUP_VOTE for the vote, else the kind of the prompt
+ * @return the popup id from the server, 0 when there is none, -1 while an answered prompt is
+ * still on screen (the popup behind it isn't shown yet, so it doesn't take an answer)
  */
-int CG_PopupFocus(qboolean *isVote)
+int CG_PopupFocus(int *kind)
 {
-	*isVote = qfalse;
+	cgPrompt_t *p;
 
-	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && (CG_GetActiveHUD()->votetext.style & 1) && cgs.complaintClient >= 0)
+	*kind = POPUP_ANY;
+
+	if (CG_PromptReplyActive())
 	{
-		return cgs.complaintId;
-	}
-	if (cgs.applicationEndTime > cg.time && cgs.applicationClient >= 0)
-	{
-		return cgs.applicationId;
-	}
-	if (cgs.propositionEndTime > cg.time && cgs.propositionClient >= 0)
-	{
-		return cgs.propositionId;
-	}
-	if (cgs.invitationEndTime > cg.time && cgs.invitationClient >= 0)
-	{
-		return cgs.invitationId;
-	}
-	if (cgs.autoFireteamEndTime > cg.time && cgs.autoFireteamNum == -1)
-	{
-		return cgs.autoFireteamId;
-	}
-	if (cgs.autoFireteamCreateEndTime > cg.time && cgs.autoFireteamCreateNum == -1)
-	{
-		return cgs.autoFireteamCreateId;
-	}
-	if (cgs.autoFireteamJoinEndTime > cg.time && cgs.autoFireteamJoinNum == -1)
-	{
-		return cgs.autoFireteamJoinId;
+		return -1;
 	}
 
-	*isVote = cgs.voteTime != 0;
-	return cgs.voteTime ? cgs.voteId : 0;
+	p = CG_PromptFront();
+	if (p)
+	{
+		*kind = p->kind;
+		return p->id;
+	}
+
+	if (cgs.voteTime)
+	{
+		*kind = POPUP_VOTE;
+		return cgs.voteId;
+	}
+
+	return 0;
 }
 
 /**
- * @brief CG_DrawVote
+ * @brief CG_DrawFireteamStatus draws the state of the player's own complaint or fireteam request
+ * @param[in] comp
+ */
+static void CG_DrawFireteamStatus(hudComponent_t *comp)
+{
+	const char *str = NULL;
+
+	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && (comp->style & 1) && cgs.complaintClient < 0)
+	{
+		switch (cgs.complaintClient)
+		{
+		case -3: str = CG_TranslateString("Server Host cannot be complained against"); break;
+		case -4: str = CG_TranslateString(va("You were %s by the Server Host", (cgs.complaintClient == CG_LastAttacker()) ? "team-killed" : "team-bled")); break;
+		case -5: str = CG_TranslateString(va("You were %s by a bot.", (cgs.complaintClient == CG_LastAttacker()) ? "team-killed" : "team-bled")); break;
+		default: break;
+		}
+	}
+	else if (cgs.applicationEndTime > cg.time && cgs.applicationClient < 0)
+	{
+		switch (cgs.applicationClient)
+		{
+		case -1: str = CG_TranslateString("Your application has been submitted"); break;
+		case -2: str = CG_TranslateString("Your application failed"); break;
+		case -3: str = CG_TranslateString("Your application has been approved"); break;
+		default: break;
+		}
+	}
+	else if (cgs.propositionEndTime > cg.time && cgs.propositionClient < 0)
+	{
+		switch (cgs.propositionClient)
+		{
+		case -1: str = CG_TranslateString("Your proposition has been submitted"); break;
+		case -2: str = CG_TranslateString("Your proposition was rejected"); break;
+		case -3: str = CG_TranslateString("Your proposition was accepted"); break;
+		default: break;
+		}
+	}
+	else if (cgs.invitationEndTime > cg.time && cgs.invitationClient < 0)
+	{
+		switch (cgs.invitationClient)
+		{
+		case -1: str = CG_TranslateString("Your invitation has been submitted"); break;
+		case -2: str = CG_TranslateString("Your invitation was rejected"); break;
+		case -3: str = CG_TranslateString("Your invitation was accepted"); break;
+		default: break;
+		}
+	}
+
+	if (str)
+	{
+		CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
+	}
+}
+
+/**
+ * @brief CG_DrawVote draws the popups: the answered prompt for a moment, else the oldest pending
+ * prompt (only its timer runs), else the running vote, else an ended vote's result, else the
+ * state of the player's own fireteam request. A vote waiting behind a prompt is stacked under it.
+ * @param[in] comp
  */
 void CG_DrawVote(hudComponent_t *comp)
 {
-	const char *str = NULL;
-	char       str1[32], str2[32];
+	cgPrompt_t *p;
 
-	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && (comp->style & 1) && cgs.complaintClient >= 0)
+	if (CG_DrawPromptReply(comp))
 	{
-		CG_DrawPromptPanel(comp, CG_TranslateString("COMPLAINT"),
-		                   va(CG_TranslateString("File complaint against ^7%s^* for %s?"),
-		                      cgs.clientinfo[cgs.complaintClient].name,
-		                      (cgs.complaintClient == CG_LastAttacker()) ? "team-killing" : "team-bleeding"),
-		                   cgs.complaintEndTime);
 		return;
 	}
 
-	if (cgs.applicationEndTime > cg.time && cgs.applicationClient >= 0)
+	p = CG_PromptFront();
+	if (p)
 	{
-		CG_DrawPromptPanel(comp, CG_TranslateString("FIRETEAM"),
-		                   va(CG_TranslateString("Accept ^7%s^*'s application to join your fireteam?"), cgs.clientinfo[cgs.applicationClient].name),
-		                   cgs.applicationEndTime);
-		return;
-	}
-
-	if (cgs.propositionEndTime > cg.time && cgs.propositionClient >= 0)
-	{
-		CG_DrawPromptPanel(comp, CG_TranslateString("FIRETEAM"),
-		                   va(CG_TranslateString("Accept ^7%s^*'s proposition to invite ^7%s^* to join your fireteam?"), cgs.clientinfo[cgs.propositionClient2].name, cgs.clientinfo[cgs.propositionClient].name),
-		                   cgs.propositionEndTime);
-		return;
-	}
-
-	if (cgs.invitationEndTime > cg.time && cgs.invitationClient >= 0)
-	{
-		CG_DrawPromptPanel(comp, CG_TranslateString("FIRETEAM"),
-		                   va(CG_TranslateString("Accept ^7%s^*'s invitation to join their fireteam?"), cgs.clientinfo[cgs.invitationClient].name),
-		                   cgs.invitationEndTime);
-		return;
-	}
-
-	if (cgs.autoFireteamEndTime > cg.time && cgs.autoFireteamNum == -1)
-	{
-		CG_DrawPromptPanel(comp, CG_TranslateString("FIRETEAM"), CG_TranslateString("Make Fireteam private?"), cgs.autoFireteamEndTime);
-		return;
-	}
-
-	if (cgs.autoFireteamCreateEndTime > cg.time && cgs.autoFireteamCreateNum == -1)
-	{
-		CG_DrawPromptPanel(comp, CG_TranslateString("FIRETEAM"), CG_TranslateString("Create a Fireteam?"), cgs.autoFireteamCreateEndTime);
-		return;
-	}
-
-	if (cgs.autoFireteamJoinEndTime > cg.time && cgs.autoFireteamJoinNum == -1)
-	{
-		CG_DrawPromptPanel(comp, CG_TranslateString("FIRETEAM"), CG_TranslateString("Join a Fireteam?"), cgs.autoFireteamJoinEndTime);
+		CG_DrawPromptPanel(comp, p);
 		return;
 	}
 
@@ -3259,110 +3448,7 @@ void CG_DrawVote(hudComponent_t *comp)
 		return;
 	}
 
-	if (cgs.complaintEndTime > cg.time && !cg.demoPlayback && (comp->style & 1) && cgs.complaintClient < 0)
-	{
-		if (cgs.complaintClient == -1 || cgs.complaintClient == -2)
-		{
-			// the answer to the complaint prompt, shown on the prompt panel
-			CG_DrawPromptReply(comp);
-			return;
-		}
-
-		switch (cgs.complaintClient)
-		{
-		case -3: str = CG_TranslateString("Server Host cannot be complained against"); break;
-		case -4: str = CG_TranslateString(va("You were %s by the Server Host", (cgs.complaintClient == CG_LastAttacker()) ? "team-killed" : "team-bled")); break;
-		case -5: str = CG_TranslateString(va("You were %s by a bot.", (cgs.complaintClient == CG_LastAttacker()) ? "team-killed" : "team-bled")); break;
-		default: break;
-
-		}
-
-		if (str)
-		{
-			CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
-			return;
-		}
-	}
-
-	if (cgs.applicationEndTime > cg.time && cgs.applicationClient < 0)
-	{
-		if (cgs.applicationClient == -4)
-		{
-			CG_DrawPromptReply(comp);
-			return;
-		}
-
-		switch (cgs.applicationClient)
-		{
-		case -1: str = CG_TranslateString("Your application has been submitted"); break;
-		case -2: str = CG_TranslateString("Your application failed"); break;
-		case -3: str = CG_TranslateString("Your application has been approved"); break;
-		default: break;
-		}
-
-		if (str)
-		{
-			CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
-			return;
-		}
-	}
-
-	if (cgs.propositionEndTime > cg.time && cgs.propositionClient < 0)
-	{
-		if (cgs.propositionClient == -4)
-		{
-			CG_DrawPromptReply(comp);
-			return;
-		}
-
-		switch (cgs.propositionClient)
-		{
-		case -1: str = CG_TranslateString("Your proposition has been submitted"); break;
-		case -2: str = CG_TranslateString("Your proposition was rejected"); break;
-		case -3: str = CG_TranslateString("Your proposition was accepted"); break;
-		default: break;
-		}
-
-		if (str)
-		{
-			CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
-			return;
-		}
-	}
-
-	if (cgs.invitationEndTime > cg.time && cgs.invitationClient < 0)
-	{
-		if (cgs.invitationClient == -4)
-		{
-			CG_DrawPromptReply(comp);
-			return;
-		}
-
-		switch (cgs.invitationClient)
-		{
-		case -1: str = CG_TranslateString("Your invitation has been submitted"); break;
-		case -2: str = CG_TranslateString("Your invitation was rejected"); break;
-		case -3: str = CG_TranslateString("Your invitation was accepted"); break;
-		default: break;
-		}
-
-		if (str)
-		{
-			CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
-			return;
-		}
-
-		if (cgs.invitationClient < 0)
-		{
-			return;
-		}
-	}
-
-	if ((cgs.autoFireteamEndTime > cg.time && cgs.autoFireteamNum == -2) || (cgs.autoFireteamCreateEndTime > cg.time && cgs.autoFireteamCreateNum == -2) || (cgs.autoFireteamJoinEndTime > cg.time && cgs.autoFireteamJoinNum == -2))
-	{
-		CG_DrawPromptReply(comp);
-		return;
-	}
+	CG_DrawFireteamStatus(comp);
 }
 
 /**

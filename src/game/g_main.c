@@ -4694,6 +4694,7 @@ void G_RunFrame(int levelTime)
 
 	// cancel vote if timed out
 	CheckVote();
+	G_PromptRunFrame();
 
 	// for tracking changes
 	CheckCvars();
