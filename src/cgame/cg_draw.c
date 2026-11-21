@@ -2600,10 +2600,43 @@ static void CG_GetBindingKeyForVote(char *str1, char *str2)
 	Q_strncpyz(str2, Binding_FromName("vote no"), 32);
 }
 
+/*
+ * Popups: the yes/no prompts from the server (complaints, fireteam requests), the vote of the
+ * player's team and the vote of all players. One of them has the focus and is drawn in full:
+ * the oldest prompt (only its timer runs), then the team vote, then the vote of all players (a vote
+ * the player has voted in after one it hasn't). A running vote without the focus is stacked compact
+ * under it. 'vote yes|no' answers the focused popup, see CG_PopupFocus().
+ */
+
 #define VOTE_PANEL_MAX_LINES 4
 #define VOTE_PANEL_MINI_ALPHA .55f
 #define VOTE_PANEL_MINI_MS 200
 #define VOTE_ANSWER_HOLD_MS 600
+#define VOTE_OPEN_MS 250
+#define VOTE_CLOSE_HOLD 1500
+#define VOTE_CLOSE_SLIDE 300
+#define PROMPT_REPLY_FLASH 700
+#define PROMPT_REPLY_SLIDE 300
+
+#define VOTE_ALL  0 ///< the vote of all players
+#define VOTE_TEAM 1 ///< the vote of the player's team
+
+/**
+ * @struct voteView_t
+ * @brief What a vote panel shows of a vote
+ */
+typedef struct
+{
+	int time;                   ///< server time the vote started, 0 = none
+	int id;
+	int yes;
+	int no;
+	qboolean voted;
+	qboolean canVote;
+	int answerTime;             ///< when the player answered it
+	qboolean answerYes;
+	const char *string;
+} voteView_t;
 
 static struct
 {
@@ -2616,7 +2649,7 @@ static struct
 	int yes;
 	int no;
 	float frac;
-} voteAnim;
+} voteAnim[2];
 
 static struct
 {
@@ -2624,18 +2657,13 @@ static struct
 	int since;
 	int lastDraw;
 	int voteTime;
-} miniAnim;
+} miniAnim[2];
 
-static float    panelTop, panelBottom; ///< extent of the panel drawn last, so a waiting vote can stack under it
-static float    voteStackY;            ///< top of the vote panel when it is stacked under a prompt
-static qboolean voteStacked;           ///< draw the vote compact and at voteStackY, because a prompt has the focus
-static qboolean voteForceVoted; ///< draw the panel as if the player had voted (result display after a vote ended)
+static float    stackTop, stackBottom; ///< extent of the popups drawn so far, the next stacked one goes under (or above) them
+static qboolean voteStacked;           ///< draw the panel compact in the stack, because another popup has the focus
 
 // votetext HUD component styles
 #define VOTE_STYLE_COMPLAINT 1 ///< show complaint popups
-
-#define PROMPT_REPLY_FLASH 700
-#define PROMPT_REPLY_SLIDE 300
 
 static struct
 {
@@ -2645,6 +2673,151 @@ static struct
 	int sec;
 	float frac;
 } promptLast; ///< the prompt drawn last, kept on screen with the answer, see CG_DrawPromptReply()
+
+/**
+ * @brief CG_GetVoteView
+ * @param[in] which VOTE_ALL or VOTE_TEAM
+ * @param[out] v
+ */
+static void CG_GetVoteView(int which, voteView_t *v)
+{
+	if (which == VOTE_TEAM)
+	{
+		v->time       = cgs.teamVoteTime;
+		v->id         = cgs.teamVoteId;
+		v->yes        = cgs.teamVoteYes;
+		v->no         = cgs.teamVoteNo;
+		v->voted      = cgs.teamVoteVoted;
+		v->canVote    = qtrue;
+		v->answerTime = cgs.teamVoteAnswerTime;
+		v->answerYes  = cgs.teamVoteAnswerYes;
+		v->string     = cgs.teamVoteString;
+		return;
+	}
+
+	v->time       = cgs.voteTime;
+	v->id         = cgs.voteId;
+	v->yes        = cgs.voteYes;
+	v->no         = cgs.voteNo;
+	v->voted      = (cg.snap->ps.eFlags & EF_VOTED) != 0 || (cgs.voteFake && cgs.voteFakeVoted);
+	v->canVote    = cgs.clientinfo[cg.clientNum].team == TEAM_AXIS || cgs.clientinfo[cg.clientNum].team == TEAM_ALLIES;
+	v->answerTime = cgs.voteAnswerTime;
+	v->answerYes  = cgs.voteAnswerYes;
+	v->string     = cgs.voteString;
+}
+
+/**
+ * @brief CG_VoteSecondsLeft
+ * @param[in] v
+ * @return seconds left, < 0 when the vote has expired
+ */
+static int CG_VoteSecondsLeft(const voteView_t *v)
+{
+	return (VOTE_TIME - (cg.time - v->time)) / 1000;
+}
+
+/**
+ * @brief CG_VoteHidden
+ * @param[in] which
+ * @return qtrue for a vote to kick a player of the other team, which isn't shown
+ */
+static qboolean CG_VoteHidden(int which)
+{
+	if (which != VOTE_ALL || Q_stricmpn(cgs.voteString, "kick", 4) || strlen(cgs.voteString) <= 5)
+	{
+		return qfalse;
+	}
+
+	{
+		int  nameindex;
+		char buffer[128];
+
+		Q_strncpyz(buffer, cgs.voteString + 5, sizeof(buffer));
+		Q_CleanStr(buffer);
+
+		for (nameindex = 0; nameindex < MAX_CLIENTS; nameindex++)
+		{
+			if (!cgs.clientinfo[nameindex].infoValid)
+			{
+				continue;
+			}
+
+			if (!Q_stricmp(cgs.clientinfo[nameindex].cleanname, buffer))
+			{
+				if (cgs.clientinfo[nameindex].team != TEAM_SPECTATOR && cgs.clientinfo[nameindex].team != cgs.clientinfo[cg.clientNum].team)
+				{
+					return qtrue;
+				}
+			}
+		}
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief CG_VoteRunning
+ * @param[in] which
+ * @return qtrue while the vote runs (it ends on the client when its time is up)
+ */
+static qboolean CG_VoteRunning(int which)
+{
+	voteView_t v;
+
+	CG_GetVoteView(which, &v);
+	if (!v.time)
+	{
+		return qfalse;
+	}
+
+	if (CG_VoteSecondsLeft(&v) < 0 && !(which == VOTE_ALL && cgs.voteFake))
+	{
+		// expired votetime
+		if (which == VOTE_TEAM)
+		{
+			cgs.teamVoteTime = 0;
+		}
+		else
+		{
+			cgs.voteTime = 0;
+		}
+		return qfalse;
+	}
+
+	return !CG_VoteHidden(which);
+}
+
+/**
+ * @brief CG_VoteFocus finds the vote that has the focus when no prompt is pending: the team vote,
+ * then the vote of all players, a vote the player has voted in after one it hasn't
+ * (the server sends an answer without an id to the same vote)
+ * @return VOTE_TEAM, VOTE_ALL or -1 when no vote runs
+ */
+static int CG_VoteFocus(void)
+{
+	qboolean   team = CG_VoteRunning(VOTE_TEAM);
+	qboolean   all  = CG_VoteRunning(VOTE_ALL);
+	voteView_t v;
+
+	if (team)
+	{
+		CG_GetVoteView(VOTE_TEAM, &v);
+		if (!v.voted)
+		{
+			return VOTE_TEAM;
+		}
+	}
+	if (all)
+	{
+		CG_GetVoteView(VOTE_ALL, &v);
+		if (!v.voted)
+		{
+			return VOTE_ALL;
+		}
+	}
+
+	return team ? VOTE_TEAM : (all ? VOTE_ALL : -1);
+}
 
 /**
  * @brief CG_PromptClearAll drops all prompts (map restart)
@@ -2799,6 +2972,73 @@ static qboolean CG_PromptReplyActive(void)
 	return cgs.promptReplyTime && elapsed >= 0 && elapsed < PROMPT_REPLY_FLASH + PROMPT_REPLY_SLIDE && promptLast.text[0];
 }
 
+/**
+ * @brief CG_PopupFocus finds the popup an answer ('vote yes|no') goes to: the prompt on screen,
+ * else the focused vote
+ * @param[out] kind POPUP_VOTE / POPUP_TEAMVOTE for a vote, else the kind of the prompt
+ * @return the popup id from the server, 0 when there is none, -1 while an answered prompt is
+ * still on screen (the popup behind it isn't shown yet, so it doesn't take an answer)
+ */
+int CG_PopupFocus(int *kind)
+{
+	cgPrompt_t *p;
+	int        which;
+
+	*kind = POPUP_ANY;
+
+	if (CG_PromptReplyActive())
+	{
+		return -1;
+	}
+
+	p = CG_PromptFront();
+	if (p)
+	{
+		*kind = p->kind;
+		return p->id;
+	}
+
+	which = CG_VoteFocus();
+	if (which == VOTE_TEAM)
+	{
+		*kind = POPUP_TEAMVOTE;
+		return cgs.teamVoteId;
+	}
+	if (which == VOTE_ALL)
+	{
+		*kind = POPUP_VOTE;
+		return cgs.voteId;
+	}
+
+	return 0;
+}
+
+/**
+ * @brief CG_ParseTeamVote reads the team vote from 'tvote <id> <startTime> <yes> <no> <voted> <text>'
+ * ('tvote 0': no team vote)
+ */
+void CG_ParseTeamVote(void)
+{
+	int id = Q_atoi(CG_Argv(1));
+
+	if (id <= 0)
+	{
+		cgs.teamVoteTime = 0;
+		return;
+	}
+
+	if (id != cgs.teamVoteId || !cgs.teamVoteTime)
+	{
+		cgs.teamVoteAnswerTime = 0;
+	}
+
+	cgs.teamVoteId    = id;
+	cgs.teamVoteTime  = Q_atoi(CG_Argv(2));
+	cgs.teamVoteYes   = Q_atoi(CG_Argv(3));
+	cgs.teamVoteNo    = Q_atoi(CG_Argv(4));
+	cgs.teamVoteVoted = Q_atoi(CG_Argv(5)) != 0;
+	Q_strncpyz(cgs.teamVoteString, CG_Argv(6), sizeof(cgs.teamVoteString));
+}
 
 /**
  * @brief CG_DrawVotePanel draws a compact vote box: title and timer, wrapped vote text,
@@ -2808,20 +3048,21 @@ static qboolean CG_PromptReplyActive(void)
  * @param[in] text body text, wrapped to the panel width
  * @param[in] sec seconds left
  * @param[in] frac remaining time, 0..1
- * @param[in] counts qtrue for a real vote with counts, qfalse for a plain yes/no prompt
+ * @param[in] v the vote with its counts, NULL for a plain yes/no prompt
+ * @param[in] which VOTE_ALL or VOTE_TEAM for a vote
  * @param[in] keyYes
  * @param[in] keyNo
  * @param[in] answer -1 for none, otherwise the chosen answer (1 yes, 0 no) which is highlighted
  * @param[in] slideT 0..1, how far the panel has slid out towards the closest window border
  */
-static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const char *text, int sec, float frac, qboolean counts, const char *keyYes, const char *keyNo, int answer, float slideT)
+static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const char *text, int sec, float frac, const voteView_t *v, int which, const char *keyYes, const char *keyNo, int answer, float slideT)
 {
 	vec4_t       colBg    = { 0.08f, 0.08f, 0.08f, 0.8f };
 	vec4_t       colHead  = { 0.f, 0.f, 0.f, 0.45f };
 	vec4_t       colYes   = { 0.35f, 0.85f, 0.35f, 1.f };
 	vec4_t       colNo    = { 0.9f, 0.3f, 0.3f, 1.f };
 	vec4_t       colDim   = { 0.7f, 0.7f, 0.7f, 1.f };
-	vec4_t       colWhite = { 1.f, 1.f, 1.f, 1.f };
+	vec4_t       colText  = { 1.f, 1.f, 1.f, 1.f };
 	vec4_t       colTrack = { 1.f, 1.f, 1.f, 0.15f };
 	fontHelper_t *font    = &cgs.media.limboFont2;
 	float        scale    = CG_ComputeScale(comp);
@@ -2839,16 +3080,19 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 	float        miniT = 0.f;
 	qboolean     hold  = qfalse;
 	int          numLines = 1, i, len;
-	qboolean     voted   = (cg.snap->ps.eFlags & EF_VOTED) != 0 || (cgs.voteFake && cgs.voteFakeVoted) || voteForceVoted;
-	qboolean     canVote = cgs.clientinfo[cg.clientNum].team == TEAM_AXIS || cgs.clientinfo[cg.clientNum].team == TEAM_ALLIES;
+	qboolean     counts  = v != NULL;
+	int          yes     = v ? v->yes : 0;
+	int          no      = v ? v->no : 0;
+	qboolean     voted   = v && v->voted;
+	qboolean     canVote = !v || v->canVote;
 
 	Vector4Copy(comp->colorMain, colMain);
 	Vector4Copy(comp->colorBorder, colBorder);
 	// the answer just given is shown highlighted for a moment before the panel shrinks
-	if (counts && canVote && voted && !voteForceVoted && cgs.voteAnswerTime && cg.time - cgs.voteAnswerTime >= 0 && cg.time - cgs.voteAnswerTime < VOTE_ANSWER_HOLD_MS)
+	if (counts && canVote && voted && v->answerTime && cg.time - v->answerTime >= 0 && cg.time - v->answerTime < VOTE_ANSWER_HOLD_MS)
 	{
 		hold   = qtrue;
-		answer = cgs.voteAnswerYes ? 1 : 0;
+		answer = v->answerYes ? 1 : 0;
 	}
 	mini = voteStacked || (counts && canVote && voted && !hold);
 
@@ -2861,18 +3105,18 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 	else if (mini)
 	{
 		// a panel that stays hidden for a while (scoreboard) comes back already shrunk
-		if (!miniAnim.active || miniAnim.voteTime != voteAnim.voteTime)
+		if (!miniAnim[which].active || miniAnim[which].voteTime != voteAnim[which].voteTime)
 		{
-			miniAnim.since = cg.time;
+			miniAnim[which].since = cg.time;
 		}
-		miniAnim.voteTime = voteAnim.voteTime;
-		miniT             = Com_Clamp(0.f, 1.f, (cg.time - miniAnim.since) / (float)VOTE_PANEL_MINI_MS);
-		miniT             = miniT * miniT * (3.f - 2.f * miniT);
+		miniAnim[which].voteTime = voteAnim[which].voteTime;
+		miniT                    = Com_Clamp(0.f, 1.f, (cg.time - miniAnim[which].since) / (float)VOTE_PANEL_MINI_MS);
+		miniT                    = miniT * miniT * (3.f - 2.f * miniT);
 	}
 	if (counts && !voteStacked)
 	{
-		miniAnim.active   = mini;
-		miniAnim.lastDraw = cg.time;
+		miniAnim[which].active   = mini;
+		miniAnim[which].lastDraw = cg.time;
 	}
 
 	if (miniT > 0.f)
@@ -2887,7 +3131,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 		colYes[3]    *= a;
 		colNo[3]     *= a;
 		colTrack[3]  *= a;
-		colWhite[3]  *= a;
+		colText[3]   *= a;
 	}
 
 	CG_WordWrapString(text, CG_MaxCharsForWidth(text, scale, font, innerW), wrapped, sizeof(wrapped), &numLines);
@@ -2908,7 +3152,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 
 		need   = CG_Text_Width_Ext_Float(titleIn, scale, 0, font) + CG_Text_Width_Ext_Float("  99s", scale, 0, font);
 		need   = MAX(need, CG_Text_Width_Ext_Float(buf, scale, 0, font));
-		need   = MAX(need, CG_Text_Width_Ext_Float(va("%s  %i   %i  %s", CG_TranslateString("YES"), cgs.voteYes, cgs.voteNo, CG_TranslateString("NO")), scale, 0, font));
+		need   = MAX(need, CG_Text_Width_Ext_Float(va("%s  %i   %i  %s", CG_TranslateString("YES"), yes, no, CG_TranslateString("NO")), scale, 0, font));
 		need   = MIN(w, need + pad * 2.f);
 		w     += (need - w) * miniT;
 		innerW = w - pad * 2.f;
@@ -2921,15 +3165,29 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 
 	if (voteStacked)
 	{
-		y = voteStackY;
-		if (y + h > SCREEN_HEIGHT)
+		qboolean below = qtrue;
+
+		y = below ? stackBottom + 4.f : stackTop - 4.f - h;
+		if (below ? y + h > SCREEN_HEIGHT : y < 0.f)
 		{
-			// no room below the prompt: go above it
-			y = panelTop - 4.f - h;
+			// no room on that side of the stack: go to the other one
+			below = !below;
+			y     = below ? stackBottom + 4.f : stackTop - 4.f - h;
+		}
+		if (below)
+		{
+			stackBottom = y + h;
+		}
+		else
+		{
+			stackTop = y;
 		}
 	}
-	panelTop    = y;
-	panelBottom = y + h;
+	else
+	{
+		stackTop    = y;
+		stackBottom = y + h;
+	}
 
 	if (slideT > 0.f)
 	{
@@ -2972,7 +3230,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 			vec4_t col;
 
 			// the lines after the first one fade out while the panel shrinks
-			Vector4Copy(colWhite, col);
+			Vector4Copy(colText, col);
 			if (i > 0)
 			{
 				col[3] *= MAX(0.f, 1.f - 2.f * miniT);
@@ -2987,7 +3245,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 
 	if (counts && !canVote)
 	{
-		footer = va("%s  Y:%i N:%i", va(CG_TranslateString("Can't vote as %s"), cgs.clientinfo[cg.clientNum].shoutcaster ? "Shoutcaster" : "Spectator"), cgs.voteYes, cgs.voteNo);
+		footer = va("%s  Y:%i N:%i", va(CG_TranslateString("Can't vote as %s"), cgs.clientinfo[cg.clientNum].shoutcaster ? "Shoutcaster" : "Spectator"), yes, no);
 		CG_Text_Paint_Ext(x + pad, y + lineH + pad * .5f, scale, scale, colDim, footer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
 	}
 	else if (!voteStacked && (!counts || !voted || hold))
@@ -3002,7 +3260,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 			(answer ? cn : cy)[3] = .3f;
 		}
 
-		footer = counts ? va("[%s] %s  %i", keyYes, CG_TranslateString("YES"), cgs.voteYes) : va("[%s] %s", keyYes, CG_TranslateString("YES"));
+		footer = counts ? va("[%s] %s  %i", keyYes, CG_TranslateString("YES"), yes) : va("[%s] %s", keyYes, CG_TranslateString("YES"));
 		tw     = CG_Text_Width_Ext_Float(footer, scale, 0, font);
 		if (answer == 1)
 		{
@@ -3010,7 +3268,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 			CG_FillRect(x + pad * .5f, y + pad * .3f, tw + pad, lineH + pad * .6f, hl);
 		}
 		CG_Text_Paint_Ext(x + pad, y + lineH + pad * .5f, scale, scale, cy, footer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
-		footer = counts ? va("[%s] %s  %i", keyNo, CG_TranslateString("NO"), cgs.voteNo) : va("[%s] %s", keyNo, CG_TranslateString("NO"));
+		footer = counts ? va("[%s] %s  %i", keyNo, CG_TranslateString("NO"), no) : va("[%s] %s", keyNo, CG_TranslateString("NO"));
 		tw     = CG_Text_Width_Ext_Float(footer, scale, 0, font);
 		if (answer == 0)
 		{
@@ -3023,27 +3281,27 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 	// after voting (or as a spectator) show the split between yes and no, the leader brighter
 	if (counts && ((voted && !hold) || !canVote || voteStacked))
 	{
-		float  total = (float)(cgs.voteYes + cgs.voteNo);
-		float  yesW  = total > 0 ? innerW * cgs.voteYes / total : innerW * .5f;
+		float  total = (float)(yes + no);
+		float  yesW  = total > 0 ? innerW * yes / total : innerW * .5f;
 		float  by    = y + lineH + pad;
 		vec4_t cy, cn;
 
 		Vector4Copy(colYes, cy);
 		Vector4Copy(colNo, cn);
-		if (cgs.voteYes < cgs.voteNo)
+		if (yes < no)
 		{
 			cy[3] = .45f;
 		}
-		else if (cgs.voteNo < cgs.voteYes)
+		else if (no < yes)
 		{
 			cn[3] = .45f;
 		}
 
 		if (canVote)
 		{
-			footer = va("%s  %i", CG_TranslateString("YES"), cgs.voteYes);
+			footer = va("%s  %i", CG_TranslateString("YES"), yes);
 			CG_Text_Paint_Ext(x + pad, y + lineH + pad * .5f, scale, scale, cy, footer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
-			footer = va("%i  %s", cgs.voteNo, CG_TranslateString("NO"));
+			footer = va("%i  %s", no, CG_TranslateString("NO"));
 			tw     = CG_Text_Width_Ext_Float(footer, scale, 0, font);
 			CG_Text_Paint_Ext(x + w - pad - tw, y + lineH + pad * .5f, scale, scale, cn, footer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
 		}
@@ -3101,8 +3359,6 @@ static void CG_PromptText(const cgPrompt_t *p, const char **title, const char **
  * @param[in] comp
  * @param[in] p
  */
-static void CG_DrawVoteQueued(hudComponent_t *comp);
-
 static void CG_DrawPromptPanel(hudComponent_t *comp, const cgPrompt_t *p)
 {
 	char       str1[32], str2[32];
@@ -3119,8 +3375,7 @@ static void CG_DrawPromptPanel(hudComponent_t *comp, const cgPrompt_t *p)
 	promptLast.frac = frac;
 
 	CG_GetBindingKeyForVote(str1, str2);
-	CG_DrawVotePanel(comp, promptLast.title, promptLast.text, promptLast.sec, frac, qfalse, str1, str2, -1, 0.f);
-	CG_DrawVoteQueued(comp);
+	CG_DrawVotePanel(comp, promptLast.title, promptLast.text, promptLast.sec, frac, NULL, VOTE_ALL, str1, str2, -1, 0.f);
 }
 
 /**
@@ -3146,72 +3401,129 @@ static qboolean CG_DrawPromptReply(hudComponent_t *comp)
 	}
 
 	CG_GetBindingKeyForVote(str1, str2);
-	CG_DrawVotePanel(comp, promptLast.title, promptLast.text, promptLast.sec, promptLast.frac, qfalse, str1, str2, cgs.promptReplyYes, slide);
-	CG_DrawVoteQueued(comp);
+	CG_DrawVotePanel(comp, promptLast.title, promptLast.text, promptLast.sec, promptLast.frac, NULL, VOTE_ALL, str1, str2, cgs.promptReplyYes, slide);
 	return qtrue;
 }
 
-#define VOTE_OPEN_MS 250
-#define VOTE_CLOSE_HOLD 1500
-#define VOTE_CLOSE_SLIDE 300
+/**
+ * @brief CG_DrawVoteRunning draws a running vote, sliding it in from the closest window border
+ * when it gets the focus, and remembers it for CG_DrawVoteClosing
+ * @param[in] comp
+ * @param[in] which VOTE_ALL or VOTE_TEAM
+ * @param[in] stacked qtrue when another popup has the focus: the vote is drawn compact under it
+ */
+static void CG_DrawVoteRunning(hudComponent_t *comp, int which, qboolean stacked)
+{
+	char       str1[32], str2[32];
+	char       title[32];
+	const char *str;
+	float      slide = 0.f, frac;
+	int        sec, n, skip;
+	voteView_t v;
 
+	CG_GetVoteView(which, &v);
+	CG_GetBindingKeyForVote(str1, str2);
+
+	// play a talk beep whenever it is modified
+	if (which == VOTE_ALL && cgs.voteModified)
+	{
+		cgs.voteModified = qfalse;
+	}
+
+	sec  = CG_VoteSecondsLeft(&v);
+	frac = Com_Clamp(0.f, 1.f, 1.f - (cg.time - v.time) / (float)VOTE_TIME);
+
+	// the vote type (first word of the vote string) is the title
+	Q_strncpyz(title, va("%s %s", which == VOTE_TEAM ? "TEAM VOTE" : "VOTE", v.string), sizeof(title));
+	skip = which == VOTE_TEAM ? 10 : 5;
+	for (n = skip; title[n] && title[n] != ' '; n++)
+	{
+		title[n] = toupper((unsigned char)title[n]);
+	}
+	title[n] = 0;
+
+	str  = v.string + strcspn(v.string, " ");
+	str += *str == ' ';
+	if (!*str)
+	{
+		str = v.string;
+	}
+
+	if (!stacked)
+	{
+		if (!voteAnim[which].shown || voteAnim[which].voteTime != v.time)
+		{
+			voteAnim[which].voteTime = v.time;
+			voteAnim[which].openTime = cg.time;
+		}
+		voteAnim[which].closeTime = 0;
+		voteAnim[which].shown     = qtrue;
+
+		if (cg.time - voteAnim[which].openTime < VOTE_OPEN_MS)
+		{
+			slide = 1.f - (cg.time - voteAnim[which].openTime) / (float)VOTE_OPEN_MS;
+		}
+
+		Q_strncpyz(voteAnim[which].text, str, sizeof(voteAnim[which].text));
+		voteAnim[which].sec  = sec;
+		voteAnim[which].yes  = v.yes;
+		voteAnim[which].no   = v.no;
+		voteAnim[which].frac = frac;
+	}
+
+	CG_DrawVotePanel(comp, title, str, MAX(sec, 0), frac, &v, which, str1, str2, -1, slide);
+}
 
 /**
- * @brief CG_DrawVoteAnimated draws the running vote panel, sliding it in from the closest
- * window border when the vote starts, and remembers it for CG_DrawVoteClosing
+ * @brief CG_DrawVotesQueued draws the running votes that don't have the focus as compact
+ * panels in the stack
+ * @param[in] comp
+ * @param[in] focus the vote drawn in full (VOTE_ALL, VOTE_TEAM), -1 if a prompt has the focus
  */
-static void CG_DrawVoteAnimated(hudComponent_t *comp, const char *title, const char *text, int sec, float frac, const char *key1, const char *key2)
+static void CG_DrawVotesQueued(hudComponent_t *comp, int focus)
 {
-	float slide = 0.f;
+	int order[2] = { VOTE_TEAM, VOTE_ALL };
+	int i;
 
-	if (!voteAnim.shown || voteAnim.voteTime != cgs.voteTime)
+	for (i = 0; i < 2; i++)
 	{
-		voteAnim.voteTime = cgs.voteTime;
-		voteAnim.openTime = cg.time;
+		if (order[i] == focus || !CG_VoteRunning(order[i]))
+		{
+			continue;
+		}
+
+		// a vote that leaves the full view this way doesn't get the closing animation
+		voteAnim[order[i]].shown = qfalse;
+
+		voteStacked = qtrue;
+		CG_DrawVoteRunning(comp, order[i], qtrue);
+		voteStacked = qfalse;
 	}
-	voteAnim.closeTime = 0;
-	voteAnim.shown     = qtrue;
-
-	if (cg.time - voteAnim.openTime < VOTE_OPEN_MS)
-	{
-		slide = 1.f - (cg.time - voteAnim.openTime) / (float)VOTE_OPEN_MS;
-	}
-
-	Q_strncpyz(voteAnim.text, text, sizeof(voteAnim.text));
-	voteAnim.sec  = sec;
-	voteAnim.yes  = cgs.voteYes;
-	voteAnim.no   = cgs.voteNo;
-	voteAnim.frac = frac;
-
-	CG_DrawVotePanel(comp, title, text, sec, frac, qtrue, key1, key2, -1, slide);
 }
 
 /**
  * @brief CG_DrawVoteClosing keeps an ended vote (passed, failed, cancelled or timed out)
  * on screen for a moment showing the result, then slides it out
+ * @param[in] comp
+ * @param[in] which
  * @return qtrue if the panel was drawn
  */
-static qboolean CG_DrawVoteClosing(hudComponent_t *comp)
+static qboolean CG_DrawVoteClosing(hudComponent_t *comp, int which)
 {
-	char  key1[32], key2[32];
-	int   elapsed, yes, no;
-	float slide = 0.f;
+	char       key1[32], key2[32];
+	int        elapsed;
+	float      slide = 0.f;
+	voteView_t v;
 
-	if (voteAnim.shown)
-	{
-		voteAnim.shown     = qfalse;
-		voteAnim.closeTime = cg.time;
-	}
-
-	if (!voteAnim.closeTime)
+	if (!voteAnim[which].closeTime)
 	{
 		return qfalse;
 	}
 
-	elapsed = cg.time - voteAnim.closeTime;
+	elapsed = cg.time - voteAnim[which].closeTime;
 	if (elapsed >= VOTE_CLOSE_HOLD + VOTE_CLOSE_SLIDE)
 	{
-		voteAnim.closeTime = 0;
+		voteAnim[which].closeTime = 0;
 		return qfalse;
 	}
 
@@ -3220,144 +3532,16 @@ static qboolean CG_DrawVoteClosing(hudComponent_t *comp)
 		slide = (elapsed - VOTE_CLOSE_HOLD) / (float)VOTE_CLOSE_SLIDE;
 	}
 
-	yes            = cgs.voteYes;
-	no             = cgs.voteNo;
-	cgs.voteYes    = voteAnim.yes;
-	cgs.voteNo     = voteAnim.no;
-	voteForceVoted = qtrue;
+	CG_GetVoteView(which, &v);
+	v.yes        = voteAnim[which].yes;
+	v.no         = voteAnim[which].no;
+	v.voted      = qtrue;
+	v.answerTime = 0;
+
 	CG_GetBindingKeyForVote(key1, key2);
-	CG_DrawVotePanel(comp, voteAnim.yes > voteAnim.no ? "VOTE PASSED" : "VOTE FAILED", voteAnim.text, voteAnim.sec, voteAnim.frac, qtrue, key1, key2, -1, slide);
-	voteForceVoted = qfalse;
-	cgs.voteYes    = yes;
-	cgs.voteNo     = no;
+	CG_DrawVotePanel(comp, va("%s %s", which == VOTE_TEAM ? "TEAM VOTE" : "VOTE", voteAnim[which].yes > voteAnim[which].no ? "PASSED" : "FAILED"),
+	                 voteAnim[which].text, voteAnim[which].sec, voteAnim[which].frac, &v, which, key1, key2, -1, slide);
 	return qtrue;
-}
-
-/**
- * @brief CG_DrawVoteRunning draws the running vote
- * @param[in] comp
- * @param[in] stacked qtrue when a prompt has the focus: the vote is drawn compact under it
- */
-static void CG_DrawVoteRunning(hudComponent_t *comp, qboolean stacked)
-{
-	const char *str = NULL;
-	char       str1[32], str2[32];
-	int        sec;
-
-	CG_GetBindingKeyForVote(str1, str2);
-
-	// play a talk beep whenever it is modified
-	if (cgs.voteModified)
-	{
-		cgs.voteModified = qfalse;
-	}
-
-	sec = (VOTE_TIME - (cg.time - cgs.voteTime)) / 1000;
-	if (sec < 0)
-	{
-		// expired votetime
-		cgs.voteTime = 0;
-		return;
-	}
-
-	if (!Q_stricmpn(cgs.voteString, "kick", 4))
-	{
-		if (strlen(cgs.voteString) > 5)
-		{
-			int  nameindex;
-			char buffer[128];
-
-			Q_strncpyz(buffer, cgs.voteString + 5, sizeof(buffer));
-			Q_CleanStr(buffer);
-
-			for (nameindex = 0; nameindex < MAX_CLIENTS; nameindex++)
-			{
-				if (!cgs.clientinfo[nameindex].infoValid)
-				{
-					continue;
-				}
-
-				if (!Q_stricmp(cgs.clientinfo[nameindex].cleanname, buffer))
-				{
-					if (cgs.clientinfo[nameindex].team != TEAM_SPECTATOR && cgs.clientinfo[nameindex].team != cgs.clientinfo[cg.clientNum].team)
-					{
-						return;
-					}
-				}
-			}
-		}
-	}
-
-	{
-		char title[32];
-		int  n;
-
-		// the vote type (first word of the vote string) is the title
-		Q_strncpyz(title, va("VOTE %s", cgs.voteString), sizeof(title));
-		for (n = 5; title[n] && title[n] != ' '; n++)
-		{
-			title[n] = toupper((unsigned char)title[n]);
-		}
-		title[n] = 0;
-
-		str  = cgs.voteString + strcspn(cgs.voteString, " ");
-		str += *str == ' ';
-		CG_DrawVoteAnimated(comp, title, *str ? str : cgs.voteString, sec,
-		                    Com_Clamp(0.f, 1.f, 1.f - (cg.time - cgs.voteTime) / (float)VOTE_TIME),
-		                    str1, str2);
-	}
-}
-
-/**
- * @brief CG_DrawVoteQueued draws a running vote that waits for the prompt on screen
- * as a compact panel under it
- * @param[in] comp
- */
-static void CG_DrawVoteQueued(hudComponent_t *comp)
-{
-	if (!cgs.voteTime)
-	{
-		return;
-	}
-
-	voteStackY  = panelBottom + 4.f;
-	voteStacked = qtrue;
-	CG_DrawVoteRunning(comp, qtrue);
-	voteStacked = qfalse;
-}
-
-/**
- * @brief CG_PopupFocus finds the popup an answer ('vote yes|no') goes to: the prompt on screen,
- * else the running vote
- * @param[out] kind POPUP_VOTE for the vote, else the kind of the prompt
- * @return the popup id from the server, 0 when there is none, -1 while an answered prompt is
- * still on screen (the popup behind it isn't shown yet, so it doesn't take an answer)
- */
-int CG_PopupFocus(int *kind)
-{
-	cgPrompt_t *p;
-
-	*kind = POPUP_ANY;
-
-	if (CG_PromptReplyActive())
-	{
-		return -1;
-	}
-
-	p = CG_PromptFront();
-	if (p)
-	{
-		*kind = p->kind;
-		return p->id;
-	}
-
-	if (cgs.voteTime)
-	{
-		*kind = POPUP_VOTE;
-		return cgs.voteId;
-	}
-
-	return 0;
 }
 
 /**
@@ -3416,17 +3600,29 @@ static void CG_DrawFireteamStatus(hudComponent_t *comp)
 }
 
 /**
- * @brief CG_DrawVote draws the popups: the answered prompt for a moment, else the oldest pending
- * prompt (only its timer runs), else the running vote, else an ended vote's result, else the
- * state of the player's own fireteam request. A vote waiting behind a prompt is stacked under it.
+ * @brief CG_DrawVote draws the popups: the answered prompt for a moment, else the prompt or
+ * vote with the focus, with the other running votes stacked compact under it, else an ended vote's result,
+ * else the state of the player's own fireteam request
  * @param[in] comp
  */
 void CG_DrawVote(hudComponent_t *comp)
 {
 	cgPrompt_t *p;
+	int        which;
+
+	// a vote that ended while it was shown in full gets the closing animation
+	for (which = 0; which < 2; which++)
+	{
+		if (voteAnim[which].shown && !CG_VoteRunning(which))
+		{
+			voteAnim[which].shown     = qfalse;
+			voteAnim[which].closeTime = cg.time;
+		}
+	}
 
 	if (CG_DrawPromptReply(comp))
 	{
+		CG_DrawVotesQueued(comp, -1);
 		return;
 	}
 
@@ -3434,16 +3630,19 @@ void CG_DrawVote(hudComponent_t *comp)
 	if (p)
 	{
 		CG_DrawPromptPanel(comp, p);
+		CG_DrawVotesQueued(comp, -1);
 		return;
 	}
 
-	if (cgs.voteTime)
+	which = CG_VoteFocus();
+	if (which >= 0)
 	{
-		CG_DrawVoteRunning(comp, qfalse);
+		CG_DrawVoteRunning(comp, which, qfalse);
+		CG_DrawVotesQueued(comp, which);
 		return;
 	}
 
-	if (CG_DrawVoteClosing(comp))
+	if (CG_DrawVoteClosing(comp, VOTE_TEAM) || CG_DrawVoteClosing(comp, VOTE_ALL))
 	{
 		return;
 	}

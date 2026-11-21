@@ -3317,7 +3317,59 @@ void Cmd_Where_f(gentity_t *ent, unsigned int dwCommand, int value)
 }
 
 /**
- * @brief Cmd_CallVote_f
+ * @brief G_VoteIsTeamVote
+ * @param[in] fn the vote function
+ * @param[in] value its argument, see voteInfo_t::vote_value
+ * @return qtrue for the votes only the caller's team decides: a surrender and kicking a
+ * player on a team (only teammates can call or vote on that)
+ */
+static qboolean G_VoteIsTeamVote(int (*fn)(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd), const char *value)
+{
+	if (fn == G_Surrender_v)
+	{
+		return qtrue;
+	}
+
+	if (fn == G_Kick_v)
+	{
+		int pid = Q_atoi(value);
+
+		return pid >= 0 && pid < level.maxclients &&
+		       (level.clients[pid].sess.sessionTeam == TEAM_AXIS || level.clients[pid].sess.sessionTeam == TEAM_ALLIES);
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief G_TeamVoteSound plays the vote sound to the players of a team
+ * @param[in] team
+ */
+static void G_TeamVoteSound(team_t team)
+{
+	int i;
+
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		int       clientNum = level.sortedClients[i];
+		gentity_t *tent;
+
+		if (level.clients[clientNum].sess.sessionTeam != team)
+		{
+			continue;
+		}
+
+		tent                 = G_TempEntityNotLinked(EV_GLOBAL_CLIENT_SOUND);
+		tent->s.eventParm    = GAMESOUND_MISC_VOTE;
+		tent->s.teamNum      = clientNum;
+		tent->r.singleClient = clientNum;
+		tent->r.svFlags      = SVF_SINGLECLIENT | SVF_BROADCAST;
+	}
+}
+
+/**
+ * @brief Cmd_CallVote_f calls a vote. A surrender and kicking a teammate become a team vote,
+ * which runs next to the vote of all players (one per team).
  * @param[in,out] ent
  * @param dwCommand - unused
  * @param[in] fRefCommand
@@ -3325,22 +3377,27 @@ void Cmd_Where_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 {
-	int  i;
-	char arg1[MAX_STRING_TOKENS];
-	char arg2[MAX_STRING_TOKENS];
-	char voteDesc[VOTE_MAXSTRING];
-	char *voteStringFormat;
+	int        i;
+	char       arg1[MAX_STRING_TOKENS];
+	char       arg2[MAX_STRING_TOKENS];
+	char       *voteStringFormat;
+	voteInfo_t running;
+	voteInfo_t *vote     = &level.voteInfo;
+	voteInfo_t *teamVote = NULL;
+	team_t     voteTeam  = TEAM_FREE;
 
 	// Normal checks, if its not being issued as a referee command
 	if (!fRefCommand)
 	{
+		teamVote = G_TeamVote(ent->client->sess.sessionTeam);
+
 		// added mute check
 		if (ent->client->sess.muted)
 		{
 			CP("cp \"You cannot call a vote while muted.\"");
 			return qfalse;
 		}
-		else if (level.voteInfo.voteTime)
+		else if (level.voteInfo.voteTime && (!teamVote || teamVote->voteTime))
 		{
 			CP("cp \"A vote is already in progress.\"");
 			return qfalse;
@@ -3394,10 +3451,17 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 		return qfalse;
 	}
 
+	// the vote functions set up level.voteInfo while they check the vote: keep a running vote
+	Com_Memcpy(&running, &level.voteInfo, sizeof(running));
+
 	if (trap_Argc() > 1 && (i = G_voteCmdCheck(ent, arg1, arg2, fRefCommand)) != G_NOTFOUND)
 	{
 		if (i != G_OK) // only G_OK continues, G_INVALID & other are dropped here
 		{
+			if (!fRefCommand)
+			{
+				Com_Memcpy(&level.voteInfo, &running, sizeof(running));
+			}
 			// no output here
 			return qfalse;                  // Command error
 		}
@@ -3406,17 +3470,46 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 	{
 		if (!fRefCommand)
 		{
+			Com_Memcpy(&level.voteInfo, &running, sizeof(running));
 			CP(va("print \"^3>>> Unknown vote command: ^7%s %s\n\"", arg1, arg2));
 			G_voteHelp(ent, qtrue);
 		}
 		return qfalse;
 	}
 
-	level.voteInfo.votePassed   = 0;
-	level.voteInfo.voteCanceled = 0;
+	if (!fRefCommand)
+	{
+		int  (*fn)(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd) = level.voteInfo.vote_fn;
+		char value[VOTE_MAXSTRING];
+
+		Q_strncpyz(value, level.voteInfo.vote_value, sizeof(value));
+		Com_Memcpy(&level.voteInfo, &running, sizeof(running));
+
+		if (teamVote && G_VoteIsTeamVote(fn, value))
+		{
+			if (teamVote->voteTime)
+			{
+				CP("cp \"A team vote is already in progress.\"");
+				return qfalse;
+			}
+			vote     = teamVote;
+			voteTeam = ent->client->sess.sessionTeam;
+		}
+		else if (level.voteInfo.voteTime)
+		{
+			CP("cp \"A vote is already in progress.\"");
+			return qfalse;
+		}
+
+		vote->vote_fn = fn;
+		Q_strncpyz(vote->vote_value, value, sizeof(vote->vote_value));
+	}
+
+	vote->votePassed   = 0;
+	vote->voteCanceled = 0;
 
 	voteStringFormat = arg2[0] ? "%s %s" : "%s";
-	Com_sprintf(level.voteInfo.voteString, sizeof(level.voteInfo.voteString), voteStringFormat, arg1, arg2);
+	Com_sprintf(vote->voteString, sizeof(vote->voteString), voteStringFormat, arg1, arg2);
 
 	// start the voting, the caller automatically votes yes
 	// If a referee, vote automatically passes.
@@ -3425,82 +3518,102 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 		// Don't announce some votes, as in comp mode, it is generally a ref
 		// who is policing people who shouldn't be joining and players don't want
 		// this sort of spam in the console
-		if (level.voteInfo.vote_fn != G_Kick_v && level.voteInfo.vote_fn != G_Mute_v)
+		if (vote->vote_fn != G_Kick_v && vote->vote_fn != G_Mute_v)
 		{
 			AP("cp \"^1** Referee Server Setting Change **\n\"");
 		}
 
 		// just call the stupid thing.... don't bother with the voting faff
-		level.voteInfo.vote_fn(NULL, 0, NULL, NULL, qfalse);
+		vote->vote_fn(NULL, 0, NULL, NULL, qfalse);
 
 		G_globalSoundEnum(GAMESOUND_MISC_REFEREE);
 	}
 	else
 	{
 		// do not automatically vote yes in polls
-		if (level.voteInfo.vote_fn != G_Poll_v)
+		if (vote->vote_fn != G_Poll_v)
 		{
-			level.voteInfo.voteYes = 1;
+			vote->voteYes = 1;
 		}
 		else
 		{
-			level.voteInfo.voteYes = 0;
+			vote->voteYes = 0;
 		}
-		AP(va("print \"[lof]%s^7 [lon]called a vote.[lof] Voting for: %s\n\"", ent->client->pers.netname, level.voteInfo.voteString));
 
-		G_LogPrintf("callvote: %i %s\n", (int)(ent - g_entities), level.voteInfo.voteString);
+		G_LogPrintf("callvote: %i %s\n", (int)(ent - g_entities), vote->voteString);
 
-		level.voteInfo.voteCaller = ent->s.number;
-		level.voteInfo.voteTeam   = ent->client->sess.sessionTeam;
-		AP(va("cp \"[lof]%s\n^7[lon]called a vote.\n\"", ent->client->pers.netname));
-		G_globalSoundEnum(GAMESOUND_MISC_VOTE);
+		vote->voteCaller = ent->s.number;
+		vote->voteTeam   = ent->client->sess.sessionTeam;
+
+		if (voteTeam != TEAM_FREE)
+		{
+			G_TeamCommand(voteTeam, va("print \"[lof]%s^7 [lon]called a team vote.[lof] Voting for: %s\n\"", ent->client->pers.netname, vote->voteString));
+			G_TeamCommand(voteTeam, va("cp \"[lof]%s\n^7[lon]called a team vote.\n\"", ent->client->pers.netname));
+			G_TeamVoteSound(voteTeam);
+		}
+		else
+		{
+			AP(va("print \"[lof]%s^7 [lon]called a vote.[lof] Voting for: %s\n\"", ent->client->pers.netname, vote->voteString));
+			AP(va("cp \"[lof]%s\n^7[lon]called a vote.\n\"", ent->client->pers.netname));
+			G_globalSoundEnum(GAMESOUND_MISC_VOTE);
+		}
 	}
 
 	// for stopwatch games, shorter vote timeout when map time is going to end
 	// (e.g. surrendering a match in stopwatch)
 	if (g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer == GS_WARMUP_COUNTDOWN && (level.warmupTime - level.time) < VOTE_TIME)
 	{
-		level.voteInfo.voteTime = level.warmupTime - VOTE_TIME;
+		vote->voteTime = level.warmupTime - VOTE_TIME;
 	}
 	else if (g_gamestate.integer == GS_PLAYING && g_timelimit.value != 0.f && (level.startTime + level.timeDelta + (g_timelimit.value * 60000) - level.time < VOTE_TIME))
 	{
 		// timeDelta is the total match pause time, level.time keeps running during a pause
-		level.voteInfo.voteTime = level.startTime + level.timeDelta + (g_timelimit.value * 60000) - VOTE_TIME;
+		vote->voteTime = level.startTime + level.timeDelta + (g_timelimit.value * 60000) - VOTE_TIME;
 	}
 	else
 	{
-		level.voteInfo.voteTime = level.time;
+		vote->voteTime = level.time;
 	}
-	level.voteInfo.voteNo = 0;
+	vote->voteNo = 0;
 
 	// Don't send the vote info if a ref initiates (as it will automatically pass)
 	if (!fRefCommand)
 	{
-		for (i = 0; i < level.numConnectedClients; i++)
-		{
-			level.clients[level.sortedClients[i]].ps.eFlags &= ~EF_VOTED;
-		}
-
 		ent->client->pers.voteCount++;
 
-		// allow to vote...
-		if (level.voteInfo.vote_fn != G_Poll_v)
-		{
-			ent->client->ps.eFlags |= EF_VOTED;
-		}
-
-		trap_SetConfigstring(CS_VOTE_YES, va("%i", level.voteInfo.voteYes));
-		trap_SetConfigstring(CS_VOTE_NO, va("%i", level.voteInfo.voteNo));
-		Q_strncpyz(voteDesc, level.voteInfo.voteString, sizeof(voteDesc));
+		Q_strncpyz(vote->voteDesc, vote->voteString, sizeof(vote->voteDesc));
 		if ((g_voting.integer & VOTEF_DISP_CALLER))
 		{
-			Q_strcat(voteDesc, sizeof(voteDesc), " (called by ");
-			Q_strcat(voteDesc, sizeof(voteDesc), ent->client->pers.netname);
-			Q_strcat(voteDesc, sizeof(voteDesc), ")");
+			Q_strcat(vote->voteDesc, sizeof(vote->voteDesc), " (called by ");
+			Q_strcat(vote->voteDesc, sizeof(vote->voteDesc), ent->client->pers.netname);
+			Q_strcat(vote->voteDesc, sizeof(vote->voteDesc), ")");
 		}
-		trap_SetConfigstring(CS_VOTE_STRING, voteDesc);
-		level.voteInfo.voteId = G_NextPopupId();
-		trap_SetConfigstring(CS_VOTE_TIME, va("%i %i", level.voteInfo.voteTime, level.voteInfo.voteId));
+		vote->voteId = G_NextPopupId();
+
+		if (voteTeam != TEAM_FREE)
+		{
+			// the caller has voted yes, except in a poll
+			ent->client->pers.teamVoteVoted = (vote->vote_fn != G_Poll_v) ? vote->voteId : 0;
+			G_TeamVoteBroadcast(voteTeam);
+		}
+		else
+		{
+			for (i = 0; i < level.numConnectedClients; i++)
+			{
+				level.clients[level.sortedClients[i]].ps.eFlags &= ~EF_VOTED;
+			}
+
+			// allow to vote...
+			if (vote->vote_fn != G_Poll_v)
+			{
+				ent->client->ps.eFlags |= EF_VOTED;
+			}
+
+			trap_SetConfigstring(CS_VOTE_YES, va("%i", vote->voteYes));
+			trap_SetConfigstring(CS_VOTE_NO, va("%i", vote->voteNo));
+			trap_SetConfigstring(CS_VOTE_STRING, vote->voteDesc);
+			trap_SetConfigstring(CS_VOTE_TIME, va("%i %i", vote->voteTime, vote->voteId));
+		}
 	}
 
 	return qtrue;
@@ -3694,14 +3807,15 @@ static void G_PromptAnswer(gentity_t *ent, int slot, qboolean yes)
 }
 
 /**
- * @brief G_VoteCast casts a client's vote
+ * @brief G_VoteCast casts a client's vote in the vote of all players or its team's vote
  * @param[in,out] ent
+ * @param[in,out] vote level.voteInfo or a team vote
  * @param[in] yes
  */
-static void G_VoteCast(gentity_t *ent, qboolean yes)
+static void G_VoteCast(gentity_t *ent, voteInfo_t *vote, qboolean yes)
 {
-	voteInfo_t *vote = &level.voteInfo;
-	qboolean   voted = (ent->client->ps.eFlags & EF_VOTED) != 0;
+	qboolean isTeamVote = vote != &level.voteInfo;
+	qboolean voted      = isTeamVote ? ent->client->pers.teamVoteVoted == vote->voteId : (ent->client->ps.eFlags & EF_VOTED) != 0;
 
 	if (!vote->voteTime)
 	{
@@ -3732,6 +3846,12 @@ static void G_VoteCast(gentity_t *ent, qboolean yes)
 	if (ent->client->sess.muted)
 	{
 		trap_SendServerCommand(ent - g_entities, "print \"Not allowed to vote when muted.\n\"");
+		return;
+	}
+
+	if (isTeamVote && ent->client->sess.sessionTeam != vote->voteTeam)
+	{
+		trap_SendServerCommand(ent - g_entities, "print \"You cannot vote on the other team's vote.\n\"");
 		return;
 	}
 
@@ -3770,8 +3890,16 @@ static void G_VoteCast(gentity_t *ent, qboolean yes)
 		vote->voteNo++;
 	}
 
-	ent->client->ps.eFlags |= EF_VOTED;
-	trap_SetConfigstring(yes ? CS_VOTE_YES : CS_VOTE_NO, va("%i", yes ? vote->voteYes : vote->voteNo));
+	if (isTeamVote)
+	{
+		ent->client->pers.teamVoteVoted = vote->voteId;
+		G_TeamVoteBroadcast((team_t)vote->voteTeam);
+	}
+	else
+	{
+		ent->client->ps.eFlags |= EF_VOTED;
+		trap_SetConfigstring(yes ? CS_VOTE_YES : CS_VOTE_NO, va("%i", yes ? vote->voteYes : vote->voteNo));
+	}
 	// a majority will be determined in G_CheckVote,
 	// which will also account for players entering or leaving
 }
@@ -3779,20 +3907,27 @@ static void G_VoteCast(gentity_t *ent, qboolean yes)
 /**
  * @brief Cmd_Vote_f answers a popup: 'vote yes|no <id>' the prompt or vote with that id (an
  * answer to one that is gone is ignored). Without an id the answer goes to the popup the
- * client shows first: the oldest pending prompt (the one counting down), then the vote.
+ * client shows first: the oldest pending prompt (the one counting down), then the team vote,
+ * then the vote of all players (a vote the player has voted in comes after one it hasn't).
  * @param[in,out] ent
  * @param dwCommand - unused
  * @param value    - unused
  */
 void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 {
-	char      msg[64];
-	gclient_t *cl = ent->client;
-	qboolean  yes;
-	int       slot;
+	char       msg[64];
+	gclient_t  *cl       = ent->client;
+	voteInfo_t *teamVote = G_TeamVote(cl->sess.sessionTeam);
+	qboolean   yes;
+	int        slot;
 
 	trap_Argv(1, msg, sizeof(msg));
 	yes = tolower(msg[0]) == 'y' || msg[0] == '1';
+
+	if (teamVote && !teamVote->voteTime)
+	{
+		teamVote = NULL;
+	}
 
 	if (trap_Argc() > 2)
 	{
@@ -3808,9 +3943,13 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 			{
 				G_PromptAnswer(ent, slot, yes);
 			}
+			else if (teamVote && teamVote->voteId == id)
+			{
+				G_VoteCast(ent, teamVote, yes);
+			}
 			else if (level.voteInfo.voteTime && level.voteInfo.voteId == id)
 			{
-				G_VoteCast(ent, yes);
+				G_VoteCast(ent, &level.voteInfo, yes);
 			}
 			// else: the popup is gone, the answer was meant for it and nothing else
 
@@ -3823,9 +3962,18 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 	{
 		G_PromptAnswer(ent, slot, yes);
 	}
+	else if (teamVote && cl->pers.teamVoteVoted != teamVote->voteId)
+	{
+		G_VoteCast(ent, teamVote, yes);
+	}
+	else if (level.voteInfo.voteTime && !(cl->ps.eFlags & EF_VOTED))
+	{
+		G_VoteCast(ent, &level.voteInfo, yes);
+	}
 	else
 	{
-		G_VoteCast(ent, yes);
+		// both voted (or no vote): 'already cast', or the caller's 'no' cancels
+		G_VoteCast(ent, teamVote ? teamVote : &level.voteInfo, yes);
 	}
 }
 

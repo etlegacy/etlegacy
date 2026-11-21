@@ -2556,19 +2556,23 @@ void Svcmd_Qsay_f(void)
 }
 
 /**
- * @brief Svcmd_PassVote_f
+ * @brief Svcmd_PassVote_f passes the running votes (the vote of all players and the team votes)
  */
 static void Svcmd_PassVote_f(void)
 {
-	level.voteInfo.votePassed = 1;
+	level.voteInfo.votePassed        = 1;
+	level.teamVoteInfo[0].votePassed = 1;
+	level.teamVoteInfo[1].votePassed = 1;
 }
 
 /**
- * @brief Svcmd_CancelVote_f
+ * @brief Svcmd_CancelVote_f cancels the running votes (the vote of all players and the team votes)
  */
 static void Svcmd_CancelVote_f(void)
 {
-	level.voteInfo.voteCanceled = 1;
+	level.voteInfo.voteCanceled        = 1;
+	level.teamVoteInfo[0].voteCanceled = 1;
+	level.teamVoteInfo[1].voteCanceled = 1;
 }
 
 /**

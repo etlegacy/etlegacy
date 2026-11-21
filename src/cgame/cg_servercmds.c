@@ -1433,6 +1433,7 @@ static void CG_MapRestart(void)
 	cgs.applicationEndTime = 0;
 	cgs.propositionEndTime = 0;
 	CG_PromptClearAll();
+	cgs.teamVoteTime = 0;
 
 	// reset fog to world fog (if present)
 	trap_R_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 20, 0, 0, 0, 0);
@@ -3015,6 +3016,7 @@ void CG_AddToBannerPrint(const char *str)
 #define COMPLAINT_HASH      118983
 #define PROMPT_HASH         81897
 #define PROMPTCLOSE_HASH    149726
+#define TVOTE_HASH          67970
 #define REQFORCESPAWN_HASH  176027
 #define SDBG_HASH           50109
 #define IMMAPLIST_HASH      120113
@@ -3485,6 +3487,9 @@ static void CG_ServerCommand(void)
 		return;
 	case PROMPTCLOSE_HASH:                                     // "promptclose <id> <answer>"
 		CG_PromptClose(Q_atoi(CG_Argv(1)), Q_atoi(CG_Argv(2)));
+		return;
+	case TVOTE_HASH:                                           // "tvote <id> <startTime> <yes> <no> <voted> <text>", "tvote 0"
+		CG_ParseTeamVote();
 		return;
 	case REQFORCESPAWN_HASH:                               // "reqforcespawn"
 		if (cg_instanttapout.integer || cgs.gamestate != GS_PLAYING)

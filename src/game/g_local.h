@@ -823,6 +823,8 @@ typedef struct
 	int promptSeq[MAX_PENDING_PROMPTS];     ///< order the prompts were sent in: the oldest is on screen
 	int promptShown[MAX_PENDING_PROMPTS];   ///< on screen: its timer runs (the prompts behind it wait)
 
+	int teamVoteVoted;                      ///< id of the team vote this client voted in
+
 	playerStats_t playerStats;
 
 	int lastBattleSenseBonusTime;
@@ -1147,6 +1149,7 @@ typedef struct voteInfo_s
 	char voteString[MAX_STRING_CHARS];
 	int voteTime;                       ///< level.time vote was called
 	int voteId;                         ///< popup id of the vote, see G_NextPopupId()
+	char voteDesc[VOTE_MAXSTRING];      ///< the text shown to the players
 	int voteYes;
 	int voteNo;
 	int numVotingClients;               ///< set by CalculateRanks
@@ -1260,6 +1263,7 @@ typedef struct level_locals_s
 
 	// voting
 	voteInfo_t voteInfo;
+	voteInfo_t teamVoteInfo[2];                 ///< the team votes of Axis and Allies, running next to voteInfo
 	int popupSeq;                               ///< last popup id handed out
 	int promptSeq;                              ///< counts the prompts sent, for their order
 	int numTeamClients[2];
@@ -1492,6 +1496,11 @@ void G_PromptRemoveAbout(int clientNum, int kindMask);
 void G_PromptJoinedFireteam(int clientNum, int leaderNum);
 void G_PromptUpdateLegacy(gclient_t *cl);
 void G_PromptRunFrame(void);
+voteInfo_t *G_TeamVote(team_t team);
+void G_TeamVoteSendTo(int clientNum);
+void G_TeamVoteBroadcast(team_t team);
+void G_VoteCancelForCaller(int clientNum, const char *reason);
+void G_VoteExecute(voteInfo_t *vote);
 void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value);

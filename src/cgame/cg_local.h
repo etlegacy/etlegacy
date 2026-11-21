@@ -2665,6 +2665,16 @@ typedef struct cgs_s
 
 	int voteId;                                     ///< popup id of the vote, returned with the answer: 'vote yes <id>'
 
+	// the vote of the player's team, next to the vote of all players
+	int teamVoteId;
+	int teamVoteTime;                               ///< server time the team vote started, 0 = none
+	int teamVoteYes;
+	int teamVoteNo;
+	qboolean teamVoteVoted;
+	int teamVoteAnswerTime;                         ///< when the player last answered the team vote
+	qboolean teamVoteAnswerYes;
+	char teamVoteString[MAX_STRING_TOKENS];
+
 	qboolean autoMapExpanded;
 	int autoMapExpandTime;
 
@@ -4401,6 +4411,7 @@ int CG_PopupFocus(int *kind);
 void CG_PromptAdd(int id, int kind, int from, int from2, int msLeft);
 void CG_PromptClose(int id, int answer);
 void CG_PromptClearAll(void);
+void CG_ParseTeamVote(void);
 void CG_DrawSpectatorMessage(hudComponent_t *comp);
 void CG_DrawLimboMessage(hudComponent_t *comp);
 void CG_DrawFollow(hudComponent_t *comp);

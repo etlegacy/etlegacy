@@ -30,16 +30,20 @@
  */
 /**
  * @file g_popup.c
- * @brief The pending yes/no prompts of each client (complaints, fireteam applications,
- * invitations, propositions and the autofireteam questions), answered with 'vote yes|no [id]'.
+ * @brief The popups a client answers with 'vote yes|no [id]': the pending yes/no prompts of
+ * each client (complaints, fireteam applications, invitations, propositions and the
+ * autofireteam questions) and the team votes, which run next to the vote of all players.
  *
  * Each client has a queue of up to MAX_PENDING_PROMPTS prompts. A prompt is sent to the client
  * with 'prompt <id> <kind> <from> <from2> <msLeft>' (again when its time changes) and removed
  * with 'promptclose <id> <answer>' (answer 1 yes, 0 no, -1 withdrawn). The client shows the
- * prompts one at a time, the oldest first, then the vote; an answer without an id goes to the
- * same popup (see Cmd_Vote_f()). Only the prompt on screen
+ * prompts one at a time, the oldest first, then the team vote, then the vote of all players; an
+ * answer without an id goes to the same popup (see Cmd_Vote_f()). Only the prompt on screen
  * counts down: the next one gets its full PROMPT_TIME when it comes to the front, so a prompt
  * never runs out while it waits.
+ *
+ * A team vote is sent only to the players of that team, with
+ * 'tvote <id> <startTime> <yes> <no> <voted> <text>', and 'tvote 0' when it ends.
  */
 
 #include "g_local.h"
@@ -558,4 +562,147 @@ void G_PromptAnswered(int clientNum, int slot, qboolean yes)
 {
 	G_PromptClear(clientNum, slot, yes ? 1 : 0, qtrue);
 	G_PromptSchedule(clientNum);
+}
+
+/**
+ * @brief G_TeamVote
+ * @param[in] team
+ * @return the team vote of Axis or Allies, NULL for the other teams
+ */
+voteInfo_t *G_TeamVote(team_t team)
+{
+	if (team == TEAM_AXIS)
+	{
+		return &level.teamVoteInfo[0];
+	}
+	if (team == TEAM_ALLIES)
+	{
+		return &level.teamVoteInfo[1];
+	}
+	return NULL;
+}
+
+/**
+ * @brief G_TeamVoteSendTo sends a client the state of its team's vote ('tvote 0' if none runs)
+ * @param[in] clientNum
+ */
+void G_TeamVoteSendTo(int clientNum)
+{
+	gclient_t  *cl   = level.clients + clientNum;
+	voteInfo_t *vote = G_TeamVote(cl->sess.sessionTeam);
+	char       desc[VOTE_MAXSTRING];
+	char       *s;
+
+	if (cl->pers.connected != CON_CONNECTED || (g_entities[clientNum].r.svFlags & SVF_BOT))
+	{
+		return;
+	}
+
+	if (!vote || !vote->voteTime)
+	{
+		trap_SendServerCommand(clientNum, "tvote 0");
+		return;
+	}
+
+	// the text goes in quotes
+	Q_strncpyz(desc, vote->voteDesc, sizeof(desc));
+	for (s = desc; *s; s++)
+	{
+		if (*s == '"')
+		{
+			*s = '\'';
+		}
+	}
+
+	trap_SendServerCommand(clientNum, va("tvote %i %i %i %i %i \"%s\"", vote->voteId, vote->voteTime, vote->voteYes, vote->voteNo,
+	                                     cl->pers.teamVoteVoted == vote->voteId, desc));
+}
+
+/**
+ * @brief G_TeamVoteBroadcast sends the state of a team's vote to the players of that team
+ * @param[in] team
+ */
+void G_TeamVoteBroadcast(team_t team)
+{
+	int i;
+
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		int clientNum = level.sortedClients[i];
+
+		if (level.clients[clientNum].sess.sessionTeam == team)
+		{
+			G_TeamVoteSendTo(clientNum);
+		}
+	}
+}
+
+/**
+ * @brief G_VoteCancelForCaller cancels the votes a client called (on disconnect or team change)
+ * @param[in] clientNum
+ * @param[in] reason "disconnected", "switched team"
+ */
+void G_VoteCancelForCaller(int clientNum, const char *reason)
+{
+	gentity_t *ent = g_entities + clientNum;
+	int       t;
+
+	if (level.voteInfo.voteTime && level.voteInfo.voteCaller == clientNum)
+	{
+		AP(va("cpm \"^1Vote CANCELED! Caller %s\n\"", reason));
+		G_LogPrintf("Vote canceled: %s (caller %s %s)\n", level.voteInfo.voteString, ent->client->pers.netname, reason);
+		level.voteInfo.voteTime     = 0;
+		level.voteInfo.voteCanceled = 1;
+		trap_SetConfigstring(CS_VOTE_TIME, ""); // so the counter goes away
+	}
+
+	for (t = 0; t < 2; t++)
+	{
+		voteInfo_t *vote = &level.teamVoteInfo[t];
+		team_t     team  = t ? TEAM_ALLIES : TEAM_AXIS;
+
+		if (vote->voteTime && vote->voteCaller == clientNum)
+		{
+			G_TeamCommand(team, va("cpm \"^1Team vote CANCELED! Caller %s\n\"", reason));
+			G_LogPrintf("Team vote canceled: %s (caller %s %s)\n", vote->voteString, ent->client->pers.netname, reason);
+			vote->voteTime     = 0;
+			vote->voteCanceled = 0;
+			G_TeamVoteBroadcast(team);
+		}
+	}
+}
+
+/**
+ * @brief G_VoteExecute runs a passed vote. The vote functions read their argument from
+ * level.voteInfo, so a team vote is put there for the call.
+ * @param[in] vote
+ */
+void G_VoteExecute(voteInfo_t *vote)
+{
+	char value[VOTE_MAXSTRING];
+	char string[MAX_STRING_CHARS];
+	int  team, caller;
+
+	if (vote == &level.voteInfo)
+	{
+		vote->vote_fn(NULL, 0, NULL, NULL, qfalse);
+		return;
+	}
+
+	Q_strncpyz(value, level.voteInfo.vote_value, sizeof(value));
+	Q_strncpyz(string, level.voteInfo.voteString, sizeof(string));
+	team   = level.voteInfo.voteTeam;
+	caller = level.voteInfo.voteCaller;
+
+	Q_strncpyz(level.voteInfo.vote_value, vote->vote_value, sizeof(level.voteInfo.vote_value));
+	Q_strncpyz(level.voteInfo.voteString, vote->voteString, sizeof(level.voteInfo.voteString));
+	level.voteInfo.voteTeam   = vote->voteTeam;
+	level.voteInfo.voteCaller = vote->voteCaller;
+
+	vote->vote_fn(NULL, 0, NULL, NULL, qfalse);
+
+	Q_strncpyz(level.voteInfo.vote_value, value, sizeof(level.voteInfo.vote_value));
+	Q_strncpyz(level.voteInfo.voteString, string, sizeof(level.voteInfo.voteString));
+	level.voteInfo.voteTeam   = team;
+	level.voteInfo.voteCaller = caller;
 }

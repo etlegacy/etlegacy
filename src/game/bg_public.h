@@ -88,6 +88,7 @@ typedef enum
 	POPUP_AFTC,             ///< create a fireteam
 	POPUP_AFTJ,             ///< join a fireteam
 	POPUP_VOTE,             ///< the vote of all players
+	POPUP_TEAMVOTE,         ///< the vote of the player's team
 
 	POPUP_NUM
 } popupKind_t;

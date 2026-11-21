@@ -3928,6 +3928,11 @@ qboolean CG_ConsoleCommand(void)
 			cgs.voteAnswerTime = cg.time;
 			cgs.voteAnswerYes  = yes;
 		}
+		else if (kind == POPUP_TEAMVOTE)
+		{
+			cgs.teamVoteAnswerTime = cg.time;
+			cgs.teamVoteAnswerYes  = yes;
+		}
 
 		// the answer carries the id of the popup it is for, so it can't land on another one
 		if (trap_Argc() == 2 && id > 0 && !(kind == POPUP_VOTE && cgs.voteFake))

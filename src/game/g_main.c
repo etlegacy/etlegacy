@@ -3707,34 +3707,71 @@ void CheckWolfMP(void)
 }
 
 /**
- * @brief CheckVote
+ * @brief G_VoteEnd ends a vote: clears it and tells its players
+ * @param[in,out] vote
+ * @param[in] team TEAM_FREE for the vote of all players, else the team of a team vote
  */
-void CheckVote(void)
+static void G_VoteEnd(voteInfo_t *vote, team_t team)
 {
-	if (!level.voteInfo.voteTime ||
-	    level.voteInfo.vote_fn == NULL ||
-	    level.time - level.voteInfo.voteTime < 1000)
+	vote->voteTime     = 0;
+	vote->voteCanceled = 0;
+
+	if (team == TEAM_FREE)
+	{
+		trap_SetConfigstring(CS_VOTE_TIME, "");
+	}
+	else
+	{
+		G_TeamVoteBroadcast(team);
+	}
+}
+
+/**
+ * @brief G_VotePrint prints a vote message to the players of the vote
+ * @param[in] team TEAM_FREE for all players
+ * @param[in] cmd
+ */
+static void G_VotePrint(team_t team, const char *cmd)
+{
+	if (team == TEAM_FREE)
+	{
+		AP(cmd);
+	}
+	else
+	{
+		G_TeamCommand(team, cmd);
+	}
+}
+
+/**
+ * @brief G_CheckVoteInfo checks a running vote: passes, fails or times it out
+ * @param[in,out] vote
+ * @param[in] team TEAM_FREE for the vote of all players, else the team of a team vote
+ */
+static void G_CheckVoteInfo(voteInfo_t *vote, team_t team)
+{
+	const char *name = team == TEAM_FREE ? "Vote" : "Team vote";
+
+	if (!vote->voteTime ||
+	    vote->vote_fn == NULL ||
+	    level.time - vote->voteTime < 1000)
 	{
 		return;
 	}
 
-	if (level.voteInfo.voteCanceled)
+	if (vote->voteCanceled)
 	{
-		level.voteInfo.voteTime     = 0;
-		level.voteInfo.voteCanceled = 0;
+		G_VoteEnd(vote, team);
 
-		trap_SetConfigstring(CS_VOTE_TIME, "");
-
-		AP(va("cpm \"^1Vote CANCELED!\n\""));
-		G_LogPrintf("Vote CANCELED!\n");
+		G_VotePrint(team, va("cpm \"^1%s CANCELED!\n\"", name));
+		G_LogPrintf("%s CANCELED!\n", name);
 
 		return;
 	}
 
-	if (g_gamestate.integer == GS_WARMUP_COUNTDOWN && level.voteInfo.vote_fn == G_StartMatch_v)
+	if (team == TEAM_FREE && g_gamestate.integer == GS_WARMUP_COUNTDOWN && vote->vote_fn == G_StartMatch_v)
 	{
-		level.voteInfo.voteTime = 0;
-		trap_SetConfigstring(CS_VOTE_TIME, "");
+		G_VoteEnd(vote, team);
 
 		AP(va("cpm \"Countdown started, vote canceled!\n\""));
 		G_LogPrintf("Countdown started, vote canceled!\n");
@@ -3757,17 +3794,21 @@ void CheckVote(void)
 		}
 
 		if ((g_voting.integer & VOTEF_USE_TOTAL_VOTERS) &&
-		    level.time - level.voteInfo.voteTime >= VOTE_TIME)
+		    level.time - vote->voteTime >= VOTE_TIME)
 		{
 
-			total = (level.voteInfo.voteYes
-			         + level.voteInfo.voteNo);
+			total = (vote->voteYes
+			         + vote->voteNo);
 		}
-		else if (level.voteInfo.vote_fn == G_Kick_v ||
-		         level.voteInfo.vote_fn == G_Surrender_v)
+		else if (team != TEAM_FREE)
+		{
+			total = level.voteInfo.numVotingTeamClients[team == TEAM_AXIS ? 0 : 1];
+		}
+		else if (vote->vote_fn == G_Kick_v ||
+		         vote->vote_fn == G_Surrender_v)
 		{
 
-			gentity_t *other = &g_entities[level.voteInfo.voteCaller];
+			gentity_t *other = &g_entities[vote->voteCaller];
 
 			if (!other->client ||
 			    other->client->sess.sessionTeam == TEAM_SPECTATOR)
@@ -3787,53 +3828,52 @@ void CheckVote(void)
 
 		threshold = pcnt * total / 100;
 
-		if (level.voteInfo.voteYes > threshold || level.voteInfo.votePassed)
+		if (vote->voteYes > threshold || vote->votePassed)
 		{
 			// execute the command, then remove the vote
-			if (level.voteInfo.voteYes > total + 1)
+			if (vote->voteYes > total + 1)
 			{
 				// Don't announce some votes, as in comp mode, it is generally a ref
 				// who is policing people who shouldn't be joining and players don't want
 				// this sort of spam in the console
-				if (level.voteInfo.vote_fn != G_Kick_v)
+				if (vote->vote_fn != G_Kick_v)
 				{
-					AP(va("cpm \"^5Referee changed setting! ^7(%s)\n\"", level.voteInfo.voteString));
+					G_VotePrint(team, va("cpm \"^5Referee changed setting! ^7(%s)\n\"", vote->voteString));
 				}
-				G_LogPrintf("Referee Setting: %s\n", level.voteInfo.voteString);
+				G_LogPrintf("Referee Setting: %s\n", vote->voteString);
 			}
 			else
 			{
-				AP(va("cpm \"^5Vote passed! ^7(^2Y:%d^7-^1N:%d^7) ^7(%s)\n\"", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString));
-				G_LogPrintf("Vote Passed: (Y:%d-N:%d) %s (Required:%d, Voting Clients:%d)\n", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString, threshold, total);
+				G_VotePrint(team, va("cpm \"^5%s passed! ^7(^2Y:%d^7-^1N:%d^7) ^7(%s)\n\"", name, vote->voteYes, vote->voteNo, vote->voteString));
+				G_LogPrintf("%s Passed: (Y:%d-N:%d) %s (Required:%d, Voting Clients:%d)\n", name, vote->voteYes, vote->voteNo, vote->voteString, threshold, total);
 			}
 
 			// Perform the passed vote
-			level.voteInfo.vote_fn(NULL, 0, NULL, NULL, qfalse);
+			G_VoteExecute(vote);
 
 			// don't penalize player if the vote passes.
 			if ((g_voting.integer & VOTEF_NO_POPULIST_PENALTY))
 			{
-				gentity_t *ent = &g_entities[level.voteInfo.voteCaller];
+				gentity_t *ent = &g_entities[vote->voteCaller];
 
 				if (ent->client)
 				{
 					ent->client->pers.voteCount--;
 				}
 			}
-
 		}
 		// Only fail vote if more than half vote no.
-		else if (level.voteInfo.voteNo > 1 && level.voteInfo.voteNo >= threshold)
+		else if (vote->voteNo > 1 && vote->voteNo >= threshold)
 		{
 			// same behavior as a no response vote
-			AP(va("cpm \"^1Vote FAILED! ^7(^2Y:%d^7-^1N:%d^7) ^7(%s)\n\"", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString));
-			G_LogPrintf("Vote Failed: (Y:%d-N:%d) %s (Required:%d, Voting Clients:%d)\n", level.voteInfo.voteYes, level.voteInfo.voteNo, level.voteInfo.voteString, threshold, total);
+			G_VotePrint(team, va("cpm \"^1%s FAILED! ^7(^2Y:%d^7-^1N:%d^7) ^7(%s)\n\"", name, vote->voteYes, vote->voteNo, vote->voteString));
+			G_LogPrintf("%s Failed: (Y:%d-N:%d) %s (Required:%d, Voting Clients:%d)\n", name, vote->voteYes, vote->voteNo, vote->voteString, threshold, total);
 		}
-		else if (level.time - level.voteInfo.voteTime >= VOTE_TIME) // timeout, not enough votes
+		else if (level.time - vote->voteTime >= VOTE_TIME) // timeout, not enough votes
 		{
 			// same behavior as a no response vote
-			AP(va("cpm \"^1Vote TIMEOUT! Not enough voters to pass vote ^7(^1%d^7/^2%d^7) ^7(%s)\n\"", level.voteInfo.voteYes, threshold, level.voteInfo.voteString));
-			G_LogPrintf("Vote TIMEOUT! Not enough voters to pass vote (%d/%d) %s\n", level.voteInfo.voteYes, threshold, level.voteInfo.voteString);
+			G_VotePrint(team, va("cpm \"^1%s TIMEOUT! Not enough voters to pass vote ^7(^1%d^7/^2%d^7) ^7(%s)\n\"", name, vote->voteYes, threshold, vote->voteString));
+			G_LogPrintf("%s TIMEOUT! Not enough voters to pass vote (%d/%d) %s\n", name, vote->voteYes, threshold, vote->voteString);
 		}
 		else
 		{
@@ -3841,9 +3881,18 @@ void CheckVote(void)
 			return;
 		}
 
-		level.voteInfo.voteTime = 0;
-		trap_SetConfigstring(CS_VOTE_TIME, "");
+		G_VoteEnd(vote, team);
 	}
+}
+
+/**
+ * @brief CheckVote checks the vote of all players and the team votes
+ */
+void CheckVote(void)
+{
+	G_CheckVoteInfo(&level.voteInfo, TEAM_FREE);
+	G_CheckVoteInfo(&level.teamVoteInfo[0], TEAM_AXIS);
+	G_CheckVoteInfo(&level.teamVoteInfo[1], TEAM_ALLIES);
 }
 
 /**
