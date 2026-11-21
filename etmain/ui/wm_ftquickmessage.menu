@@ -145,25 +145,25 @@ QM_MENU_END
 
 QM_MENU_START( "wm_ftquickglobal" )
 
-	QM_MENU_ITEM( _("Y. Yes"),				exec "VoiceChat Affirmative"; 	close wm_ftquickglobal, 	"y", 0 )
-	QM_MENU_ITEM( _("N. No"),				exec "VoiceChat Negative"; 		close wm_ftquickglobal, 	"n", 1 )
-	QM_MENU_ITEM( _("W. Enemy Weak"),		exec "VoiceChat EnemyWeak";		close wm_ftquickglobal, 	"w", 2 )
-	QM_MENU_ITEM( _("H. Hi"),				exec "VoiceChat Hi"; 			close wm_ftquickglobal, 	"h", 3 )
-	QM_MENU_ITEM( _("B. Bye"),				exec "VoiceChat Bye"; 			close wm_ftquickglobal, 	"b", 4 )
-	QM_MENU_ITEM( _("S. Great Shot"),		exec "VoiceChat GreatShot"; 	close wm_ftquickglobal, 	"s", 5 )
-	QM_MENU_ITEM( _("C. Cheer"),			exec "VoiceChat Cheer"; 		close wm_ftquickglobal, 	"c", 6 )
-	QM_MENU_ITEM( _("G. More Globals"),		close wm_ftquickglobal;			open wm_ftquickglobal2, 	"g", 7 )
+	QM_MENU_ITEM( _("Y. Yes"),				exec "VoiceFireteamChat Affirmative"; 	close wm_ftquickglobal, 	"y", 0 )
+	QM_MENU_ITEM( _("N. No"),				exec "VoiceFireteamChat Negative"; 		close wm_ftquickglobal, 	"n", 1 )
+	QM_MENU_ITEM( _("W. Enemy Weak"),		exec "VoiceFireteamChat EnemyWeak";		close wm_ftquickglobal, 	"w", 2 )
+	QM_MENU_ITEM( _("H. Hi"),				exec "VoiceFireteamChat Hi"; 			close wm_ftquickglobal, 	"h", 3 )
+	QM_MENU_ITEM( _("B. Bye"),				exec "VoiceFireteamChat Bye"; 			close wm_ftquickglobal, 	"b", 4 )
+	QM_MENU_ITEM( _("S. Great Shot"),		exec "VoiceFireteamChat GreatShot"; 	close wm_ftquickglobal, 	"s", 5 )
+	QM_MENU_ITEM( _("C. Cheer"),			exec "VoiceFireteamChat Cheer"; 		close wm_ftquickglobal, 	"c", 6 )
+	QM_MENU_ITEM( _("G. More Globals"),		close wm_ftquickglobal;					open wm_ftquickglobal2, 	"g", 7 )
 
 QM_MENU_END
 
 QM_MENU_START( "wm_ftquickglobal2" )
 
-	QM_MENU_ITEM( _("T. Thanks"),		exec "VoiceChat Thanks";	close wm_ftquickglobal2, 	"t", 0 )
-	QM_MENU_ITEM( _("W. Welcome"),		exec "VoiceChat Welcome"; 	close wm_ftquickglobal2, 	"w", 1 )
-	QM_MENU_ITEM( _("O. Oops"),			exec "VoiceChat Oops"; 		close wm_ftquickglobal2, 	"o", 2 )
-	QM_MENU_ITEM( _("S. Sorry"),		exec "VoiceChat Sorry"; 	close wm_ftquickglobal2, 	"s", 3 )
-	QM_MENU_ITEM( _("H. Hold Fire!"),	exec "VoiceChat HoldFire";	close wm_ftquickglobal2, 	"h", 4 )
-	QM_MENU_ITEM( _("G. Good Game"),	exec "VoiceChat GoodGame";	close wm_ftquickglobal2, 	"g", 5 )
+	QM_MENU_ITEM( _("T. Thanks"),		exec "VoiceFireteamChat Thanks";	close wm_ftquickglobal2, 	"t", 0 )
+	QM_MENU_ITEM( _("W. Welcome"),		exec "VoiceFireteamChat Welcome"; 	close wm_ftquickglobal2, 	"w", 1 )
+	QM_MENU_ITEM( _("O. Oops"),			exec "VoiceFireteamChat Oops"; 		close wm_ftquickglobal2, 	"o", 2 )
+	QM_MENU_ITEM( _("S. Sorry"),		exec "VoiceFireteamChat Sorry"; 	close wm_ftquickglobal2, 	"s", 3 )
+	QM_MENU_ITEM( _("H. Hold Fire!"),	exec "VoiceFireteamChat HoldFire";	close wm_ftquickglobal2, 	"h", 4 )
+	QM_MENU_ITEM( _("G. Good Game"),	exec "VoiceFireteamChat GoodGame";	close wm_ftquickglobal2, 	"g", 5 )
 
 QM_MENU_END
 

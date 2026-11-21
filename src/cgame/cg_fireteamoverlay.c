@@ -118,6 +118,7 @@ int QDECL CG_SortFireTeam(const void *a, const void *b)
 	{
 		return -1;
 	}
+
 	if (!CG_IsOnSameFireteam(cna, cg.clientNum))
 	{
 		return 1;
@@ -128,6 +129,7 @@ int QDECL CG_SortFireTeam(const void *a, const void *b)
 	{
 		return -1;
 	}
+
 	if (CG_IsFireTeamLeader(cnb))
 	{
 		return 1;
@@ -138,6 +140,7 @@ int QDECL CG_SortFireTeam(const void *a, const void *b)
 	{
 		return -1;
 	}
+
 	if (cb->rank > ca->rank)
 	{
 		return 1;
@@ -149,7 +152,8 @@ int QDECL CG_SortFireTeam(const void *a, const void *b)
 	//}
 	//if ( cb->score > ca->score ) {
 	//  return 1;
-	//}                                                                                                                       // not atm
+	//}
+	// not atm
 
 	return 0;
 }
@@ -195,8 +199,8 @@ void CG_ParseFireteams()
 		char hexbuffer[11] = "0x00000000";
 
 		p = CG_ConfigString(CS_FIRETEAMS + i);
-
 		j = Q_atoi(Info_ValueForKey(p, "id"));
+
 		if (j == -1)
 		{
 			cg.fireTeams[i].inuse = qfalse;
@@ -252,6 +256,7 @@ fireteamData_t *CG_IsOnFireteam(int clientNum)
 	{
 		return NULL;
 	}
+
 	return cgs.clientinfo[clientNum].fireteamData;
 }
 
@@ -415,6 +420,7 @@ clientInfo_t *CG_SortedFireTeamPlayerForPosition(int pos)
 		{
 			return &cgs.clientinfo[sortedFireTeamClients[i]];
 		}
+
 		cnt++;
 	}
 
@@ -546,7 +552,7 @@ static void CG_FTOverlay_StoreSpawnpointString(fireteamOverlay_t *fto, const int
 #define CLASS_ICON_ARROW_WIDTH (CG_Text_Width_Ext_Float("->", fto->textScale, 0, FONT_TEXT))
 // slightly wider than the icon size, to leave a bit of margin between the icon and name
 #define POWERUP_WIDTH (fto->iconSize * 1.25f)
-#define MAJOR_SPAWN_NUMBER_WIDTH_SCALE ((comp->style & FT_SPAWN_POINT_MINOR) ? 1.25f : 1.0f)
+#define MAJOR_SPAWN_NUMBER_WIDTH_SCALE ((comp->style &FT_SPAWN_POINT_MINOR) ? 1.25f : 1.0f)
 
 static float CG_FTOverlay_ClassIconWidth(const fireteamOverlay_t *fto, const hudComponent_t *comp)
 {
@@ -1509,10 +1515,10 @@ qboolean CG_FireteamHasClass(int classnum, qboolean selectedonly)
 }
 
 /**
- * @brief CG_BuildSelectedFirteamString
+ * @brief CG_BuildSelectedFireteamString
  * @return
  */
-const char *CG_BuildSelectedFirteamString(void)
+const char *CG_BuildSelectedFireteamString(void)
 {
 	char         buffer[256];
 	clientInfo_t *ci;
@@ -1520,9 +1526,11 @@ const char *CG_BuildSelectedFirteamString(void)
 	int          i;
 
 	*buffer = '\0';
+
 	for (i = 0; i < MAX_FIRETEAM_MEMBERS; i++)
 	{
 		ci = CG_SortedFireTeamPlayerForPosition(i);
+
 		if (!ci)
 		{
 			break;
