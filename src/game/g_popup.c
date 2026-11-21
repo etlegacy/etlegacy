@@ -519,6 +519,80 @@ void G_PromptJoinedFireteam(int clientNum, int leaderNum)
 }
 
 /**
+ * @brief G_PromptSyncLegacy applies a Lua script's change of the old single-prompt fields
+ * (complaintClient, invitationEndTime, ...) to the prompt list: an end time in the past
+ * withdraws the newest prompt of that kind, a new end time or client changes or creates it.
+ * A field written on its own (the client before the end time) waits until the prompt is complete.
+ * @param[in,out] cl
+ */
+void G_PromptSyncLegacy(gclient_t *cl)
+{
+	int clientNum = cl - level.clients;
+	int kind;
+
+	for (kind = POPUP_COMPLAINT; kind <= POPUP_AFTJ; kind++)
+	{
+		int *client, *client2, *endTime;
+		int slot = G_PromptNewest(cl, kind);
+		int want, want2, wantEnd, has, has2, hasEnd;
+
+		G_PromptLegacyFields(cl, kind, &client, &client2, &endTime);
+		if (!endTime)
+		{
+			continue;
+		}
+
+		want    = client ? *client : -1;
+		want2   = client2 ? *client2 : -1;
+		wantEnd = *endTime;
+		has     = slot >= 0 ? cl->pers.promptFrom[slot] : -1;
+		has2    = slot >= 0 ? cl->pers.promptFrom2[slot] : -1;
+		hasEnd  = slot >= 0 ? cl->pers.promptEndTime[slot] : 0;
+
+		if (want == has && want2 == has2 && wantEnd == hasEnd)
+		{
+			continue;
+		}
+
+		if (wantEnd > level.time)
+		{
+			if (client && (want < 0 || want >= level.maxclients))
+			{
+				// not complete yet
+				continue;
+			}
+
+			if (slot >= 0 && want == has && want2 == has2)
+			{
+				// same prompt, new end time: the client restarts its timer
+				cl->pers.promptEndTime[slot] = wantEnd;
+				G_PromptSend(clientNum, slot);
+			}
+			else
+			{
+				if (slot >= 0)
+				{
+					G_PromptClear(clientNum, slot, -1, qtrue);
+				}
+				G_PromptAdd(clientNum, (popupKind_t)kind, want, want2, wantEnd);
+			}
+		}
+		else if (slot >= 0)
+		{
+			G_PromptClear(clientNum, slot, -1, qtrue);
+		}
+		else
+		{
+			continue;
+		}
+
+		// the next prompt comes to the front; only a kind with a prompt left shows it: the
+		// fields of a withdrawn one keep what the script wrote
+		G_PromptScheduleKeep(clientNum, kind);
+	}
+}
+
+/**
  * @brief G_PromptRunFrame drops the prompt on screen when its time is up (the client times it
  * out itself) and starts the timer of the next one
  */

@@ -50,6 +50,8 @@
 #define FIELD_FLAG_GCLIENT  2 ///< marks a gclient_s field
 #define FIELD_FLAG_NOPTR    4
 #define FIELD_FLAG_READONLY 8 ///< read-only access
+#define FIELD_FLAG_PROMPT   16 ///< an old single-prompt field (invitationClient, ...): a write changes the prompt list, see G_PromptSyncLegacy()
+#define FIELD_FLAG_PROMPTS  32 ///< an array over the prompt slots: the index must be below MAX_PENDING_PROMPTS
 
 // define HOSTARCH and EXTENSION depending on host architecture
 #if defined WIN32

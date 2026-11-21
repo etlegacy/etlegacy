@@ -1495,6 +1495,7 @@ void G_PromptRemoveKinds(int clientNum, int kindMask);
 void G_PromptRemoveAbout(int clientNum, int kindMask);
 void G_PromptJoinedFireteam(int clientNum, int leaderNum);
 void G_PromptUpdateLegacy(gclient_t *cl);
+void G_PromptSyncLegacy(gclient_t *cl);
 void G_PromptRunFrame(void);
 voteInfo_t *G_TeamVote(team_t team);
 void G_TeamVoteSendTo(int clientNum);
