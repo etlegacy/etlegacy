@@ -2604,8 +2604,9 @@ static void CG_GetBindingKeyForVote(char *str1, char *str2)
  * Popups: the yes/no prompts from the server (complaints, fireteam requests), the vote of the
  * player's team and the vote of all players. One of them has the focus and is drawn in full:
  * the oldest prompt (only its timer runs), then the team vote, then the vote of all players (a vote
- * the player has voted in after one it hasn't). A running vote without the focus is stacked compact
- * under it. 'vote yes|no' answers the focused popup, see CG_PopupFocus().
+ * the player has voted in after one it hasn't). The popups without the focus are stacked compact
+ * under it in the same order: the waiting prompts, then the votes. 'vote yes|no' answers the
+ * focused popup, see CG_PopupFocus().
  */
 
 #define VOTE_PANEL_MAX_LINES 4
@@ -2617,6 +2618,7 @@ static void CG_GetBindingKeyForVote(char *str1, char *str2)
 #define VOTE_CLOSE_SLIDE 300
 #define PROMPT_REPLY_FLASH 700
 #define PROMPT_REPLY_SLIDE 300
+#define PROMPT_STACK_MAX 3 ///< waiting prompts drawn in the stack, the rest are counted in the last one's title
 
 #define VOTE_ALL  0 ///< the vote of all players
 #define VOTE_TEAM 1 ///< the vote of the player's team
@@ -3046,7 +3048,7 @@ void CG_ParseTeamVote(void)
  * @param[in] comp
  * @param[in] titleIn header text
  * @param[in] text body text, wrapped to the panel width
- * @param[in] sec seconds left
+ * @param[in] sec seconds left, < 0 for a prompt that waits (its timer hasn't started)
  * @param[in] frac remaining time, 0..1
  * @param[in] v the vote with its counts, NULL for a plain yes/no prompt
  * @param[in] which VOTE_ALL or VOTE_TEAM for a vote
@@ -3161,7 +3163,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 	barH  = MAX(3.f, lineH * .3f);
 	headH = rowH * 1.3f;
 	gap   = pad * .4f;
-	h     = headH + gap * 2.f + barH + (1.f + (numLines - 1) * (1.f - miniT)) * (lineH * 1.6f) + pad + rowH + barH * 1.5f + gap * 2.f;
+	h     = headH + gap * 2.f + barH + (1.f + (numLines - 1) * (1.f - miniT)) * (lineH * 1.6f) + pad + (counts ? 1.f : 1.f - miniT) * (rowH + barH * 1.5f) + gap * 2.f;
 
 	if (voteStacked)
 	{
@@ -3209,13 +3211,16 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 	CG_DrawRect_FixedBorder(x, y, w, h, 1, colBorder);
 
 	CG_Text_Paint_Ext(x + pad, y + (headH + lineH) * .5f, scale, scale, colMain, titleIn, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
-	line = va("%is", sec);
+	line = sec >= 0 ? va("%is", sec) : CG_TranslateString("next");
 	tw   = CG_Text_Width_Ext_Float(line, scale, 0, font);
 	CG_Text_Paint_Ext(x + w - pad - tw, y + (headH + lineH) * .5f, scale, scale, colDim, line, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
 
 	// time bar under the header, drains to the left
 	CG_FillRect(x + pad, y + headH + gap, innerW, barH, colTrack);
-	CG_FillRect(x + pad, y + headH + gap, innerW * frac, barH, colMain);
+	if (sec >= 0)
+	{
+		CG_FillRect(x + pad, y + headH + gap, innerW * frac, barH, colMain);
+	}
 	y += headH + gap * 2.f + barH;
 
 	// wrapped text, at most VOTE_PANEL_MAX_LINES lines (the last one is cut)
@@ -3376,6 +3381,55 @@ static void CG_DrawPromptPanel(hudComponent_t *comp, const cgPrompt_t *p)
 
 	CG_GetBindingKeyForVote(str1, str2);
 	CG_DrawVotePanel(comp, promptLast.title, promptLast.text, promptLast.sec, frac, NULL, VOTE_ALL, str1, str2, -1, 0.f);
+}
+
+/**
+ * @brief CG_DrawPromptsQueued draws the prompts waiting behind the one with the focus as compact
+ * panels in the stack, oldest first
+ * @param[in] comp
+ * @param[in] focus the prompt drawn in full, NULL if none is (an answered one is still on screen)
+ */
+static void CG_DrawPromptsQueued(hudComponent_t *comp, const cgPrompt_t *focus)
+{
+	const cgPrompt_t *queue[MAX_PENDING_PROMPTS];
+	int              n = 0, i, j;
+
+	for (i = 0; i < MAX_PENDING_PROMPTS; i++)
+	{
+		const cgPrompt_t *p = &cgs.prompts[i];
+
+		if (p == focus || p->kind == POPUP_ANY || p->endTime <= cg.time)
+		{
+			continue;
+		}
+
+		// insertion by age
+		for (j = n; j > 0 && queue[j - 1]->seq > p->seq; j--)
+		{
+			queue[j] = queue[j - 1];
+		}
+		queue[j] = p;
+		n++;
+	}
+
+	for (i = 0; i < n && i < PROMPT_STACK_MAX; i++)
+	{
+		const char *title, *text;
+		char       titleBuf[32], textBuf[256];
+
+		CG_PromptText(queue[i], &title, &text);
+		Q_strncpyz(textBuf, text, sizeof(textBuf));
+		// the last one shown counts the prompts that don't fit
+		if (i == PROMPT_STACK_MAX - 1 && n > PROMPT_STACK_MAX)
+		{
+			title = va("%s  +%i", title, n - PROMPT_STACK_MAX);
+		}
+		Q_strncpyz(titleBuf, title, sizeof(titleBuf));
+
+		voteStacked = qtrue;
+		CG_DrawVotePanel(comp, titleBuf, textBuf, -1, 1.f, NULL, VOTE_ALL, "", "", -1, 0.f);
+		voteStacked = qfalse;
+	}
 }
 
 /**
@@ -3601,7 +3655,7 @@ static void CG_DrawFireteamStatus(hudComponent_t *comp)
 
 /**
  * @brief CG_DrawVote draws the popups: the answered prompt for a moment, else the prompt or
- * vote with the focus, with the other running votes stacked compact under it, else an ended vote's result,
+ * vote with the focus, with the waiting prompts and the other votes stacked compact under it, else an ended vote's result,
  * else the state of the player's own fireteam request
  * @param[in] comp
  */
@@ -3622,6 +3676,7 @@ void CG_DrawVote(hudComponent_t *comp)
 
 	if (CG_DrawPromptReply(comp))
 	{
+		CG_DrawPromptsQueued(comp, NULL);
 		CG_DrawVotesQueued(comp, -1);
 		return;
 	}
@@ -3630,6 +3685,7 @@ void CG_DrawVote(hudComponent_t *comp)
 	if (p)
 	{
 		CG_DrawPromptPanel(comp, p);
+		CG_DrawPromptsQueued(comp, p);
 		CG_DrawVotesQueued(comp, -1);
 		return;
 	}
