@@ -2664,9 +2664,12 @@ static struct
 static float    stackTop, stackBottom; ///< extent of the popups drawn so far, the next stacked one goes under (or above) them
 static qboolean voteStacked;           ///< draw the panel compact in the stack, because another popup has the focus
 static int      panelKey;              ///< the popup the next CG_DrawVotePanel() call draws: a prompt id or VOTE_KEY(), 0 = none
+static int      panelMore;             ///< popups not drawn ("No Stack"), counted in the title of the next panel
 
 // votetext HUD component styles
 #define VOTE_STYLE_COMPLAINT 1 ///< show complaint popups
+#define VOTE_STYLE_NOSTACK   2 ///< draw only the popup with the focus, not the ones waiting
+#define VOTE_STYLE_NOANIM    4 ///< no sliding, growing or shrinking
 
 #define VOTE_KEY(which, id) ((((which) + 1) << 16) | ((id) & 0xffff))
 #define STACK_SLOTS (PROMPT_STACK_MAX + 2)
@@ -3153,20 +3156,21 @@ static qboolean CG_StackedAt(int key, float *y)
  */
 static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const char *text, int sec, float frac, const voteView_t *v, int which, const char *keyYes, const char *keyNo, int answer, float slideT)
 {
-	vec4_t       colBg    = { 0.08f, 0.08f, 0.08f, 0.8f };
-	vec4_t       colHead  = { 0.f, 0.f, 0.f, 0.45f };
-	vec4_t       colYes   = { 0.35f, 0.85f, 0.35f, 1.f };
-	vec4_t       colNo    = { 0.9f, 0.3f, 0.3f, 1.f };
-	vec4_t       colDim   = { 0.7f, 0.7f, 0.7f, 1.f };
-	vec4_t       colText  = { 1.f, 1.f, 1.f, 1.f };
+	vec4_t       colBg;
+	vec4_t       colHead = { 0.f, 0.f, 0.f, 0.45f };
+	vec4_t       colYes  = { 0.35f, 0.85f, 0.35f, 1.f };
+	vec4_t       colNo   = { 0.9f, 0.3f, 0.3f, 1.f };
+	vec4_t       colDim  = { 0.7f, 0.7f, 0.7f, 1.f };
+	vec4_t       colText;
 	vec4_t       colTrack = { 1.f, 1.f, 1.f, 0.15f };
 	fontHelper_t *font    = &cgs.media.limboFont2;
 	float        scale    = CG_ComputeScale(comp);
 	float        lineH    = CG_Text_Height_Ext("A", scale, 0, font);
 	float        pad      = lineH * .6f;
 	float        rowH     = lineH + pad;
-	float        w        = MIN(comp->location.w, 240.f * cgs.screenXScale);
+	float        w        = MAX(comp->location.w, 60.f);
 	float        x = comp->location.x, y = comp->location.y;
+	char         title[64];
 	float        innerW = w - pad * 2.f;
 	float        h, headH, barH, tw, gap;
 	char         wrapped[MAX_STRING_TOKENS * 2];
@@ -3184,9 +3188,29 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 	float        growT   = 0.f;
 	float        shrinkT = 0.f;
 	float        keyA, barA;
+	qboolean     noAnim = (comp->style & VOTE_STYLE_NOANIM) != 0;
+	// in the lower half of the screen the popups grow upwards from the bottom of the component
+	qboolean up = comp->location.y + comp->location.h * .5f > SCREEN_HEIGHT * .5f;
 
 	Vector4Copy(comp->colorMain, colMain);
 	Vector4Copy(comp->colorBorder, colBorder);
+	Vector4Copy(comp->colorBackground, colBg);
+	Vector4Copy(comp->colorSecondary, colText);
+
+	// popups hidden with "No Stack" are counted in the title of the one shown
+	if (!voteStacked && panelMore > 0)
+	{
+		Com_sprintf(title, sizeof(title), "%s  +%i", titleIn, panelMore);
+	}
+	else
+	{
+		Q_strncpyz(title, titleIn, sizeof(title));
+	}
+	panelMore = 0;
+	if (noAnim)
+	{
+		slideT = 0.f;
+	}
 	// the answer just given is shown highlighted for a moment before the panel shrinks
 	if (counts && canVote && voted && v->answerTime && cg.time - v->answerTime >= 0 && cg.time - v->answerTime < VOTE_ANSWER_HOLD_MS)
 	{
@@ -3196,7 +3220,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 	mini = voteStacked || (counts && canVote && voted && !hold);
 
 	// a popup that gets the focus grows out of its place in the stack
-	if (!voteStacked && panelKey)
+	if (!voteStacked && panelKey && !noAnim)
 	{
 		if (panelGrow.key != panelKey)
 		{
@@ -3222,7 +3246,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 	}
 
 	// a popup that loses the focus shrinks from the full view into the stack
-	if (voteStacked && panelKey)
+	if (voteStacked && panelKey && !noAnim)
 	{
 		if (panelShrink.key != panelKey)
 		{
@@ -3252,6 +3276,10 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 	if (voteStacked)
 	{
 		miniT = 1.f - (1.f - panelShrink.fromMini) * shrinkT;
+	}
+	else if (mini && noAnim)
+	{
+		miniT = 1.f;
 	}
 	else if (mini)
 	{
@@ -3304,7 +3332,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 		end = strchr(wrapped, '\n');
 		Q_strncpyz(buf, wrapped, end ? MIN((int)(end - wrapped) + 1, (int)sizeof(buf)) : (int)sizeof(buf));
 
-		need   = CG_Text_Width_Ext_Float(titleIn, scale, 0, font) + CG_Text_Width_Ext_Float("  99s", scale, 0, font);
+		need   = CG_Text_Width_Ext_Float(title, scale, 0, font) + CG_Text_Width_Ext_Float("  99s", scale, 0, font);
 		need   = MAX(need, CG_Text_Width_Ext_Float(buf, scale, 0, font));
 		need   = MAX(need, CG_Text_Width_Ext_Float(va("%s  %i   %i  %s", CG_TranslateString("YES"), yes, no, CG_TranslateString("NO")), scale, 0, font));
 		need   = MIN(w, need + pad * 2.f);
@@ -3319,7 +3347,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 
 	if (voteStacked)
 	{
-		qboolean below = qtrue;
+		qboolean below = !up;
 		float    prevY;
 		int      since;
 
@@ -3334,7 +3362,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 		{
 			y += (panelShrink.fromY - y) * shrinkT;
 		}
-		else if (CG_StackedAt(panelKey, &prevY) && fabs(y - prevY) > .5f)
+		else if (!noAnim && CG_StackedAt(panelKey, &prevY) && fabs(y - prevY) > .5f)
 		{
 			// glide to a new place in the stack when the popups above it change
 			y = prevY + (y - prevY) * (1.f - (float)exp(-cg.frametime / (VOTE_PANEL_MINI_MS * .3f)));
@@ -3350,13 +3378,17 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 
 		// a popup that comes into the stack (not from the full view) slides in
 		since = CG_StackedSet(panelKey, y);
-		if (!shrinkT && panelShrink.key != panelKey && cg.time - since >= 0 && cg.time - since < VOTE_OPEN_MS)
+		if (!noAnim && !shrinkT && panelShrink.key != panelKey && cg.time - since >= 0 && cg.time - since < VOTE_OPEN_MS)
 		{
 			slideT = MAX(slideT, 1.f - (cg.time - since) / (float)VOTE_OPEN_MS);
 		}
 	}
 	else
 	{
+		if (up)
+		{
+			y = comp->location.y + comp->location.h - h;
+		}
 		y          += (panelGrow.fromY - y) * growT;
 		stackTop    = y;
 		stackBottom = y + h;
@@ -3374,6 +3406,16 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 	}
 	panelKey = 0;
 
+	// a panel narrower than the component (compact) keeps to the side set by the text alignment
+	if (comp->alignText == ITEM_ALIGN_RIGHT)
+	{
+		x = comp->location.x + MAX(comp->location.w, 60.f) - w;
+	}
+	else if (comp->alignText == ITEM_ALIGN_CENTER)
+	{
+		x = comp->location.x + (MAX(comp->location.w, 60.f) - w) * .5f;
+	}
+
 	if (slideT > 0.f)
 	{
 		float left = x, right = Ccg_WideX(SCREEN_WIDTH) - (x + w), top = y, bottom = SCREEN_HEIGHT - (y + h);
@@ -3389,14 +3431,20 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 		}
 	}
 
-	CG_FillRect(x, y, w, h, colBg);
-	CG_FillRect(x, y, w, headH, colHead);
-	CG_DrawRect_FixedBorder(x, y, w, h, 1, colBorder);
+	if (comp->showBackGround)
+	{
+		CG_FillRect(x, y, w, h, colBg);
+		CG_FillRect(x, y, w, headH, colHead);
+	}
+	if (comp->showBorder)
+	{
+		CG_DrawRect_FixedBorder(x, y, w, h, 1, colBorder);
+	}
 
-	CG_Text_Paint_Ext(x + pad, y + (headH + lineH) * .5f, scale, scale, colMain, titleIn, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+	CG_Text_Paint_Ext(x + pad, y + (headH + lineH) * .5f, scale, scale, colMain, title, 0, 0, comp->styleText, font);
 	line = sec >= 0 ? va("%is", sec) : CG_TranslateString("next");
 	tw   = CG_Text_Width_Ext_Float(line, scale, 0, font);
-	CG_Text_Paint_Ext(x + w - pad - tw, y + (headH + lineH) * .5f, scale, scale, colDim, line, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+	CG_Text_Paint_Ext(x + w - pad - tw, y + (headH + lineH) * .5f, scale, scale, colDim, line, 0, 0, comp->styleText, font);
 
 	// time bar under the header, drains to the left
 	CG_FillRect(x + pad, y + headH + gap, innerW, barH, colTrack);
@@ -3424,7 +3472,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 				col[3] *= MAX(0.f, 1.f - 2.f * miniT);
 			}
 			Q_strncpyz(buf, line, MIN(len + 1, (int)sizeof(buf)));
-			CG_Text_Paint_Ext(x + pad, y + lineH, scale, scale, col, buf, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+			CG_Text_Paint_Ext(x + pad, y + lineH, scale, scale, col, buf, 0, 0, comp->styleText, font);
 		}
 		y   += lineH * 1.6f * (i > 0 ? 1.f - miniT : 1.f);
 		line = end ? end + 1 : line + len;
@@ -3451,7 +3499,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 	if (counts && !canVote)
 	{
 		footer = va("%s  Y:%i N:%i", va(CG_TranslateString("Can't vote as %s"), cgs.clientinfo[cg.clientNum].shoutcaster ? "Shoutcaster" : "Spectator"), yes, no);
-		CG_Text_Paint_Ext(x + pad, y + lineH + pad * .5f, scale, scale, colDim, footer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+		CG_Text_Paint_Ext(x + pad, y + lineH + pad * .5f, scale, scale, colDim, footer, 0, 0, comp->styleText, font);
 	}
 	else if ((!counts || !voted || hold) && keyA > 0.f)
 	{
@@ -3474,7 +3522,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 			Vector4Set(hl, colYes[0], colYes[1], colYes[2], .3f);
 			CG_FillRect(x + pad * .5f, y + pad * .3f, tw + pad, lineH + pad * .6f, hl);
 		}
-		CG_Text_Paint_Ext(x + pad, y + lineH + pad * .5f, scale, scale, cy, footer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+		CG_Text_Paint_Ext(x + pad, y + lineH + pad * .5f, scale, scale, cy, footer, 0, 0, comp->styleText, font);
 		footer = counts ? va("[%s] %s  %i", keyNo, CG_TranslateString("NO"), no) : va("[%s] %s", keyNo, CG_TranslateString("NO"));
 		tw     = CG_Text_Width_Ext_Float(footer, scale, 0, font);
 		if (answer == 0)
@@ -3482,7 +3530,7 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 			Vector4Set(hl, colNo[0], colNo[1], colNo[2], .3f);
 			CG_FillRect(x + w - pad * 1.5f - tw, y + pad * .3f, tw + pad, lineH + pad * .6f, hl);
 		}
-		CG_Text_Paint_Ext(x + w - pad - tw, y + lineH + pad * .5f, scale, scale, cn, footer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+		CG_Text_Paint_Ext(x + w - pad - tw, y + lineH + pad * .5f, scale, scale, cn, footer, 0, 0, comp->styleText, font);
 	}
 
 	// after voting (or as a spectator) show the split between yes and no, the leader brighter
@@ -3511,10 +3559,10 @@ static void CG_DrawVotePanel(hudComponent_t *comp, const char *titleIn, const ch
 		if (canVote)
 		{
 			footer = va("%s  %i", CG_TranslateString("YES"), yes);
-			CG_Text_Paint_Ext(x + pad, y + lineH + pad * .5f, scale, scale, cy, footer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+			CG_Text_Paint_Ext(x + pad, y + lineH + pad * .5f, scale, scale, cy, footer, 0, 0, comp->styleText, font);
 			footer = va("%i  %s", no, CG_TranslateString("NO"));
 			tw     = CG_Text_Width_Ext_Float(footer, scale, 0, font);
-			CG_Text_Paint_Ext(x + w - pad - tw, y + lineH + pad * .5f, scale, scale, cn, footer, 0, 0, ITEM_TEXTSTYLE_SHADOWED, font);
+			CG_Text_Paint_Ext(x + w - pad - tw, y + lineH + pad * .5f, scale, scale, cn, footer, 0, 0, comp->styleText, font);
 		}
 		CG_FillRect(x + pad, by, innerW, barH * 1.5f, ct);
 		CG_FillRect(x + pad, by, yesW, barH * 1.5f, cy);
@@ -3612,6 +3660,11 @@ static void CG_DrawPromptsQueued(hudComponent_t *comp, const cgPrompt_t *focus)
 {
 	const cgPrompt_t *queue[MAX_PENDING_PROMPTS];
 	int              n = 0, i, j;
+
+	if (comp->style & VOTE_STYLE_NOSTACK)
+	{
+		return;
+	}
 
 	for (i = 0; i < MAX_PENDING_PROMPTS; i++)
 	{
@@ -3762,6 +3815,11 @@ static void CG_DrawVotesQueued(hudComponent_t *comp, int focus)
 	int order[2] = { VOTE_TEAM, VOTE_ALL };
 	int i;
 
+	if (comp->style & VOTE_STYLE_NOSTACK)
+	{
+		return;
+	}
+
 	for (i = 0; i < 2; i++)
 	{
 		if (order[i] == focus || !CG_VoteRunning(order[i]))
@@ -3878,6 +3936,82 @@ static void CG_DrawFireteamStatus(hudComponent_t *comp)
 }
 
 /**
+ * @brief CG_PopupHiddenCount
+ * @param[in] comp
+ * @param[in] focusPrompt the prompt drawn in full, or NULL
+ * @param[in] focusVote the vote drawn in full, or -1
+ * @return the popups that "No Stack" leaves out
+ */
+static int CG_PopupHiddenCount(hudComponent_t *comp, const cgPrompt_t *focusPrompt, int focusVote)
+{
+	int i, n = 0;
+
+	if (!(comp->style & VOTE_STYLE_NOSTACK))
+	{
+		return 0;
+	}
+
+	for (i = 0; i < MAX_PENDING_PROMPTS; i++)
+	{
+		if (&cgs.prompts[i] != focusPrompt && cgs.prompts[i].kind != POPUP_ANY && cgs.prompts[i].endTime > cg.time)
+		{
+			n++;
+		}
+	}
+	for (i = 0; i < 2; i++)
+	{
+		if (i != focusVote && CG_VoteRunning(i))
+		{
+			n++;
+		}
+	}
+
+	return n;
+}
+
+/**
+ * @brief CG_DrawVotePreview draws sample popups for the HUD editor (noise generator): a prompt
+ * with the focus, a waiting prompt and a running vote
+ * @param[in] comp
+ */
+static void CG_DrawVotePreview(hudComponent_t *comp)
+{
+	char       str1[32], str2[32];
+	voteView_t v;
+
+	CG_GetBindingKeyForVote(str1, str2);
+
+	if (comp->style & VOTE_STYLE_NOSTACK)
+	{
+		panelMore = 2;
+	}
+	panelKey = -1;
+	CG_DrawVotePanel(comp, CG_TranslateString("FIRETEAM"), va(CG_TranslateString("Accept ^7%s^*'s invitation to join their fireteam?"), "Player"),
+	                 15, .75f, NULL, VOTE_ALL, str1, str2, -1, 0.f);
+
+	if (comp->style & VOTE_STYLE_NOSTACK)
+	{
+		return;
+	}
+
+	voteStacked = qtrue;
+	panelKey    = -2;
+	CG_DrawVotePanel(comp, CG_TranslateString("COMPLAINT"), va(CG_TranslateString("File complaint against ^7%s^* for %s?"), "Player", "team-killing"),
+	                 -1, 1.f, NULL, VOTE_ALL, "", "", -1, 0.f);
+
+	Com_Memset(&v, 0, sizeof(v));
+	v.time    = cg.time - 5000;
+	v.yes     = 3;
+	v.no      = 1;
+	v.canVote = qtrue;
+	v.voted   = qtrue;
+	v.string  = "Map goldrush";
+	panelKey  = -3;
+	CG_DrawVotePanel(comp, "VOTE MAP", "goldrush", 25, .83f, &v, VOTE_ALL, str1, str2, -1, 0.f);
+	voteStacked = qfalse;
+}
+
+/**
  * @brief CG_DrawVote draws the popups: the answered prompt for a moment, else the prompt or
  * vote with the focus, with the waiting prompts and the other votes stacked compact under it, else an ended vote's result,
  * else the state of the player's own fireteam request
@@ -3887,6 +4021,12 @@ void CG_DrawVote(hudComponent_t *comp)
 {
 	cgPrompt_t *p;
 	int        which;
+
+	if (cg.generatingNoiseHud)
+	{
+		CG_DrawVotePreview(comp);
+		return;
+	}
 
 	// a vote that ended while it was shown in full gets the closing animation
 	for (which = 0; which < 2; which++)
@@ -3908,6 +4048,7 @@ void CG_DrawVote(hudComponent_t *comp)
 	p = CG_PromptFront();
 	if (p)
 	{
+		panelMore = CG_PopupHiddenCount(comp, p, -1);
 		CG_DrawPromptPanel(comp, p);
 		CG_DrawPromptsQueued(comp, p);
 		CG_DrawVotesQueued(comp, -1);
@@ -3917,6 +4058,7 @@ void CG_DrawVote(hudComponent_t *comp)
 	which = CG_VoteFocus();
 	if (which >= 0)
 	{
+		panelMore = CG_PopupHiddenCount(comp, NULL, which);
 		CG_DrawVoteRunning(comp, which, qfalse);
 		CG_DrawVotesQueued(comp, which);
 		return;
@@ -5834,12 +5976,7 @@ static void CG_NoiseGenerator()
 	// objective indicator simulation
 	cg.flagIndicator |= (1 << PW_NUM_POWERUPS);
 
-	// vote
-	if (!cgs.voteTime)
-	{
-		cgs.voteTime = cg.time;
-		Q_strncpyz(cgs.voteString, NOISE_VOTE_TEXT, sizeof(cgs.voteString));
-	}
+	// the vote popups draw a preview of their own (CG_DrawVotePreview)
 
 	// missile camera
 	cg.latestMissile = &cg_entities[cg.snap->ps.clientNum];

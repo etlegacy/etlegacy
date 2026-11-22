@@ -86,7 +86,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(reinforcement),      CG_DrawRespawnTimer,              HUD_COMP_TYPE_TEXT,      0.19f,              { "Double Digits", "Reinforce Warning" } },
 	{ HUDF(spawntimer),         CG_DrawSpawnTimer,                HUD_COMP_TYPE_TEXT,      0.19f,              { "Double Digits" } },
 	{ HUDF(localtime),          CG_DrawLocalTime,                 HUD_COMP_TYPE_TEXT,      0.19f,              { "Second",        "12 Hours" } },
-	{ HUDF(votetext),           CG_DrawVote,                      HUD_COMP_TYPE_MULTITEXT, 0.22f,              { "Complaint" } }, // FIXME: outside cg_draw_hud
+	{ HUDF(votetext),           CG_DrawVote,                      HUD_COMP_TYPE_MULTITEXT, 0.22f,              { "Complaint",     "No Stack",      "No Animation" } },// FIXME: outside cg_draw_hud
 	{ HUDF(spectatortext),      CG_DrawSpectatorMessage,          HUD_COMP_TYPE_MULTITEXT, 0.22f,              { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(limbotext),          CG_DrawLimboMessage,              HUD_COMP_TYPE_MULTITEXT, 0.22f,              { "No Wounded Msg" } },// FIXME: outside cg_draw_hud
 	{ HUDF(followtext),         CG_DrawFollow,                    HUD_COMP_TYPE_SPECIFIC,  0.22f,              { "No Countdown" } },// FIXME: outside cg_draw_hud
@@ -189,10 +189,11 @@ static ID_INLINE hudComponent_t CG_getComponent(float x, float y, float w, float
 	return tmp;
 }
 
-vec4_t HUD_Background    = { 0.16f, 0.2f, 0.17f, 0.5f };
-vec4_t HUD_BackgroundAlt = { 0.0f, 0.0f, 0.0f, 0.3f };
-vec4_t HUD_Border        = { 0.5f, 0.5f, 0.5f, 0.5f };
-vec4_t HUD_Text          = { 0.6f, 0.6f, 0.6f, 1.0f };
+vec4_t        HUD_Background      = { 0.16f, 0.2f, 0.17f, 0.5f };
+vec4_t        HUD_BackgroundAlt   = { 0.0f, 0.0f, 0.0f, 0.3f };
+vec4_t        HUD_Border          = { 0.5f, 0.5f, 0.5f, 0.5f };
+vec4_t        HUD_Text            = { 0.6f, 0.6f, 0.6f, 1.0f };
+static vec4_t HUD_PopupBackground = { 0.08f, 0.08f, 0.08f, 0.8f };
 
 /**
  * @brief CG_setDefaultHudValues
@@ -235,7 +236,7 @@ void CG_setDefaultHudValues(hudStucture_t *hud)
 	hud->reinforcement      = CG_getComponent(SCREEN_WIDTH * .5f - 24, 3.0, 48, 14, qfalse, 0, 0, 100.f, colorLtBlue, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawRespawnTimer);
 	hud->spawntimer         = CG_getComponent(SCREEN_WIDTH - 60, SCREEN_HEIGHT - 60, 57, 14, qfalse, 0, 0, 100.f, colorRed, colorWhite, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawSpawnTimer);
 	hud->localtime          = CG_getComponent(SCREEN_WIDTH - 60, 168, 57, 14, qfalse, 0, 0, 100.f, HUD_Text, HUD_Text, qtrue, HUD_Background, qtrue, HUD_Border, ITEM_TEXTSTYLE_NORMAL, ITEM_ALIGN_CENTER, qfalse, 0.19f, 0, 0, 0, CG_DrawLocalTime);
-	hud->votetext           = CG_getComponent(4, 202, 278, 28, qtrue, 1, 0, 100.f, colorYellow, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, 0, 0, 0, CG_DrawVote);
+	hud->votetext           = CG_getComponent(4, 202, 278, 28, qtrue, 1, 0, 100.f, colorYellow, colorWhite, qtrue, HUD_PopupBackground, qtrue, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, 0, 0, 0, CG_DrawVote);
 	hud->spectatortext      = CG_getComponent(4, 160, 278, 38, qtrue, 0, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, 0, 0, 0, CG_DrawSpectatorMessage);
 	hud->limbotext          = CG_getComponent(4, 124, 278, 38, qtrue, 0, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, 0, 0, 0, CG_DrawLimboMessage);
 	hud->followtext         = CG_getComponent(4, 124, 278, 24, qtrue, 0, 0, 100.f, colorWhite, colorWhite, qfalse, HUD_Background, qfalse, HUD_Border, ITEM_TEXTSTYLE_SHADOWED, ITEM_ALIGN_LEFT, qfalse, 0.22f, 0, 0, 0, CG_DrawFollow);
