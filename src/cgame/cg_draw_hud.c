@@ -86,7 +86,7 @@ const hudComponentFields_t hudComponentFields[] =
 	{ HUDF(reinforcement),      CG_DrawRespawnTimer,              HUD_COMP_TYPE_TEXT,      0.19f,              { "Double Digits", "Reinforce Warning" } },
 	{ HUDF(spawntimer),         CG_DrawSpawnTimer,                HUD_COMP_TYPE_TEXT,      0.19f,              { "Double Digits" } },
 	{ HUDF(localtime),          CG_DrawLocalTime,                 HUD_COMP_TYPE_TEXT,      0.19f,              { "Second",        "12 Hours" } },
-	{ HUDF(votetext),           CG_DrawVote,                      HUD_COMP_TYPE_MULTITEXT, 0.22f,              { "Complaint",     "No Stack",      "No Animation" } },// FIXME: outside cg_draw_hud
+	{ HUDF(votetext),           CG_DrawVote,                      HUD_COMP_TYPE_MULTITEXT, 0.22f,              { "Complaint",     "No Stack",      "No Animation",   "Classic"           } },// FIXME: outside cg_draw_hud
 	{ HUDF(spectatortext),      CG_DrawSpectatorMessage,          HUD_COMP_TYPE_MULTITEXT, 0.22f,              { 0 } },           // FIXME: outside cg_draw_hud
 	{ HUDF(limbotext),          CG_DrawLimboMessage,              HUD_COMP_TYPE_MULTITEXT, 0.22f,              { "No Wounded Msg" } },// FIXME: outside cg_draw_hud
 	{ HUDF(followtext),         CG_DrawFollow,                    HUD_COMP_TYPE_SPECIFIC,  0.22f,              { "No Countdown" } },// FIXME: outside cg_draw_hud

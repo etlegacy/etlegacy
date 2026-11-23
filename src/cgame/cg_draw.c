@@ -2670,6 +2670,7 @@ static int      panelMore;             ///< popups not drawn ("No Stack"), count
 #define VOTE_STYLE_COMPLAINT 1 ///< show complaint popups
 #define VOTE_STYLE_NOSTACK   2 ///< draw only the popup with the focus, not the ones waiting
 #define VOTE_STYLE_NOANIM    4 ///< no sliding, growing or shrinking
+#define VOTE_STYLE_CLASSIC   8 ///< the old text-only popup instead of the panels
 
 #define VOTE_KEY(which, id) ((((which) + 1) << 16) | ((id) & 0xffff))
 #define STACK_SLOTS (PROMPT_STACK_MAX + 2)
@@ -4012,6 +4013,67 @@ static void CG_DrawVotePreview(hudComponent_t *comp)
 }
 
 /**
+ * @brief CG_DrawVoteClassic draws the popups the old way, as plain text lines in the main color:
+ * only the prompt or vote with the focus, no panels, bars, stack or animations
+ * @param[in] comp
+ */
+static void CG_DrawVoteClassic(hudComponent_t *comp)
+{
+	char       str1[32], str2[32];
+	const char *str = NULL, *title, *text;
+	cgPrompt_t *p;
+	int        which;
+
+	CG_GetBindingKeyForVote(str1, str2);
+
+	if (cg.generatingNoiseHud)
+	{
+		str = va("%s\n%s", va(CG_TranslateString("Accept ^7%s^*'s invitation to join their fireteam?"), "Player"),
+		         va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
+	}
+	else if ((p = CG_PromptFront()) != NULL)
+	{
+		CG_PromptText(p, &title, &text);
+		str = va("%s\n%s", text, va(CG_TranslateString("Press '%s' for YES, or '%s' for NO"), str1, str2));
+	}
+	else if ((which = CG_VoteFocus()) >= 0)
+	{
+		voteView_t v;
+		const char *head;
+
+		CG_GetVoteView(which, &v);
+		if (which == VOTE_ALL && cgs.voteModified)
+		{
+			cgs.voteModified = qfalse;
+		}
+		head = va(CG_TranslateString(which == VOTE_TEAM ? "TEAM VOTE(%i): %s" : "VOTE(%i): %s"), MAX(CG_VoteSecondsLeft(&v), 0), v.string);
+
+		if (!v.canVote)
+		{
+			str = va("%s\n^*%s\n%s", head, va(CG_TranslateString("YES:%i, NO:%i"), v.yes, v.no),
+			         va(CG_TranslateString("Can't vote as %s"), cgs.clientinfo[cg.clientNum].shoutcaster ? "Shoutcaster" : "Spectator"));
+		}
+		else if (v.voted)
+		{
+			str = va("%s\n^*%s", va(CG_TranslateString("YOU VOTED ON: %s"), v.string), va(CG_TranslateString("Y:%i, N:%i"), v.yes, v.no));
+		}
+		else
+		{
+			str = va("%s\n^*%s", head, va(CG_TranslateString("YES(%s):%i, NO(%s):%i"), str1, v.yes, str2, v.no));
+		}
+	}
+
+	if (str)
+	{
+		CG_DrawCompMultilineText(comp, str, comp->colorMain, comp->alignText, comp->styleText, &cgs.media.limboFont2);
+	}
+	else
+	{
+		CG_DrawFireteamStatus(comp);
+	}
+}
+
+/**
  * @brief CG_DrawVote draws the popups: the answered prompt for a moment, else the prompt or
  * vote with the focus, with the waiting prompts and the other votes stacked compact under it, else an ended vote's result,
  * else the state of the player's own fireteam request
@@ -4021,6 +4083,14 @@ void CG_DrawVote(hudComponent_t *comp)
 {
 	cgPrompt_t *p;
 	int        which;
+
+	if (comp->style & VOTE_STYLE_CLASSIC)
+	{
+		// the panel animations start over when the style is switched back
+		Com_Memset(voteAnim, 0, sizeof(voteAnim));
+		CG_DrawVoteClassic(comp);
+		return;
+	}
 
 	if (cg.generatingNoiseHud)
 	{
