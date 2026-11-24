@@ -1534,8 +1534,8 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 dialogResult_t Sys_SDLDialog(dialogType_t type, const char *message, const char *title);
 #endif
 
-// NOTE: on win32 the cwd is prepended .. non portable behaviour
-void Sys_StartProcess(char *cmdline, qboolean doexit);
+// argv: program followed by its arguments, NULL terminated; no shell is involved
+void Sys_StartProcessArgs(const char *const argv[], qboolean doexit);
 void Sys_OpenURL(const char *url, qboolean doexit);
 
 #ifndef _WIN32

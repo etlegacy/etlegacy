@@ -1356,6 +1356,13 @@ qboolean G_DropItems(gentity_t *self)
 {
 	gitem_t *item = NULL;
 
+	// a following spectator or a limbo player has a copy of the followed player's playerstate
+	// including the flag powerups, but doesn't carry anything
+	if (self->client->sess.sessionTeam == TEAM_SPECTATOR || (self->client->ps.pm_flags & (PMF_FOLLOW | PMF_LIMBO)))
+	{
+		return qfalse;
+	}
+
 	// drop flag regardless
 	if (self->client->ps.powerups[PW_REDFLAG])
 	{

@@ -1054,76 +1054,34 @@ dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *ti
 #endif
 
 /**
- * @brief Actually forks and starts a process
- * @param[in] cmdline Execution string
+ * @brief Starts a process
+ * @param[in] argv   Program (searched in PATH) followed by its arguments, NULL terminated
+ * @param     doexit Quit from game after starting the process
  *
- * @note
- * UGLY HACK:\n
- * Sys_StartProcess works with a command line only\n
- * If this command line is actually a binary with command line parameters,
- * the only way to do this on unix is to use a system() call
- * but system doesn't replace the current process, which leads to a situation like:\n
- * wolf.x86--spawned_process.x86\n
- * in the case of auto-update for instance, this will cause write access denied on wolf.x86:\n
- * wolf-beta/2002-March/000079.html\n
- * we hack the implementation here, if there are no space in the command line, assume it's a straight process and use execl
- * otherwise, use system...\n
- * The clean solution would be Sys_StartProcess and Sys_StartProcess_Args..
+ * The arguments are passed to the program as they are, no shell is involved.
  */
-void Sys_DoStartProcess(char *cmdline)
+void Sys_StartProcessArgs(const char *const argv[], qboolean doexit)
 {
+	Com_DPrintf("Sys_StartProcessArgs %s%s\n", argv[0], doexit ? " (quitting)" : "");
+
 	switch (fork())
 	{
 	case -1:
-		// main thread
+		Com_Printf("Sys_StartProcessArgs: fork failed: %s\n", strerror(errno));
 		break;
 	case 0:
-		if (strchr(cmdline, ' '))
-		{
-			int ret = system(cmdline);
-
-			// we assume there is a valid command
-			switch (ret)
-			{
-			case -1:
-				printf("execl failed: child process could not be created, or its status could not be retrieved\n");
-				break;
-			default:
-				break;
-			}
-		}
-		else
-		{
-			execl(cmdline, cmdline, NULL);
-			printf("execl failed: %s\n", strerror(errno));
-		}
-
-		_exit(0);
+		execvp(argv[0], (char *const *)argv);
+		printf("Sys_StartProcessArgs: %s failed: %s\n", argv[0], strerror(errno));
+		_exit(1);
+		break;
+	default:
 		break;
 	}
-}
 
-/**
- * @brief Starts process
- * @param[in] cmdline Execution string
- * @param     doexit  Quit from game after executing command
- * @note might even want to add a small delay?
- *
- * If !doexit then start the process ASAP, otherwise push it for execution at exit
- * (i.e. let complete shutdown of the game and freeing of resources happen)
- */
-void Sys_StartProcess(char *cmdline, qboolean doexit)
-{
 	if (doexit)
 	{
-		Com_DPrintf("Sys_StartProcess %s (delaying to final exit)\n", cmdline);
-		Sys_DoStartProcess(cmdline);
 		Cbuf_ExecuteText(EXEC_APPEND, "quit\n");
-		return;
 	}
-
-	Com_DPrintf("Sys_StartProcess %s\n", cmdline);
-	Sys_DoStartProcess(cmdline);
 }
 
 /**
@@ -1134,7 +1092,11 @@ void Sys_StartProcess(char *cmdline, qboolean doexit)
 void Sys_OpenURL(const char *url, qboolean doexit)
 {
 #ifndef DEDICATED
-	char cmdline[MAX_CMD];
+#ifdef __APPLE__
+	const char *argv[] = { "open", url, NULL };
+#else
+	const char *argv[] = { "xdg-open", url, NULL };
+#endif
 
 	static qboolean doexit_spamguard = qfalse;
 
@@ -1146,13 +1108,7 @@ void Sys_OpenURL(const char *url, qboolean doexit)
 
 	Com_Printf("Open URL: %s\n", url);
 
-#ifdef __APPLE__
-	Com_sprintf(cmdline, MAX_CMD, "open '%s' &", url);
-#else
-	Com_sprintf(cmdline, MAX_CMD, "xdg-open '%s' &", url);
-#endif
-
-	Sys_StartProcess(cmdline, doexit);
+	Sys_StartProcessArgs(argv, doexit);
 #endif // not DEDICATED
 }
 

@@ -902,6 +902,11 @@ void CL_ParseDownload(msg_t *msg)
 			cls.download.downloadFlags = MSG_ReadLong(msg);
 			if (cls.download.downloadFlags & BIT(DL_FLAG_URL))
 			{
+				// fallback URLs have to be web pages
+				if (Q_stricmpn(cls.download.downloadName, "http://", 7) && Q_stricmpn(cls.download.downloadName, "https://", 8))
+				{
+					Com_Error(ERR_DROP, "CL_ParseDownload: server sent a fallback URL that is not http or https");
+				}
 				Sys_OpenURL(cls.download.downloadName, qtrue);
 				Cbuf_ExecuteText(EXEC_APPEND, "quit\n");
 				CL_AddReliableCommand("wwwdl bbl8r");   // not sure if that's the right msg

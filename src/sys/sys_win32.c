@@ -947,20 +947,79 @@ qboolean Sys_PIDIsRunning(unsigned int pid)
 }
 
 /**
- * @brief Sys_StartProcess
- * @param[in] cmdline
- * @param[in] doexit
+ * @brief Appends one argument to a command line, quoted the way CommandLineToArgvW() splits it
+ * @param[in,out] cmdline Command line
+ * @param[in,out] len Current length of cmdline
+ * @param[in] size Size of cmdline
+ * @param[in] arg Argument to append
+ * @return qfalse if the argument doesn't fit
  */
-void Sys_StartProcess(char *cmdline, qboolean doexit)
+static qboolean Sys_AppendProcessArg(char *cmdline, size_t *len, size_t size, const char *arg)
 {
-	//TCHAR               szPathOrig[_MAX_PATH];
+	size_t backslashes = 0;
+	size_t i;
+
+#define APPEND_CHAR(c) do { if (*len + 1 >= size) { return qfalse; } cmdline[(*len)++] = (c); } while (0)
+
+	if (*len)
+	{
+		APPEND_CHAR(' ');
+	}
+	APPEND_CHAR('"');
+	for (; *arg; arg++)
+	{
+		if (*arg == '\\')
+		{
+			backslashes++;
+			continue;
+		}
+
+		// backslashes are only special in front of a quote
+		for (i = 0; i < (*arg == '"' ? backslashes * 2 + 1 : backslashes); i++)
+		{
+			APPEND_CHAR('\\');
+		}
+		backslashes = 0;
+		APPEND_CHAR(*arg);
+	}
+	// double the trailing backslashes, they are followed by the closing quote
+	for (i = 0; i < backslashes * 2; i++)
+	{
+		APPEND_CHAR('\\');
+	}
+	APPEND_CHAR('"');
+
+#undef APPEND_CHAR
+
+	cmdline[*len] = '\0';
+	return qtrue;
+}
+
+/**
+ * @brief Starts a process
+ * @param[in] argv   Program followed by its arguments, NULL terminated
+ * @param     doexit Quit from game after starting the process
+ */
+void Sys_StartProcessArgs(const char *const argv[], qboolean doexit)
+{
 	STARTUPINFO         si;
 	PROCESS_INFORMATION pi;
+	char                cmdline[MAX_CMD * 4];
+	size_t              len = 0;
+	int                 i;
+
+	cmdline[0] = '\0';
+	for (i = 0; argv[i]; i++)
+	{
+		if (!Sys_AppendProcessArg(cmdline, &len, sizeof(cmdline), argv[i]))
+		{
+			Com_Error(ERR_DROP, "Could not start process '%s': command line too long", argv[0]);
+			return;
+		}
+	}
 
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
-
-	//GetCurrentDirectory(_MAX_PATH, szPathOrig);
 
 	if (!CreateProcess(NULL, cmdline, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
 	{
@@ -968,6 +1027,9 @@ void Sys_StartProcess(char *cmdline, qboolean doexit)
 		Com_Error(ERR_DROP, "Could not start process: '%s'", cmdline);
 		return;
 	}
+
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
 
 	// similar way of exiting as used in Sys_OpenURL below
 	if (doexit)
