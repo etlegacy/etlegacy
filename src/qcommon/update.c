@@ -45,11 +45,9 @@
 #ifdef _WIN32
 #define UPDATE_BINARY "updater.exe"
 #define GAME_BINARY gamebin ".exe"
-#define CMDP "\""
 #else
 #define UPDATE_BINARY "updater"
 #define GAME_BINARY gamebin
-#define CMDP "'"
 #endif
 #define UPDATE_PACKAGE "updater.zip"
 #define UPDATE_CONFIG "updater.xml"
@@ -219,7 +217,9 @@ void Com_GetAutoUpdate(void)
 static void Com_RunUpdateBinary(const char *updateBinary, const char *updateConfig)
 {
 	static char fn[MAX_OSPATH];
-	char        cmdBuffer[MAX_OSPATH];
+	char        installDir[MAX_OSPATH], packageDir[MAX_OSPATH], script[MAX_OSPATH], pid[32];
+	const char  *argv[16];
+	int         argc = 0;
 
 	Q_strncpyz(fn, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateBinary), MAX_OSPATH);
 
@@ -237,21 +237,32 @@ static void Com_RunUpdateBinary(const char *updateBinary, const char *updateConf
 	}
 #endif
 
-	Com_sprintf(cmdBuffer, MAX_OSPATH, CMDP "%s" CMDP, fn);
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --install-dir " CMDP "%s" CMDP, Cvar_VariableString("fs_basepath"));
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --package-dir " CMDP "%s" CMDP, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, NULL));
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --script " CMDP "%s" CMDP, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateConfig));
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --wait " CMDP "%s" CMDP, Cvar_VariableString("com_pid"));
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --auto-close");
+	Q_strncpyz(installDir, Cvar_VariableString("fs_basepath"), sizeof(installDir));
+	Q_strncpyz(packageDir, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, NULL), sizeof(packageDir));
+	Q_strncpyz(script, FS_BuildOSPath(Cvar_VariableString("fs_homepath"), AUTOUPDATE_DIR, updateConfig), sizeof(script));
+	Q_strncpyz(pid, Cvar_VariableString("com_pid"), sizeof(pid));
 
+	argv[argc++] = fn;
+	argv[argc++] = "--install-dir";
+	argv[argc++] = installDir;
+	argv[argc++] = "--package-dir";
+	argv[argc++] = packageDir;
+	argv[argc++] = "--script";
+	argv[argc++] = script;
+	argv[argc++] = "--wait";
+	argv[argc++] = pid;
+	argv[argc++] = "--auto-close";
+	argv[argc++] = "--execute";
 #if defined(__APPLE__) && !defined(DEDICATED)
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --execute " CMDP "ET Legacy.app" CMDP);
+	argv[argc++] = "ET Legacy.app";
 #else
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --execute " CMDP GAME_BINARY CMDP);
+	argv[argc++] = GAME_BINARY;
 #endif
-	Com_sprintf(cmdBuffer, MAX_OSPATH, " --execute-args " CMDP "%s" CMDP, Com_GetCommandLine());
+	argv[argc++] = "--execute-args";
+	argv[argc++] = Com_GetCommandLine();
+	argv[argc]   = NULL;
 
-	Sys_StartProcess(cmdBuffer, qtrue);
+	Sys_StartProcessArgs(argv, qtrue);
 
 	// reinitialize the filesystem if the game directory or checksum has changed
 	// - after mod update
