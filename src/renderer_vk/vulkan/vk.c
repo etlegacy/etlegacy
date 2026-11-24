@@ -281,6 +281,7 @@ typedef struct
 
 	VkSwapchainKHR swapchain;
 	VkFormat swapchainFormat;
+	VkFormat sceneFormat;                                  // swapchainFormat when the scene targets were created
 	VkExtent2D swapchainExtent;
 	uint32_t swapchainImageCount;
 	VkImage swapchainImages[VK_MAX_SWAPCHAIN_IMAGES];
@@ -357,6 +358,7 @@ typedef struct
 	VkSemaphore renderFinishedSemaphores[VK_MAX_SWAPCHAIN_IMAGES]; // per swapchain image
 	qboolean fenceSubmitted[VK_FRAMES_IN_FLIGHT];          // inFlightFences[i] has a submit that signals it
 	qboolean swapchainStale;                               // out of date / resized: rebuild before presenting (VK_RecreateSwapchain)
+	int swapchainFailTime;                                 // ri.Milliseconds() of the first failed rebuild in a row, 0 = none
 	qboolean restartPending;                               // device or surface lost: no submits until the vid_restart (VK_RequestRestart)
 #ifdef VK_EXT_device_fault
 	PFN_vkGetDeviceFaultInfoEXT getDeviceFaultInfo;        // VK_EXT_device_fault, NULL when not supported (VK_LogDeviceFault)
@@ -1003,6 +1005,8 @@ static void VK_CheckDeviceLost(VkResult result, const char *what)
 #define VK_FENCE_HANG_STEPS   3
 // a swapchain image that isn't available within this time: skip presenting
 #define VK_ACQUIRE_TIMEOUT_NS 1000000000ull
+// a swapchain rebuild that keeps failing this long (the window not minimized): fatal
+#define VK_SWAPCHAIN_RETRY_MSEC 10000
 
 /**
  * @brief vkWaitForFences() with a finite timeout: a GPU that hangs without the
@@ -1537,7 +1541,17 @@ static qboolean VK_PresentWantsClock(void)
 	return (1000.0 / vk.pacing.nominalRefresh > VK_PRESENT_CLOCK_MIN_HZ) ? qtrue : qfalse;
 }
 
-static qboolean VK_CreateSwapchainAndViews(int width, int height)
+/**
+ * @brief Creates the swapchain for the surface's current size and its image
+ * views. oldSwapchain (or VK_NULL_HANDLE) is passed to the driver for the
+ * handover; it is retired by the call even if the creation fails, and the
+ * caller destroys it afterwards.
+ * @return VK_SUCCESS; VK_NOT_READY if the surface is 0x0 (minimized), so no
+ * swapchain can be created now; otherwise the failed call's result. On
+ * failure vk.swapchain is VK_NULL_HANDLE and image views created so far
+ * remain for VK_DestroySwapchain().
+ */
+static VkResult VK_CreateSwapchainAndViews(int width, int height, VkSwapchainKHR oldSwapchain)
 {
 	VkSurfaceCapabilitiesKHR caps;
 	VkSurfaceFormatKHR       formats[32];
@@ -1547,8 +1561,15 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 	VkSwapchainCreateInfoKHR createInfo;
 	uint32_t                 i;
 	uint32_t                 queueFamilyIndices[2];
+	VkResult                 result;
 
-	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vk.physicalDevice, vk.surface, &caps);
+	vk.swapchain = VK_NULL_HANDLE;
+
+	result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vk.physicalDevice, vk.surface, &caps);
+	if (result != VK_SUCCESS)
+	{
+		return result;
+	}
 
 	// r_swapInterval (renderer1: SDL_GL_SetSwapInterval): 0 = don't wait
 	// for vblank - prefer IMMEDIATE, then MAILBOX; otherwise (or if
@@ -1582,11 +1603,15 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 	Ren_Developer("Vulkan: present mode %s\n", vk.pacing.lock ? (vk.pacing.byClock ? "IMMEDIATE (one present per refresh, by the clock)" : "FIFO (one present per refresh)") :
 	              presentMode == VK_PRESENT_MODE_IMMEDIATE_KHR ? "IMMEDIATE" :
 	              presentMode == VK_PRESENT_MODE_MAILBOX_KHR ? "MAILBOX" : "FIFO (vsync)");
-	vkGetPhysicalDeviceSurfaceFormatsKHR(vk.physicalDevice, vk.surface, &formatCount, formats);
+	result = vkGetPhysicalDeviceSurfaceFormatsKHR(vk.physicalDevice, vk.surface, &formatCount, formats);
+	if (result != VK_SUCCESS && result != VK_INCOMPLETE)
+	{
+		return result;
+	}
 	if (formatCount == 0)
 	{
 		Ren_Print("Vulkan: surface has no formats\n");
-		return qfalse;
+		return VK_ERROR_INITIALIZATION_FAILED;
 	}
 
 	vk.swapchainFormat = formats[0].format;
@@ -1607,6 +1632,12 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 	{
 		extent.width  = (uint32_t)Com_Clamp(caps.minImageExtent.width, caps.maxImageExtent.width, (float)width);
 		extent.height = (uint32_t)Com_Clamp(caps.minImageExtent.height, caps.maxImageExtent.height, (float)height);
+	}
+	// a swapchain can't be 0x0: the window was minimized (possibly after the
+	// caller's own check, e.g. during an alt-tab)
+	if (extent.width == 0 || extent.height == 0)
+	{
+		return VK_NOT_READY;
 	}
 	vk.swapchainExtent = extent;
 
@@ -1656,10 +1687,13 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 	createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 	createInfo.presentMode    = presentMode;
 	createInfo.clipped        = VK_TRUE;
+	createInfo.oldSwapchain   = oldSwapchain;
 
-	if (!VK_CheckResult(vkCreateSwapchainKHR(vk.device, &createInfo, NULL, &vk.swapchain), "vkCreateSwapchainKHR"))
+	result = vkCreateSwapchainKHR(vk.device, &createInfo, NULL, &vk.swapchain);
+	if (result != VK_SUCCESS)
 	{
-		return qfalse;
+		vk.swapchain = VK_NULL_HANDLE;
+		return result;
 	}
 
 	// the refresh can only be read from a swapchain: create it again if this
@@ -1676,19 +1710,23 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 
 			createInfo.presentMode  = vk.pacing.byClock ? VK_PRESENT_MODE_IMMEDIATE_KHR : VK_PRESENT_MODE_FIFO_KHR;
 			createInfo.oldSwapchain = VK_NULL_HANDLE;
-			if (!VK_CheckResult(vkCreateSwapchainKHR(vk.device, &createInfo, NULL, &vk.swapchain), "vkCreateSwapchainKHR"))
+			result                  = vkCreateSwapchainKHR(vk.device, &createInfo, NULL, &vk.swapchain);
+			if (result != VK_SUCCESS)
 			{
-				return qfalse;
+				vk.swapchain = VK_NULL_HANDLE;
+				return result;
 			}
 		}
 	}
 
-	vkGetSwapchainImagesKHR(vk.device, vk.swapchain, &vk.swapchainImageCount, NULL);
-	if (vk.swapchainImageCount > VK_MAX_SWAPCHAIN_IMAGES)
+	// with no image views yet, VK_DestroySwapchain() only has the swapchain to
+	// destroy if this fails
+	vk.swapchainImageCount = VK_MAX_SWAPCHAIN_IMAGES;
+	result                 = vkGetSwapchainImagesKHR(vk.device, vk.swapchain, &vk.swapchainImageCount, vk.swapchainImages);
+	if (result != VK_SUCCESS && result != VK_INCOMPLETE)
 	{
-		vk.swapchainImageCount = VK_MAX_SWAPCHAIN_IMAGES;
+		return result;
 	}
-	vkGetSwapchainImagesKHR(vk.device, vk.swapchain, &vk.swapchainImageCount, vk.swapchainImages);
 
 	for (i = 0; i < vk.swapchainImageCount; i++)
 	{
@@ -1707,13 +1745,15 @@ static qboolean VK_CreateSwapchainAndViews(int width, int height)
 		viewInfo.subresourceRange.levelCount = 1;
 		viewInfo.subresourceRange.layerCount = 1;
 
-		if (!VK_CheckResult(vkCreateImageView(vk.device, &viewInfo, NULL, &vk.swapchainImageViews[i]), "vkCreateImageView"))
+		result = vkCreateImageView(vk.device, &viewInfo, NULL, &vk.swapchainImageViews[i]);
+		if (result != VK_SUCCESS)
 		{
-			return qfalse;
+			vk.swapchainImageViews[i] = VK_NULL_HANDLE;
+			return result;
 		}
 	}
 
-	return qtrue;
+	return VK_SUCCESS;
 }
 
 /**
@@ -2151,6 +2191,7 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	qboolean                msaa = (vk.sampleCount != VK_SAMPLE_COUNT_1_BIT) ? qtrue : qfalse;
 
 	vk.sceneExtent = vk.sceneSize.width ? vk.sceneSize : vk.swapchainExtent;
+	vk.sceneFormat = vk.swapchainFormat;
 
 	if (!VK_CreateDepthResources() || !VK_CreateSceneColorResources())
 	{
@@ -5289,10 +5330,14 @@ static void VK_DestroySwapchainObjects(void)
 
 qboolean VK_ResizeSwapchain(int width, int height)
 {
+	VkResult result;
+
 	VK_DestroySwapchainObjects();
 
-	if (!VK_CreateSwapchainAndViews(width, height))
+	result = VK_CreateSwapchainAndViews(width, height, VK_NULL_HANDLE);
+	if (result != VK_SUCCESS)
 	{
+		Ren_Print("Vulkan: couldn't create the swapchain (VkResult %d)\n", (int)result);
 		return qfalse;
 	}
 	if (!VK_CreateRenderPassAndFramebuffers())
@@ -5337,21 +5382,30 @@ static qboolean VK_SwapchainSizeChanged(void)
  * resolution, which doesn't follow the window (the gamma pass scales the
  * scene to the new size). While the window is minimized (a 0x0 surface) no
  * swapchain can be created: it stays stale and VK_EndFrame() doesn't present.
+ *
+ * A failed swapchain create is retried every frame: during an alt-tab the
+ * window can be minimized or change display mode between the surface query
+ * and the create, and drivers then fail it for a moment (OUT_OF_DATE,
+ * NATIVE_WINDOW_IN_USE, INITIALIZATION_FAILED). Meanwhile there is no
+ * swapchain, frames are rendered into the scene targets but not presented.
+ * Only a create that keeps failing for VK_SWAPCHAIN_RETRY_MSEC is fatal.
  * @return qtrue if the swapchain can be presented to again
  */
 static qboolean VK_RecreateSwapchain(void)
 {
 	VkSurfaceCapabilitiesKHR caps;
+	VkSwapchainKHR           oldSwapchain;
 	VkResult                 result;
-	VkFormat                 format;
 	qboolean                 ok;
+	int                      now;
 
 	result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vk.physicalDevice, vk.surface, &caps);
 	VK_CheckDeviceLost(result, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
 	VK_CheckSurfaceLost(result, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
 	if (result != VK_SUCCESS || caps.currentExtent.width == 0 || caps.currentExtent.height == 0)
 	{
-		return qfalse; // minimized: try again next frame (or lost: the vid_restart rebuilds it)
+		vk.swapchainFailTime = 0; // minimized doesn't count as failing
+		return qfalse;            // try again next frame (or lost: the vid_restart rebuilds it)
 	}
 
 	VK_CheckDeviceLost(vkDeviceWaitIdle(vk.device), "vkDeviceWaitIdle");
@@ -5370,14 +5424,44 @@ static qboolean VK_RecreateSwapchain(void)
 	// MB of them on every alt-tab fragments video memory, and later allocations
 	// can end up in slower system memory. They are only rebuilt if the
 	// swapchain format changed, which their color format follows.
-	format = vk.swapchainFormat;
 	VK_DestroyPresentTargets();
+
+	// the old swapchain goes to the create for the handover, which retires it
+	// (even if the create fails); its image views go first
+	oldSwapchain = vk.swapchain;
+	vk.swapchain = VK_NULL_HANDLE;
 	VK_DestroySwapchain();
-	if (!VK_CreateSwapchainAndViews((int)vk.swapchainExtent.width, (int)vk.swapchainExtent.height))
+	result = VK_CreateSwapchainAndViews((int)vk.swapchainExtent.width, (int)vk.swapchainExtent.height, oldSwapchain);
+	if (oldSwapchain != VK_NULL_HANDLE)
 	{
-		Ren_Fatal("Vulkan: couldn't recreate the swapchain after the window changed.\n");
+		vkDestroySwapchainKHR(vk.device, oldSwapchain, NULL);
 	}
-	if (vk.swapchainFormat != format)
+
+	if (result != VK_SUCCESS)
+	{
+		VK_CheckDeviceLost(result, "vkCreateSwapchainKHR");
+		VK_CheckSurfaceLost(result, "vkCreateSwapchainKHR");
+		VK_DestroySwapchain(); // image views created before the failure
+		if (vk.restartPending || result == VK_NOT_READY)
+		{
+			vk.swapchainFailTime = 0; // lost (vid_restart follows) or minimized after all
+			return qfalse;
+		}
+
+		now = ri.Milliseconds();
+		if (!vk.swapchainFailTime)
+		{
+			vk.swapchainFailTime = now ? now : 1;
+			Ren_Print("Vulkan: couldn't recreate the swapchain (VkResult %d), retrying\n", (int)result);
+		}
+		else if (now - vk.swapchainFailTime > VK_SWAPCHAIN_RETRY_MSEC)
+		{
+			Ren_Fatal("Vulkan: couldn't recreate the swapchain after the window changed (VkResult %d).\n", (int)result);
+		}
+		return qfalse;
+	}
+
+	if (vk.swapchainFormat != vk.sceneFormat)
 	{
 		VK_DestroySceneTargets();
 		ok = VK_CreateRenderPassAndFramebuffers();
@@ -5388,9 +5472,14 @@ static qboolean VK_RecreateSwapchain(void)
 	}
 	if (!ok || !VK_CreatePresentResources())
 	{
-		Ren_Fatal("Vulkan: couldn't recreate the swapchain after the window changed.\n");
+		Ren_Fatal("Vulkan: couldn't recreate the render targets after the window changed.\n");
 	}
 
+	if (vk.swapchainFailTime)
+	{
+		Ren_Print("Vulkan: swapchain recreated after %d ms of retries\n", ri.Milliseconds() - vk.swapchainFailTime);
+		vk.swapchainFailTime = 0;
+	}
 	vk.swapchainStale = qfalse;
 	Ren_Developer("Vulkan: swapchain recreated, window %ux%u, render resolution %ux%u\n", vk.swapchainExtent.width,
 	              vk.swapchainExtent.height, vk.sceneExtent.width, vk.sceneExtent.height);
