@@ -2494,11 +2494,78 @@ static qboolean VK_CreatePresentResources(void)
 	return qtrue;
 }
 
+/**
+ * @brief Destroys the semaphores of the acquire/submit/present chain. The
+ * caller has waited for the device to go idle.
+ */
+static void VK_DestroyFrameSemaphores(void)
+{
+	int i;
+
+	for (i = 0; i < VK_FRAMES_IN_FLIGHT; i++)
+	{
+		if (vk.imageAvailableSemaphores[i] != VK_NULL_HANDLE)
+		{
+			vkDestroySemaphore(vk.device, vk.imageAvailableSemaphores[i], NULL);
+			vk.imageAvailableSemaphores[i] = VK_NULL_HANDLE;
+		}
+		if (vk.sceneDoneSemaphores[i] != VK_NULL_HANDLE)
+		{
+			vkDestroySemaphore(vk.device, vk.sceneDoneSemaphores[i], NULL);
+			vk.sceneDoneSemaphores[i] = VK_NULL_HANDLE;
+		}
+	}
+	for (i = 0; i < VK_MAX_SWAPCHAIN_IMAGES; i++)
+	{
+		if (vk.renderFinishedSemaphores[i] != VK_NULL_HANDLE)
+		{
+			vkDestroySemaphore(vk.device, vk.renderFinishedSemaphores[i], NULL);
+			vk.renderFinishedSemaphores[i] = VK_NULL_HANDLE;
+		}
+	}
+	vk.imageAvailableSemaphore = VK_NULL_HANDLE;
+	vk.renderFinishedSemaphore = VK_NULL_HANDLE;
+}
+
+/**
+ * @brief Creates the semaphores of the acquire/submit/present chain: image
+ * available and scene done per frame slot, render finished per swapchain
+ * image. Created again on every swapchain rebuild (VK_RecreateSwapchain).
+ */
+static qboolean VK_CreateFrameSemaphores(void)
+{
+	VkSemaphoreCreateInfo semaphoreInfo;
+	int                   i;
+
+	Com_Memset(&semaphoreInfo, 0, sizeof(semaphoreInfo));
+	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+	for (i = 0; i < VK_FRAMES_IN_FLIGHT; i++)
+	{
+		if (!VK_CheckResult(vkCreateSemaphore(vk.device, &semaphoreInfo, NULL, &vk.imageAvailableSemaphores[i]), "vkCreateSemaphore(imageAvailable)") ||
+		    !VK_CheckResult(vkCreateSemaphore(vk.device, &semaphoreInfo, NULL, &vk.sceneDoneSemaphores[i]), "vkCreateSemaphore(sceneDone)"))
+		{
+			return qfalse;
+		}
+	}
+	for (i = 0; i < VK_MAX_SWAPCHAIN_IMAGES; i++)
+	{
+		if (!VK_CheckResult(vkCreateSemaphore(vk.device, &semaphoreInfo, NULL, &vk.renderFinishedSemaphores[i]), "vkCreateSemaphore(renderFinished)"))
+		{
+			return qfalse;
+		}
+	}
+	// VK_BeginFrame() set the current frame slot's alias before a rebuild
+	vk.imageAvailableSemaphore = vk.imageAvailableSemaphores[vk.frameIndex];
+	vk.renderFinishedSemaphore = vk.renderFinishedSemaphores[0];
+
+	return qtrue;
+}
+
 static qboolean VK_CreateCommandObjects(void)
 {
 	VkCommandPoolCreateInfo     poolInfo;
 	VkCommandBufferAllocateInfo allocInfo;
-	VkSemaphoreCreateInfo       semaphoreInfo;
 	VkFenceCreateInfo           fenceInfo;
 	int                         i;
 
@@ -2526,34 +2593,20 @@ static qboolean VK_CreateCommandObjects(void)
 	vk.commandBuffer = vk.commandBuffers[0];
 	vk.frameIndex    = VK_FRAMES_IN_FLIGHT - 1; // VK_BeginFrame() advances to slot 0 first
 
-	Com_Memset(&semaphoreInfo, 0, sizeof(semaphoreInfo));
-	semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
 	Com_Memset(&fenceInfo, 0, sizeof(fenceInfo));
 	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
 	for (i = 0; i < VK_FRAMES_IN_FLIGHT; i++)
 	{
-		if (!VK_CheckResult(vkCreateSemaphore(vk.device, &semaphoreInfo, NULL, &vk.imageAvailableSemaphores[i]), "vkCreateSemaphore(imageAvailable)") ||
-		    !VK_CheckResult(vkCreateSemaphore(vk.device, &semaphoreInfo, NULL, &vk.sceneDoneSemaphores[i]), "vkCreateSemaphore(sceneDone)") ||
-		    !VK_CheckResult(vkCreateFence(vk.device, &fenceInfo, NULL, &vk.inFlightFences[i]), "vkCreateFence"))
+		if (!VK_CheckResult(vkCreateFence(vk.device, &fenceInfo, NULL, &vk.inFlightFences[i]), "vkCreateFence"))
 		{
 			return qfalse;
 		}
 	}
-	for (i = 0; i < VK_MAX_SWAPCHAIN_IMAGES; i++)
-	{
-		if (!VK_CheckResult(vkCreateSemaphore(vk.device, &semaphoreInfo, NULL, &vk.renderFinishedSemaphores[i]), "vkCreateSemaphore(renderFinished)"))
-		{
-			return qfalse;
-		}
-	}
-	vk.imageAvailableSemaphore = vk.imageAvailableSemaphores[0];
-	vk.renderFinishedSemaphore = vk.renderFinishedSemaphores[0];
-	vk.inFlightFence           = vk.inFlightFences[0];
+	vk.inFlightFence = vk.inFlightFences[0];
 
-	return qtrue;
+	return VK_CreateFrameSemaphores();
 }
 
 /**
@@ -5414,6 +5467,17 @@ static qboolean VK_RecreateSwapchain(void)
 		return qfalse;
 	}
 
+	// New semaphores for the new swapchain. The spec has a present rejected
+	// with OUT_OF_DATE still consume its wait semaphore, but some drivers
+	// don't: the semaphore would stay signaled and the next submit signaling
+	// it again can hang the GPU (a TDR on Windows). The device is idle, so
+	// nothing waits on the old ones any more.
+	VK_DestroyFrameSemaphores();
+	if (!VK_CreateFrameSemaphores())
+	{
+		Ren_Fatal("Vulkan: couldn't recreate the frame semaphores after the window changed.\n");
+	}
+
 	if (!vk.sceneSize.width)
 	{
 		vk.sceneSize = vk.sceneExtent;
@@ -6039,26 +6103,12 @@ void VK_Shutdown(void)
 
 		for (i = 0; i < VK_FRAMES_IN_FLIGHT; i++)
 		{
-			if (vk.imageAvailableSemaphores[i] != VK_NULL_HANDLE)
-			{
-				vkDestroySemaphore(vk.device, vk.imageAvailableSemaphores[i], NULL);
-			}
-			if (vk.sceneDoneSemaphores[i] != VK_NULL_HANDLE)
-			{
-				vkDestroySemaphore(vk.device, vk.sceneDoneSemaphores[i], NULL);
-			}
 			if (vk.inFlightFences[i] != VK_NULL_HANDLE)
 			{
 				vkDestroyFence(vk.device, vk.inFlightFences[i], NULL);
 			}
 		}
-		for (i = 0; i < VK_MAX_SWAPCHAIN_IMAGES; i++)
-		{
-			if (vk.renderFinishedSemaphores[i] != VK_NULL_HANDLE)
-			{
-				vkDestroySemaphore(vk.device, vk.renderFinishedSemaphores[i], NULL);
-			}
-		}
+		VK_DestroyFrameSemaphores();
 	}
 	if (vk.commandPool != VK_NULL_HANDLE)
 	{
