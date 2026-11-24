@@ -2053,6 +2053,88 @@ static qboolean VK_CreateSceneColorResources(void)
 	return qtrue;
 }
 
+/**
+ * @brief Creates the present render pass (the swapchain image only, fully
+ * overwritten by the gamma pass) and a framebuffer per swapchain image. These
+ * are the only render objects that depend on the swapchain itself, so a
+ * swapchain rebuild recreates just these (VK_RecreateSwapchain).
+ */
+static qboolean VK_CreatePresentPass(void)
+{
+	VkAttachmentDescription colorAttachment;
+	VkAttachmentReference   colorAttachmentRef;
+	VkSubpassDescription    subpass;
+	VkSubpassDependency     dependency;
+	VkRenderPassCreateInfo  renderPassInfo;
+	VkFramebufferCreateInfo framebufferInfo;
+	uint32_t                i;
+
+	Com_Memset(&colorAttachment, 0, sizeof(colorAttachment));
+	colorAttachment.format         = vk.swapchainFormat;
+	colorAttachment.samples        = VK_SAMPLE_COUNT_1_BIT;
+	colorAttachment.loadOp         = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	colorAttachment.storeOp        = VK_ATTACHMENT_STORE_OP_STORE;
+	colorAttachment.stencilLoadOp  = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	colorAttachment.initialLayout  = VK_IMAGE_LAYOUT_UNDEFINED;
+	colorAttachment.finalLayout    = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+	Com_Memset(&colorAttachmentRef, 0, sizeof(colorAttachmentRef));
+	colorAttachmentRef.attachment = 0;
+	colorAttachmentRef.layout     = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+	Com_Memset(&subpass, 0, sizeof(subpass));
+	subpass.pipelineBindPoint    = VK_PIPELINE_BIND_POINT_GRAPHICS;
+	subpass.colorAttachmentCount = 1;
+	subpass.pColorAttachments    = &colorAttachmentRef;
+
+	Com_Memset(&dependency, 0, sizeof(dependency));
+	dependency.srcSubpass    = VK_SUBPASS_EXTERNAL;
+	dependency.dstSubpass    = 0;
+	dependency.srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.srcAccessMask = 0;
+	dependency.dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+	Com_Memset(&renderPassInfo, 0, sizeof(renderPassInfo));
+	renderPassInfo.sType           = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+	renderPassInfo.attachmentCount = 1;
+	renderPassInfo.pAttachments    = &colorAttachment;
+	renderPassInfo.subpassCount    = 1;
+	renderPassInfo.pSubpasses      = &subpass;
+	renderPassInfo.dependencyCount = 1;
+	renderPassInfo.pDependencies   = &dependency;
+
+	if (!VK_CheckResult(vkCreateRenderPass(vk.device, &renderPassInfo, NULL, &vk.presentRenderPass), "vkCreateRenderPass(present)"))
+	{
+		return qfalse;
+	}
+
+	Com_Memset(&framebufferInfo, 0, sizeof(framebufferInfo));
+	framebufferInfo.sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+	framebufferInfo.renderPass      = vk.presentRenderPass;
+	framebufferInfo.attachmentCount = 1;
+	framebufferInfo.width           = vk.swapchainExtent.width;
+	framebufferInfo.height          = vk.swapchainExtent.height;
+	framebufferInfo.layers          = 1;
+
+	for (i = 0; i < vk.swapchainImageCount; i++)
+	{
+		framebufferInfo.pAttachments = &vk.swapchainImageViews[i];
+
+		if (!VK_CheckResult(vkCreateFramebuffer(vk.device, &framebufferInfo, NULL, &vk.swapchainFramebuffers[i]), "vkCreateFramebuffer"))
+		{
+			return qfalse;
+		}
+	}
+
+	return qtrue;
+}
+
+/**
+ * @brief Creates the scene targets (depth, scene color, MSAA color, soft
+ * depth), the scene render passes and framebuffer, and then the present pass.
+ */
 static qboolean VK_CreateRenderPassAndFramebuffers(void)
 {
 	VkAttachmentDescription colorAttachment;
@@ -2066,7 +2148,6 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 	VkRenderPassCreateInfo  renderPassInfo;
 	VkFramebufferCreateInfo framebufferInfo;
 	VkImageView             fbAttachments[3];
-	uint32_t                i;
 	qboolean                msaa = (vk.sampleCount != VK_SAMPLE_COUNT_1_BIT) ? qtrue : qfalse;
 
 	vk.sceneExtent = vk.sceneSize.width ? vk.sceneSize : vk.swapchainExtent;
@@ -2218,50 +2299,7 @@ static qboolean VK_CreateRenderPassAndFramebuffers(void)
 		return qfalse;
 	}
 
-	// --- present render pass: swapchain color only, fully overwritten by
-	// the gamma pass
-	colorAttachment.loadOp        = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-	colorAttachment.finalLayout   = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-	subpass.pDepthStencilAttachment = NULL;
-	subpass.pResolveAttachments     = NULL;
-	colorAttachment.samples         = VK_SAMPLE_COUNT_1_BIT;
-
-	Com_Memset(dependencies, 0, sizeof(dependencies));
-	dependencies[0].srcSubpass    = VK_SUBPASS_EXTERNAL;
-	dependencies[0].dstSubpass    = 0;
-	dependencies[0].srcStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	dependencies[0].srcAccessMask = 0;
-	dependencies[0].dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-	dependencies[0].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-
-	renderPassInfo.attachmentCount = 1;
-	renderPassInfo.pAttachments    = &colorAttachment;
-	renderPassInfo.dependencyCount = 1;
-
-	if (!VK_CheckResult(vkCreateRenderPass(vk.device, &renderPassInfo, NULL, &vk.presentRenderPass), "vkCreateRenderPass(present)"))
-	{
-		return qfalse;
-	}
-
-	for (i = 0; i < vk.swapchainImageCount; i++)
-	{
-		fbAttachments[0] = vk.swapchainImageViews[i];
-
-		framebufferInfo.renderPass      = vk.presentRenderPass;
-		framebufferInfo.attachmentCount = 1;
-		framebufferInfo.pAttachments    = fbAttachments;
-		framebufferInfo.width           = vk.swapchainExtent.width;
-		framebufferInfo.height          = vk.swapchainExtent.height;
-
-		if (!VK_CheckResult(vkCreateFramebuffer(vk.device, &framebufferInfo, NULL, &vk.swapchainFramebuffers[i]), "vkCreateFramebuffer"))
-		{
-			return qfalse;
-		}
-	}
-
-	return qtrue;
+	return VK_CreatePresentPass();
 }
 
 /**
@@ -5072,13 +5110,17 @@ void VK_ClearPortalClip(void)
  * VK_CreatePresentResources() created (render passes, framebuffers, scene
  * color/MSAA/depth targets, gamma pipeline), keeping the swapchain.
  */
-static void VK_DestroySceneTargets(void)
+/**
+ * @brief Destroys what VK_CreatePresentPass() and VK_CreatePresentResources()
+ * create: the swapchain framebuffers, the present render pass, the gamma
+ * pipeline and the descriptor set it samples the scene color image with. The
+ * caller has waited for the device to go idle.
+ */
+static void VK_DestroyPresentTargets(void)
 {
 	uint32_t i;
 
-	VK_CheckDeviceLost(vkDeviceWaitIdle(vk.device), "vkDeviceWaitIdle");
-
-	for (i = 0; i < vk.swapchainImageCount; i++)
+	for (i = 0; i < VK_MAX_SWAPCHAIN_IMAGES; i++)
 	{
 		if (vk.swapchainFramebuffers[i] != VK_NULL_HANDLE)
 		{
@@ -5086,6 +5128,32 @@ static void VK_DestroySceneTargets(void)
 			vk.swapchainFramebuffers[i] = VK_NULL_HANDLE;
 		}
 	}
+	if (vk.sceneColorDescriptor != VK_NULL_HANDLE)
+	{
+		vkFreeDescriptorSets(vk.device, vk.uiDescriptorPool, 1, &vk.sceneColorDescriptor);
+		vk.sceneColorDescriptor = VK_NULL_HANDLE;
+	}
+	if (vk.gammaPipeline != VK_NULL_HANDLE)
+	{
+		vkDestroyPipeline(vk.device, vk.gammaPipeline, NULL);
+		vk.gammaPipeline = VK_NULL_HANDLE;
+	}
+	if (vk.presentRenderPass != VK_NULL_HANDLE)
+	{
+		vkDestroyRenderPass(vk.device, vk.presentRenderPass, NULL);
+		vk.presentRenderPass = VK_NULL_HANDLE;
+	}
+}
+
+/**
+ * @brief Destroys the scene targets and render passes, and with them the
+ * present targets (the gamma pass samples the scene color image).
+ */
+static void VK_DestroySceneTargets(void)
+{
+	VK_CheckDeviceLost(vkDeviceWaitIdle(vk.device), "vkDeviceWaitIdle");
+
+	VK_DestroyPresentTargets();
 
 	if (vk.renderPass != VK_NULL_HANDLE)
 	{
@@ -5130,26 +5198,11 @@ static void VK_DestroySceneTargets(void)
 		vk.softDepthMemory = VK_NULL_HANDLE;
 	}
 
-	// Offscreen scene target + present pass resources
-	if (vk.sceneColorDescriptor != VK_NULL_HANDLE)
-	{
-		vkFreeDescriptorSets(vk.device, vk.uiDescriptorPool, 1, &vk.sceneColorDescriptor);
-		vk.sceneColorDescriptor = VK_NULL_HANDLE;
-	}
-	if (vk.gammaPipeline != VK_NULL_HANDLE)
-	{
-		vkDestroyPipeline(vk.device, vk.gammaPipeline, NULL);
-		vk.gammaPipeline = VK_NULL_HANDLE;
-	}
+	// Offscreen scene target
 	if (vk.sceneFramebuffer != VK_NULL_HANDLE)
 	{
 		vkDestroyFramebuffer(vk.device, vk.sceneFramebuffer, NULL);
 		vk.sceneFramebuffer = VK_NULL_HANDLE;
-	}
-	if (vk.presentRenderPass != VK_NULL_HANDLE)
-	{
-		vkDestroyRenderPass(vk.device, vk.presentRenderPass, NULL);
-		vk.presentRenderPass = VK_NULL_HANDLE;
 	}
 	if (vk.sceneColorView != VK_NULL_HANDLE)
 	{
@@ -5199,16 +5252,13 @@ static void VK_DestroySceneTargets(void)
 	}
 }
 
-static void VK_DestroySwapchainObjects(void)
+/**
+ * @brief Destroys the swapchain and its image views. The present targets that
+ * use them must be gone already (VK_DestroyPresentTargets).
+ */
+static void VK_DestroySwapchain(void)
 {
 	uint32_t i;
-
-	if (vk.device == VK_NULL_HANDLE)
-	{
-		return;
-	}
-
-	VK_DestroySceneTargets();
 
 	for (i = 0; i < vk.swapchainImageCount; i++)
 	{
@@ -5224,6 +5274,17 @@ static void VK_DestroySwapchainObjects(void)
 		vkDestroySwapchainKHR(vk.device, vk.swapchain, NULL);
 		vk.swapchain = VK_NULL_HANDLE;
 	}
+}
+
+static void VK_DestroySwapchainObjects(void)
+{
+	if (vk.device == VK_NULL_HANDLE)
+	{
+		return;
+	}
+
+	VK_DestroySceneTargets();
+	VK_DestroySwapchain();
 }
 
 qboolean VK_ResizeSwapchain(int width, int height)
@@ -5282,6 +5343,8 @@ static qboolean VK_RecreateSwapchain(void)
 {
 	VkSurfaceCapabilitiesKHR caps;
 	VkResult                 result;
+	VkFormat                 format;
+	qboolean                 ok;
 
 	result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vk.physicalDevice, vk.surface, &caps);
 	VK_CheckDeviceLost(result, "vkGetPhysicalDeviceSurfaceCapabilitiesKHR");
@@ -5302,7 +5365,28 @@ static qboolean VK_RecreateSwapchain(void)
 		vk.sceneSize = vk.sceneExtent;
 	}
 
-	if (!VK_ResizeSwapchain((int)vk.swapchainExtent.width, (int)vk.swapchainExtent.height))
+	// Only the swapchain and what renders into it are rebuilt. The scene
+	// targets don't depend on the window: freeing and reallocating hundreds of
+	// MB of them on every alt-tab fragments video memory, and later allocations
+	// can end up in slower system memory. They are only rebuilt if the
+	// swapchain format changed, which their color format follows.
+	format = vk.swapchainFormat;
+	VK_DestroyPresentTargets();
+	VK_DestroySwapchain();
+	if (!VK_CreateSwapchainAndViews((int)vk.swapchainExtent.width, (int)vk.swapchainExtent.height))
+	{
+		Ren_Fatal("Vulkan: couldn't recreate the swapchain after the window changed.\n");
+	}
+	if (vk.swapchainFormat != format)
+	{
+		VK_DestroySceneTargets();
+		ok = VK_CreateRenderPassAndFramebuffers();
+	}
+	else
+	{
+		ok = VK_CreatePresentPass();
+	}
+	if (!ok || !VK_CreatePresentResources())
 	{
 		Ren_Fatal("Vulkan: couldn't recreate the swapchain after the window changed.\n");
 	}
