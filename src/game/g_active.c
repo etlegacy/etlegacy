@@ -642,11 +642,14 @@ void SpectatorThink(gentity_t *ent, usercmd_t *ucmd)
 
 		Pmove(&pm);
 
-		// Activate - made it a latched event (occurs on keydown only)
-		if (client->latched_buttons & BUTTON_ACTIVATE)
-		{
-			Cmd_Activate_f(ent);
-		}
+		// Spectators can't activate: latched_buttons is never updated for them
+		// (only in ClientThink_real after this function returns), so this never fired.
+		// Cmd_Activate_f() would also not be safe for spectators, their health is max
+		// and a followed player's playerstate is copied into theirs.
+		//if (client->latched_buttons & BUTTON_ACTIVATE)
+		//{
+		//	Cmd_Activate_f(ent);
+		//}
 
 		// save results of pmove
 		VectorCopy(client->ps.origin, ent->s.origin);
