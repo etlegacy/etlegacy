@@ -290,7 +290,7 @@ void VM_LoadSymbols(vm_t *vm)
 		}
 
 		sym->symValue = value;
-		Q_strncpyz(sym->symName, token, chars + 1);
+		Q_strncpyz(sym->symName, token, (int)chars + 1);
 
 		count++;
 	}

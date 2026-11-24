@@ -132,7 +132,7 @@ void SV_UpdateConfigStrings(void)
 		if (sv.configstrings[index][0])
 		{
 			// get total CS length
-			cstotal += strlen(sv.configstrings[index]);
+			cstotal += (int)strlen(sv.configstrings[index]);
 
 			if (index == CS_SYSTEMINFO)
 			{
@@ -174,7 +174,7 @@ void SV_UpdateConfigStrings(void)
 					continue;
 				}
 
-				len = strlen(sv.configstrings[index]);
+				len = (int)strlen(sv.configstrings[index]);
 				if (len >= maxChunkSize)
 				{
 					sent      = 0;
@@ -997,7 +997,7 @@ void SV_WriteAttackLog(const char *log)
 			Com_sprintf(string, sizeof(string), "%i/%02i/%02i %02i:%02i:%02i %s",
 			            1900 + time.tm_year, time.tm_mday, time.tm_mon + 1,
 			            time.tm_hour, time.tm_min, time.tm_sec, log);
-			(void)FS_Write(string, strlen(string), attHandle);
+			(void)FS_Write(string, (int)strlen(string), attHandle);
 		}
 
 		if (sv_protect->integer & SVP_CONSOLE)

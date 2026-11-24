@@ -55,7 +55,7 @@ g_StringToken_t G_GetTokenForString(char const *str)
 {
 	// Use our minimal perfect hash generated code to give us the
 	// result token in optimal time
-	const g_strtoken_t *token = in_word_set(str, strlen(str));
+	const g_strtoken_t *token = in_word_set(str, (unsigned int)strlen(str));
 	if (token == NULL)
 	{
 		return TOK_UNKNOWN;

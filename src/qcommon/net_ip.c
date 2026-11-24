@@ -462,7 +462,11 @@ static void Sys_SockaddrToString(char *dest, size_t destlen, struct sockaddr *in
 		Com_Error(ERR_FATAL, "Sys_SockaddrToString: unsupported address family");
 	}
 
-	if (getnameinfo(input, inputlen, dest, destlen, NULL, 0, NI_NUMERICHOST) && destlen > 0)
+#ifdef _WIN32
+	if (getnameinfo(input, inputlen, dest, (DWORD)destlen, NULL, 0, NI_NUMERICHOST) && destlen > 0)
+#else
+	if (getnameinfo(input, inputlen, dest, (socklen_t)destlen, NULL, 0, NI_NUMERICHOST) && destlen > 0)
+#endif
 	{
 		*dest = '\0';
 	}
@@ -1459,7 +1463,7 @@ void NET_OpenSocks(int port)
 		return;
 	}
 
-	if (connect(socks_socket, res->ai_addr, res->ai_addrlen) != 0)
+	if (connect(socks_socket, res->ai_addr, (int)res->ai_addrlen) != 0)
 	{
 		freeaddrinfo(res);
 		Com_Printf(S_COLOR_YELLOW "WARNING: NET_OpenSocks: connect: %s\n", NET_ErrorString());
@@ -1531,8 +1535,8 @@ void NET_OpenSocks(int port)
 		int plen;
 
 		// build the request
-		ulen = strlen(net_socksUsername->string);
-		plen = strlen(net_socksPassword->string);
+		ulen = (int)strlen(net_socksUsername->string);
+		plen = (int)strlen(net_socksPassword->string);
 
 		buf[0] = 1;     // username/password authentication version
 		buf[1] = ulen;

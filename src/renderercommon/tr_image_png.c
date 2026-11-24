@@ -2266,7 +2266,7 @@ void RE_SavePNG(const char *filename, int width, int height, byte *data, int pad
 	WriteCRC(&buffer, &crcPtr, CRC);
 
 	// Write the image to file
-	ri.FS_WriteFile(filename, pngData, pngSize);
+	ri.FS_WriteFile(filename, pngData, (int)pngSize);
 
 	// Free memory
 	ri.Hunk_FreeTempMemory(pngData);

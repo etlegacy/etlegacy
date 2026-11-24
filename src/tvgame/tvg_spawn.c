@@ -249,7 +249,7 @@ char *TVG_NewString(const char *string)
 	char         *newb, *new_p;
 	unsigned int i, l;
 
-	l = strlen(string) + 1;
+	l = (unsigned int)strlen(string) + 1;
 
 	newb = G_Alloc(l);
 

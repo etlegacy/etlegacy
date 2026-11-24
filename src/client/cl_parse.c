@@ -781,7 +781,7 @@ void CL_ParseGamestate(msg_t *msg)
 				Com_Error(ERR_DROP, "configstring < 0 or configstring >= MAX_CONFIGSTRINGS");
 			}
 			s   = MSG_ReadBigString(msg);
-			len = strlen(s);
+			len = (int)strlen(s);
 
 			if (len + 1 + cl.gameState.dataCount > MAX_GAMESTATE_CHARS)
 			{

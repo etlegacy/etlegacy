@@ -291,7 +291,7 @@ EDIT FIELDS
  */
 void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qboolean showCursor, qboolean noColorEscape)
 {
-	int  len     = strlen(edit->buffer);
+	int  len     = (int)strlen(edit->buffer);
 	int  drawLen = edit->widthInChars;
 	int  prestep;
 	char str[MAX_STRING_CHARS];
@@ -355,7 +355,7 @@ void Field_VariableSizeDraw(field_t *edit, int x, int y, int width, int size, qb
 		{
 			Q_CleanStr(str);
 		}
-		i = drawLen - strlen(str);
+		i = drawLen - (int)strlen(str);
 
 		SCR_DrawSmallChar(x + (edit->cursor - prestep - i) * size, y, cursorChar);
 	}
@@ -597,7 +597,7 @@ static void Field_KillWordBackward(field_t *edit)
 	Com_Memcpy(removedText, edit->buffer + startOffset, removedLength);
 	removedText[removedLength] = '\0';
 
-	len = strlen(edit->buffer);
+	len = (int)strlen(edit->buffer);
 	memmove(edit->buffer + startOffset, edit->buffer + endOffset, len + 1 - endOffset);
 
 	// Consecutive kill-word operations prepend to preserve natural yank order.
@@ -643,7 +643,7 @@ void Field_KeyDownEvent(field_t *edit, int key)
 
 	key       = tolower(key);
 	len       = strlen(edit->buffer);
-	stringLen = Q_UTF8_Strlen(edit->buffer);
+	stringLen = (int)Q_UTF8_Strlen(edit->buffer);
 
 	switch (key)
 	{
@@ -699,12 +699,12 @@ void Field_KeyDownEvent(field_t *edit, int key)
 		break;
 	case K_END:
 	case K_KP_END:
-		edit->cursor = stringLen;
+		edit->cursor = (int)stringLen;
 		break;
 	case 'e':
 		if (keys[K_LCTRL].down || keys[K_RCTRL].down)
 		{
-			edit->cursor = stringLen;
+			edit->cursor = (int)stringLen;
 		}
 		break;
 	case K_INS:
@@ -773,7 +773,7 @@ void Field_CharEvent(field_t *edit, int ch)
 			return;
 		}
 
-		len         = strlen(edit->buffer);
+		len         = (int)strlen(edit->buffer);
 		yankByteLen = strlen(fieldYankBuffer);
 		yankCharLen = Q_UTF8_Strlen(fieldYankBuffer);
 
@@ -789,7 +789,7 @@ void Field_CharEvent(field_t *edit, int ch)
 		        len + 1 - yankOffset);
 		Com_Memcpy(edit->buffer + yankOffset, fieldYankBuffer, yankByteLen);
 
-		edit->cursor += yankCharLen;
+		edit->cursor += (int)yankCharLen;
 		if (edit->cursor >= edit->scroll + edit->widthInChars)
 		{
 			edit->scroll = edit->cursor - edit->widthInChars + 1;
@@ -799,8 +799,8 @@ void Field_CharEvent(field_t *edit, int ch)
 
 	fieldLastCommandWasKillWord = qfalse;
 
-	len       = strlen(edit->buffer);
-	stringLen = Q_UTF8_Strlen(edit->buffer);
+	len       = (int)strlen(edit->buffer);
+	stringLen = (int)Q_UTF8_Strlen(edit->buffer);
 
 	if (ch == CTRL('h'))          // ctrl-h is backspace
 	{
@@ -828,7 +828,7 @@ void Field_CharEvent(field_t *edit, int ch)
 
 	if (ch == CTRL('e'))      // ctrl-e is end
 	{
-		edit->cursor = stringLen;
+		edit->cursor = (int)stringLen;
 		edit->scroll = edit->cursor - edit->widthInChars;
 		return;
 	}

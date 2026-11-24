@@ -1911,8 +1911,8 @@ static qboolean ParseShader(char **text)
 				Ren_Warning("WARNING: missing shader name for 'sunshader'\n");
 				continue;
 			}
-			tokenLen         = strlen(token) + 1;
-			tr.sunShaderName = ri.Hunk_Alloc(sizeof(char) * tokenLen, h_low);
+			tokenLen         = (int)strlen(token) + 1;
+			tr.sunShaderName = ri.Hunk_Alloc((int)(sizeof(char) * tokenLen), h_low);
 			Q_strncpyz(tr.sunShaderName, token, tokenLen);
 		}
 		else if (!Q_stricmp(token, "lightgridmulamb"))       // ambient multiplier for lightgrid
@@ -3068,12 +3068,12 @@ qboolean RE_LoadDynamicShader(const char *shadername, const char *shadertext)
 	{
 		lastdptr->next = dptr;
 	}
-	dptr->shadertext = ri.Z_Malloc(strlen(shadertext) + 1);
+	dptr->shadertext = ri.Z_Malloc((int)strlen(shadertext) + 1);
 	if (!dptr->shadertext)
 	{
 		Ren_Fatal("Couldn't allocate buffer for dynamic shader %s", shadername);
 	}
-	Q_strncpyz(dptr->shadertext, shadertext, strlen(shadertext) + 1);
+	Q_strncpyz(dptr->shadertext, shadertext, (int)strlen(shadertext) + 1);
 	dptr->next = NULL;
 	if (!dshader)
 	{

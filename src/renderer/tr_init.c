@@ -369,10 +369,10 @@ void RB_TakeScreenshotTGA(int x, int y, int width, int height, const char *fileN
 	// gamma correct
 	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
-		R_GammaCorrect(allbuf + offset, memcount);
+		R_GammaCorrect(allbuf + offset, (int)memcount);
 	}
 
-	ri.FS_WriteFile(fileName, buffer, memcount + 18);
+	ri.FS_WriteFile(fileName, buffer, (int)(memcount + 18));
 
 	ri.Hunk_FreeTempMemory(allbuf);
 }
@@ -397,7 +397,7 @@ void RB_TakeScreenshotJPEG(int x, int y, int width, int height, char *fileName)
 	// gamma correct
 	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
-		R_GammaCorrect(buffer + offset, memcount);
+		R_GammaCorrect(buffer + offset, (int)memcount);
 	}
 
 	RE_SaveJPG(fileName, r_screenshotJpegQuality->integer, width, height, buffer + offset, padlen);
@@ -425,7 +425,7 @@ void RB_TakeScreenshotPNG(int x, int y, int width, int height, char *fileName)
 	// gamma correct
 	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
-		R_GammaCorrect(buffer + offset, memcount);
+		R_GammaCorrect(buffer + offset, (int)memcount);
 	}
 
 	RE_SavePNG(fileName, width, height, buffer + offset, padlen);
@@ -545,10 +545,10 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 
 	// Alignment stuff for glReadPixels
 	padwidth = PAD(linelen, packAlign);
-	padlen   = padwidth - linelen;
+	padlen   = (int)(padwidth - linelen);
 	// AVI line padding
 	avipadwidth = PAD(linelen, AVI_LINE_PADDING);
-	avipadlen   = avipadwidth - linelen;
+	avipadlen   = (int)(avipadwidth - linelen);
 
 	cBuf = PADP(cmd->captureBuffer, packAlign);
 
@@ -562,7 +562,7 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 	// gamma correct
 	if (glConfig.deviceSupportsGamma && !tr.gammaProgramUsed)
 	{
-		R_GammaCorrect(cBuf, memcount);
+		R_GammaCorrect(cBuf, (int)memcount);
 	}
 
 	if (cmd->motionJpeg)
@@ -570,7 +570,7 @@ const void *RB_TakeVideoFrameCmd(const void *data)
 		memcount = RE_SaveJPGToBuffer(cmd->encodeBuffer, linelen * cmd->height,
 		                              r_screenshotJpegQuality->integer,
 		                              cmd->width, cmd->height, cBuf, padlen);
-		ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, memcount);
+		ri.CL_WriteAVIVideoFrame(cmd->encodeBuffer, (int)memcount);
 	}
 	else
 	{

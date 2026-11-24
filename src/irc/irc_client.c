@@ -1481,7 +1481,7 @@ static int IRCH_FatalError()
  */
 static int IRCH_NickError()
 {
-	int nicklen = strlen(IRC_User.nick);
+	int nicklen = (int)strlen(IRC_User.nick);
 
 	if (IRC_ThreadStatus == IRC_THREAD_SETNICK)
 	{
@@ -2005,7 +2005,7 @@ static int IRC_ProcessData(void)
 char *IRC_GetName(const char *name)
 {
 	int  i = 0, j = 0, k = 0;
-	int  namelen = strlen(name);
+	int  namelen = (int)strlen(name);
 	char c;
 	char *retName;
 
@@ -2159,7 +2159,7 @@ static int IRC_AttemptConnection()
 	}
 
 	// Attempt connection
-	if ((connect(IRC_Socket, res->ai_addr, res->ai_addrlen)) != 0)
+	if ((connect(IRC_Socket, res->ai_addr, (int)res->ai_addrlen)) != 0)
 	{
 		freeaddrinfo(res);
 		closesocket(IRC_Socket);

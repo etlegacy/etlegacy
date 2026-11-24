@@ -825,7 +825,7 @@ void use_dlight(gentity_t *ent, gentity_t *other, gentity_t *activator)
 		if (ent->spawnflags & 4)       // ONETIME
 		{
 			ent->think     = shutoff_dlight;
-			ent->nextthink = level.time + (strlen(ent->dl_stylestring)  * 100) - 100;
+			ent->nextthink = level.time + ((int)strlen(ent->dl_stylestring) * 100) - 100;
 		}
 	}
 }
@@ -902,7 +902,7 @@ void SP_dlight(gentity_t *ent)
 		ent->dl_stylestring = "mmmaaa";                          // default to a strobe to call attention to this not being set
 	}
 
-	ent->count = strlen(ent->dl_stylestring);
+	ent->count = (int)strlen(ent->dl_stylestring);
 
 	ent->dl_atten = atten;
 
@@ -2794,7 +2794,7 @@ char *ClientName(int client, char *name, size_t size)
 		return "[client out of range]";
 	}
 	trap_GetConfigstring(CS_PLAYERS + client, buf, sizeof(buf));
-	Q_strncpyz(name, Info_ValueForKey(buf, "n"), size);
+	Q_strncpyz(name, Info_ValueForKey(buf, "n"), (int)size);
 	Q_CleanStr(name);
 
 	return name;

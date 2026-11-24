@@ -62,10 +62,10 @@ void G_PushMapEntityToBuffer(char *buffer, size_t size, mapEntityData_t *mEnt)
 	case ME_TANK:
 	case ME_TANK_DEAD:
 	case ME_COMMANDMAP_MARKER:
-		Q_strcat(buffer, size, va(" %i %s %i", mEnt->type, buf, mEnt->data));
+		Q_strcat(buffer, (int)size, va(" %i %s %i", mEnt->type, buf, mEnt->data));
 		break;
 	default:
-		Q_strcat(buffer, size, va(" %i %s %i %i", mEnt->type, buf, mEnt->yaw, mEnt->data));
+		Q_strcat(buffer, (int)size, va(" %i %s %i %i", mEnt->type, buf, mEnt->yaw, mEnt->data));
 		break;
 	}
 }

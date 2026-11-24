@@ -18,7 +18,7 @@ char *G_SHA1(const char *string)
 	SHA1Context sha;
 
 	SHA1Reset(&sha);
-	SHA1Input(&sha, (const unsigned char *)string, strlen(string));
+	SHA1Input(&sha, (const unsigned char *)string, (unsigned int)strlen(string));
 
 	if (!SHA1Result(&sha))
 	{

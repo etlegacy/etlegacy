@@ -2907,7 +2907,7 @@ static void CG_EditComponent_f(void)
 				fieldFound = qtrue;
 
 				// try to parse the field arguments
-				if (!hudComponentMembersFields[j].parse(&i, comp, hudComponentMembersFields[j].offset))
+				if (!hudComponentMembersFields[j].parse(&i, comp, (int)hudComponentMembersFields[j].offset))
 				{
 					// display specific help for style
 					if (!Q_stricmp(hudComponentMembersFields[j].name, "style"))

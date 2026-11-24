@@ -90,7 +90,7 @@ float CG_Text_Width_Ext_Float(const char *text, float scale, int limit, fontHelp
 		return 0;
 	}
 
-	len = Q_UTF8_Strlen(text);
+	len = (int)Q_UTF8_Strlen(text);
 
 	if (limit > 0 && len > limit)
 	{
@@ -200,7 +200,7 @@ float CG_Text_Height_Ext_Float(const char *text, float scale, int limit, fontHel
 		const char  *s = text;
 		glyphInfo_t *glyph;
 		int         count = 0;
-		int         len   = Q_UTF8_Strlen(text);
+		int         len   = (int)Q_UTF8_Strlen(text);
 
 		if (limit > 0 && len > limit)
 		{
@@ -354,7 +354,7 @@ void CG_Text_Paint_Ext(float x, float y, float scalex, float scaley, vec4_t colo
 		scalex *= Q_UTF8_GlyphScale(font);
 		scaley *= Q_UTF8_GlyphScale(font);
 
-		len = Q_UTF8_Strlen(text);
+		len = (int)Q_UTF8_Strlen(text);
 		if (limit > 0 && len > limit)
 		{
 			len = limit;
@@ -463,7 +463,7 @@ void CG_Text_PaintWithCursor_Ext(float x, float y, float scale, vec4_t color, co
 	if (text)
 	{
 		float      yadj;
-		int        len   = Q_UTF8_Strlen(text);
+		int        len   = (int)Q_UTF8_Strlen(text);
 		int        count = 0;
 		const char *s    = text;
 
@@ -624,7 +624,7 @@ static void Text_Paint_LimitX(float *maxX, float x, float y, float scale, vec4_t
 		const char *s       = text;
 		float      max      = *maxX;
 		float      useScale = scale * Q_UTF8_GlyphScale(font);
-		int        len      = Q_UTF8_Strlen(text);
+		int        len      = (int)Q_UTF8_Strlen(text);
 		int        count    = 0;
 
 		trap_R_SetColor(color);
@@ -699,7 +699,7 @@ static void Text_Paint_LimitY(float *maxY, float x, float y, float scale, vec4_t
 		const char *s       = text;
 		float      max      = *maxY;
 		float      useScale = scale * Q_UTF8_GlyphScale(font);
-		int        len      = Q_UTF8_Strlen(text);
+		int        len      = (int)Q_UTF8_Strlen(text);
 		int        count    = 0;
 		float      newX     = x;
 		int        height   = CG_Text_Height_Ext(text, useScale, 0, font);

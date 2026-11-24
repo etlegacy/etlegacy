@@ -35,7 +35,7 @@ typedef struct
 
 // fields are in network order, same as the engine
 // selected fields do not provide forward compatibility
-#define ESF(Field, Bits) { offsetof(entityState_t, Field), Bits }
+#define ESF(Field, Bits) { (int)offsetof(entityState_t, Field), Bits }
 static const intField_t entityIntFields[] =
 {
 	//ESF(eType,         8),  // @NOTE: we can't override this! it's needed for the client to know what to do
@@ -95,11 +95,11 @@ static const intField_t entityIntFields[] =
 	ESF(aiState,         2)
 };
 #undef ESF
-const int ebs_fieldCount = ARRAY_LEN(entityIntFields);
+const int ebs_fieldCount = (int)ARRAY_LEN(entityIntFields);
 const int ebs_maxIntBits = 758;
 
 // fields are in network order, same as the engine
-#define ESF(Field) (offsetof(entityState_t, Field))
+#define ESF(Field) ((int)offsetof(entityState_t, Field))
 static const int entityFloatFields[] =
 {
 	ESF(pos.trBase[0]),

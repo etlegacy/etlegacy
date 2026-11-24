@@ -1187,7 +1187,7 @@ qboolean Script_WriteProfile(const char *profile_path)
 
 	DC->getCVarString("com_pid", com_pid, sizeof(com_pid));
 
-	trap_FS_Write(com_pid, strlen(com_pid), f);
+	trap_FS_Write(com_pid, (int)strlen(com_pid), f);
 
 	trap_FS_FCloseFile(f);
 

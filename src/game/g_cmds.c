@@ -57,7 +57,7 @@ static qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
 
 	if (plist[0] == -1)
 	{
-		Q_strcat(err, len, "no connected player by that name or slot #\n");
+		Q_strcat(err, (int)len, "no connected player by that name or slot #\n");
 
 		return qfalse;
 	}
@@ -70,7 +70,7 @@ static qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
 
 		line[0] = '\0';
 
-		Q_strcat(err, len, "more than one player name matches be more specific or use the slot #:\n");
+		Q_strcat(err, (int)len, "more than one player name matches be more specific or use the slot #:\n");
 
 		for (p = plist; *p != -1; p++)
 		{
@@ -85,7 +85,7 @@ static qboolean G_MatchOnePlayer(int *plist, char *err, size_t len)
 					break;
 				}
 
-				Q_strcat(err, len, line);
+				Q_strcat(err, (int)len, line);
 			}
 		}
 
@@ -546,8 +546,8 @@ char *ConcatArgs(int start)
 	c = trap_Argc();
 	for (i = start ; i < c ; i++)
 	{
-		trap_Argv(i, arg, sizeof(arg));
-		tlen = strlen(arg);
+		trap_Argv(i, arg, (int)sizeof(arg));
+		tlen = (unsigned int)strlen(arg);
 		if (len + tlen >= MAX_STRING_CHARS - 1)
 		{
 			break;

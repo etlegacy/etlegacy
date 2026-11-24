@@ -246,11 +246,11 @@ void Con_Dump_f(void)
 			}
 		}
 #ifdef _WIN32
-		Q_strcat(buffer, bufferlen, "\r\n");
+		Q_strcat(buffer, (int)bufferlen, "\r\n");
 #else
-		Q_strcat(buffer, bufferlen, "\n");
+		Q_strcat(buffer, (int)bufferlen, "\n");
 #endif
-		(void) FS_Write(buffer, strlen(buffer), f);
+		(void) FS_Write(buffer, (int)strlen(buffer), f);
 	}
 
 	Hunk_FreeTempMemory(buffer);
@@ -608,7 +608,7 @@ void CL_ConsolePrint(char *txt)
 
 	if (cls.clipboard.buffer)
 	{
-		Q_strcat(cls.clipboard.buffer, cls.clipboard.bufferSize, txt);
+		Q_strcat(cls.clipboard.buffer, (int)cls.clipboard.bufferSize, txt);
 	}
 
 	// for some demos we don't want to ever show anything on the console
