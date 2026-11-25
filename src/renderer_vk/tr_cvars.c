@@ -368,9 +368,10 @@ void R_Register(void)
 	r_softParticles = ri.Cvar_Get("r_softParticles", "0", CVAR_ARCHIVE_ND);
 
 	// keep compiled pipelines between runs in vkpipelines.bin in the homepath,
-	// and create the pipelines earlier runs used at startup, listed in
-	// vkpipelinekeys.bin (0 = neither: every pipeline is compiled when first
-	// needed, mid-frame; read at vid_restart)
+	// and create at startup the pipelines of the built-in list and those
+	// earlier runs used, listed in vkpipelinekeys.bin (0 = none of this: every
+	// pipeline is compiled when first needed, mid-frame; 2 = without the
+	// built-in list, to record a new one; read at vid_restart)
 	r_vkPipelineCache = ri.Cvar_Get("r_vkPipelineCache", "1", 0);
 
 #ifdef _WIN32
