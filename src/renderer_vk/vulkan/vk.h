@@ -70,6 +70,7 @@ qboolean VK_ResizeSwapchain(int width, int height);
  * @return qfalse if the targets could not be recreated
  */
 qboolean VK_SetSceneSize(int width, int height);
+void VK_GfxInfo(void);
 
 /**
  * @brief Acquires the next swapchain image and begins recording the

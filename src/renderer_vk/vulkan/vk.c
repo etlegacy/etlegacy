@@ -359,6 +359,10 @@ typedef struct
 	qboolean fenceSubmitted[VK_FRAMES_IN_FLIGHT];          // inFlightFences[i] has a submit that signals it
 	qboolean swapchainStale;                               // out of date / resized: rebuild before presenting (VK_RecreateSwapchain)
 	int swapchainFailTime;                                 // ri.Milliseconds() of the first failed rebuild in a row, 0 = none
+	const char *swapchainStaleReason;                      // why it went stale, for the rebuild's log line
+	int swapchainRebuilds;                                 // since the renderer started
+	qboolean memoryBudget;                                 // VK_EXT_memory_budget enabled (VK_MemoryBudgetString)
+	PFN_vkGetPhysicalDeviceMemoryProperties2 getMemoryProperties2;
 	qboolean restartPending;                               // device or surface lost: no submits until the vid_restart (VK_RequestRestart)
 #ifdef VK_EXT_device_fault
 	PFN_vkGetDeviceFaultInfoEXT getDeviceFaultInfo;        // VK_EXT_device_fault, NULL when not supported (VK_LogDeviceFault)
@@ -1257,12 +1261,13 @@ static qboolean VK_CreateLogicalDevice(void)
 	VkPhysicalDeviceFeatures         deviceFeatures;
 	VkPhysicalDeviceVulkan12Features features12;
 	VkDeviceCreateInfo               createInfo;
-	const char                       *deviceExtensions[4] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME, NULL, NULL, NULL };
+	const char                       *deviceExtensions[8] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 	uint32_t                         deviceExtensionCount = 1;
 	qboolean                         hasDisplayTiming     = qfalse;
 	uint32_t                         availableExtCount = 0, i;
 	VkExtensionProperties            *availableExt;
-	qboolean                         hasDeviceFault = qfalse;
+	qboolean                         hasDeviceFault  = qfalse;
+	qboolean                         hasMemoryBudget = qfalse;
 #ifdef VK_EXT_device_fault
 	VkPhysicalDeviceFaultFeaturesEXT faultFeatures;
 #endif
@@ -1362,6 +1367,12 @@ static qboolean VK_CreateLogicalDevice(void)
 					hasDeviceFault = qtrue;
 				}
 #endif
+#ifdef VK_EXT_memory_budget
+				else if (!strcmp(availableExt[i].extensionName, VK_EXT_MEMORY_BUDGET_EXTENSION_NAME))
+				{
+					hasMemoryBudget = qtrue;
+				}
+#endif
 			}
 		}
 		if (availableExt)
@@ -1451,6 +1462,28 @@ static qboolean VK_CreateLogicalDevice(void)
 				deviceExtensions[deviceExtensionCount++] = VK_EXT_DEVICE_FAULT_EXTENSION_NAME;
 				hasDeviceFault                           = qtrue;
 			}
+		}
+	}
+#endif
+
+#ifdef VK_EXT_memory_budget
+	// the process's video memory use and the budget the OS gives it, for the
+	// log (VK_MemoryBudgetString): read with vkGetPhysicalDeviceMemoryProperties2
+	vk.memoryBudget         = qfalse;
+	vk.getMemoryProperties2 = NULL;
+	if (hasMemoryBudget && vk.instanceVersion >= VK_API_VERSION_1_1)
+	{
+		VkPhysicalDeviceProperties props;
+
+		vkGetPhysicalDeviceProperties(vk.physicalDevice, &props);
+		if (props.apiVersion >= VK_API_VERSION_1_1)
+		{
+			vk.getMemoryProperties2 = (PFN_vkGetPhysicalDeviceMemoryProperties2)vkGetInstanceProcAddr(vk.instance, "vkGetPhysicalDeviceMemoryProperties2");
+		}
+		if (vk.getMemoryProperties2)
+		{
+			deviceExtensions[deviceExtensionCount++] = VK_EXT_MEMORY_BUDGET_EXTENSION_NAME;
+			vk.memoryBudget                          = qtrue;
 		}
 	}
 #endif
@@ -5409,6 +5442,85 @@ qboolean VK_ResizeSwapchain(int width, int height)
 }
 
 /**
+ * @brief Marks the swapchain for a rebuild at the start of the next frame
+ * (VK_RecreateSwapchain). The first reason since the last rebuild is kept
+ * for its log line.
+ */
+static void VK_MarkSwapchainStale(const char *reason)
+{
+	if (!vk.swapchainStale)
+	{
+		vk.swapchainStaleReason = reason;
+	}
+	vk.swapchainStale = qtrue;
+}
+
+/**
+ * @brief Writes the process's video memory use and the budget the OS gives it
+ * (VK_EXT_memory_budget), summed over the device-local heaps ("VRAM") and the
+ * others ("system"; none on unified memory), or an empty string without the
+ * extension. The driver's budget shrinks when other programs need memory, and
+ * on Windows memory beyond it may be moved to system memory, which slows
+ * rendering down.
+ */
+static void VK_MemoryBudgetString(char *buf, int size)
+{
+	VkPhysicalDeviceMemoryBudgetPropertiesEXT budget;
+	VkPhysicalDeviceMemoryProperties2         props2;
+	VkDeviceSize                              vramUsage = 0, vramBudget = 0, sysUsage = 0, sysBudget = 0;
+	uint32_t                                  i;
+
+	buf[0] = '\0';
+	if (!vk.memoryBudget)
+	{
+		return;
+	}
+
+	Com_Memset(&budget, 0, sizeof(budget));
+	budget.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT;
+	Com_Memset(&props2, 0, sizeof(props2));
+	props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
+	props2.pNext = &budget;
+	vk.getMemoryProperties2(vk.physicalDevice, &props2);
+
+	for (i = 0; i < props2.memoryProperties.memoryHeapCount && i < VK_MAX_MEMORY_HEAPS; i++)
+	{
+		if (props2.memoryProperties.memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT)
+		{
+			vramUsage  += budget.heapUsage[i];
+			vramBudget += budget.heapBudget[i];
+		}
+		else
+		{
+			sysUsage  += budget.heapUsage[i];
+			sysBudget += budget.heapBudget[i];
+		}
+	}
+
+	if (sysBudget)
+	{
+		Com_sprintf(buf, size, "VRAM %u of %u MB, system %u of %u MB", (unsigned)(vramUsage >> 20), (unsigned)(vramBudget >> 20),
+		            (unsigned)(sysUsage >> 20), (unsigned)(sysBudget >> 20));
+	}
+	else
+	{
+		Com_sprintf(buf, size, "VRAM %u of %u MB", (unsigned)(vramUsage >> 20), (unsigned)(vramBudget >> 20));
+	}
+}
+
+/**
+ * @brief gfxinfo lines: swapchain rebuilds and video memory use.
+ */
+void VK_GfxInfo(void)
+{
+	char mem[128];
+
+	VK_MemoryBudgetString(mem, sizeof(mem));
+	Ren_Print("swapchain rebuilds: %d\n", vk.swapchainRebuilds);
+	Ren_Print("video memory: %s\n", mem[0] ? mem : "unknown (no VK_EXT_memory_budget)");
+}
+
+/**
  * @brief True if the window's size differs from the swapchain's, or the
  * window is minimized: then a VK_SUBOPTIMAL_KHR swapchain is rebuilt. (Some
  * drivers report suboptimal for reasons a rebuild doesn't change, so it
@@ -5545,8 +5657,18 @@ static qboolean VK_RecreateSwapchain(void)
 		vk.swapchainFailTime = 0;
 	}
 	vk.swapchainStale = qfalse;
-	Ren_Developer("Vulkan: swapchain recreated, window %ux%u, render resolution %ux%u\n", vk.swapchainExtent.width,
-	              vk.swapchainExtent.height, vk.sceneExtent.width, vk.sceneExtent.height);
+	vk.swapchainRebuilds++;
+	{
+		char mem[128];
+
+		// one line per rebuild (alt-tab, minimize, resize): the count, reason
+		// and memory use show in a player's log whether memory grows with them
+		VK_MemoryBudgetString(mem, sizeof(mem));
+		Ren_Print("Vulkan: swapchain recreated (%d, %s), window %ux%u, render resolution %ux%u%s%s\n", vk.swapchainRebuilds,
+		          vk.swapchainStaleReason ? vk.swapchainStaleReason : "unknown", vk.swapchainExtent.width, vk.swapchainExtent.height,
+		          vk.sceneExtent.width, vk.sceneExtent.height, mem[0] ? ", " : "", mem);
+	}
+	vk.swapchainStaleReason = NULL;
 
 	return qtrue;
 }
@@ -6647,7 +6769,7 @@ static void VK_PresentLockUpdate(void)
 		if (VK_PresentWantsClock() != vk.pacing.byClock)
 		{
 			vk.pacing.byClock = VK_PresentWantsClock();
-			vk.swapchainStale = qtrue;
+			VK_MarkSwapchainStale("display refresh changed");
 		}
 	}
 
@@ -6878,7 +7000,7 @@ void VK_EndFrame(void)
 		VK_CheckSurfaceLost(result, "vkAcquireNextImageKHR");
 		if (result == VK_SUBOPTIMAL_KHR && VK_SwapchainSizeChanged())
 		{
-			vk.swapchainStale = qtrue; // the image is acquired: present it, rebuild next frame
+			VK_MarkSwapchainStale("acquire: window size changed"); // the image is acquired: present it, rebuild next frame
 		}
 		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
 		{
@@ -6886,7 +7008,7 @@ void VK_EndFrame(void)
 			// below neither waits for the acquire nor signals the present
 			if (result == VK_ERROR_OUT_OF_DATE_KHR)
 			{
-				vk.swapchainStale = qtrue;
+				VK_MarkSwapchainStale("acquire: out of date");
 			}
 			present = qfalse;
 		}
@@ -7136,9 +7258,13 @@ void VK_EndFrame(void)
 		result = vkQueuePresentKHR(vk.presentQueue, &presentInfo);
 		VK_CheckDeviceLost(result, "vkQueuePresentKHR");
 		VK_CheckSurfaceLost(result, "vkQueuePresentKHR");
-		if (result == VK_ERROR_OUT_OF_DATE_KHR || (result == VK_SUBOPTIMAL_KHR && VK_SwapchainSizeChanged()))
+		if (result == VK_ERROR_OUT_OF_DATE_KHR)
 		{
-			vk.swapchainStale = qtrue;
+			VK_MarkSwapchainStale("present: out of date");
+		}
+		else if (result == VK_SUBOPTIMAL_KHR && VK_SwapchainSizeChanged())
+		{
+			VK_MarkSwapchainStale("present: window size changed");
 		}
 		else if (vk.pacing.lock && !vk.restartPending)
 		{
