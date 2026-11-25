@@ -229,6 +229,24 @@ typedef struct
 	VkPipeline pipeline;
 } vkScenePipelineEntry_t;
 
+// What identifies a pipeline: the arguments of VK_GetUIPipeline() /
+// VK_GetScenePipelineEx(). The same on every GPU, so the list of keys used
+// (vkpipelinekeys.bin) stays valid across driver updates and GPU changes.
+typedef struct
+{
+	uint32_t type;                  // VK_PIPELINE_KEY_*
+	uint32_t stateBits;
+	int32_t cullType;
+	int32_t polygonOffset;
+	int32_t special;
+	int32_t vertexSource;
+} vkPipelineKey_t;
+
+#define VK_PIPELINE_KEY_UI       0
+#define VK_PIPELINE_KEY_SCENE    1
+#define VK_PIPELINE_KEY_SCENE_LM 2
+#define VK_PIPELINE_KEYS_MAX     1024
+
 // One lazily-created pipeline variant for a given stateBits value used by
 // the 2D/UI pipeline (see VK_GetUIPipeline()). UI shader stages (e.g. the
 // automap circular-mask trick in cg_commandmap.c, which relies on
@@ -375,6 +393,10 @@ typedef struct
 	VkPipelineCache pipelineCache;                         // VK_NULL_HANDLE with r_vkPipelineCache 0 (VK_CreatePipelineCache)
 	size_t pipelineCacheSavedSize;                         // driver data size read from or last written to the file
 	int pipelineCount;                                     // pipelines created since the renderer started
+	int pipelinesAtStartup;                                // of these, created at startup from the key list
+	vkPipelineKey_t pipelineKeys[VK_PIPELINE_KEYS_MAX];    // every key created, plus those loaded (VK_RecordPipelineKey)
+	int numPipelineKeys;
+	qboolean pipelineKeysChanged;                          // a new key since the list was loaded: save it
 	double pipelineMsec;                                   // and the time spent creating them
 	qboolean restartPending;                               // device or surface lost: no submits until the vid_restart (VK_RequestRestart)
 #ifdef VK_EXT_device_fault
@@ -1087,6 +1109,95 @@ static void VK_SavePipelineCache(void)
 
 	vk.pipelineCacheSavedSize = size;
 	Ren_Developer("Vulkan: pipeline cache saved (%u KB)\n", (unsigned)(size >> 10));
+}
+
+/*
+ * The pipeline key list (vkpipelinekeys.bin, with r_vkPipelineCache): the keys
+ * of every pipeline created, so that the next run creates them all at startup
+ * (VK_CreateListedPipelines) instead of in the middle of the frame that first
+ * needs them. With the pipeline cache file that costs little: the compiled
+ * pipelines are mostly found there.
+ */
+#define VK_PIPELINE_KEYS_FILE    "vkpipelinekeys.bin"
+#define VK_PIPELINE_KEYS_MAGIC   0x4b504b56 // "VKPK"
+#define VK_PIPELINE_KEYS_VERSION 1
+
+typedef struct
+{
+	uint32_t magic;
+	uint32_t version;
+	uint32_t count;                         // vkPipelineKey_t after this header
+	uint32_t checksum;                      // VK_PipelineCacheChecksum() of the keys
+} vkPipelineKeysFile_t;
+
+/**
+ * @brief Adds a pipeline's key to the key list unless it is there already.
+ */
+static void VK_RecordPipelineKey(uint32_t type, unsigned long stateBits, int cullType, qboolean polygonOffset, int special, int vertexSource)
+{
+	vkPipelineKey_t *key;
+	int             i;
+
+	if (vk.pipelineCache == VK_NULL_HANDLE)
+	{
+		return; // r_vkPipelineCache 0
+	}
+
+	for (i = 0; i < vk.numPipelineKeys; i++)
+	{
+		key = &vk.pipelineKeys[i];
+		if (key->type == type && key->stateBits == (uint32_t)stateBits && key->cullType == cullType &&
+		    key->polygonOffset == polygonOffset && key->special == special && key->vertexSource == vertexSource)
+		{
+			return;
+		}
+	}
+	if (vk.numPipelineKeys >= VK_PIPELINE_KEYS_MAX)
+	{
+		return;
+	}
+
+	key                    = &vk.pipelineKeys[vk.numPipelineKeys++];
+	key->type              = type;
+	key->stateBits         = (uint32_t)stateBits;
+	key->cullType          = cullType;
+	key->polygonOffset     = polygonOffset ? 1 : 0;
+	key->special           = special;
+	key->vertexSource      = vertexSource;
+	vk.pipelineKeysChanged = qtrue;
+}
+
+/**
+ * @brief Writes the key list when it got a new key since it was loaded.
+ */
+static void VK_SavePipelineKeys(void)
+{
+	vkPipelineKeysFile_t *header;
+	byte                 *buffer;
+	size_t               keysSize = vk.numPipelineKeys * sizeof(vkPipelineKey_t);
+
+	if (vk.pipelineCache == VK_NULL_HANDLE || !vk.pipelineKeysChanged || !vk.numPipelineKeys)
+	{
+		return;
+	}
+
+	buffer = malloc(sizeof(vkPipelineKeysFile_t) + keysSize);
+	if (!buffer)
+	{
+		return;
+	}
+	header           = (vkPipelineKeysFile_t *)buffer;
+	header->magic    = VK_PIPELINE_KEYS_MAGIC;
+	header->version  = VK_PIPELINE_KEYS_VERSION;
+	header->count    = (uint32_t)vk.numPipelineKeys;
+	header->checksum = VK_PipelineCacheChecksum((const byte *)vk.pipelineKeys, keysSize);
+	Com_Memcpy(buffer + sizeof(vkPipelineKeysFile_t), vk.pipelineKeys, keysSize);
+
+	ri.FS_WriteFile(VK_PIPELINE_KEYS_FILE, buffer, (int)(sizeof(vkPipelineKeysFile_t) + keysSize));
+	free(buffer);
+
+	vk.pipelineKeysChanged = qfalse;
+	Ren_Developer("Vulkan: pipeline key list saved (%d keys)\n", vk.numPipelineKeys);
 }
 
 // losses closer together than this count as one series: after more than
@@ -3723,6 +3834,7 @@ static VkPipeline VK_GetUIPipeline(unsigned long stateBits)
 	vk.uiPipelines[vk.numUIPipelines].stateBits = stateBits;
 	vk.uiPipelines[vk.numUIPipelines].pipeline  = pipeline;
 	vk.numUIPipelines++;
+	VK_RecordPipelineKey(VK_PIPELINE_KEY_UI, stateBits, 0, qfalse, 0, 0);
 
 	return pipeline;
 }
@@ -5275,6 +5387,13 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	pipelineInfo.renderPass = vk.renderPass;
 	pipelineInfo.subpass    = 0;
 
+	// a key from the key list for a path that is off in this run (e.g. bindless
+	// with r_vkBindless 0) has no shader or layout: never drawn, not created
+	if (stages[0].module == VK_NULL_HANDLE || stages[1].module == VK_NULL_HANDLE || pipelineInfo.layout == VK_NULL_HANDLE)
+	{
+		return VK_NULL_HANDLE;
+	}
+
 	if (!VK_CheckResult(VK_CreateGraphicsPipeline(&pipelineInfo, &pipeline), "vkCreateGraphicsPipelines(scene)"))
 	{
 		return VK_NULL_HANDLE;
@@ -5351,6 +5470,7 @@ static VkPipeline VK_GetScenePipelineEx(unsigned long stateBits, int cullType, q
 	entries[*count].vertexSource  = vertexSource;
 	entries[*count].pipeline      = pipeline;
 	(*count)++;
+	VK_RecordPipelineKey(lightmapped ? VK_PIPELINE_KEY_SCENE_LM : VK_PIPELINE_KEY_SCENE, stateBits, cullType, polygonOffset, special, vertexSource);
 
 	return pipeline;
 }
@@ -5967,6 +6087,85 @@ static qboolean VK_RecreateSwapchain(void)
 	return qtrue;
 }
 
+/**
+ * @brief Creates the pipelines of the key list (vkpipelinekeys.bin) at
+ * startup, after the pipeline layouts and shader modules exist. The file is
+ * read only from the homepath, like the pipeline cache file, and every key is
+ * checked to be in range; keys for paths that are off in this run are kept in
+ * the list but not created.
+ */
+static void VK_CreateListedPipelines(void)
+{
+	const vkPipelineKeysFile_t *header;
+	const vkPipelineKey_t      *keys;
+	void                       *file = NULL;
+	double                     start = VK_PresentClock();
+	int                        len, i, created = 0;
+	qboolean                   changed = vk.pipelineKeysChanged;
+
+	if (vk.pipelineCache == VK_NULL_HANDLE || !ri.FS_FileExists(VK_PIPELINE_KEYS_FILE) ||
+	    ri.FS_FileIsInPAK(VK_PIPELINE_KEYS_FILE, NULL) == 1)
+	{
+		return;
+	}
+	len = ri.FS_ReadFile(VK_PIPELINE_KEYS_FILE, &file);
+	if (len <= 0)
+	{
+		return;
+	}
+
+	header = (const vkPipelineKeysFile_t *)file;
+	keys   = (const vkPipelineKey_t *)((const byte *)file + sizeof(vkPipelineKeysFile_t));
+	if ((size_t)len < sizeof(vkPipelineKeysFile_t) || header->magic != VK_PIPELINE_KEYS_MAGIC ||
+	    header->version != VK_PIPELINE_KEYS_VERSION || header->count > VK_PIPELINE_KEYS_MAX ||
+	    (size_t)len != sizeof(vkPipelineKeysFile_t) + header->count * sizeof(vkPipelineKey_t) ||
+	    header->checksum != VK_PipelineCacheChecksum((const byte *)keys, header->count * sizeof(vkPipelineKey_t)))
+	{
+		Ren_Print("Vulkan: pipeline key list %s is damaged, ignored\n", VK_PIPELINE_KEYS_FILE);
+		ri.FS_FreeFile(file);
+		return;
+	}
+
+	for (i = 0; i < (int)header->count; i++)
+	{
+		const vkPipelineKey_t *key = &keys[i];
+		int                   *count;
+
+		if (key->type > VK_PIPELINE_KEY_SCENE_LM || key->cullType < CT_FRONT_SIDED || key->cullType > CT_TWO_SIDED ||
+		    (key->polygonOffset != 0 && key->polygonOffset != 1) || key->special < VK_SPECIAL_NONE ||
+		    key->special > VK_SPECIAL_LINES || key->vertexSource < VK_VERTS_ARENA || key->vertexSource > VK_VERTS_SOFT)
+		{
+			continue;
+		}
+
+		// listed first, so creating it doesn't count as a new key; leave room
+		// in the pipeline tables for the pipelines this run adds
+		VK_RecordPipelineKey(key->type, key->stateBits, key->cullType, key->polygonOffset, key->special, key->vertexSource);
+		count = key->type == VK_PIPELINE_KEY_UI ? &vk.numUIPipelines :
+		        key->type == VK_PIPELINE_KEY_SCENE_LM ? &vk.numSceneLMPipelines : &vk.numScenePipelines;
+		if (*count >= VK_MAX_SCENE_PIPELINES - 32)
+		{
+			continue;
+		}
+
+		if (key->type == VK_PIPELINE_KEY_UI)
+		{
+			created += VK_GetUIPipeline(key->stateBits) != VK_NULL_HANDLE;
+		}
+		else
+		{
+			created += VK_GetScenePipelineEx(key->stateBits, key->cullType, key->type == VK_PIPELINE_KEY_SCENE_LM,
+			                                 key->polygonOffset ? qtrue : qfalse, key->special, key->vertexSource) != VK_NULL_HANDLE;
+		}
+	}
+	ri.FS_FreeFile(file);
+
+	// the keys read from the file don't need saving again
+	vk.pipelineKeysChanged = changed;
+	Ren_Print("Vulkan: %d of %d listed pipelines created at startup in %.1f ms\n", created, (int)header->count,
+	          VK_PresentClock() - start);
+}
+
 qboolean VK_SetSceneSize(int width, int height)
 {
 	if (!vk.initialized)
@@ -6091,6 +6290,10 @@ qboolean VK_Init(int width, int height)
 		return qfalse;
 	}
 
+	// the pipelines earlier runs used, now instead of mid-frame
+	VK_CreateListedPipelines();
+	vk.pipelinesAtStartup = vk.pipelineCount;
+
 	vkGetPhysicalDeviceProperties(vk.physicalDevice, &props);
 
 	// driver properties ('VK_KHR_driver_properties') needs Vulkan 1.2 or newer
@@ -6143,8 +6346,10 @@ void VK_Shutdown(void)
 		vkDeviceWaitIdle(vk.device);
 		VK_FlushPendingFrees();
 
-		Ren_Developer("Vulkan: %d pipelines created in %.1f ms\n", vk.pipelineCount, vk.pipelineMsec);
+		Ren_Developer("Vulkan: %d pipelines created in %.1f ms, %d of them after startup\n", vk.pipelineCount, vk.pipelineMsec,
+		              vk.pipelineCount - vk.pipelinesAtStartup);
 		VK_SavePipelineCache();
+		VK_SavePipelineKeys();
 
 		if (vk.captureBuffer != VK_NULL_HANDLE)
 		{
