@@ -49,6 +49,7 @@
 
 #include "vk.h"
 #include "vk_funcs.h"
+#include "vk_pipeline_keys.h"
 #include "../../renderercommon/tr_common.h"
 #include "../tr_local.h"
 
@@ -229,22 +230,7 @@ typedef struct
 	VkPipeline pipeline;
 } vkScenePipelineEntry_t;
 
-// What identifies a pipeline: the arguments of VK_GetUIPipeline() /
-// VK_GetScenePipelineEx(). The same on every GPU, so the list of keys used
-// (vkpipelinekeys.bin) stays valid across driver updates and GPU changes.
-typedef struct
-{
-	uint32_t type;                  // VK_PIPELINE_KEY_*
-	uint32_t stateBits;
-	int32_t cullType;
-	int32_t polygonOffset;
-	int32_t special;
-	int32_t vertexSource;
-} vkPipelineKey_t;
-
-#define VK_PIPELINE_KEY_UI       0
-#define VK_PIPELINE_KEY_SCENE    1
-#define VK_PIPELINE_KEY_SCENE_LM 2
+// the player's key list (vkpipelinekeys.bin) plus the built-in one
 #define VK_PIPELINE_KEYS_MAX     1024
 
 // One lazily-created pipeline variant for a given stateBits value used by
@@ -6088,45 +6074,16 @@ static qboolean VK_RecreateSwapchain(void)
 }
 
 /**
- * @brief Creates the pipelines of the key list (vkpipelinekeys.bin) at
- * startup, after the pipeline layouts and shader modules exist. The file is
- * read only from the homepath, like the pipeline cache file, and every key is
- * checked to be in range; keys for paths that are off in this run are kept in
- * the list but not created.
+ * @brief Creates the pipelines of a key list (VK_CreateListedPipelines). Every
+ * key is checked to be in range first; keys for paths that are off in this
+ * run are kept in the list but not created.
+ * @return the number of pipelines created or found
  */
-static void VK_CreateListedPipelines(void)
+static int VK_CreateKeyedPipelines(const vkPipelineKey_t *keys, int numKeys)
 {
-	const vkPipelineKeysFile_t *header;
-	const vkPipelineKey_t      *keys;
-	void                       *file = NULL;
-	double                     start = VK_PresentClock();
-	int                        len, i, created = 0;
-	qboolean                   changed = vk.pipelineKeysChanged;
+	int i, created = 0;
 
-	if (vk.pipelineCache == VK_NULL_HANDLE || !ri.FS_FileExists(VK_PIPELINE_KEYS_FILE) ||
-	    ri.FS_FileIsInPAK(VK_PIPELINE_KEYS_FILE, NULL) == 1)
-	{
-		return;
-	}
-	len = ri.FS_ReadFile(VK_PIPELINE_KEYS_FILE, &file);
-	if (len <= 0)
-	{
-		return;
-	}
-
-	header = (const vkPipelineKeysFile_t *)file;
-	keys   = (const vkPipelineKey_t *)((const byte *)file + sizeof(vkPipelineKeysFile_t));
-	if ((size_t)len < sizeof(vkPipelineKeysFile_t) || header->magic != VK_PIPELINE_KEYS_MAGIC ||
-	    header->version != VK_PIPELINE_KEYS_VERSION || header->count > VK_PIPELINE_KEYS_MAX ||
-	    (size_t)len != sizeof(vkPipelineKeysFile_t) + header->count * sizeof(vkPipelineKey_t) ||
-	    header->checksum != VK_PipelineCacheChecksum((const byte *)keys, header->count * sizeof(vkPipelineKey_t)))
-	{
-		Ren_Print("Vulkan: pipeline key list %s is damaged, ignored\n", VK_PIPELINE_KEYS_FILE);
-		ri.FS_FreeFile(file);
-		return;
-	}
-
-	for (i = 0; i < (int)header->count; i++)
+	for (i = 0; i < numKeys; i++)
 	{
 		const vkPipelineKey_t *key = &keys[i];
 		int                   *count;
@@ -6158,12 +6115,60 @@ static void VK_CreateListedPipelines(void)
 			                                 key->polygonOffset ? qtrue : qfalse, key->special, key->vertexSource) != VK_NULL_HANDLE;
 		}
 	}
-	ri.FS_FreeFile(file);
 
-	// the keys read from the file don't need saving again
+	return created;
+}
+
+/**
+ * @brief Creates at startup, after the pipeline layouts and shader modules
+ * exist, the pipelines of the built-in key list (vk_pipeline_keys.c: the stock
+ * maps, so a first run doesn't compile them mid-frame) and of the player's own
+ * list (vkpipelinekeys.bin, what earlier runs used). The file is read only
+ * from the homepath, like the pipeline cache file.
+ */
+static void VK_CreateListedPipelines(void)
+{
+	const vkPipelineKeysFile_t *header;
+	const vkPipelineKey_t      *keys;
+	void                       *file = NULL;
+	double                     start = VK_PresentClock();
+	int                        len, created, numDefault, fileKeys = 0;
+	qboolean                   changed = vk.pipelineKeysChanged;
+
+	if (vk.pipelineCache == VK_NULL_HANDLE)
+	{
+		return; // r_vkPipelineCache 0
+	}
+
+	// r_vkPipelineCache 2: without the built-in list, to record a new one
+	// (only the keys a run really uses end up in its key file)
+	numDefault = r_vkPipelineCache->integer == 2 ? 0 : vkNumDefaultPipelineKeys;
+	created    = VK_CreateKeyedPipelines(vkDefaultPipelineKeys, numDefault);
+
+	if (ri.FS_FileExists(VK_PIPELINE_KEYS_FILE) && ri.FS_FileIsInPAK(VK_PIPELINE_KEYS_FILE, NULL) != 1 &&
+	    (len = ri.FS_ReadFile(VK_PIPELINE_KEYS_FILE, &file)) > 0)
+	{
+		header = (const vkPipelineKeysFile_t *)file;
+		keys   = (const vkPipelineKey_t *)((const byte *)file + sizeof(vkPipelineKeysFile_t));
+		if ((size_t)len < sizeof(vkPipelineKeysFile_t) || header->magic != VK_PIPELINE_KEYS_MAGIC ||
+		    header->version != VK_PIPELINE_KEYS_VERSION || header->count > VK_PIPELINE_KEYS_MAX ||
+		    (size_t)len != sizeof(vkPipelineKeysFile_t) + header->count * sizeof(vkPipelineKey_t) ||
+		    header->checksum != VK_PipelineCacheChecksum((const byte *)keys, header->count * sizeof(vkPipelineKey_t)))
+		{
+			Ren_Print("Vulkan: pipeline key list %s is damaged, ignored\n", VK_PIPELINE_KEYS_FILE);
+		}
+		else
+		{
+			fileKeys = (int)header->count;
+			created += VK_CreateKeyedPipelines(keys, fileKeys);
+		}
+		ri.FS_FreeFile(file);
+	}
+
+	// the listed keys don't need saving again
 	vk.pipelineKeysChanged = changed;
-	Ren_Print("Vulkan: %d of %d listed pipelines created at startup in %.1f ms\n", created, (int)header->count,
-	          VK_PresentClock() - start);
+	Ren_Print("Vulkan: %d pipelines created at startup in %.1f ms (%d keys built in, %d from %s)\n", created,
+	          VK_PresentClock() - start, numDefault, fileKeys, VK_PIPELINE_KEYS_FILE);
 }
 
 qboolean VK_SetSceneSize(int width, int height)
