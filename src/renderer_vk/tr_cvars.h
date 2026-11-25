@@ -80,6 +80,7 @@ extern cvar_t *r_vkWorldBatch;
 extern cvar_t *r_vkModelBatch;
 extern cvar_t *r_vkGpuVertex;
 extern cvar_t *r_vkBindless;
+extern cvar_t *r_vkPipelineCache;
 #ifdef _WIN32
 extern cvar_t *r_vkFullscreenExclusive;
 #endif
