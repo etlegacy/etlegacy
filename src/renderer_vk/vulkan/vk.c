@@ -372,6 +372,10 @@ typedef struct
 	qboolean fullscreenExclusiveExt;                       // VK_EXT_full_screen_exclusive enabled
 #endif
 	PFN_vkGetPhysicalDeviceMemoryProperties2 getMemoryProperties2;
+	VkPipelineCache pipelineCache;                         // VK_NULL_HANDLE with r_vkPipelineCache 0 (VK_CreatePipelineCache)
+	size_t pipelineCacheSavedSize;                         // driver data size read from or last written to the file
+	int pipelineCount;                                     // pipelines created since the renderer started
+	double pipelineMsec;                                   // and the time spent creating them
 	qboolean restartPending;                               // device or surface lost: no submits until the vid_restart (VK_RequestRestart)
 #ifdef VK_EXT_device_fault
 	PFN_vkGetDeviceFaultInfoEXT getDeviceFaultInfo;        // VK_EXT_device_fault, NULL when not supported (VK_LogDeviceFault)
@@ -855,6 +859,234 @@ static qboolean VK_CheckResult(VkResult result, const char *what)
 		return qfalse;
 	}
 	return qtrue;
+}
+
+static double VK_PresentClock(void);
+
+/**
+ * @brief Creates one graphics pipeline through the pipeline cache, counting
+ * the pipelines and the time their creation takes (logged at shutdown).
+ */
+static VkResult VK_CreateGraphicsPipeline(const VkGraphicsPipelineCreateInfo *info, VkPipeline *pipeline)
+{
+	double   start = VK_PresentClock();
+	VkResult result;
+
+	result           = vkCreateGraphicsPipelines(vk.device, vk.pipelineCache, 1, info, NULL, pipeline);
+	vk.pipelineMsec += VK_PresentClock() - start;
+	vk.pipelineCount++;
+	return result;
+}
+
+/**
+ * @brief VK_CreateGraphicsPipeline() for a compute pipeline.
+ */
+static VkResult VK_CreateComputePipeline(const VkComputePipelineCreateInfo *info, VkPipeline *pipeline)
+{
+	double   start = VK_PresentClock();
+	VkResult result;
+
+	result           = vkCreateComputePipelines(vk.device, vk.pipelineCache, 1, info, NULL, pipeline);
+	vk.pipelineMsec += VK_PresentClock() - start;
+	vk.pipelineCount++;
+	return result;
+}
+
+/*
+ * The pipeline cache file (r_vkPipelineCache): the driver's pipeline cache
+ * data behind a header of our own. The driver checks its own header too and
+ * ignores data from another GPU or driver version, but some drivers have
+ * crashed on damaged data, so the data only reaches the driver when our
+ * header, size and checksum match and it was made by this GPU and driver.
+ */
+#define VK_PIPELINE_CACHE_FILE     "vkpipelines.bin"
+#define VK_PIPELINE_CACHE_MAGIC    0x50434b56 // "VKCP"
+#define VK_PIPELINE_CACHE_VERSION  1
+#define VK_PIPELINE_CACHE_MAX_SIZE (128 * 1024 * 1024)
+
+typedef struct
+{
+	uint32_t magic;
+	uint32_t version;
+	uint32_t dataSize;                      // driver data after this header
+	uint32_t checksum;                      // VK_PipelineCacheChecksum() of the driver data
+	uint32_t vendorID;                      // VkPhysicalDeviceProperties of the GPU that made it
+	uint32_t deviceID;
+	uint32_t driverVersion;
+	uint8_t pipelineCacheUUID[VK_UUID_SIZE];
+} vkPipelineCacheFile_t;
+
+/**
+ * @brief FNV-1a hash of the cache data: finds damaged or truncated files (not
+ * a protection against crafted ones: the file is never read from a pk3).
+ */
+static uint32_t VK_PipelineCacheChecksum(const byte *data, size_t size)
+{
+	uint32_t hash = 2166136261u;
+
+	while (size--)
+	{
+		hash ^= *data++;
+		hash *= 16777619u;
+	}
+	return hash;
+}
+
+/**
+ * @brief Creates the pipeline cache that every pipeline creation goes through,
+ * filled from the cache file of an earlier run when it is valid for this GPU
+ * and driver. Without it each run compiles every pipeline again, the first
+ * time it is needed, in the middle of a frame (a hitch of 1-2 ms on desktop
+ * drivers, up to 100 ms on mobile ones).
+ */
+static void VK_CreatePipelineCache(void)
+{
+	VkPipelineCacheCreateInfo  info;
+	VkPhysicalDeviceProperties props;
+	void                       *file   = NULL;
+	const char                 *reason = NULL;
+	VkResult                   result;
+	int                        len;
+
+	vk.pipelineCache          = VK_NULL_HANDLE;
+	vk.pipelineCacheSavedSize = 0;
+	if (!r_vkPipelineCache->integer)
+	{
+		return;
+	}
+
+	vkGetPhysicalDeviceProperties(vk.physicalDevice, &props);
+	Com_Memset(&info, 0, sizeof(info));
+	info.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+
+	// only the file VK_SavePipelineCache() wrote, in the homepath
+	// (FS_FileExists() looks only there): data that goes to the driver must
+	// never come from a pk3, e.g. a server download
+	if (!ri.FS_FileExists(VK_PIPELINE_CACHE_FILE))
+	{
+		reason = NULL; // first run
+	}
+	else if (ri.FS_FileIsInPAK(VK_PIPELINE_CACHE_FILE, NULL) == 1)
+	{
+		reason = "also found in a pk3, ignored";
+	}
+	else if ((len = ri.FS_ReadFile(VK_PIPELINE_CACHE_FILE, &file)) > 0)
+	{
+		const vkPipelineCacheFile_t           *header = (const vkPipelineCacheFile_t *)file;
+		const byte                            *data   = (const byte *)file + sizeof(vkPipelineCacheFile_t);
+		const VkPipelineCacheHeaderVersionOne *driver = (const VkPipelineCacheHeaderVersionOne *)data;
+
+		if ((size_t)len < sizeof(vkPipelineCacheFile_t) || header->magic != VK_PIPELINE_CACHE_MAGIC ||
+		    header->version != VK_PIPELINE_CACHE_VERSION)
+		{
+			reason = "of an unknown format";
+		}
+		else if (header->dataSize != (size_t)len - sizeof(vkPipelineCacheFile_t) ||
+		         header->dataSize < sizeof(VkPipelineCacheHeaderVersionOne))
+		{
+			reason = "truncated";
+		}
+		else if (header->checksum != VK_PipelineCacheChecksum(data, header->dataSize))
+		{
+			reason = "damaged";
+		}
+		else if (header->vendorID != props.vendorID || header->deviceID != props.deviceID ||
+		         header->driverVersion != props.driverVersion ||
+		         memcmp(header->pipelineCacheUUID, props.pipelineCacheUUID, VK_UUID_SIZE) ||
+		         driver->headerSize < sizeof(VkPipelineCacheHeaderVersionOne) ||
+		         driver->headerVersion != VK_PIPELINE_CACHE_HEADER_VERSION_ONE ||
+		         driver->vendorID != props.vendorID || driver->deviceID != props.deviceID ||
+		         memcmp(driver->pipelineCacheUUID, props.pipelineCacheUUID, VK_UUID_SIZE))
+		{
+			reason = "from another GPU or driver version";
+		}
+		else
+		{
+			info.initialDataSize = header->dataSize;
+			info.pInitialData    = data;
+		}
+	}
+
+	result = vkCreatePipelineCache(vk.device, &info, NULL, &vk.pipelineCache);
+	if (result != VK_SUCCESS && info.pInitialData)
+	{
+		// the driver refused the data: start empty
+		reason               = "refused by the driver";
+		info.initialDataSize = 0;
+		info.pInitialData    = NULL;
+		result               = vkCreatePipelineCache(vk.device, &info, NULL, &vk.pipelineCache);
+	}
+
+	if (result != VK_SUCCESS)
+	{
+		vk.pipelineCache = VK_NULL_HANDLE;
+		Ren_Print("Vulkan: vkCreatePipelineCache failed (VkResult %d), pipelines are compiled on every run\n", (int)result);
+	}
+	else if (info.pInitialData)
+	{
+		vk.pipelineCacheSavedSize = info.initialDataSize;
+		Ren_Print("Vulkan: pipeline cache loaded (%u KB)\n", (unsigned)(info.initialDataSize >> 10));
+	}
+	else if (reason)
+	{
+		Ren_Print("Vulkan: pipeline cache file %s %s, starting empty\n", VK_PIPELINE_CACHE_FILE, reason);
+	}
+
+	if (file)
+	{
+		ri.FS_FreeFile(file);
+	}
+}
+
+/**
+ * @brief Writes the pipeline cache to its file when it grew since it was read
+ * or last written. Not after a lost device: the data may be incomplete.
+ */
+static void VK_SavePipelineCache(void)
+{
+	VkPhysicalDeviceProperties props;
+	vkPipelineCacheFile_t      *header;
+	byte                       *buffer;
+	size_t                     size = 0;
+
+	if (vk.pipelineCache == VK_NULL_HANDLE || vk.restartPending)
+	{
+		return;
+	}
+	if (vkGetPipelineCacheData(vk.device, vk.pipelineCache, &size, NULL) != VK_SUCCESS ||
+	    size <= vk.pipelineCacheSavedSize || size > VK_PIPELINE_CACHE_MAX_SIZE)
+	{
+		return;
+	}
+
+	buffer = malloc(sizeof(vkPipelineCacheFile_t) + size);
+	if (!buffer)
+	{
+		return;
+	}
+	if (vkGetPipelineCacheData(vk.device, vk.pipelineCache, &size, buffer + sizeof(vkPipelineCacheFile_t)) != VK_SUCCESS)
+	{
+		free(buffer);
+		return;
+	}
+
+	vkGetPhysicalDeviceProperties(vk.physicalDevice, &props);
+	header = (vkPipelineCacheFile_t *)buffer;
+	Com_Memset(header, 0, sizeof(*header));
+	header->magic         = VK_PIPELINE_CACHE_MAGIC;
+	header->version       = VK_PIPELINE_CACHE_VERSION;
+	header->dataSize      = (uint32_t)size;
+	header->checksum      = VK_PipelineCacheChecksum(buffer + sizeof(vkPipelineCacheFile_t), size);
+	header->vendorID      = props.vendorID;
+	header->deviceID      = props.deviceID;
+	header->driverVersion = props.driverVersion;
+	Com_Memcpy(header->pipelineCacheUUID, props.pipelineCacheUUID, VK_UUID_SIZE);
+
+	ri.FS_WriteFile(VK_PIPELINE_CACHE_FILE, buffer, (int)(sizeof(vkPipelineCacheFile_t) + size));
+	free(buffer);
+
+	vk.pipelineCacheSavedSize = size;
+	Ren_Developer("Vulkan: pipeline cache saved (%u KB)\n", (unsigned)(size >> 10));
 }
 
 // losses closer together than this count as one series: after more than
@@ -2551,7 +2783,7 @@ static qboolean VK_CreatePresentResources(void)
 	pipelineInfo.renderPass          = vk.presentRenderPass;
 	pipelineInfo.subpass             = 0;
 
-	if (!VK_CheckResult(vkCreateGraphicsPipelines(vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &vk.gammaPipeline), "vkCreateGraphicsPipelines(gamma)"))
+	if (!VK_CheckResult(VK_CreateGraphicsPipeline(&pipelineInfo, &vk.gammaPipeline), "vkCreateGraphicsPipelines(gamma)"))
 	{
 		return qfalse;
 	}
@@ -3450,7 +3682,7 @@ static VkPipeline VK_CreateUIPipelineVariant(unsigned long stateBits)
 	pipelineInfo.renderPass          = vk.renderPass;
 	pipelineInfo.subpass             = 0;
 
-	if (!VK_CheckResult(vkCreateGraphicsPipelines(vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &pipeline), "vkCreateGraphicsPipelines(ui)"))
+	if (!VK_CheckResult(VK_CreateGraphicsPipeline(&pipelineInfo, &pipeline), "vkCreateGraphicsPipelines(ui)"))
 	{
 		return VK_NULL_HANDLE;
 	}
@@ -4077,7 +4309,7 @@ static void VK_CreateCullPipeline(void)
 	pipelineInfo.stage.pName  = "main";
 	pipelineInfo.layout       = vk.cullPipelineLayout;
 
-	VK_CheckResult(vkCreateComputePipelines(vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &vk.cullPipeline), "vkCreateComputePipelines(cull)");
+	VK_CheckResult(VK_CreateComputePipeline(&pipelineInfo, &vk.cullPipeline), "vkCreateComputePipelines(cull)");
 	vkDestroyShaderModule(vk.device, module, NULL);
 
 	// merged world batches: gather pipeline (same layout), the per-draw
@@ -4093,7 +4325,7 @@ static void VK_CreateCullPipeline(void)
 		return;
 	}
 	pipelineInfo.stage.module = module;
-	VK_CheckResult(vkCreateComputePipelines(vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &vk.gatherPipeline), "vkCreateComputePipelines(gather)");
+	VK_CheckResult(VK_CreateComputePipeline(&pipelineInfo, &vk.gatherPipeline), "vkCreateComputePipelines(gather)");
 	vkDestroyShaderModule(vk.device, module, NULL);
 
 	{
@@ -5043,7 +5275,7 @@ static VkPipeline VK_CreateScenePipelineVariant(unsigned long stateBits, int cul
 	pipelineInfo.renderPass = vk.renderPass;
 	pipelineInfo.subpass    = 0;
 
-	if (!VK_CheckResult(vkCreateGraphicsPipelines(vk.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &pipeline), "vkCreateGraphicsPipelines(scene)"))
+	if (!VK_CheckResult(VK_CreateGraphicsPipeline(&pipelineInfo, &pipeline), "vkCreateGraphicsPipelines(scene)"))
 	{
 		return VK_NULL_HANDLE;
 	}
@@ -5810,6 +6042,9 @@ qboolean VK_Init(int width, int height)
 		return qfalse;
 	}
 
+	// before the first pipeline (the gamma pass's, in VK_ResizeSwapchain)
+	VK_CreatePipelineCache();
+
 	if (!VK_ResizeSwapchain(width, height))
 	{
 		return qfalse;
@@ -5907,6 +6142,9 @@ void VK_Shutdown(void)
 	{
 		vkDeviceWaitIdle(vk.device);
 		VK_FlushPendingFrees();
+
+		Ren_Developer("Vulkan: %d pipelines created in %.1f ms\n", vk.pipelineCount, vk.pipelineMsec);
+		VK_SavePipelineCache();
 
 		if (vk.captureBuffer != VK_NULL_HANDLE)
 		{
@@ -6297,6 +6535,11 @@ void VK_Shutdown(void)
 	if (vk.commandPool != VK_NULL_HANDLE)
 	{
 		vkDestroyCommandPool(vk.device, vk.commandPool, NULL);
+	}
+	if (vk.pipelineCache != VK_NULL_HANDLE)
+	{
+		vkDestroyPipelineCache(vk.device, vk.pipelineCache, NULL);
+		vk.pipelineCache = VK_NULL_HANDLE;
 	}
 	if (vk.device != VK_NULL_HANDLE)
 	{

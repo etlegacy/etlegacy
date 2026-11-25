@@ -106,6 +106,7 @@
 		X(vkCreateComputePipelines) \
 		X(vkCreateImage) \
 		X(vkCreateImageView) \
+		X(vkCreatePipelineCache) \
 		X(vkCreatePipelineLayout) \
 		X(vkCreateRenderPass) \
 		X(vkCreateSampler) \
@@ -122,6 +123,7 @@
 		X(vkDestroyImage) \
 		X(vkDestroyImageView) \
 		X(vkDestroyPipeline) \
+		X(vkDestroyPipelineCache) \
 		X(vkDestroyPipelineLayout) \
 		X(vkDestroyRenderPass) \
 		X(vkDestroySampler) \
@@ -136,6 +138,7 @@
 		X(vkGetBufferMemoryRequirements) \
 		X(vkGetDeviceQueue) \
 		X(vkGetImageMemoryRequirements) \
+		X(vkGetPipelineCacheData) \
 		X(vkGetSwapchainImagesKHR) \
 		X(vkInvalidateMappedMemoryRanges) \
 		X(vkMapMemory) \

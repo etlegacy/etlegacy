@@ -162,6 +162,7 @@ cvar_t *r_vkWorldBatch;
 cvar_t *r_vkModelBatch;
 cvar_t *r_vkGpuVertex;
 cvar_t *r_vkBindless;
+cvar_t *r_vkPipelineCache;
 #ifdef _WIN32
 cvar_t *r_vkFullscreenExclusive;
 #endif
@@ -365,6 +366,10 @@ void R_Register(void)
 	// (0 = one descriptor set per image as before; read at vid_restart)
 	r_vkBindless    = ri.Cvar_Get("r_vkBindless", "1", 0);
 	r_softParticles = ri.Cvar_Get("r_softParticles", "0", CVAR_ARCHIVE_ND);
+
+	// keep compiled pipelines between runs in vkpipelines.bin in the homepath
+	// (0 = no pipeline cache, every run compiles all pipelines; read at vid_restart)
+	r_vkPipelineCache = ri.Cvar_Get("r_vkPipelineCache", "1", 0);
 
 #ifdef _WIN32
 	// 0 = don't let the driver turn a fullscreen window into exclusive
