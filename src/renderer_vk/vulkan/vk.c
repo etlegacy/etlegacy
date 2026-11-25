@@ -35,6 +35,11 @@
  * frame loop and the 2D/3D draw submission used by the tr_*.c code.
  */
 
+#ifdef _WIN32
+// VK_EXT_full_screen_exclusive (Windows only) is declared in vulkan_win32.h,
+// which vulkan.h then includes, with windows.h
+#   define VK_USE_PLATFORM_WIN32_KHR
+#endif
 #include <vulkan/vulkan.h>
 #include <string.h>
 #include <stdlib.h>
@@ -362,6 +367,10 @@ typedef struct
 	const char *swapchainStaleReason;                      // why it went stale, for the rebuild's log line
 	int swapchainRebuilds;                                 // since the renderer started
 	qboolean memoryBudget;                                 // VK_EXT_memory_budget enabled (VK_MemoryBudgetString)
+#ifdef VK_EXT_full_screen_exclusive
+	qboolean surfaceCapabilities2;                         // instance has VK_KHR_get_surface_capabilities2
+	qboolean fullscreenExclusiveExt;                       // VK_EXT_full_screen_exclusive enabled
+#endif
 	PFN_vkGetPhysicalDeviceMemoryProperties2 getMemoryProperties2;
 	qboolean restartPending;                               // device or surface lost: no submits until the vid_restart (VK_RequestRestart)
 #ifdef VK_EXT_device_fault
@@ -1108,8 +1117,9 @@ static qboolean VK_CreateInstance(void)
 	{
 		return qfalse;
 	}
-	// Reserve one extra slot for VK_KHR_portability_enumeration.
-	if (extCount >= (sizeof(extNames) / sizeof(extNames[0])) - 1)
+	// Reserve extra slots for VK_KHR_portability_enumeration and (Windows)
+	// VK_KHR_get_surface_capabilities2.
+	if (extCount >= (sizeof(extNames) / sizeof(extNames[0])) - 2)
 	{
 		Ren_Print("Vulkan: too many required instance extensions (%u)\n", extCount);
 		return qfalse;
@@ -1127,6 +1137,15 @@ static qboolean VK_CreateInstance(void)
 	{
 		extNames[extCount++] = VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME;
 	}
+
+#ifdef VK_EXT_full_screen_exclusive
+	// needed by VK_EXT_full_screen_exclusive (VK_CreateLogicalDevice)
+	vk.surfaceCapabilities2 = VK_HasInstanceExtension(VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME);
+	if (vk.surfaceCapabilities2)
+	{
+		extNames[extCount++] = VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME;
+	}
+#endif
 
 	Com_Memset(&appInfo, 0, sizeof(appInfo));
 	appInfo.sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -1268,6 +1287,9 @@ static qboolean VK_CreateLogicalDevice(void)
 	VkExtensionProperties            *availableExt;
 	qboolean                         hasDeviceFault  = qfalse;
 	qboolean                         hasMemoryBudget = qfalse;
+#ifdef VK_EXT_full_screen_exclusive
+	qboolean hasFullscreenExclusive = qfalse;
+#endif
 #ifdef VK_EXT_device_fault
 	VkPhysicalDeviceFaultFeaturesEXT faultFeatures;
 #endif
@@ -1371,6 +1393,12 @@ static qboolean VK_CreateLogicalDevice(void)
 				else if (!strcmp(availableExt[i].extensionName, VK_EXT_MEMORY_BUDGET_EXTENSION_NAME))
 				{
 					hasMemoryBudget = qtrue;
+				}
+#endif
+#ifdef VK_EXT_full_screen_exclusive
+				else if (!strcmp(availableExt[i].extensionName, VK_EXT_FULL_SCREEN_EXCLUSIVE_EXTENSION_NAME))
+				{
+					hasFullscreenExclusive = qtrue;
 				}
 #endif
 			}
@@ -1488,6 +1516,21 @@ static qboolean VK_CreateLogicalDevice(void)
 	}
 #endif
 
+#ifdef VK_EXT_full_screen_exclusive
+	// Windows drivers turn a window covering the screen into exclusive
+	// fullscreen on their own; the swapchain can disallow that
+	// (r_vkFullscreenExclusive, VK_CreateSwapchainAndViews). The extension needs
+	// VK_KHR_get_surface_capabilities2 and Vulkan 1.1 (properties2) on the instance.
+	vk.fullscreenExclusiveExt = qfalse;
+	if (hasFullscreenExclusive && vk.surfaceCapabilities2 && vk.instanceVersion >= VK_API_VERSION_1_1)
+	{
+		deviceExtensions[deviceExtensionCount++] = VK_EXT_FULL_SCREEN_EXCLUSIVE_EXTENSION_NAME;
+		vk.fullscreenExclusiveExt                = qtrue;
+		Ren_Print("Vulkan: exclusive fullscreen %s (r_vkFullscreenExclusive %d)\n",
+		          r_vkFullscreenExclusive->integer ? "left to the driver" : "disallowed", r_vkFullscreenExclusive->integer);
+	}
+#endif
+
 	createInfo.pQueueCreateInfos       = queueCreateInfos;
 	createInfo.queueCreateInfoCount    = queueCreateInfoCount;
 	createInfo.pEnabledFeatures        = &deviceFeatures;
@@ -1589,12 +1632,15 @@ static VkResult VK_CreateSwapchainAndViews(int width, int height, VkSwapchainKHR
 	VkSurfaceCapabilitiesKHR caps;
 	VkSurfaceFormatKHR       formats[32];
 	uint32_t                 formatCount = 32;
-	VkPresentModeKHR         presentMode = VK_PRESENT_MODE_FIFO_KHR; // vsynced, always supported
+	VkPresentModeKHR         presentMode = VK_PRESENT_MODE_FIFO_KHR;    // vsynced, always supported
 	VkExtent2D               extent;
 	VkSwapchainCreateInfoKHR createInfo;
 	uint32_t                 i;
 	uint32_t                 queueFamilyIndices[2];
 	VkResult                 result;
+#ifdef VK_EXT_full_screen_exclusive
+	VkSurfaceFullScreenExclusiveInfoEXT fullscreenExclusive;
+#endif
 
 	vk.swapchain = VK_NULL_HANDLE;
 
@@ -1721,6 +1767,18 @@ static VkResult VK_CreateSwapchainAndViews(int width, int height, VkSwapchainKHR
 	createInfo.presentMode    = presentMode;
 	createInfo.clipped        = VK_TRUE;
 	createInfo.oldSwapchain   = oldSwapchain;
+
+#ifdef VK_EXT_full_screen_exclusive
+	// no exclusive fullscreen: an alt-tab is then an ordinary focus change,
+	// without the driver handing the display back and forth
+	if (vk.fullscreenExclusiveExt && !r_vkFullscreenExclusive->integer)
+	{
+		Com_Memset(&fullscreenExclusive, 0, sizeof(fullscreenExclusive));
+		fullscreenExclusive.sType               = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
+		fullscreenExclusive.fullScreenExclusive = VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT;
+		createInfo.pNext                        = &fullscreenExclusive;
+	}
+#endif
 
 	result = vkCreateSwapchainKHR(vk.device, &createInfo, NULL, &vk.swapchain);
 	if (result != VK_SUCCESS)
@@ -5518,6 +5576,10 @@ void VK_GfxInfo(void)
 	VK_MemoryBudgetString(mem, sizeof(mem));
 	Ren_Print("swapchain rebuilds: %d\n", vk.swapchainRebuilds);
 	Ren_Print("video memory: %s\n", mem[0] ? mem : "unknown (no VK_EXT_memory_budget)");
+#ifdef VK_EXT_full_screen_exclusive
+	Ren_Print("exclusive fullscreen: %s\n", !vk.fullscreenExclusiveExt ? "driver's choice (no VK_EXT_full_screen_exclusive)" :
+	          r_vkFullscreenExclusive->integer ? "driver's choice (r_vkFullscreenExclusive 1)" : "disallowed (r_vkFullscreenExclusive 0)");
+#endif
 }
 
 /**

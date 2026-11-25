@@ -162,6 +162,9 @@ cvar_t *r_vkWorldBatch;
 cvar_t *r_vkModelBatch;
 cvar_t *r_vkGpuVertex;
 cvar_t *r_vkBindless;
+#ifdef _WIN32
+cvar_t *r_vkFullscreenExclusive;
+#endif
 cvar_t *r_softParticles;
 
 /**
@@ -362,6 +365,14 @@ void R_Register(void)
 	// (0 = one descriptor set per image as before; read at vid_restart)
 	r_vkBindless    = ri.Cvar_Get("r_vkBindless", "1", 0);
 	r_softParticles = ri.Cvar_Get("r_softParticles", "0", CVAR_ARCHIVE_ND);
+
+#ifdef _WIN32
+	// 0 = don't let the driver turn a fullscreen window into exclusive
+	// fullscreen (its handover on every alt-tab is a suspected cause of black
+	// screens and driver resets), 1 = leave it to the driver
+	// (VK_EXT_full_screen_exclusive; read at vid_restart)
+	r_vkFullscreenExclusive = ri.Cvar_Get("r_vkFullscreenExclusive", "0", CVAR_ARCHIVE_ND | CVAR_LATCH);
+#endif
 
 	// make sure all the commands added here are also
 	// removed in R_Shutdown
