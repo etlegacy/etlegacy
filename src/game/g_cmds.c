@@ -3823,17 +3823,16 @@ static void G_VoteCast(gentity_t *ent, voteInfo_t *vote, qboolean yes)
 		return;
 	}
 
+	// the caller's 'no' cancels the vote, also in a poll, where the caller hasn't voted
+	if (vote->voteCaller == (ent - g_entities) && !yes)
+	{
+		vote->voteCanceled = 1;
+		return;
+	}
+
 	if (voted)
 	{
-		if (vote->voteCaller == (ent - g_entities) && !yes)
-		{
-			vote->voteCanceled = 1;
-		}
-		else
-		{
-			trap_SendServerCommand(ent - g_entities, "print \"Vote already cast.\n\"");
-		}
-
+		trap_SendServerCommand(ent - g_entities, "print \"Vote already cast.\n\"");
 		return;
 	}
 

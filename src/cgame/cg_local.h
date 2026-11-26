@@ -2556,10 +2556,10 @@ typedef struct cgs_s
 	int voteTime;
 	int voteYes;
 	int voteNo;
-	qboolean voteFakeVoted;                         ///< fakevote: pretend the player has voted
+	qboolean voteFakeVoted;                         ///< fakevote (debug builds): pretend the player has voted
 	int voteAnswerTime;                             ///< when the player last answered the vote
 	qboolean voteAnswerYes;                         ///< the answer given at voteAnswerTime
-	qboolean voteFake;                              ///< local test vote: never expires, not from the server
+	qboolean voteFake;                              ///< fakevote (debug builds only, else always qfalse): local test vote, never expires
 	qboolean voteModified;                          ///< beep whenever changed
 	char voteString[MAX_STRING_TOKENS];
 
@@ -4408,6 +4408,7 @@ void CG_DrawFireTeamOverlay(hudComponent_t *comp);
 void CG_DrawPM(hudComponent_t *comp);
 void CG_DrawVote(hudComponent_t *comp);
 int CG_PopupFocus(int *kind);
+qboolean CG_VoteCanAnswer(int kind);
 void CG_PromptAdd(int id, int kind, int from, int from2, int msLeft);
 void CG_PromptClose(int id, int answer);
 void CG_PromptClearAll(void);

@@ -2737,12 +2737,13 @@ static void CG_GetVoteView(int which, voteView_t *v)
 		return;
 	}
 
+	// a fake vote is a layout test: votable also for a spectator
 	v->time       = cgs.voteTime;
 	v->id         = cgs.voteId;
 	v->yes        = cgs.voteYes;
 	v->no         = cgs.voteNo;
 	v->voted      = (cg.snap->ps.eFlags & EF_VOTED) != 0 || (cgs.voteFake && cgs.voteFakeVoted);
-	v->canVote    = cgs.clientinfo[cg.clientNum].team == TEAM_AXIS || cgs.clientinfo[cg.clientNum].team == TEAM_ALLIES;
+	v->canVote    = cgs.voteFake || cgs.clientinfo[cg.clientNum].team == TEAM_AXIS || cgs.clientinfo[cg.clientNum].team == TEAM_ALLIES;
 	v->answerTime = cgs.voteAnswerTime;
 	v->answerYes  = cgs.voteAnswerYes;
 	v->string     = cgs.voteString;
@@ -3053,6 +3054,26 @@ int CG_PopupFocus(int *kind)
 	}
 
 	return 0;
+}
+
+/**
+ * @brief CG_VoteCanAnswer tells whether the player's answer to the vote popup of this kind
+ * (POPUP_VOTE / POPUP_TEAMVOTE, from CG_PopupFocus()) can count: the player may vote and hasn't
+ * yet. Prompts are always answerable. Only then the popup shows the answer.
+ * @param[in] kind
+ * @return
+ */
+qboolean CG_VoteCanAnswer(int kind)
+{
+	voteView_t v;
+
+	if (kind != POPUP_VOTE && kind != POPUP_TEAMVOTE)
+	{
+		return qtrue;
+	}
+
+	CG_GetVoteView(kind == POPUP_TEAMVOTE ? VOTE_TEAM : VOTE_ALL, &v);
+	return v.canVote && !v.voted;
 }
 
 /**

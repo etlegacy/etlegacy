@@ -394,10 +394,13 @@ void CG_ScoresUp_f(void)
 	}
 }
 
+#ifdef ETLEGACY_DEBUG
 /**
  * @brief CG_FakeVote_f starts a local vote popup that runs like a real vote (slides in, counts down, shows the result
  * and slides out when it times out or is ended), for testing the layout.
  * Usage: fakevote [text] [yes] [no] [voted] - without arguments or with 'off' it ends the vote early.
+ * The arguments are positional: [yes] and [no] are the starting counts, [voted] 1 starts it as
+ * if the player had voted already (the compact panel, F1/F2 ignored).
  * While it runs, 'vote yes' / 'vote no' (and their keys) answer it locally like a normal vote.
  */
 static void CG_FakeVote_f(void)
@@ -418,6 +421,7 @@ static void CG_FakeVote_f(void)
 	cgs.voteFakeVoted = trap_Argc() > 4 && Q_atoi(CG_Argv(4));
 	cgs.voteModified  = qtrue;
 }
+#endif
 
 /**
  * @brief CG_Fade_f
@@ -3542,7 +3546,9 @@ static consoleCommand_t commands[] =
 	{ "weapon",                 CG_Weapon_f                  },
 	{ "weaponbank",             CG_WeaponBank_f              },
 	{ "fade",                   CG_Fade_f                    },
+#ifdef ETLEGACY_DEBUG
 	{ "fakevote",               CG_FakeVote_f                },
+#endif
 
 	{ "mp_QuickMessage",        CG_QuickMessage_f            },
 	{ "mp_fireteammsg",         CG_QuickFireteams_f          },
@@ -3922,13 +3928,15 @@ qboolean CG_ConsoleCommand(void)
 			return qtrue;
 		}
 
-		// remember the answer so the vote popup can highlight it before it shrinks
-		if (kind == POPUP_VOTE)
+		// remember the answer so the vote popup can highlight it before it shrinks; not for a
+		// vote the player has voted in or can't vote in (the server ignores such an answer,
+		// except the caller's 'no', which cancels the vote)
+		if (kind == POPUP_VOTE && CG_VoteCanAnswer(kind))
 		{
 			cgs.voteAnswerTime = cg.time;
 			cgs.voteAnswerYes  = yes;
 		}
-		else if (kind == POPUP_TEAMVOTE)
+		else if (kind == POPUP_TEAMVOTE && CG_VoteCanAnswer(kind))
 		{
 			cgs.teamVoteAnswerTime = cg.time;
 			cgs.teamVoteAnswerYes  = yes;
@@ -3942,6 +3950,7 @@ qboolean CG_ConsoleCommand(void)
 		}
 	}
 
+#ifdef ETLEGACY_DEBUG
 	// a fake vote takes the player's answer locally instead of sending it to the server
 	if (cgs.voteFake && cgs.voteTime && !cgs.voteFakeVoted && !Q_stricmp(cmd, "vote") && trap_Argc() > 1)
 	{
@@ -3959,6 +3968,7 @@ qboolean CG_ConsoleCommand(void)
 			return qtrue;
 		}
 	}
+#endif
 
 	for (i = 0; i < sizeof(commands) / sizeof(commands[0]); i++)
 	{
