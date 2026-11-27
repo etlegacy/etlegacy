@@ -5133,6 +5133,32 @@ void FS_CalcModHashes(void)
 	modHashes.currentMod = Com_BlockChecksum(tmp, strlen(tmp));
 }
 
+#if defined(__APPLE__) && !defined(DEDICATED)
+/**
+ * @brief Offers to set up the original game data in fs_homepath's etmain and
+ * restarts the file system with it. The macOS package has no installer that
+ * does this, unlike the Windows and Linux ones.
+ * @return qtrue if pak0.pk3 is found afterwards
+ */
+static qboolean FS_SetupGameData(void)
+{
+	char etmain[MAX_OSPATH];
+
+	Com_sprintf(etmain, sizeof(etmain), "%s%c%s", fs_homepath->string, PATH_SEP, BASEGAME);
+
+	if (!Sys_SetupGameData(etmain))
+	{
+		return qfalse;
+	}
+
+	FS_Shutdown(qfalse);
+	FS_ClearPakReferences(0);
+	FS_Startup(BASEGAME);
+
+	return FS_FOpenFileRead("pak0.pk3", NULL, qfalse) ? qtrue : qfalse;
+}
+#endif
+
 /**
  * @brief If we can't find pak0.pk3, assume that the paths are busted
  * and error out now, rather than getting an unreadable graphics screen.
@@ -5161,6 +5187,13 @@ static void FS_CheckRequiredFiles(int checksumFeed)
 			Com_Error(ERR_DROP, "Invalid game folder");
 			return;
 		}
+
+#if defined(__APPLE__) && !defined(DEDICATED)
+		if (FS_SetupGameData())
+		{
+			return;
+		}
+#endif
 
 		Com_Error(ERR_FATAL, "FS_InitFilesystem: Original game data files not found.\n\nPlease copy pak0.pk3 from the 'etmain' path of your Wolfenstein: Enemy Territory installation to:\n\n\"%s%c%s\"\n\n",
 		          Cvar_VariableString("fs_basepath"), PATH_SEP, BASEGAME);
