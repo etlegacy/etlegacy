@@ -408,18 +408,6 @@ void CG_NewClientInfo(int clientNum)
 	{
 		int i;
 
-		if (newInfo.team != cgs.clientinfo[cg.clientNum].team)
-		{
-			if (cgs.autoFireteamCreateEndTime != cg.time + 20000)
-			{
-				cgs.autoFireteamCreateEndTime = 0;
-			}
-			if (cgs.autoFireteamJoinEndTime != cg.time + 20000)
-			{
-				cgs.autoFireteamJoinEndTime = 0;
-			}
-		}
-
 #ifdef FEATURE_EDV
 		if (newInfo.rank > cgs.clientinfo[cg.clientNum].rank && !cgs.demoCamera.renderingFreeCam && !cgs.demoCamera.renderingWeaponCam)
 #else

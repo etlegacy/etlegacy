@@ -810,6 +810,20 @@ typedef struct
 	int autofireteamEndTime;
 	int autofireteamCreateEndTime;
 	int autofireteamJoinEndTime;
+	// the fields above (complaint..., application..., invitation..., proposition..., autofireteam...)
+	// show the newest pending prompt of each kind for Lua scripts, see G_PromptUpdateLegacy();
+	// the prompts themselves are the lists below
+
+	// pending yes/no prompts, one entry per slot (parallel arrays, so Lua can read them by index)
+	int promptKind[MAX_PENDING_PROMPTS];    ///< popupKind_t, POPUP_ANY = free slot
+	int promptId[MAX_PENDING_PROMPTS];      ///< sent with the prompt and returned with the answer
+	int promptFrom[MAX_PENDING_PROMPTS];    ///< the client the prompt is about (team-killer, applicant, inviter, proposed player), -1 if none
+	int promptFrom2[MAX_PENDING_PROMPTS];   ///< proposition: the player who proposed, else -1
+	int promptEndTime[MAX_PENDING_PROMPTS]; ///< level.time the prompt expires
+	int promptSeq[MAX_PENDING_PROMPTS];     ///< order the prompts were sent in: the oldest is on screen
+	int promptShown[MAX_PENDING_PROMPTS];   ///< on screen: its timer runs (the prompts behind it wait)
+
+	int teamVoteVoted;                      ///< id of the team vote this client voted in
 
 	playerStats_t playerStats;
 
@@ -1134,6 +1148,8 @@ typedef struct voteInfo_s
 {
 	char voteString[MAX_STRING_CHARS];
 	int voteTime;                       ///< level.time vote was called
+	int voteId;                         ///< popup id of the vote, see G_NextPopupId()
+	char voteDesc[VOTE_MAXSTRING];      ///< the text shown to the players
 	int voteYes;
 	int voteNo;
 	int numVotingClients;               ///< set by CalculateRanks
@@ -1247,6 +1263,9 @@ typedef struct level_locals_s
 
 	// voting
 	voteInfo_t voteInfo;
+	voteInfo_t teamVoteInfo[2];                 ///< the team votes of Axis and Allies, running next to voteInfo
+	int popupSeq;                               ///< last popup id handed out
+	int promptSeq;                              ///< counts the prompts sent, for their order
 	int numTeamClients[2];
 	int numVotingTeamClients[2];
 
@@ -1464,6 +1483,25 @@ void G_ParseField(const char *key, const char *value, gentity_t *ent);
 // g_cmds.c
 void Cmd_Score_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value);
+
+// g_popup.c
+int G_NextPopupId(void);
+int G_PromptAdd(int clientNum, popupKind_t kind, int from, int from2, int endTime);
+int G_PromptFindId(gclient_t *cl, int id);
+int G_PromptFront(gclient_t *cl);
+void G_PromptClear(int clientNum, int slot, int answer, qboolean notify);
+void G_PromptAnswered(int clientNum, int slot, qboolean yes);
+void G_PromptRemoveKinds(int clientNum, int kindMask);
+void G_PromptRemoveAbout(int clientNum, int kindMask);
+void G_PromptJoinedFireteam(int clientNum, int leaderNum);
+void G_PromptUpdateLegacy(gclient_t *cl);
+void G_PromptSyncLegacy(gclient_t *cl);
+void G_PromptRunFrame(void);
+voteInfo_t *G_TeamVote(team_t team);
+void G_TeamVoteSendTo(int clientNum);
+void G_TeamVoteBroadcast(team_t team);
+void G_VoteCancelForCaller(int clientNum, const char *reason);
+void G_VoteExecute(voteInfo_t *vote);
 void Cmd_Ignore_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_UnIgnore_f(gentity_t *ent, unsigned int dwCommand, int value);
 void Cmd_SelectedObjective_f(gentity_t *ent, unsigned int dwCommand, int value);

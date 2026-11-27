@@ -1596,6 +1596,9 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 
 	G_LeaveTank(ent, qfalse);
 	G_RemoveClientFromFireteams(clientNum, qtrue, qfalse);
+	// the fireteam prompts of the old team are void: the player's own and those about the player
+	G_PromptRemoveKinds(clientNum, POPUP_MASK_FIRETEAM);
+	G_PromptRemoveAbout(clientNum, POPUP_MASK(POPUP_APPLICATION) | POPUP_MASK(POPUP_INVITATION) | POPUP_MASK(POPUP_PROPOSITION));
 	if (g_landminetimeout.integer)
 	{
 		G_ExplodeMines(ent);
@@ -1703,9 +1706,6 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 		}
 	}
 
-	ent->client->pers.autofireteamCreateEndTime = 0;
-	ent->client->pers.autofireteamJoinEndTime   = 0;
-
 	if (client->sess.sessionTeam == TEAM_AXIS || client->sess.sessionTeam == TEAM_ALLIES)
 	{
 		switch (g_autoFireteams.integer)
@@ -1716,13 +1716,11 @@ qboolean SetTeam(gentity_t *ent, const char *s, qboolean force, weapon_t w1, wea
 
 			if (ft)
 			{
-				trap_SendServerCommand(ent - g_entities, "aftj -1");
-				ent->client->pers.autofireteamJoinEndTime = level.time + 20500;
+				G_PromptAdd(ent - g_entities, POPUP_AFTJ, -1, -1, 0);
 			}
 			else
 			{
-				trap_SendServerCommand(ent - g_entities, "aftc -1");
-				ent->client->pers.autofireteamCreateEndTime = level.time + 20500;
+				G_PromptAdd(ent - g_entities, POPUP_AFTC, -1, -1, 0);
 			}
 			break;
 		}
@@ -3319,7 +3317,59 @@ void Cmd_Where_f(gentity_t *ent, unsigned int dwCommand, int value)
 }
 
 /**
- * @brief Cmd_CallVote_f
+ * @brief G_VoteIsTeamVote
+ * @param[in] fn the vote function
+ * @param[in] value its argument, see voteInfo_t::vote_value
+ * @return qtrue for the votes only the caller's team decides: a surrender and kicking a
+ * player on a team (only teammates can call or vote on that)
+ */
+static qboolean G_VoteIsTeamVote(int (*fn)(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd), const char *value)
+{
+	if (fn == G_Surrender_v)
+	{
+		return qtrue;
+	}
+
+	if (fn == G_Kick_v)
+	{
+		int pid = Q_atoi(value);
+
+		return pid >= 0 && pid < level.maxclients &&
+		       (level.clients[pid].sess.sessionTeam == TEAM_AXIS || level.clients[pid].sess.sessionTeam == TEAM_ALLIES);
+	}
+
+	return qfalse;
+}
+
+/**
+ * @brief G_TeamVoteSound plays the vote sound to the players of a team
+ * @param[in] team
+ */
+static void G_TeamVoteSound(team_t team)
+{
+	int i;
+
+	for (i = 0; i < level.numConnectedClients; i++)
+	{
+		int       clientNum = level.sortedClients[i];
+		gentity_t *tent;
+
+		if (level.clients[clientNum].sess.sessionTeam != team)
+		{
+			continue;
+		}
+
+		tent                 = G_TempEntityNotLinked(EV_GLOBAL_CLIENT_SOUND);
+		tent->s.eventParm    = GAMESOUND_MISC_VOTE;
+		tent->s.teamNum      = clientNum;
+		tent->r.singleClient = clientNum;
+		tent->r.svFlags      = SVF_SINGLECLIENT | SVF_BROADCAST;
+	}
+}
+
+/**
+ * @brief Cmd_CallVote_f calls a vote. A surrender and kicking a teammate become a team vote,
+ * which runs next to the vote of all players (one per team).
  * @param[in,out] ent
  * @param dwCommand - unused
  * @param[in] fRefCommand
@@ -3327,22 +3377,27 @@ void Cmd_Where_f(gentity_t *ent, unsigned int dwCommand, int value)
  */
 qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 {
-	int  i;
-	char arg1[MAX_STRING_TOKENS];
-	char arg2[MAX_STRING_TOKENS];
-	char voteDesc[VOTE_MAXSTRING];
-	char *voteStringFormat;
+	int        i;
+	char       arg1[MAX_STRING_TOKENS];
+	char       arg2[MAX_STRING_TOKENS];
+	char       *voteStringFormat;
+	voteInfo_t running;
+	voteInfo_t *vote     = &level.voteInfo;
+	voteInfo_t *teamVote = NULL;
+	team_t     voteTeam  = TEAM_FREE;
 
 	// Normal checks, if its not being issued as a referee command
 	if (!fRefCommand)
 	{
+		teamVote = G_TeamVote(ent->client->sess.sessionTeam);
+
 		// added mute check
 		if (ent->client->sess.muted)
 		{
 			CP("cp \"You cannot call a vote while muted.\"");
 			return qfalse;
 		}
-		else if (level.voteInfo.voteTime)
+		else if (level.voteInfo.voteTime && (!teamVote || teamVote->voteTime))
 		{
 			CP("cp \"A vote is already in progress.\"");
 			return qfalse;
@@ -3396,10 +3451,17 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 		return qfalse;
 	}
 
+	// the vote functions set up level.voteInfo while they check the vote: keep a running vote
+	Com_Memcpy(&running, &level.voteInfo, sizeof(running));
+
 	if (trap_Argc() > 1 && (i = G_voteCmdCheck(ent, arg1, arg2, fRefCommand)) != G_NOTFOUND)
 	{
 		if (i != G_OK) // only G_OK continues, G_INVALID & other are dropped here
 		{
+			if (!fRefCommand)
+			{
+				Com_Memcpy(&level.voteInfo, &running, sizeof(running));
+			}
 			// no output here
 			return qfalse;                  // Command error
 		}
@@ -3408,17 +3470,46 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 	{
 		if (!fRefCommand)
 		{
+			Com_Memcpy(&level.voteInfo, &running, sizeof(running));
 			CP(va("print \"^3>>> Unknown vote command: ^7%s %s\n\"", arg1, arg2));
 			G_voteHelp(ent, qtrue);
 		}
 		return qfalse;
 	}
 
-	level.voteInfo.votePassed   = 0;
-	level.voteInfo.voteCanceled = 0;
+	if (!fRefCommand)
+	{
+		int  (*fn)(gentity_t *ent, unsigned int dwVoteIndex, char *arg, char *arg2, qboolean fRefereeCmd) = level.voteInfo.vote_fn;
+		char value[VOTE_MAXSTRING];
+
+		Q_strncpyz(value, level.voteInfo.vote_value, sizeof(value));
+		Com_Memcpy(&level.voteInfo, &running, sizeof(running));
+
+		if (teamVote && G_VoteIsTeamVote(fn, value))
+		{
+			if (teamVote->voteTime)
+			{
+				CP("cp \"A team vote is already in progress.\"");
+				return qfalse;
+			}
+			vote     = teamVote;
+			voteTeam = ent->client->sess.sessionTeam;
+		}
+		else if (level.voteInfo.voteTime)
+		{
+			CP("cp \"A vote is already in progress.\"");
+			return qfalse;
+		}
+
+		vote->vote_fn = fn;
+		Q_strncpyz(vote->vote_value, value, sizeof(vote->vote_value));
+	}
+
+	vote->votePassed   = 0;
+	vote->voteCanceled = 0;
 
 	voteStringFormat = arg2[0] ? "%s %s" : "%s";
-	Com_sprintf(level.voteInfo.voteString, sizeof(level.voteInfo.voteString), voteStringFormat, arg1, arg2);
+	Com_sprintf(vote->voteString, sizeof(vote->voteString), voteStringFormat, arg1, arg2);
 
 	// start the voting, the caller automatically votes yes
 	// If a referee, vote automatically passes.
@@ -3427,81 +3518,102 @@ qboolean Cmd_CallVote_f(gentity_t *ent, unsigned int dwCommand, int fRefCommand)
 		// Don't announce some votes, as in comp mode, it is generally a ref
 		// who is policing people who shouldn't be joining and players don't want
 		// this sort of spam in the console
-		if (level.voteInfo.vote_fn != G_Kick_v && level.voteInfo.vote_fn != G_Mute_v)
+		if (vote->vote_fn != G_Kick_v && vote->vote_fn != G_Mute_v)
 		{
 			AP("cp \"^1** Referee Server Setting Change **\n\"");
 		}
 
 		// just call the stupid thing.... don't bother with the voting faff
-		level.voteInfo.vote_fn(NULL, 0, NULL, NULL, qfalse);
+		vote->vote_fn(NULL, 0, NULL, NULL, qfalse);
 
 		G_globalSoundEnum(GAMESOUND_MISC_REFEREE);
 	}
 	else
 	{
 		// do not automatically vote yes in polls
-		if (level.voteInfo.vote_fn != G_Poll_v)
+		if (vote->vote_fn != G_Poll_v)
 		{
-			level.voteInfo.voteYes = 1;
+			vote->voteYes = 1;
 		}
 		else
 		{
-			level.voteInfo.voteYes = 0;
+			vote->voteYes = 0;
 		}
-		AP(va("print \"[lof]%s^7 [lon]called a vote.[lof] Voting for: %s\n\"", ent->client->pers.netname, level.voteInfo.voteString));
 
-		G_LogPrintf("callvote: %i %s\n", (int)(ent - g_entities), level.voteInfo.voteString);
+		G_LogPrintf("callvote: %i %s\n", (int)(ent - g_entities), vote->voteString);
 
-		level.voteInfo.voteCaller = ent->s.number;
-		level.voteInfo.voteTeam   = ent->client->sess.sessionTeam;
-		AP(va("cp \"[lof]%s\n^7[lon]called a vote.\n\"", ent->client->pers.netname));
-		G_globalSoundEnum(GAMESOUND_MISC_VOTE);
+		vote->voteCaller = ent->s.number;
+		vote->voteTeam   = ent->client->sess.sessionTeam;
+
+		if (voteTeam != TEAM_FREE)
+		{
+			G_TeamCommand(voteTeam, va("print \"[lof]%s^7 [lon]called a team vote.[lof] Voting for: %s\n\"", ent->client->pers.netname, vote->voteString));
+			G_TeamCommand(voteTeam, va("cp \"[lof]%s\n^7[lon]called a team vote.\n\"", ent->client->pers.netname));
+			G_TeamVoteSound(voteTeam);
+		}
+		else
+		{
+			AP(va("print \"[lof]%s^7 [lon]called a vote.[lof] Voting for: %s\n\"", ent->client->pers.netname, vote->voteString));
+			AP(va("cp \"[lof]%s\n^7[lon]called a vote.\n\"", ent->client->pers.netname));
+			G_globalSoundEnum(GAMESOUND_MISC_VOTE);
+		}
 	}
 
 	// for stopwatch games, shorter vote timeout when map time is going to end
 	// (e.g. surrendering a match in stopwatch)
 	if (g_gametype.integer == GT_WOLF_STOPWATCH && g_gamestate.integer == GS_WARMUP_COUNTDOWN && (level.warmupTime - level.time) < VOTE_TIME)
 	{
-		level.voteInfo.voteTime = level.warmupTime - VOTE_TIME;
+		vote->voteTime = level.warmupTime - VOTE_TIME;
 	}
 	else if (g_gamestate.integer == GS_PLAYING && g_timelimit.value != 0.f && (level.startTime + level.timeDelta + (g_timelimit.value * 60000) - level.time < VOTE_TIME))
 	{
 		// timeDelta is the total match pause time, level.time keeps running during a pause
-		level.voteInfo.voteTime = level.startTime + level.timeDelta + (g_timelimit.value * 60000) - VOTE_TIME;
+		vote->voteTime = level.startTime + level.timeDelta + (g_timelimit.value * 60000) - VOTE_TIME;
 	}
 	else
 	{
-		level.voteInfo.voteTime = level.time;
+		vote->voteTime = level.time;
 	}
-	level.voteInfo.voteNo = 0;
+	vote->voteNo = 0;
 
 	// Don't send the vote info if a ref initiates (as it will automatically pass)
 	if (!fRefCommand)
 	{
-		for (i = 0; i < level.numConnectedClients; i++)
-		{
-			level.clients[level.sortedClients[i]].ps.eFlags &= ~EF_VOTED;
-		}
-
 		ent->client->pers.voteCount++;
 
-		// allow to vote...
-		if (level.voteInfo.vote_fn != G_Poll_v)
-		{
-			ent->client->ps.eFlags |= EF_VOTED;
-		}
-
-		trap_SetConfigstring(CS_VOTE_YES, va("%i", level.voteInfo.voteYes));
-		trap_SetConfigstring(CS_VOTE_NO, va("%i", level.voteInfo.voteNo));
-		Q_strncpyz(voteDesc, level.voteInfo.voteString, sizeof(voteDesc));
+		Q_strncpyz(vote->voteDesc, vote->voteString, sizeof(vote->voteDesc));
 		if ((g_voting.integer & VOTEF_DISP_CALLER))
 		{
-			Q_strcat(voteDesc, sizeof(voteDesc), " (called by ");
-			Q_strcat(voteDesc, sizeof(voteDesc), ent->client->pers.netname);
-			Q_strcat(voteDesc, sizeof(voteDesc), ")");
+			Q_strcat(vote->voteDesc, sizeof(vote->voteDesc), " (called by ");
+			Q_strcat(vote->voteDesc, sizeof(vote->voteDesc), ent->client->pers.netname);
+			Q_strcat(vote->voteDesc, sizeof(vote->voteDesc), ")");
 		}
-		trap_SetConfigstring(CS_VOTE_STRING, voteDesc);
-		trap_SetConfigstring(CS_VOTE_TIME, va("%i", level.voteInfo.voteTime));
+		vote->voteId = G_NextPopupId();
+
+		if (voteTeam != TEAM_FREE)
+		{
+			// the caller has voted yes, except in a poll
+			ent->client->pers.teamVoteVoted = (vote->vote_fn != G_Poll_v) ? vote->voteId : 0;
+			G_TeamVoteBroadcast(voteTeam);
+		}
+		else
+		{
+			for (i = 0; i < level.numConnectedClients; i++)
+			{
+				level.clients[level.sortedClients[i]].ps.eFlags &= ~EF_VOTED;
+			}
+
+			// allow to vote...
+			if (vote->vote_fn != G_Poll_v)
+			{
+				ent->client->ps.eFlags |= EF_VOTED;
+			}
+
+			trap_SetConfigstring(CS_VOTE_YES, va("%i", vote->voteYes));
+			trap_SetConfigstring(CS_VOTE_NO, va("%i", vote->voteNo));
+			trap_SetConfigstring(CS_VOTE_STRING, vote->voteDesc);
+			trap_SetConfigstring(CS_VOTE_TIME, va("%i %i", vote->voteTime, vote->voteId));
+		}
 	}
 
 	return qtrue;
@@ -3541,289 +3653,186 @@ qboolean G_FindFreeComplainIP(gclient_t *cl, ipFilter_t *ip)
 }
 
 /**
- * @brief Cmd_Vote_f
+ * @brief G_PromptAnswer answers a pending prompt of a client
  * @param[in,out] ent
- * @param dwCommand - unused
- * @param value    - unused
+ * @param[in] slot
+ * @param[in] yes
  */
-void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
+static void G_PromptAnswer(gentity_t *ent, int slot, qboolean yes)
 {
-	char msg[64];
+	int       clientNum = ent - g_entities;
+	gclient_t *self     = ent->client;
+	int       kind      = self->pers.promptKind[slot];
+	int       from      = self->pers.promptFrom[slot];
+	int       from2     = self->pers.promptFrom2[slot];
+	gclient_t *other    = (from >= 0 && from < level.maxclients) ? g_entities[from].client : NULL;
 
-	// Complaints supercede voting (and share command)
-	if (ent->client->pers.complaintEndTime > level.time && g_gamestate.integer == GS_PLAYING && g_complaintlimit.integer)
+	// the prompt goes first: an answer can change the list (joining a fireteam withdraws the
+	// other invitations), and the client shows the answer on it
+	G_PromptAnswered(clientNum, slot, yes);
+
+	switch (kind)
 	{
-		gentity_t *other = &g_entities[ent->client->pers.complaintClient];
-		gclient_t *cl    = other->client;
-
-		if (!cl)
+	case POPUP_COMPLAINT:
+		if (g_gamestate.integer != GS_PLAYING || !g_complaintlimit.integer || !other || other->pers.connected != CON_CONNECTED)
 		{
 			return;
 		}
-		if (cl->pers.connected != CON_CONNECTED)
+
+		if (other->pers.localClient)
 		{
-			return;
-		}
-		if (cl->pers.localClient)
-		{
-			trap_SendServerCommand(ent - g_entities, "complaint -3");
+			trap_SendServerCommand(clientNum, "complaint -3");
 			return;
 		}
 
-		trap_Argv(1, msg, sizeof(msg));
-
-		if (tolower(msg[0]) == 'y' || msg[0] == '1')
+		if (yes)
 		{
 			int num;
 
 			// Increase their complaint counter
-			cl->pers.complaints++;
+			other->pers.complaints++;
 
-			num = g_complaintlimit.integer - cl->pers.complaints;
+			num = g_complaintlimit.integer - other->pers.complaints;
 
-			if (!cl->pers.localClient)
+			if (!other->pers.localClient)
 			{
-				const char *value = level.clients[ent - g_entities].pers.client_ip;
-
+				const char *value = level.clients[clientNum].pers.client_ip;
 				ipFilter_t ip;
 
 				StringToFilter(value, &ip);
 
-				if (num <= 0 || !G_FindFreeComplainIP(cl, &ip))
+				if (num <= 0 || !G_FindFreeComplainIP(other, &ip))
 				{
-					trap_DropClient(cl - level.clients, "kicked after too many complaints.", cl->sess.referee ? 0 : 300);
-					trap_SendServerCommand(ent - g_entities, "complaint -1");
+					trap_DropClient(other - level.clients, "kicked after too many complaints.", other->sess.referee ? 0 : 300);
 					return;
 				}
 			}
 
-			trap_SendServerCommand(ent->client->pers.complaintClient, va("cpm \"^1Warning^7: Complaint filed against you by %s^7. You have lost XP.\n\"", ent->client->pers.netname));    // ^*
-			trap_SendServerCommand(ent - g_entities, "complaint -1");
+			trap_SendServerCommand(from, va("cpm \"^1Warning^7: Complaint filed against you by %s^7. You have lost XP.\n\"", self->pers.netname));    // ^*
 
-			G_LoseKillSkillPoints(other, ent);
+			G_LoseKillSkillPoints(&g_entities[from], ent);
 		}
 		else
 		{
-			trap_SendServerCommand(ent->client->pers.complaintClient, "cpm \"No complaint filed against you.\n\"");
-			trap_SendServerCommand(ent - g_entities, "complaint -2");
+			trap_SendServerCommand(from, "cpm \"No complaint filed against you.\n\"");
 		}
-
-		// Reset this ent's complainEndTime so they can't send multiple complaints
-		ent->client->pers.complaintEndTime = -1;
-		ent->client->pers.complaintClient  = -1;
-
 		return;
-	}
 
-	if (ent->client->pers.applicationEndTime > level.time)
-	{
-		gclient_t *cl = g_entities[ent->client->pers.applicationClient].client;
-
-		if (!cl)
-		{
-			return;
-		}
-		if (cl->pers.connected != CON_CONNECTED)
+	case POPUP_APPLICATION:
+		if (!other || other->pers.connected != CON_CONNECTED)
 		{
 			return;
 		}
 
-		trap_Argv(1, msg, sizeof(msg));
-
-		if (tolower(msg[0]) == 'y' || msg[0] == '1')
+		if (yes)
 		{
-			trap_SendServerCommand(ent - g_entities, "application -4");
-			trap_SendServerCommand(ent->client->pers.applicationClient, "application -3");
-
-			G_AddClientToFireteam(ent->client->pers.applicationClient, ent - g_entities);
+			trap_SendServerCommand(from, "application -3");
+			G_AddClientToFireteam(from, clientNum);
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "application -4");
-			trap_SendServerCommand(ent->client->pers.applicationClient, "application -2");
+			trap_SendServerCommand(from, "application -2");
 		}
-
-		ent->client->pers.applicationEndTime = 0;
-		ent->client->pers.applicationClient  = -1;
-
 		return;
-	}
 
-	ent->client->pers.applicationEndTime = 0;
-	ent->client->pers.applicationClient  = -1;
-
-	if (ent->client->pers.invitationEndTime > level.time)
-	{
-		gclient_t *cl = g_entities[ent->client->pers.invitationClient].client;
-
-		if (!cl)
-		{
-			return;
-		}
-		if (cl->pers.connected != CON_CONNECTED)
+	case POPUP_INVITATION:
+		if (!other || other->pers.connected != CON_CONNECTED)
 		{
 			return;
 		}
 
-		trap_Argv(1, msg, sizeof(msg));
-
-		if (tolower(msg[0]) == 'y' || msg[0] == '1')
+		if (yes)
 		{
-			trap_SendServerCommand(ent - g_entities, "invitation -4");
-			trap_SendServerCommand(ent->client->pers.invitationClient, "invitation -3");
-
-			G_AddClientToFireteam(ent - g_entities, ent->client->pers.invitationClient);
+			trap_SendServerCommand(from, "invitation -3");
+			G_AddClientToFireteam(clientNum, from);
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "invitation -4");
-			trap_SendServerCommand(ent->client->pers.invitationClient, "invitation -2");
+			trap_SendServerCommand(from, "invitation -2");
 		}
-
-		ent->client->pers.invitationEndTime = 0;
-		ent->client->pers.invitationClient  = -1;
-
 		return;
-	}
 
-	ent->client->pers.invitationEndTime = 0;
-	ent->client->pers.invitationClient  = -1;
-
-	if (ent->client->pers.propositionEndTime > level.time)
-	{
-		gclient_t *cl = g_entities[ent->client->pers.propositionClient].client;
-
-		if (!cl)
-		{
-			return;
-		}
-		if (cl->pers.connected != CON_CONNECTED)
+	case POPUP_PROPOSITION:
+		if (!other || other->pers.connected != CON_CONNECTED)
 		{
 			return;
 		}
 
-		trap_Argv(1, msg, sizeof(msg));
-
-		if (tolower(msg[0]) == 'y' || msg[0] == '1')
+		if (yes)
 		{
-			trap_SendServerCommand(ent - g_entities, "proposition -4");
-			trap_SendServerCommand(ent->client->pers.propositionClient2, "proposition -3");
-
-			G_InviteToFireTeam(ent - g_entities, ent->client->pers.propositionClient);
+			trap_SendServerCommand(from2, "proposition -3");
+			G_InviteToFireTeam(clientNum, from);
 		}
 		else
 		{
-			trap_SendServerCommand(ent - g_entities, "proposition -4");
-			trap_SendServerCommand(ent->client->pers.propositionClient2, "proposition -2");
+			trap_SendServerCommand(from2, "proposition -2");
 		}
-
-		ent->client->pers.propositionEndTime = 0;
-		ent->client->pers.propositionClient  = -1;
-		ent->client->pers.propositionClient2 = -1;
-
 		return;
-	}
 
-	if (ent->client->pers.autofireteamEndTime > level.time)
-	{
-		fireteamData_t *ft;
-
-		trap_Argv(1, msg, sizeof(msg));
-
-		if (tolower(msg[0]) == 'y' || msg[0] == '1')
+	case POPUP_AFT:
+		if (yes)
 		{
-			trap_SendServerCommand(ent - g_entities, "aft -2");
+			fireteamData_t *ft;
 
-			if (G_IsFireteamLeader(ent - g_entities, &ft))
+			if (G_IsFireteamLeader(clientNum, &ft))
 			{
 				ft->priv = qtrue;
 				G_UpdateFireteamConfigString(ft);
 			}
 		}
-		else
-		{
-			trap_SendServerCommand(ent - g_entities, "aft -2");
-		}
-
-		ent->client->pers.autofireteamEndTime = 0;
-
 		return;
-	}
 
-	if (ent->client->pers.autofireteamCreateEndTime > level.time)
-	{
-		trap_Argv(1, msg, sizeof(msg));
-
-		if (tolower(msg[0]) == 'y' || msg[0] == '1')
+	case POPUP_AFTC:
+		if (yes)
 		{
-			trap_SendServerCommand(ent - g_entities, "aftc -2");
-
-			G_RegisterFireteam(ent - g_entities);
+			G_RegisterFireteam(clientNum);
 		}
-		else
-		{
-			trap_SendServerCommand(ent - g_entities, "aftc -2");
-		}
-
-		ent->client->pers.autofireteamCreateEndTime = 0;
-
 		return;
-	}
 
-	if (ent->client->pers.autofireteamJoinEndTime > level.time)
-	{
-		trap_Argv(1, msg, sizeof(msg));
-
-		if (tolower(msg[0]) == 'y' || msg[0] == '1')
+	case POPUP_AFTJ:
+		if (yes)
 		{
-			fireteamData_t *ft;
+			fireteamData_t *ft = G_FindFreePublicFireteam(self->sess.sessionTeam);
 
-			trap_SendServerCommand(ent - g_entities, "aftj -2");
-
-
-			ft = G_FindFreePublicFireteam(ent->client->sess.sessionTeam);
 			if (ft)
 			{
-				G_AddClientToFireteam(ent - g_entities, ft->joinOrder[0]);
+				G_AddClientToFireteam(clientNum, ft->joinOrder[0]);
 			}
 		}
-		else
-		{
-			trap_SendServerCommand(ent - g_entities, "aftj -2");
-		}
+		return;
 
-		ent->client->pers.autofireteamCreateEndTime = 0;
-
+	default:
 		return;
 	}
+}
 
-	ent->client->pers.propositionEndTime = 0;
-	ent->client->pers.propositionClient  = -1;
-	ent->client->pers.propositionClient2 = -1;
+/**
+ * @brief G_VoteCast casts a client's vote in the vote of all players or its team's vote
+ * @param[in,out] ent
+ * @param[in,out] vote level.voteInfo or a team vote
+ * @param[in] yes
+ */
+static void G_VoteCast(gentity_t *ent, voteInfo_t *vote, qboolean yes)
+{
+	qboolean isTeamVote = vote != &level.voteInfo;
+	qboolean voted      = isTeamVote ? ent->client->pers.teamVoteVoted == vote->voteId : (ent->client->ps.eFlags & EF_VOTED) != 0;
 
-	// Reset this ent's complainEndTime so they can't send multiple complaints
-	ent->client->pers.complaintEndTime = -1;
-	ent->client->pers.complaintClient  = -1;
-
-	if (!level.voteInfo.voteTime)
+	if (!vote->voteTime)
 	{
 		trap_SendServerCommand(ent - g_entities, "print \"No vote in progress.\n\"");
 		return;
 	}
 
-	trap_Argv(1, msg, sizeof(msg));
-
-	if (ent->client->ps.eFlags & EF_VOTED)
+	// the caller's 'no' cancels the vote, also in a poll, where the caller hasn't voted
+	if (vote->voteCaller == (ent - g_entities) && !yes)
 	{
-		if (level.voteInfo.voteCaller == (ent - g_entities) && (tolower(msg[0]) == 'n' || msg[0] == '0'))
-		{
-			level.voteInfo.voteCanceled = 1;
-		}
-		else
-		{
-			trap_SendServerCommand(ent - g_entities, "print \"Vote already cast.\n\"");
-		}
+		vote->voteCanceled = 1;
+		return;
+	}
 
+	if (voted)
+	{
+		trap_SendServerCommand(ent - g_entities, "print \"Vote already cast.\n\"");
 		return;
 	}
 
@@ -3839,9 +3848,15 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 		return;
 	}
 
-	if (level.voteInfo.vote_fn == G_Kick_v)
+	if (isTeamVote && ent->client->sess.sessionTeam != vote->voteTeam)
 	{
-		int pid = Q_atoi(level.voteInfo.vote_value);
+		trap_SendServerCommand(ent - g_entities, "print \"You cannot vote on the other team's vote.\n\"");
+		return;
+	}
+
+	if (vote->vote_fn == G_Kick_v)
+	{
+		int pid = Q_atoi(vote->vote_value);
 
 		if (!g_entities[pid].client)
 		{
@@ -3854,9 +3869,9 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 			return;
 		}
 	}
-	else if (level.voteInfo.vote_fn == G_Surrender_v)
+	else if (vote->vote_fn == G_Surrender_v)
 	{
-		if (ent->client->sess.sessionTeam != level.voteInfo.voteTeam)
+		if (ent->client->sess.sessionTeam != vote->voteTeam)
 		{
 			CP("cp \"You cannot vote on the other team's surrender.\"");
 			return;
@@ -3865,20 +3880,100 @@ void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
 
 	trap_SendServerCommand(ent - g_entities, "print \"Vote cast.\n\"");
 
-	ent->client->ps.eFlags |= EF_VOTED;
-
-	if (tolower(msg[0]) == 'y' || msg[0] == '1')
+	if (yes)
 	{
-		level.voteInfo.voteYes++;
-		trap_SetConfigstring(CS_VOTE_YES, va("%i", level.voteInfo.voteYes));
+		vote->voteYes++;
 	}
 	else
 	{
-		level.voteInfo.voteNo++;
-		trap_SetConfigstring(CS_VOTE_NO, va("%i", level.voteInfo.voteNo));
+		vote->voteNo++;
+	}
+
+	if (isTeamVote)
+	{
+		ent->client->pers.teamVoteVoted = vote->voteId;
+		G_TeamVoteBroadcast((team_t)vote->voteTeam);
+	}
+	else
+	{
+		ent->client->ps.eFlags |= EF_VOTED;
+		trap_SetConfigstring(yes ? CS_VOTE_YES : CS_VOTE_NO, va("%i", yes ? vote->voteYes : vote->voteNo));
 	}
 	// a majority will be determined in G_CheckVote,
 	// which will also account for players entering or leaving
+}
+
+/**
+ * @brief Cmd_Vote_f answers a popup: 'vote yes|no <id>' the prompt or vote with that id (an
+ * answer to one that is gone is ignored). Without an id the answer goes to the popup the
+ * client shows first: the oldest pending prompt (the one counting down), then the team vote,
+ * then the vote of all players (a vote the player has voted in comes after one it hasn't).
+ * @param[in,out] ent
+ * @param dwCommand - unused
+ * @param value    - unused
+ */
+void Cmd_Vote_f(gentity_t *ent, unsigned int dwCommand, int value)
+{
+	char       msg[64];
+	gclient_t  *cl       = ent->client;
+	voteInfo_t *teamVote = G_TeamVote(cl->sess.sessionTeam);
+	qboolean   yes;
+	int        slot;
+
+	trap_Argv(1, msg, sizeof(msg));
+	yes = tolower(msg[0]) == 'y' || msg[0] == '1';
+
+	if (teamVote && !teamVote->voteTime)
+	{
+		teamVote = NULL;
+	}
+
+	if (trap_Argc() > 2)
+	{
+		int id;
+
+		trap_Argv(2, msg, sizeof(msg));
+		id = Q_atoi(msg);
+
+		if (id > 0)
+		{
+			slot = G_PromptFindId(cl, id);
+			if (slot >= 0)
+			{
+				G_PromptAnswer(ent, slot, yes);
+			}
+			else if (teamVote && teamVote->voteId == id)
+			{
+				G_VoteCast(ent, teamVote, yes);
+			}
+			else if (level.voteInfo.voteTime && level.voteInfo.voteId == id)
+			{
+				G_VoteCast(ent, &level.voteInfo, yes);
+			}
+			// else: the popup is gone, the answer was meant for it and nothing else
+
+			return;
+		}
+	}
+
+	slot = G_PromptFront(cl);
+	if (slot >= 0)
+	{
+		G_PromptAnswer(ent, slot, yes);
+	}
+	else if (teamVote && cl->pers.teamVoteVoted != teamVote->voteId)
+	{
+		G_VoteCast(ent, teamVote, yes);
+	}
+	else if (level.voteInfo.voteTime && !(cl->ps.eFlags & EF_VOTED))
+	{
+		G_VoteCast(ent, &level.voteInfo, yes);
+	}
+	else
+	{
+		// both voted (or no vote): 'already cast', or the caller's 'no' cancels
+		G_VoteCast(ent, teamVote ? teamVote : &level.voteInfo, yes);
+	}
 }
 
 /**

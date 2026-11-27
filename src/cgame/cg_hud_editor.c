@@ -127,8 +127,23 @@ float    HUDEditorWidth;
 float    HUDEditorCenterX;
 qboolean wsAdjusted = qfalse;
 
-static panel_button_t  *lastFocusComponent;
-static qboolean        lastFocusComponentMoved;
+static panel_button_t *lastFocusComponent;
+static qboolean       lastFocusComponentMoved;
+
+static ID_INLINE float CG_HudEditor_GetGridScale(void);
+
+// resizing the selected component by dragging an edge or a corner
+#define RESIZE_LEFT   1
+#define RESIZE_RIGHT  2
+#define RESIZE_TOP    4
+#define RESIZE_BOTTOM 8
+#define RESIZE_GRAB   4.f ///< how close to an edge the cursor must be to grab it
+#define RESIZE_MIN    2.f ///< smallest width / height
+#define RESIZE_HANDLE 4.f ///< size of the handles drawn on the selected component
+
+static int             resizeEdges; ///< RESIZE_* edges being dragged, 0 = none
+static float           resizeStartX, resizeStartY;
+static rectDef_t       resizeStartRect;
 static int             elementColorSelection;
 static panel_button_t  *lastButtonTabSelected;
 static panel_button_t  *lastButtonColorSelected;
@@ -3255,6 +3270,206 @@ static void CG_HudEditorUpdateFields(panel_button_t *button)
 }
 
 /**
+* @brief CG_HudEditor_ResizeEdgesAt
+* @param[in] r component location
+* @param[in] cx cursor
+* @param[in] cy cursor
+* @return the RESIZE_* edges the cursor is on, 0 if none
+*/
+static int CG_HudEditor_ResizeEdgesAt(const rectDef_t *r, float cx, float cy)
+{
+	// inside a small component the grab zone shrinks, so the middle still moves it
+	float inX   = MIN(RESIZE_GRAB, r->w * .25f);
+	float inY   = MIN(RESIZE_GRAB, r->h * .25f);
+	int   edges = 0;
+
+	if (cx < r->x - RESIZE_GRAB || cx > r->x + r->w + RESIZE_GRAB || cy < r->y - RESIZE_GRAB || cy > r->y + r->h + RESIZE_GRAB)
+	{
+		return 0;
+	}
+
+	if (cx <= r->x + inX)
+	{
+		edges |= RESIZE_LEFT;
+	}
+	else if (cx >= r->x + r->w - inX)
+	{
+		edges |= RESIZE_RIGHT;
+	}
+
+	if (cy <= r->y + inY)
+	{
+		edges |= RESIZE_TOP;
+	}
+	else if (cy >= r->y + r->h - inY)
+	{
+		edges |= RESIZE_BOTTOM;
+	}
+
+	return edges;
+}
+
+/**
+* @brief CG_HudEditor_DrawResizeHandles draws the handles on the corners and edges of the selected
+* component, the one under the cursor highlighted
+* @param[in] r
+*/
+static void CG_HudEditor_DrawResizeHandles(const rectDef_t *r)
+{
+	static const int handles[8] =
+	{
+		RESIZE_LEFT | RESIZE_TOP,    RESIZE_TOP,    RESIZE_RIGHT | RESIZE_TOP,
+		RESIZE_LEFT,                 RESIZE_RIGHT,
+		RESIZE_LEFT | RESIZE_BOTTOM, RESIZE_BOTTOM, RESIZE_RIGHT | RESIZE_BOTTOM,
+	};
+	int hover = resizeEdges ? resizeEdges : CG_HudEditor_ResizeEdgesAt(r, cgs.cursorX, cgs.cursorY);
+	int i;
+
+	for (i = 0; i < 8; i++)
+	{
+		int   e  = handles[i];
+		float hx = (e & RESIZE_LEFT) ? r->x : ((e & RESIZE_RIGHT) ? r->x + r->w : r->x + r->w * .5f);
+		float hy = (e & RESIZE_TOP) ? r->y : ((e & RESIZE_BOTTOM) ? r->y + r->h : r->y + r->h * .5f);
+
+		CG_FillRect(hx - RESIZE_HANDLE * .5f - 1, hy - RESIZE_HANDLE * .5f - 1, RESIZE_HANDLE + 2, RESIZE_HANDLE + 2, colorBlack);
+		CG_FillRect(hx - RESIZE_HANDLE * .5f, hy - RESIZE_HANDLE * .5f, RESIZE_HANDLE, RESIZE_HANDLE, e == hover ? colorWhite : colorYellow);
+	}
+}
+
+/**
+* @brief CG_HudEditor_ResizeStart starts dragging an edge or corner of the selected component
+* when the cursor is on one
+* @return qtrue if it started
+*/
+static qboolean CG_HudEditor_ResizeStart(void)
+{
+	hudComponent_t *comp;
+	int            edges;
+
+	if (!lastFocusComponent)
+	{
+		return qfalse;
+	}
+
+	comp  = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
+	edges = CG_HudEditor_ResizeEdgesAt(&comp->location, cgs.cursorX, cgs.cursorY);
+	if (!edges)
+	{
+		return qfalse;
+	}
+
+	// don't modify default HUD, so clone it and modify the copy
+	if (!hudData.active->isEditable)
+	{
+		if (!CG_HudSave(hudData.active->hudnumber, -1))
+		{
+			return qfalse;
+		}
+		comp = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
+	}
+
+	resizeEdges     = edges;
+	resizeStartX    = cgs.cursorX;
+	resizeStartY    = cgs.cursorY;
+	resizeStartRect = comp->location;
+	return qtrue;
+}
+
+/**
+* @brief CG_HudEditor_ResizeMove resizes the selected component to the cursor
+* @param[in] x
+* @param[in] y
+*/
+static void CG_HudEditor_ResizeMove(float x, float y)
+{
+	hudComponent_t  *comp    = (hudComponent_t *)((byte *)hudData.active + hudComponentFields[lastFocusComponent->data[0]].offset);
+	const rectDef_t *r       = &resizeStartRect;
+	qboolean        grid     = forceGridAlignment && (showGrid || showMicroGrid);
+	float           multiple = CG_HudEditor_GetGridScale();
+	float           stepX    = SCREEN_WIDTH_SAFE * (multiple / (1 / multiple));
+	float           stepY    = SCREEN_HEIGHT_SAFE * (multiple / (1 / multiple));
+	float           edge;
+
+	if (resizeEdges & RESIZE_LEFT)
+	{
+		edge = r->x + x - resizeStartX;
+		edge = grid ? Q_ClosestMultipleFloat(edge, stepX, 3) : edge;
+		edge = MIN(edge, r->x + r->w - RESIZE_MIN);
+
+		comp->location.x = edge;
+		comp->location.w = r->x + r->w - edge;
+	}
+	else if (resizeEdges & RESIZE_RIGHT)
+	{
+		edge = r->x + r->w + x - resizeStartX;
+		edge = grid ? Q_ClosestMultipleFloat(edge, stepX, 3) : edge;
+
+		comp->location.w = MAX(edge - r->x, RESIZE_MIN);
+	}
+
+	if (resizeEdges & RESIZE_TOP)
+	{
+		edge = r->y + y - resizeStartY;
+		edge = grid ? Q_ClosestMultipleFloat(edge, stepY, 3) : edge;
+		edge = MIN(edge, r->y + r->h - RESIZE_MIN);
+
+		comp->location.y = edge;
+		comp->location.h = r->y + r->h - edge;
+	}
+	else if (resizeEdges & RESIZE_BOTTOM)
+	{
+		edge = r->y + r->h + y - resizeStartY;
+		edge = grid ? Q_ClosestMultipleFloat(edge, stepY, 3) : edge;
+
+		comp->location.h = MAX(edge - r->y, RESIZE_MIN);
+	}
+
+	// shift keeps the width / height ratio: a corner follows the side that changed more, an edge
+	// resizes the other side around its middle
+	if ((trap_Key_IsDown(K_LSHIFT) || trap_Key_IsDown(K_RSHIFT)) && r->w > 0.f && r->h > 0.f)
+	{
+		int   horiz = resizeEdges & (RESIZE_LEFT | RESIZE_RIGHT);
+		int   vert  = resizeEdges & (RESIZE_TOP | RESIZE_BOTTOM);
+		float sw    = comp->location.w / r->w;
+		float sh    = comp->location.h / r->h;
+		float scale = (horiz && vert) ? MAX(sw, sh) : (horiz ? sw : sh);
+
+		scale            = MAX(scale, RESIZE_MIN / MIN(r->w, r->h));
+		comp->location.w = r->w * scale;
+		comp->location.h = r->h * scale;
+
+		if (resizeEdges & RESIZE_LEFT)
+		{
+			comp->location.x = r->x + r->w - comp->location.w;
+		}
+		else if (resizeEdges & RESIZE_RIGHT)
+		{
+			comp->location.x = r->x;
+		}
+		else
+		{
+			comp->location.x = r->x + (r->w - comp->location.w) * .5f;
+		}
+
+		if (resizeEdges & RESIZE_TOP)
+		{
+			comp->location.y = r->y + r->h - comp->location.h;
+		}
+		else if (resizeEdges & RESIZE_BOTTOM)
+		{
+			comp->location.y = r->y;
+		}
+		else
+		{
+			comp->location.y = r->y + (r->h - comp->location.h) * .5f;
+		}
+	}
+
+	CG_HudEditor_SetModified();
+	CG_HudEditorUpdateFields(lastFocusComponent);
+}
+
+/**
 * @brief CG_HudEditor_Render draw borders for hud elements
 * @param[in] button
 */
@@ -3293,6 +3508,11 @@ static void CG_HudEditor_Render(panel_button_t *button)
 	}
 
 	CG_DrawRect_FixedBorder(button->rect.x - 1, button->rect.y - 1, button->rect.w + 2, button->rect.h + 2, 2, *color);
+
+	if (button == lastFocusComponent)
+	{
+		CG_HudEditor_DrawResizeHandles(&button->rect);
+	}
 }
 
 /**
@@ -3659,6 +3879,7 @@ void CG_HudEditorSetup(void)
 
 	// clear last selected button
 	lastFocusComponent = NULL;
+	resizeEdges        = 0;
 
 	// set button default selection
 	lastButtonTabSelected   = &hudEditorColorButton;
@@ -3895,6 +4116,10 @@ static void CG_HudEditor_HelpDraw(void)
 	{
 		static const helpType_t help[] =
 		{
+			{ "MOUSE1 drag",         "move a comp"                            },
+			{ "MOUSE1 drag handle",  "resize the selected comp"               },
+			{ "+ K_SHIFT",           "keep the width / height ratio"          },
+			{ NULL,                  NULL                                     },
 			{ "K_DOWN",              "move down by 1px"                       },
 			{ "K_LEFT",              "move left by 1px"                       },
 			{ "K_UP",                "move down by 1px"                       },
@@ -4330,6 +4555,20 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 		return;
 	}
 
+	// drag an edge or a corner of the selected component to resize it
+	if (key == K_MOUSE1)
+	{
+		if (down && !resizeEdges && CG_HudEditor_ResizeStart())
+		{
+			return;
+		}
+		if (!down && resizeEdges)
+		{
+			resizeEdges = 0;
+			return;
+		}
+	}
+
 	// left mouse up
 	if (key == K_MOUSE1 && !down)
 	{
@@ -4346,6 +4585,7 @@ void CG_HudEditor_KeyHandling(int key, qboolean down)
 	if (key == K_MOUSE2)
 	{
 		lastFocusComponent    = NULL;
+		resizeEdges           = 0;
 		lastButtonTabSelected = &hudEditorColorButton;
 		BG_PanelButtons_SetFocusButton(NULL);
 		return;
@@ -4571,6 +4811,15 @@ void CG_HudEditorMouseMove_Handling(int x, int y)
 
 	if (!cg.editingHud || hudEditorExitConfirm)
 	{
+		return;
+	}
+
+	if (resizeEdges)
+	{
+		if (button)
+		{
+			CG_HudEditor_ResizeMove(x, y);
+		}
 		return;
 	}
 

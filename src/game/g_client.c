@@ -2717,8 +2717,9 @@ void ClientBegin(int clientNum)
 	client->ps.persistant[PERS_SPAWN_COUNT]   = spawn_count;
 	client->ps.persistant[PERS_RESPAWNS_LEFT] = lives_left;
 
-	client->pers.complaintClient      = -1;
-	client->pers.complaintEndTime     = -1;
+	G_PromptRemoveKinds(clientNum, POPUP_MASK(POPUP_COMPLAINT));
+	// the vote of the (new) team, or none
+	G_TeamVoteSendTo(clientNum);
 	client->pers.lastkilled_client    = -1;
 	client->pers.lastammo_client      = -1;
 	client->pers.lasthealth_client    = -1;
@@ -3492,15 +3493,7 @@ void ClientSpawn(gentity_t *ent, qboolean revived, qboolean teamChange, qboolean
 
 	if (teamChange)
 	{
-		if (level.voteInfo.voteTime && level.voteInfo.voteCaller == index)
-		{
-			AP(va("cpm \"^1Vote CANCELED! Caller switched team\n\""));
-			G_LogPrintf("Vote canceled: %s (caller %s switched team)\n",
-			            level.voteInfo.voteString, ent->client->pers.netname);
-			level.voteInfo.voteTime     = 0;
-			level.voteInfo.voteCanceled = 1;
-			trap_SetConfigstring(CS_VOTE_TIME, ""); // so the counter goes away
-		}
+		G_VoteCancelForCaller(index, "switched team");
 	}
 }
 
@@ -3586,19 +3579,8 @@ void ClientDisconnect(int clientNum)
 		}
 	}
 
-	// remove complaint client
-	for (i = 0 ; i < level.numConnectedClients ; i++)
-	{
-		flag = g_entities + level.sortedClients[i];
-		if (flag->client->pers.complaintEndTime > level.time && flag->client->pers.complaintClient == clientNum)
-		{
-			flag->client->pers.complaintClient  = -1;
-			flag->client->pers.complaintEndTime = -1;
-
-			CPx(level.sortedClients[i], "complaint -2");
-			break;
-		}
-	}
+	// remove the prompts about this client (complaints, fireteam requests)
+	G_PromptRemoveAbout(clientNum, ~0);
 
 	if (g_landminetimeout.integer)
 	{
@@ -3696,15 +3678,7 @@ void ClientDisconnect(int clientNum)
 
 	CalculateRanks();
 
-	if (level.voteInfo.voteTime && level.voteInfo.voteCaller == clientNum)
-	{
-		AP(va("cpm \"^1Vote CANCELED! Caller disconnected\n\""));
-		G_LogPrintf("Vote canceled: %s (caller %s disconnected)\n",
-		            level.voteInfo.voteString, ent->client->pers.netname);
-		level.voteInfo.voteTime     = 0;
-		level.voteInfo.voteCanceled = 1;
-		trap_SetConfigstring(CS_VOTE_TIME, ""); // so the counter goes away
-	}
+	G_VoteCancelForCaller(clientNum, "disconnected");
 
 	G_verifyMatchState((team_t)i);
 #ifdef FEATURE_MULTIVIEW

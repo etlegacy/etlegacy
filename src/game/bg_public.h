@@ -69,6 +69,34 @@
 
 #define VOTE_TIME           30000  ///< 30 seconds before vote times out
 
+#define MAX_PENDING_PROMPTS 8      ///< yes/no prompts a client can have pending at the same time
+#define PROMPT_TIME         20500  ///< how long a prompt waits for the answer on the server
+#define PROMPT_CLIENT_MARGIN 500   ///< prompts end this much earlier on the client, so a late answer still arrives in time
+
+/**
+ * @enum popupKind_t
+ * @brief The prompts and votes a client answers with 'vote yes|no <id>'
+ */
+typedef enum
+{
+	POPUP_ANY,              ///< no popup / a free prompt slot
+	POPUP_COMPLAINT,        ///< file a complaint against a team-killer
+	POPUP_APPLICATION,      ///< to a fireteam leader: accept an application
+	POPUP_INVITATION,       ///< accept an invitation to a fireteam
+	POPUP_PROPOSITION,      ///< to a fireteam leader: invite the proposed player
+	POPUP_AFT,              ///< make the new fireteam private
+	POPUP_AFTC,             ///< create a fireteam
+	POPUP_AFTJ,             ///< join a fireteam
+	POPUP_VOTE,             ///< the vote of all players
+	POPUP_TEAMVOTE,         ///< the vote of the player's team
+
+	POPUP_NUM
+} popupKind_t;
+
+#define POPUP_MASK(kind) (1 << (kind))
+/// the prompts about fireteams, void when the player changes team or joins a fireteam
+#define POPUP_MASK_FIRETEAM (POPUP_MASK(POPUP_APPLICATION) | POPUP_MASK(POPUP_INVITATION) | POPUP_MASK(POPUP_PROPOSITION) | POPUP_MASK(POPUP_AFT) | POPUP_MASK(POPUP_AFTC) | POPUP_MASK(POPUP_AFTJ))
+
 #define DEFAULT_VIEWHEIGHT  40
 #define CROUCH_VIEWHEIGHT   16
 #define DEAD_VIEWHEIGHT     -16

@@ -387,6 +387,18 @@ void CG_ParseModInfo(void)
 }
 
 /**
+ * @brief CG_ParseVoteTime reads the vote start time and the popup id of the vote from CS_VOTE_TIME ("<time> <id>")
+ * @param[in] str
+ */
+static void CG_ParseVoteTime(const char *str)
+{
+	const char *space = strchr(str, ' ');
+
+	cgs.voteTime = Q_atoi(str);
+	cgs.voteId   = space ? Q_atoi(space + 1) : 0;
+}
+
+/**
  * @brief CG_ParseWarmup
  */
 static void CG_ParseWarmup(void)
@@ -842,9 +854,9 @@ void CG_SetConfigValues(void)
 	// you have nothing to use if another 'Match Reset' vote is called
 	// (no update will be sent because the string will be the same.)
 
-	cgs.voteTime = Q_atoi(CG_ConfigString(CS_VOTE_TIME));
-	cgs.voteYes  = Q_atoi(CG_ConfigString(CS_VOTE_YES));
-	cgs.voteNo   = Q_atoi(CG_ConfigString(CS_VOTE_NO));
+	CG_ParseVoteTime(CG_ConfigString(CS_VOTE_TIME));
+	cgs.voteYes = Q_atoi(CG_ConfigString(CS_VOTE_YES));
+	cgs.voteNo  = Q_atoi(CG_ConfigString(CS_VOTE_NO));
 	Q_strncpyz(cgs.voteString, CG_ConfigString(CS_VOTE_STRING), sizeof(cgs.voteString));
 
 	cg.teamFirstBlood = Q_atoi(CG_ConfigString(CS_FIRSTBLOOD));
@@ -1024,7 +1036,8 @@ static void CG_ConfigStringModified(void)
 		cgs.intermissionStartTime = Q_atoi(CG_ConfigString(num));
 		break;
 	case CS_VOTE_TIME:
-		cgs.voteTime     = Q_atoi(CG_ConfigString(num));
+		CG_ParseVoteTime(CG_ConfigString(num));
+		cgs.voteFake     = qfalse;
 		cgs.voteModified = qtrue;
 		break;
 	case CS_VOTE_YES:
@@ -1415,12 +1428,12 @@ static void CG_MapRestart(void)
 	cg.zoomTime    = 0;
 	cg.zoomval     = 0;
 
-	cgs.complaintEndTime          = 0;
-	cgs.invitationEndTime         = 0;
-	cgs.applicationEndTime        = 0;
-	cgs.propositionEndTime        = 0;
-	cgs.autoFireteamEndTime       = 0;
-	cgs.autoFireteamCreateEndTime = 0;
+	cgs.complaintEndTime   = 0;
+	cgs.invitationEndTime  = 0;
+	cgs.applicationEndTime = 0;
+	cgs.propositionEndTime = 0;
+	CG_PromptClearAll();
+	cgs.teamVoteTime = 0;
 
 	// reset fog to world fog (if present)
 	trap_R_SetFog(FOG_CMD_SWITCHFOG, FOG_MAP, 20, 0, 0, 0, 0);
@@ -1467,6 +1480,7 @@ static void CG_MapRestart(void)
 	cg.mapRestart          = qtrue;
 	cg.timelimitWarnings   = 0;
 	cgs.voteTime           = 0;
+	cgs.voteFake           = qfalse;
 	cgs.dumpStatsTime      = 0;
 
 	CG_StartMusic();
@@ -2999,10 +3013,10 @@ void CG_AddToBannerPrint(const char *str)
 #define APPLICATION_HASH    145376
 #define INVITATION_HASH     134986
 #define PROPOSITION_HASH    151490
-#define AFT_HASH            37819
-#define AFTC_HASH           49897
-#define AFTJ_HASH           50751
 #define COMPLAINT_HASH      118983
+#define PROMPT_HASH         81897
+#define PROMPTCLOSE_HASH    149726
+#define TVOTE_HASH          67970
 #define REQFORCESPAWN_HASH  176027
 #define SDBG_HASH           50109
 #define IMMAPLIST_HASH      120113
@@ -3447,78 +3461,35 @@ static void CG_ServerCommand(void)
 
 		// fade out over the course of 5 seconds, should be enough (nuking: atvi bug 3793)
 		return;
+	// the state of the player's own fireteam request: -1 sent, -2 rejected, -3 accepted
 	case APPLICATION_HASH:                                         //  "application"
-		cgs.applicationEndTime = cg.time + 20000;
+		cgs.applicationEndTime = cg.time + 10000;
 		cgs.applicationClient  = Q_atoi(CG_Argv(1));
-
-		if (cgs.applicationClient < 0)
-		{
-			cgs.applicationEndTime = cg.time + 10000;
-		}
 		return;
 	case INVITATION_HASH:                                          // "invitation"
-		cgs.invitationEndTime = cg.time + 20000;
+		cgs.invitationEndTime = cg.time + 10000;
 		cgs.invitationClient  = Q_atoi(CG_Argv(1));
-
-		if (cgs.invitationClient < 0)
-		{
-			cgs.invitationEndTime = cg.time + 10000;
-		}
 		return;
 	case PROPOSITION_HASH:                                        // "proposition"
-		cgs.propositionEndTime = cg.time + 20000;
+		cgs.propositionEndTime = cg.time + 10000;
 		cgs.propositionClient  = Q_atoi(CG_Argv(1));
-		cgs.propositionClient2 = Q_atoi(CG_Argv(2));
-
-		if (cgs.propositionClient < 0)
-		{
-			cgs.propositionEndTime = cg.time + 10000;
-		}
 		return;
-	case AFT_HASH:                                                // "aft"
-		cgs.autoFireteamEndTime = cg.time + 20000;
-		cgs.autoFireteamNum     = Q_atoi(CG_Argv(1));
-
-		if (cgs.autoFireteamNum < -1)
-		{
-			cgs.autoFireteamEndTime = cg.time + 10000;
-		}
-		return;
-	case AFTC_HASH:                                              // "aftc"
-		cgs.autoFireteamCreateEndTime = cg.time + 20000;
-		cgs.autoFireteamCreateNum     = Q_atoi(CG_Argv(1));
-
-		if (cgs.autoFireteamCreateNum < -1)
-		{
-			cgs.autoFireteamCreateEndTime = cg.time + 10000;
-		}
-		return;
-	case AFTJ_HASH:                                              // "aftj"
-		cgs.autoFireteamJoinEndTime = cg.time + 20000;
-		cgs.autoFireteamJoinNum     = Q_atoi(CG_Argv(1));
-
-		if (cgs.autoFireteamJoinNum < -1)
-		{
-			cgs.autoFireteamJoinEndTime = cg.time + 10000;
-		}
-		return;
-	// Allow client to lodge a complaing
+	// why the player can't complain: -3 against the server host, -4/-5 team-killed by the host / a bot
 	case COMPLAINT_HASH:                                       // "complaint"
 		if (cgs.gamestate == GS_PLAYING)
 		{
-			if (!(CG_GetActiveHUD()->votetext.style & 1))
-			{
-				trap_SendClientCommand("vote no");
-			}
-
-			cgs.complaintEndTime = cg.time + 20000;
+			cgs.complaintEndTime = cg.time + 10000;
 			cgs.complaintClient  = Q_atoi(CG_Argv(1));
-
-			if (cgs.complaintClient < 0)
-			{
-				cgs.complaintEndTime = cg.time + 10000;
-			}
 		}
+		return;
+	case PROMPT_HASH:                                          // "prompt <id> <kind> <from> <from2> <msLeft>"
+		CG_PromptAdd(Q_atoi(CG_Argv(1)), Q_atoi(CG_Argv(2)), Q_atoi(CG_Argv(3)), Q_atoi(CG_Argv(4)), Q_atoi(CG_Argv(5)));
+		return;
+	case PROMPTCLOSE_HASH:                                     // "promptclose <id> <answer>"
+		CG_PromptClose(Q_atoi(CG_Argv(1)), Q_atoi(CG_Argv(2)));
+		return;
+	case TVOTE_HASH:                                           // "tvote <id> <startTime> <yes> <no> <voted> <text>", "tvote 0"
+		CG_ParseTeamVote();
 		return;
 	case REQFORCESPAWN_HASH:                               // "reqforcespawn"
 		if (cg_instanttapout.integer || cgs.gamestate != GS_PLAYING)

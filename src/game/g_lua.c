@@ -839,6 +839,44 @@ static int _et_G_Sound(lua_State *L)
 }
 
 /**
+ * Returns the running vote of all players, or the running team vote of a team.
+ *
+ * @lua_def_prototype et.G_GetVote(team)
+ * @lua_def ---@param team? number 0 or nil for the vote of all players, et.TEAM_AXIS or et.TEAM_ALLIES for that team's vote.
+ * @lua_def ---@return table|nil vote nil if none runs, else a table with id, startTime (level time), yes, no, caller (client number), team (the caller's team), text (the vote, e.g. "kick name") and desc (the text the players see).
+ */
+static int _et_G_GetVote(lua_State *L)
+{
+	int        team  = (int)luaL_optinteger(L, 1, 0);
+	voteInfo_t *vote = team ? G_TeamVote((team_t)team) : &level.voteInfo;
+
+	if (!vote || !vote->voteTime)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+
+	lua_newtable(L);
+	lua_pushinteger(L, vote->voteId);
+	lua_setfield(L, -2, "id");
+	lua_pushinteger(L, vote->voteTime);
+	lua_setfield(L, -2, "startTime");
+	lua_pushinteger(L, vote->voteYes);
+	lua_setfield(L, -2, "yes");
+	lua_pushinteger(L, vote->voteNo);
+	lua_setfield(L, -2, "no");
+	lua_pushinteger(L, vote->voteCaller);
+	lua_setfield(L, -2, "caller");
+	lua_pushinteger(L, vote->voteTeam);
+	lua_setfield(L, -2, "team");
+	lua_pushstring(L, vote->voteString);
+	lua_setfield(L, -2, "text");
+	lua_pushstring(L, vote->voteDesc);
+	lua_setfield(L, -2, "desc");
+	return 1;
+}
+
+/**
  * Plays a sound originating from a client entity to the team members of that
  * client.
  *
@@ -1240,8 +1278,8 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(constructSoundTime,                FIELD_INT,                 FIELD_FLAG_READONLY),
 
 	// to be compatible with ETPro:
-	_et_gclient_addfieldalias(client.inactivityTime,        inactivityTime,            FIELD_INT,           0),
-	_et_gclient_addfieldalias(client.inactivityWarning,     inactivityWarning,         FIELD_INT,           0),
+	_et_gclient_addfieldalias(client.inactivityTime,        inactivityTime,            FIELD_INT,                                0),
+	_et_gclient_addfieldalias(client.inactivityWarning,     inactivityWarning,         FIELD_INT,                                0),
 
 	_et_gclient_addfield(pers.connected,                    FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.netname,                      FIELD_STRING,              FIELD_FLAG_NOPTR),
@@ -1252,19 +1290,25 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(pers.teamState.state,              FIELD_INT,                 0),
 	_et_gclient_addfield(pers.voteCount,                    FIELD_INT,                 0),
 	_et_gclient_addfield(pers.complaints,                   FIELD_INT,                 0),
-	_et_gclient_addfield(pers.complaintClient,              FIELD_INT,                 0),
-	_et_gclient_addfield(pers.complaintEndTime,             FIELD_INT,                 0),
+	_et_gclient_addfield(pers.complaintClient,              FIELD_INT,                 FIELD_FLAG_PROMPT),
+	_et_gclient_addfield(pers.complaintEndTime,             FIELD_INT,                 FIELD_FLAG_PROMPT),
 	_et_gclient_addfield(pers.lastReinforceTime,            FIELD_INT,                 0),
-	_et_gclient_addfield(pers.applicationClient,            FIELD_INT,                 0),
-	_et_gclient_addfield(pers.applicationEndTime,           FIELD_INT,                 0),
-	_et_gclient_addfield(pers.invitationClient,             FIELD_INT,                 0),
-	_et_gclient_addfield(pers.invitationEndTime,            FIELD_INT,                 0),
-	_et_gclient_addfield(pers.propositionClient,            FIELD_INT,                 0),
-	_et_gclient_addfield(pers.propositionClient2,           FIELD_INT,                 0),
-	_et_gclient_addfield(pers.propositionEndTime,           FIELD_INT,                 0),
-	_et_gclient_addfield(pers.autofireteamEndTime,          FIELD_INT,                 0),
-	_et_gclient_addfield(pers.autofireteamCreateEndTime,    FIELD_INT,                 0),
-	_et_gclient_addfield(pers.autofireteamJoinEndTime,      FIELD_INT,                 0),
+	_et_gclient_addfield(pers.applicationClient,            FIELD_INT,                 FIELD_FLAG_PROMPT),
+	_et_gclient_addfield(pers.applicationEndTime,           FIELD_INT,                 FIELD_FLAG_PROMPT),
+	_et_gclient_addfield(pers.invitationClient,             FIELD_INT,                 FIELD_FLAG_PROMPT),
+	_et_gclient_addfield(pers.invitationEndTime,            FIELD_INT,                 FIELD_FLAG_PROMPT),
+	_et_gclient_addfield(pers.propositionClient,            FIELD_INT,                 FIELD_FLAG_PROMPT),
+	_et_gclient_addfield(pers.propositionClient2,           FIELD_INT,                 FIELD_FLAG_PROMPT),
+	_et_gclient_addfield(pers.propositionEndTime,           FIELD_INT,                 FIELD_FLAG_PROMPT),
+	_et_gclient_addfield(pers.autofireteamEndTime,          FIELD_INT,                 FIELD_FLAG_PROMPT),
+	_et_gclient_addfield(pers.autofireteamCreateEndTime,    FIELD_INT,                 FIELD_FLAG_PROMPT),
+	_et_gclient_addfield(pers.autofireteamJoinEndTime,      FIELD_INT,                 FIELD_FLAG_PROMPT),
+	_et_gclient_addfield(pers.promptKind,                   FIELD_INT_ARRAY,           FIELD_FLAG_READONLY + FIELD_FLAG_PROMPTS),
+	_et_gclient_addfield(pers.promptId,                     FIELD_INT_ARRAY,           FIELD_FLAG_READONLY + FIELD_FLAG_PROMPTS),
+	_et_gclient_addfield(pers.promptFrom,                   FIELD_INT_ARRAY,           FIELD_FLAG_READONLY + FIELD_FLAG_PROMPTS),
+	_et_gclient_addfield(pers.promptFrom2,                  FIELD_INT_ARRAY,           FIELD_FLAG_READONLY + FIELD_FLAG_PROMPTS),
+	_et_gclient_addfield(pers.promptEndTime,                FIELD_INT_ARRAY,           FIELD_FLAG_READONLY + FIELD_FLAG_PROMPTS),
+	_et_gclient_addfield(pers.teamVoteVoted,                FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.lastSpawnTime,                FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(pers.ready,                        FIELD_INT,                 0),
 	_et_gclient_addfield(pers.lastkilled_client,            FIELD_INT,                 FIELD_FLAG_READONLY),
@@ -1288,7 +1332,7 @@ static const gentity_field_t gclient_fields[] =
 	_et_gclient_addfield(ps.weaponstate,                    FIELD_INT,                 FIELD_FLAG_READONLY),
 	_et_gclient_addfield(ps.stats,                          FIELD_INT_ARRAY,           0),
 	_et_gclient_addfield(ps.persistant,                     FIELD_INT_ARRAY,           0),
-	_et_gclient_addfield(ps.ping,                           FIELD_INT,                 FIELD_FLAG_READONLY),// no ping change for lua scripts
+	_et_gclient_addfield(ps.ping,                           FIELD_INT,                 FIELD_FLAG_READONLY),                     // no ping change for lua scripts
 	_et_gclient_addfield(ps.powerups,                       FIELD_INT_ARRAY,           0),
 	_et_gclient_addfield(ps.origin,                         FIELD_VEC3,                0),
 	_et_gclient_addfield(ps.viewangles,                     FIELD_VEC3,                0),
@@ -1358,10 +1402,10 @@ static const gentity_field_t gclient_fields[] =
 
 	// origin: use ps.origin instead of r.currentOrigin
 	// for client entities
-	_et_gclient_addfieldalias(origin,                       ps.origin,                 FIELD_VEC3,          0),
+	_et_gclient_addfieldalias(origin,                       ps.origin,                 FIELD_VEC3,                               0),
 
-	_et_gclient_addfieldalias(sess.team_damage,             sess.team_damage_given,    FIELD_INT,           0),
-	_et_gclient_addfieldalias(sess.team_received,           sess.team_damage_received, FIELD_INT,           0),
+	_et_gclient_addfieldalias(sess.team_damage,             sess.team_damage_given,    FIELD_INT,                                0),
+	_et_gclient_addfieldalias(sess.team_received,           sess.team_damage_received, FIELD_INT,                                0),
 
 	{ NULL },
 };
@@ -2085,7 +2129,17 @@ static int _et_gentity_get(lua_State *L)
 		_etH_gentity_getvec3(L, *(vec3_t *)addr);
 		return 1;
 	case FIELD_INT_ARRAY:
-		lua_pushinteger(L, (*(int *)(addr + (sizeof(int) * (int)luaL_optinteger(L, 3, 0)))));
+	{
+		int index = (int)luaL_optinteger(L, 3, 0);
+
+		if ((field->flags & FIELD_FLAG_PROMPTS) && (index < 0 || index >= MAX_PENDING_PROMPTS))
+		{
+			luaL_error(L, "gentity field \"%s\": index %d out of range (0-%d)", fieldname, index, MAX_PENDING_PROMPTS - 1);
+			return 0;
+		}
+
+		lua_pushinteger(L, (*(int *)(addr + (sizeof(int) * index))));
+	}
 		return 1;
 	case FIELD_TRAJECTORY:
 		_etH_gentity_gettrajectory(L, (trajectory_t *)addr);
@@ -2189,6 +2243,11 @@ static int _et_gentity_set(lua_State *L)
 	default:
 		G_Printf("Lua API: et.gentity_set with no valid field type\n");
 		break;
+	}
+
+	if (field->flags & FIELD_FLAG_PROMPT)
+	{
+		G_PromptSyncLegacy(ent->client);
 	}
 	return 0;
 }
@@ -2492,6 +2551,7 @@ static const luaL_Reg etlib[] =
 	{ "G_globalSound",           _et_G_globalSound           },
 	{ "G_Sound",                 _et_G_Sound                 },
 	{ "G_ClientSound",           _et_G_ClientSound           },
+	{ "G_GetVote",               _et_G_GetVote               },
 	// Miscellaneous
 	{ "trap_Milliseconds",       _et_trap_Milliseconds       },
 	{ "isBitSet",                _et_isBitSet                },
@@ -2872,6 +2932,19 @@ static void registerConfigstringConstants(lua_vm_t *vm)
 	lua_regconstinteger(vm->L, CS_VOTE_STRING);
 	lua_regconstinteger(vm->L, CS_VOTE_YES);
 	lua_regconstinteger(vm->L, CS_VOTE_NO);
+
+	// prompts and votes, see et.gentity_get(clientnum, "pers.promptKind", index) and et.G_GetVote()
+	lua_regconstinteger(vm->L, MAX_PENDING_PROMPTS);
+	lua_regconstinteger(vm->L, POPUP_ANY);
+	lua_regconstinteger(vm->L, POPUP_COMPLAINT);
+	lua_regconstinteger(vm->L, POPUP_APPLICATION);
+	lua_regconstinteger(vm->L, POPUP_INVITATION);
+	lua_regconstinteger(vm->L, POPUP_PROPOSITION);
+	lua_regconstinteger(vm->L, POPUP_AFT);
+	lua_regconstinteger(vm->L, POPUP_AFTC);
+	lua_regconstinteger(vm->L, POPUP_AFTJ);
+	lua_regconstinteger(vm->L, POPUP_VOTE);
+	lua_regconstinteger(vm->L, POPUP_TEAMVOTE);
 	lua_regconstinteger(vm->L, CS_GAME_VERSION);
 
 	lua_regconstinteger(vm->L, CS_LEVEL_START_TIME); // so the timer only shows the current level
