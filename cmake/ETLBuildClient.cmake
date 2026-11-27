@@ -21,6 +21,9 @@ elseif(APPLE)
 	set(RESOURCES_DIR "${CMAKE_SOURCE_DIR}/misc")
 	set(MACOSX_RESOURCES "${RESOURCES_DIR}/${MACOSX_BUNDLE_ICON_FILE}")
 	set_source_files_properties(${CMAKE_SOURCE_DIR}/misc/${MACOSX_BUNDLE_ICON_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+	# shown by the game data setup on the first start (Sys_SetupGameData)
+	list(APPEND MACOSX_RESOURCES "${RESOURCES_DIR}/wininstaller/EULA_Wolfenstein_Enemy_Territory.txt")
+	set_source_files_properties(${RESOURCES_DIR}/wininstaller/EULA_Wolfenstein_Enemy_Territory.txt PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
 	# Create the .app bundle
 	add_executable(etl MACOSX_BUNDLE ${COMMON_SRC} ${CLIENT_SRC} ${PLATFORM_SRC} ${PLATFORM_CLIENT_SRC} ${MACOSX_RESOURCES})

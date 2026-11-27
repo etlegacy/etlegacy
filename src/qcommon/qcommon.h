@@ -1529,6 +1529,9 @@ typedef enum
 } dialogType_t;
 
 dialogResult_t Sys_Dialog(dialogType_t type, const char *message, const char *title);
+#if defined(__APPLE__) && !defined(DEDICATED)
+qboolean Sys_SetupGameData(const char *etmainPath);
+#endif
 
 #ifdef ETL_CLIENT
 dialogResult_t Sys_SDLDialog(dialogType_t type, const char *message, const char *title);
